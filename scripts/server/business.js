@@ -402,16 +402,22 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
-	if(!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if(getBusinessData(business).ownerType != VRR_VEHOWNER_PLAYER) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
-	getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
-	getBusinessData(businessId).needsSaved = true;
+	if(getBusinessData(business).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
+		return false;
+	}
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You gave business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
+	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	getPlayerData(client).promptType = VRR_PROMPT_GIVEBIZTOCLAN;
+
+	//getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
+	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
+	//getBusinessData(businessId).needsSaved = true;
 }
 
 // ===========================================================================
@@ -1343,14 +1349,8 @@ function buyBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_PLAYER;
-	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-	getBusinessData(businessId).buyPrice = 0;
-
-	updateBusinessPickupLabelData(businessId);
-	getBusinessData(businessId).needsSaved = true;
-
-	messagePlayerSuccess(client, `You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
+	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	getPlayerData(client).promptType = VRR_PROMPT_BUYBIZ;
 }
 
 // ===========================================================================
