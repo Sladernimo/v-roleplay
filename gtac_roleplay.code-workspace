@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "..\\ag_locale"
 		}
 	],
 	"settings": {}
