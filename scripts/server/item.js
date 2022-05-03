@@ -295,13 +295,13 @@ function pickupItemCommand(command, params, client) {
 	let itemId = getClosestItemOnGround(getPlayerPosition(client));
 
 	if(!getItemData(itemId)) {
-		messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
+		//messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
 		submitBugReport(client, `(AUTOMATED REPORT) Pickup Item: Getting item data for item ${itemId} on ground returned false.`);
 		return false;
 	}
 
 	if(!getItemTypeData(getItemData(itemId).itemTypeIndex)) {
-		messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
+		//messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
 		submitBugReport(client, `(AUTOMATED REPORT) Pickup Item: Getting item type ${getItemData(itemId).itemType} data for item ${itemId}/${getItemData(itemId).databaseId} on ground returned false.`);
 		return false;
 	}
