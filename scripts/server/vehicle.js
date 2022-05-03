@@ -306,8 +306,8 @@ function vehicleLightsCommand(command, params, client) {
 	}
 
 	getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
-	setVehicleLightsState(vehicle, getVehicleData(vehicle).lights);
 	getVehicleData(vehicle).needsSaved = true;
+	setVehicleLightsState(vehicle, getVehicleData(vehicle).lights);
 
 	meActionToNearbyPlayers(client, `turned the ${getVehicleName(vehicle)}'s lights ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).lights))}`);
 }
