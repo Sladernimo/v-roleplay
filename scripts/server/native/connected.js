@@ -1145,24 +1145,33 @@ function getPlayerPed(client) {
 
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 	if(entity != null) {
-		return entity.setData(dataName, dataValue, syncToClients);
+		if(areServerElementsSupported()) {
+			return entity.setData(dataName, dataValue, syncToClients);
+		}
 	}
+	return false;
 }
 
 // ===========================================================================
 
 function removeEntityData(entity, dataName) {
 	if(entity != null) {
-		return entity.removeData(dataName);
+		if(areServerElementsSupported()) {
+			return entity.removeData(dataName);
+		}
 	}
-	return null;
+	return false;
 }
 
 // ===========================================================================
 
 function doesEntityDataExist(entity, dataName) {
 	if(entity != null) {
-		return (entity.getData(dataName) != null);
+		if(areServerElementsSupported()) {
+			return (entity.getData(dataName) != null);
+		} else {
+			return false;
+		}
 	}
 	return null;
 }
