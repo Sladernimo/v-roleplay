@@ -131,32 +131,10 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	if(!locked && labelInfoType != VRR_PROPLABEL_INFO_NONE) {
 		let infoText = "";
 		switch(labelInfoType) {
-			case VRR_PROPLABEL_INFO_ENTER:
-				if(enterPropertyKey) {
-					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
-				} else {
-					infoText = getLocaleString("PropertyEnterKeyPressLabel", getKeyNameFromId(enterPropertyKey));
-				}
-				break;
+
 
 			case VRR_PROPLABEL_INFO_BUY:
 				infoText = getLocaleString("BusinessBuyItemsLabel", "/buy");
-				break;
-
-			case VRR_PROPLABEL_INFO_BUYBIZ:
-				infoText = getLocaleString("PropertyForSaleLabel", price);
-				break;
-
-			//case VRR_PROPLABEL_INFO_RENTBIZ:
-			//    infoText = `Use /bizrent to buy this business`;
-			//    break;
-
-			case VRR_PROPLABEL_INFO_BUYHOUSE:
-				infoText = getLocaleString("PropertyForSaleLabel", price);
-				break;
-
-			case VRR_PROPLABEL_INFO_RENTHOUSE:
-				infoText = getLocaleString("PropertyForRentLabel", rentPrice);
 				break;
 
 			case VRR_PROPLABEL_INFO_ENTERVEH:
@@ -164,8 +142,16 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 				break;
 
 			case VRR_PROPLABEL_INFO_NONE:
+			case VRR_PROPLABEL_INFO_ENTER:
+			case VRR_PROPLABEL_INFO_BUYBIZ:
+			case VRR_PROPLABEL_INFO_BUYHOUSE:
+			case VRR_PROPLABEL_INFO_RENTHOUSE:
 			default:
-				infoText = "";
+				if(enterPropertyKey) {
+					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
+				} else {
+					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
+				}
 				break;
 		}
 		if(getDistance(localPlayer.position, position) <= renderLabelDistance-2) {
