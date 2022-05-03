@@ -312,15 +312,9 @@ function setLocalPlayerInfiniteRun(state) {
 // ===========================================================================
 
 function setLocalPlayerSkin(skinId) {
-	logToConsole(LOG_INFO, skinId);
+	logToConsole(LOG_INFO, `[VRR.Server] Setting locale player skin to ${skinId}`);
 	if(getGame() == VRR_GAME_GTA_IV) {
-		if(natives.isModelInCdimage(skinId)) {
-			natives.requestModel(skinId);
-			natives.loadAllObjectsNow();
-			if(natives.hasModelLoaded(skinId)) {
-				natives.changePlayerModel(natives.getPlayerId(), skinId);
-			}
-		}
+		natives.changePlayerModel(natives.getPlayerId(), skinId);
 	} else {
 		localPlayer.skin = skinId;
 	}
