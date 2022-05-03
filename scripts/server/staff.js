@@ -494,13 +494,14 @@ function gotoGameLocationCommand(command, params, client) {
 
 	let gameLocationId = getGameLocationFromParams(params);
 
-	if(!gameLocationId) {
+	if(gameLocationId == false) {
 		messagePlayerError(client, "That game location doesn't exist!");
 		return false;
 	}
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	setPlayerHeading(client, getGameConfig().locations[getGame()][gameLocationId][1]);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
