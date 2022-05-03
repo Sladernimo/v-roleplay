@@ -121,7 +121,6 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		screenPosition.y -= propertyLabelPriceOffset;
 	}
 
-
 	if(isBusiness) {
 		text = (locked) ? toUpperCase(getLocaleString("Closed")) : toUpperCase(getLocaleString("Open"));
 	} else {
@@ -131,21 +130,38 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	if(!locked && labelInfoType != VRR_PROPLABEL_INFO_NONE) {
 		let infoText = "";
 		switch(labelInfoType) {
-
+			case VRR_PROPLABEL_INFO_ENTER:
+				if(enterPropertyKey) {
+					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
+				} else {
+					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
+				}
+				break;
 
 			case VRR_PROPLABEL_INFO_BUY:
 				infoText = getLocaleString("BusinessBuyItemsLabel", "/buy");
 				break;
 
-			case VRR_PROPLABEL_INFO_ENTERVEH:
+			case VRR_PROPLABEL_INFO_BUYBIZ:
+				infoText = getLocaleString("BuyBusinessLabel", price);
+				break;
+
+			//case VRR_PROPLABEL_INFO_RENTBIZ:
+			//    infoText = `Use /bizrent to buy this business`;
+			//    break;
+
+			case VRR_PROPLABEL_INFO_BUYHOUSE:
+				infoText = getLocaleString("PropertyForSaleLabel", price);
+				break;
+
+			case VRR_PROPLABEL_INFO_RENTHOUSE:
+				infoText = getLocaleString("PropertyForRentLabel", rentPrice);
+				break;
+
+			case VRR_PROPLABEL_INFO_ENTERVEHICLE:
 				infoText = getLocaleString("VehicleDealershipLabel");
 				break;
 
-			case VRR_PROPLABEL_INFO_NONE:
-			case VRR_PROPLABEL_INFO_ENTER:
-			case VRR_PROPLABEL_INFO_BUYBIZ:
-			case VRR_PROPLABEL_INFO_BUYHOUSE:
-			case VRR_PROPLABEL_INFO_RENTHOUSE:
 			default:
 				if(enterPropertyKey) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
