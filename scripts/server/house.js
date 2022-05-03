@@ -211,11 +211,14 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
-		if(getHouseData(houseId).ownerType == VRR_HOUSEOWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
-			messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
-			return false;
-		}
+	if(getHouseData(houseId).ownerType != VRR_VEHOWNER_PLAYER) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
+		return false;
+	}
+
+	if(getHouseData(houseId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
+		return false;
 	}
 
 	getHouseData(houseId).needsSaved = true;
@@ -1057,8 +1060,9 @@ function setHouseBuyPriceCommand(command, params, client) {
 	}
 
 	getHouseData(houseId).buyPrice = amount;
-	setEntityData(getHouseData(houseId).entrancePickup, "vrr.label.price", getHouseData(houseId).buyPrice, true);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	getHouseData(houseId).needsSaved = true;
+	updateHousePickupLabelData(houseId);
+	messageAdmins(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
 }
 
 // ===========================================================================
@@ -1094,7 +1098,8 @@ function setHouseRentPriceCommand(command, params, client) {
 	}
 
 	getHouseData(houseId).rentPrice = amount;
-	setEntityData(getHouseData(houseId).entrancePickup, "vrr.label.price", `Rent: ${getHouseData(houseId).rentPrice}`, true);
+	getHouseData(houseId).needsSaved = true;
+	updateHousePickupLabelData(houseId);
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s {MAINCOLOUR}rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
 }
 
@@ -1127,13 +1132,8 @@ function buyHouseCommand(command, params, client) {
 		return false;
 	}
 
-	getHouseData(houseId).ownerType = VRR_BIZOWNER_PLAYER;
-	getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-	getHouseData(houseId).buyPrice = 0;
-
-	updateHousePickupLabelData(houseId);
-
-	messagePlayerSuccess(client, `You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
+	showPlayerPrompt(client, getLocaleString(client, "BuyHouseConfirmMessage"), getLocaleString(client, "BuyHouseConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	getPlayerData(client).promptType = VRR_PROMPT_BUYHOUSE;
 }
 
 // ===========================================================================
