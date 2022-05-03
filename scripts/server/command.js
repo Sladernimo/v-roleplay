@@ -123,15 +123,11 @@ function loadCommands() {
 			new CommandData("clans", listClansCommand, "[search text]", getStaffFlagValue("None"), true, true, "List clans (search by partial name, if provided)"),
 			new CommandData("clanranks", listClanRanksCommand, "[clan name]", getStaffFlagValue("None"), true, true, "Shows a list of a clan's ranks"),
 			new CommandData("clanflags", showClanFlagListCommand, "", getStaffFlagValue("None"), true, true, "Shows a list of clan permission flags"),
-
 			new CommandData("addclan", createClanCommand, "<name>", getStaffFlagValue("ManageClans"), true, true, "Creates an new empty, unowned clan."),
 			new CommandData("delclan", deleteClanCommand, "<clan id>", getStaffFlagValue("ManageClans"), true, true, "Deletes a clan by ID or name"),
-
 			new CommandData("clanaddrank", createClanRankCommand, "<rank id> <name>", getStaffFlagValue("None"), true, true, "Adds a clan rank"),
 			new CommandData("clandelrank", deleteClanRankCommand, "<rank name>", getStaffFlagValue("None"), true, true, "Removes a clan rank"),
-
 			new CommandData("clansetrank", setClanMemberRankCommand, "<player name/id> <rank name>", getStaffFlagValue("None"), true, true, "Sets the rank of a clan member"),
-
 			new CommandData("clanowner", setClanOwnerCommand, "<player name/id>", getStaffFlagValue("None"), true, true, "Gives ownership of the clan to a player"),
 			new CommandData("clantag", setClanTagCommand, "<tag>", getStaffFlagValue("None"), true, true, "Sets a clan's main tag"),
 			new CommandData("clanranktag", setClanRankTagCommand, "<rank name/id> <tag>", getStaffFlagValue("None"), true, true, "Sets a clan rank's custom tag"),
@@ -320,11 +316,14 @@ function loadCommands() {
 			// Admin Job Stuff
 			new CommandData("addjob", createJobCommand, "<name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("addjobloc", createJobLocationCommand, "<job name/id>", getStaffFlagValue("ManageJobs"), true, false),
+			new CommandData("addjobuniform", createJobUniformCommand, "<job name/id> <skin name/id>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("deljobloc", deleteJobLocationCommand, "", getStaffFlagValue("ManageJobs"), true, false),
+			new CommandData("deljobuniform", deleteJobUniformCommand, "<job name/id> <skin name/id>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("addjobroute", createJobRouteCommand, "<name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("addjobrouteloc", createJobRouteLocationCommand, "<name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("deljobroute", deleteJobRouteCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("deljobrouteloc", deleteJobRouteLocationCommand, "", getStaffFlagValue("ManageJobs"), true, false),
+			new CommandData("jobroutelocpos", setJobRouteLocationPositionCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutename", setJobRouteNameCommand, "<name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutepay", setJobRoutePayCommand, "<amount>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutestartmsg", setJobRouteStartMessageCommand, "<new message>", getStaffFlagValue("ManageJobs"), true, false),
@@ -334,7 +333,6 @@ function loadCommands() {
 			new CommandData("jobrouteenabled", toggleJobRouteEnabledCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutevehcolours", setJobRouteVehicleColoursCommand, "<colour 1> <colour 2>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutedelays", setJobRouteAllLocationDelaysCommand, "<time in milliseconds>", getStaffFlagValue("ManageJobs"), true, false),
-
 			new CommandData("jobcolour", setJobColourCommand, "<job id/name> <red> <green> <blue>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobblip", setJobBlipCommand, "<job id/name> <blip id/name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobpickup", setJobPickupCommand, "<job id/name> <pickup id/name>", getStaffFlagValue("ManageJobs"), true, false),
@@ -348,7 +346,6 @@ function loadCommands() {
 			new CommandData("jobdelplayerbl", removePlayerFromJobBlackListCommand, "<player name/id> [job id]", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobdelplayerbl", removePlayerFromJobWhiteListCommand, "<player name/id> [job id]", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobreloadall", reloadAllJobsCommand, "", getStaffFlagValue("ManageJobs"), true, false),
-
 			new CommandData("jobinfo", getJobInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job"),
 			new CommandData("joblocinfo", getJobLocationInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job location"),
 		],

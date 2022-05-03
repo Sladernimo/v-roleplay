@@ -1357,6 +1357,34 @@ function setJobRouteStartMessageCommand(command, params, client) {
 
 // ===========================================================================
 
+function setJobRouteLocationPositionCommand(command, params, client) {
+	if(!isPlayerWorking(client)) {
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", "{ALTCOLOUR}/startwork{MAINCOLOUR}"));
+		return false;
+	}
+
+	if(!isPlayerOnJobRoute(client)) {
+		messagePlayerError(client, getLocaleString(client, "NeedToBeOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
+		return false;
+	}
+
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getPlayerJob(client);
+	let jobRoute = getPlayerJobRoute(client);
+	let jobRouteLocation = getPlayerJobRouteLocation(client);
+
+	getJobData(jobId).routes[jobRoute].locations[jobRouteLocation].position = position;
+	getJobData(jobId).routes[jobRoute].locations[jobRouteLocation].needsSaved = true;
+	showCurrentJobLocation(client);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)} set the position for location ${getJobRouteLocationData(jobId, jobRoute, jobRouteLocation).name} on route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+}
+
+// ===========================================================================
+
 function setJobRouteLocationArriveMessageCommand(command, params, client) {
 	if(!isPlayerWorking(client)) {
 		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", "{ALTCOLOUR}/startwork{MAINCOLOUR}"));
@@ -2625,6 +2653,32 @@ function createJobRouteLocationCommand(command, params, client) {
 
 // ===========================================================================
 
+function createJobUniformCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getJobFromParams(getParam(params, " ", 1));
+	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
+
+	if(!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if(!skinIndex) {
+		messagePlayerError(client, getLocaleString(client, "InvalidSkin"));
+		return false;
+	}
+
+	createJobUniform(jobId, skinIndex);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getGameConfig().skins[skinIndex][1]} (}${getGameConfig().skins[skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	return true;
+}
+
+// ===========================================================================
+
 function createJobRoute(routeName, closestJobLocation) {
 	let tempJobRouteData = new JobRouteData(false);
 	tempJobRouteData.name = routeName;
@@ -2660,6 +2714,19 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData) {
 
 	getJobData(jobRouteData.jobIndex).routes[jobRouteData.index].locations.push(tempJobRouteLocationData);
 	saveJobRouteLocationToDatabase(tempJobRouteLocationData);
+	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function createJobUniform(jobId, skinIndex) {
+	let tempJobUniformData = new JobUniformData(false);
+	tempJobUniformData.skin = skinIndex;
+	tempJobUniformData.jobIndex = jobId;
+	tempJobUniformData.job = getJobData(jobId);
+	tempJobUniformData.needsSaved = true;
+
+	getJobData(jobId).uniforms.push(tempJobUniformData);
 	setAllJobDataIndexes();
 }
 
@@ -2715,6 +2782,34 @@ function deleteJobRouteCommand(command, params, client) {
 
 	clearArray(getServerData().jobs[jobId].routes[jobRoute].locations);
 	getServerData().jobs[jobId].routes.splice(jobRoute, 1);
+
+	setAllJobDataIndexes();
+	collectAllGarbage();
+}
+
+// ===========================================================================
+
+function deleteJobUniformCommand(command, params, client) {
+	let jobId = getJobFromParams(getParam(params, " ", 1));
+	let uniformIndex = getParam(params, " ", 1);
+
+	if(!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if(isNaN(uniformIndex)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber", "uniform ID"));
+		return false;
+	}
+
+	if(typeof getJobData(jobId).uniforms[uniformIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
+		return false;
+	}
+
+	quickDatabaseQuery(`DELETE FROM job_uniform WHERE job_uniform_id = ${getJobData(jobId).uniforms[uniformIndex].databaseId}`);
+	getJobData(jobId).uniforms.splice(uniformIndex, 1);
 
 	setAllJobDataIndexes();
 	collectAllGarbage();
