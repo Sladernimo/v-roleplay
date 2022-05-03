@@ -700,8 +700,7 @@ function showClanRankFlagsCommand(command, params, client) {
 
 	let chunkedList = splitArrayIntoChunks(flagList, 6);
 
-	messagePlayerInfo(client, `{clanOrange}== {jobYellow}Clan Rank Flags (${getClanRankData(clanId, rankId).name}){clanOrange}===================`);
-
+	makeChatBoxSectionHeader(client, getLocaleString(client, "ClanRankFlags"), getClanRankData(clanId, rankId).name);
 	for(let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join("{MAINCOLOUR}, "));
 	}
@@ -842,7 +841,7 @@ function setClanMemberRankCommand(command, params, client) {
 	let oldClanRank = getClanRankData(clanId, getPlayerClanRank(targetClient));
 	getPlayerCurrentSubAccount(targetClient).clanRank = getClanRankData(clanId, rankId).databaseId;
 	getPlayerCurrentSubAccount(targetClient).clanRankIndex = rankId;
-	messagePlayerSuccess(client, `You changed {ALTCOLOUR}${getCharacterFullName(targetClient)}'s {MAINCOLOUR}rank from {ALTCOLOUR}${oldClanRank.name} {MAINCOLOUR}to {ALTCOLOUR}${getClanRankData(clanId, rankId).name}`);
+	messagePlayerSuccess(client, `You changed {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} rank from {ALTCOLOUR}${oldClanRank.name}{MAINCOLOUR} to {ALTCOLOUR}${getClanRankData(clanId, rankId).name}`);
 }
 
 // ===========================================================================
@@ -1209,7 +1208,7 @@ function showClanFlagListCommand(command, params, client) {
 		return false;
 	}
 
-let rankId = getClanRankFromParams(clanId, getParam(params, " ", 1));
+	let rankId = getClanRankFromParams(clanId, getParam(params, " ", 1));
 
 	if(!getClanRankData(clanId, rankId)) {
 		messagePlayerError(client, getLocaleString(client, "ClanRankInvalid"));
@@ -1231,6 +1230,8 @@ let rankId = getClanRankFromParams(clanId, getParam(params, " ", 1));
 	}
 }
 */
+
+// ===========================================================================
 
 /**
  * @param {String} params - The params to search for
