@@ -151,8 +151,8 @@ function setUpInitialGame() {
 			natives.switchMadDrivers(false);
 
 			// Singleplayer Cellphone
-			natives.requestScript("spcellphone");
-			natives.startNewScript("spcellphone", 0);
+			//natives.requestScript("spcellphone");
+			//natives.startNewScript("spcellphone", 0);
 			// Script "v-blockedscripts" blocks the mpcellphone scripts
 			natives.setMessagesWaiting(false); // Seems to have no effect
 			natives.setMobilePhoneRadioState(false);
