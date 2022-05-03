@@ -179,19 +179,7 @@ function setVehicleEngine(vehicleId, state) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
-	if(getGame() != VRR_GAME_MAFIA_ONE) {
-		if(!state) {
-			getElementFromId(vehicleId).lightStatus = 2;
-		} else {
-			getElementFromId(vehicleId).lightStatus = 1;
-		}
-	} else {
-		if(!state) {
-			getElementFromId(vehicleId).lights = false;
-		} else {
-			getElementFromId(vehicleId).lights = true;
-		}
-	}
+	getElementFromId(vehicleId).lights = state;
 }
 
 // ===========================================================================
@@ -205,11 +193,7 @@ function repairVehicle(syncId) {
 function syncVehicleProperties(vehicle) {
 	if(doesEntityDataExist(vehicle, "vrr.lights")) {
 		let lightStatus = getEntityData(vehicle, "vrr.lights");
-		if(!lightStatus) {
-			vehicle.lightStatus = 2;
-		} else {
-			vehicle.lightStatus = 1;
-		}
+		vehicle.lights = lightStatus;
 	}
 
 	if(doesEntityDataExist(vehicle, "vrr.invincible")) {
@@ -565,6 +549,12 @@ function syncElementProperties(element) {
 		default:
 			break;
 	}
+}
+
+// ===========================================================================
+
+function getPlayerPed(client) {
+	return client.player;
 }
 
 // ===========================================================================
