@@ -1543,14 +1543,15 @@ function listPlayerInventoryCommand(command, params, client) {
 	let targetClient = client;
 	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
 		if(!areParamsEmpty(client)) {
-			targetClient = getPlayerFromParams(params);
 			if(targetClient == false) {
 				sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
 				return false;
 			}
+			targetClient = getPlayerFromParams(params);
 		}
 	}
 	showPlayerInventoryToPlayer(client, targetClient);
+	//showPlayerInventoryToPlayer(client, client);
 }
 
 // ===========================================================================
@@ -2250,7 +2251,7 @@ function showPlayerInventoryToPlayer(client, targetClient) {
 	if(client == targetClient) {
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderSelfItemList")));
 	} else {
-		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerItemList")));
+		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerItemList", getCharacterFullName(targetClient))));
 	}
 
 	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
