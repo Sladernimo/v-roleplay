@@ -93,11 +93,12 @@ function removePlayerKeyBind(client, keyId) {
 		quickDatabaseQuery(`DELETE FROM acct_hotkey WHERE acct_hotkey_acct = ${getPlayerData(client).accountData.databaseId} AND acct_hotkey_key = ${keyId}`);
 	}
 
-	for(let i in getPlayerData(client).keyBinds) {
-		if(getPlayerData(client).keyBinds[i].key == keyId) {
-			getPlayerData(client).keyBinds.splice(i, 1);
-		}
-	}
+	//for(let i in getPlayerData(client).keyBinds) {
+	//	if(getPlayerData(client).keyBinds[i].key == keyId) {
+	//		getPlayerData(client).keyBinds.splice(i, 1);
+	//	}
+	//}
+	getPlayerData(client).keyBinds = getPlayerData(client).keyBinds.filter(keyBind => keyBind.key != keyId);
 	sendRemoveAccountKeyBindToClient(client, keyId);
 
 	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
