@@ -67,6 +67,9 @@
 		"Unlocked",
 		"Closed",
 		"Open",
-		"JobLabel"
+		"JobLabel",
+		"BuyBusinessLabel",
+		"BuyHouseLabel",
+		"RentHouseLabel"
 	]
 }
