@@ -691,18 +691,18 @@ function jobUniformCommand(command, params, client) {
 
 	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
-		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) < getGlobalConfig().startWorkingDistance) {
+		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
 			return false;
 		}
 
-		if(getVehicleData(closestVehicle).ownerType == VRR_VEHOWNER_JOB) {
-			messagePlayerError(client, "This is not a job vehicle!");
+		if(getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
 
 		if(getPlayerCurrentSubAccount(client).job != getVehicleData(closestVehicle).ownerId) {
-			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
+			messagePlayerError(client, getLocaleString(client, "NotYourJobVehicle"));
 			return false;
 		}
 
@@ -774,28 +774,28 @@ function jobEquipmentCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
 	let jobData = false;
 
-	if(getDistance(closestJobLocation.position, getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
 		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
 			return false;
 		}
 
-		if(getVehicleData(closestVehicle).ownerType == VRR_VEHOWNER_JOB) {
-			messagePlayerError(client, "This is not a job vehicle!");
+		if(getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
 
 		if(getPlayerCurrentSubAccount(client).job != getVehicleData(closestVehicle).ownerId) {
-			messagePlayerError(client, "This is not your job vehicle!");
+			messagePlayerError(client, getLocaleString(client, "NotYourJobVehicle"));
 			return false;
 		}
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
 		if(getPlayerCurrentSubAccount(client).job == VRR_JOB_NONE) {
-			messagePlayerError(client, "You don't have a job!");
-			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
+			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
+			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
 			return false;
 		}
 
