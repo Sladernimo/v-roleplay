@@ -116,8 +116,8 @@ function playerPromptAnswerYes(client) {
 			break;
 
 		case VRR_PROMPT_GIVEHOUSETOCLAN:
-			let house = getPlayerHouse(client);
-			if(!house) {
+			let houseId = getPlayerHouse(client);
+			if(!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 				return false;
 			}
@@ -132,33 +132,85 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getHouseData(houseId).ownerType = VRR_VEHOWNER_CLAN;
+			getHouseData(houseId).ownerType = VRR_HOUSEOWNER_CLAN;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 
 		case VRR_PROMPT_GIVEBIZTOCLAN:
-			let business = getPlayerBusiness(client);
-			if(!business) {
+			let businessId = getPlayerBusiness(client);
+			if(!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 				return false;
 			}
 
-			if(getBusinessData(business).ownerType != VRR_VEHOWNER_PLAYER) {
+			if(getBusinessData(businessId).ownerType != VRR_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
 
-			if(getBusinessData(business).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+			if(getBusinessData(businessId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
 
-			getBusinessData(business).ownerType = VRR_VEHOWNER_CLAN;
-			getBusinessData(business).ownerId = getPlayerCurrentSubAccount(client).clan;
+			getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
+			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
+			break;
+
+		case VRR_PROMPT_BUYHOUSE:
+			houseId = getPlayerHouse(client);
+			if(!houseId) {
+				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
+				return false;
+			}
+
+			if(getHouseData(houseId).buyPrice <= 0) {
+				messagePlayerError(client, getLocaleString(client, "HouseNotForSale"));
+				return false;
+			}
+
+			if(getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
+				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
+				return false;
+			}
+
+			getHouseData(houseId).ownerType = VRR_HOUSEOWNER_PLAYER;
+			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
+			getHouseData(houseId).buyPrice = 0;
+			getHouseData(houseId).needsSaved = true;
+			updateHousePickupLabelData(houseId);
+
+			messagePlayerSuccess(client, `You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
+			break;
+
+		case VRR_PROMPT_BUYBIZ:
+			businessId = getPlayerBusiness(client);
+			if(!businessId) {
+				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+				return false;
+			}
+
+			if(getBusinessData(businessId).buyPrice <= 0) {
+				messagePlayerError(client, getLocaleString(client, "BusinessNotForSale"));
+				return false;
+			}
+
+			if(getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
+				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
+				return false;
+			}
+
+			getBusinessData(businessId).ownerType = VRR_BIZOWNER_PLAYER;
+			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
+			getBusinessData(businessId).buyPrice = 0;
+			getBusinessData(businessId).needsSaved = true;
+			updateBusinessPickupLabelData(businessId);
+
+			messagePlayerSuccess(client, `You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
 			break;
 
 		default:
