@@ -802,6 +802,7 @@ function lockCommand(command, params, client) {
 			}
 
 			getBusinessData(businessId).interiorLights = !getBusinessData(businessId).interiorLights;
+			getBusinessData(businessId).needsSaved = true;
 
 			let clients = getClients();
 			for(let i in clients) {
@@ -810,9 +811,7 @@ function lockCommand(command, params, client) {
 				}
 			}
 
-			getBusinessData(businessId).needsSaved = true;
-
-			meActionToNearbyPlayers(client, `turned ${getOnOffFromBool((getBusinessData(businessId).interiorLights))} on the business lights`);
+			meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool((getBusinessData(businessId).interiorLights)))} on the business lights`);
 			return true;
 		}
 
@@ -823,7 +822,8 @@ function lockCommand(command, params, client) {
 				return false;
 			}
 
-			getHouseData(businessId).interiorLights = !getHouseData(houseId).interiorLights;
+			getHouseData(houseId).interiorLights = !getHouseData(houseId).interiorLights;
+			getHouseData(houseId).needsSaved = true;
 
 			let clients = getClients();
 			for(let i in clients) {
@@ -832,9 +832,7 @@ function lockCommand(command, params, client) {
 				}
 			}
 
-			getHouseData(houseId).needsSaved = true;
-
-			meActionToNearbyPlayers(client, `turned ${getOnOffFromBool((getHouseData(houseId).interiorLights))} on the house lights`);
+			meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool((getHouseData(houseId).interiorLights)))} on the house lights`);
 			return true;
 		}
 	}
