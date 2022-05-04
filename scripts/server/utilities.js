@@ -18,7 +18,8 @@ let disconnectReasons = [
 	"Banned",
 	"Failed",
 	"Invalid Name",
-	"Crashed"
+	"Crashed",
+	"Modified Game"
 ];
 
 // ===========================================================================
