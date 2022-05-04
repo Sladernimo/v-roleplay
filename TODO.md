@@ -1,3 +1,4 @@
+== TODO
 * Finish auto-translator
 * Add ways to acquire drugs. Pot/coke plants, meth labs, etc
 * Finish setting up the persistent NPC system
@@ -8,3 +9,12 @@
 * Make game messages (big message, small message) into array of types
 	* Array of message types in shared
 	* Font, text, duration, etc arrays in client, indexed by type
+* Fix the item take/put system for items in vehicle trunks, other items, etc
+---
+== Planned Features
+* Named and scripted NPCs
+* Racing
+* Fishing
+* Stock Market
+* Mapped interiors for GTA 3
+* Drug growing/manufacturing
