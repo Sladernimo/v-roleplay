@@ -296,12 +296,12 @@ let gameData = {
 			"Grey/Cloudy"
 		],
 		[VRR_GAME_GTA_VC]: [ // GTA Vice City
-			"Clear",
+			"Partly Cloudy",
 			"Overcast",
 			"Thunderstorm",
 			"Fog",
-			"Clear",
-			"Rainy",
+			"Sunny",
+			"Hurricane",
 			"Dark/Cloudy",
 			"Light/Cloudy",
 			"Overcast/Cloudy",
