@@ -136,11 +136,11 @@ function toggleAccountLoginAttemptNotificationsCommand(command, params, client) 
 
 	if(hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You will ${getBoolRedGreenInlineColour(true)}now {MAINCOLOUR}be notified by email when somebody tries to login to your account`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} notification by email when somebody tries to login to your account`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You will ${getBoolRedGreenInlineColour(false)}not {MAINCOLOUR}be notified by email when somebody tries to login to your account`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} notification by email when somebody tries to login to your account`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	}
 
@@ -154,14 +154,14 @@ function toggleAccountServerLogoCommand(command, params, client) {
 
 	if(!doesPlayerHaveLogoEnabled(client)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You will ${getBoolRedGreenInlineColour(true)}now {MAINCOLOUR}be shown the server logo (if enabled on current server)`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} the server logo`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo ON for their account`);
 		if(getServerConfig().showLogo) {
 			updatePlayerShowLogoState(client, true);
 		}
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You will ${getBoolRedGreenInlineColour(false)}not {MAINCOLOUR}be shown the server logo.`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} the server logo.`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo OFF for their account`);
 		updatePlayerShowLogoState(client, false);
 	}
@@ -190,11 +190,11 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 
 	if(!doesPlayerHaveTwoFactorAuthEnabled(client)) {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, `{MAINCOLOUR}You have turned ${getBoolRedGreenInlineColour(false)}ON {MAINCOLOUR} two factor authentication!{ALTCOLOUR}${addtoAuthenticatorCode}`);
+		messagePlayerSuccess(client, `{MAINCOLOUR}You have turned ${getBoolRedGreenInlineColour(false)}ON{MAINCOLOUR} two factor authentication!`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication ON for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, `You have turned ${getBoolRedGreenInlineColour(false)}OFF {MAINCOLOUR}two-factor authentication for login.`);
+		messagePlayerSuccess(client, `You have turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} two-factor authentication for login.`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication OFF for their account`);
 	}
 	return true;
@@ -1416,7 +1416,7 @@ function isAccountTwoFactorAuthenticationVerified(accountData) {
 // ===========================================================================
 
 function doesPlayerHaveTwoFactorAuthEnabled(client) {
-	return hasBitFlag(getPlayerData(client).accountData.flags.settings, getAccountSettingsFlagValue("TwoFactorAuth"));
+	return hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("TwoFactorAuth"));
 }
 
 // ===========================================================================
