@@ -2398,7 +2398,7 @@ function createJobLocationBlip(jobId, locationId) {
 		}
 
 		if(areServerElementsSupported()) {
-			let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, getColourByType("job"));
+			let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, getColourByType("jobYellow"));
 			if(blip != false) {
 				tempJobData.locations[locationId].blip = blip;
 			}
