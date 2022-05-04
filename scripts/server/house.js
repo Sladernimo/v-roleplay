@@ -1521,3 +1521,21 @@ function updateHousePickupLabelData(houseId) {
 }
 
 // ===========================================================================
+
+function deleteAllHouseBlips() {
+	for(let i in getServerData().houses) {
+		deleteHouseEntranceBlip(i);
+		deleteHouseExitBlip(i);
+	}
+}
+
+// ===========================================================================
+
+function deleteAllHousePickups() {
+	for(let i in getServerData().houses) {
+		deleteHouseEntrancePickup(i);
+		deleteHouseExitPickup(i);
+	}
+}
+
+// ===========================================================================

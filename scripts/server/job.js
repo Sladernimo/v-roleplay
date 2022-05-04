@@ -2635,8 +2635,6 @@ function createJobRouteLocationCommand(command, params, client) {
 		return false;
 	}
 
-
-
 	if(!isPlayerOnJobRoute(client)) {
 		messagePlayerError(client, getLocaleString(client, "NeedToBeOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
 		return false;
@@ -2843,9 +2841,17 @@ function getClosestJobLocation(position) {
 	let closestJobLocation = false;
 	for(let i in getServerData().jobs) {
 		for(let j in getServerData().jobs[i].locations) {
-			if(!closestJobLocation || getServerData().jobs[i].locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
-				closestJobLocation = getServerData().jobs[i].locations[j];
+			if(getServerData().jobs[i].locations[j].interior != getGameConfig().mainWorldInterior[getGame()] || getServerData().jobs[i].locations[j].dimension != getGameConfig().mainWorldDimension[getGame()]) {
+				let businessId = getBusinessFromInteriorAndDimension(getServerData().jobs[i].locations[j].dimension, getServerData().jobs[i].locations[j].interior);
+				if(getBusinessData(businessId) != false) {
+					position = getBusinessData(businessId).entrancePosition;
+				}
+
+				if(!closestJobLocation || getServerData().jobs[i].locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
+					closestJobLocation = getServerData().jobs[i].locations[j];
+				}
 			}
+
 		}
 	}
 	return closestJobLocation;
