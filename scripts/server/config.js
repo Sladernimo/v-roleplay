@@ -78,14 +78,12 @@ let globalConfig = {
 	housePickupStreamOutDistance: 120,
 	jobPickupStreamInDistance: 100,
 	jobPickupStreamOutDistance: 120,
-	businessBlipStreamInDistance: 200,
-	businessBlipStreamOutDistance: 220,
-	houseBlipStreamInDistance: 200,
-	houseBlipStreamOutDistance: 220,
-	jobBlipStreamInDistance: 200,
-	jobBlipStreamOutDistance: 220,
-
-
+	businessBlipStreamInDistance: 150,
+	businessBlipStreamOutDistance: 200,
+	houseBlipStreamInDistance: 100,
+	houseBlipStreamOutDistance: 120,
+	jobBlipStreamInDistance: 300,
+	jobBlipStreamOutDistance: 320,
 };
 
 // ===========================================================================
@@ -197,9 +195,6 @@ function applyConfigToServer(tempServerConfig) {
 	logToConsole(LOG_INFO, "[VRR.Config]: Applying server config ...");
 	getServerConfig().devServer = intToBool(toInteger(server.getCVar("vrr_devserver")));
 	getServerConfig().testerOnly = intToBool(toInteger(server.getCVar("vrr_testeronly")));
-
-	getServerConfig().useRealTime = intToBool(toInteger(server.getCVar("vrr_realtime")));
-	getServerConfig().antiCheat.enabled = intToBool(toInteger(server.getCVar("vrr_anticheat")));
 
 	logToConsole(LOG_DEBUG, "[VRR.Config]: Server config applied successfully!");
 
