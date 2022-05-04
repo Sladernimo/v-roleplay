@@ -614,9 +614,9 @@ function removeBusinessOwnerCommand(command, params, client) {
 
 	getBusinessData(businessId).ownerType = VRR_BIZOWNER_NONE;
 	getBusinessData(businessId).ownerId = -1;
-
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You removed business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}owner`);
+
+	messagePlayerSuccess(client, `{MAINCOLOUR}You removed business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} owner`);
 }
 
 // ===========================================================================
@@ -1748,7 +1748,8 @@ function createBusinessEntranceBlip(businessId) {
 		logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${getBusinessData(businessId).name} (model ${blipModelId})`);
 
 		if(areServerElementsSupported()) {
-			let entranceBlip = createGameBlip(getBusinessData(businessId).entrancePosition, blipModelId, 1, getColourByName("businessBlue"));
+			let entranceBlip = createGameBlip(getBusinessData(businessId).entrancePosition, blipModelId, getColourByType("businessBlue"));
+
 			if(entranceBlip != null) {
 				setElementOnAllDimensions(entranceBlip, false);
 				setElementDimension(entranceBlip, getBusinessData(businessId).entranceDimension);
