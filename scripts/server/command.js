@@ -241,6 +241,7 @@ function loadCommands() {
 			new CommandData("housedesc", setHouseDescriptionCommand, "", getStaffFlagValue("ManageHouses"), true, false, "Sets a house's description"),
 			//new CommandData("houselock", lockUnlockHouseCommand, "", getStaffFlagValue("None"), true, false, "Locks/unlocks a house door"),
 			//new CommandData("houselights", toggleHouseInteriorLightsCommand, "", getStaffFlagValue("None"), true, false, "Turns on and off the lights inside a house"),
+			new CommandData("housedelowner", removeHouseOwnerCommand, "", getStaffFlagValue("ManageHouse"), true, true, "Removes the owner of a house, making the house unowned"),
 			new CommandData("houseowner", setHouseOwnerCommand, "", getStaffFlagValue("None"), true, false, "Gives a house to a player"),
 			new CommandData("housebuyprice", setHouseBuyPriceCommand, "", getStaffFlagValue("None"), true, false, "Sets the purchase price of a house so people can buy it"),
 			new CommandData("houserentprice", setHouseRentPriceCommand, "", getStaffFlagValue("None"), true, false, "Sets the rent price of a house so people can rent it"),
