@@ -1171,7 +1171,6 @@ function stopRentingVehicle(client) {
 	getPlayerData(client).rentingVehicle = false;
 	getVehicleData(vehicle).rentedBy = false;
 	respawnVehicle(vehicle);
-	getVehicleData(vehicle).needsSaved = true;
 }
 
 // ===========================================================================
