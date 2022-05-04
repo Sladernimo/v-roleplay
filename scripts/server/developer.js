@@ -399,7 +399,7 @@ function testPromptGUICommand(command, params, client) {
 		return false;
 	}
 
-	showPlayerPromptGUI(targetClient, "Testing the two button prompt GUI", "Testing", "Yes", "No")
+	showPlayerPromptGUI(targetClient, "Testing the two button prompt GUI", "Testing", getLocaleString(client, "Yes"), getLocaleString(client, "No"))
 	return true;
 }
 
