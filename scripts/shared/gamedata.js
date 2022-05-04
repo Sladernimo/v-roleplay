@@ -2616,6 +2616,7 @@ let gameData = {
 			["VCN Roof", [-446.21, 1128.09, 56.69], 0.0, null],
 			["Downtown Building Roof", [-448.37, 1249.13, 77.40], 0.0, null],
 			["Downtown Ammunation Back Lot", [-741.58, 1254.04, 12.18], 0.0, null],
+			["Phil's Place", [-1098.68, 343.21, 11.26], 0.0, null],
 
 			// Bar, Restaurants and Food
 			["Little Havana Donut Shop", [-856.28, -649.32, 11.047], 1.700, null],
@@ -2632,11 +2633,10 @@ let gameData = {
 
 			// Gunshops
 			["Ocean Beach Ammunation", [-53.41, -1482.25, 10.293], 1.441, null],
+			["Downtown Ammunation", [-676.39, 1196.51, 11.07], 0.0, null],
 
 			// Pay-n-sprays
 			["Ocean Beach Pay-n-spray", [-18.51, -1256.76, 10.463], -1.556, null],
-
-
 		],
 
 		[VRR_GAME_GTA_SA]: [ // GTA SA
@@ -3090,10 +3090,15 @@ let gameData = {
 			VehicleDealership: 7,
 			Restaurant: 0,
 			FastFood: 0,
-			Bank: 0,
+			Bank: 24,
 			FuelStation: 0,
 			Business: 0,
 			House: 0,
+			Clothes: 28,
+			BoatDealership: 12,
+			Club: 13,
+			Tools: 18,
+			Bar: 11,
 		},
 		[VRR_GAME_GTA_SA]: {	// GTA SA
 			PoliceStation: 30,
