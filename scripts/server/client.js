@@ -381,8 +381,8 @@ function showPlayerCharacterSelectFailedGUI(client) {
 
 // ===========================================================================
 
-function showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage})`);
+function showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText = "Yes", noButtonText = "No") {
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage}, YesButton: ${yesButtonText}, NoButton: ${noButtonText})`);
 	sendNetworkEventToPlayer("vrr.showPrompt", client, promptMessage, promptTitle, yesButtonText, noButtonText);
 }
 
