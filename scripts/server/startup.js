@@ -121,6 +121,7 @@ function loadServerDataFromDatabase() {
 	// Always load these regardless of "test server" status
 	getServerData().itemTypes = loadItemTypesFromDatabase();
 	getServerData().localeStrings = loadAllLocaleStrings();
+	getServerData().allowedSkins = getAllowedSkins(getGame());
 
 	// Translation Cache
 	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
