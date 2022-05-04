@@ -181,8 +181,39 @@ function setHouseOwnerCommand(command, params, client) {
 	getHouseData(houseId).needsSaved = true;
 
 	getHouseData(houseId).ownerType = VRR_HOUSEOWNER_PLAYER;
-	getHouseData(houseId).ownerId = getServerData().clients[newHouseOwner.index].accountData.databaseId;
+	getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(newHouseOwner).databaseId;
 	messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to {ALTCOLOUR}${newHouseOwner.name}`);
+}
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function removeHouseOwnerCommand(command, params, client) {
+	let houseId = getPlayerHouse(client);
+
+	if(!getHouseData(houseId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
+		return false;
+	}
+
+	if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
+		if(getHouseData(houseId).ownerType == VRR_HOUSEOWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+			messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
+			return false;
+		}
+	}
+
+	getHouseData(houseId).ownerType = VRR_HOUSEOWNER_NONE;
+	getHouseData(houseId).ownerId = -1;
+	getHouseData(houseId).needsSaved = true;
+
+	messagePlayerSuccess(client, `{MAINCOLOUR}You removed house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} owner`);
 }
 
 // ===========================================================================
@@ -869,7 +900,7 @@ function createHouseEntranceBlip(houseId) {
 		}
 
 		if(areServerElementsSupported()) {
-			let entranceBlip = createGameBlip(getHouseData(houseId).entrancePosition, blipModelId, 1, getColourByName("houseGreen"));
+			let entranceBlip = createGameBlip(getHouseData(houseId).entrancePosition, blipModelId, getColourByName("houseGreen"));
 			if(entranceBlip != null) {
 				setElementDimension(entranceBlip, getHouseData(houseId).entranceDimension);
 				setElementOnAllDimensions(entranceBlip, false);
