@@ -242,40 +242,6 @@ function initBitFlagScript() {
 
 // ===========================================================================
 
-function createBitFlagTable(keyNames) {
-	let bitVal = 0;
-	let bitTable = {};
-	let incVal = 1;
-
-	for(let i in keyNames) {
-		let key = keyNames[i];
-		bitTable[key] = bitVal;
-		bitVal = 1 << incVal;
-		incVal++;
-	}
-	return bitTable;
-}
-
-// ===========================================================================
-
-function hasBitFlag(allFlags, checkForFlag) {
-	if(allFlags == 0) {
-		return false;
-	}
-
-	if(allFlags == -1) {
-		return true;
-	}
-
-	if((allFlags & checkForFlag) == checkForFlag) {
-		return true;
-	}
-
-	return false;
-}
-
-// ===========================================================================
-
 function doesPlayerHaveStaffPermission(client, requiredFlags) {
 	if(isConsole(client)) {
 		return true;
@@ -413,18 +379,6 @@ function takePlayerStaffFlag(client, flagName) {
 
 // ===========================================================================
 
-function addBitFlag(allFlags, flagValue) {
-	return allFlags | flagValue;
-}
-
-// ===========================================================================
-
-function removeBitFlag(allFlags, flagValue) {
-	return allFlags ^ flagValue;
-}
-
-// ===========================================================================
-
 function takePlayerStaffFlag(client, flagName) {
 	if(!getStaffFlagValue(flagName)) {
 		return false;
@@ -451,22 +405,6 @@ function getServerBitFlags() {
 
 function getServerBitFlagKeys() {
 	return serverBitFlagKeys;
-}
-
-// ===========================================================================
-
-function createBitwiseTable(tableKeys) {
-	let bitVal = 0;
-	let bitTable = {};
-	let incVal = 1;
-
-	for(let i in tableKeys) {
-		let key = tableKeys[i];
-		bitTable[key] = bitVal;
-		bitVal = 1 << incVal;
-		incVal++;
-	}
-	return bitTable;
 }
 
 // ===========================================================================
