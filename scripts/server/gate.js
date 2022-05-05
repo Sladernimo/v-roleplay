@@ -196,3 +196,31 @@ function saveGateToDatabase(gateId) {
 }
 
 // ===========================================================================
+
+function loadGatesFromDatabase() {
+	logToConsole(LOG_INFO, "[VRR.Gate]: Loading gates from database ...");
+
+	let tempGates = [];
+	let dbConnection = connectToDatabase();
+	let dbAssoc;
+
+	if(dbConnection) {
+		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM gate_main WHERE gate_server = ${getServerId()}`);
+		if(dbQuery) {
+			if(dbQuery.numRows > 0) {
+				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+					let tempGateData = new GateData(dbAssoc);
+					tempGates.push(tempGateData);
+					logToConsole(LOG_DEBUG, `[VRR.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
+				}
+			}
+			freeDatabaseQuery(dbQuery);
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+
+	logToConsole(LOG_INFO, `[VRR.Gate]: ${tempGates.length} gates loaded from database successfully!`);
+	return tempGates;
+}
+
+// ===========================================================================
