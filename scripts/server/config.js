@@ -937,9 +937,9 @@ function getDatabaseConfig() {
 function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading server configuration");
 	try {
-		serverConfig = loadServerConfigFromGameAndPort(server.game, server.port);
+		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
 	} catch(error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${server.game} and port ${server.port}`);
+		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
 		thisResource.stop();
 	}
 }
