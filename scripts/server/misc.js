@@ -322,6 +322,10 @@ function getPlayerInfoCommand(command, params, client) {
 // ===========================================================================
 
 function playerChangeAFKState(client, afkState) {
+	if(!getPlayerData(client)) {
+		return false;
+	}
+
 	getPlayerData(client).afk = afkState;
 	updateAllPlayerNameTags();
 }
