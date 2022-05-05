@@ -591,7 +591,7 @@ function loginSuccess(client) {
 		if(!hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("IsTester"))) {
 			setTimeout(function() {
 				getPlayerData(client).customDisconnectReason = "Kicked - Not a tester";
-				disconnectPlayer();
+				disconnectPlayer(client);
 			}, 3500);
 
 			if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
@@ -804,7 +804,7 @@ function createAccount(name, password, email = "") {
 function checkLogin(client, password) {
 	getPlayerData(client).loginAttemptsRemaining = getPlayerData(client).loginAttemptsRemaining-1;
 	if(getPlayerData(client).loginAttemptsRemaining <= 0) {
-		disconnectPlayer();
+		disconnectPlayer(client);
 	}
 
 	if(isPlayerLoggedIn(client)) {
@@ -983,7 +983,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 	if(doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
 		setTimeout(function() {
-			disconnectPlayer();
+			disconnectPlayer(client);
 		}, 5000);
 
 		if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
