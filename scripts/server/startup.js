@@ -123,6 +123,7 @@ function loadServerDataFromDatabase() {
 	getServerData().localeStrings = loadAllLocaleStrings();
 	getServerData().allowedSkins = getAllowedSkins(getGame());
 
+
 	// Translation Cache
 	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
 	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
@@ -136,10 +137,11 @@ function loadServerDataFromDatabase() {
 		getServerData().houses = loadHousesFromDatabase();
 		getServerData().vehicles = loadVehiclesFromDatabase();
 		getServerData().clans = loadClansFromDatabase();
-		getServerData().jobs = loadJobsFromDatabase();
 		getServerData().npcs = loadNPCsFromDatabase();
 		getServerData().races = loadRacesFromDatabase();
 		getServerData().radioStations = loadRadioStationsFromDatabase();
+		getServerData().gates = loadGatesFromDatabase();
+		getServerData().jobs = loadJobsFromDatabase();
 	}
 
 	getServerData().commands = loadCommands();
