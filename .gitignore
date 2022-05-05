@@ -4,3 +4,4 @@
 config/database.json
 config/email.json
 config/discord.json
+locale/*
