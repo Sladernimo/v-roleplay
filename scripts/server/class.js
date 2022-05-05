@@ -1253,14 +1253,12 @@ class JobLocationData {
 		this.routeCache = [];
 
 		if(dbAssoc) {
-			this.databaseId = dbAssoc["job_loc_id"];
-			this.jobId = dbAssoc["job_loc_job"];
-			this.position = toVector3(dbAssoc["job_loc_pos_x"], dbAssoc["job_loc_pos_y"], dbAssoc["job_loc_pos_z"]);
-			this.blip = false;
-			this.pickup = false;
-			this.enabled = dbAssoc["job_loc_enabled"];
-			this.interior = dbAssoc["job_loc_int"];
-			this.dimension = dbAssoc["job_loc_vw"];
+			this.databaseId = toInteger(dbAssoc["job_loc_id"]);
+			this.jobId = toInteger(dbAssoc["job_loc_job"]);
+			this.position = toVector3(toFloat(dbAssoc["job_loc_pos_x"]), toFloat(dbAssoc["job_loc_pos_y"]), toFloat(dbAssoc["job_loc_pos_z"]));
+			this.enabled = toInteger(dbAssoc["job_loc_enabled"]);
+			this.interior = toInteger(dbAssoc["job_loc_int"]);
+			this.dimension = toInteger(dbAssoc["job_loc_vw"]);
 		}
 	}
 };
@@ -1713,3 +1711,26 @@ class JobRouteLocationData {
 		}
 	}
 };
+
+class GateData {
+	constructor(dbAssoc = false) {
+		this.databaseId = 0;
+		this.name = "";
+		this.scriptName = "";
+		this.enabled = false;
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.locked = true;
+		this.ownerType = VRR_GATEOWNER_NONE;
+		this.ownerId = 0;
+
+		if(dbAssoc) {
+			this.databaseId = toInteger(dbAssoc["gate_id"]);
+			this.name = toString(dbAssoc["gate_name"]);
+			this.scriptName = toString(dbAssoc["gate_script_name"]);
+			this.enabled = intToBool(toInteger(dbAssoc["gate_enabled"]));
+			this.position = toVector3(toFloat(dbAssoc["gate_pos_x"]), toFloat(dbAssoc["gate_pos_y"]), toFloat(dbAssoc["gate_pos_z"]));
+			this.ownerType = toInteger(dbAssoc["gate_owner_type"]);
+			this.ownerId = toInteger(dbAssoc["gate_owner_id"]);
+		}
+	}
+}
