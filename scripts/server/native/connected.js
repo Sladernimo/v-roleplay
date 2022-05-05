@@ -92,7 +92,7 @@ function getPlayerInterior(client) {
 // ===========================================================================
 
 function setPlayerDimension(client, dimension) {
-	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
+	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
 	if(!areServerElementsSupported()) {
 		getPlayerData(client).syncDimension = dimension;
 	} else {
@@ -105,7 +105,7 @@ function setPlayerDimension(client, dimension) {
 // ===========================================================================
 
 function setPlayerInterior(client, interior) {
-	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s interior to ${interior}`);
+	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s interior to ${interior}`);
 	sendPlayerSetInterior(client, interior);
 	if(isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
 		getPlayerCurrentSubAccount(client).interior = interior;
@@ -378,7 +378,7 @@ function getElementDimension(element) {
 
 function setElementDimension(element, dimension) {
     if(typeof element.dimension != "undefined") {
-		logToConsole(LOG_DEBUG, `Setting element ${element} (${element.id}) dimension to ${dimension}`);
+		logToConsole(LOG_VERBOSE, `Setting element ${element} (${element.id}) dimension to ${dimension}`);
         element.dimension = dimension;
         return true;
     }
@@ -1228,3 +1228,11 @@ function getCountryNameFromIP(ip) {
 }
 
 // ===========================================================================
+
+function getServerPort() {
+	return server.port;
+}
+
+function serverBanIP(ip) {
+	server.banIP(ip);
+}
