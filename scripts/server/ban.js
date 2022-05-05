@@ -99,7 +99,7 @@ function ipBanCommand(command, params, client, fromDiscord) {
 	announceAdminAction(`PlayerIPBanned`, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR}`);
 	banIPAddress(getPlayerIP(targetClient), getPlayerData(client).accountData.databaseId, reason);
 
-	server.banIP(getPlayerIP(targetClient));
+	serverBanIP(getPlayerIP(targetClient));
 	disconnectPlayer(targetClient);
 }
 
@@ -130,7 +130,7 @@ function subNetBanCommand(command, params, client, fromDiscord) {
 	announceAdminAction(`PlayerSubNetBanned`, `{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR}`);
 	banSubNet(getPlayerIP(targetClient), getSubNet(getPlayerIP(targetClient), octetAmount), getPlayerData(client).accountData.databaseId, reason);
 
-	server.banIP(getPlayerIP(targetClient));
+	serverBanIP(getPlayerIP(targetClient));
 }
 
 // ===========================================================================
