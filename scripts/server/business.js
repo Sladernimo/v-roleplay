@@ -52,7 +52,7 @@ function loadBusinessesFromDatabase() {
 					//tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
 					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
 					tempBusinesses.push(tempBusinessData);
-					logToConsole(LOG_INFO, `[VRR.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -2733,6 +2733,19 @@ function deleteAllBusinessPickups() {
 	for(let i in getServerData().businesses) {
 		deleteBusinessPickups(i);
 	}
+}
+
+// ===========================================================================
+
+function getBusinessFromInteriorAndDimension(dimension, interior) {
+	let businesses = getServerData().businesses;
+	for(let i in businesses) {
+		if(businesses[i].exitInterior == interior && businesses[i].exitDimension == dimension) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================
