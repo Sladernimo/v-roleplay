@@ -1359,11 +1359,9 @@ function getDistance(vec1, vec2) {
 // ===========================================================================
 
 function logToConsole(tempLogLevel, text) {
-	if(typeof server != "undefined") {
-		text = removeColoursInMessage(text);
-	}
+	text = removeColoursInMessage(text);
 
-	if((logLevel & tempLogLevel)) {
+	if(hasBitFlag(logLevel, tempLogLevel) || hasBitFlag(logLevel, LOG_ERROR) || hasBitFlag(logLevel, LOG_WARN)) {
 		if(tempLogLevel & LOG_ERROR) {
 			consoleError(text);
 			return true;
@@ -2802,6 +2800,52 @@ function isPosInPoly(poly, position) {
 		&& (position.x < (poly[j].x - poly[i].x) * (position[1] - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
 		&& (c = !c);
 	return c;
+}
+
+// ===========================================================================
+
+function createBitFlagTable(keyNames) {
+	let bitVal = 0;
+	let bitTable = {};
+	let incVal = 1;
+
+	for(let i in keyNames) {
+		let key = keyNames[i];
+		bitTable[key] = bitVal;
+		bitVal = 1 << incVal;
+		incVal++;
+	}
+	return bitTable;
+}
+
+// ===========================================================================
+
+function hasBitFlag(allFlags, checkForFlag) {
+	if(allFlags == 0) {
+		return false;
+	}
+
+	if(allFlags == -1) {
+		return true;
+	}
+
+	if((allFlags & checkForFlag) == checkForFlag) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function addBitFlag(allFlags, flagValue) {
+	return allFlags | flagValue;
+}
+
+// ===========================================================================
+
+function removeBitFlag(allFlags, flagValue) {
+	return allFlags ^ flagValue;
 }
 
 // ===========================================================================
