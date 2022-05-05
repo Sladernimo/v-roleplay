@@ -9,10 +9,28 @@
 
 let scriptVersion = "1.1";
 let serverStartTime = 0;
-let logLevel = LOG_INFO|LOG_DEBUG|LOG_VERBOSE|LOG_WARN|LOG_ERROR;
+let logLevel = LOG_INFO|LOG_ERROR|LOG_WARN|LOG_DEBUG;
 
 // ===========================================================================
 
+/**
+ * @typedef {Object} ServerData
+ * @property {Array.<VehicleData>} vehicles
+ * @property {Array.<ClientData>} clients
+ * @property {Array.<BusinessData>} businesses
+ * @property {Array.<HouseData>} houses
+ * @property {Array.<HouseData>} commands
+ * @property {Array} groundItemCache
+ * @property {Array} groundPlantCache
+ * @property {Array.<ItemData>} items
+ * @property {Array.<ItemTypeData>} itemTypes
+ * @property {Array.<ClanData>} clans
+ * @property {Array} localeStrings
+ * @property {Array.<NPCData>} npcs
+ * @property {Array.<RaceData>} races
+ * @property {Array.<JobData>} jobs
+ * @property {Array.<Gates>} gates
+ */
 let serverData = {
 	vehicles: [],
 	clients: new Array(128),
@@ -24,33 +42,25 @@ let serverData = {
 	items: [],
 	itemTypes: [],
 	clans: [],
-	antiCheat: {
-		//whiteListedGameScripts: [],
-		//blackListedGameScripts: [],
-	},
 	localeStrings: {},
 	cachedTranslations: [],
 	cachedTranslationFrom: [],
-	triggers: [],
+	//triggers: [],
 	npcs: [],
 	races: [],
+	jobs: [],
+	gates: [],
 };
 
 // ===========================================================================
 
-function initServerData() {
-}
-
-// ===========================================================================
-
+/**
+ *
+ * @return {ServerData}
+ *
+ */
 function getServerData() {
 	return serverData;
-}
-
-// ===========================================================================
-
-function getModNatives() {
-	return modNatives;
 }
 
 // ===========================================================================
