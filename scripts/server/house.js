@@ -723,12 +723,14 @@ function saveAllHousesToDatabase() {
 function saveHouseToDatabase(houseId) {
 	let tempHouseData = getServerData().houses[houseId];
 
+	if(!tempHouseData.needsSaved) {
+		return false;
+	}
+
 	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house '${tempHouseData.databaseId}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if(dbConnection) {
 		let safeHouseDescription = escapeDatabaseString(dbConnection, tempHouseData.description);
-		let safeExitCutscene = escapeDatabaseString(dbConnection, tempHouseData.exitCutscene);
-		let safeEntranceCutscene = escapeDatabaseString(dbConnection, tempHouseData.entranceCutscene);
 
 		let data = [
 			["house_server", getServerId()],
@@ -745,7 +747,7 @@ function saveHouseToDatabase(houseId) {
 			["house_entrance_vw", tempHouseData.entranceDimension],
 			["house_entrance_pickup", tempHouseData.entrancePickupModel],
 			["house_entrance_blip", tempHouseData.entranceBlipModel],
-			["house_entrance_cutscene", safeEntranceCutscene],
+			["house_entrance_cutscene", tempHouseData.entranceCutscene],
 			["house_exit_pos_x", tempHouseData.exitPosition.x],
 			["house_exit_pos_y", tempHouseData.exitPosition.y],
 			["house_exit_pos_z", tempHouseData.exitPosition.z],
@@ -754,12 +756,12 @@ function saveHouseToDatabase(houseId) {
 			["house_exit_vw", tempHouseData.exitDimension],
 			["house_exit_pickup", tempHouseData.exitPickupModel],
 			["house_exit_blip", tempHouseData.exitBlipModel],
-			["house_exit_cutscene", safeExitCutscene],
+			["house_exit_cutscene", tempHouseData.exitCutscene],
 			["house_buy_price", tempHouseData.buyPrice],
 			["house_rent_price", tempHouseData.rentPrice],
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
-
+			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
 		];
 
 		let dbQuery = null;
@@ -787,6 +789,10 @@ function saveHouseToDatabase(houseId) {
 
 function saveHouseLocationToDatabase(houseId, locationId) {
 	let tempHouseLocationData = getServerData().houses[houseId].locations[locationId];
+
+	if(!tempHouseLocationData.needsSaved) {
+		return false;
+	}
 
 	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house location '${locationId}' for house '${getHouseData(houseId).databaseId}' to database ...`);
 	let dbConnection = connectToDatabase();

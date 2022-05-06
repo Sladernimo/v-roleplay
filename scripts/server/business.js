@@ -860,6 +860,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			getBusinessData(businessId).hasInterior = false;
 			getBusinessData(businessId).interiorCutscene = "";
 			getBusinessData(businessId).exitPickupModel = -1;
+			getBusinessData(businessId).customInterior = false;
 			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`);
 			return false;
 		}
@@ -880,10 +881,9 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
 		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId+getGlobalConfig().businessDimensionStart;
 		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
-		if(getGameConfig().interiors[getGame()][typeParam].length == 3) {
-			getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][2];
-		}
 		getBusinessData(businessId).hasInterior = true;
+		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1576,8 +1576,6 @@ function saveBusinessToDatabase(businessId) {
 	let dbConnection = connectToDatabase();
 	if(dbConnection) {
 		let safeBusinessName = escapeDatabaseString(dbConnection, tempBusinessData.name);
-		let safeExitCutscene = escapeDatabaseString(dbConnection, tempBusinessData.exitCustscene);
-		let safeEntranceCutscene = escapeDatabaseString(dbConnection, tempBusinessData.entranceCutscene);
 
 		let data = [
 			["biz_server", getServerId()],
@@ -1595,7 +1593,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_entrance_vw", tempBusinessData.entranceDimension],
 			["biz_entrance_pickup", tempBusinessData.entrancePickupModel],
 			["biz_entrance_blip", tempBusinessData.entranceBlipModel],
-			["biz_entrance_cutscene", safeEntranceCutscene],
+			["biz_entrance_cutscene", tempBusinessData.entranceCutscene],
 			["biz_exit_pos_x", tempBusinessData.exitPosition.x],
 			["biz_exit_pos_y", tempBusinessData.exitPosition.y],
 			["biz_exit_pos_z", tempBusinessData.exitPosition.z],
@@ -1604,11 +1602,12 @@ function saveBusinessToDatabase(businessId) {
 			["biz_exit_vw", tempBusinessData.exitDimension],
 			["biz_exit_pickup", tempBusinessData.exitPickupModel],
 			["biz_exit_blip", tempBusinessData.exitBlipModel],
-			["biz_exit_cutscene", safeExitCutscene],
+			["biz_exit_cutscene", tempBusinessData.exitCutscene],
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
 			["biz_radiostation", tempBusinessData.streamingRadioStation],
+			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 		];
 
 		let dbQuery = null;
