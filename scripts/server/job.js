@@ -2835,23 +2835,26 @@ function getJobFromParams(params) {
 
 /**
  * @param {Vector3} position - The position to get the closest job location for
+ * @param {Number} dimension - The dimension to get the closest job location for
  * @return {JobLocationData} The job location's data (class instance)
  */
 function getClosestJobLocation(position, dimension = 0) {
 	let closestJobLocation = false;
-	for(let i in getServerData().jobs) {
-		for(let j in getServerData().jobs[i].locations) {
-			if(getServerData().jobs[i].locations[j].dimension != dimension) {
-				let businessId = getClosestBusinessExit(getServerData().jobs[i].locations[j].position, getServerData().jobs[i].locations[j].dimension);
+	let jobs = getServerData().jobs;
+	for(let i in jobs) {
+		let locations = jobs[i].locations;
+		for(let j in locations) {
+			if(locations[j].dimension != dimension) {
+				let businessId = getClosestBusinessExit(locations[j].position, locations[j].dimension);
 				if(getBusinessData(businessId) != false) {
 					if(!closestJobLocation || getBusinessData(businessId).entrancePosition.distance(position) < closestJobLocation.position.distance(position)) {
-						closestJobLocation = getServerData().jobs[i].locations[j];
+						closestJobLocation = locations[j];
 					}
 				}
 			}
 
-			if(!closestJobLocation || getServerData().jobs[i].locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
-				closestJobLocation = getServerData().jobs[i].locations[j];
+			if(!closestJobLocation || locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
+				closestJobLocation = locations[j];
 			}
 		}
 	}
