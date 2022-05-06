@@ -51,35 +51,13 @@ function loadHousesFromDatabase() {
  *
  */
 function createHouseCommand(command, params, client) {
-	let entranceLocation = new HouseLocationData(false);
-	entranceLocation.entrancePosition = getPlayerPosition(client);
-	entranceLocation.entranceRotation = 0.0;
-	entranceLocation.entrancePickupModel = getGameConfig().pickupModels[getGame()].House;
-	entranceLocation.entranceBlipModel = getGameConfig().blipSprites[getGame()].House;
-	entranceLocation.entranceInterior = 0;
-	entranceLocation.entranceDimension = 0;
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
 
-	entranceLocation.exitPosition = toVector3(0.0, 0.0, 0.0);
-	entranceLocation.exitRotation = 0.0;
-	entranceLocation.exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
-	entranceLocation.exitBlipModel = -1;
-	entranceLocation.exitInterior = 0;
-	entranceLocation.exitDimension = 0;
-
-	let tempHouseData = createHouse(params, entranceLocation);
-	let houseId = getServerData().houses.push(tempHouseData);
-
-	saveHouseToDatabase(houseId-1);
-	setHouseDataIndexes();
-
-	createHouseEntrancePickup(houseId-1);
-	createHouseExitPickup(houseId-1);
-	createHouseEntranceBlip(houseId-1);
-	createHouseExitBlip(houseId-1);
-
-	//getHouseData(houseId).needsSaved = true;
-
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house {houseGreen}${tempHouseData.description}`);
+	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`);
 }
 
 // ===========================================================================
@@ -132,12 +110,6 @@ function setHouseDescriptionCommand(command, params, client) {
 
 	let oldDescription = getHouseData(houseId).description;
 	getHouseData(houseId).description = newHouseDescription;
-
-	//for(let i in getHouseData(houseId).locations) {
-	//	if(getHouseData(houseId).locations[i].type == VRR_HOUSE_LOC_DOOR) {
-	//		setEntityData(getHouseData(houseId).entrancePickup, "vrr.label.name", getHouseData(houseId).description, true);
-	//	}
-	//}
 
 	setEntityData(getHouseData(houseId).entrancePickup, "vrr.label.name", getHouseData(houseId).description, true);
 
@@ -619,25 +591,37 @@ function removePlayerFromHouses(client) {
  * @return {bool} Whether or not the player was successfully removed from the house
  *
  */
-function createHouse(description, entranceLocation) {
+function createHouse(description, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceCutscene = -1) {
 	let tempHouseData = new HouseData(false);
 	tempHouseData.description = description;
 
-	tempHouseData.entrancePosition = entranceLocation.entrancePosition;
-	tempHouseData.entranceRotation = entranceLocation.entranceRotation;
-	tempHouseData.entrancePickupModel = entranceLocation.entrancePickupModel;
-	tempHouseData.entranceBlipModel = entranceLocation.entranceBlipModel;
-	tempHouseData.entranceInterior = entranceLocation.entranceInterior;
-	tempHouseData.entranceDimension = entranceLocation.entranceDimension;
+	tempHouseData.entrancePosition = entrancePosition;
+	tempHouseData.entranceRotation = 0.0;
+	tempHouseData.entrancePickupModel = entrancePickupModel;
+	tempHouseData.entranceBlipModel = entranceBlipModel;
+	tempHouseData.entranceInterior = entranceInterior;
+	tempHouseData.entranceDimension = entranceDimension;
+	tempHouseData.entranceCutscene = entranceCutscene;
 
-	tempHouseData.exitPosition = entranceLocation.exitPosition;
-	tempHouseData.exitRotation = entranceLocation.exitRotation;
-	tempHouseData.exitPickupModel = entranceLocation.exitPickupModel;
-	tempHouseData.exitBlipModel = entranceLocation.exitBlipModel;
-	tempHouseData.exitInterior = entranceLocation.exitInterior;
-	tempHouseData.entranceDimension = entranceLocation.entranceDimension;
+	tempHouseData.exitPosition = exitPosition;
+	tempHouseData.exitRotation = 0.0;
+	tempHouseData.exitPickupModel = 0;
+	tempHouseData.exitBlipModel = -1;
+	tempHouseData.exitInterior = 0;
+	tempHouseData.exitDimension = 0;
+	tempHouseData.exitCutscene = -1;
 
-	return tempHouseData;
+	tempHouseData.needsSaved = true;
+
+	let houseId = getServerData().houses.push(tempHouseData);
+
+	saveHouseToDatabase(houseId-1);
+	setHouseDataIndexes();
+
+	createHousePickups(houseId-1);
+	createHouseBlips(houseId-1);
+
+	return houseId-1;
 }
 
 // ===========================================================================
@@ -882,7 +866,6 @@ function createHouseEntrancePickup(houseId) {
 				setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
 				setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamOutDistance);
 				setElementTransient(entrancePickup, false);
-				addToWorld(entrancePickup);
 
 				getHouseData(houseId).entrancePickup = entrancePickup;
 				updateHousePickupLabelData(houseId);
@@ -915,7 +898,6 @@ function createHouseEntranceBlip(houseId) {
 				setElementTransient(entranceBlip, false);
 				setEntityData(entranceBlip, "vrr.owner.type", VRR_BLIP_HOUSE_ENTRANCE, false);
 				setEntityData(entranceBlip, "vrr.owner.id", houseId, false);
-				addToWorld(entranceBlip);
 
 				getHouseData(houseId).entranceBlip = entranceBlip;
 			}
@@ -946,7 +928,6 @@ function createHouseExitPickup(houseId) {
 					setElementStreamInDistance(exitPickup, getGlobalConfig().housePickupStreamInDistance);
 					setElementStreamOutDistance(exitPickup, getGlobalConfig().housePickupStreamOutDistance);
 					setElementTransient(exitPickup, false);
-					addToWorld(exitPickup);
 
 					getHouseData(houseId).exitPickup = exitPickup;
 					updateHousePickupLabelData(houseId);
@@ -981,7 +962,6 @@ function createHouseExitBlip(houseId) {
 					setElementTransient(exitBlip, false);
 					setEntityData(exitBlip, "vrr.owner.type", VRR_BLIP_HOUSE_EXIT, false);
 					setEntityData(exitBlip, "vrr.owner.id", houseId, false);
-					addToWorld(exitBlip);
 
 					getHouseData(houseId).exitBlip = exitBlip;
 				}
@@ -1000,14 +980,17 @@ function getHouseOwnerTypeText(ownerType) {
 		case VRR_HOUSEOWNER_PLAYER:
 			return "player";
 
-		case VRR_BIZOWNER_NONE:
+		case VRR_HOUSEOWNER_NONE:
 			return "not owned";
 
-		case VRR_BIZOWNER_PUBLIC:
+		case VRR_HOUSEOWNER_PUBLIC:
 			return "not owned";
 
-		case VRR_BIZOWNER_JOB:
+		case VRR_HOUSEOWNER_JOB:
 			return "job";
+
+		case VRR_HOUSEOWNER_BIZ:
+			return "business";
 
 		default:
 			return "unknown";
@@ -1061,7 +1044,7 @@ function getHouseInfoCommand(command, params, client) {
 			break;
 	}
 
-	messagePlayerNormal(client, `🏠 {houseGreen}[House Info] {MAINCOLOUR}Description: {ALTCOLOUR}${getHouseData(houseId).description}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getHouseOwnerTypeText(getHouseData(houseId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getHouseData(houseId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${houseId}/${getHouseData(houseId).databaseId}`);
+	messagePlayerNormal(client, `🏠 {houseGreen}[House Info]{MAINCOLOUR} Description: {ALTCOLOUR}${getHouseData(houseId).description}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getHouseOwnerTypeText(getHouseData(houseId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getHouseData(houseId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${houseId}/${getHouseData(houseId).databaseId}`);
 }
 
 // ===========================================================================
@@ -1542,6 +1525,20 @@ function deleteAllHousePickups() {
 		deleteHouseEntrancePickup(i);
 		deleteHouseExitPickup(i);
 	}
+}
+
+// ===========================================================================
+
+function createHouseBlips(houseId) {
+	createHouseEntranceBlip(houseId);
+	createHouseExitBlip(houseId);
+}
+
+// ===========================================================================
+
+function createHousePickups(houseId) {
+	createHouseEntrancePickup(houseId);
+	createHouseExitPickup(houseId);
 }
 
 // ===========================================================================

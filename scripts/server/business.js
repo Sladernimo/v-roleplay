@@ -140,19 +140,9 @@ function loadBusinessGameScriptsFromDatabase(businessId) {
  *
  */
 function createBusinessCommand(command, params, client) {
-	let tempBusinessData = createBusiness(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].Business, getGameConfig().blipSprites[getGame()].Business, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
-	tempBusinessData.needsSaved = true;
-	let businessId = getServerData().businesses.push(tempBusinessData);
-	setBusinessDataIndexes();
+	createBusiness(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].Business, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
 
-	saveAllBusinessesToDatabase();
-
-	createBusinessEntrancePickup(businessId-1);
-	createBusinessExitPickup(businessId-1);
-	createBusinessEntranceBlip(businessId-1);
-	createBusinessExitBlip(businessId-1);
-
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business {businessBlue}${tempBusinessData.name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
 }
 
 // ===========================================================================
@@ -192,7 +182,7 @@ function createBusinessLocationCommand(command, params, client) {
 
 // ===========================================================================
 
-function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInteriorId = 0, entranceVirtualWorld = 0, entranceCutscene = "", exitCutscene = "") {
+function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceCutscene = -1) {
 	let tempBusinessData = new BusinessData(false);
 	tempBusinessData.name = name;
 
@@ -200,8 +190,8 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.entranceRotation = 0.0;
 	tempBusinessData.entrancePickupModel = entrancePickupModel;
 	tempBusinessData.entranceBlipModel = entranceBlipModel;
-	tempBusinessData.entranceInterior = entranceInteriorId;
-	tempBusinessData.entranceDimension = entranceVirtualWorld;
+	tempBusinessData.entranceInterior = entranceInterior;
+	tempBusinessData.entranceDimension = entranceDimension;
 	tempBusinessData.entranceCutscene = entranceCutscene;
 
 	tempBusinessData.exitPosition = exitPosition;
@@ -210,7 +200,15 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.exitBlipModel = -1;
 	tempBusinessData.exitInterior = 0;
 	tempBusinessData.exitDimension = 0;
-	tempBusinessData.exitCutscene = "";
+	tempBusinessData.exitCutscene = -1;
+
+	tempBusinessData.needsSaved = true;
+	let businessId = getServerData().businesses.push(tempBusinessData);
+	setBusinessDataIndexes();
+	saveAllBusinessesToDatabase();
+
+	createBusinessPickups(businessId-1);
+	createBusinessBlips(businessId-1);
 
 	return tempBusinessData;
 }
@@ -1701,10 +1699,9 @@ function createBusinessEntrancePickup(businessId) {
 				setElementOnAllDimensions(entrancePickup, false);
 				setElementDimension(entrancePickup, getBusinessData(businessId).entranceDimension);
 				setElementOnAllDimensions(entrancePickup, false);
-				setElementStreamInDistance(entrancePickup, getGlobalConfig().houseBlipStreamInDistance);
-				setElementStreamOutDistance(entrancePickup, getGlobalConfig().houseBlipStreamOutDistance);
+				setElementStreamInDistance(entrancePickup, getGlobalConfig().businessBlipStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessBlipStreamOutDistance);
 				setElementTransient(entrancePickup, false);
-				addToWorld(entrancePickup);
 
 				getBusinessData(businessId).entrancePickup = entrancePickup;
 				updateBusinessPickupLabelData(businessId);
@@ -1757,7 +1754,6 @@ function createBusinessEntranceBlip(businessId) {
 				setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
 				setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
 				setElementTransient(entranceBlip, false);
-				addToWorld(entranceBlip);
 
 				getBusinessData(businessId).entranceBlip = entranceBlip;
 			}

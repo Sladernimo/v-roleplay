@@ -246,7 +246,7 @@ class ClientData {
 
 		this.customDisconnectReason = "";
 
-		this.interiorCutscene = "";
+		this.interiorCutscene = -1;
 	}
 };
 
