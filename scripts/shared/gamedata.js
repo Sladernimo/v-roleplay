@@ -45,15 +45,15 @@ let supportedFeatures = {
 
 // Connected MP mods only
 let extraContentResource = {
-	[VRR_GAME_GTA_III]: "connectedrp-gta3",
-	[VRR_GAME_GTA_VC]: "connectedrp-gtavc",
-	[VRR_GAME_GTA_SA]: "connectedrp-gtasa",
-	[VRR_GAME_GTA_IV]: "connectedrp-gtaiv",
-	[VRR_GAME_GTA_IV_EFLC]: "connectedrp-gtaiv",
-	[VRR_GAME_MAFIA_ONE]: "connectedrp-mafia1",
-	[VRR_GAME_MAFIA_TWO]: "connectedrp-mafia2",
-	[VRR_GAME_MAFIA_TWO]: "connectedrp-mafia3",
-	[VRR_GAME_MAFIA_ONE_DE]: "connectedrp-mafia1de",
+	[VRR_GAME_GTA_III]: "agrp-gta3",
+	[VRR_GAME_GTA_VC]: "agrp-gtavc",
+	[VRR_GAME_GTA_SA]: "agrp-gtasa",
+	[VRR_GAME_GTA_IV]: "agrp-gtaiv",
+	[VRR_GAME_GTA_IV_EFLC]: "agrp-gtaiv",
+	[VRR_GAME_MAFIA_ONE]: "agrp-mafia1",
+	[VRR_GAME_MAFIA_TWO]: "agrp-mafia2",
+	[VRR_GAME_MAFIA_TWO]: "agrp-mafia3",
+	[VRR_GAME_MAFIA_ONE_DE]: "agrp-mafia1de",
 };
 
 // ===========================================================================
