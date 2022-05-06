@@ -311,7 +311,7 @@ function setAccountEmailCommand(command, params, client) {
 	//}
 
 	if(getPlayerData(client).accountData.emailAddress != "" && isAccountEmailVerified(getPlayerData(client).accountData)) {
-		messagePlayerError(client, `You already set your email and verified it!`);
+		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadySetAndVerified"));
 		return false;
 	}
 
@@ -321,9 +321,9 @@ function setAccountEmailCommand(command, params, client) {
 	setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
 	sendEmailVerificationEmail(client, emailVerificationCode);
 
-	messagePlayerSuccess(client, `Your email has been set!`);
-	messagePlayerAlert(client, `Please verify your email to enable extra account security and recovery features.`);
-	messagePlayerAlert(client, `A verification code and instructions have been sent to your email.`);
+	messagePlayerSuccess(client, getLocaleString(client, "EmailSet"));
+	messagePlayerAlert(client, getLocaleString(client, "RegistrationEmailVerifyReminder"));
+	messagePlayerAlert(client, getLocaleString(client, "EmailVerificationCodeSent"));
 	saveAccountToDatabase(getPlayerData(client).accountData);
 }
 
