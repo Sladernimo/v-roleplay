@@ -1729,11 +1729,9 @@ function getObjectModelFromName(name, gameId = getGame()) {
 
 // ===========================================================================
 
-// ===========================================================================
-
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((-angle+1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((-angle+1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x+((Math.cos((angle-1.57)+(Math.PI/2)))*distance));
+	let y = (pos.y+((Math.sin((angle-1.57)+(Math.PI/2)))*distance));
 
 	let rightPos = toVector3(x, y, pos.z);
 
