@@ -8,6 +8,12 @@
 // ===========================================================================
 
 function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
+	let ped = getElementFromId(pedId);
+
+	if(ped == null) {
+		return false;
+	}
+
 	let animationData = getAnimationData(animationSlot);
 	logToConsole(LOG_DEBUG, `[VRR.Animation] Playing animation ${animationData[0]} for ped ${pedId}`);
 
@@ -15,25 +21,33 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	switch(animationData.moveType) {
 		case VRR_ANIMMOVE_FORWARD:
 			setElementCollisionsEnabled(ped, false);
-			setElementPosition(ped, getPosInFrontOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
+			if(ped.isSyncer) {
+				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
+			}
 			freezePlayer = true;
 			break;
 
 		case VRR_ANIMMOVE_BACK:
-			setElementCollisionsEnabled(ped, false);
-			setElementPosition(ped, getPosBehindPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
+			setElementCollisionsEnabled(pedId, false);
+			if(ped.isSyncer) {
+				setElementPosition(pedId, getPosBehindPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
+			}
 			freezePlayer = true;
 			break;
 
 		case VRR_ANIMMOVE_LEFT:
-			setElementCollisionsEnabled(ped, false);
-			setElementPosition(ped, getPosToLeftOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
+			setElementCollisionsEnabled(pedId, false);
+			if(ped.isSyncer) {
+				setElementPosition(pedId, getPosToLeftOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
+			}
 			freezePlayer = true;
 			break;
 
 		case VRR_ANIMMOVE_RIGHT:
-			setElementCollisionsEnabled(ped, false);
-			setElementPosition(ped, getPosToRightOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
+			setElementCollisionsEnabled(pedId, false);
+			if(ped.isSyncer) {
+				setElementPosition(pedId, getPosToRightOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
+			}
 			freezePlayer = true;
 			break;
 
@@ -44,63 +58,71 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	if(getGame() < VRR_GAME_GTA_IV) {
 		if(animationData.animType == VRR_ANIMTYPE_NORMAL || animationData.animType == VRR_ANIMTYPE_SURRENDER) {
 			if(getGame() == VRR_GAME_GTA_VC || getGame() == VRR_GAME_GTA_SA) {
-				getElementFromId(pedId).clearAnimations();
+				ped.clearAnimations();
 			} else {
-				getElementFromId(pedId).clearObjective();
+				ped.clearObjective();
 			}
-			getElementFromId(pedId).addAnimation(animationData.groupId, animationData.animId);
+			ped.addAnimation(animationData.groupId, animationData.animId);
 
-			if(getElementFromId(pedId) == localPlayer && freezePlayer == true) {
+			if(ped == localPlayer && freezePlayer == true) {
 				inAnimation = true;
 				setLocalPlayerControlState(false, false);
 				localPlayer.collisionsEnabled = false;
 			}
 		} else if(animationData.animType == VRR_ANIMTYPE_BLEND) {
-			getElementFromId(pedId).position = getElementFromId(pedId).position;
-			getElementFromId(pedId).blendAnimation(animationData.groupId, animationData.animId, animationData.animSpeed);
+			ped.position = ped.position;
+			ped.blendAnimation(animationData.groupId, animationData.animId, animationData.animSpeed);
 		}
 	} else {
 		natives.requestAnims(animationData.groupId);
-		natives.taskPlayAnimNonInterruptable(getElementFromId(pedId), animationData.groupId, animationData.animId, animationData.animSpeed, boolToInt(animationData.infiniteLoop), boolToInt(animationData.infiniteLoopNoMovement), boolToInt(animationData.dontReturnToStartCoords), boolToInt(animationData.freezeLastFrame), -1);
+		natives.taskPlayAnimNonInterruptable(ped, animationData.groupId, animationData.animId, animationData.animSpeed, boolToInt(animationData.infiniteLoop), boolToInt(animationData.infiniteLoopNoMovement), boolToInt(animationData.dontReturnToStartCoords), boolToInt(animationData.freezeLastFrame), -1);
 	}
 }
 
 // ===========================================================================
 
 function forcePedAnimation(pedId, animSlot) {
+	let ped = getElementFromId(pedId);
+
+	if(ped == null) {
+		return false;
+	}
+
 	let animationData = getAnimationData(animSlot);
 
 	if(getGame() < VRR_GAME_GTA_IV) {
-		getElementFromId(pedId).position = getElementFromId(pedId).position;
-		getElementFromId(pedId).addAnimation(animationData.groupId, animationData.animId);
+		ped.position = ped.position;
+		ped.addAnimation(animationData.groupId, animationData.animId);
 
-		if(getElementFromId(pedId) == localPlayer) {
+		if(ped == localPlayer) {
 			inAnimation = true;
 			setLocalPlayerControlState(false, false);
 			localPlayer.collisionsEnabled = false;
 		}
 	} else {
 		natives.requestAnims(animationData.groupId);
-		natives.taskPlayAnimNonInterruptable(getElementFromId(pedId), animationData.groupId, animationData.animId, animationData.animSpeed, boolToInt(animationData.infiniteLoop), boolToInt(animationData.infiniteLoopNoMovement), boolToInt(animationData.dontReturnToStartCoords), boolToInt(animationData.freezeLastFrame), -1);
+		natives.taskPlayAnimNonInterruptable(ped, animationData.groupId, animationData.animId, animationData.animSpeed, boolToInt(animationData.infiniteLoop), boolToInt(animationData.infiniteLoopNoMovement), boolToInt(animationData.dontReturnToStartCoords), boolToInt(animationData.freezeLastFrame), -1);
 	}
 }
 
 // ===========================================================================
 
 function makePedStopAnimation(pedId) {
-	if(getElementFromId(pedId) == null) {
+	let ped = getElementFromId(pedId);
+
+	if(ped == null) {
 		return false;
 	}
 
 	if(getGame() != VRR_GAME_GTA_IV) {
 		if(getGame() == VRR_GAME_GTA_VC || getGame() == VRR_GAME_GTA_SA) {
-			getElementFromId(pedId).clearAnimations();
+			ped.clearAnimations();
 		} else {
-			getElementFromId(pedId).clearObjective();
+			ped.clearObjective();
 		}
 	}
 
-	if(getElementFromId(pedId) == localPlayer) {
+	if(ped == localPlayer) {
 		if(getGame() != VRR_GAME_GTA_IV) {
 			localPlayer.collisionsEnabled = true;
 		}
