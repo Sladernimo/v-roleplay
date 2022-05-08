@@ -42,7 +42,7 @@ function createNPCCommand(client, command, params) {
 
 	let position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), 3);
 
-	let npcId = createNPC(skinId, position, getPlayerHeading(client));
+	let npcId = createNPC(skinId, position, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension());
 	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} created a ${getSkinNameFromIndex(getNPCData(npcId).skin)} NPC!`);
 }
 
@@ -160,6 +160,10 @@ function saveAllNPCsToDatabase() {
 // ===========================================================================
 
 function saveNPCToDatabase(npcDataId) {
+	if(getServerConfig().devServer) {
+		return false;
+	}
+
 	if(getNPCData(npcDataId) == null) {
 		// Invalid NPC data
 		return false;
@@ -373,17 +377,19 @@ function getClosestNPC(position) {
 
 // ===========================================================================
 
-function createNPC(skinIndex, position, heading) {
+function createNPC(skinIndex, position, heading, interior, dimension) {
 	let tempNPCData = new NPCData(false);
 	tempNPCData.position = position;
 	tempNPCData.heading = heading;
 	tempNPCData.skin = skinIndex;
+	tempNPCData.interior = interior;
+	tempNPCData.dimension = dimension;
 	tempNPCData.animationName = "";
 
 	let npcIndex = getServerData().npcs.push(tempNPCData);
+	setNPCDataIndexes();
 
 	spawnNPC(npcIndex-1);
-	setNPCDataIndexes();
 
 	return npcIndex-1;
 }
