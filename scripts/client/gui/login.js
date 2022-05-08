@@ -11,7 +11,6 @@ let login = {
 	window: null,
 	logoImage: null,
 	messageLabel: null,
-	passwordLabel: null,
 	passwordInput: null,
 	loginButton: null,
 	forgotPasswordButton: null,
