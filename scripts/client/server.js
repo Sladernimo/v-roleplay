@@ -257,20 +257,6 @@ function forceSyncElementProperties(elementId) {
 
 // ===========================================================================
 
-function setElementPosition(elementId, position) {
-	if(getElementFromId(elementId) == null) {
-		return false;
-	}
-
-	if(!getElementFromId(elementId).isSyncer) {
-		return false;
-	}
-
-	getElementFromId(elementId).position = position;
-}
-
-// ===========================================================================
-
 function setElementCollisionsEnabled(elementId, state) {
 	if(getElementFromId(elementId) == null) {
 		return false;
