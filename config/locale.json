@@ -50,6 +50,38 @@
 			"flagImageFile": "sa",
 			"countries": ["dz", "bh", "eg",	"iq", "jo", "kw", "lb", "ly", "ma", "om", "qa", "sa", "sy", "tn", "ae", "ye"],
 			"requiresUnicode": true
+		},
+		{
+			"englishName": "Slovak",
+			"stringsFile": "slovak.json",
+			"isoCode": "sk",
+			"flagImageFile": "sk",
+			"countries": ["sk"],
+			"requiresUnicode": false
+		}	,
+		{
+			"englishName": "German",
+			"stringsFile": "german.json",
+			"isoCode": "de",
+			"flagImageFile": "de",
+			"countries": ["de", "at", "be", "ch", "li", "lu"],
+			"requiresUnicode": false
+		},
+		{
+			"englishName": "French",
+			"stringsFile": "french.json",
+			"isoCode": "fr",
+			"flagImageFile": "fr",
+			"countries": ["fr", "cd", "bj", "bf", "cd", "cg", "ga", "gn", "ml", "mc", "ne", "sn"],
+			"requiresUnicode": false
+		},
+		{
+			"englishName": "Japanese",
+			"stringsFile": "japanese.json",
+			"isoCode": "jp",
+			"flagImageFile": "jp",
+			"countries": ["jp"],
+			"requiresUnicode": true
 		}
     ],
 	"sendStringsToClient": [
@@ -70,6 +102,39 @@
 		"JobLabel",
 		"BuyBusinessLabel",
 		"BuyHouseLabel",
-		"RentHouseLabel"
+		"RentHouseLabel",
+		"GUIPlayAsCharacterButton",
+		"GUINewCharacterButton",
+		"GUIPreviousCharacterButton",
+		"GUINextCharacterButton",
+		"GUICharacterSelectWindowTitle",
+		"GUICharacterSelectMoneyLabel",
+		"GUICharacterSelectClanLabel",
+		"GUICharacterSelectLastPlayedLabel",
+		"GUILoginWindowLabelEnterPassword",
+		"GUILoginWindowSubmitButton",
+		"GUILoginWindowResetPasswordButton",
+		"GUILoginWindowForgotPasswordButton",
+		"GUILoginWindowPasswordPlaceholder",
+		"GUIRegisterWindowLabelCreateAccount",
+		"GUIRegisterWindowPasswordPlaceholder",
+		"GUIRegisterWindowConfirmPasswordPlaceholder",
+		"GUIRegisterWindowEmailPlaceholder",
+		"GUIRegisterWindowSubmitButton",
+		"GUINewCharacterMessageLabel",
+		"GUINewCharacterFirstNamePlaceholder",
+		"GUINewCharacterLastNamePlaceholder",
+		"GUINewCharacterSubmitButton",
+		"GUIChangePasswordWindowTitle",
+		"GUIChangePasswordPasswordLabel",
+		"GUIChangePasswordPasswordPlaceholder",
+		"GUIChangePasswordConfirmPasswordPlaceholder",
+		"GUIChangePasswordSubmitButton",
+		"GUIResetPasswordWindowTitle",
+		"GUIResetPasswordConfirmEmailLabel",
+		"GUIResetPasswordEmailPlaceholder",
+		"GUIResetPasswordSubmitButton",
+		"GUIResetPasswordLoginButton",
+		"GUIResetPasswordRememberMessage"
 	]
 }
