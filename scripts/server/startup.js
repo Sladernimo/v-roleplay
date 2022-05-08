@@ -119,7 +119,6 @@ function loadServerDataFromDatabase() {
 	logToConsole(LOG_INFO, "[VRR.Config]: Loading server data ...");
 
 	// Always load these regardless of "test server" status
-	getServerData().itemTypes = loadItemTypesFromDatabase();
 	getServerData().localeStrings = loadAllLocaleStrings();
 	getServerData().allowedSkins = getAllowedSkins(getGame());
 
@@ -132,6 +131,7 @@ function loadServerDataFromDatabase() {
 
 	// Only load these if the server isn't a testing/dev server
 	if(!getServerConfig().devServer) {
+		getServerData().itemTypes = loadItemTypesFromDatabase();
 		getServerData().items = loadItemsFromDatabase();
 		getServerData().businesses = loadBusinessesFromDatabase();
 		getServerData().houses = loadHousesFromDatabase();
