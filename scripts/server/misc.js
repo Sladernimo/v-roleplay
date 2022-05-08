@@ -438,6 +438,7 @@ function gpsCommand(command, params, client) {
 
 	switch(toLowerCase(params)) {
 		case "police":
+		case "policestation":
 			blipColour = "businessBlue"
 			locationType = VRR_GPS_TYPE_POLICE;
 			break;
