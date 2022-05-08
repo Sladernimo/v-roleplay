@@ -320,3 +320,51 @@ function processToggleGUIKeyPress(keyCode) {
 }
 
 // ===========================================================================
+
+
+function resetGUIStrings() {
+	// Login GUI
+	login.messageLabel.text = getLocaleString("GUILoginWindowLabelEnterPassword");
+	login.passwordInput.placeholder = getLocaleString("GUILoginWindowPasswordPlaceholder");
+	login.loginButton.text = toUpperCase(getLocaleString("GUILoginWindowSubmitButton"));
+	login.forgotPasswordButton.text = toUpperCase(getLocaleString("GUILoginWindowResetPasswordButton"));
+	login.resetPasswordLabel.text = getLocaleString("GUILoginWindowForgotPasswordLabel");
+
+	// Register GUI
+	register.messageLabel.text = getLocaleString("GUIRegisterWindowLabelCreateAccount");
+	register.passwordInput.placeholder = getLocaleString("GUIRegisterWindowPasswordPlaceholder");
+	register.confirmPasswordInput.placeholder = getLocaleString("GUIRegisterWindowConfirmPasswordPlaceholder");
+	register.emailInput.placeholder = getLocaleString("GUIRegisterWindowEmailPlaceholder");
+	register.registerButton.text = toUpperCase(getLocaleString("GUIRegisterWindowSubmitButton"));
+
+	// Change Password GUI
+	passwordChange.window.title = toUpperCase(getLocaleString("GUIChangePasswordWindowTitle"));
+	passwordChange.messageLabel.text = getLocaleString("GUIChangePasswordPasswordLabel");
+	passwordChange.passwordInput.placeholder = getLocaleString("GUIChangePasswordPasswordPlaceholder");
+	passwordChange.confirmPasswordInput.placeholder = getLocaleString("GUIChangePasswordConfirmPasswordPlaceholder");
+	passwordChange.submitButton.text = toUpperCase(getLocaleString("GUIChangePasswordSubmitButton"));
+
+	// Reset Password GUI
+	passwordReset.messageLabel.text = toUpperCase(getLocaleString("GUIResetPasswordConfirmEmailLabel"));
+	passwordReset.emailLabel.text = getLocaleString("GUIResetPasswordConfirmEmailLabel");
+	passwordReset.emailInput.placeholder = getLocaleString("GUIResetPasswordEmailPlaceholder");
+	passwordReset.resetPasswordButton.text = toUpperCase(getLocaleString("GUIResetPasswordSubmitButton"));
+	passwordReset.backToLoginButton.text = toUpperCase(getLocaleString("GUIResetPasswordLoginButton"));
+	passwordReset.backToLoginLabel.text = getLocaleString("GUIResetPasswordRememberMessage");
+
+	// Character Selection GUI
+	characterSelect.window.title = toUpperCase(getLocaleString("GUICharacterSelectWindowTitle"));
+	characterSelect.cashText.text = getLocaleString("GUICharacterSelectMoneyLabel", "0");
+	characterSelect.clanText.text = getLocaleString("GUICharacterSelectClanLabel", "None");
+	characterSelect.lastPlayedText.text = getLocaleString("GUICharacterSelectLastPlayedLabel", "Never");
+	characterSelect.previousCharacterButton.text = toUpperCase(getLocaleString("GUIPreviousCharacterButton"));
+	characterSelect.nextCharacterButton.text = toUpperCase(getLocaleString("GUINextCharacterButton"));
+	characterSelect.selectCharacterButton.text = toUpperCase(getLocaleString("GUIPlayAsCharacterButton"));
+	characterSelect.newCharacterButton.text = toUpperCase(getLocaleString("GUINewCharacterButton"));
+
+	// Character Creation GUI
+	newCharacter.messageLabel.text = getLocaleString("GUINewCharacterMessageLabel");
+	newCharacter.firstNameInput.placeholder = getLocaleString("GUINewCharacterFirstNamePlaceholder");
+	newCharacter.lastNameInput.placeholder = getLocaleString("GUINewCharacterLastNamePlaceholder");
+	newCharacter.createButton.text = toUpperCase(getLocaleString("GUINewCharacterSubmitButton"));
+}
