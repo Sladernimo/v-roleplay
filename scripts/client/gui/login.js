@@ -62,6 +62,7 @@ function initLoginGUI() {
 	});
 	login.window.titleBarIconSize = toVector2(0,0);
 	login.window.titleBarHeight = 0;
+	login.window.titleBarShown = false;
 
 	login.logoImage = login.window.image(100, 20, 100, 100, mainLogoPath, {
 		focused: {

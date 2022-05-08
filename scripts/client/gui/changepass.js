@@ -38,6 +38,7 @@ function initChangePasswordGUI() {
 	});
 	passwordChange.window.titleBarIconSize = toVector2(0,0);
 	passwordChange.window.titleBarHeight = 0;
+	passwordChange.window.titleBarShown = false;
 
 	passwordChange.window.image(85, -10, 140, 140, mainLogoPath, {
 		focused: {

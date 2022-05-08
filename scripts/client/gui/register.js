@@ -39,6 +39,7 @@ function initRegisterGUI() {
 	});
 	register.window.titleBarIconSize = toVector2(0,0);
 	register.window.titleBarHeight = 0;
+	register.window.titleBarShown = false;
 
 	register.window.image(100, 20, 100, 100, mainLogoPath, {
 		focused: {
