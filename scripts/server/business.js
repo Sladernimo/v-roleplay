@@ -2744,3 +2744,46 @@ function getBusinessFromInteriorAndDimension(dimension, interior) {
 }
 
 // ===========================================================================
+
+function getClosestBusinessWithBuyableItemOfUseType(position, useType) {
+	let availableBusinesses = getBusinessesWithBuyableItemOfUseType(useType);
+
+	let closestBusiness = 0;
+	for(let i in availableBusinesses) {
+		if(getDistance(position, getBusinessData(availableBusinesses[i]).entrancePosition) < getDistance(position, getBusinessData(availableBusinesses[closestBusiness]).entrancePosition)) {
+			closestBusiness = i;
+		}
+	}
+	return availableBusinesses[closestBusiness];
+}
+
+// ===========================================================================
+
+function getBusinessesWithBuyableItemOfUseType(useType) {
+	let businesses = getServerData().businesses;
+	for(let i in businesses) {
+		if(doesBusinessHaveBuyableItemOfUseType(i, useType)) {
+			availableBusinesses.push(i);
+		}
+	}
+
+	return availableBusinesses;
+}
+
+// ===========================================================================
+
+function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
+	let floorItems = getBusinessData(businessId).floorItemCache;
+	for(let i in floorItems) {
+		if(floorItems[i] != -1) {
+			if(getItemData(floorItems[i]) != false) {
+				if(getItemTypeData(getItemData(floorItems[i])).useType == useType) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
