@@ -471,7 +471,7 @@ function setServerGUIColoursCommand(command, params, client) {
 
 	getServerConfig().needsSaved = true;
 
-	//announceAdminAction(`${getPlayerName(client)} ${getInlineChatColourByName("orange")}set the server ${getBoolRedGreenInlineColour(fallingSnow)}${getOnOffFromBool(fallingSnow)} ${getInlineChatColourByName("orange")}and ground snow ${getBoolRedGreenInlineColour(groundSnow)}${getOnOffFromBool(groundSnow)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} has set the server GUI colours to ${colourRed}, ${colourGreen}, ${colourBlue}`);
 	//updateServerRules();
 	return true;
 }
@@ -493,7 +493,7 @@ function toggleServerLogoCommand(command, params, client) {
 
 	updatePlayerShowLogoState(null, getServerConfig().useLogo);
 
-	//announceAdminAction(`${getPlayerName(client)}{MAINCOLOUR}${getBoolRedGreenInlineColour(doesServerHaveServerLogoEnabled())}${toUpperCase(getOnOffFromBool(getServerConfig().useLogo))}`);
+	announceAdminAction(`ServerLogoSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `${getBoolRedGreenInlineColour(getServerConfig().useLogo)}${toUpperCase(getOnOffFromBool(getServerConfig().useLogo))}`);
 	updateServerRules();
 	return true;
 }
