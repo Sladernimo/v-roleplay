@@ -29,28 +29,38 @@ function setPlayerPosition(position) {
 
 // ===========================================================================
 
-function getElementPosition(element) {
-	return element.position;
+function getElementPosition(elementId) {
+	return getElementFromId(elementId).position;
 }
 
 // ===========================================================================
 
-function setElementPosition(element, position) {
-	if(!element.isSyncer) {
-		return false;
-	}
-
-	element.position = position;
+function getElementHeading(elementId) {
+	return getElementFromId(elementId).heading;
 }
 
 // ===========================================================================
 
-function deleteGameElement(element, position) {
-	if(!element.isOwner) {
+function setElementPosition(elementId, position) {
+	if(getElementFromId(elementId) == null) {
 		return false;
 	}
 
-	destroyGameElement(element);
+	if(!getElementFromId(elementId).isSyncer) {
+		return false;
+	}
+
+	getElementFromId(elementId).position = position;
+}
+
+// ===========================================================================
+
+function deleteGameElement(elementId, position) {
+	if(!getElementFromId(elementId).isOwner) {
+		return false;
+	}
+
+	destroyGameElement(getElementFromId(elementId));
 }
 
 // ===========================================================================
@@ -105,7 +115,7 @@ function getClientsInRange(position, distance) {
 // ===========================================================================
 
 function getCiviliansInRange(position, distance) {
-	return getElementsByType(ELEMENT_PED).filter(x => !x.isType(ELEMENT_PLAYER) && getElementPosition(x).position.distance(position) <= distance);
+	return getElementsByType(ELEMENT_PED).filter(x => !x.isType(ELEMENT_PLAYER) && x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
@@ -117,7 +127,7 @@ function getPlayersInRange(position, distance) {
 // ===========================================================================
 
 function getElementsByTypeInRange(elementType, position, distance) {
-	return getElementsByType(elementType).filter(x => getElementPosition(x).position.distance(position) <= distance);
+	return getElementsByType(elementType).filter(x => x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
