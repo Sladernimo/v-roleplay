@@ -43,6 +43,10 @@ function loadRacesFromDatabase() {
 // ===========================================================================
 
 function saveRacesToDatabase() {
+	if(getServerConfig().devServer) {
+		return false;
+	}
+
 	for(let i in getServerData().races) {
 		saveRaceToDatabase(getServerData().races[i]);
 	}
