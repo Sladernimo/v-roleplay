@@ -1036,6 +1036,9 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
+	if(getGame() == VRR_GAME_GTA_IV) {
+		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }
 
@@ -1233,6 +1236,16 @@ function getServerPort() {
 	return server.port;
 }
 
+// ===========================================================================
+
 function serverBanIP(ip) {
 	server.banIP(ip);
 }
+
+// ===========================================================================
+
+function setVehicleTrunkState(vehicle, trunkState) {
+	sendNetworkEventToPlayer("vrr.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+}
+
+// ===========================================================================
