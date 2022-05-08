@@ -239,16 +239,32 @@ function createTemporaryVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function getNearbyVehiclesCommand(command, params, client) {
-	let distance = getParam(params, " ", 1) || 10.0;
+	let distance = 10.0;
 
-	let nearbyVehicles = getElementsByTypeInRange(ELEMENT_VEHICLE, getPlayerPosition, distance);
+	if(!areParamsEmpty(params)) {
+		distance = getParam(params, " ", 1);
+	}
+
+	if(isNaN(distance)) {
+		messagePlayerError(client, "The distance must be a number!");
+		return false;
+	}
+
+	distance = toFloat(distance);
+
+	if(distance <= 0) {
+		messagePlayerError(client, "The distance must be more than 0!");
+		return false;
+	}
+
+	let nearbyVehicles = getVehiclesInRange(getPlayerPosition(client), distance);
 
 	if(nearbyVehicles.length == 0) {
 		messagePlayerAlert(client, getLocaleString(client, "NoVehiclesWithinRange", distance));
 		return false;
 	}
 
-	let vehiclesList = getServerData().radioStations.map(function(x) { return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {darkGrey}(${getDistance(getPlayerPosition(client), getVehiclePosition(x))} ${getLocaleString(client, "Meters")} ${getGroupedLocaleString(client, "CardinalDirections")[getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x))]}})`; });
+	let vehiclesList = nearbyVehicles.map(function(x) { return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {darkGrey}(${getDistance(getPlayerPosition(client), getVehiclePosition(x))} ${getLocaleString(client, "Meters")} ${getGroupedLocaleString(client, "CardinalDirections")[getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x))]}})`; });
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehiclesInRangeList")));
@@ -279,8 +295,8 @@ function vehicleTrunkCommand(command, params, client) {
 	}
 
 	getVehicleData(vehicle).trunk = !getVehicleData(vehicle).trunk;
-
 	getVehicleData(vehicle).needsSaved = true;
+	setVehicleTrunkState(vehicle, getVehicleData(vehicle).trunk);
 
 	meActionToNearbyPlayers(client, `${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s trunk.`);
 }
