@@ -25,7 +25,7 @@ function playPlayerAnimationCommand(command, params, client) {
 
 	if(!animationSlot) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
-		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip"), `{ALTCOLOUR}/animlist{MAINCOLOUR}`);
+		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
 		return false;
 	}
 
@@ -64,7 +64,7 @@ function stopPlayerAnimationCommand(command, params, client) {
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 
-	setPlayerMouseCameraState(client, false);
+	//setPlayerMouseCameraState(client, false);
 }
 
 // ===========================================================================
