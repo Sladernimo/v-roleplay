@@ -11,7 +11,6 @@ let resetPassword = {
 	window: null,
 	logoImage: null,
 	messageLabel: null,
-	emailLabel: null,
 	emailInput: null,
 	resetPasswordButton: null,
 	backToLoginButton: null,
@@ -41,6 +40,7 @@ function initResetPasswordGUI() {
 	});
 	resetPassword.window.titleBarIconSize = toVector2(0,0);
 	resetPassword.window.titleBarHeight = 0;
+	resetPassword.window.titleBarShown = false;
 
 	resetPassword.logoImage = resetPassword.window.image(5, 20, 290, 80, mainLogoPath, {
 		focused: {
