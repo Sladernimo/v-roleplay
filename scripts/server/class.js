@@ -534,6 +534,7 @@ class BusinessData {
 		this.entranceBlipModel = -1;
 		this.entrancePickup = null;
 		this.entranceBlip = null;
+		this.entranceCutscene = -1;
 
 		this.exitPosition = false;
 		this.exitRotation = 0.0;
@@ -543,7 +544,7 @@ class BusinessData {
 		this.exitBlipModel = -1;
 		this.exitPickup = null;
 		this.exitBlip = null;
-		this.exitCutscene = "";
+		this.exitCutscene = -1;
 
 		this.entranceFee = 0;
 		this.till = 0;
@@ -572,6 +573,7 @@ class BusinessData {
 			this.entranceDimension = toInteger(dbAssoc["biz_entrance_vw"]);
 			this.entrancePickupModel = toInteger(dbAssoc["biz_entrance_pickup"]);
 			this.entranceBlipModel = toInteger(dbAssoc["biz_entrance_blip"]);
+			this.entranceCutscene = toInteger(dbAssoc["biz_entrance_cutscene"]);
 
 			this.exitPosition = toVector3(dbAssoc["biz_exit_pos_x"], dbAssoc["biz_exit_pos_y"], dbAssoc["biz_exit_pos_z"]);
 			this.exitRotation = toInteger(dbAssoc["biz_exit_rot_z"]);
@@ -579,6 +581,7 @@ class BusinessData {
 			this.exitDimension = toInteger(dbAssoc["biz_exit_vw"]);
 			this.exitPickupModel = toInteger(dbAssoc["biz_exit_pickup"]);
 			this.exitBlipModel = toInteger(dbAssoc["biz_exit_blip"]);
+			this.exitCutscene = toInteger(dbAssoc["biz_exit_cutscene"]);
 
 			this.entranceFee = toInteger(dbAssoc["biz_entrance_fee"]);
 			this.till = toInteger(dbAssoc["biz_till"]);
