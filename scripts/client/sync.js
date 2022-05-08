@@ -39,7 +39,7 @@ function processSync(event, deltaTime) {
 	}
 
 	if(streamingRadioElement) {
-		streamingRadio.position = getElementPosition(streamingRadioElement);
+		streamingRadio.position = getElementPosition(streamingRadioElement.id);
 		//streamingRadio.volume = getStreamingRadioVolumeForPosition(streamingRadio.position);
 	}
 }
