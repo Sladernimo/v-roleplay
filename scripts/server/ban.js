@@ -252,13 +252,9 @@ function unbanSubNet(ipAddressStart, ipAddressEnd, adminAccountId) {
 // ===========================================================================
 
 function isAccountBanned(accountId) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_ACCOUNT) {
-			if(bans[i].detail == accountId) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_ACCOUNT && ban.detail === accountId);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;
@@ -267,13 +263,9 @@ function isAccountBanned(accountId) {
 // ===========================================================================
 
 function isSubAccountBanned(subAccountId) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_SUBACCOUNT) {
-			if(bans[i].detail == subAccountId) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_SUBACCOUNT && ban.detail === subAccountId);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;
@@ -282,13 +274,9 @@ function isSubAccountBanned(subAccountId) {
 // ===========================================================================
 
 function isIpAddressBanned(ipAddress) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_IPADDRESS) {
-			if(bans[i].detail == ipAddress) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_IPADDRESS && ban.detail === ipAddress);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;

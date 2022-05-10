@@ -2394,26 +2394,14 @@ function stockItemOnBusinessFloorCommand(command, params, client) {
 
 // Gets the first free slot in a business's storage items
 function getBusinessStorageFirstFreeItemSlot(businessId) {
-	for(let i in getBusinessData(businessId).storageItemCache) {
-		if(getBusinessData(businessId).storageItemCache[i] == -1) {
-			return i;
-		}
-	}
-
-	return -1;
+	return getBusinessData(businessId).storageItemCache.findIndex(item => item == -1);
 }
 
 // ===========================================================================
 
 // Gets the first free slot in a business's floor items
 function getBusinessFloorFirstFreeItemSlot(businessId) {
-	for(let i in getBusinessData(businessId).floorItemCache) {
-		if(getBusinessData(businessId).floorItemCache[i] == -1) {
-			return i;
-		}
-	}
-
-	return -1;
+	return getBusinessData(businessId).floorItemCache.findIndex(item => item == -1);
 }
 
 // ===========================================================================
@@ -2449,13 +2437,7 @@ function cacheBusinessItems(businessId) {
 
 // Gets a business's data index from a business's databaseId
 function getBusinessIdFromDatabaseId(databaseId) {
-	for(let i in getServerData().businesses) {
-		if(getBusinessData(i).databaseId == databaseId) {
-			return i;
-		}
-	}
-
-	return false;
+	return getServerData().businesses.findIndex(business => business.databaseId == databaseId);
 }
 
 // ===========================================================================

@@ -1389,9 +1389,7 @@ function Enum(constantsList) {
 // ===========================================================================
 
 function clearArray(array) {
-	if(array != null) {
-		array.splice(0, array.length);
-	}
+	array.length = 0;
 }
 
 // ===========================================================================

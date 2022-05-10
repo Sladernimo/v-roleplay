@@ -509,3 +509,13 @@ function getPlayerConnectionsInLastMonthByName(name) {
 }
 
 // ===========================================================================
+
+function addPrefixNumberFill(number, amount) {
+	let numberString = toString(number);
+	while(numberString.length < amount) {
+		numberString = toString(`0${numberString}`);
+	}
+	return toString(numberString);
+}
+
+// ===========================================================================
