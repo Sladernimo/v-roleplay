@@ -435,6 +435,17 @@ function onPlayerDeath(client, position) {
 			}
 		}, 2000);
 	}, 1000);
+
+	let queryData = [
+		["log_death_server", getServerId()]
+		["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
+		["log_death_when_died", "{UNIXTIMESTAMP}"],
+		["log_death_pos_x", position.x],
+		["log_death_pos_y", position.y],
+		["log_death_pos_z", position.x],
+	];
+	let queryString = createDatabaseInsertQuery("log_death", data);
+	addToQueryQueue(queryString);
 }
 
 // ===========================================================================
