@@ -15,7 +15,7 @@
 			"englishName": "Russian",
 			"stringsFile": "russian.json",
 			"isoCode": "ru",
-			"flagImageFile": "ru",
+			"flagImageFile": "ru.png",
 			"countries": ["ru", "ua"],
 			"requiresUnicode": false
 		},
@@ -23,7 +23,7 @@
 			"englishName": "Polish",
 			"stringsFile": "polish.json",
 			"isoCode": "pl",
-			"flagImageFile": "pl",
+			"flagImageFile": "pl.png",
 			"countries": ["pl"],
 			"requiresUnicode": false
 		},
@@ -31,7 +31,7 @@
 			"englishName": "Spanish",
 			"stringsFile": "spanish.json",
 			"isoCode": "es",
-			"flagImageFile": "es",
+			"flagImageFile": "es.png",
 			"countries": ["es", "ar", "bo", "cl", "co", "cr", "do", "ec", "sv", "gt", "hn", "mx", "ni", "pa", "py", "pe", "pr", "uy", "ve"],
 			"requiresUnicode": false
 		},
@@ -39,7 +39,7 @@
 			"englishName": "Chinese",
 			"stringsFile": "chinese.json",
 			"isoCode": "zh",
-			"flagImageFile": "cn",
+			"flagImageFile": "cn.png",
 			"countries": ["cn", "hk", "sg", "tw"],
 			"requiresUnicode": true
 		},
@@ -47,7 +47,7 @@
 			"englishName": "Arabic",
 			"stringsFile": "arabic.json",
 			"isoCode": "ar",
-			"flagImageFile": "sa",
+			"flagImageFile": "sa.png",
 			"countries": ["dz", "bh", "eg",	"iq", "jo", "kw", "lb", "ly", "ma", "om", "qa", "sa", "sy", "tn", "ae", "ye"],
 			"requiresUnicode": true
 		},
@@ -55,7 +55,7 @@
 			"englishName": "Slovak",
 			"stringsFile": "slovak.json",
 			"isoCode": "sk",
-			"flagImageFile": "sk",
+			"flagImageFile": "sk.png",
 			"countries": ["sk"],
 			"requiresUnicode": false
 		}	,
@@ -63,7 +63,7 @@
 			"englishName": "German",
 			"stringsFile": "german.json",
 			"isoCode": "de",
-			"flagImageFile": "de",
+			"flagImageFile": "de.png",
 			"countries": ["de", "at", "be", "ch", "li", "lu"],
 			"requiresUnicode": false
 		},
@@ -71,7 +71,7 @@
 			"englishName": "French",
 			"stringsFile": "french.json",
 			"isoCode": "fr",
-			"flagImageFile": "fr",
+			"flagImageFile": "fr.png",
 			"countries": ["fr", "cd", "bj", "bf", "cd", "cg", "ga", "gn", "ml", "mc", "ne", "sn"],
 			"requiresUnicode": false
 		},
@@ -79,7 +79,7 @@
 			"englishName": "Japanese",
 			"stringsFile": "japanese.json",
 			"isoCode": "jp",
-			"flagImageFile": "jp",
+			"flagImageFile": "jp.png",
 			"countries": ["jp"],
 			"requiresUnicode": true
 		}
