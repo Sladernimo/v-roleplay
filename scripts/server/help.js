@@ -16,7 +16,7 @@ function initHelpScript() {
 
 let randomTips = [
 	`{MAINCOLOUR}Look for yellow dots on your map for job locations.`,
-	`{MAINCOLOUR}You can set custom key binds. Use {ALTCOLOUR}/help keys {MAINCOLOUR} for details.`,
+	`{MAINCOLOUR}You can set custom key binds. Use {ALTCOLOUR}/info keys {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Use /notips if you don't want to see tips and extra information`,
 	`{MAINCOLOUR}You can edit your keybinds using {ALTCOLOUR}/bindkey and /unbindkey`,
 	`{MAINCOLOUR}Press ℹ️ to see your inventory, and use number keys to select an item`,
@@ -40,8 +40,8 @@ let randomTips = [
 	//`{MAINCOLOUR}You can change your quick item display. Choices are GTAV-style pie menu or Minecraft-style hotbar`,
 	//`{MAINCOLOUR}Hold [#0066FF]E {MAINCOLOUR}to hail a nearby taxi if you need a ride.`,
 	//`{MAINCOLOUR}Press [#0066FF]G {MAINCOLOUR}to enter a vehicle as passenger.`,
-	//`{MAINCOLOUR}Banks can provide loans. Use {ALTCOLOUR}/help loans {MAINCOLOUR} for more details.`,
-	`{MAINCOLOUR}Want to make a clan? Use {ALTCOLOUR}/help clans {MAINCOLOUR} for details.`,
+	//`{MAINCOLOUR}Banks can provide loans. Use {ALTCOLOUR}/info loans {MAINCOLOUR} for more details.`,
+	`{MAINCOLOUR}Want to make a clan? Use {ALTCOLOUR}/info clans {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Legal weapons can be purchased at any ammunation.`,
 ];
 
@@ -184,8 +184,8 @@ function helpCommand(command, params, client) {
 // ===========================================================================
 
 function showMainHelpMessage(client) {
-	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHelpMainList")));
-	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Use /help <category> for commands and info. Example: {ALTCOLOUR}/help vehicle`);
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HelpMainListHeader")));
+	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Use /info <category> for commands and info. Example: {ALTCOLOUR}/info vehicle`);
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, website, animation`);
 	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, discord, colour, keybind`);
 }
@@ -205,10 +205,10 @@ function showAccountHelpMessage(client) {
 function showVehicleHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleHelp")));
 
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 0, `{ALTCOLOUR}/help dealership{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 0, `{ALTCOLOUR}/info dealership{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 1, `{ALTCOLOUR}/lock, /engine, /lights, /trunk, /rentveh, /buyveh, /rentprice, /buyprice{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 2));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 3, `{ALTCOLOUR}/help mechanic{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 3, `{ALTCOLOUR}/info mechanic{MAINCOLOUR}`));
 }
 
 // ===========================================================================
@@ -249,7 +249,7 @@ function showRulesHelpMessage(client) {
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 1));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 2));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 3));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 4), `{ALTCOLOUR}/help language {MAINCOLOUR}`);
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 4), `{ALTCOLOUR}/info language {MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -280,7 +280,7 @@ function showAnimationHelpMessage(client) {
 function showClothesHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderSkinHelp")));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "SkinHelp", 0, `{ALTCOLOUR}/buy {MAINCOLOUR}`));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "SkinHelp", 1, `{ALTCOLOUR}/help items {MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "SkinHelp", 1, `{ALTCOLOUR}/info items {MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "SkinHelp", 2));
 }
 
@@ -380,7 +380,7 @@ function showCommandHelpMessage(client, commandName) {
  *
  */
 function helpGetCarCommand(command, params, client) {
-	messagePlayerAlert(client, getLocaleString(client, "CarCommandHelp", `{ALTCOLOUR}/help vehicle{MAINCOLOUR}`));
+	messagePlayerAlert(client, getLocaleString(client, "CarCommandHelp", `{ALTCOLOUR}/info vehicle{MAINCOLOUR}`));
 }
 
 // ===========================================================================
@@ -395,7 +395,7 @@ function helpGetCarCommand(command, params, client) {
  *
  */
  function helpGetSkinCommand(command, params, client) {
-	messagePlayerAlert(client, getLocaleString(client, "SkinCommandHelp", `{ALTCOLOUR}/help skin{MAINCOLOUR}`));
+	messagePlayerAlert(client, getLocaleString(client, "SkinCommandHelp", `{ALTCOLOUR}/info skin{MAINCOLOUR}`));
 	messagePlayerAlert(client, ``);
 }
 
