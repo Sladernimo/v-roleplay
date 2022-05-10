@@ -7,6 +7,9 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let flagImagesPosition = toVector2(getScreenWidth()/2, login.window.position.y+100);
+let flagImageSize = toVector2(50, 50);
+
 function getLocaleString(stringName, ...args) {
 	if(typeof getServerData().localeStrings[stringName] == undefined) {
 		return "";
