@@ -64,7 +64,9 @@ function showJobRouteLocation(position, colour) {
 			destroyElement(jobRouteLocationBlip);
 		}
 
-		blinkJobRouteLocationBlip(10, position, colour);
+		// Blinking is bugged if player hit the spot before it stops blinking.
+		//blinkJobRouteLocationBlip(10, position, colour);
+		jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
 	}
 }
 
