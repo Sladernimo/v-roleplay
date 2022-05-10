@@ -10,6 +10,7 @@
 	<script src="scripts/shared/gamedata.js" type="client" language="javascript" />
 
 	<!-- Multiplayer Mod (Wrapped Natives) -->
+	<!-- The goal is to just swap only these out when I port the script to a new mod, like Oakwood -->
 	<script src="scripts/server/native/connected.js" type="server" language="javascript" />
 	<script src="scripts/client/native/connected.js" type="client" language="javascript" />
 
@@ -84,6 +85,17 @@
 	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/gtac-logo.png" />
 	<file type="client" src="files/images/asshat-logo.png" />
+
+	<!-- International Flag Images -->
+	<file type="client" src="files/images/flags/uk.png" />
+	<file type="client" src="files/images/flags/de.png" />
+	<file type="client" src="files/images/flags/fr.png" />
+	<file type="client" src="files/images/flags/pl.png" />
+	<file type="client" src="files/images/flags/es.png" />
+	<file type="client" src="files/images/flags/jp.png" />
+	<file type="client" src="files/images/flags/sk.png" />
+	<file type="client" src="files/images/flags/sa.png" />
+	<file type="client" src="files/images/flags/cn.png" />
 
 	<!-- GUI -->
 	<script src="scripts/client/gui/login.js" type="client" language="javascript" />
