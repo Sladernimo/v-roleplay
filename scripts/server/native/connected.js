@@ -939,7 +939,11 @@ function createDatabaseInsertQuery(tableName, data) {
 				fields.push(data[i][0]);
 
 				if(typeof data[i][1] == "string") {
-					values.push(`'${data[i][1]}'`);
+					if(data[i][1] == "{UNIXTIMESTAMP}") {
+						values.push("UNIX_TIMESTAMP()");
+					} else {
+						values.push(`'${data[i][1]}'`);
+					}
 				} else {
 					values.push(data[i][1]);
 				}
@@ -960,7 +964,11 @@ function createDatabaseUpdateQuery(tableName, data, whereClause) {
 		if(data[i][0] != "undefined" && data[i][0] != NaN && data[i][0] != 'NaN') {
 			if(data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
 				if(typeof data[i][1] == "string") {
-					values.push(`${data[i][0]}='${data[i][1]}'`);
+					if(data[i][1] == "{UNIXTIMESTAMP}") {
+						values.push(`${data[i][0]}=UNIX_TIMESTAMP()`);
+					} else {
+						values.push(`${data[i][0]}='${data[i][1]}'`);
+					}
 				} else {
 					values.push(`${data[i][0]}=${data[i][1]}`);
 				}
