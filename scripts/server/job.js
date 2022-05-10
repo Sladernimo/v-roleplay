@@ -1691,6 +1691,11 @@ function jobStopRouteCommand(command, params, client) {
 		return false;
 	}
 
+	if(!getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).enabled) {
+		setAllJobDataIndexes();
+		getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).enabled = true;
+	}
+
 	stopJobRoute(client, false, false);
 	return true;
 }
@@ -2682,7 +2687,7 @@ function createJobRoute(routeName, closestJobLocation) {
 	tempJobRouteData.name = routeName;
 	tempJobRouteData.jobId = closestJobLocation.jobId;
 	tempJobRouteData.locationId = closestJobLocation.databaseId;
-	tempJobRouteData.enabled = true;
+	tempJobRouteData.enabled = false;
 	tempJobRouteData.needsSaved = true;
 	tempJobRouteData.vehicleColour1 = 1;
 	tempJobRouteData.vehicleColour2 = 1;
@@ -2711,8 +2716,8 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData) {
 	tempJobRouteLocationData.routeIndex = jobRouteData.index;
 
 	getJobData(jobRouteData.jobIndex).routes[jobRouteData.index].locations.push(tempJobRouteLocationData);
-	saveJobRouteLocationToDatabase(tempJobRouteLocationData);
-	setAllJobDataIndexes();
+	//saveJobRouteLocationToDatabase(tempJobRouteLocationData);
+	//setAllJobDataIndexes();
 }
 
 // ===========================================================================
@@ -2905,6 +2910,9 @@ function getRandomJobRouteForLocation(closestJobLocation) {
 	if(closestJobLocation.routeCache.length > 0) {
 		let randomRoute = getRandom(0, closestJobLocation.routeCache.length-1);
 		let routeId = closestJobLocation.routeCache[randomRoute];
+		if(!getJobRouteData(closestJobLocation.jobIndex, routeId).enabled) {
+			return getRandomJobRouteForLocation(closestJobLocation);
+		}
 		return getJobRouteData(closestJobLocation.jobIndex, routeId).index;
 	}
 	return -1;
