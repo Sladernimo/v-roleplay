@@ -306,19 +306,16 @@ function showCharacterSelectCameraToPlayer(client) {
 // ===========================================================================
 
 function getClosestPlayer(position, exemptPlayer) {
-	//let clients = getClients();
-	//let closest = 0;
-	//for(let i in clients) {
-	//	if(exemptClient != clients[i]) {
-	//		if(getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
-	//			closest = i;
-	//		}
-	//	}
-	//}
-
-	return getElementsByType(ELEMENT_PLAYER).filter((fp) => fp != exemptPlayer).reduce((i, j) => ((i.position.distance(position) <= j.position.distance(position)) ? i : j));
-
-	//return clients[closest];
+	let clients = getClients();
+	let closest = 0;
+	for(let i in clients) {
+		if(exemptClient != clients[i]) {
+			if(getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
+				closest = i;
+			}
+		}
+	}
+	return clients[closest];
 }
 
 // ===========================================================================
