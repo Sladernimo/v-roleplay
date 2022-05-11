@@ -111,7 +111,7 @@ function playerPromptAnswerYes(client) {
 
 			getVehicleData(getPlayerVehicle(client)).ownerType = VRR_VEHOWNER_CLAN;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getPlayerCurrentSubAccount(client).clan;
-			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan"));
+			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 
