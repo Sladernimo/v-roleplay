@@ -790,7 +790,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 
 		case VRR_ITEM_USETYPE_ROPE:
-			closestPlayer = getClosestPlayer(getPlayerPosition(client), getPlayerPed(client));
+			closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if(!getPlayerData(closestPlayer)) {
 				messagePlayerError(client, "There isn't anyone close enough to tie up!");
@@ -1469,12 +1469,12 @@ function getBestNewOwnerToPutItem(client) {
 	let closestDistance = 100.0;
 	let position = getPlayerPosition(client);
 
-	let possibleHouse = (isPlayerInAnyHouse(client)) ? getPlayerHouse(client) : getClosestHouseEntrance(getPlayerPosition(client));
+	let possibleHouse = getPlayerHouse(client);
 	if(getHouseData(possibleHouse)) {
 		return [VRR_ITEM_OWNER_HOUSE, possibleHouse];
 	}
 
-	let possibleBusiness = (isPlayerInAnyBusiness(client)) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let possibleBusiness = getPlayerBusiness(client);
 	if(getBusinessData(possibleBusiness)) {
 		return [VRR_ITEM_OWNER_BIZSTORAGE, possibleBusiness];
 	}
@@ -1496,7 +1496,7 @@ function getBestItemToTake(client, slot) {
 	let ownerType = VRR_ITEM_OWNER_NONE;
 	let ownerId = 0;
 
-	let possibleHouse = (isPlayerInAnyHouse(client)) ? getPlayerHouse(client) : getClosestHouseEntrance(getPlayerPosition(client));
+	let possibleHouse = getPlayerHouse(client);
 	if(getHouseData(possibleHouse)) {
 		if(typeof getHouseData(possibleHouse).itemCache[slot] != "undefined") {
 			itemId = getHouseData(possibleHouse).itemCache[slot];
@@ -1505,7 +1505,7 @@ function getBestItemToTake(client, slot) {
 		}
 	}
 
-	let possibleBusiness = (isPlayerInAnyBusiness(client)) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let possibleBusiness = getPlayerBusiness(client);
 	if(getBusinessData(possibleBusiness)) {
 		if(typeof getBusinessData(possibleBusiness).floorItemCache[slot] != "undefined") {
 			itemId = getBusinessData(possibleBusiness).floorItemCache[slot];
@@ -1566,7 +1566,7 @@ function listPlayerInventoryCommand(command, params, client) {
  *
  */
 function listBusinessStorageInventoryCommand(command, params, client) {
-	let businessId = (isPlayerInAnyBusiness(client)) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let businessId = getPlayerBusiness(client);
 
 	if(!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -1593,7 +1593,7 @@ function listBusinessStorageInventoryCommand(command, params, client) {
  *
  */
 function listBusinessFloorInventoryCommand(command, params, client) {
-	let businessId = (isPlayerInAnyBusiness(client)) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let businessId = getPlayerBusiness(client);
 
 	if(!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -1620,7 +1620,7 @@ function listBusinessFloorInventoryCommand(command, params, client) {
  *
  */
 function listHouseInventoryCommand(command, params, client) {
-	let houseId = (isPlayerInAnyHouse(client)) ? getPlayerHouse(client) : getClosestHouseEntrance(getPlayerPosition(client));
+	let houseId = getPlayerHouse(client);
 
 	if(!getHouseData(houseId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
