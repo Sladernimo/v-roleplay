@@ -139,7 +139,7 @@ function playerClientStopped(client) {
 
 function showGameMessage(client, text, colour, duration, fontName = "Pricedown") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Showing game message to ${getPlayerDisplayForConsole(client)} (${text}) for ${duration} milliseconds`);
-	sendNetworkEventToPlayer("vrr.smallGameMessage", client, text, colour, duration);
+	sendNetworkEventToPlayer("vrr.smallGameMessage", client, text, colour, duration, fontName);
 }
 
 // ===========================================================================
