@@ -713,6 +713,11 @@ function setVehicleJobCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
 	let closestJobLocation = getClosestJobLocation(getVehiclePosition(vehicle));
 	let jobId = closestJobLocation.job;
 
@@ -748,8 +753,12 @@ function setVehicleRankCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
-
 	let rankId = params;
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	if(getVehicleData(vehicle).ownerType == VRR_VEHOWNER_CLAN) {
 		rankId = getClanRankFromParams(getVehicleData(vehicle).ownerId, params);
@@ -777,6 +786,11 @@ function setVehicleClanCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 	let clanId = getPlayerClan(client);
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	if(!getClanData(clanId)) {
 		messagePlayerError(client, "That clan is invalid or doesn't exist!");
@@ -808,7 +822,17 @@ function setVehicleToBusinessCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessId = toInteger(isPlayerInAnyBusiness(client)) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let businessId = getPlayerBusiness(client);
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if(!getBusinessData(businessId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
 
 	getVehicleData(vehicle).ownerType = VRR_VEHOWNER_BIZ;
 	getVehicleData(vehicle).ownerId = getBusinessData(businessId).databaseId;
@@ -828,6 +852,11 @@ function setVehicleOwnerCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 	let targetClient = getPlayerFromParams(params);
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	if(!targetClient) {
 		messagePlayerError(client, "That player is invalid or isn't connected!");
@@ -852,6 +881,11 @@ function setVehiclePublicCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
 	getVehicleData(vehicle).ownerType = VRR_VEHOWNER_PUBLIC;
 	getVehicleData(vehicle).ownerId = 0;
 
@@ -869,6 +903,11 @@ function setVehicleRentPriceCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	if(!doesClientOwnVehicle(client, vehicle)) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
@@ -893,6 +932,11 @@ function setVehicleBuyPriceCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
+
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	if(!doesClientOwnVehicle(client, vehicle)) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
@@ -919,6 +963,11 @@ function removeVehicleOwnerCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let targetClient = getPlayerFromParams(params);
 
+	if(!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
 	if(!targetClient) {
 		messagePlayerError(client, "That player is invalid or isn't connected!");
 		return false;
@@ -944,7 +993,7 @@ function getVehicleInfoCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 
 	if(!getVehicleData(vehicle)) {
-		messagePlayerError(client, "This is a random traffic vehicle and doesn't have any info");
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
 
@@ -993,7 +1042,7 @@ function getLastVehicleInfoCommand(command, params, client) {
 	let vehicle = getPlayerLastVehicle(client);
 
 	if(!getVehicleData(vehicle)) {
-		messagePlayerError(client, "This is a random traffic vehicle and doesn't have any info");
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
 
