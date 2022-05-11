@@ -575,10 +575,8 @@ function deleteHouse(houseId, whoDeleted = 0) {
  * @return {bool} Whether or not the player was successfully removed from the house
  *
  */
-function removePlayerFromHouses(client) {
-	if(isPlayerInAnyHouse(client)) {
-		exitHouse(client);
-	}
+function removePlayerFromHouse(client) {
+	exitHouse(client);
 }
 
 // ===========================================================================
@@ -1082,7 +1080,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	getHouseData(houseId).buyPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messageAdmins(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
 }
 
 // ===========================================================================
@@ -1120,7 +1118,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	getHouseData(houseId).rentPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s {MAINCOLOUR}rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
 }
 
 // ===========================================================================
@@ -1154,12 +1152,6 @@ function buyHouseCommand(command, params, client) {
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyHouseConfirmMessage"), getLocaleString(client, "BuyHouseConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = VRR_PROMPT_BUYHOUSE;
-}
-
-// ===========================================================================
-
-function isPlayerInAnyHouse(client) {
-	return doesEntityDataExist(client, "vrr.inHouse");
 }
 
 // ===========================================================================
@@ -1250,8 +1242,8 @@ function deleteHouseExitBlip(houseId) {
 function reloadAllHousesCommand(command, params, client) {
 	let clients = getClients();
 	for(let i in clients) {
-		if(isPlayerInAnyHouse(clients[i])) {
-			removePlayerFromHouses(clients[i]);
+		if(getPlayerHouse(clients[i]) != -1) {
+			removePlayerFromHouse(clients[i]);
 		}
 	}
 
@@ -1267,7 +1259,7 @@ function reloadAllHousesCommand(command, params, client) {
 	createAllHousePickups();
 	createAllHouseBlips();
 
-	announceAdminAction(`HousesReloaded`);
+	announceAdminAction(`AllHousesReloaded`);
 }
 
 // ===========================================================================
@@ -1279,7 +1271,6 @@ function exitHouse(client) {
 		setPlayerDimension(client, getServerData().house[houseId].entranceDimension);
 		setPlayerPosition(client, getServerData().house[houseId].entrancePosition);
 	}
-	removeEntityData(client, "vrr.inHouse");
 }
 
 // ===========================================================================
