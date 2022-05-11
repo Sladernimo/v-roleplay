@@ -882,15 +882,6 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
 	getPlayerData(targetClient).returnToType = VRR_RETURNTO_TYPE_ADMINGET;
 
-	if(isPlayerInAnyHouse(targetClient)) {
-		getPlayerData(targetClient).returnToHouse = getPlayerHouse(targetClient);
-	}
-
-	if(isPlayerInAnyBusiness(targetClient)) {
-		getPlayerData(targetClient).returnToBusiness = getPlayerBusiness(targetClient);
-	}
-
-	removePlayerFromVehicle(targetClient);
 	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
 	setPlayerHeading(targetClient, getPlayerHeading(client));
 	setPlayerInterior(targetClient, getPlayerInterior(client));
