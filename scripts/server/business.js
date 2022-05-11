@@ -163,7 +163,7 @@ function createBusinessLocationCommand(command, params, client) {
 	}
 
 	let locationType = toString(getParam(params, " ", 1));
-	let businessId = (isPlayerInAnyBusiness(getParam(params, " ", 2))) ? getPlayerBusiness(client) : getClosestBusinessEntrance(getPlayerPosition(client));
+	let businessId = getPlayerBusiness(client);
 
 	if(!areParamsEmpty(params)) {
 		businessId = getBusinessFromParams(params);
@@ -1892,10 +1892,8 @@ function deleteBusiness(businessId, deletedBy = 0) {
 function removePlayersFromBusiness(businessId) {
 	getClients().forEach(function(client) {
 		if(doesBusinessHaveInterior(businessId)) {
-			if(isPlayerInAnyBusiness(client)) {
-				if(getPlayerBusiness(client) == businessId) {
-					exitBusiness(client);
-				}
+			if(getPlayerBusiness(client) == businessId) {
+				exitBusiness(client);
 			}
 		}
 	});
@@ -1912,12 +1910,8 @@ function removePlayersFromBusiness(businessId) {
  * @return {Boolean} Whether or not the player was forced to exit
  *
  */
-function removePlayerFromBusinesses(client) {
-	if(isPlayerInAnyBusiness(client)) {
-		exitBusiness(client);
-		return true;
-	}
-
+function removePlayerFromBusiness(client) {
+	exitBusiness(client);
 	return false;
 }
 
@@ -2094,9 +2088,7 @@ function deleteBusinessExitBlip(businessId) {
 function reloadAllBusinessesCommand(command, params, client) {
 	let clients = getClients();
 	for(let i in clients) {
-		if(isPlayerInAnyBusiness(clients[i])) {
-			removePlayerFromBusinesses(clients[i]);
-		}
+		removePlayerFromBusiness(clients[i]);
 	}
 
 	for(let i in getServerData().businesses) {
