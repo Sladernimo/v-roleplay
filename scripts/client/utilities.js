@@ -420,6 +420,28 @@ function processLocalPlayerVehicleControlState() {
 
 // ===========================================================================
 
+function processLocalPlayerSphereEntryExitHandling() {
+	let position = getLocalPlayerPosition();
+
+	if(areMarkersSupported()) {
+		getElementsByType(ELEMENT_MARKER).forEach(function(sphere) {
+			if(getDistance(position, sphere.position) <= sphere.radius) {
+				if(!inSphere) {
+					inSphere = sphere;
+					triggerEvent("OnLocalPlayerEnterSphere", null, sphere);
+				}
+			} else {
+				if(inSphere) {
+					inSphere = false;
+					triggerEvent("OnLocalPlayerExitSphere", null, sphere);
+				}
+			}
+		});
+	}
+}
+
+// ===========================================================================
+
 function processJobRouteSphere() {
 	if(getGame() == VRR_GAME_GTA_SA) {
 		let position = getLocalPlayerPosition();
@@ -465,6 +487,24 @@ function getLocalPlayerPosition() {
 	}
 
 	return position;
+}
+
+// ===========================================================================
+
+function processLocalPlayerVehicleEntryExitHandling() {
+	if(localPlayer.vehicle) {
+		if(!inVehicle) {
+			inVehicle = localPlayer.vehicle;
+			inVehicleSeat = getLocalPlayerVehicleSeat();
+			triggerEvent("OnLocalPlayerEnteredVehicle", inVehicle, inVehicleSeat);
+		}
+	} else {
+		if(inVehicle) {
+			triggerEvent("OnLocalPlayerExitedVehicle", inVehicle, inVehicleSeat);
+			inVehicle = false;
+			inVehicleSeat = false;
+		}
+	}
 }
 
 // ===========================================================================
