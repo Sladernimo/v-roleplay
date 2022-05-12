@@ -515,6 +515,9 @@ function getPlayerLastVehicle(client) {
 // ===========================================================================
 
 function isVehicleObject(vehicle) {
+	if(vehicle == null || vehicle == undefined) {
+		return false;
+	}
 	return (vehicle.type == ELEMENT_VEHICLE);
 }
 
