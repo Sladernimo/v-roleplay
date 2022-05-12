@@ -1067,7 +1067,7 @@ function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
 
 function receiveVehiclePurchaseStateUpdateFromClient(client, state) {
 	if(getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
-		checkVehicleBuying(client);
+		checkVehiclePurchasing(client);
 	}
 }
 
