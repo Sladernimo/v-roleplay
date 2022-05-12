@@ -72,6 +72,7 @@ let globalConfig = {
 	vehicleInactiveRespawnDelay: 1800000, // 20 minutes
 	chatSectionHeaderLength: 96,
 	useServerSideVehiclePurchaseCheck: true,
+	useServerSideVehicleBurnCheck: false,
 	businessPickupStreamInDistance: 100,
 	businessPickupStreamOutDistance: 120,
 	housePickupStreamInDistance: 100,

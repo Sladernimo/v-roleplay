@@ -580,3 +580,69 @@ function getScreenHeight() {
 }
 
 // ===========================================================================
+
+// ===========================================================================
+
+function openAllGarages() {
+	switch(getGame()) {
+		case VRR_GAME_GTA_III:
+			for(let i=0;i<=26;i++) {
+				openGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_VC:
+			for(let i=0;i<=32;i++) {
+				openGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_SA:
+			for(let i=0;i<=44;i++) {
+				openGarage(i);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+function closeAllGarages() {
+	switch(getGame()) {
+		case VRR_GAME_GTA_III:
+			for(let i=0;i<=26;i++) {
+				closeGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_VC:
+			for(let i=0;i<=32;i++) {
+				closeGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_SA:
+			for(let i=0;i<=44;i++) {
+				closeGarage(i);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+function setPedInvincible(ped, state) {
+	ped.invincible = state;
+}
+
+// ===========================================================================

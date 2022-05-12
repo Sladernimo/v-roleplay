@@ -7,9 +7,6 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-let flagImagesPosition = toVector2(getScreenWidth()/2, login.window.position.y+100);
-let flagImageSize = toVector2(50, 50);
-
 function getLocaleString(stringName, ...args) {
 	if(typeof getServerData().localeStrings[stringName] == undefined) {
 		return "";
@@ -29,6 +26,15 @@ function getLocaleString(stringName, ...args) {
 function receiveLocaleStringFromServer(stringName, stringValue) {
 	logToConsole(LOG_INFO, `[VRR.Locale]: Received locale string "${stringName}" from server (${stringValue})`);
 	getServerData().localeStrings[stringName] = stringValue;
+}
+
+// ===========================================================================
+
+function receiveLocaleStringsFromServer(strings) {
+	for(let i in strings) {
+		let stringName = strings[i][0];
+		getServerData().localeStrings[stringName] = strings[i][1];
+	}
 }
 
 // ===========================================================================

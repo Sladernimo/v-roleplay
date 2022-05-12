@@ -16,3 +16,47 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 }
 
 // ===========================================================================
+
+function processVehiclePurchasing() {
+	if(vehiclePurchaseState == VRR_VEHBUYSTATE_TESTDRIVE) {
+		if(getLocalPlayerVehicle() == false) {
+			vehiclePurchaseState = VRR_VEHBUYSTATE_EXITVEH;
+			sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_EXITVEH);
+			return false;
+		} else {
+			if(vehiclePurchasing == getLocalPlayerVehicle()) {
+				if(getDistance(getLocalPlayerVehicle().position, vehiclePurchasePosition) >= 25) {
+					vehiclePurchaseState = VRR_VEHBUYSTATE_FARENOUGH;
+					sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_FARENOUGH);
+				}
+			} else {
+				vehiclePurchaseState = VRR_VEHBUYSTATE_WRONGVEH;
+				sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_WRONGVEH);
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function processVehicleBurning() {
+	getElementsByType(ELEMENT_VEHICLE).filter(vehicle => vehicle.isSyncer && vehicle.health < 250).forEach((vehicle) => {
+		vehicle.health = 250;
+	});
+}
+
+// ===========================================================================
+
+function setVehiclePurchaseState(state, vehicleId, position) {
+	vehiclePurchaseState = state;
+
+	if(vehicleId != null) {
+		vehiclePurchasing = getElementFromId(vehicleId);
+	} else {
+		vehiclePurchasing = null;
+	}
+
+	vehiclePurchasePosition = position;
+}
+
+// ===========================================================================

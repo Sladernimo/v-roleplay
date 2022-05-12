@@ -161,7 +161,7 @@ function setUpInitialGame() {
 			natives.requestAnims("DANCING");
 
 			// Some last steps
-			natives.loadAllObjectsNow();
+			//natives.loadAllObjectsNow();
 			break;
 
 		case VRR_GAME_MAFIA_ONE:

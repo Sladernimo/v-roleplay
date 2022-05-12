@@ -94,6 +94,7 @@ function addAllNetworkHandlers() {
 
 	// Locale
 	addNetworkEventHandler("vrr.localeString", receiveLocaleStringFromServer);
+	addNetworkEventHandler("vrr.localeStrings", receiveLocaleStringsFromServer);
 
 	// Misc
 	addNetworkEventHandler("vrr.mouseCursor", toggleMouseCursor);

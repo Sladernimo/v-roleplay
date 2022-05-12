@@ -47,8 +47,6 @@ function initServerScripts() {
 
 	// Load all the server data
 	loadServerDataFromDatabase();
-
-	// Set indexes and cache necessary data
 	setAllServerDataIndexes();
 	createAllServerElements();
 
@@ -122,7 +120,6 @@ function loadServerDataFromDatabase() {
 	getServerData().localeStrings = loadAllLocaleStrings();
 	getServerData().allowedSkins = getAllowedSkins(getGame());
 
-
 	// Translation Cache
 	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
 	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
@@ -150,8 +147,8 @@ function loadServerDataFromDatabase() {
 // ===========================================================================
 
 function setAllServerDataIndexes() {
-	setItemTypeDataIndexes();
-	setItemDataIndexes();
+	setAllItemTypeDataIndexes();
+	setAllItemDataIndexes();
 	setBusinessDataIndexes();
 	setHouseDataIndexes();
 	setAllClanDataIndexes();

@@ -1297,7 +1297,7 @@ function getClosestItemOnGround(position) {
 
 // ===========================================================================
 
-function setItemDataIndexes() {
+function setAllItemDataIndexes() {
 	for(let i in getServerData().items) {
 		if(getServerData().items[i]) {
 			getServerData().items[i].index = i;
@@ -1308,7 +1308,7 @@ function setItemDataIndexes() {
 
 // ===========================================================================
 
-function setItemTypeDataIndexes() {
+function setAllItemTypeDataIndexes() {
 	for(let i in getServerData().itemTypes) {
 		if(getServerData().itemTypes[i]) {
 			getServerData().itemTypes[i].index = i;
@@ -1460,7 +1460,7 @@ function deleteItem(itemId) {
 		quickDatabaseQuery(`DELETE FROM item_main WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
 	getServerData().items[itemId] = false;
-	setItemDataIndexes();
+	setAllItemDataIndexes();
 }
 
 // ===========================================================================

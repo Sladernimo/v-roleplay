@@ -1361,7 +1361,7 @@ function getDistance(vec1, vec2) {
 function logToConsole(tempLogLevel, text) {
 	text = removeColoursInMessage(text);
 
-	if(hasBitFlag(logLevel, tempLogLevel) || hasBitFlag(logLevel, LOG_ERROR) || hasBitFlag(logLevel, LOG_WARN)) {
+	if(hasBitFlag(logLevel, tempLogLevel)) {
 		if(tempLogLevel & LOG_ERROR) {
 			consoleError(text);
 			return true;

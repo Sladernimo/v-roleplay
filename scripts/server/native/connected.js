@@ -799,9 +799,16 @@ function disconnectFromDatabase(dbConnection) {
 
 // ===========================================================================
 
-function queryDatabase(dbConnection, queryString) {
+function queryDatabase(dbConnection, queryString, useThread = false) {
 	logToConsole(LOG_DEBUG, `[VRR.Database] Query string: ${queryString}`);
-	return dbConnection.query(queryString);
+	if(useThread == true) {
+		Promise.resolve().then(() => {
+			let queryResult = dbConnection.query(queryString);
+			return queryResult;
+		});
+	} else {
+		return dbConnection.query(queryString);
+	}
 }
 
 // ===========================================================================

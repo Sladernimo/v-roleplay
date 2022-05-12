@@ -9,7 +9,7 @@
 
 let scriptVersion = "1.1";
 let serverStartTime = 0;
-let logLevel = LOG_INFO|LOG_ERROR|LOG_WARN|LOG_DEBUG;
+let logLevel = LOG_INFO|LOG_ERROR|LOG_WARN;
 
 // ===========================================================================
 
@@ -20,8 +20,6 @@ let logLevel = LOG_INFO|LOG_ERROR|LOG_WARN|LOG_DEBUG;
  * @property {Array.<BusinessData>} businesses
  * @property {Array.<HouseData>} houses
  * @property {Array.<HouseData>} commands
- * @property {Array} groundItemCache
- * @property {Array} groundPlantCache
  * @property {Array.<ItemData>} items
  * @property {Array.<ItemTypeData>} itemTypes
  * @property {Array.<ClanData>} clans
@@ -30,6 +28,10 @@ let logLevel = LOG_INFO|LOG_ERROR|LOG_WARN|LOG_DEBUG;
  * @property {Array.<RaceData>} races
  * @property {Array.<JobData>} jobs
  * @property {Array.<Gates>} gates
+ * @property {Array} groundItemCache
+ * @property {Array} groundPlantCache
+ * @property {Array} purchasingVehicleCache
+ * @property {Array} rentingVehicleCache
  */
 let serverData = {
 	vehicles: [],
@@ -37,8 +39,6 @@ let serverData = {
 	businesses: [],
 	houses: [],
 	commands: {},
-	groundItemCache: [],
-	groundPlantCache: [],
 	items: [],
 	itemTypes: [],
 	clans: [],
@@ -50,6 +50,10 @@ let serverData = {
 	races: [],
 	jobs: [],
 	gates: [],
+	groundItemCache: [],
+	groundPlantCache: [],
+	purchasingVehicleCache: [],
+	rentingVehicleCache: [],
 };
 
 // ===========================================================================

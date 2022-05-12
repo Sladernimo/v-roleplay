@@ -7,173 +7,6 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-let weaponSlots = [
-	false,
-	[
-		0,
-		1,
-		2,
-		3,
-		4,
-		5,
-		6,
-		7,
-		8,
-		9,
-		10,
-		11
-	],
-	[
-		0,
-		0,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		2,
-		2,
-		2,
-		2,
-		2,
-		3,
-		3,
-		4,
-		4,
-		4,
-		5,
-		5,
-		5,
-		5,
-		6,
-		6,
-		8,
-		8,
-		7,
-		7,
-		7,
-		7,
-		9,
-		-1,
-		9,
-	],
-	[
-		0,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		8,
-		8,
-		8,
-		-1,
-		-1,
-		-1,
-		2,
-		2,
-		2,
-		3,
-		3,
-		3,
-		4,
-		4,
-		5,
-		5,
-		4,
-		6,
-		6,
-		7,
-		7,
-		7,
-		7,
-		8,
-		12,
-		9,
-		9,
-		9,
-		9,
-		9,
-		11,
-		9,
-		9,
-		9,
-	],
-];
-
-function openAllGarages() {
-	switch(getGame()) {
-		case VRR_GAME_GTA_III:
-			for(let i=0;i<=26;i++) {
-				openGarage(i);
-				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
-			}
-			break;
-
-		case VRR_GAME_GTA_VC:
-			for(let i=0;i<=32;i++) {
-				openGarage(i);
-				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
-			}
-			break;
-
-		case VRR_GAME_GTA_SA:
-			for(let i=0;i<=44;i++) {
-				openGarage(i);
-			}
-			break;
-
-		default:
-			break;
-	}
-}
-
-// ===========================================================================
-
-function closeAllGarages() {
-	switch(getGame()) {
-		case VRR_GAME_GTA_III:
-			for(let i=0;i<=26;i++) {
-				closeGarage(i);
-				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
-			}
-			break;
-
-		case VRR_GAME_GTA_VC:
-			for(let i=0;i<=32;i++) {
-				closeGarage(i);
-				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
-			}
-			break;
-
-		case VRR_GAME_GTA_SA:
-			for(let i=0;i<=44;i++) {
-				closeGarage(i);
-			}
-			break;
-
-		default:
-			break;
-	}
-}
-
-// ===========================================================================
-
 function setLocalPlayerFrozenState(state) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting frozen state to ${state}`);
 	gui.showCursor(state, !state);
@@ -186,11 +19,9 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 	controlsEnabled = controlState;
 	if(getGame() == VRR_GAME_GTA_III || getGame() == VRR_GAME_GTA_VC) {
 		game.SET_PLAYER_CONTROL(game.GET_PLAYER_ID(), boolToInt(controlState));
-	}
-
-	if(getGame() != VRR_GAME_GTA_IV) {
-		localPlayer.collisionsEnabled = controlState;
-		localPlayer.invincible = true;
+	} else if(getGame() != VRR_GAME_GTA_IV) {
+		setElementCollisionsEnabled(localPlayer, controlState);
+		setPedInvincible(localPlayer, true);
 	}
 }
 
@@ -371,12 +202,12 @@ function setLocalPlayerInterior(interior) {
 		//}
 	}
 
-	//let vehicles = getElementsByType(ELEMENT_VEHICLE);
-	//for(let i in vehicles) {
-	//    if(getEntityData(vehicles[i], "vrr.interior")) {
-	//        vehicles[i].interior = getEntityData(vehicles[i], "vrr.interior");
-	//    }
-	//}
+	let vehicles = getElementsByType(ELEMENT_VEHICLE);
+	for(let i in vehicles) {
+	    if(getEntityData(vehicles[i], "vrr.interior")) {
+	        vehicles[i].interior = getEntityData(vehicles[i], "vrr.interior");
+	    }
+	}
 }
 
 // ===========================================================================
@@ -398,12 +229,6 @@ function setLocalPlayerHealth(health) {
 
 // ===========================================================================
 
-function isSnowEnabled() {
-	return (typeof snowing != "undefined");
-}
-
-// ===========================================================================
-
 function playPedSpeech(pedName, speechId) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Making ${pedName}'s ped talk (${speechId})`);
 	if(getMultiplayerMod() == VRR_MPMOD_GTAC) {
@@ -421,18 +246,14 @@ function clearLocalPedState() {
 // ===========================================================================
 
 function getWeaponSlot(weaponId) {
-	if(getGame() == VRR_GAME_GTA_IV) {
-		return false;
-	}
-
-	return weaponSlots[getGame()][weaponId];
+	return getGameConfig().weaponSlots[getGame()][weaponId];
 }
 
 // ===========================================================================
 
 function setLocalPlayerDrunkEffect(amount, duration) {
 	if(getMultiplayerMod() == VRR_MPMOD_GTAC) {
-		logToConsole(LOG_DEBUG, `[VRR.Utilities] Drunk effect set to ${amount} for ${duration}ms`);
+		logToConsole(LOG_DEBUG, `[VRR.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
 		drunkEffectAmount = 0;
 		drunkEffectDurationTimer = setInterval(function() {
 			drunkEffectAmount = drunkEffectAmount;
@@ -599,28 +420,6 @@ function processLocalPlayerVehicleControlState() {
 
 // ===========================================================================
 
-function processLocalPlayerSphereEntryExitHandling() {
-	let position = getLocalPlayerPosition();
-
-	if(areMarkersSupported()) {
-		getElementsByType(ELEMENT_MARKER).forEach(function(sphere) {
-			if(getDistance(position, sphere.position) <= sphere.radius) {
-				if(!inSphere) {
-					inSphere = sphere;
-					triggerEvent("OnLocalPlayerEnterSphere", null, sphere);
-				}
-			} else {
-				if(inSphere) {
-					inSphere = false;
-					triggerEvent("OnLocalPlayerExitSphere", null, sphere);
-				}
-			}
-		});
-	}
-}
-
-// ===========================================================================
-
 function processJobRouteSphere() {
 	if(getGame() == VRR_GAME_GTA_SA) {
 		let position = getLocalPlayerPosition();
@@ -670,29 +469,11 @@ function getLocalPlayerPosition() {
 
 // ===========================================================================
 
-function processLocalPlayerVehicleEntryExitHandling() {
-	if(localPlayer.vehicle) {
-		if(!inVehicle) {
-			inVehicle = localPlayer.vehicle;
-			inVehicleSeat = getLocalPlayerVehicleSeat();
-			triggerEvent("OnLocalPlayerEnteredVehicle", inVehicle, inVehicleSeat);
-		}
-	} else {
-		if(inVehicle) {
-			triggerEvent("OnLocalPlayerExitedVehicle", inVehicle, inVehicleSeat);
-			inVehicle = false;
-			inVehicleSeat = false;
-		}
-	}
-}
-
-// ===========================================================================
-
 function getVehicleForNetworkEvent(vehicle) {
 	if(getGame() == VRR_GAME_GTA_IV) {
 		return natives.getNetworkIdFromVehicle(vehicle);
 	}
-	return vehicle;
+	return vehicle.id;
 }
 
 // ===========================================================================
@@ -777,59 +558,6 @@ function processGameSpecifics() {
 	}
 
 	destroyAutoCreatedPickups();
-}
-
-// ===========================================================================
-
-function processVehiclePurchasing() {
-	if(vehiclePurchaseState == VRR_VEHBUYSTATE_TESTDRIVE) {
-		if(inVehicle == false) {
-			vehiclePurchaseState = VRR_VEHBUYSTATE_EXITVEH;
-			sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_EXITVEH);
-			return false;
-		} else {
-			if(vehiclePurchasing == inVehicle) {
-				if(getDistance(inVehicle.position, vehiclePurchasePosition) >= 25) {
-					vehiclePurchaseState = VRR_VEHBUYSTATE_FARENOUGH;
-					sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_FARENOUGH);
-				}
-			} else {
-				vehiclePurchaseState = VRR_VEHBUYSTATE_WRONGVEH;
-				sendNetworkEventToServer("vrr.vehBuyState", VRR_VEHBUYSTATE_WRONGVEH);
-			}
-		}
-	}
-}
-
-// ===========================================================================
-
-function setVehiclePurchaseState(state, vehicleId, position) {
-	vehiclePurchaseState = state;
-
-	if(vehicleId != null) {
-		vehiclePurchasing = getElementFromId(vehicleId);
-	} else {
-		vehiclePurchasing = null;
-	}
-
-	vehiclePurchasePosition = position;
-}
-
-// ===========================================================================
-
-function processVehicleFires() {
-	/*
-	let vehicles = getElementsByType(ELEMENT_VEHICLE);
-	for(let i in vehicles) {
-		if(vehicles[i].isSyncer) {
-			if(!doesEntityDataExist(vehicles[i], "vrr.fire")) {
-				triggerNetworkEvent("vrr.vehFire", vehicles[i].id);
-			} else {
-				vehicles[i].health = 249;
-			}
-		}
-	}
-	*/
 }
 
 // ===========================================================================

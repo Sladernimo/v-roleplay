@@ -105,7 +105,7 @@ function oneMinuteTimerFunction() {
 	checkServerGameTime();
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking rentable vehicles`);
-	vehicleRentCheck();
+	checkVehicleRenting();
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
 	updateAllPlayerNameTags();
@@ -130,19 +130,18 @@ function thirtyMinuteTimerFunction() {
 
 // ===========================================================================
 
-function vehicleRentCheck() {
-	// Loop through players, not vehicles. Much more efficient (and doesn't consume resources when no players are connected)
-	let clients = getClients();
-	for(let i in clients) {
-		if(isClientInitialized(clients[i])) {
-			if(getPlayerData(clients[i]) != false) {
-				if(isPlayerLoggedIn(clients[i] && isPlayerSpawned(clients[i]))) {
-					if(getPlayerData(clients[i]).rentingVehicle != false) {
-						if(getPlayerCurrentSubAccount(clients[i]).cash < getServerData().vehicles[getPlayerData(clients[i]).rentingVehicle].rentPrice) {
-							messagePlayerAlert(clients[i], `You do not have enough money to continue renting this vehicle!`);
-							stopRentingVehicle(clients[i]);
+function checkVehicleRenting() {
+	let renting = getServerData().rentingVehicleCache;
+	for(let i in renting) {
+		if(isClientInitialized(renting[i])) {
+			if(getPlayerData(renting[i]) != false) {
+				if(isPlayerLoggedIn(renting[i] && isPlayerSpawned(renting[i]))) {
+					if(getPlayerData(renting[i]).rentingVehicle != false) {
+						if(getPlayerCurrentSubAccount(renting[i]).cash < getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {
+							messagePlayerAlert(renting[i], `You do not have enough money to continue renting this vehicle!`);
+							stopRentingVehicle(renting[i]);
 						} else {
-							takePlayerCash(clients[i], getServerData().vehicles[getPlayerData(clients[i]).rentingVehicle].rentPrice);
+							takePlayerCash(renting[i], getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice);
 						}
 					}
 				}

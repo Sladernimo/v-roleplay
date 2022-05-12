@@ -144,7 +144,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			getServerData().vehicles[vehicleDataId].needsSaved = false;
 		} else {
 			let queryString = createDatabaseUpdateQuery("veh_main", data, `veh_id=${tempVehicleData.databaseId}`);
-			dbQuery = queryDatabase(dbConnection, queryString);
+			dbQuery = queryDatabase(dbConnection, queryString, true);
 			getServerData().vehicles[vehicleDataId].needsSaved = false;
 		}
 
@@ -547,6 +547,7 @@ function buyVehicleCommand(command, params, client) {
 	setPlayerBuyingVehicleState(client, VRR_VEHBUYSTATE_TESTDRIVE, vehicle.id, getVehiclePosition(vehicle));
 	meActionToNearbyPlayers(client, `receives a set of keys to test drive the ${getVehicleName(vehicle)} and starts the engine`);
 	messagePlayerInfo(client, getLocaleString(client, "DealershipPurchaseTestDrive"));
+	getServerData().purchasingVehicleCache.push(client);
 }
 
 // ===========================================================================
@@ -593,7 +594,7 @@ function rentVehicleCommand(command, params, client) {
 	getVehicleData(vehicle).rentedBy = client;
 	getPlayerData(client).rentingVehicle = vehicle;
 	getVehicleData(vehicle).rentStart = getCurrentUnixTimestamp();
-
+	getServerData().rentingVehicleCache.push(client);
 	getVehicleData(vehicle).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `rents the ${getVehicleName(vehicle)} and receives a set of vehicle keys!`);
@@ -1232,6 +1233,7 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function stopRentingVehicle(client) {
+	getServerData().rentingVehicleCache.splice(getServerData().rentingVehicleCache.indexOf(client), 1);
 	let vehicle = getPlayerData(client).rentingVehicle;
 	getPlayerData(client).rentingVehicle = false;
 	getVehicleData(vehicle).rentedBy = false;
@@ -1465,9 +1467,9 @@ function processVehiclePurchasing() {
 		return false;
 	}
 
-	let clients = getClients();
-	for(let i in clients) {
-		checkVehicleBuying(clients[i]);
+	let purchasingVehicles = getServerData().purchasingVehicleCache;
+	for(let i in purchasingVehicles) {
+		checkVehiclePurchasing(purchasingVehicles[i]);
 	}
 
 	return false;
@@ -1475,7 +1477,7 @@ function processVehiclePurchasing() {
 
 // ===========================================================================
 
-function checkVehicleBuying(client) {
+function checkVehiclePurchasing(client) {
 	if(!isPlayerLoggedIn(client)) {
 		setPlayerBuyingVehicleState(client, VRR_VEHBUYSTATE_NONE, null, null);
 		return false;
@@ -1498,6 +1500,7 @@ function checkVehicleBuying(client) {
 
 	if(!isPlayerInAnyVehicle(client)) {
 		if(getPlayerData(client).buyingVehicle != false) {
+			getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "DealershipPurchaseExitedVehicle"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
@@ -1508,6 +1511,7 @@ function checkVehicleBuying(client) {
 
 	if(getDistance(getVehiclePosition(getPlayerData(client).buyingVehicle), getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition) > getGlobalConfig().buyVehicleDriveAwayDistance) {
 		if(getPlayerCurrentSubAccount(client).cash < getVehicleData(getPlayerData(client).buyingVehicle).buyPrice) {
+			getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
@@ -1515,6 +1519,7 @@ function checkVehicleBuying(client) {
 			return false;
 		}
 
+		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 		createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
 		updatePlayerCash(client);
@@ -1533,10 +1538,16 @@ function checkVehicleBuying(client) {
 // ===========================================================================
 
 function processVehicleBurning() {
+	if(!getGlobalConfig().useServerSideVehicleBurnCheck) {
+		return false;
+	}
+
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for(let i in vehicles) {
-		if(vehicles[i].health <= 250) {
-			return false;
+		if(vehicles[i].syncer == null) {
+			if(vehicles[i].health <= 250) {
+				vehicles[i].health = 250;
+			}
 		}
 	}
 }

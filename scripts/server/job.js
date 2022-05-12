@@ -926,17 +926,15 @@ function takeJob(client, jobId) {
 function reloadAllJobsCommand(command, params, client) {
 	forceAllPlayersToStopWorking();
 
+	deleteAllJobBlips();
+	deleteAllJobPickups();
 	clearArray(getServerData().jobs);
-	getServerData().jobs = loadJobsFromDatabase();
 
-	for(let i in getServerData().jobs) {
-		for(let j in getServerData().jobs[i].locations) {
-			deleteJobLocationPickup(i, j);
-			deleteJobLocationBlip(i, j);
-			createJobLocationPickup(i, j);
-			createJobLocationBlip(i, j);
-		}
-	}
+	Promise.resolve().then(() => {
+		getServerData().jobs = loadJobsFromDatabase();
+		createJobLocationPickup(i, j);
+		createJobLocationBlip(i, j);
+    });
 
 	announceAdminAction("AllJobsReloaded");
 }
