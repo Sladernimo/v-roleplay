@@ -60,12 +60,17 @@ function initGUI() {
 	initListGUI();
 	initResetPasswordGUI();
 	initChangePasswordGUI();
+	initLocaleChooserGUI();
 
 	closeAllWindows();
 	guiReady = true;
 
 	logToConsole(LOG_DEBUG, `[VRR.GUI] All GUI created successfully!`);
 	sendNetworkEventToServer("vrr.guiReady", true);
+
+	loadAllLocaleStrings();
+	resetGUIStrings();
+	resetLocaleChooserOptions();
 };
 
 // ===========================================================================
@@ -81,8 +86,9 @@ function closeAllWindows() {
 	characterSelect.window.shown = false;
 	twoFactorAuth.window.shown = false;
 	listDialog.window.shown = false;
-	resetPassword.window.shown = false;
+	passwordReset.window.shown = false;
 	passwordChange.window.shown = false;
+	localeChooser.window.shown = false;
 
 	mexui.setInput(false);
 	mexui.focusedControl = false;
@@ -137,11 +143,15 @@ function isAnyGUIActive() {
 		return true;
 	}
 
-	if(resetPassword.window.shown == true) {
+	if(passwordReset.window.shown == true) {
 		return true;
 	}
 
 	if(passwordChange.window.shown == true) {
+		return true;
+	}
+
+	if(localeChooser.window.shown == true) {
 		return true;
 	}
 
@@ -242,6 +252,13 @@ addNetworkEventHandler("vrr.showResetPasswordCodeInput", function() {
 
 // ===========================================================================
 
+addNetworkEventHandler("vrr.showLocaleChooser", function() {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal to show locale chooser from server`);
+	showLocaleChooserGUI();
+});
+
+// ===========================================================================
+
 addNetworkEventHandler("vrr.guiColour", function(red1, green1, blue1, red2, green2, blue2, red3, green3, blue3) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Received new GUI colours from server: ${red1}, ${green1}, ${blue1} / ${red2}, ${green2}, ${blue2} / ${red3}, ${green3}, ${blue3}`);
 	primaryColour = [red1, green1, blue1];
@@ -321,7 +338,6 @@ function processToggleGUIKeyPress(keyCode) {
 
 // ===========================================================================
 
-
 function resetGUIStrings() {
 	// Login GUI
 	login.messageLabel.text = getLocaleString("GUILoginWindowLabelEnterPassword");
@@ -346,7 +362,6 @@ function resetGUIStrings() {
 
 	// Reset Password GUI
 	passwordReset.messageLabel.text = toUpperCase(getLocaleString("GUIResetPasswordConfirmEmailLabel"));
-	passwordReset.emailLabel.text = getLocaleString("GUIResetPasswordConfirmEmailLabel");
 	passwordReset.emailInput.placeholder = getLocaleString("GUIResetPasswordEmailPlaceholder");
 	passwordReset.resetPasswordButton.text = toUpperCase(getLocaleString("GUIResetPasswordSubmitButton"));
 	passwordReset.backToLoginButton.text = toUpperCase(getLocaleString("GUIResetPasswordLoginButton"));
@@ -366,5 +381,5 @@ function resetGUIStrings() {
 	newCharacter.messageLabel.text = getLocaleString("GUINewCharacterMessageLabel");
 	newCharacter.firstNameInput.placeholder = getLocaleString("GUINewCharacterFirstNamePlaceholder");
 	newCharacter.lastNameInput.placeholder = getLocaleString("GUINewCharacterLastNamePlaceholder");
-	newCharacter.createButton.text = toUpperCase(getLocaleString("GUINewCharacterSubmitButton"));
+	newCharacter.createCharacterButton.text = toUpperCase(getLocaleString("GUINewCharacterSubmitButton"));
 }
