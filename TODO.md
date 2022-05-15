@@ -18,3 +18,6 @@
 * Stock Market
 * Mapped interiors for GTA 3
 * Drug growing/manufacturing
+---
+== Bug Fixes
+* Check natives for if player is console (getPlayerPosition, etc)
