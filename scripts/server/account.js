@@ -1167,7 +1167,6 @@ function initClient(client) {
 
 	setTimeout(function() {
 		if(client != null) {
-
 			clearChatBox(client);
 			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
 			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
@@ -1179,6 +1178,7 @@ function initClient(client) {
 			requestClientInfo(client);
 
 			if(tempAccountData != false) {
+				sendPlayerLocaleId(client, getPlayerData(client).accountData.locale);
 				if(isAccountAutoIPLoginEnabled(tempAccountData) && getPlayerData(client).accountData.ipAddress == getPlayerIP(client)) {
 					messagePlayerAlert(client, getLocaleString(client, "AutoLoggedInIP"));
 					loginSuccess(client);
@@ -1200,6 +1200,7 @@ function initClient(client) {
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 				}
 			} else {
+				sendPlayerLocaleId(client, 0);
 				if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 					logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
 					showPlayerRegistrationGUI(client);
@@ -1212,7 +1213,10 @@ function initClient(client) {
 
 			getServerData().clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(getServerData().clients[getPlayerId(client)].accountData.databaseId);
 			sendAccountKeyBindsToClient(client);
+
+
 		}
+
 	}, 2500);
 }
 
