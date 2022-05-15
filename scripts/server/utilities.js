@@ -408,6 +408,10 @@ function getClientFromSyncerId(syncerId) {
 // ===========================================================================
 
 function triggerWebHook(messageString, serverId = getServerId(), type = VRR_DISCORD_WEBHOOK_LOG) {
+	if(!getGlobalConfig().discord.webhook.enabled) {
+		return false;
+	}
+
 	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
 	tempURL = tempURL.replace("{0}", encodeURI(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
