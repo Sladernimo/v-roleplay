@@ -57,7 +57,7 @@ function blinkGPSBlip(times, position, colour) {
 			gpsBlipBlinkAmount = 0;
 			gpsBlipBlinkTimes = 0;
 			gpsBlip = game.createBlip(position, 0, 2, colour);
-			destroyTimer(gpsBlipBlinkTimer);
+			clearInterval(gpsBlipBlinkTimer);
 		}
 	}, gpsBlipBlinkInterval);
 }

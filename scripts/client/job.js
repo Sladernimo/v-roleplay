@@ -80,14 +80,19 @@ function showJobRouteLocation(position, colour) {
 function enteredJobRouteSphere() {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Entered job route sphere`);
 
-	destroyTimer(jobBlipBlinkTimer);
+	clearInterval(jobBlipBlinkTimer);
 	jobBlipBlinkAmount = 0;
 	jobBlipBlinkTimes = 0;
 
-	destroyElement(jobRouteLocationSphere);
-	destroyElement(jobRouteLocationBlip);
-	jobRouteLocationSphere = null;
-	jobRouteLocationBlip = null;
+	if(jobRouteLocationBlip != null) {
+		destroyElement(jobRouteLocationBlip);
+		jobRouteLocationBlip = null;
+	}
+
+	if(jobRouteLocationSphere != null) {
+		destroyElement(jobRouteLocationSphere);
+		jobRouteLocationSphere = null;
+	}
 
 	tellServerPlayerArrivedAtJobRouteLocation();
 }
@@ -113,7 +118,7 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 			jobBlipBlinkAmount = 0;
 			jobBlipBlinkTimes = 0;
 			jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
-			destroyTimer(jobBlipBlinkTimer);
+			clearInterval(jobBlipBlinkTimer);
 		}
 	}, jobBlipBlinkInterval);
 }
