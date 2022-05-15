@@ -394,6 +394,24 @@ function showJobInformationToPlayer(client, jobType) {
 
 // ===========================================================================
 
+function jobListCommand(command, params, client) {
+	if(!canPlayerUseJobs(client)) {
+		messagePlayerError(client, "You are not allowed to use any jobs!");
+		return false;
+	}
+
+	let jobList = getServerData().jobs.map(function(x) { return `${x.name}`});
+	let chunkedList = splitArrayIntoChunks(jobList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobList")));
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+	return true;
+}
+
+// ===========================================================================
+
 function takeJobCommand(command, params, client) {
 	if(!canPlayerUseJobs(client)) {
 		messagePlayerError(client, "You are not allowed to use any jobs!");

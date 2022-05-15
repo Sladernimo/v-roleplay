@@ -298,6 +298,10 @@ function loadCommands() {
 			new CommandData("uniform", jobUniformCommand, "[uniform]", getStaffFlagValue("None"), true, false, "Use a job uniform"),
 			new CommandData("equip", jobEquipmentCommand, "[equipment]", getStaffFlagValue("None"), true, false, "Get equipment for your job"),
 
+			new CommandData("jobs", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
+			new CommandData("joblist", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
+			new CommandData("alljobs", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
+
 			// Emergency Services (Police, Fire, EMS, etc)
 			new CommandData("department", jobDepartmentRadioCommand, "", getStaffFlagValue("None"), true, false, "Communicate with all emergency services (radio must be on and able to transmit)"),
 			new CommandData("d", jobDepartmentRadioCommand, "", getStaffFlagValue("None"), true, false, "Communicate with all emergency services (radio must be on and able to transmit)"),
