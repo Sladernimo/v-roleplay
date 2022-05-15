@@ -7,6 +7,9 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let resourceReady = false;
+let resourceStarted = false;
+
 let inSphere = false;
 let inVehicle = false;
 let inVehicleSeat = false;
@@ -27,7 +30,7 @@ let renderHotBar = true;
 let renderItemActionDelay = true;
 let renderInteriorLights = true;
 
-let logLevel = LOG_NONE;
+let logLevel = LOG_INFO|LOG_DEBUG|LOG_VERBOSE;
 
 let weaponDamageEnabled = {};
 let weaponDamageEvent = {};
@@ -75,10 +78,13 @@ let guiDownKey = false;
 // Pre-cache all allowed skins
 let allowedSkins = getAllowedSkins(getGame());
 
+let localLocaleId = 0;
+
 let serverData = {
 	houses: [],
 	businesses: [],
 	localeStrings: [],
+	localeOptions: [],
 	vehicles: [],
 	jobs: [],
 };
