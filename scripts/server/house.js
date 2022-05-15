@@ -224,11 +224,10 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	getHouseData(houseId).needsSaved = true;
+	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	getPlayerData(client).promptType = VRR_PROMPT_HOUSEGIVETOCLAN;
 
-	getHouseData(houseId).ownerType = VRR_HOUSEOWNER_CLAN;
-	getHouseData(houseId).ownerId = getClanData(clanId).databaseId;
-	messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
+	//messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
 }
 
 // ===========================================================================
@@ -256,9 +255,6 @@ function setHouseClanCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
-
-	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_GIVEHOUSETOCLAN;
 
 	getHouseData(houseId).clanRank = getClanRankData(clanId, clanRankId).level;
 	getHouseData(houseId).needsSaved = true;
@@ -1042,7 +1038,29 @@ function getHouseInfoCommand(command, params, client) {
 			break;
 	}
 
-	messagePlayerNormal(client, `🏠 {houseGreen}[House Info]{MAINCOLOUR} Description: {ALTCOLOUR}${getHouseData(houseId).description}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getHouseOwnerTypeText(getHouseData(houseId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getHouseData(houseId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${houseId}/${getHouseData(houseId).databaseId}`);
+	let houseData = getHouseData(businessId);
+	let tempStats = [
+		[`Name`, `${houseData.description}`],
+		[`ID`, `${houseData.index}/${houseData.databaseId}`],
+		[`Owner`, `${ownerName}`],
+		[`Locked`, `${getLockedUnlockedFromBool(houseData.locked)}`],
+		[`BuyPrice`, `${houseData.buyPrice}`],
+		[`RentPrice`, `${houseData.rentPrice}`],
+		[`HasInterior`, `${getYesNoFromBool(houseData.hasInterior)}`],
+		[`CustomInterior`, `${getYesNoFromBool(houseData.customInterior)}`],
+		[`InteriorLights`, `${getOnOffFromBool(houseData.interiorLights)}`],
+		[`RadioStation`, `${houseData.streamingRadioStation}`],
+	];
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHouseInfo", houseData.description)));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+
+	//messagePlayerNormal(client, `🏠 {houseGreen}[House Info]{MAINCOLOUR} Description: {ALTCOLOUR}${getHouseData(houseId).description}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getHouseOwnerTypeText(getHouseData(houseId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getHouseData(houseId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${houseId}/${getHouseData(houseId).databaseId}`);
 }
 
 // ===========================================================================
@@ -1151,7 +1169,7 @@ function buyHouseCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyHouseConfirmMessage"), getLocaleString(client, "BuyHouseConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_BUYHOUSE;
+	getPlayerData(client).promptType = VRR_PROMPT_HOUSEBUY;
 }
 
 // ===========================================================================
