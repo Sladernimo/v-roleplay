@@ -26,7 +26,7 @@ function initClientScripts() {
 
 function setUpInitialGame() {
 	switch(getGame()) {
-		case VRR_GAME_GTA_III:
+		case [VRR_GAME_GTA_III]: {
 			game.SET_PLAYER_NEVER_GETS_TIRED(game.GET_PLAYER_ID(), 0);
 			game.setGameStat(STAT_PROGRESSMADE, 9999);
 			game.setGameStat(STAT_TOTALPROGRESSINGAME, 9999);
@@ -35,8 +35,9 @@ function setUpInitialGame() {
 			game.onMission = true; // Disables taxi/vigilante/etc and other start mission triggers
 			SetStandardControlsEnabled(true); // Provided by mouse camera script (mousecam.js)
 			break;
+		}
 
-		case VRR_GAME_GTA_VC:
+		case [VRR_GAME_GTA_VC]: {
 			game.SET_PLAYER_NEVER_GETS_TIRED(game.GET_PLAYER_ID(), 0);
 			game.setGameStat(STAT_PROGRESSMADE, 9999);
 			game.setGameStat(STAT_TOTALPROGRESSINGAME, 9999);
@@ -69,8 +70,9 @@ function setUpInitialGame() {
 			game.onMission = true; // Disables taxi/vigilante/etc and other start mission triggers
 			SetStandardControlsEnabled(true); // Provided by mouse camera script (mousecam.js)
 			break;
+		}
 
-		case VRR_GAME_GTA_SA:
+		case [VRR_GAME_GTA_SA]: {
 			game.setGameStat(STAT_WEAPONTYPE_PISTOL_SKILL, 400);
 			game.setGameStat(STAT_WEAPONTYPE_PISTOL_SILENCED_SKILL, 400);
 			game.setGameStat(STAT_WEAPONTYPE_DESERT_EAGLE_SKILL, 400);
@@ -99,8 +101,9 @@ function setUpInitialGame() {
 			game.setDefaultInteriors(false); // Disables default yellow cone at doors for entering places in singleplayer
 			game.onMission = true; // Disables taxi/vigilante/etc and other start mission triggers
 			break;
+		}
 
-		case VRR_GAME_GTA_IV:
+		case [VRR_GAME_GTA_IV]: {
 			natives.allowEmergencyServices(false);
 			natives.setCreateRandomCops(true);
 			natives.setMaxWantedLevel(0);
@@ -163,12 +166,23 @@ function setUpInitialGame() {
 			// Some last steps
 			//natives.loadAllObjectsNow();
 			break;
+		}
 
-		case VRR_GAME_MAFIA_ONE:
+		case VRR_GAME_MAFIA_ONE: {
 			game.mapEnabled = false;
 			game.setTrafficEnabled(false);
 			break;
+		}
 	}
+}
+
+// ===========================================================================
+
+function initClient() {
+	loadLocaleConfig();
+	loadAllLocaleStrings();
+
+	setUpInitialGame();
 }
 
 // ===========================================================================

@@ -19,40 +19,45 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 
 	let freezePlayer = false;
 	switch(animationData.moveType) {
-		case VRR_ANIMMOVE_FORWARD:
+		case VRR_ANIMMOVE_FORWARD: {
 			setElementCollisionsEnabled(ped, false);
 			if(ped.isSyncer) {
 				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}
 			freezePlayer = true;
 			break;
+		}
 
-		case VRR_ANIMMOVE_BACK:
+		case VRR_ANIMMOVE_BACK: {
 			setElementCollisionsEnabled(pedId, false);
 			if(ped.isSyncer) {
 				setElementPosition(pedId, getPosBehindPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}
 			freezePlayer = true;
 			break;
+		}
 
-		case VRR_ANIMMOVE_LEFT:
+		case VRR_ANIMMOVE_LEFT: {
 			setElementCollisionsEnabled(pedId, false);
 			if(ped.isSyncer) {
 				setElementPosition(pedId, getPosToLeftOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}
 			freezePlayer = true;
 			break;
+		}
 
-		case VRR_ANIMMOVE_RIGHT:
+		case VRR_ANIMMOVE_RIGHT: {
 			setElementCollisionsEnabled(pedId, false);
 			if(ped.isSyncer) {
 				setElementPosition(pedId, getPosToRightOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}
 			freezePlayer = true;
 			break;
+		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 
 	if(getGame() < VRR_GAME_GTA_IV) {

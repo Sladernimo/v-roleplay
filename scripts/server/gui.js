@@ -58,11 +58,12 @@ function playerPromptAnswerYes(client) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
 
 	switch(getPlayerData(client).promptType) {
-		case VRR_PROMPT_CREATEFIRSTCHAR:
+		case VRR_PROMPT_CREATEFIRSTCHAR: {
 			showPlayerNewCharacterGUI(client);
 			break;
+		}
 
-		case VRR_PROMPT_BIZORDER:
+		case VRR_PROMPT_BIZORDER: {
 			if(getPlayerData(client).businessOrderAmount > 0) {
 				if(getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
 					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost/getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
@@ -87,8 +88,9 @@ function playerPromptAnswerYes(client) {
 				showPlayerErrorGUI(client, ``, `Business Order Canceled`);
 			}
 			break;
+		}
 
-		case VRR_PROMPT_GIVEVEHTOCLAN:
+		case VRR_PROMPT_GIVEVEHTOCLAN: {
 			if(!isPlayerInAnyVehicle(client)) {
 				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
 				return false;
@@ -114,8 +116,9 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
+		}
 
-		case VRR_PROMPT_GIVEHOUSETOCLAN:
+		case VRR_PROMPT_GIVEHOUSETOCLAN: {
 			let houseId = getPlayerHouse(client);
 			if(!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
@@ -137,8 +140,9 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
+		}
 
-		case VRR_PROMPT_GIVEBIZTOCLAN:
+		case VRR_PROMPT_GIVEBIZTOCLAN: {
 			let businessId = getPlayerBusiness(client);
 			if(!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -160,9 +164,10 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
+		}
 
-		case VRR_PROMPT_BUYHOUSE:
-			houseId = getPlayerHouse(client);
+		case VRR_PROMPT_BUYHOUSE: {
+			let houseId = getPlayerHouse(client);
 			if(!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 				return false;
@@ -186,9 +191,10 @@ function playerPromptAnswerYes(client) {
 
 			messagePlayerSuccess(client, `You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
 			break;
+		}
 
-		case VRR_PROMPT_BUYBIZ:
-			businessId = getPlayerBusiness(client);
+		case VRR_PROMPT_BUYBIZ: {
+			let businessId = getPlayerBusiness(client);
 			if(!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 				return false;
@@ -212,9 +218,12 @@ function playerPromptAnswerYes(client) {
 
 			messagePlayerSuccess(client, `You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
 			break;
+		}
 
-		default:
+		default: {
+			submitBugReport(client, `[AUTOMATED REPORT] Unknown prompt type: ${getPlayerData(client).promptType}`);
 			break;
+		}
 	}
 
 	getPlayerData(client).promptType = VRR_PROMPT_NONE;
