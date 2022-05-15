@@ -324,7 +324,7 @@ function executeServerCodeCommand(command, params, client) {
 
 	messagePlayerSuccess(client, "Server code executed!");
 	messagePlayerNormal(client, `Code: ${params}`, COLOUR_YELLOW);
-	messagePlayerNormal(client, `Returns: ${returnValue}`, COLOUR_YELLOW);
+	messagePlayerNormal(client, `Returns: ${returnValue} (${typeof returnValue})`, COLOUR_YELLOW);
 	logToConsole(LOG_INFO, `Server code executed by ${getPlayerDisplayForConsole(client)}: ${params}`);
 	return true;
 }
@@ -337,6 +337,7 @@ function executeClientCodeCommand(command, params, client) {
 		return false;
 	}
 
+	let splitParams = params.split(" ");
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let targetCode = splitParams.slice(1).join(" ");
 
@@ -350,10 +351,10 @@ function executeClientCodeCommand(command, params, client) {
 		return false;
 	}
 
-	sendRunCodeToClient(client, targetClient, targetCode, getPlayerId(client));
+	sendRunCodeToClient(targetClient, targetCode, client);
 
-	messagePlayerSuccess(client, "Executing client code for " + toString(getPlayerName(targetClient)) + "!");
-	messagePlayerNormal(client, "Code: " + targetCode);
+	messagePlayerSuccess(client, `Executing client code for ${getPlayerName(targetClient)}`);
+	messagePlayerNormal(client, `Code: ${targetCode}`);
 	return true;
 }
 
@@ -474,27 +475,26 @@ function restartGameModeCommand(command, params, client) {
 
 // ===========================================================================
 
-function clientRunCodeFail(client, returnTo, code) {
+function clientRunCodeFail(client, returnTo, error) {
 	let returnClient = getClientFromIndex(returnTo);
 	if(!returnClient) {
 		return false;
 	}
 
-	messagePlayerError(returnClient, `Client code failed to execute for ${getPlayerName(client)}!`);
-	messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
+	messagePlayerError(returnClient, `(${getPlayerName(client)}). Error: ${error}`);
 }
 
 // ===========================================================================
 
-function clientRunCodeSuccess(client, returnTo, returnVal, code) {
+function clientRunCodeSuccess(client, returnTo, returnVal) {
 	let returnClient = getClientFromIndex(returnTo);
 	if(!returnClient) {
 		return false;
 	}
 
-	messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
-	messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
-	messagePlayerNormal(returnClient, `Returns: ${returnVal}`, getColourByName("yellow"));
+	//messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
+	//messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
+	messagePlayerNormal(returnClient, `(${getPlayerName(client)}) Code returns: ${returnVal}`, getColourByName("white"));
 }
 
 // ===========================================================================
