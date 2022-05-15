@@ -296,7 +296,7 @@ function getPlayerInfoCommand(command, params, client) {
 		}
 	}
 
-	messagePlayerNormal(client, `{clanOrange}== {jobYellow}Player Info {clanOrange}==============================`);
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo")));
 
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${getClanData(getClanIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan)).name}[${getPlayerCurrentSubAccount(targetClient).clan}] (Rank: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).name}[Level: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).level}, DBID: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).databaseId}` : `(None)`;
 	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${getJobData(getJobIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job)).name}[${getPlayerCurrentSubAccount(targetClient).job}] (Rank: ${getPlayerCurrentSubAccount(targetClient).jobRank})` : `(None)`;
@@ -352,13 +352,7 @@ function checkPlayerSpawning() {
 
 // ===========================================================================
 
-function showPlayerPrompt(client, promptType, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	if(promptType == VRR_PROMPT_NONE) {
-		return false;
-	}
-
-	getPlayerData(client).promptType = promptType;
-
+function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
 	if(canPlayerUseGUI(client)) {
 		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
@@ -439,17 +433,17 @@ function gpsCommand(command, params, client) {
 	switch(toLowerCase(params)) {
 		case "police":
 		case "policestation":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_POLICE;
 			break;
 
 		case "hospital":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_HOSPITAL;
 			break;
 
 		case "job":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_JOB;
 			break;
 
@@ -457,7 +451,7 @@ function gpsCommand(command, params, client) {
 		case "skins":
 		case "clothes":
 		case "player":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_SKIN;
 			break;
@@ -468,20 +462,20 @@ function gpsCommand(command, params, client) {
 		case "weapons":
 		case "wep":
 		case "weps":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_WEAPON;
 			break;
 
 		case "food":
 		case "eat":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_FOOD;
 			break;
 
 		case "drink":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_DRINK;
 			break;
@@ -489,7 +483,7 @@ function gpsCommand(command, params, client) {
 		case "alcohol":
 		case "booze":
 		case "bar":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_ALCOHOL;
 			break;
@@ -499,7 +493,7 @@ function gpsCommand(command, params, client) {
 		case "vehrepair":
 		case "spray":
 		case "fix":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_VEHREPAIR;
 			break;
@@ -508,7 +502,7 @@ function gpsCommand(command, params, client) {
 		case "vehcolour":
 		case "carcolour":
 		case "colour":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_VEHCOLOUR;
 			break;
@@ -517,7 +511,7 @@ function gpsCommand(command, params, client) {
 			let itemTypeId = getItemTypeFromParams(params);
 			if(getItemTypeData(itemTypeId) != false) {
 				locationType = VRR_GPS_TYPE_BUSINESS;
-				blipColour = "businessBlue";
+				blipColour = "mediumGrey";
 				useType = getItemTypeData(itemTypeId).useType;
 			} else {
 				let gameLocationId = getGameLocationFromParams(params);
