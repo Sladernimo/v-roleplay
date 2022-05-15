@@ -92,9 +92,11 @@ function addAllNetworkHandlers() {
 	// House
 	addNetworkEventHandler("vrr.house", receiveHouseFromServer);
 
+	// GPS
+	addNetworkEventHandler("vrr.showGPSBlip", showGPSLocation);
+
 	// Locale
-	addNetworkEventHandler("vrr.localeString", receiveLocaleStringFromServer);
-	addNetworkEventHandler("vrr.localeStrings", receiveLocaleStringsFromServer);
+	addNetworkEventHandler("vrr.locale", setLocale);
 
 	// Misc
 	addNetworkEventHandler("vrr.mouseCursor", toggleMouseCursor);
@@ -372,6 +374,12 @@ function serverRequestedLocalPlayerSpawn(skinId, position) {
 		//	game.restoreCamera(true);
 		//}
 	}
+}
+
+// ===========================================================================
+
+function sendLocaleSelectToServer(localeId) {
+	sendNetworkEventToServer("vrr.localeSelect", localeId);
 }
 
 // ===========================================================================
