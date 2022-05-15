@@ -6,7 +6,7 @@ mexui.native.loadImage = function(imageFilePath, imageName)
 	var file = openFile(imageFilePath);
 	if(!file)
 	{
-		logToConsole(LOG_DEBUG, 'ERROR [IMAGE LOAD] - Opening File: '+imageFilePath);
+		logToConsole(LOG_DEBUG|LOG_ERROR, 'ERROR [IMAGE LOAD] - Opening File: '+imageFilePath);
 		return false;
 	}
 
@@ -19,14 +19,14 @@ mexui.native.loadImage = function(imageFilePath, imageName)
 		image = drawing.loadBMP(file);
 	else
 	{
-		logToConsole(LOG_DEBUG, 'ERROR [IMAGE LOAD] - Unsupported image file path extension. Currently only supports PNG or BMP.');
+		logToConsole(LOG_DEBUG|LOG_ERROR, 'ERROR [IMAGE LOAD] - Unsupported image file path extension. Currently only supports PNG or BMP.');
 		return false;
 	}
 
 	if(!image)
 	{
 		file.close();
-		logToConsole(LOG_DEBUG, 'ERROR [IMAGE LOAD] - Reading File: '+imageFilePath);
+		logToConsole(LOG_DEBUG|LOG_ERROR, 'ERROR [IMAGE LOAD] - Reading File: '+imageFilePath);
 		return false;
 	}
 
