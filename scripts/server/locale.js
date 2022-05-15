@@ -152,7 +152,7 @@ function setLocaleCommand(command, params, client) {
 	getPlayerData(client).accountData.locale = localeId;
 	getPlayerData(client).locale = localeId;
 	messagePlayerSuccess(client, getLocaleString(client, "LocaleChanged1", getLocaleString(client, "LocaleNativeName")));
-	sendPlayerLocaleStrings(client);
+	sendPlayerLocaleId(client, localeId);
 }
 
 // ===========================================================================
@@ -177,9 +177,7 @@ function reloadLocaleConfigurationCommand(command, params, client) {
 	getServerData().cachedTranslationFrom.fill([]);
 	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
 
-	getGlobalConfig().locale.defaultLanguageId = getLocaleFromParams(getGlobalConfig().locale.defaultLanguage);
-
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} has reloaded the locale settings and texts`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} has reloaded the locale settings and texts`);
 }
 
 // ===========================================================================
