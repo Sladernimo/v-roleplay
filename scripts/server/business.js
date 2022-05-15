@@ -411,7 +411,7 @@ function setBusinessClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_GIVEBIZTOCLAN;
+	getPlayerData(client).promptType = VRR_PROMPT_BIZGIVETOCLAN;
 
 	//getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
 	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
@@ -716,16 +716,47 @@ function getBusinessInfoCommand(command, params, client) {
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case VRR_BIZOWNER_NONE:
-			ownerName = "None";
-			break;
-
 		case VRR_BIZOWNER_PUBLIC:
 			ownerName = "Public";
 			break;
+
+		case VRR_BIZOWNER_NONE:
+			submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
+			ownerName = "INVALID";
+			break;
+
+		default:
+			ownerName = "None";
+			break;
 	}
 
-	messagePlayerInfo(client, `🏢 {businessBlue}[Business Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getBusinessData(businessId).name}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getBusinessOwnerTypeText(getBusinessData(businessId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getBusinessData(businessId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${businessId}/${getBusinessData(businessId).databaseId}`);
+	let businessData = getBusinessData(businessId);
+	let tempStats = [
+		[`Name`, `${businessData.name}`],
+		[`ID`, `${businessData.index}/${businessData.databaseId}`],
+		[`Owner`, `${ownerName}`],
+		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
+		[`BuyPrice`, `${businessData.buyPrice}`],
+		[`RentPrice`, `${businessData.rentPrice}`],
+		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
+		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
+		[`HasBuyableItems`, `${getYesNoFromBool(doesBusinessHaveAnyItemsToBuy(businessId))}`],
+		[`EntranceFee`, `${businessData.entranceFee}`],
+		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
+		[`Balance`, `${businessData.till}`],
+		[`RadioStation`, `${businessData.streamingRadioStation}`],
+		[`LabelHelpType`, `${businessData.labelHelpType}`],
+	];
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessInfo", businessData.name)));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+
+	//messagePlayerInfo(client, `🏢 {businessBlue}[Business Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getBusinessData(businessId).name}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getBusinessOwnerTypeText(getBusinessData(businessId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getBusinessData(businessId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${businessId}/${getBusinessData(businessId).databaseId}`);
 }
 
 // ===========================================================================
@@ -1261,7 +1292,8 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderCost = orderTotalCost;
 
 	getBusinessData(businessId).needsSaved = true;
-	showPlayerPrompt(client, VRR_PROMPT_BIZORDER, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${makeLargeNumberReadable(pricePerItem)} each will cost a total of $${makeLargeNumberReadable(orderTotalCost)}`, "Business Order Cost");
+	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${makeLargeNumberReadable(pricePerItem)} each will cost a total of $${makeLargeNumberReadable(orderTotalCost)}`, "Business Order Cost");
+	getPlayerData(client).promptType = VRR_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
@@ -1348,7 +1380,7 @@ function buyBusinessCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_BUYBIZ;
+	getPlayerData(client).promptType = VRR_PROMPT_BIZBUY;
 }
 
 // ===========================================================================
@@ -2453,30 +2485,38 @@ function updateBusinessPickupLabelData(businessId) {
 		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.name", getBusinessData(businessId).name, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.locked", getBusinessData(businessId).locked, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_NONE, true);
-		if(getBusinessData(businessId).labelHelpType == VRR_PROPLABEL_INFO_ENTERVEHICLE) {
-			setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTERVEHICLE, true);
-		} else if(getBusinessData(businessId).labelHelpType == VRR_PROPLABEL_INFO_ENTER) {
-			setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTER, true);
-		} else if(getBusinessData(businessId).labelHelpType == VRR_PROPLABEL_INFO_REPAIR) {
-			setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_REPAIR, true);
-		} else {
-			//if(getBusinessData(businessId).buyPrice > 0) {
-			//	setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.price", getBusinessData(businessId).buyPrice, true);
-			//	setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_BUYBIZ, true);
-			//} else {
+
+		switch(getBusinessData(businessId).labelHelpType) {
+			case VRR_PROPLABEL_INFO_ENTERVEHICLE: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTERVEHICLE, true);
+				break;
+			}
+
+			case VRR_PROPLABEL_INFO_ENTER: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTER, true);
+				break;
+			}
+
+			case VRR_PROPLABEL_INFO_REPAIR: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_REPAIR, true);
+				break;
+			}
+
+			default: {
 				if(getBusinessData(businessId).hasInterior) {
 					setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTER, true);
 				} else {
 					if(doesBusinessHaveAnyItemsToBuy(businessId)) {
 						setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_BUY, true);
+					} else {
+						removeEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help");
 					}
 				}
-			//}
+				break;
+			}
 		}
 
-		if(getBusinessData(businessId).buyPrice > 0) {
-			setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.price", getBusinessData(businessId).buyPrice, true);
-		}
+		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.price", getBusinessData(businessId).buyPrice, true);
 	}
 }
 
