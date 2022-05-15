@@ -514,6 +514,18 @@ function consolePrint(text) {
 
 // ===========================================================================
 
+function consoleWarn(text) {
+	console.warn(text);
+}
+
+// ===========================================================================
+
+function consoleError(text) {
+	console.error(text);
+}
+
+// ===========================================================================
+
 function getPlayerName(client) {
 	return client.name;
 }
