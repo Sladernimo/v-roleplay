@@ -130,45 +130,48 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	if(!locked && labelInfoType != VRR_PROPLABEL_INFO_NONE) {
 		let infoText = "";
 		switch(labelInfoType) {
-			case VRR_PROPLABEL_INFO_ENTER:
+			case VRR_PROPLABEL_INFO_ENTER: {
 				if(enterPropertyKey) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
 				} else {
 					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
 				}
 				break;
+			}
 
-			case VRR_PROPLABEL_INFO_BUY:
+			case VRR_PROPLABEL_INFO_BUY: {
 				infoText = getLocaleString("BusinessBuyItemsLabel", "/buy");
 				break;
+			}
 
-			case VRR_PROPLABEL_INFO_BUYBIZ:
+			case VRR_PROPLABEL_INFO_BUYBIZ: {
 				infoText = getLocaleString("BuyBusinessLabel", price);
 				break;
+			}
 
-			//case VRR_PROPLABEL_INFO_RENTBIZ:
-			//    infoText = `Use /bizrent to buy this business`;
-			//    break;
-
-			case VRR_PROPLABEL_INFO_BUYHOUSE:
+			case VRR_PROPLABEL_INFO_BUYHOUSE: {
 				infoText = getLocaleString("PropertyForSaleLabel", price);
 				break;
+			}
 
-			case VRR_PROPLABEL_INFO_RENTHOUSE:
+			case VRR_PROPLABEL_INFO_RENTHOUSE: {
 				infoText = getLocaleString("PropertyForRentLabel", rentPrice);
 				break;
+			}
 
-			case VRR_PROPLABEL_INFO_ENTERVEHICLE:
+			case VRR_PROPLABEL_INFO_ENTERVEHICLE: {
 				infoText = getLocaleString("VehicleDealershipLabel");
 				break;
+			}
 
-			default:
+			default: {
 				if(enterPropertyKey) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
 				} else {
 					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
 				}
 				break;
+			}
 		}
 		if(getDistance(localPlayer.position, position) <= renderLabelDistance-2) {
 			let size = propertyLabelLockedFont.measure(infoText, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
@@ -349,21 +352,25 @@ function processLabelRendering() {
 								}
 
 								switch(pickups[i].getData("vrr.label.type")) {
-									case VRR_LABEL_BUSINESS:
+									case VRR_LABEL_BUSINESS: {
 										renderPropertyEntranceLabel(pickups[i].getData("vrr.label.name"), pickups[i].position, pickups[i].getData("vrr.label.locked"), true, price, rentPrice, labelInfoType);
 										break;
+									}
 
-									case VRR_LABEL_HOUSE:
+									case VRR_LABEL_HOUSE: {
 										renderPropertyEntranceLabel("House", pickups[i].position, pickups[i].getData("vrr.label.locked"), false, price, rentPrice, labelInfoType);
 										break;
+									}
 
-									case VRR_LABEL_JOB:
+									case VRR_LABEL_JOB: {
 										renderJobLabel(pickups[i].getData("vrr.label.name"), pickups[i].position, pickups[i].getData("vrr.label.jobType"));
 										break;
+									}
 
-									case VRR_LABEL_EXIT:
+									case VRR_LABEL_EXIT: {
 										renderPropertyExitLabel(pickups[i].position);
 										break;
+									}
 								}
 							}
 						}
