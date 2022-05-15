@@ -141,6 +141,8 @@ function showChangePasswordGUI() {
 	passwordChange.window.shown = true;
 	mexui.focusedControl = passwordChange.passwordInput;
 	guiSubmitKey = checkChangePassword;
+
+	showLocaleChooserGUI();
 }
 
 // ===========================================================================

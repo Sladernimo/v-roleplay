@@ -161,6 +161,9 @@ function showRegistrationGUI() {
 	register.window.shown = true;
 	mexui.focusedControl = register.passwordInput;
 	guiSubmitKey = checkRegistration;
+
+	showLocaleChooserGUI();
+
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 

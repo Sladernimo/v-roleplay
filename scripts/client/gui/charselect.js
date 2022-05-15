@@ -170,6 +170,8 @@ function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, ski
 	guiSubmitKey = selectThisCharacter;
 	guiLeftKey = selectPreviousCharacter;
 	guiRightKey = selectNextCharacter;
+
+	showLocaleChooserGUI();
 }
 
 // ===========================================================================

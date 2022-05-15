@@ -156,6 +156,8 @@ function showLoginGUI() {
 	login.window.shown = true;
 	mexui.focusedControl = login.passwordInput;
 	guiSubmitKey = checkLogin;
+
+	showLocaleChooserGUI();
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 

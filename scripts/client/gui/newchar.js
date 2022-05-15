@@ -12,7 +12,7 @@ let newCharacter = {
 	messageLabel: null,
 	firstNameInput: null,
 	lastNameInput: null,
-	createButton: null,
+	createCharacterButton: null,
 	mainLogoImage: null,
 };
 
@@ -159,6 +159,8 @@ function showNewCharacterGUI() {
 	newCharacter.window.shown = true;
 	mexui.focusedInput = newCharacter.firstNameInput;
 	guiSubmitButton = checkNewCharacter;
+
+	showLocaleChooserGUI();
 }
 
 // ===========================================================================
