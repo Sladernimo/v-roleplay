@@ -95,10 +95,16 @@ function runClientCode(code, returnTo) {
 	try {
 		returnValue = eval("(" + code + ")");
 	} catch(error) {
-		sendNetworkEventToServer("vrr.runCodeFail", returnTo, code);
+		sendNetworkEventToServer("vrr.runCodeFail", returnTo, error.toString());
 		return false;
 	}
-	sendNetworkEventToServer("vrr.runCodeSuccess", returnTo, code, returnValue);
+	let returnValueString = returnValue;
+	if(returnValue != null && returnValue != undefined) {
+		returnValueString = `${returnValue.toString()} (${typeof returnValue})`;
+	} else {
+		returnValueString = "null/undefined";
+	}
+	sendNetworkEventToServer("vrr.runCodeSuccess", returnTo, returnValueString);
 }
 
 // ===========================================================================
