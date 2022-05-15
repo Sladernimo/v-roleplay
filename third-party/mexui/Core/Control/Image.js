@@ -18,3 +18,13 @@ mexui.Control.Image.prototype.render = function()
 	if(this.isFocused())
 		mexui.native.drawRectangleBorder(mexui.util.subtractVec2(pos,new Vec2(2,2)), mexui.util.addVec2(this.size,new Vec2(3,3)), this.getStyles('focused'));
 };
+
+// input
+mexui.Control.Image.prototype.onMouseDown = function(e)
+{
+	if(e.button == 0 && this.isCursorOverControl())
+	{
+		e.used = true;
+		this.checkToCallCallback();
+	}
+};
