@@ -67,6 +67,9 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("vrr.itemActionDelayComplete", playerItemActionDelayComplete);
 	addNetworkEventHandler("vrr.weaponDamage", playerDamagedByPlayer);
 
+	// Locale
+	addNetworkEventHandler("vrr.localeSelect", playerSelectedNewLocale);
+
 	// Misc
 	addNetworkEventHandler("vrr.plr.pos", updatePositionInPlayerData);
 	addNetworkEventHandler("vrr.plr.rot", updateHeadingInPlayerData);
@@ -404,7 +407,7 @@ function showPlayerErrorGUI(client, errorMessage, errorTitle, buttonText = "OK")
 
 function sendRunCodeToClient(client, code, returnTo) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending runcode to ${getPlayerDisplayForConsole(client)} (returnTo: ${getPlayerDisplayForConsole(getClientFromIndex(returnTo))}, Code: ${code})`);
-	sendNetworkEventToPlayer("vrr.runCode", client, code, returnTo);
+	sendNetworkEventToPlayer("vrr.runCode", client, code, getPlayerId(returnTo));
 }
 
 // ===========================================================================
@@ -1169,17 +1172,27 @@ function tellPlayerToSpawn(client, skinId, position) {
 
 // ==========================================================================
 
-function sendPlayerLocaleStrings(client) {
-	let strings = getGlobalConfig().locale.sendStringsToClient;
-	for(let i in strings) {
-		sendNetworkEventToPlayer("vrr.localeString", client, strings[i], getLocaleString(client, strings[i]));
-	}
+function sendNameTagDistanceToClient(client, distance) {
+	sendNetworkEventToPlayer("vrr.nameTagDistance", client, distance);
 }
 
 // ==========================================================================
 
-function sendNameTagDistanceToClient(client, distance) {
-	sendNetworkEventToPlayer("vrr.nameTagDistance", client, distance);
+function sendGPSBlipToPlayer(client, position, colour) {
+	sendNetworkEventToPlayer("vrr.showGPSBlip", client, position, colour);
+}
+
+// ==========================================================================
+
+function playerSelectedNewLocale(client, localeId) {
+	getPlayerData(client).locale = localeId;
+	sendPlayerLocaleId(client, localeId);
+}
+
+// ==========================================================================
+
+function sendPlayerLocaleId(client, localeId) {
+	sendNetworkEventToPlayer("vrr.locale", client, localeId);
 }
 
 // ==========================================================================
