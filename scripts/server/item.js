@@ -723,6 +723,12 @@ function playerUseItem(client, hotBarSlot) {
 		return false;
 	}
 
+	if(!getItemData(itemIndex)) {
+		submitBugReport(client, `[AUTOMATED REPORT] Tried to use invalid item (index ${itemIndex} in player slot ${hotBarSlot})`);
+		cachePlayerHotBarItems(client);
+		return false;
+	}
+
 	switch(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useType) {
 		case VRR_ITEM_USETYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
@@ -1021,6 +1027,39 @@ function playerUseItem(client, hotBarSlot) {
 
 		case VRR_ITEM_USETYPE_AMMO_CLIP: {
 			messagePlayerError(client, `Equip a compatible weapon and press R to use an ammo clip/magazine`);
+			break;
+		}
+
+		case VRR_ITEM_USETYPE_HEALTH: {
+			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
+
+			if(!getPlayerData(closestPlayer)) {
+				messagePlayerError(client, "There isn't anyone close enough to heal!");
+				return false;
+			}
+
+			if(getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().firstAidKitPlayerDistance) {
+				messagePlayerError(client, "There isn't anyone close enough to heal!");
+				return false;
+			}
+			break;
+		}
+
+		case VRR_ITEM_USETYPE_LOTTOTICKET: {
+
+			break;
+		}
+
+		case VRR_ITEM_USETYPE_AREARADIO: {
+			let state = getItemData(itemIndex)
+			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(state)} the boombox radio`);
+			messagePlayerAlert(client, `Use /radiostation to set the radio station and drop it on the ground to play`);
+			break;
+		}
+
+		case VRR_ITEM_USETYPE_PERSONALRADIO: {
+			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(state)} the boombox radio`);
+			messagePlayerAlert(client, `Use /radiostation to set the radio station`);
 			break;
 		}
 
