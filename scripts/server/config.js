@@ -83,9 +83,10 @@ let globalConfig = {
 	businessBlipStreamOutDistance: 200,
 	houseBlipStreamInDistance: 100,
 	houseBlipStreamOutDistance: 120,
-	jobBlipStreamInDistance: 2000,
-	jobBlipStreamOutDistance: 2500,
+	jobBlipStreamInDistance: -1,
+	jobBlipStreamOutDistance: -1,
 	handcuffPlayerDistance: 3,
+	firstAidKitPlayerDistance: 3,
 };
 
 // ===========================================================================
