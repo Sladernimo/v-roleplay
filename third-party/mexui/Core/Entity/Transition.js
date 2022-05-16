@@ -21,10 +21,10 @@ mexui.Entity.Transition.prototype.onMouseEnter = function(transitionDelay, trans
 	if(this.isMouseEntered())
 		return;
 	this.setMouseEntered(true);
-
+	
 	this.transitionDelay = transitionDelay;
 	this.transitionTime = transitionTime;
-
+	
 	if(transitionDelay > 0)
 	{
 		this.startDelay();
@@ -44,7 +44,7 @@ mexui.Entity.Transition.prototype.onMouseExit = function()
 	if(!this.isMouseEntered())
 		return;
 	this.setMouseEntered(false);
-
+	
 	if(this.isDelayActive())
 	{
 		this.clearDelayTimer();
@@ -82,7 +82,7 @@ mexui.Entity.Transition.prototype.stopProcessing = function()
 	{
 		this.stopInterpolation();
 	}
-
+	
 	this.delayTimer			= null;
 	this.processing			= false;
 };
@@ -129,12 +129,12 @@ mexui.Entity.Transition.prototype.increaseMainToPseudoProgress = function()
 	var timeDiff = mexui.util.time() - this.lastUpdateTime;
 	this.lastUpdateTime = mexui.util.time();
 	var progressDiff = timeDiff / this.transitionTime;
-
+	
 	if(this.direction)
 		this.mainToPseudoProgress += progressDiff;
 	else
 		this.mainToPseudoProgress -= progressDiff;
-
+	
 	if(this.mainToPseudoProgress < 0.0)
 	{
 		this.mainToPseudoProgress = 0.0;
@@ -149,7 +149,7 @@ mexui.Entity.Transition.prototype.increaseMainToPseudoProgress = function()
 mexui.Entity.Transition.prototype.getMainToPseudoProgress = function()
 {
 	this.increaseMainToPseudoProgress();
-
+	
 	return this.mainToPseudoProgress;
 };
 
@@ -181,3 +181,4 @@ mexui.Entity.Transition.prototype.clearDelayTimer = function()
 	clearTimeout(this.delayTimer);
 	this.delayTimer = null;
 };
+

@@ -13,9 +13,9 @@ mexui.Control.Second.prototype.validateInputCallback = function(e, character)
 mexui.Control.Second.prototype.validateValueCallback = function(e)
 {
 	var _int = parseInt(this.getText());
-
+	
 	if(_int < 1 || _int > 59)
 		return false;
-
+	
 	return true;
 };

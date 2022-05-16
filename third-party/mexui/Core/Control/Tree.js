@@ -2,7 +2,7 @@ mexui.util.createControlConstructor('Tree', true, function(window, x, y, w, h, s
 {
 	mexui.Component.Control.call(this, window, x, y, w, h, this.linkControlStyles('Tree', styles));
 	mexui.Entity.ControlWithEntries.call(this, false, false);
-
+	
 	this.rowHeight					= 25;
 	this.rowLevelIndentation		= 10;
 	this.scrollMultiplier			= 10.0;
@@ -32,10 +32,10 @@ mexui.Control.Tree.prototype.onMouseDown = function(e)
 	{
 		var pos = this.getScreenPosition();
 		pos.y -= this.axis.y.getScrolledOffset();
-
+		
 		this.testRowClick(e, this.axis.y.entries, pos);
 	}
-
+	
 	if(!e.used)
 		mexui.Entity.ControlWithEntries.prototype.onMouseDown.call(this, e);
 };
@@ -45,9 +45,9 @@ mexui.Control.Tree.prototype.render = function()
 {
 	var pos = this.getScreenPosition();
 	pos.y -= this.axis.y.getScrolledOffset();
-
+	
 	this.renderRows(this.axis.y.entries, 0, pos);
-
+	
 	if(this.isFocused())
 		mexui.native.drawRectangleBorder(mexui.util.subtractVec2(pos,new Vec2(2,2)), mexui.util.addVec2(this.size,new Vec2(3,3)), this.getStyles('focused'));
 };
@@ -58,23 +58,23 @@ mexui.Control.Tree.prototype.renderRows = function(rows, level, pos)
 	{
 		var row = rows[i];
 		var shouldDraw = pos.y >= this.getScreenPosition().y && pos.y <= (this.getScreenPosition().y + this.size.y);
-
+		
 		if(shouldDraw)
 		{
 			if(row.rows.length > 0)
 				mexui.native.drawText(new Vec2(pos.x - (this.rowLevelIndentation * 2), pos.y), new Vec2(this.size.x, this.rowHeight), row.open ? '-' : '+', this.getStyles('rowIcon'));
-
+			
 			mexui.native.drawRectangle(pos, new Vec2(this.size.x - (this.rowLevelIndentation * level), this.rowHeight), this.getStyles('row'));
 			mexui.native.drawText(pos, new Vec2(this.size.x, this.rowHeight), row.text, this.getStyles('row'));
 		}
-
+		
 		pos.y += this.rowHeight;
-
+		
 		if(shouldDraw)
 		{
 			mexui.native.drawAALine(pos, new Vec2(pos.x + this.size.x, pos.y), this.getStyles('rowLine'));
 		}
-
+		
 		if(row.rows.length > 0 && row.open)
 		{
 			pos.x += this.rowLevelIndentation;
@@ -106,7 +106,7 @@ mexui.Control.Tree.prototype.testRowClick = function(e, rows, pos)
 	for(var i in rows)
 	{
 		var row = rows[i];
-
+		
 		var rowPos = new Vec2(pos.x - (this.rowLevelIndentation * 2), pos.y);
 		var rowSize = new Vec2(this.size.x + (this.rowLevelIndentation * 2), this.rowHeight);
 		if(mexui.util.isCursorInRectangle(rowPos, rowSize))
@@ -115,9 +115,9 @@ mexui.Control.Tree.prototype.testRowClick = function(e, rows, pos)
 			e.used = true;
 			return;
 		}
-
+		
 		pos.y += this.rowHeight;
-
+		
 		if(row.rows.length > 0 && row.open)
 		{
 			this.testRowClick(e, row.rows, pos);
@@ -132,10 +132,10 @@ mexui.Control.Tree.prototype.onClickRow = function(row)
 	if(row.rows.length > 0)
 	{
 		//var scrollableLengthBefore = this.axis.y.getScrollableLength();
-
+		
 		row.open = !row.open;
 		this.checkToShowScrollBars();
-
+		
 		/*
 		if(this.scrollBars[1].shown)
 		{
@@ -153,3 +153,4 @@ mexui.Control.Tree.prototype.row = function(text)
 	this.axis.y.addEntry(entry);
 	return entry;
 };
+

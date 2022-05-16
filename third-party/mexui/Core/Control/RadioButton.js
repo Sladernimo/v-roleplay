@@ -1,10 +1,10 @@
 mexui.util.createControlConstructor('RadioButton', false, function(window, x, y, w, h, groupId, text, styles, callback)
 {
 	mexui.Component.Control.call(this, window, x, y, w, h, this.linkControlStyles('RadioButton', styles), callback);
-
+	
 	this.groupId			= groupId;
 	this.text				= text;
-
+	
 	this.checked			= this.isFirstRadioInGroup();
 	this.textMarginLeft		= 5;
 });
@@ -42,14 +42,14 @@ mexui.Control.RadioButton.prototype.onKeyDown = function(e, key, mods)
 mexui.Control.RadioButton.prototype.render = function()
 {
 	var pos = this.getScreenPosition();
-
+	
 	mexui.native.drawRectangle(pos, this.size, this.getStyles('main'));
-
+	
 	if(this.checked)
 		mexui.native.drawRectangle(mexui.util.addVec2(pos, new Vec2(2, 2)), new Vec2(this.size.x - 4, this.size.y - 4), this.getStyles('innerBox'));
-
+	
 	mexui.native.drawText(mexui.util.addVec2(pos, new Vec2(this.size.x + this.textMarginLeft, 2)), this.size, this.text, this.getStyles('main'));
-
+	
 	if(this.isFocused())
 		mexui.native.drawRectangleBorder(mexui.util.subtractVec2(pos,new Vec2(2,2)), mexui.util.addVec2(this.size,new Vec2(3,3)), this.getStyles('focused'));
 };
@@ -68,11 +68,11 @@ mexui.Control.RadioButton.prototype.getGroupRadios = function()
 	for(var i in windows)
 	{
 		var window = mexui.windows[i];
-
+		
 		for(var i2 in window.controls)
 		{
 			var control = window.controls[i2];
-
+			
 			if((control instanceof mexui.Control.RadioButton) && this.groupId == control.groupId)
 			{
 				radios.push(control);
@@ -103,7 +103,7 @@ mexui.Control.RadioButton.prototype.setChecked = function()
 	var checkedRadio = this.getCheckedRadio();
 	if(checkedRadio != this.checked)
 		checkedRadio.checked = false;
-
+	
 	this.checked = !this.checked;
 	this.checkToCallCallback();
 };

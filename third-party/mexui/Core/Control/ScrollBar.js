@@ -1,11 +1,11 @@
 mexui.util.createControlConstructor('ScrollBar', false, function(window, x, y, w, h, isVertical, styles, callback)
 {
 	mexui.Component.Control.call(this, window, x, y, w, h, this.linkControlStyles('ScrollBar', styles), callback);
-
+	
 	this.isVertical			= isVertical;
 	this.axisIndex			= isVertical ? 1 : 0;
 	this.otherAxisIndex		= isVertical ? 0 : 1;
-
+	
 	this.barHigherLength	= 50;
 	this.scrolledRatio		= 0.0;
 	this.isScrolling		= false;
@@ -16,7 +16,7 @@ mexui.util.linkBaseControlStyles('ScrollBar', {
 	main:
 	{
 		backgroundColour:	toColour(0, 0, 0, 190),
-
+		
 		hover:
 		{
 			backgroundColour:	toColour(0, 0, 0, 150)
@@ -25,7 +25,7 @@ mexui.util.linkBaseControlStyles('ScrollBar', {
 	innerBar:
 	{
 		backgroundColour:	toColour(79, 161, 246, 190),
-
+		
 		hover:
 		{
 			backgroundColour:	toColour(79, 161, 246, 150)
@@ -69,7 +69,7 @@ mexui.Control.ScrollBar.prototype.onMouseMove = function(e, offset)
 		this.clampScrolledRatio();
 		e.used = true;
 	}
-
+	
 	if(!e.used)
 		mexui.Component.Control.prototype.onMouseMove.call(this, e, offset);
 };
@@ -100,7 +100,7 @@ mexui.Control.ScrollBar.prototype.getInnerBarPosition = function()
 {
 	var screenPos = this.getScreenPosition();
 	var pos = new Vec2(screenPos.x, screenPos.y);
-
+	
 	var minPos = pos[this.axisIndex] + 1;
 	var maxPos = pos[this.axisIndex] + this.size[this.axisIndex] - 2;
 	pos[this.axisIndex] = minPos + (this.scrolledRatio * (maxPos - minPos - this.barHigherLength));

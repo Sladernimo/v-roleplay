@@ -15,7 +15,7 @@ mexui.util.isPointInRectangle = function(point, position, size)
 {
 	if(!point)
 		return false; // temp bug fix
-
+	
 	return point.x >= position.x && point.y >= position.y && point.x <= (position.x + size.x) && point.y <= (position.y + size.y);
 };
 
@@ -53,7 +53,7 @@ mexui.util.linkBaseControlStyles = function(controlName, derivedStyles)
 mexui.util.linkStyles = function(baseStyles, derivedStyles)
 {
 	derivedStyles = derivedStyles || {};
-
+	
 	for(var k in baseStyles)
 	{
 		switch(k)
@@ -62,12 +62,12 @@ mexui.util.linkStyles = function(baseStyles, derivedStyles)
 			case 'hover':
 				continue;
 		}
-
+		
 		if(!derivedStyles[k])
 			derivedStyles[k] = {};
 		if(!(derivedStyles[k].__proto__ instanceof Object))
 			derivedStyles[k].__proto__ = baseStyles[k];
-
+		
 		/*
 		var hoverBaseStyles = JSON.parse(JSON.stringify(baseStyles[k]));
 		if(!derivedStyles[k].hover)
@@ -76,7 +76,7 @@ mexui.util.linkStyles = function(baseStyles, derivedStyles)
 			derivedStyles[k].hover.__proto__ = hoverBaseStyles;
 		*/
 	}
-
+	
 	return mexui.util.linkGlobalStyles(mexui.Entity.StyleableEntity.globalDefaultStyles, derivedStyles);
 	//return derivedStyles;
 };
@@ -84,7 +84,7 @@ mexui.util.linkStyles = function(baseStyles, derivedStyles)
 mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 {
 	derivedStyles = derivedStyles || {};
-
+	
 	for(var k in derivedStyles)
 	{
 		switch(k)
@@ -93,13 +93,13 @@ mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 			case 'hover':
 				continue;
 		}
-
+		
 		if(!(derivedStyles[k].__proto__ instanceof Object))
 		{
 			derivedStyles[k].__proto__ = baseStyles.all;
 		}
 	}
-
+	
 	for(var k in derivedStyles)
 	{
 		switch(k)
@@ -108,7 +108,7 @@ mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 			case 'hover':
 				continue;
 		}
-
+		
 		/*
 		if(!derivedStyles[k].hasOwnProperty('hover'))
 		{
@@ -116,14 +116,14 @@ mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 			derivedStyles[k].hover.__proto__ = derivedStyles[k];
 		}
 		*/
-
+		
 		if(derivedStyles[k].focus)
 		{
 			if(!(derivedStyles[k].focus.__proto__ instanceof Object))
 			{
 				derivedStyles[k].focus.__proto__ = baseStyles.all;
 			}
-
+			
 			if(derivedStyles[k].focus.hover)
 			{
 				if(!(derivedStyles[k].focus.hover.__proto__ instanceof Object))
@@ -132,7 +132,7 @@ mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 				}
 			}
 		}
-
+		
 		if(derivedStyles[k].hover)
 		{
 			if(!(derivedStyles[k].hover.__proto__ instanceof Object))
@@ -141,7 +141,7 @@ mexui.util.linkGlobalStyles = function(baseStyles, derivedStyles)
 			}
 		}
 	}
-
+	
 	return derivedStyles;
 };
 
@@ -236,15 +236,15 @@ mexui.util.getCenterPosition = function(largerSize, smallerSize)
 
 mexui.util.getWindowSize = function()
 {
-	return new Vec2(game.width, game.height);
+	return new Vec2(gta.width, gta.height);
 };
 
 mexui.util.isRectangleInsideRectangle = function(pos1, size1, pos2, size2)
 {
-	return !(pos2.x > (pos1.x + size1.x) ||
-		   (pos2.x + size2.x) < pos1.x ||
-		   pos2.y > (pos1.y + size1.y) ||
-		   (pos2.y + size2.y) < pos1.y);
+	return !(pos2.x > (pos1.x + size1.x) || 
+           (pos2.x + size2.x) < pos1.x || 
+           pos2.y > (pos1.y + size1.y) ||
+           (pos2.y + size2.y) < pos1.y);
 };
 
 mexui.util.mergeStyles = function(styles, pseudoPartNames)
@@ -257,38 +257,38 @@ mexui.util.mergeStyles = function(styles, pseudoPartNames)
 		for(var i in pseudoPartNames)
 		{
 			var pseudoPartName = pseudoPartNames[i];
-
+			
 			if(styles2[0] && styles2[0].hasOwnProperty(pseudoPartName))
 				styles2.push(styles2[0][pseudoPartName]);
 		}
-
+		
 		for(var i=styles2.length-1; i>=0; i--)
 		{
 			if(styles2[i] == null)
 				continue;
-
+			
 			for(var k in styles2[i])
 			{
 				switch(k)
 				{
 					case 'focus':
 					case 'hover':
-
+					
 					case 'transitionTime':
 					case 'transitionDelay':
-
+					
 					case 'transitionDelayStartTime':
 					case 'transitionStartTime':
 					case 'transitionStarted':
 					case 'transitionEnded':
 					case 'transitionReverting':
-
+					
 						continue;
 				}
 				if(styles2[i].hasOwnProperty(k) && styles3[k] == null)
 				{
 					var styleValue = styles2[i][k];
-
+					
 					/*
 					if(i > 0 && (styles2[i].transitionTime != null || styles2[i].transitionDelay != null))
 					{
@@ -301,7 +301,7 @@ mexui.util.mergeStyles = function(styles, pseudoPartNames)
 							{
 								styles2[i].transitionEnded = true;
 								styleValue = styles2[0][k];
-
+								
 								delete styles2[i].transitionDelayStartTime;
 								delete styles2[i].transitionStartTime;
 								delete styles2[i].transitionStarted;
@@ -348,19 +348,19 @@ mexui.util.mergeStyles = function(styles, pseudoPartNames)
 						}
 					}
 					*/
-
+					
 					styles3[k] = styleValue;
 				}
 			}
 		}
-
+		
 		for(var i in styles2)
 		{
 			if(styles2[i])
 				styles2[i] = styles2[i].__proto__;
 		}
 	}
-
+	
 	return styles3;
 };
 
@@ -374,54 +374,54 @@ mexui.util.getTransitionStyles = function(styles, pseudoPartNames, progress)
 		for(var i in pseudoPartNames)
 		{
 			var pseudoPartName = pseudoPartNames[i];
-
+			
 			if(styles2[0] && styles2[0].hasOwnProperty(pseudoPartName))
 				styles2.push(styles2[0][pseudoPartName]);
 		}
-
+		
 		for(var i=styles2.length-1; i>=0; i--)
 		{
 			if(styles2[i] == null)
 				continue;
-
+			
 			for(var k in styles2[i])
 			{
 				switch(k)
 				{
 					case 'focus':
 					case 'hover':
-
+					
 					case 'transitionTime':
 					case 'transitionDelay':
-
+						
 						continue;
 				}
 				if(styles2[i].hasOwnProperty(k) && styles3[k] == null)
 				{
 					var styleValue = styles2[i][k];
-
+					
 					if(i > 0)
 					{
 						var mainStyleValue = styles2[0][k];
 						var pseudoStyleValue = styles2[i][k];
-
+						
 						//console.log(mainStyleValue+' '+pseudoStyleValue);
-
+						
 						styleValue = mexui.util.interpolateStyle(k, progress, mainStyleValue, pseudoStyleValue);
 					}
-
+					
 					styles3[k] = styleValue;
 				}
 			}
 		}
-
+		
 		for(var i in styles2)
 		{
 			if(styles2[i])
 				styles2[i] = styles2[i].__proto__;
 		}
 	}
-
+	
 	return styles3;
 };
 
@@ -476,7 +476,7 @@ mexui.util.fromColour = function(colour)
 
 mexui.util.time = function()
 {
-	return sdl.tickCount;
+	return gta.tickCount;
 };
 
 mexui.util.isIntChar = function(character)
@@ -570,14 +570,14 @@ mexui.util.isDayId = function(text)
 {
 	if(text.length == 2 && text.substr(0, 1) == '0')
 		text = text.substr(1);
-
+	
 	if(mexui.util.isPositiveInt(text))
 	{
 		var _int = parseInt(text);
 		if(_int >= 1 && _int <= 31)
 			return true;
 	}
-
+	
 	return false;
 };
 
@@ -585,7 +585,7 @@ mexui.util.isDayIdWithOptionalSuffix = function(text)
 {
 	if(mexui.util.isDayId(text))
 		return true;
-
+	
 	if(text.length > 2)
 	{
 		var last2Chars = text.substr(text.length - 2, 2);
@@ -598,14 +598,14 @@ mexui.util.isDayIdWithOptionalSuffix = function(text)
 			}
 		}
 	}
-
+	
 	return false;
 };
 
 mexui.util.inArrayOrStartsWithInArray = function(text, arr, startsWithCharCount)
 {
 	text = text.toLowerCase();
-
+	
 	for(var i in arr)
 	{
 		if(text === arr[i])
@@ -613,7 +613,7 @@ mexui.util.inArrayOrStartsWithInArray = function(text, arr, startsWithCharCount)
 			return true;
 		}
 	}
-
+	
 	if(text.length == startsWithCharCount)
 	{
 		for(var i in arr)
@@ -624,7 +624,7 @@ mexui.util.inArrayOrStartsWithInArray = function(text, arr, startsWithCharCount)
 			}
 		}
 	}
-
+	
 	return false;
 };
 
@@ -633,14 +633,14 @@ mexui.util.isMonthIdOrName = function(text)
 	var text2 = text;
 	if(text2.length == 2 && text2.substr(0, 1) == '0')
 		text2 = text2.substr(1);
-
+	
 	if(mexui.util.isPositiveInt(text2))
 	{
 		var _int = parseInt(text2);
 		if(_int >= 1 && _int <= 12)
 			return true;
 	}
-
+	
 	return mexui.util.isMonthName(text);
 };
 
@@ -649,14 +649,14 @@ mexui.util.isWeekDayId = function(text)
 	var text2 = text;
 	if(text2.length == 2 && text2.substr(0, 1) == '0')
 		text2 = text2.substr(1);
-
+	
 	if(mexui.util.isPositiveInt(text2))
 	{
 		var _int = parseInt(text2);
 		if(_int >= 1 && _int <= 7)
 			return true;
 	}
-
+	
 	return false;
 };
 
@@ -665,14 +665,14 @@ mexui.util.isWeekDayIdOrName = function(text)
 	var text2 = text;
 	if(text2.length == 2 && text2.substr(0, 1) == '0')
 		text2 = text2.substr(1);
-
+	
 	if(mexui.util.isPositiveInt(text2))
 	{
 		var _int = parseInt(text2);
 		if(_int >= 1 && _int <= 7)
 			return true;
 	}
-
+	
 	return mexui.util.isWeekDayName(text);
 };
 
@@ -690,15 +690,15 @@ mexui.util.expand2DigitYear = function(year, twoDigitYearCapOffset)
 mexui.util.isYear = function(text, minYear, maxYear, twoDigitYearCapOffset)
 {
 	var _int = parseInt(text);
-
+	
 	if(isNaN(_int))
 		return false;
-
+	
 	if(_int >= 0 && _int <= 99)
 		_int = mexui.util.expand2DigitYear(_int, twoDigitYearCapOffset);
-
+	
 	if(_int < minYear || _int > maxYear)
 		return false;
-
+	
 	return true;
 };

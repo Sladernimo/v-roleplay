@@ -3,11 +3,11 @@ mexui.util.createControlConstructor('TextInput', false, function(window, x, y, w
 	text = text || '';
 	if(singleCharacter)
 		multiLineSupported = false;
-
+	
 	mexui.Component.Control.call(this, window, x, y, w, h, this.linkControlStyles('TextInput', styles), callback);
-
+	
 	this.lines				= text ? mexui.util.splitLines(text) : [''];
-
+	
 	this.caretPosition		= new Vec2(0, 0);
 	this.multiLineSupported	= multiLineSupported === undefined ? true : multiLineSupported;
 	this.multiLine			= this.multiLineSupported ? mexui.util.doesContainEOLChar(text) : false;
@@ -17,7 +17,7 @@ mexui.util.createControlConstructor('TextInput', false, function(window, x, y, w
 	this.caretShownForBlink	= true;
 	this.lineHeight			= 25;
 	this.maxLength			= this.singleCharacter ? 1 : false;
-
+	
 	this.validValue			= true;
 });
 
@@ -44,7 +44,7 @@ mexui.Control.TextInput.prototype.onMouseDown = function(e)
 			this.caretPosition = this.getCaretPositionByCursor();
 		}
 	}
-
+	
 	mexui.Component.Control.prototype.onMouseDown.call(this, e);
 };
 
@@ -57,11 +57,11 @@ mexui.Control.TextInput.prototype.onCharacter = function(e, character)
 		if(!isValid1 && isValid1 !== undefined)
 			return;
 		*/
-
+		
 		var isValid2 = this.validateInputCallback ? this.validateInputCallback(e, character) : true;
 		if(!isValid2)
 			return;
-
+		
 		if(this.singleCharacter)
 		{
 			this.resetText();
@@ -73,7 +73,7 @@ mexui.Control.TextInput.prototype.onCharacter = function(e, character)
 			this.lines[this.caretPosition.y] = this.getTextWithNewCharacter(character);
 			this.caretPosition.x++;
 		}
-
+		
 		this.checkToCallCallback();
 		this.validateValue(e);
 	}
@@ -83,9 +83,9 @@ mexui.Control.TextInput.prototype.onKeyDown = function(e, key, mods)
 {
 	if(mexui.focusedControl != this)
 		return;
-
+	
 	var controlIsDown = (mods & KMOD_CTRL) == KMOD_CTRL;
-
+	
 	switch(key)
 	{
 		case SDLK_LEFT:
@@ -156,7 +156,7 @@ mexui.Control.TextInput.prototype.onKeyDown = function(e, key, mods)
 			}
 			break;
 	}
-
+	
 	if(this.multiLine)
 	{
 		switch(key)
@@ -199,7 +199,7 @@ mexui.Control.TextInput.prototype.onKeyDown = function(e, key, mods)
 				break;
 		}
 	}
-
+	
 	this.validateValue(e);
 };
 
@@ -208,9 +208,9 @@ mexui.Control.TextInput.prototype.render = function()
 {
 	var pos = this.getScreenPosition();
 	var pos2 = new Vec2(pos.x, pos.y);
-
+	
 	mexui.native.drawRectangle(pos, this.size, this.getStyles('main'));
-
+	
 	if(this.isEmpty())
 	{
 		mexui.native.drawText(pos, this.size, this.placeholder, this.getStyles('placeholder'));
@@ -222,18 +222,18 @@ mexui.Control.TextInput.prototype.render = function()
 		{
 			var displayedText = this.masked ? '*'.repeat(this.lines[i].length) : this.lines[i];
 			mexui.native.drawText(pos, lineSize, displayedText, this.getStyles('main'));
-
+			
 			pos.y += this.lineHeight;
 		}
 	}
-
+	
 	var valueIsInvalid = !this.isEmpty() && !this.validValue;
-
+	
 	if(this.isFocused())
 	{
 		if(!valueIsInvalid)
 			mexui.native.drawRectangleBorder(mexui.util.subtractVec2(pos2,new Vec2(2,2)), mexui.util.addVec2(this.size,new Vec2(3,3)), this.getStyles('focused'));
-
+		
 		if(this.caretShownForBlink)
 		{
 			var pos = this.getScreenPosition();
@@ -246,7 +246,7 @@ mexui.Control.TextInput.prototype.render = function()
 			mexui.native.drawAALine(caretPoint1, caretPoint2, this.getStyles('caret'));
 		}
 	}
-
+	
 	if(valueIsInvalid)
 		mexui.native.drawRectangleBorder(mexui.util.subtractVec2(pos2,new Vec2(2,2)), mexui.util.addVec2(this.size,new Vec2(3,3)), this.getStyles('invalidValue'));
 };
@@ -269,7 +269,7 @@ mexui.Control.TextInput.prototype.clampCaretPosition = function()
 		this.caretPosition.y = 0;
 	else if(this.caretPosition.y > (this.lines.length - 1))
 		this.caretPosition.y = this.lines.length - 1;
-
+	
 	if(this.caretPosition.x < 0)
 		this.caretPosition.x = 0;
 	else if(this.caretPosition.x > this.lines[this.caretPosition.y].length)
@@ -287,7 +287,7 @@ mexui.Control.TextInput.prototype.getCaretLineIndexByCursor = function()
 {
 	var yPos = gui.cursorPosition.y - this.getScreenPosition().y;
 	var lineIndex = Math.floor(yPos / this.lineHeight);
-
+	
 	if(lineIndex < 0)
 		return 0;
 	else if(lineIndex > (this.lines.length - 1))
@@ -301,12 +301,12 @@ mexui.Control.TextInput.prototype.getCharIndexByCursor = function(lineIndex)
 	var xPos = gui.cursorPosition.x - this.getScreenPosition().x;
 	var line = this.lines[lineIndex];
 	var lineStyles = this.getStyles('caret');
-
+	
 	for(var i=0,j=line.length; i<j; i++)
 	{
 		var text = line.substr(0, i + 1);
 		var textWidth = mexui.native.getTextWidth(text, lineStyles);
-
+		
 		if(xPos < textWidth)
 			return i;
 	}

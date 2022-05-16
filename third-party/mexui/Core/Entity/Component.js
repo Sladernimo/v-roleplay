@@ -1,7 +1,7 @@
 mexui.Entity.Component = function(moveable)
 {
 	this.moveable		= moveable;
-
+	
 	this.moving			= false;
 };
 mexui.util.extend(mexui.Entity.Component, mexui.Entity.StyleableEntity);

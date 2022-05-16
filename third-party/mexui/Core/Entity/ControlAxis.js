@@ -3,7 +3,7 @@ mexui.Entity.ControlAxis = function(control, isVertical, manualScrollBar, entrie
 	this.control				= control;
 	this.isVertical				= isVertical;
 	this.manualScrollBar		= manualScrollBar;
-
+	
 	this.axisIndex				= isVertical ? 1 : 0;
 	this.entriesShown			= true;
 	this.entryCountShown		= 15;
@@ -27,7 +27,7 @@ mexui.Entity.ControlAxis.prototype.initScrollBar = function()
 		var pos					= mexui.util.addVec2(this.control.position, new Vec2(this.control.entriesPositionOffset.x, this.control.size.y));
 		this.scrollBar			= new mexui.Control.ScrollBar(this.control.window, pos.x, pos.y, this.getDisplayedEntriesLength(), 25, false, this.control.styles.scrollBar);
 	}
-
+	
 	if(this.manualScrollBar)
 		this.scrollBar.shown = false;
 };
@@ -73,19 +73,19 @@ mexui.Entity.ControlAxis.prototype.getEntryIndexByPoint = function(point)
 		{
 			return null;
 		}
-
+		
 		var pos = new Vec2(screenPos.x + this.control.entriesPositionOffset.x, screenPos.y + this.control.entriesPositionOffset.y);
 		var index = Math.floor((point.y - pos.y) / this.control.entrySize[this.axisIndex]);
 		index += this.getEntryStartIndex();
-
+		
 		if(index < 0 || index >= this.entries.length)
 			return null;
-
+		
 		return index;
 	}
 	else
 	{
-
+		
 	}
 };
 
@@ -121,7 +121,7 @@ mexui.Entity.ControlAxis.prototype.getDisplayedEntriesLength = function()
 mexui.Entity.ControlAxis.prototype.setScrollBarManual = function(manual)
 {
 	this.manualScrollBar = manual;
-
+	
 	if(manual)
 	{
 		this.setScrollBarShown(false);
@@ -150,7 +150,7 @@ mexui.Entity.ControlAxis.prototype.checkToShowScrollBar = function()
 {
 	if(this.manualScrollBar)
 		return;
-
+	
 	this.setScrollBarShown(this.shouldDisplayScrollBar(), true);
 };
 
@@ -160,7 +160,7 @@ mexui.Entity.ControlAxis.prototype.getScrolledOffset = function()
 	{
 		if(!this.scrollBar.shown)
 			return 0;
-
+		
 		return this.scrollBar.scrolledRatio * this.getScrollableLength();
 	}
 	else
@@ -197,3 +197,4 @@ mexui.Entity.ControlAxis.prototype.getDisplayedEntryCount = function()
 	var displayedEntryCount = Math.floor(displayedEntriesLength / this.control.entrySize[this.axisIndex]);
 	return this.entries.length < displayedEntryCount ? this.entries.length : displayedEntryCount;
 };
+

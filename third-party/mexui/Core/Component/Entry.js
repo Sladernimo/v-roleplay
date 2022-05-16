@@ -2,7 +2,7 @@ mexui.Component.Entry = function(control, axisIndex, text, styles)
 {
 	mexui.Entity.Component.call(this, false);
 	mexui.Entity.StyleableEntity.call(this, this.linkComponentStyles('Entry', styles));
-
+	
 	this.control			= control;
 	this.axisIndex			= axisIndex;
 	this.text				= text;
@@ -29,3 +29,4 @@ mexui.Component.Entry.prototype.remove = function()
 	this.control.axis[this.getAxisKey()].entries.splice(this.getEntryIndex(), 1);
 	this.control.checkToShowScrollBars();
 };
+

@@ -2,12 +2,12 @@ mexui.Component.Control = function(window, x, y, w, h, styles, callback)
 {
 	mexui.Entity.Component.call(this, false);
 	mexui.Entity.StyleableEntity.call(this, this.linkComponentStyles('Control', styles));
-
+	
 	this.window		= window;
 	this.position	= new Vec2(x, y);
 	this.size		= new Vec2(w, h);
 	this.callback	= callback;
-
+	
 	this.boundTo	= null;
 };
 mexui.util.extend(mexui.Component.Control, mexui.Entity.Component);
@@ -131,3 +131,4 @@ mexui.Component.Control.prototype.unbind = function()
 {
 	this.boundTo = null;
 };
+

@@ -4,14 +4,14 @@ mexui.Entity.ControlWithEntries = function(entriesOutsideControl, manualScrollBa
 	this.entriesPositionOffset	= entriesPositionOffset	|| new Vec2(0, 0);
 	this.entrySize				= entrySize				|| new Vec2(this.size.x, 25);
 	this.entriesSizeOffset		= entriesSizeOffset		|| new Vec2(0, 0);
-
+	
 	this.axis					= {};
 	this.axis.x					= new mexui.Entity.ControlAxis(this, false, manualScrollBar, entriesPositionOffset);
 	this.axis.y					= new mexui.Entity.ControlAxis(this, true, manualScrollBar, entriesPositionOffset);
-
+	
 	this.axis.x.initScrollBar();
 	this.axis.y.initScrollBar();
-
+	
 	this.checkToShowScrollBars();
 };
 mexui.util.extend(mexui.Entity.ControlWithEntries, mexui.Component.Control);
@@ -46,7 +46,7 @@ mexui.Entity.ControlWithEntries.prototype.onMouseMove = function(e, offset)
 			}
 		}
 	}
-
+	
 	if(!e.used)
 		this.triggerEvent('onMouseMove', e, offset);
 };
@@ -74,7 +74,7 @@ mexui.Entity.ControlWithEntries.prototype.triggerEvent = function(eventName, e, 
 				return;
 		}
 	}
-
+	
 	mexui.Component.Control.prototype[eventName].call(this, e, data);
 };
 
@@ -95,3 +95,4 @@ mexui.Entity.ControlWithEntries.prototype.removeAllEntries = function()
 	this.axis.x.removeAllEntries();
 	this.axis.y.removeAllEntries();
 };
+

@@ -1,7 +1,7 @@
 mexui.util.createControlConstructor('Year', false, function(window, x, y, w, h, text, styles, callback)
 {
 	mexui.Control.TextInput.call(this, window, x, y, w, h, text, this.linkControlStyles('Year', styles), callback, false, false);
-
+	
 	this.maxYearOffset			= 10;
 	this.minYearCallback		= ()=>{ return 1900; };
 	this.maxYearCallback		= ()=>{ return new Date().getFullYear() + this.maxYearOffset; }

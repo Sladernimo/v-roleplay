@@ -1,12 +1,12 @@
 mexui.Entity.StyleableEntity = function(styles)
 {
 	this.styles						= styles;
-
+	
 	this.shown						= true;
 	//this.hovered					= false;
-
+	
 	this.transitions				= {};		// string controlPartName => Transition transition
-
+	
 	/*
 	this.transitionDelayTimer		= null;
 	this.transitionStartTime		= 0;
@@ -26,9 +26,9 @@ mexui.Entity.StyleableEntity.globalDefaultStyles = {
 		textAlign:			0.0,
 		textIndent:			5,
 		textColour:			toColour(0, 0, 0, 255),
-
+		
 		backgroundColour:	toColour(255, 255, 255, 255),
-
+		
 		lineWeight:			1
 	}
 };
@@ -39,14 +39,14 @@ mexui.Entity.StyleableEntity.defaultStyles = mexui.util.linkGlobalStyles(mexui.E
 		backgroundColour:	toColour(255, 255, 255, 255),
 		borderColour:		'none',
 		textColour:			toColour(0, 0, 0, 255),
-
+		
 		hover:
 		{
 			backgroundColour:	toColour(220, 220, 220, 255),
 			borderColour:		'none',
 			textColour:			toColour(0, 0, 0, 255)
 		}/*,
-
+		
 		focus:
 		{
 			borderColour:		toColour(255, 128, 0, 230),
@@ -96,30 +96,30 @@ mexui.Entity.StyleableEntity.prototype.getStyles = function(controlPartName)
 	var isFocused = this.isFocused();
 	var isHovered = this.isHovered();
 	var styles = this.styles[controlPartName];
-
+	
 	var transition = this.getTransition(controlPartName);
-
+	
 	if(transition.isProcessing())
 	{
 		return mexui.util.getTransitionStyles(styles, ['hover'], transition.getMainToPseudoProgress());
 	}
-
+	
 	if(isHovered)
 	{
 		return mexui.util.mergeStyles(styles, ['hover']);
 	}
-
+	
 	return styles;
 };
 
 mexui.Entity.StyleableEntity.prototype.getEntryStyles = function(data)
 {
 	var styles = {};
-
+	
 	for(var i in data)
 	{
 		var baseStyles = data[i][0].getStyles(data[i][1]);
-
+		
 		for(var k in baseStyles)
 		{
 			if(baseStyles.hasOwnProperty(k) && styles[k] === undefined)
@@ -128,11 +128,11 @@ mexui.Entity.StyleableEntity.prototype.getEntryStyles = function(data)
 			}
 		}
 	}
-
+	
 	for(var i in data)
 	{
 		var baseStyles = data[i][0].getStyles(data[i][1]);
-
+		
 		for(var k in baseStyles)
 		{
 			if(styles[k] === undefined)
@@ -141,7 +141,7 @@ mexui.Entity.StyleableEntity.prototype.getEntryStyles = function(data)
 			}
 		}
 	}
-
+	
 	return styles;
 };
 
@@ -152,10 +152,10 @@ mexui.Entity.StyleableEntity.prototype.onMouseEnter = function()
 	for(var i in controlParts)
 	{
 		var transition = this.getTransition(controlParts[i]);
-
+		
 		var delay = this.getTransitionDelayStyle(controlParts[i]);
 		var time = this.getTransitionTimeStyle(controlParts[i]);
-
+		
 		transition.onMouseEnter(delay, time);
 	}
 };
@@ -166,7 +166,7 @@ mexui.Entity.StyleableEntity.prototype.onMouseExit = function()
 	for(var i in controlParts)
 	{
 		var transition = this.getTransition(controlParts[i]);
-
+		
 		transition.onMouseExit();
 	}
 };
@@ -207,3 +207,4 @@ mexui.Entity.StyleableEntity.prototype.getTransitionTimeStyle = function(control
 	else
 		return mexui.Entity.Transition.defaultTransitionTime;
 };
+
