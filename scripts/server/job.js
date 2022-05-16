@@ -265,9 +265,14 @@ function createAllJobBlips() {
 	for(let i in getServerData().jobs) {
 		for(let j in getServerData().jobs[i].locations) {
 			getServerData().jobs[i].locations[j].blip = game.createBlip((getServerData().jobs[i].blipModel!=0) ? getServerData().jobs[i].blipModel : 0, getServerData().jobs[i].locations[j].position, 2, getColourByName("yellow"));
-			//setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
-			//setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
-			addToWorld(getServerData().jobs[i].locations[j].blip);
+			if(getGlobalConfig().jobBlipStreamInDistance == -1 || getGlobalConfig().jobBlipStreamOutDistance == -1)	{
+				getServerData().jobs[i].locations[j].blip.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
+				setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
+			}
+
+			//addToWorld(getServerData().jobs[i].locations[j].blip);
 			logToConsole(LOG_DEBUG, `[VRR.Job] Job '${getServerData().jobs[i].name}' location blip ${j} spawned!`);
 		}
 	}
