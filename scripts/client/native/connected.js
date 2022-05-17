@@ -7,6 +7,23 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+let disconnectReasons = [
+	"Lost Connection",
+	"Disconnected",
+	"Unsupported Client",
+	"Wrong Game",
+	"Incorrect Password",
+	"Unsupported Executable",
+	"Disconnected",
+	"Banned",
+	"Failed",
+	"Invalid Name",
+	"Crashed",
+	"Modified Game"
+];
+
+// ===========================================================================
+
 function sendNetworkEventToPlayer(networkEvent, client, ...args) {
 	triggerNetworkEvent.apply(null, networkEvent, client, args);
 }
