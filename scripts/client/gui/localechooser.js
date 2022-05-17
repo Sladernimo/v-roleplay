@@ -52,11 +52,27 @@ function closeLocaleChooserGUI() {
 
 // ===========================================================================
 
-function showLocaleChooserGUI() {
+function showLocaleChooserGUI(position = toVector2(0, 0)) {
+	if(position.x != 0 && position.y != 0) {
+		localeChooser.window.position = position;
+	} else {
+		localeChooser.window.position = toVector2((getScreenWidth()/2)-(localeChooser.window.size.x/2), getScreenHeight()-100);
+	}
+
 	//closeAllWindows();
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
 	localeChooser.window.shown = true;
+}
+
+// ===========================================================================
+
+function toggleLocaleChooserGUI() {
+	if(localeChooser.window.shown) {
+		closeLocaleChooserGUI();
+	} else {
+		showLocaleChooserGUI();
+	}
 }
 
 // ===========================================================================
