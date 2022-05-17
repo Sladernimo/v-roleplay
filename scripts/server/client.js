@@ -1196,3 +1196,9 @@ function sendPlayerLocaleId(client, localeId) {
 }
 
 // ==========================================================================
+
+function showLocaleChooserForPlayer(client) {
+	sendNetworkEventToPlayer("vrr.localeChooser", client);
+}
+
+// ==========================================================================

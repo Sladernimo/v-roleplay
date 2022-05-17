@@ -677,3 +677,9 @@ function reloadEconomyConfigurationCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function showLocalePickerTestCommand(command, params, client) {
+	showLocaleChooserForPlayer(client);
+}
+
+// ===========================================================================
