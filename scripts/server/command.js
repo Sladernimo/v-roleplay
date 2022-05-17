@@ -726,23 +726,23 @@ function processPlayerCommand(command, params, client) {
 
 		let possibleCommand = getCommandFromParams(command);
 		if(possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
-			messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Did you mean {ALTCOLOUR}/${possibleCommand.command} ?`);
+			messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Did you mean {ALTCOLOUR}/${possibleCommand.command} ?`);
 		} else {
-			messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
+			messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Use /help for commands and information.`);
 		}
 		return false;
 	}
 
 	if(!commandData.enabled) {
 		logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (command is disabled): /${command} ${paramsDisplay}`);
-		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}is disabled!`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} is disabled!`);
 		return false;
 	}
 
 	if(doesCommandRequireLogin(toLowerCase(command))) {
 		if(!isPlayerLoggedIn(client)) {
 			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (requires login first): /${command} ${paramsDisplay}`);
-			messagePlayerError(client, `You must be logged in to use the {ALTCOLOUR}/${command} {MAINCOLOUR}command!`);
+			messagePlayerError(client, `You must be logged in to use the {ALTCOLOUR}/${command}{MAINCOLOUR} command!`);
 			return false;
 		}
 	}
@@ -758,7 +758,7 @@ function processPlayerCommand(command, params, client) {
 	if(!isConsole(client)) {
 		if(!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(command)))) {
 			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
-			messagePlayerError(client, `You do not have permission to use the {ALTCOLOUR}/${toLowerCase(command)} {MAINCOLOUR}command!`);
+			messagePlayerError(client, `You do not have permission to use the {ALTCOLOUR}/${toLowerCase(command)}{MAINCOLOUR} command!`);
 			return false;
 		}
 	}
