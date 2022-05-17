@@ -105,14 +105,19 @@ function onPlayerQuit(event, client, quitReasonId) {
 	updateConnectionLogOnQuit(client, quitReasonId);
 
 	let reasonText = disconnectReasons[quitReasonId];
-	if(getPlayerData(client).customDisconnectReason != "") {
+	if(getPlayerData(client).customDisconnectReason != "" && getPlayerData(client).customDisconnectReason != undefined && getPlayerData(client).customDisconnectReason != false && getPlayerData(client).customDisconnectReason != null) {
 		reasonText = getPlayerData(client).customDisconnectReason;
 	}
+
 	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
-	messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
+
+	getClients().forEach(forClient => {
+		let reasonText = getGroupedLocaleString(forClient, "DisconnectReasons", quitReasonId);
+		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), reasonText));
+	});
+	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
 
 	if(isPlayerLoggedIn(client)) {
-
 		savePlayerToDatabase(client);
 		resetClientStuff(client);
 		getServerData().clients[getPlayerId(client)] = null;
