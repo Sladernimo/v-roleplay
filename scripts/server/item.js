@@ -1383,13 +1383,9 @@ function setAllItemTypeDataIndexes() {
 // ===========================================================================
 
 function cacheAllGroundItems() {
-	getServerData().groundItemCache = [];
-
-	for(let i in getServerData().items) {
-		if(getServerData().items[i].ownerType == VRR_ITEM_OWNER_GROUND) {
-			getServerData().groundItemCache.push(i);
-		}
-	}
+	clearArray(getServerData().groundItemCache);
+	getServerData().groundItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_GROUND);
+	getServerData().groundPlantCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_PLANT);
 }
 
 // ===========================================================================
@@ -1425,19 +1421,11 @@ function cachePlayerHotBarItems(client) {
 		return false;
 	}
 
-	for(let i = 0 ; i < 9 ; i++) {
-		getPlayerData(client).hotBarItems[i] = -1;
-	}
+	clearArray(getPlayerData(client).hotBarItems);
+	getPlayerData(client).hotBarItems = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_PLAYER && item.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 
-	for(let i in getServerData().items) {
-		if(getItemData(i).ownerType == VRR_ITEM_OWNER_PLAYER) {
-			if(getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
-				let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
-				if(firstSlot != -1) {
-					getPlayerData(client).hotBarItems[firstSlot] = i;
-				}
-			}
-		}
+	if(getPlayerData(client).hotBarItems.length < getGlobalConfig().maxPlayerItemSlots) {
+		getPlayerData(client).hotBarItems.concat(Array(getGlobalConfig().maxPlayerItemSlots-getPlayerData(client).hotBarItems.length).fill(-1));
 	}
 }
 

@@ -841,7 +841,7 @@ function createAllHouseBlips() {
 // ===========================================================================
 
 function createHouseEntrancePickup(houseId) {
-	if(areServerElementsSupported()) {
+	if(!areServerElementsSupported()) {
 		return false;
 	}
 
@@ -885,7 +885,7 @@ function createHouseEntrancePickup(houseId) {
 // ===========================================================================
 
 function createHouseEntranceBlip(houseId) {
-	if(areServerElementsSupported()) {
+	if(!areServerElementsSupported()) {
 		return false;
 	}
 
@@ -938,7 +938,7 @@ function createHouseEntranceBlip(houseId) {
 // ===========================================================================
 
 function createHouseExitPickup(houseId) {
-	if(areServerElementsSupported()) {
+	if(!areServerElementsSupported()) {
 		return false;
 	}
 
@@ -966,9 +966,9 @@ function createHouseExitPickup(houseId) {
 		pickupModelId = houseData.exitPickupModel;
 	}
 
-	let exitPickup = createGamePickup(pickupModelId, getHouseData(houseId).exitPosition, getGameConfig().pickupTypes[getGame()].house);
+	let exitPickup = createGamePickup(pickupModelId, houseData.exitPosition, getGameConfig().pickupTypes[getGame()].house);
 	if(exitPickup != null) {
-		setElementDimension(exitPickup, getHouseData(houseId).exitDimension);
+		setElementDimension(exitPickup, houseData.exitDimension);
 		setElementOnAllDimensions(exitPickup, false);
 		setElementStreamInDistance(exitPickup, getGlobalConfig().housePickupStreamInDistance);
 		setElementStreamOutDistance(exitPickup, getGlobalConfig().housePickupStreamOutDistance);
@@ -977,13 +977,12 @@ function createHouseExitPickup(houseId) {
 		getHouseData(houseId).exitPickup = exitPickup;
 		updateHousePickupLabelData(houseId);
 	}
-
 }
 
 // ===========================================================================
 
 function createHouseExitBlip(houseId) {
-	if(areServerElementsSupported()) {
+	if(!areServerElementsSupported()) {
 		return false;
 	}
 
@@ -1005,13 +1004,13 @@ function createHouseExitBlip(houseId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].House;
+	let blipModelId = getGameConfig().blipSprites[getGame()].Exit;
 
 	if(getServerData().houses[houseId].exitBlipModel != 0) {
-		blipModelId = getHouseData(houseId).exitBlipModel;
+		blipModelId = houseData.exitBlipModel;
 	}
 
-	let exitBlip = createGameBlip(blipModelId, getHouseData(houseId).exitPosition, 1, getColourByName("houseGreen"));
+	let exitBlip = createGameBlip(houseData.exitPosition, blipModelId, 1, getColourByName("houseGreen"));
 	if(exitBlip != null) {
 		if(houseData.exitDimension != -1) {
 			setElementDimension(exitBlip, houseData.exitDimension);
@@ -1567,7 +1566,7 @@ function updateHousePickupLabelData(houseId) {
 		setEntityData(houseData.entrancePickup, "vrr.owner.type", VRR_PICKUP_HOUSE_ENTRANCE, false);
 		setEntityData(houseData.entrancePickup, "vrr.owner.id", houseId, false);
 		setEntityData(houseData.entrancePickup, "vrr.label.type", VRR_LABEL_HOUSE, true);
-		//setEntityData(houseData.entrancePickup, "vrr.label.name", houseData.description, true);
+		setEntityData(houseData.entrancePickup, "vrr.label.name", houseData.description, true);
 		setEntityData(houseData.entrancePickup, "vrr.label.locked", houseData.locked, true);
 		if(houseData.buyPrice > 0) {
 			setEntityData(houseData.entrancePickup, "vrr.label.price", houseData.buyPrice, true);

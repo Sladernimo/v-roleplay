@@ -1712,44 +1712,50 @@ function createAllBusinessBlips() {
  *
  */
 function createBusinessEntrancePickup(businessId) {
+	if(!areServerElementsSupported()) {
+		return false;
+	}
+
 	if(!getServerConfig().createBusinessPickups) {
 		return false;
 	}
 
-	if(getBusinessData(businessId).entrancePickupModel != -1) {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+	let businessData = getBusinessData(businessId);
 
-		if(getServerData().businesses[businessId].entrancePickupModel != 0) {
-			pickupModelId = getBusinessData(businessId).entrancePickupModel;
-		}
+	//if(businessData.hasInterior) {
+	//	return false;
+	//}
 
-		logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${getBusinessData(businessId).name} (model ${pickupModelId})`);
+	if(businessData.entrancePickupModel == -1) {
+		return false;
+	}
 
-		if(areServerElementsSupported()) {
-			let entrancePickup = createGamePickup(pickupModelId, getBusinessData(businessId).entrancePosition, getGameConfig().pickupTypes[getGame()].business);
-			if(entrancePickup != null) {
-				if(businessData.entranceDimension != -1) {
-					setElementDimension(entrancePickup, businessData.entranceDimension);
-					setElementOnAllDimensions(entrancePickup, false);
-				} else {
-					setElementOnAllDimensions(entrancePickup, true);
-				}
+	let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
 
-				if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
-					entrancePickup.netFlags.distanceStreaming = false;
-				} else {
-					setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
-					setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
-				}
-				setElementTransient(entrancePickup, false);
-				getBusinessData(businessId).entrancePickup = entrancePickup;
-				updateBusinessPickupLabelData(businessId);
-			}
+	if(businessData.entrancePickupModel != 0) {
+		pickupModelId = businessData.entrancePickupModel;
+	}
+
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name} (model ${pickupModelId})`);
+
+	let entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+	if(entrancePickup != null) {
+		if(businessData.entranceDimension != -1) {
+			setElementDimension(entrancePickup, businessData.entranceDimension);
+			setElementOnAllDimensions(entrancePickup, false);
 		} else {
-			sendBusinessToPlayer(null, businessId, getBusinessData(businessId), getBusinessData(businessId).entrancePosition, getBusinessData(businessId).entranceBlipModel, getBusinessData(businessId).entrancePickupModel, getBusinessData(businessId).hasInterior, false);
+			setElementOnAllDimensions(entrancePickup, true);
 		}
 
-		return true;
+		if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
+			entrancePickup.netFlags.distanceStreaming = false;
+		} else {
+			setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
+			setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
+		}
+		setElementTransient(entrancePickup, false);
+		getBusinessData(businessId).entrancePickup = entrancePickup;
+		updateBusinessPickupLabelData(businessId);
 	}
 
 	return false;
@@ -1775,38 +1781,39 @@ function createBusinessEntranceBlip(businessId) {
 
 	let businessData = getBusinessData(businessId);
 
-	if(businessData.entranceBlipModel != -1) {
-		let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+	//if(businessData.hasInterior) {
+	//	return false;
+	//}
 
-		if(getServerData().businesses[businessId].entranceBlipModel != 0) {
-			blipModelId = businessData.entranceBlipModel;
-		}
+	if(businessData.entranceBlipModel == -1) {
+		return false;
+	}
 
-		logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
-		if(areServerElementsSupported()) {
-			let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, getColourByType("businessBlue"));
+	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
 
-			if(entranceBlip != null) {
-				if(businessData.entranceDimension != -1) {
-					setElementDimension(entranceBlip, businessData.entranceDimension);
-					setElementOnAllDimensions(entranceBlip, false);
-				} else {
-					setElementOnAllDimensions(entranceBlip, true);
-				}
+	if(businessData.entranceBlipModel != 0) {
+		blipModelId = businessData.entranceBlipModel;
+	}
 
-				if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
-					entranceBlip.netFlags.distanceStreaming = false;
-				} else {
-					setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
-					setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
-				}
-				setElementTransient(entranceBlip, false);
-				businessData.entranceBlip = entranceBlip;
-			}
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
+	let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, getColourByType("businessBlue"));
+	if(entranceBlip != null) {
+		if(businessData.entranceDimension != -1) {
+			setElementDimension(entranceBlip, businessData.entranceDimension);
+			setElementOnAllDimensions(entranceBlip, false);
 		} else {
-			sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, businessData.entrancePickupModel, businessData.hasInterior, false);
+			setElementOnAllDimensions(entranceBlip, true);
 		}
+
+		if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
+			entranceBlip.netFlags.distanceStreaming = false;
+		} else {
+			setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
+			setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
+		}
+		setElementTransient(entranceBlip, false);
+		businessData.entranceBlip = entranceBlip;
 	}
 }
 
@@ -1820,6 +1827,10 @@ function createBusinessEntranceBlip(businessId) {
  *
  */
 function createBusinessExitPickup(businessId) {
+	if(!areServerElementsSupported()) {
+		return false;
+	}
+
 	if(!getServerConfig().createBusinessPickups) {
 		return false;
 	}
@@ -1827,37 +1838,39 @@ function createBusinessExitPickup(businessId) {
 	let businessData = getBusinessData(businessId);
 
 	if(businessData.hasInterior) {
-		if(businessData.exitPickupModel != -1) {
-			let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+		return false;
+	}
 
-			if(getServerData().businesses[businessId].exitPickupModel != 0) {
-				pickupModelId = businessData.exitPickupModel;
-			}
+	if(businessData.entrancePickupModel == -1) {
+		return false;
+	}
 
-			logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name} (model ${pickupModelId})`);
+	let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
 
-			if(areServerElementsSupported()) {
-				let exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
-				if(exitPickup != null) {
-					if(businessData.exitDimension != -1) {
-						setElementDimension(exitPickup, businessData.exitDimension);
-						setElementOnAllDimensions(exitPickup, false);
-					} else {
-						setElementOnAllDimensions(exitPickup, true);
-					}
+	if(businessData.exitPickupModel != 0) {
+		pickupModelId = businessData.exitPickupModel;
+	}
 
-					if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
-						exitPickup.netFlags.distanceStreaming = false;
-					} else {
-						setElementStreamInDistance(exitPickup, getGlobalConfig().businessPickupStreamInDistance);
-						setElementStreamOutDistance(exitPickup, getGlobalConfig().businessPickupStreamOutDistance);
-					}
-					setElementTransient(exitPickup, false);
-					getBusinessData(businessId).exitPickup = exitPickup;
-					updateBusinessPickupLabelData(businessId);
-				}
-			}
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name} (model ${pickupModelId})`);
+
+	let exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
+	if(exitPickup != null) {
+		if(businessData.exitDimension != -1) {
+			setElementDimension(exitPickup, businessData.exitDimension);
+			setElementOnAllDimensions(exitPickup, false);
+		} else {
+			setElementOnAllDimensions(exitPickup, true);
 		}
+
+		if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
+			exitPickup.netFlags.distanceStreaming = false;
+		} else {
+			setElementStreamInDistance(exitPickup, getGlobalConfig().businessPickupStreamInDistance);
+			setElementStreamOutDistance(exitPickup, getGlobalConfig().businessPickupStreamOutDistance);
+		}
+		setElementTransient(exitPickup, false);
+		getBusinessData(businessId).exitPickup = exitPickup;
+		updateBusinessPickupLabelData(businessId);
 	}
 }
 
@@ -1871,6 +1884,10 @@ function createBusinessExitPickup(businessId) {
  *
  */
 function createBusinessExitBlip(businessId) {
+	if(!areServerElementsSupported()) {
+		return false;
+	}
+
 	if(!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -1878,36 +1895,38 @@ function createBusinessExitBlip(businessId) {
 	let businessData = getBusinessData(businessId);
 
 	if(businessData.hasInterior) {
-		if(businessData.exitBlipModel != -1) {
-			let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+		return false;
+	}
 
-			if(getServerData().businesses[businessId].exitBlipModel != 0) {
-				blipModelId = businessData.exitBlipModel;
-			}
+	if(businessData.exitBlipModel == -1) {
+		return false;
+	}
 
-			if(areServerElementsSupported()) {
-				logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
+	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
 
-				let exitBlip = createGameBlip(businessData.exitPosition, blipModelId, 1, getColourByName("businessBlue"));
-				if(exitBlip != null) {
-					if(businessData.exitDimension != -1) {
-						setElementDimension(exitBlip, businessData.exitDimension);
-						setElementOnAllDimensions(exitBlip, false);
-					} else {
-						setElementOnAllDimensions(exitBlip, true);
-					}
+	if(businessData.exitBlipModel != 0) {
+		blipModelId = businessData.exitBlipModel;
+	}
 
-					if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
-						exitBlip.netFlags.distanceStreaming = false;
-					} else {
-						setElementStreamInDistance(exitBlip, getGlobalConfig().businessBlipStreamInDistance);
-						setElementStreamOutDistance(exitBlip, getGlobalConfig().businessBlipStreamOutDistance);
-					}
-					setElementTransient(exitBlip, false);
-					businessData.exitBlip = exitBlip;
-				}
-			}
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
+
+	let exitBlip = createGameBlip(businessData.exitPosition, blipModelId, 1, getColourByName("businessBlue"));
+	if(exitBlip != null) {
+		if(businessData.exitDimension != -1) {
+			setElementDimension(exitBlip, businessData.exitDimension);
+			setElementOnAllDimensions(exitBlip, false);
+		} else {
+			setElementOnAllDimensions(exitBlip, true);
 		}
+
+		if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
+			exitBlip.netFlags.distanceStreaming = false;
+		} else {
+			setElementStreamInDistance(exitBlip, getGlobalConfig().businessBlipStreamInDistance);
+			setElementStreamOutDistance(exitBlip, getGlobalConfig().businessBlipStreamOutDistance);
+		}
+		setElementTransient(exitBlip, false);
+		businessData.exitBlip = exitBlip;
 	}
 }
 
@@ -2475,17 +2494,14 @@ function cacheAllBusinessItems() {
 
 // Caches all items for a business by businessId
 function cacheBusinessItems(businessId) {
-	getBusinessData(businessId).floorItemCache.splice(0, getBusinessData(businessId).floorItemCache.length);
-	getBusinessData(businessId).storageItemCache.splice(0, getBusinessData(businessId).storageItemCache.length);
+	clearArray(getBusinessData(businessId).floorItemCache);
+	clearArray(getBusinessData(businessId).storageItemCache);
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
-	for(let i in getServerData().items) {
-		if(getItemData(i).ownerType == VRR_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).floorItemCache.push(i);
-		} else if(getItemData(i).ownerType == VRR_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).storageItemCache.push(i);
-		}
-	}
+	let businessData = getBusinessData(businessId);
+	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
+	getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId);
+	getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+
 	logToConsole(LOG_VERBOSE, `[VRR.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
 }
 
