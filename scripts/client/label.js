@@ -145,17 +145,17 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 			}
 
 			case VRR_PROPLABEL_INFO_BUYBIZ: {
-				infoText = getLocaleString("BuyBusinessLabel", price);
+				infoText = getLocaleString("BuyBusinessLabel", "/bizbuy");
 				break;
 			}
 
 			case VRR_PROPLABEL_INFO_BUYHOUSE: {
-				infoText = getLocaleString("PropertyForSaleLabel", price);
+				infoText = getLocaleString("BuyHouseLabel", "/housebuy");
 				break;
 			}
 
 			case VRR_PROPLABEL_INFO_RENTHOUSE: {
-				infoText = getLocaleString("PropertyForRentLabel", rentPrice);
+				infoText = getLocaleString("RentHouseLabel", "/houserent");
 				break;
 			}
 
@@ -358,7 +358,7 @@ function processLabelRendering() {
 									}
 
 									case VRR_LABEL_HOUSE: {
-										renderPropertyEntranceLabel("House", pickups[i].position, pickups[i].getData("vrr.label.locked"), false, price, rentPrice, labelInfoType);
+										renderPropertyEntranceLabel(pickups[i].getData("vrr.label.name"), pickups[i].position, pickups[i].getData("vrr.label.locked"), false, price, rentPrice, labelInfoType);
 										break;
 									}
 
