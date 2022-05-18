@@ -213,6 +213,15 @@ function loadCommands() {
 		email: [
 			new CommandData("testemail", testEmailCommand, "<email address>", getStaffFlagValue("Developer"), true, true),
 		],
+		gate: [
+			new CommandData("gate", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("opengate", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("closegate", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("housegate", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("biz", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("door", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+			new CommandData("garagedoor", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
+		],
 		help: [
 			new CommandData("help", helpCommand, "", getStaffFlagValue("None"), false, false, "Shows help messages for information"),
 			new CommandData("commands", helpCommand, "", getStaffFlagValue("None"), false, false, "Shows help messages for information"),
@@ -747,13 +756,13 @@ function processPlayerCommand(command, params, client) {
 		}
 	}
 
-	//if(isClientFromDiscord(client)) {
-	//	if(!isCommandAllowedOnDiscord(command)) {
-	//      logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
-	//		messagePlayerError(client, `The {ALTCOLOUR}/${command} {MAINCOLOUR} command isn't available on discord!`);
-	//		return false;
-	//	}
-	//}
+	if(isClientFromDiscord(client)) {
+		if(!isCommandAllowedOnDiscord(command)) {
+	      	logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
+			messagePlayerError(client, `The {ALTCOLOUR}/${command}{MAINCOLOUR} command isn't available on discord!`);
+			return false;
+		}
+	}
 
 	if(!isConsole(client)) {
 		if(!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(command)))) {

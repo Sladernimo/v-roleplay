@@ -116,7 +116,7 @@ function triggerGateCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidGate"));
 	}
 
-	if(!canPlayerUseGate(client, closestGate)) {
+	if(!doesPlayerHaveGateKeys(client, closestGate)) {
 		messagePlayerError(client, getLocaleString(client, "NoGateAccess"));
 		return false;
 	}
