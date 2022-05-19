@@ -1752,3 +1752,65 @@ function forceFightStyleCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function getPlayerCurrentHouseCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+
+	let houseId = getPlayerHouse(targetClient);
+
+	if(!houseId) {
+		messagePlayerAlert(client, `${getPlayerName(targetClient)} isn't in or at a house!`);
+		return false;
+	}
+
+	let houseData = getHouseData(houseId);
+	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in house '${houseData.description}' (ID ${houseId}/${houseData.databaseId})`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function getPlayerCurrentBusinessCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+
+	let businessId = getPlayerBusiness(targetClient);
+
+	if(!businessId) {
+		messagePlayerAlert(client, `${getPlayerName(targetClient)} isn't in or at a house!`);
+		return false;
+	}
+
+	let businessData = getBusinessData(houseId);
+	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in business '${businessData.name}' (ID ${businessId}/${businessData.databaseId})`);
+	return true;
+}
+
+// ===========================================================================
