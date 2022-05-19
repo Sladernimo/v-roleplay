@@ -701,18 +701,20 @@ function getBusinessInfoCommand(command, params, client) {
 		return false;
 	}
 
+	let businessData = getBusinessData(businessId);
+
 	let ownerName = "Unknown";
-	switch(getBusinessData(businessId).ownerType) {
+	switch(businessData.ownerType) {
 		case VRR_BIZOWNER_CLAN:
-			ownerName = getClanData(getBusinessData(businessId).ownerId).name;
+			ownerName = getClanData(businessData.ownerId).name;
 			break;
 
 		case VRR_BIZOWNER_JOB:
-			ownerName = getJobData(getBusinessData(businessId).ownerId).name;
+			ownerName = getJobData(businessData.ownerId).name;
 			break;
 
 		case VRR_BIZOWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(getBusinessData(businessId).ownerId);
+			let subAccountData = loadSubAccountFromId(businessData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
@@ -730,11 +732,11 @@ function getBusinessInfoCommand(command, params, client) {
 			break;
 	}
 
-	let businessData = getBusinessData(businessId);
+
 	let tempStats = [
 		[`Name`, `${businessData.name}`],
 		[`ID`, `${businessData.index}/${businessData.databaseId}`],
-		[`Owner`, `${ownerName}`],
+		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
 		[`BuyPrice`, `${businessData.buyPrice}`],
 		[`RentPrice`, `${businessData.rentPrice}`],
@@ -748,7 +750,7 @@ function getBusinessInfoCommand(command, params, client) {
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
 
-	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}`);
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessInfo", businessData.name)));
 	let chunkedList = splitArrayIntoChunks(stats, 6);
@@ -1837,15 +1839,15 @@ function createBusinessExitPickup(businessId) {
 
 	let businessData = getBusinessData(businessId);
 
-	if(businessData.hasInterior) {
+	//if(!businessData.hasInterior) {
+	//	return false;
+	//}
+
+	if(businessData.exitPickupModel == -1) {
 		return false;
 	}
 
-	if(businessData.entrancePickupModel == -1) {
-		return false;
-	}
-
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+	let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
 
 	if(businessData.exitPickupModel != 0) {
 		pickupModelId = businessData.exitPickupModel;
@@ -1894,9 +1896,9 @@ function createBusinessExitBlip(businessId) {
 
 	let businessData = getBusinessData(businessId);
 
-	if(businessData.hasInterior) {
-		return false;
-	}
+	//if(!businessData.hasInterior) {
+	//	return false;
+	//}
 
 	if(businessData.exitBlipModel == -1) {
 		return false;
