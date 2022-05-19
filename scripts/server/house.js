@@ -952,9 +952,9 @@ function createHouseExitPickup(houseId) {
 
 	let houseData = getHouseData(houseId);
 
-	if(houseData.hasInterior) {
-		return false;
-	}
+	//if(houseData.hasInterior) {
+	//	return false;
+	//}
 
 	if(houseData.exitPickupModel == -1) {
 		return false;
@@ -996,9 +996,9 @@ function createHouseExitBlip(houseId) {
 
 	let houseData = getHouseData(houseId);
 
-	if(houseData.hasInterior) {
-		return false;
-	}
+	//if(houseData.hasInterior) {
+	//	return false;
+	//}
 
 	if(houseData.exitBlipModel == -1) {
 		return false;
@@ -1082,14 +1082,16 @@ function getHouseInfoCommand(command, params, client) {
 		return false;
 	}
 
+	let houseData = getHouseData(houseId);
+
 	let ownerName = "Unknown";
 	switch(getHouseData(houseId).ownerType) {
 		case VRR_HOUSEOWNER_CLAN:
-			ownerName = getClanData(getHouseData(houseId).ownerId).name;
+			ownerName = getClanData(houseData).name;
 			break;
 
 		case VRR_HOUSEOWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(getHouseData(houseId).ownerId);
+			let subAccountData = loadSubAccountFromId(houseData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
@@ -1101,16 +1103,20 @@ function getHouseInfoCommand(command, params, client) {
 			ownerName = "Public";
 			break;
 
+		case VRR_HOUSEOWNER_BIZ:
+			ownerName = getBusinessDataFromDatabaseId(houseData.ownerId).name;
+			break;
+
 		case VRR_HOUSEOWNER_JOB:
-			ownerName = getJobData(getHouseData(houseId).ownerId).name;
+			ownerName = getJobData(houseData.ownerId).name;
 			break;
 	}
 
-	let houseData = getHouseData(businessId);
+
 	let tempStats = [
 		[`Name`, `${houseData.description}`],
 		[`ID`, `${houseData.index}/${houseData.databaseId}`],
-		[`Owner`, `${ownerName}`],
+		[`Owner`, `${ownerName} (${getHouseOwnerTypeText(houseData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(houseData.locked)}`],
 		[`BuyPrice`, `${houseData.buyPrice}`],
 		[`RentPrice`, `${houseData.rentPrice}`],
@@ -1120,7 +1126,7 @@ function getHouseInfoCommand(command, params, client) {
 		[`RadioStation`, `${houseData.streamingRadioStation}`],
 	];
 
-	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}`);
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHouseInfo", houseData.description)));
 	let chunkedList = splitArrayIntoChunks(stats, 6);
