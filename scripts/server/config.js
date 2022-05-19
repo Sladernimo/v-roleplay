@@ -87,6 +87,11 @@ let globalConfig = {
 	jobBlipStreamOutDistance: -1,
 	handcuffPlayerDistance: 3,
 	firstAidKitPlayerDistance: 3,
+	passwordRequiredCapitals: 0,
+	passwordRequiredNumbers: 0,
+	passwordRequiredSymbols: 0,
+	minChatLines: 1,
+	maxChatLines: 6,
 };
 
 // ===========================================================================
@@ -258,6 +263,17 @@ function saveServerConfigToDatabase() {
 				["svr_charselect_vw", getServerConfig().characterSelectDimension],
 				["svr_inflation_multiplier", getServerConfig().inflationMultiplier],
 				["svr_intro_music", getServerConfig().introMusicURL],
+				["svr_gui", getServerConfig().useGUI],
+				["svr_logo", getServerConfig().useLogo],
+				["svr_snow_falling", getServerConfig().fallingSnow],
+				["svr_snow_ground", getServerConfig().groundSnow],
+				["svr_biz_blips", getServerConfig().createBusinessBlips],
+				["svr_biz_pickups", getServerConfig().createBusinessPickups],
+				["svr_house_blips", getServerConfig().createHouseBlips],
+				["svr_house_pickups", getServerConfig().createHousePickups],
+				["svr_job_blips", getServerConfig().createJobBlips],
+				["svr_job_pickups", getServerConfig().createJobPickups],
+				["svr_nametag_distance", getServerConfig().nameTagDistance],
 			];
 
 			let dbQuery = null;
