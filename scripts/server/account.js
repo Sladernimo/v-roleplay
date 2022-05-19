@@ -112,7 +112,7 @@ function toggleAccountGUICommand(command, params, client) {
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI`);
 			} else {
 				hideAllPlayerGUI(client);
-				messagePlayerNormal(client, `👋 Welcome back to ${getServerName()}, ${getPlayerName(client)}! Please /login to continue.`, getColourByName("softGreen"));
+				messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "{ALTCOLOUR}/login{MAINCOLOUR}"));
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled)`);
 			}
 		} else {
@@ -121,7 +121,7 @@ function toggleAccountGUICommand(command, params, client) {
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
 			} else {
 				hideAllPlayerGUI(client);
-				messagePlayerNormal(client, `👋 Welcome to ${getServerName()}, ${getPlayerName(client)}! Please /register to continue.`, getColourByName("softGreen"));
+				messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "{ALTCOLOUR}/register{MAINCOLOUR}"));
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
 			}
 		}
@@ -134,13 +134,13 @@ function toggleAccountGUICommand(command, params, client) {
 function toggleAccountLoginAttemptNotificationsCommand(command, params, client) {
 	let flagValue = getAccountSettingsFlagValue("AuthAttemptAlert");
 
-	if(hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
+	if(doesPlayerHaveLoginAlertsEnabled(client)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} notification by email when somebody tries to login to your account`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} notification by email when somebody tries to login to your account`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} notification by email when somebody tries to login to your account`);
+		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} notification by email when somebody tries to login to your account`);
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	}
 
@@ -154,14 +154,14 @@ function toggleAccountServerLogoCommand(command, params, client) {
 
 	if(!doesPlayerHaveLogoEnabled(client)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} the server logo`);
+		messagePlayerSuccess(client, getLocaleString(client, "AccountServerLogoSet", `${getBoolRedGreenInlineColour(true)}${getLocaleString(client, "On")}{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo ON for their account`);
 		if(getServerConfig().showLogo) {
 			updatePlayerShowLogoState(client, true);
 		}
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} the server logo.`);
+		messagePlayerSuccess(client, getLocaleString(client, "AccountServerLogoSet", `${getBoolRedGreenInlineColour(false)}${getLocaleString(client, "Off")}{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo OFF for their account`);
 		updatePlayerShowLogoState(client, false);
 	}
@@ -190,11 +190,11 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 
 	if(!doesPlayerHaveTwoFactorAuthEnabled(client)) {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, `{MAINCOLOUR}You have turned ${getBoolRedGreenInlineColour(false)}ON{MAINCOLOUR} two factor authentication!`);
+		messagePlayerSuccess(client, getLocaleString(client, "TwoFactorAuthSet", `${getBoolRedGreenInlineColour(true)}${getLocaleString(client, "On")}{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication ON for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, `You have turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} two-factor authentication for login.`);
+		messagePlayerSuccess(client, getLocaleString(client, "TwoFactorAuthSet", `${getBoolRedGreenInlineColour(false)}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication OFF for their account`);
 	}
 	return true;
@@ -204,7 +204,7 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 
 function registerCommand(command, params, client) {
 	if(isPlayerRegistered(client)) {
-		messagePlayerError(client, `Your name is already registered!`);
+		messagePlayerError(client, getLocaleString(client, "AccountNameAlreadyRegistered"));
 		return false;
 	}
 
@@ -236,8 +236,8 @@ function changeAccountPasswordCommand(command, params, client) {
 	}
 
 	if(!doesPasswordMeetRequirements(newPassword)) {
-		messagePlayerError(client, `The new password must meet the requirements!`);
-		messagePlayerInfo(client, `Passwords must have at least one capital letter, one lowercase letter, and one number!`);
+		messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
+		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", `${getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals)}, ${getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols)}`));
 		return false;
 	}
 
@@ -254,12 +254,12 @@ function setAccountChatScrollLinesCommand(command, params, client) {
 	}
 
 	if(isNaN(params)) {
-		messagePlayerError(client, `The line amount must be a number!`);
+		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesNotNumber"));
 		return false;
 	}
 
 	if(toInteger(params) < 1 || toInteger(params) > 6) {
-		messagePlayerError(client, `The line amount must be between 1 and 6!`);
+		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesMustBeBetween", getGlobalConfig().minChatLines, getGlobalConfig().maxChatLines));
 		return false;
 	}
 
@@ -267,7 +267,7 @@ function setAccountChatScrollLinesCommand(command, params, client) {
 
 	getPlayerData(client).accountData.chatScrollLines = lines;
 	sendPlayerChatScrollLines(client, lines);
-	messagePlayerSuccess(client, `Your chatbox will now scroll ${toInteger(lines)} lines at a time!`);
+	messagePlayerSuccess(client, getLocaleString(client, "ChatScrollLinesSet", lines));
 }
 
 // ===========================================================================
@@ -301,7 +301,7 @@ function setAccountEmailCommand(command, params, client) {
 	let emailAddress = getParam(params, " ", 1);
 
 	if(!isValidEmailAddress(emailAddress)) {
-		messagePlayerError(client, `The email '${emailAddress} is not valid!`);
+		messagePlayerError(client, getLocaleString(client, "RegistrationFailedInvalidEmail"));
 		return false;
 	}
 
@@ -343,7 +343,7 @@ function verifyAccountEmailCommand(command, params, client) {
 	}
 
 	if(module.hashing.sha512(verificationCode) != getPlayerData(client).accountData.emailVerificationCode) {
-		messagePlayerError(client, `Invalid email verification code! A new one has been created and sent to your email.`);
+		messagePlayerError(client, getLocaleString(client, "InvalidEmailVerificationCode"));
 		let emailVerificationCode = generateEmailVerificationCode();
 		setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
 		sendEmailVerificationEmail(client, emailVerificationCode);
@@ -353,8 +353,8 @@ function verifyAccountEmailCommand(command, params, client) {
 	getPlayerData(client).accountData.flags.moderation = addBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("EmailVerified"));
 	getPlayerData(client).accountData.emailVerificationCode = "";
 
-	messagePlayerSuccess(client, `Your email has been verified!`);
-	messagePlayerAlert(client, `You can now use your email for password resets, two-factor authentication, alerts, and more!`);
+	messagePlayerSuccess(client, getLocaleString(client, "EmailVerified"));
+	messagePlayerAlert(client, getLocaleString(client, "EmailVerifiedTip"));
 	saveAccountToDatabase(getPlayerData(client).accountData);
 }
 
@@ -840,7 +840,7 @@ function checkLogin(client, password) {
 			logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
-		if(isAccountEmailVerified(getPlayerData(client).accountData) && isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if(isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
@@ -856,17 +856,18 @@ function checkLogin(client, password) {
 			logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
-		if(isAccountEmailVerified(getPlayerData(client).accountData) && isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if(isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
 	}
 
-	//if(doesPlayerHaveTwoFactorAuthEnabled(client)) {
-	//	getPlayerData(client).twoFactorAuthCode = toUpperCase(generateRandomString(6));
-	//	showPlayerTwoFactorAuthenticationGUI(client);
-	//	return true;
-	//}
+	if(doesPlayerHaveTwoFactorAuthEnabled(client) && checkForSMTPModule() && getEmailConfig().enabled) {
+		getPlayerData(client).twoFactorAuthCode = toUpperCase(generateRandomString(6));
+		showPlayerTwoFactorAuthenticationGUI(client);
+		sendAccountTwoFactorAuthCode(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerData(client).twoFactorAuthCode);
+		return true;
+	}
 
 	if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 		showPlayerLoginSuccessGUI(client);
@@ -874,7 +875,7 @@ function checkLogin(client, password) {
 
 	loginSuccess(client);
 
-	if(isAccountEmailVerified(getPlayerData(client).accountData) && isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+	if(isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 		sendAccountLoginSuccessNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 	}
 }
@@ -1425,6 +1426,12 @@ function doesPlayerHaveTwoFactorAuthEnabled(client) {
 
 // ===========================================================================
 
+function doesPlayerHaveLoginAlertsEnabled(client) {
+	return hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("AuthAttemptAlert"));
+}
+
+// ===========================================================================
+
 function setAccountEmail(accountData, emailAddress) {
 	accountData.emailAddress = emailAddress;
 }
@@ -1486,7 +1493,7 @@ function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGa
 	let emailBodyText = getEmailConfig().bodyContent.accountAuthFailAlert;
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
 	emailBodyText = emailBodyText.replace("{IPADDRESS}", ip);
-	emailBodyText = emailBodyText.replace("{LOCATION}", `${cityName}, ${countryName}, ${countryName}`);
+	emailBodyText = emailBodyText.replace("{LOCATION}", `${cityName}, ${subDivisionName}, ${countryName}`);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", date.toLocaleString('en-US'));
 
@@ -1542,6 +1549,18 @@ function checkPlayerTwoFactorAuthentication(client, authCode) {
 
 function isPlayerATester(client) {
 
+}
+
+// ===========================================================================
+
+function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
+	let emailBodyText = getEmailConfig().bodyContent.twoFactorAuthentication;
+	emailBodyText = emailBodyText.replace("{2FACODE}", twoFactorAuthCode);
+	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(getGame()));
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+
+	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
+	return true;
 }
 
 // ===========================================================================
