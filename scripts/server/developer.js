@@ -683,3 +683,34 @@ function showLocalePickerTestCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function executeDatabaseQueryCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if(!targetClient) {
+		messagePlayerError(client, "That player was not found!");
+		return false;
+	}
+
+	if(targetCode == "") {
+		messagePlayerError(client, "You didn't enter any code!");
+		return false;
+	}
+
+	let success = quickDatabaseQuery(params);
+
+	if(!success) {
+		messagePlayerAlert(client, `Database query failed to execute: {ALTCOLOUR}${query}`);
+	} else if(typeof success != "boolean") {
+		messagePlayeSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
+		messagePlayerInfo(client, `Returns: ${success}`);
+	} else {
+		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
+	}
+	return true;
+}
+
+// ===========================================================================
