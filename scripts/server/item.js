@@ -1385,7 +1385,7 @@ function setAllItemTypeDataIndexes() {
 function cacheAllGroundItems() {
 	clearArray(getServerData().groundItemCache);
 	getServerData().groundItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_GROUND);
-	getServerData().groundPlantCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_PLANT);
+	//getServerData().groundPlantCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_PLANT);
 }
 
 // ===========================================================================
