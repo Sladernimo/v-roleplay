@@ -912,103 +912,6 @@ function quickDatabaseQuery(queryString) {
 
 // ===========================================================================
 
-function executeDatabaseQueryCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	if(!targetClient) {
-		messagePlayerError(client, "That player was not found!");
-		return false;
-	}
-
-	if(targetCode == "") {
-		messagePlayerError(client, "You didn't enter any code!");
-		return false;
-	}
-
-	let success = quickDatabaseQuery(params);
-
-	if(!success) {
-		messagePlayerAlert(client, `Database query failed to execute: {ALTCOLOUR}${query}`);
-	} else if(typeof success != "boolean") {
-		messagePlayeSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
-		messagePlayerInfo(client, `Returns: ${success}`);
-	} else {
-		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
-	}
-	return true;
-}
-
-// ===========================================================================
-
-function setConstantsAsGlobalVariablesInDatabase() {
-	let dbConnection = connectToDatabase();
-	let entries = Object.entries(global);
-	for(let i in entries) {
-		logToConsole(LOG_DEBUG, `[VRR.Database] Checking entry ${i} (${entries[i]})`);
-		if(toString(i).slice(0, 3).indexOf("VRR_") != -1) {
-			logToConsole(LOG_DEBUG, `[VRR.Database] Adding ${i} (${entries[i]}) to database global variables`);
-		}
-	}
-}
-
-// ===========================================================================
-
-function createDatabaseInsertQuery(tableName, data) {
-	let fields = [];
-	let values = [];
-
-	for(let i in data) {
-		if(data[i][1] != "undefined" && data[i][1] != NaN && data[i][0] != 'NaN') {
-			if(data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				fields.push(data[i][0]);
-
-				if(typeof data[i][1] == "string") {
-					if(data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push("UNIX_TIMESTAMP()");
-					} else {
-						values.push(`'${data[i][1]}'`);
-					}
-				} else {
-					values.push(data[i][1]);
-				}
-			}
-		}
-	}
-
-	let queryString = `INSERT INTO ${tableName} (${fields.join(", ")}) VALUES (${values.join(", ")})`;
-	return queryString;
-}
-
-// ===========================================================================
-
-function createDatabaseUpdateQuery(tableName, data, whereClause) {
-	let values = [];
-
-	for(let i in data) {
-		if(data[i][0] != "undefined" && data[i][0] != NaN && data[i][0] != 'NaN') {
-			if(data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				if(typeof data[i][1] == "string") {
-					if(data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push(`${data[i][0]}=UNIX_TIMESTAMP()`);
-					} else {
-						values.push(`${data[i][0]}='${data[i][1]}'`);
-					}
-				} else {
-					values.push(`${data[i][0]}=${data[i][1]}`);
-				}
-			}
-		}
-	}
-
-	let queryString = `UPDATE ${tableName} SET ${values.join(", ")} WHERE ${whereClause}`;
-	return queryString;
-}
-
-// ===========================================================================
-
 function sendNetworkEventToPlayer(eventName, client, ...args) {
 	let argsArray = [eventName, client];
 	argsArray = argsArray.concat(args);
@@ -1267,6 +1170,24 @@ function getCountryNameFromIP(ip) {
 
 // ===========================================================================
 
+function getSubdivisionNameFromIP(ip) {
+	if(module.geoip.getSubdivisionName(ip)) {
+		return module.geoip.getSubdivisionName(ip);
+	}
+	return false;
+}
+
+// ===========================================================================
+
+function getCityNameFromIP(ip) {
+	if(module.geoip.getCityNameFromIP(ip)) {
+		return module.geoip.getCityNameFromIP(ip);
+	}
+	return false;
+}
+
+// ===========================================================================
+
 function getServerPort() {
 	return server.port;
 }
@@ -1281,6 +1202,32 @@ function serverBanIP(ip) {
 
 function setVehicleTrunkState(vehicle, trunkState) {
 	sendNetworkEventToPlayer("vrr.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+}
+
+// ===========================================================================
+
+function addAllEventHandlers() {
+	addEventHandler("onResourceStart", onResourceStart);
+	addEventHandler("onResourceStop", onResourceStop);
+	addEventHandler("onServerStop", onResourceStop);
+
+	addEventHandler("onProcess", onProcess);
+	addEventHandler("onEntityProcess", onEntityProcess);
+
+	addEventHandler("onPlayerConnect", onInitialConnectionToServer);
+	addEventHandler("onPlayerJoin", onPlayerJoin);
+	addEventHandler("onPlayerJoined", onPlayerJoined);
+	addEventHandler("onPlayerChat", onPlayerChat);
+	addEventHandler("onPlayerQuit", onPlayerQuit);
+	addEventHandler("onElementStreamIn", onElementStreamIn);
+	addEventHandler("onElementStreamOut", onElementStreamOut);
+
+	addEventHandler("onPedSpawn", onPedSpawn);
+	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
+	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
+
+	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
+	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
 }
 
 // ===========================================================================
