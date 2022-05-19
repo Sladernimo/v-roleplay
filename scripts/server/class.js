@@ -88,7 +88,7 @@ class ServerConfigData {
 		this.discordConfig = {
 			sendEvents: true,
 			sendChat: true,
-			sendAdminEvents: true,
+			sendAdmin: true,
 		};
 
 		if(dbAssoc) {
@@ -131,9 +131,9 @@ class ServerConfigData {
 			//this.realTimeZone = dbAssoc["svr_real_time_timezone"];
 
 			this.discord = {
-				sendEvents: true,
-				sendChat: true,
-				sendAdmin: true,
+				sendEvents: intToBool(dbAssoc["svr_discord_send_events"]),
+				sendChat: intToBool(dbAssoc["svr_discord_send_chat"]),
+				sendAdmin: intToBool(dbAssoc["svr_discord_send_admin"]),
 			};
 		}
 	}
