@@ -85,6 +85,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("vrr.showRegistration", showRegistrationGUI);
 	addNetworkEventHandler("vrr.showNewCharacter", showNewCharacterGUI);
 	addNetworkEventHandler("vrr.showLogin", showLoginGUI);
+	addNetworkEventHandler("vrr.2fa", showTwoFactorAuthGUI);
 
 	// Business
 	addNetworkEventHandler("vrr.business", receiveBusinessFromServer);
