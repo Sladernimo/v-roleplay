@@ -63,6 +63,7 @@ const VRR_HOUSEOWNER_JOB = 2;                    // Owned by a job
 const VRR_HOUSEOWNER_CLAN = 3;                   // Owned by a clan
 const VRR_HOUSEOWNER_FACTION = 4;                // Owned by a faction
 const VRR_HOUSEOWNER_PUBLIC = 5;                 // Is a public house. Technically not owned. This probably won't be used.
+const VRR_HOUSEOWNER_BIZ = 6;	                 // Owned by a business. Used for apartment buildings where rent goes to business.
 
 // Gate Owner Types
 const VRR_GATEOWNER_NONE = 0;                   // Not owned
