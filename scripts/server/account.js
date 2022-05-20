@@ -1414,14 +1414,8 @@ function isAccountEmailVerified(accountData) {
 
 // ===========================================================================
 
-function isAccountTwoFactorAuthenticationVerified(accountData) {
-	return hasBitFlag(accountData.flags.moderation, getModerationFlagValue("TwoFactorAuthVerified"));
-}
-
-// ===========================================================================
-
 function doesPlayerHaveTwoFactorAuthEnabled(client) {
-	return hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("TwoFactorAuth"));
+	return hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("TwoStepAuth"));
 }
 
 // ===========================================================================
