@@ -89,9 +89,9 @@ function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
 // ===========================================================================
 
 function removePlayerKeyBind(client, keyId) {
-	if(isPlayerLoggedIn(client)) {
-		quickDatabaseQuery(`DELETE FROM acct_hotkey WHERE acct_hotkey_acct = ${getPlayerData(client).accountData.databaseId} AND acct_hotkey_key = ${keyId}`);
-	}
+	//if(isPlayerLoggedIn(client)) {
+	//	quickDatabaseQuery(`DELETE FROM acct_hotkey WHERE acct_hotkey_acct = ${getPlayerData(client).accountData.databaseId} AND acct_hotkey_key = ${keyId}`);
+	//}
 
 	//for(let i in getPlayerData(client).keyBinds) {
 	//	if(getPlayerData(client).keyBinds[i].key == keyId) {
