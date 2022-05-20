@@ -66,11 +66,14 @@ function initGUI() {
 	guiReady = true;
 
 	logToConsole(LOG_DEBUG, `[VRR.GUI] All GUI created successfully!`);
-	sendNetworkEventToServer("vrr.guiReady", true);
 
+	loadLocaleConfig();
 	loadAllLocaleStrings();
+
 	resetGUIStrings();
 	resetLocaleChooserOptions();
+
+	sendNetworkEventToServer("vrr.guiReady", true);
 };
 
 // ===========================================================================
