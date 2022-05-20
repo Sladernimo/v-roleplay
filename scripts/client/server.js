@@ -184,8 +184,8 @@ function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardS
 function onServerSpawnedLocalPlayer(state) {
 	logToConsole(LOG_DEBUG, `[VRR.Main] Setting spawned state to ${state}`);
 	isSpawned = state;
+	setUpInitialGame();
 	if(state) {
-		setUpInitialGame();
 		setTimeout(function() {
 			calledDeathEvent = false;
 		}, 1000);
