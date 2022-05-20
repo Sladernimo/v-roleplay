@@ -672,6 +672,14 @@ function setGameTime(hour, minute, minuteDuration = 1000) {
 
 // ===========================================================================
 
+function setGameWeather(weather) {
+	if(isWeatherSupported()) {
+		mp.world.weather = weather;
+	}
+}
+
+// ===========================================================================
+
 function setPlayerFightStyle(client, fightStyleId) {
 	if(!isPlayerSpawned(client)) {
 		return false;
@@ -1207,27 +1215,59 @@ function setVehicleTrunkState(vehicle, trunkState) {
 // ===========================================================================
 
 function addAllEventHandlers() {
-	addEventHandler("onResourceStart", onResourceStart);
-	addEventHandler("onResourceStop", onResourceStop);
-	addEventHandler("onServerStop", onResourceStop);
+	bindServerEventHandler("onResourceStart", onResourceStart)
+	bindServerEventHandler("onResourceStop", onResourceStart)
+	addServerEventHandler("onServerStop", onResourceStart);
 
-	addEventHandler("onProcess", onProcess);
-	addEventHandler("onEntityProcess", onEntityProcess);
+	addServerEventHandler("onResourceStart", onResourceStart);
+	addServerEventHandler("onResourceStop", onResourceStop);
+	addServerEventHandler("onServerStop", onResourceStop);
 
-	addEventHandler("onPlayerConnect", onInitialConnectionToServer);
-	addEventHandler("onPlayerJoin", onPlayerJoin);
-	addEventHandler("onPlayerJoined", onPlayerJoined);
-	addEventHandler("onPlayerChat", onPlayerChat);
-	addEventHandler("onPlayerQuit", onPlayerQuit);
-	addEventHandler("onElementStreamIn", onElementStreamIn);
-	addEventHandler("onElementStreamOut", onElementStreamOut);
+	addServerEventHandler("onProcess", onProcess);
+	addServerEventHandler("onEntityProcess", onEntityProcess);
 
-	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
+	addServerEventHandler("onPlayerConnect", onInitialConnectionToServer);
+	addServerEventHandler("onPlayerJoin", onPlayerJoin);
+	addServerEventHandler("onPlayerJoined", onPlayerJoined);
+	addServerEventHandler("onPlayerChat", onPlayerChat);
+	addServerEventHandler("onPlayerQuit", onPlayerQuit);
+	addServerEventHandler("onElementStreamIn", onElementStreamIn);
+	addServerEventHandler("onElementStreamOut", onElementStreamOut);
 
-	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
+	addServerEventHandler("onPedSpawn", onPedSpawn);
+	addServerEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
+	addServerEventHandler("onPedExitVehicle", onPedExitingVehicle);
+
+	addServerEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
+	addServerEventHandler("onPedExitingVehicle", onPedExitingVehicle);
+}
+
+// ===========================================================================
+
+function addServerCommandHandler(command, handlerFunction) {
+	addCommandHandler(command, handlerFunction);
+}
+
+// ===========================================================================
+
+function addServerEventHandler(eventName, handlerFunction) {
+	addEventHandler(eventName, function(event, ...args) {
+		let result = handlerFunction.apply(this, args);
+		if(result == false) {
+			event.preventDefault();
+		}
+	});
+}
+
+// ===========================================================================
+
+function bindServerEventHandler(eventName, bindTo, handlerFunction) {
+	addEventHandler(eventName, bindTo, function(event, ...args) {
+		let result = handlerFunction.apply(this, args);
+		if(result == false) {
+			event.preventDefault();
+		}
+	});
 }
 
 // ===========================================================================
