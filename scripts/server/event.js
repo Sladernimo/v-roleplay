@@ -94,16 +94,13 @@ function onPlayerQuit(client, quitReasonId) {
 		resetClientStuff(client);
 		getServerData().clients[getPlayerId(client)] = null;
 	}
-
-	clearTemporaryVehicles();
-	clearTemporaryPeds();
 }
 
 // ===========================================================================
 
-async function onPlayerChat(client, messageText) {
+function onPlayerChat(client, messageText) {
 	processPlayerChat(client, messageText);
-	event.preventDefault();
+	return false;
 }
 
 // ===========================================================================
@@ -177,9 +174,9 @@ function onPedExitingVehicle(ped, vehicle) {
 function onResourceStart(resource) {
 	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} started!`);
 
-	if(resource != thisResource) {
-		messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
-	}
+	//if(resource != thisResource) {
+	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
+	//}
 }
 
 // ===========================================================================
@@ -187,9 +184,9 @@ function onResourceStart(resource) {
 function onResourceStop(resource) {
 	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} stopped!`);
 
-	if(resource != thisResource) {
-		messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} stopped!`);
-	}
+	//if(resource != thisResource) {
+	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} stopped!`);
+	//}
 
 	if(resource == thisResource) {
 		kickAllClients();
@@ -497,9 +494,6 @@ function onPlayerSpawn(client) {
 	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
-	updatePlayerSpawnedState(client, true);
-
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 	setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 
@@ -602,6 +596,9 @@ function onPlayerSpawn(client) {
 
 		requestPlayerPedNetworkId(client);
 	}
+
+	logToConsole(LOG_DEBUG, `[VRR.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
+	updatePlayerSpawnedState(client, true);
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
