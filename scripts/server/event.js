@@ -15,7 +15,35 @@ function initEventScript() {
 
 // ===========================================================================
 
-function onInitialConnectionToServer(ipAddress, port) {
+function addAllEventHandlers() {
+	addEventHandler("onResourceStart", onResourceStart);
+	addEventHandler("onResourceStop", onResourceStop);
+	addEventHandler("onServerStop", onResourceStop);
+
+	addEventHandler("onProcess", onProcess);
+	addEventHandler("onEntityProcess", onEntityProcess);
+
+	addEventHandler("onPlayerConnect", onPlayerConnect);
+	addEventHandler("onPlayerJoin", onPlayerJoin);
+	addEventHandler("onPlayerJoined", onPlayerJoined);
+	addEventHandler("onPlayerChat", onPlayerChat);
+	addEventHandler("onPlayerQuit", onPlayerQuit);
+	addEventHandler("onElementStreamIn", onElementStreamIn);
+	addEventHandler("onElementStreamOut", onElementStreamOut);
+
+	addEventHandler("onPedSpawn", onPedSpawn);
+	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
+	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
+
+	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
+	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
+
+	//addEventHandler("OnPlayerCommand", onPlayerCommand);
+}
+
+// ===========================================================================
+
+function onPlayerConnect(event, ipAddress, port) {
 	logToConsole(LOG_INFO, `[VRR.Event] Client connecting (IP: ${ipAddress})`);
 	//if(isIpAddressBanned(ipAddress)) {
 	//    messagePlayerError(client, "You are banned from this server!");
@@ -25,7 +53,7 @@ function onInitialConnectionToServer(ipAddress, port) {
 
 // ===========================================================================
 
-function onPlayerJoin(client) {
+function onPlayerJoin(event, client) {
 	logToConsole(LOG_INFO, `[VRR.Event] Client ${getPlayerName(client)}[${getPlayerId(client)}] joining from ${getPlayerIP(client)}`);
 
 	if(isFadeCameraSupported()) {
@@ -45,13 +73,13 @@ function onPlayerJoin(client) {
 
 // ===========================================================================
 
-function onPlayerJoined(client) {
+function onPlayerJoined(event, client) {
 
 }
 
 // ===========================================================================
 
-function onElementStreamIn(element, client) {
+function onElementStreamIn(event, element, client) {
 	//if(getPlayerDimension(client) != getElementDimension(element)) {
 	//    event.preventDefault();
 	//}
@@ -66,13 +94,13 @@ function onElementStreamIn(element, client) {
 
 // ===========================================================================
 
-function onElementStreamOut(element, client) {
+function onElementStreamOut(event, element, client) {
 
 }
 
 // ===========================================================================
 
-function onPlayerQuit(client, quitReasonId) {
+function onPlayerQuit(event, client, quitReasonId) {
 	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (${disconnectReasons[quitReasonId]}[${quitReasonId}])`);
 	updateConnectionLogOnQuit(client, quitReasonId);
 
@@ -98,14 +126,14 @@ function onPlayerQuit(client, quitReasonId) {
 
 // ===========================================================================
 
-function onPlayerChat(client, messageText) {
+async function onPlayerChat(event, client, messageText) {
 	processPlayerChat(client, messageText);
 	return false;
 }
 
 // ===========================================================================
 
-function onProcess(deltaTime = 0) {
+function onProcess(event, deltaTime) {
 	updateServerGameTime();
 	//checkPlayerSpawning();
 	//checkPlayerPedState();
