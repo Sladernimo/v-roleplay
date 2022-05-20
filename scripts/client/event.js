@@ -59,13 +59,7 @@ function addAllEventHandlers() {
 
 function onResourceStart(event, resource) {
 	sendResourceStartedSignalToServer();
-	//setUpInitialGame();
 	//garbageCollectorInterval = setInterval(collectAllGarbage, 1000*60);
-
-	resourceStarted = true;
-	if(resourceReady == true) {
-		initClient();
-	}
 }
 
 // ===========================================================================
@@ -78,10 +72,6 @@ function onResourceStop(event, resource) {
 
 function onResourceReady(event, resource) {
 	sendResourceReadySignalToServer();
-	resourceReady = true;
-	if(resourceStarted == true) {
-		initClient();
-	}
 }
 
 // ===========================================================================
