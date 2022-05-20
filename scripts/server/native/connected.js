@@ -621,7 +621,7 @@ function createGameVehicle(modelIndex, position, heading, toClient = null) {
 
 function createGameCivilian(modelIndex, position, heading, toClient = null) {
 	if(areServerElementsSupported()) {
-		let civilian = game.createCivilian(getGameConfig().skins[getGame()][modelIndex][0], 0);
+		let civilian = game.createCivilian(getGameConfig().skins[getGame()][modelIndex][1], 0);
 		if(!isNull(civilian)) {
 			civilian.position = position;
 			civilian.heading = heading;
@@ -1031,7 +1031,7 @@ function getPlayerPing(client) {
 // ===========================================================================
 
 function setVehicleHealth(vehicle, health) {
-	vehicle.health = 1000;
+	vehicle.health = health;
 }
 
 // ===========================================================================
