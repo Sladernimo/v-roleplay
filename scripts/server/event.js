@@ -128,7 +128,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 
 async function onPlayerChat(event, client, messageText) {
 	processPlayerChat(client, messageText);
-	return false;
+	event.preventDefault();
 }
 
 // ===========================================================================
