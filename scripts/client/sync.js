@@ -128,10 +128,10 @@ function syncVehicleProperties(vehicle) {
 	}
 
 	if(getGame() == VRR_GAME_GTA_SA) {
-		let allUpgrades = getGameConfig().vehicleUpgrades[getGame()];
-		for(let i in allUpgrades) {
-			vehicle.removeUpgrade(i);
-		}
+		//let allUpgrades = getGameConfig().vehicleUpgrades[getGame()];
+		//for(let i in allUpgrades) {
+		//	vehicle.removeUpgrade(i);
+		//}
 
 		if(doesEntityDataExist(vehicle, "vrr.upgrades")) {
 			let upgrades = getEntityData(vehicle, "vrr.upgrades");
