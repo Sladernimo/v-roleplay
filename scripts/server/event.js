@@ -119,12 +119,12 @@ function onProcess(deltaTime = 0) {
 
 // ===========================================================================
 
-function onEntityProcess(event, entity) {
+function onEntityProcess(entity) {
 }
 
 // ===========================================================================
 
-function onPedEnteringVehicle(event, ped, vehicle, seat) {
+function onPedEnteringVehicle(ped, vehicle, seat) {
 	if(ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		getPlayerData(client).pedState = VRR_PEDSTATE_ENTERINGVEHICLE;
@@ -155,7 +155,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 
 // ===========================================================================
 
-function onPedExitingVehicle(event, ped, vehicle) {
+function onPedExitingVehicle(ped, vehicle) {
 	if(!getVehicleData(vehicle)) {
 		return false;
 	}
@@ -174,7 +174,7 @@ function onPedExitingVehicle(event, ped, vehicle) {
 
 // ===========================================================================
 
-function onResourceStart(event, resource) {
+function onResourceStart(resource) {
 	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} started!`);
 
 	if(resource != thisResource) {
@@ -184,7 +184,7 @@ function onResourceStart(event, resource) {
 
 // ===========================================================================
 
-function onResourceStop(event, resource) {
+function onResourceStop(resource) {
 	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} stopped!`);
 
 	if(resource != thisResource) {
