@@ -432,7 +432,7 @@ let gameData = {
 			"Overcast/Cloudy",
 			"Grey/Cloudy"
 		],
-		[VRR_GAME_GTA_IV_SA]: [ // GTA San Andreas
+		[VRR_GAME_GTA_SA]: [ // GTA San Andreas
 			"Blue Skies",
 			"Blue Skies",
 			"Blue Skies",
@@ -489,10 +489,10 @@ let gameData = {
 		[VRR_GAME_GTA_SA]: "GTA San Andreas",
 		[VRR_GAME_GTA_IV]: "GTA IV",
 		[VRR_GAME_GTA_IV_EFLC]: "GTA IV: Episodes from Liberty City",
-		[VRR_GAME_GTA_MAFIA_ONE]: "Mafia: The City of Lost Heaven",
-		[VRR_GAME_GTA_MAFIA_TWO]: "Mafia II",
-		[VRR_GAME_GTA_MAFIA_THREE]: "Mafia III",
-		[VRR_GAME_GTA_MAFIA_ONE_DE]: "Mafia Definitive Edition",
+		[VRR_GAME_MAFIA_ONE]: "Mafia: The City of Lost Heaven",
+		[VRR_GAME_MAFIA_TWO]: "Mafia II",
+		[VRR_GAME_MAFIA_THREE]: "Mafia III",
+		[VRR_GAME_MAFIA_ONE_DE]: "Mafia Definitive Edition",
 		[VRR_GAME_GTA_V]: "GTA V",
 	},
 	vehicleWheelStateNames: [
