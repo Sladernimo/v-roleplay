@@ -1586,12 +1586,14 @@ function getBestItemToTake(client, slot) {
  */
 function listPlayerInventoryCommand(command, params, client) {
 	let targetClient = client;
-	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
-		if(!areParamsEmpty(client)) {
+
+	if(!areParamsEmpty(client)) {
+		if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
 			if(targetClient == false) {
 				sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
 				return false;
 			}
+
 			targetClient = getPlayerFromParams(params);
 		}
 	}
@@ -1717,6 +1719,7 @@ function getItemData(itemId) {
 	if(typeof getServerData().items[itemId] != "undefined") {
 		return getServerData().items[itemId];
 	}
+
 	return false;
 }
 
@@ -1727,7 +1730,11 @@ function getItemData(itemId) {
  * @return {ItemTypeData} The item type's data (class instance)
  */
 function getItemTypeData(itemTypeId) {
-	return getServerData().itemTypes[itemTypeId];
+	if(typeof getServerData().itemTypes[itemTypeId] != "undefined") {
+		return getServerData().itemTypes[itemTypeId];
+	}
+
+	return false;
 }
 
 // ===========================================================================
@@ -2278,7 +2285,7 @@ function showItemInventoryToPlayer(client, itemId) {
 
 // ===========================================================================
 
-function showPlayerInventoryToPlayer(client, targetClient) {
+function showPlayerInventoryToPlayer(showToClient, targetClient) {
 	resyncWeaponItemAmmo(targetClient);
 	let itemDisplay = [];
 	for(let i in getPlayerData(targetClient).hotBarItems) {
@@ -2289,19 +2296,24 @@ function showPlayerInventoryToPlayer(client, targetClient) {
 		if(getPlayerData(targetClient).hotBarItems[i] == -1) {
 			itemDisplay.push(`{MAINCOLOUR}${toInteger(i)+1}: ${colour}(Empty)`);
 		} else {
-			itemDisplay.push(`{MAINCOLOUR}${toInteger(i)+1}: ${colour}${getItemTypeData(getItemData(getPlayerData(targetClient).hotBarItems[i]).itemTypeIndex).name}`);
+			let itemTypeData = getItemTypeData(getItemData(getPlayerData(targetClient).hotBarItems[i]).itemTypeIndex);
+			if(itemTypeData != false) {
+				itemDisplay.push(`{MAINCOLOUR}${toInteger(i)+1}: ${colour}${itemTypeData.name}`);
+			} else {
+				itemDisplay.push(`{MAINCOLOUR}${toInteger(i)+1}: ${colour}(Empty)`);
+			}
 		}
 	}
 
-	if(client == targetClient) {
-		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderSelfItemList")));
+	if(showToClient == targetClient) {
+		messagePlayerNormal(showToClient, makeChatBoxSectionHeader(getLocaleString(showToClient, "HeaderSelfItemList")));
 	} else {
-		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerItemList", getCharacterFullName(targetClient))));
+		messagePlayerNormal(showToClient, makeChatBoxSectionHeader(getLocaleString(showToClient, "HeaderPlayerItemList", getCharacterFullName(targetClient))));
 	}
 
 	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
 	for(let i in chunkedList) {
-		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+		messagePlayerNormal(showToClient, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
 	}
 }
 
