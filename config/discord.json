@@ -1,10 +1,13 @@
 {
-	"sendChat": "true",
-	"sendConnectEvents": "true",
-	"sendVehicleEvents": "true",
-	"sendDeathEvents": "true",
+	"sendChat": true,
+	"sendEvents": true,
+	"sendConnectEvents": true,
+	"sendVehicleEvents": true,
+	"sendDeathEvents": true,
+	"sendAdmin": true,
 	"webhook": {
-		"enabled": "true",
-		"webhookBaseURL": "https://example.com/something.php?message={0}&url={1}"
+		"enabled": true,
+		"webhookBaseURL": "http://127.0.0.1:8090/discord.php?message={0}&server={1}&type={2}&pass={3}",
+		"pass": "LWb7T3ZyCam7Nzen"
 	}
 }
