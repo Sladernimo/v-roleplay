@@ -5721,6 +5721,7 @@ let gameData = {
 			ConcertHall: [toVector3(-925.417, 1053.4, 13.2005), 8, false, -1],
 			RecordingStudio: [toVector3(-879.767, 1156.88, 17.8115), 9, false, -1],
 			PrintWorks: [toVector3(-1064.98, -279.093, 12.0882), 18, false, -1],
+			Gas: [toVector3(447.26, 789.09, 12.95), 0, false, -1],
 		},
 
 		[VRR_GAME_GTA_SA]: { // GTA SA
