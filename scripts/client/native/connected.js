@@ -155,6 +155,12 @@ function getClosestCivilian(position) {
 
 // ===========================================================================
 
+function getClosestPlayer(position) {
+	return getElementsByType(ELEMENT_PLAYER).reduce((i, j) => ((i.position.distance(position) <= j.position.distance(position)) ? i : j));
+}
+
+// ===========================================================================
+
 function is2dPositionOnScreen(pos2d) {
 	return pos2d.x >= 0 && pos2d.y >= 0 && pos2d.x <= game.width && pos2d.y <= game.height;
 }
@@ -672,6 +678,23 @@ function closeAllGarages() {
 
 function setPedInvincible(ped, state) {
 	ped.invincible = state;
+}
+
+// ===========================================================================
+
+function setPedLookAt(ped, position) {
+	if(getGame() == VRR_GAME_GTA_SA) {
+		ped.lookAt(position, 10000);
+		return true;
+	} else {
+		setElementHeading(ped.id, getHeadingFromPosToPos(getElementPosition(ped.id), position));
+	}
+}
+
+// ===========================================================================
+
+function setElementHeading(elementId, heading) {
+	getElementFromId(elementId).heading = heading;
 }
 
 // ===========================================================================

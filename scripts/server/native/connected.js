@@ -619,14 +619,13 @@ function createGameVehicle(modelIndex, position, heading, toClient = null) {
 
 // ===========================================================================
 
-function createGameCivilian(modelIndex, position, heading, toClient = null) {
+function createGamePed(modelIndex, position, heading, toClient = null) {
 	if(areServerElementsSupported()) {
-		let civilian = game.createCivilian(getGameConfig().skins[getGame()][modelIndex][1], 0);
-		if(!isNull(civilian)) {
-			civilian.position = position;
-			civilian.heading = heading;
-			addToWorld(civilian);
-			return civilian;
+		let ped = game.createPed(getGameConfig().skins[getGame()][modelIndex][0], position);
+		if(ped) {
+			//ped.position = position;
+			ped.heading = heading;
+			return ped;
 		}
 	}
 
@@ -1349,6 +1348,12 @@ function bindServerEventHandler(eventName, bindTo, handlerFunction) {
 			event.preventDefault();
 		}
 	});
+}
+
+// ===========================================================================
+
+function setElementName(element, name) {
+	element.name = name;
 }
 
 // ===========================================================================
