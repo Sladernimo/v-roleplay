@@ -149,6 +149,7 @@
 	<script src="scripts/client/messaging.js" type="client" language="javascript" />
 	<script src="scripts/client/mousecam.js" type="client" language="javascript" />
 	<script src="scripts/client/nametag.js" type="client" language="javascript" />
+	<script src="scripts/client/npc.js" type="client" language="javascript" />
 	<script src="scripts/client/radio.js" type="client" language="javascript" />
 	<script src="scripts/client/scoreboard.js" type="client" language="javascript" />
 	<script src="scripts/client/server.js" type="client" language="javascript" />
