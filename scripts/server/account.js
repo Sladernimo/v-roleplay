@@ -1016,27 +1016,41 @@ function checkAccountResetPasswordRequest(client, inputText) {
 		return false;
 	}
 
-	if(getPlayerData(client).passwordResetState == VRR_RESETPASS_STATE_NONE) {
-		if(toLowerCase(getPlayerData(client).accountData.emailAddress) != toLowerCase(inputText)) {
-			logToConsole(LOG_DEBUG|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (email not correct)`);
-			return false;
+	switch(getPlayerData(client).passwordResetState) {
+		case VRR_RESETPASS_STATE_EMAILCONFIRM: {
+			if(toLowerCase(getPlayerData(client).accountData.emailAddress) != toLowerCase(inputText)) {
+				logToConsole(LOG_INFO|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (email not correct)`);
+				showPlayerErrorGUI(client, getLocaleString(client, "GUIErrorResetPasswordFailedInvalidEmail"), getLocaleString(client, "GUIErrorTitle"), getLocaleString(client, "GUIOkButton"));
+				return false;
+			}
+
+			let passwordResetCode = toUpperCase(generateEmailVerificationCode());
+			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_CODEINPUT;
+			getPlayerData(client).passwordResetCode = passwordResetCode;
+			showPlayerResetPasswordCodeInputGUI(client);
+			sendPasswordResetEmail(client, passwordResetCode);
+			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} submitted successful email for password reset. Sending email and awaiting verification code input ...`);
+			break;
 		}
 
-		let passwordResetCode = toUpperCase(generateEmailVerificationCode());
-		getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_CODEINPUT;
-		getPlayerData(client).passwordResetCode = passwordResetCode;
-		sendPasswordResetEmail(client, passwordResetCode);
-		showPlayerResetPasswordCodeInputGUI(client);
-		logToConsole(LOG_DEBUG|LOG_WARN, `${getPlayerDisplayForConsole(client)} reset their password. Awaiting verification code input ...`);
-	} else if(getPlayerData(client).passwordResetState == VRR_RESETPASS_STATE_CODEINPUT) {
-		if(getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
-			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
-			showPlayerChangePasswordGUI(client);
-			logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
-		} else {
-			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
-			disconnectPlayer(client);
-			logToConsole(LOG_DEBUG|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct)`);
+		case VRR_RESETPASS_STATE_CODEINPUT: {
+			if(getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
+				getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
+				showPlayerChangePasswordGUI(client, getLocaleString(client));
+				logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
+			} else {
+				getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
+				disconnectPlayer(client);
+				logToConsole(LOG_INFO|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct)`);
+			}
+			break;
+		}
+
+		case VRR_RESETPASS_STATE_NONE: {
+			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} requested a password reset. Awaiting email input ...`);
+			showPlayerResetPasswordEmailInputGUI(client);
+			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_EMAILCONFIRM;
+			break;
 		}
 	}
 
