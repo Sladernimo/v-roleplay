@@ -27,23 +27,23 @@ function getNPCData(npcId) {
 
 // ===========================================================================
 
-function createNPCCommand(client, command, params) {
+function createNPCCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	let skinId = getSkinModelIndexFromParams(params);
+	let skinIndex = getSkinModelIndexFromParams(params);
 
-	if(!skinId) {
+	if(!skinIndex) {
 		messagePlayerError(client, getLocaleString(client, "InvalidSkin"));
 		return false;
 	}
 
-	let position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), 3);
-
-	let npcId = createNPC(skinId, position, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension());
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} created a ${getSkinNameFromIndex(getNPCData(npcId).skin)} NPC!`);
+	let position = getPlayerPosition(client);
+	setPlayerPosition(client, getPosBehindPos(position, getPlayerHeading(client), 1.5))
+	let npcId = createNPC(skinIndex, position, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client));
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {ALTCOLOUR}${getSkinNameFromIndex(getNPCData(npcId).skin)}{MAINCOLOUR} NPC!`);
 }
 
 // ===========================================================================
@@ -59,7 +59,7 @@ function loadNPCsFromDatabase() {
 		if(dbQuery) {
 			while(dbAssoc = fetchQueryAssoc(dbQuery)) {
 				let tempNPCData = new NPCData(dbAssoc);
-				tempNPCData.triggers = loadNPCTriggersFromDatabase();
+				tempNPCData.triggers = loadNPCTriggersFromDatabase(tempNPCData.databaseId);
 				tempNPCs.push(tempNPCData);
 			}
 			freeDatabaseQuery(dbQuery);
@@ -161,23 +161,24 @@ function saveAllNPCsToDatabase() {
 
 function saveNPCToDatabase(npcDataId) {
 	if(getServerConfig().devServer) {
+		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}
 
-	if(getNPCData(npcDataId) == null) {
-		// Invalid NPC data
+	if(getNPCData(npcDataId) == false) {
+		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} data is invalid. Aborting save ...`);
 		return false;
 	}
 
 	let tempNPCData = getNPCData(npcDataId);
 
 	if(tempNPCData.databaseId == -1) {
-		// Temp NPC, no need to save
+		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} is a temp NPC. Aborting save ...`);
 		return false;
 	}
 
 	if(!tempNPCData.needsSaved) {
-		// NPC hasn't changed. No need to save.
+		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} hasn't changed data. Aborting save ...`);
 		return false;
 	}
 
@@ -196,17 +197,13 @@ function saveNPCToDatabase(npcDataId) {
 			}
 		}
 
-		let safeAnimationName = escapeDatabaseString(tempNPCData.animationName);
-		let safeFirstName = escapeDatabaseString(tempNPCData.firstName);
-		let safeLastName = escapeDatabaseString(tempNPCData.lastName);
-		let safeMiddleName = escapeDatabaseString(tempNPCData.middleName);
+		let safeAnimationName = escapeDatabaseString(dbConnection, tempNPCData.animationName);
+		let safeName = escapeDatabaseString(dbConnection, tempNPCData.name);
 
 		let data = [
 			["npc_server", getServerId()],
-			["npc_skin", toInteger(tempNPCData.model)],
-			["npc_name_first", safeFirstName],
-			["npc_name_middle", safeMiddleName],
-			["npc_name_last", safeLastName],
+			["npc_skin", toInteger(tempNPCData.skin)],
+			["npc_name", safeName],
 			["npc_owner_type", toInteger(tempNPCData.ownerType)],
 			["npc_owner_id", toInteger(tempNPCData.ownerId)],
 			["npc_pos_x", toFloat(tempNPCData.position.x)],
@@ -273,13 +270,19 @@ function setNPCDataIndexes() {
 // ===========================================================================
 
 function spawnNPC(npcIndex) {
-	let civilian = createGameCivilian(getNPCData(npcIndex).model, getNPCData(npcIndex).spawnPosition, getNPCData(npcIndex).spawnRotation);
-	if(civilian) {
-		civilian.setData("vrr.dataIndex", npcIndex);
-		if(getNPCData(npcIndex).animationName != "") {
-			civilian.setData("vrr.animation", getNPCData(npcIndex).animationName);
+	let npcData = getNPCData(npcIndex);
+	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
+	if(ped) {
+		getNPCData(npcIndex).ped = ped;
+		setEntityData(ped, "vrr.dataIndex", npcIndex, false);
+		setElementInterior(ped, npcData.interior);
+		if(npcData.animationName != "") {
+			let animationId = getAnimationFromParams(npcData.animationName);
+			if(getAnimationData(animationId) != false) {
+				setEntityData(ped, "vrr.animation", animationId, true);
+			}
 		}
-		getNPCData(npcIndex).ped = civilian;
+		forcePlayerToSyncElementProperties(null, ped);
 	}
 }
 
@@ -287,18 +290,13 @@ function spawnNPC(npcIndex) {
 
 function spawnAllNPCs() {
 	for(let i in getServerData().npcs) {
-		spawnNPC(npcIndex);
+		spawnNPC(i);
 	}
 }
 
 // ===========================================================================
 
 function deleteNPCCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, command);
-		return false;
-	}
-
 	let closestNPC = getClosestNPC(getPlayerPosition(client));
 
 	if(!getNPCData(closestNPC)) {
@@ -309,7 +307,7 @@ function deleteNPCCommand(command, params, client) {
 	let npcName = getNPCData(closestNPC).name;
 
 	deleteNPC(closestNPC);
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} deleted NPC {npcPink}${npcName}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted NPC {npcPink}${npcName}`);
 }
 
 // ===========================================================================
@@ -331,7 +329,7 @@ function deleteNPC(npcId) {
 
 function setNPCAnimationCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, command);
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
@@ -357,8 +355,118 @@ function setNPCAnimationCommand(command, params, client) {
 		animationPositionOffset = getParam(params, " ", 2);
 	}
 
-	getNPCData(closestNPC).animationName = animation;
+	getNPCData(closestNPC).animationName = getAnimationData(animationId).name;
+	getNPCData(closestNPC).needsSaved = true;
+
 	makePedPlayAnimation(getNPCData(closestNPC).ped, animationId, animationPositionOffset);
+	messagePlayerSuccess(client, getLocaleString(client, "NPCAnimationSet", `{ALTCOLOUR}${getNPCData(closestNPC).name}{MAINCOLOUR}`, `{ALTCOLOUR}${getAnimationData(animationId).name}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function setNPCNameCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client));
+	let name = params;
+
+	if(!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	let oldName = getNPCData(closestNPC).name;
+	getNPCData(closestNPC).name = name;
+	getNPCData(closestNPC).needsSaved = true;
+
+	setElementName(getNPCData(closestNPC).ped, name);
+	messagePlayerSuccess(client, getLocaleString(client, "NPCNameSet", `{ALTCOLOUR}${oldName}{MAINCOLOUR}`, `{ALTCOLOUR}${getNPCData(closestNPC).name}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function toggleNPCLookAtClosestPlayerCommand(command, params, client) {
+	let closestNPC = getClosestNPC(getPlayerPosition(client));
+
+	if(!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	getNPCData(closestNPC).lookAtClosestPlayer = !getNPCData(closestNPC).lookAtClosestPlayer;
+	getNPCData(closestNPC).needsSaved = true;
+	setEntityData(getNPCData(closestNPC).ped, "vrr.lookAtClosestPlayer", getNPCData(closestNPC).lookAtClosestPlayer, true);
+	forcePlayerToSyncElementProperties(null, getNPCData(closestNPC).ped);
+	//messagePlayerSuccess(client, getLocaleString(client, "NPCLookAtClosestPlayerSet", `{ALTCOLOUR}${getNPCData(closestNPC).name}{MAINCOLOUR}));
+}
+
+// ===========================================================================
+
+function getNPCInfoCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client));
+
+	if(!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	let npcData = getNPCData(closestNPC);
+
+	let ownerName = "Nobody";
+	let ownerType = "None";
+	switch(npcData.ownerType) {
+		case VRR_NPCOWNER_CLAN:
+			ownerName = getClanData(getClanIdFromDatabaseId(npcData.ownerId)).name;
+			ownerType = "clan";
+			break;
+
+		case VRR_NPCOWNER_JOB:
+			ownerName = getJobData(getJobIdFromDatabaseId(npcData.ownerId)).name;
+			ownerType = "job";
+			break;
+
+		case VRR_NPCOWNER_PLAYER:
+			let subAccountData = loadSubAccountFromId(npcData.ownerId);
+			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
+			ownerType = "player";
+			break;
+
+		case VRR_NPCOWNER_BIZ:
+			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
+			ownerType = "business";
+			break;
+
+		case VRR_NPCOWNER_PUBLIC:
+			ownerName = "Nobody";
+			ownerType = "public";
+			break;
+
+		default:
+			break;
+	}
+
+	let tempStats = [
+		[`Skin`, `${getGameConfig().skins[npcData.skin][0]} (${getGameConfig().skins[npcData.skin][1]})`],
+		[`ID`, `${npcData.index}/${npcData.databaseId}`],
+		[`Owner`, `${ownerName} (${ownerType})`],
+		[`Animation`, `${npcData.animationName}`],
+	];
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderNPCInfo")));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
 }
 
 // ===========================================================================
@@ -367,7 +475,7 @@ function getClosestNPC(position) {
 	let npcs = getServerData().npcs;
 	let closest = 0;
 	for(let i in npcs) {
-		if(getDistance(npcs[i].ped.position, position) < getDistance(npcs[i].ped.position, position)) {
+		if(getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position)) {
 			closest = i;
 		}
 	}
@@ -380,11 +488,12 @@ function getClosestNPC(position) {
 function createNPC(skinIndex, position, heading, interior, dimension) {
 	let tempNPCData = new NPCData(false);
 	tempNPCData.position = position;
-	tempNPCData.heading = heading;
+	tempNPCData.rotation = toVector3(0.0, 0.0, heading);
 	tempNPCData.skin = skinIndex;
 	tempNPCData.interior = interior;
 	tempNPCData.dimension = dimension;
 	tempNPCData.animationName = "";
+	tempNPCData.needsSaved = true;
 
 	let npcIndex = getServerData().npcs.push(tempNPCData);
 	setNPCDataIndexes();
