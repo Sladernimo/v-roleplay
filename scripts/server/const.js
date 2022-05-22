@@ -308,6 +308,7 @@ const VRR_2FA_STATE_SETUP_CODEFROMAPP = 3;       // Waiting on player to enter c
 const VRR_RESETPASS_STATE_NONE = 0;             // None
 const VRR_RESETPASS_STATE_CODEINPUT = 1;        // Waiting on player to enter code sent via email
 const VRR_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter new password
+const VRR_RESETPASS_STATE_EMAILCONFIRM = 3;     // Waiting on player to enter their email to confirm it's correct
 
 // NPC Trigger Condition Match Types
 const VRR_NPC_COND_MATCH_NONE = 0;               // None (invalid)
@@ -359,3 +360,12 @@ const VRR_GPS_TYPE_GAMELOC = 5;                  // Game Location
 const VRR_DISCORD_WEBHOOK_NONE = 0;
 const VRR_DISCORD_WEBHOOK_LOG = 1;
 const VRR_DISCORD_WEBHOOK_ADMIN = 2;
+
+// NPC Owner Types
+const VRR_NPCOWNER_NONE = 0;                     // Not owned
+const VRR_NPCOWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const VRR_NPCOWNER_JOB = 2;                      // Owned by a job
+const VRR_NPCOWNER_CLAN = 3;                     // Owned by a clan
+const VRR_NPCOWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const VRR_NPCOWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
+const VRR_NPCOWNER_BIZ = 6;                      // Owned by a business
