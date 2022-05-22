@@ -17,7 +17,7 @@ let errorDialog = {
 
 function initErrorDialogGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating error GUI ...`);
-	errorDialog.window = mexui.window(game.width/2-200, game.height/2-70, 500, 140, 'ERROR', {
+	errorDialog.window = mexui.window(getScreenWidth()/2-200, getScreenHeight()/2-70, 400, 140, 'ERROR', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -34,7 +34,7 @@ function initErrorDialogGUI() {
 		},
 	});
 
-	errorDialog.messageLabel = errorDialog.window.text(15, 50, 470, 75, 'Error Message', {
+	errorDialog.messageLabel = errorDialog.window.text(15, 50, 370, 20, 'Error Message', {
 		main: {
 			textSize: 10.0,
 			textAlign: 0.5,
@@ -70,7 +70,7 @@ function showErrorGUI(errorMessage, errorTitle, buttonText) {
 	mexui.setInput(true);
 	errorDialog.messageLabel.text = errorMessage;
 	errorDialog.okayButton.text = buttonText;
-	errprDialog.window.title = errorTitle;
+	errorDialog.window.title = errorTitle;
 	errorDialog.window.shown = true;
 }
 
