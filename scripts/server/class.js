@@ -135,6 +135,15 @@ class ServerConfigData {
 				sendChat: intToBool(dbAssoc["svr_discord_send_chat"]),
 				sendAdmin: intToBool(dbAssoc["svr_discord_send_admin"]),
 			};
+
+			this.economy = {
+				inflationMultiplier: toFloat(dbAssoc["svr_inflation_multiplier"]),
+				incomeTaxRate: toFloat(dbAssoc["svr_income_tax_rate"]),
+				passiveIncome: toFloat(dbAssoc["svr_passive_income"]),
+			}
+
+			this.devServer = intToBool(toInteger(server.getCVar("vrr_devserver")));
+			this.testerOnly = intToBool(toInteger(server.getCVar("vrr_testeronly")));
 		}
 	}
 };
@@ -1475,9 +1484,7 @@ class NPCData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
-		this.firstName = "John";
-		this.lastName = "Doe";
-		this.middleName = "Q";
+		this.name = "NPC";
 		this.skin = 0;
 		this.cash = 0;
 		this.position = toVector3(0.0, 0.0, 0.0);
@@ -1496,12 +1503,15 @@ class NPCData {
 		this.fightStyle = 0;
 		this.health = 100;
 		this.armour = 100;
-		this.currentAction = VRR_NPCACTION_NONE;
+		this.currentAction = VRR_NPC_ACTION_NONE;
 		this.triggers = [];
 		this.typeFlags = 0;
 		this.heedThreats = false;
 		this.threats = 0;
 		this.invincible = false;
+		this.animationName = "";
+		this.ownerType = VRR_NPCOWNER_NONE;
+		this.ownerId = 0;
 
 		this.bodyParts = {
 			hair: [0,0],
@@ -1528,9 +1538,7 @@ class NPCData {
 		if(dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_id"]);
 			this.serverId = toInteger(dbAssoc["npc_server"]);
-			this.firstName = dbAssoc["npc_name_first"];
-			this.lastName = dbAssoc["npc_name_last"];
-			this.middleName = dbAssoc["npc_name_middle"] || "";
+			this.name = dbAssoc["npc_name"];
 			this.skin = toInteger(dbAssoc["npc_skin"]);
 			this.cash = toInteger(dbAssoc["npc_cash"]);
 			this.position = toVector3(toFloat(dbAssoc["npc_pos_x"]), toFloat(dbAssoc["npc_pos_y"]), toFloat(dbAssoc["npc_pos_z"]));
@@ -1551,6 +1559,7 @@ class NPCData {
 			this.heedThreats = intToBool(dbAssoc["npc_headthreats"]);
 			this.threats = toInteger(dbAssoc["npc_threats"]);
 			this.invincible = intToBool(dbAssoc["npc_invincible"]);
+			this.animationName = intToBool(dbAssoc["npc_animation"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["npc_hd_part_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_part_hair_texture"]) || 0],
