@@ -1002,7 +1002,6 @@ function getVehicleInfoCommand(command, params, client) {
 
 	let ownerName = "Nobody";
 	let ownerType = "None";
-	ownerType = toLowerCase(getVehicleOwnerTypeText(vehicleData.ownerType));
 	switch(vehicleData.ownerType) {
 		case VRR_VEHOWNER_CLAN:
 			ownerName = getClanData(getClanIdFromDatabaseId(vehicleData.ownerId)).name;
@@ -1025,11 +1024,40 @@ function getVehicleInfoCommand(command, params, client) {
 			ownerType = "business";
 			break;
 
+		case VRR_VEHOWNER_PUBLIC:
+			ownerName = "Nobody";
+			ownerType = "public";
+			break;
+
 		default:
 			break;
 	}
 
-	messagePlayerNormal(client, `🚗 {vehiclePurple}[Vehicle Info] {MAINCOLOUR}ID: {ALTCOLOUR}${getElementId(vehicle)}, {MAINCOLOUR}Index: {ALTCOLOUR}${vehicleData.index}, {MAINCOLOUR}DatabaseID: {ALTCOLOUR}${vehicleData.databaseId}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName}[ID ${vehicleData.ownerId}] (${ownerType}), {MAINCOLOUR}Type: {ALTCOLOUR}${getVehicleName(vehicle)}[ID: ${vehicle.modelIndex}, Index: ${getVehicleModelIndexFromModel(vehicle.modelIndex)}], {MAINCOLOUR}BuyPrice: {ALTCOLOUR}${vehicleData.buyPrice}, {MAINCOLOUR}RentPrice: {ALTCOLOUR}${vehicleData.rentPrice}`);
+	let tempStats = [
+		[`Type`, `${getGameConfig().vehicles[vehicleData.model][1]} (${getGameConfig().vehicles[vehicleData.model][0]})`],
+		[`ID`, `${vehicleData.index}/${vehicleData.databaseId}`],
+		[`Owner`, `${ownerName} (${getVehicleOwnerTypeText(vehicleData.ownerType)})`],
+		[`Locked`, `${getLockedUnlockedFromBool(vehicleData.locked)}`],
+		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
+		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
+		[`Buy Price`, `${vehicleData.buyPrice}`],
+		[`Rent Price`, `${vehicleData.rentPrice}`],
+		[`Radio Station`, `${vehicleData.streamingRadioStation}`],
+		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
+		[`License Plate`, `${vehicleData.licensePlate}`],
+		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
+		[`Last Driver`, `${vehicleData.lastDriverName}`],
+	];
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleInfo")));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+
+	//messagePlayerNormal(client, `🚗 {vehiclePurple}[Vehicle Info] {MAINCOLOUR}ID: {ALTCOLOUR}${getElementId(vehicle)}, {MAINCOLOUR}Index: {ALTCOLOUR}${vehicleData.index}, {MAINCOLOUR}DatabaseID: {ALTCOLOUR}${vehicleData.databaseId}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName}[ID ${vehicleData.ownerId}] (${ownerType}), {MAINCOLOUR}Type: {ALTCOLOUR}${getVehicleName(vehicle)}[ID: ${vehicle.modelIndex}, Index: ${getVehicleModelIndexFromModel(vehicle.modelIndex)}], {MAINCOLOUR}BuyPrice: {ALTCOLOUR}${vehicleData.buyPrice}, {MAINCOLOUR}RentPrice: {ALTCOLOUR}${vehicleData.rentPrice}`);
 }
 
 // ===========================================================================
@@ -1051,7 +1079,6 @@ function getLastVehicleInfoCommand(command, params, client) {
 
 	let ownerName = "Nobody";
 	let ownerType = "None";
-	ownerType = toLowerCase(getVehicleOwnerTypeText(vehicleData.ownerType));
 	switch(vehicleData.ownerType) {
 		case VRR_VEHOWNER_CLAN:
 			ownerName = getClanData(vehicleData.ownerId).name;
@@ -1074,7 +1101,14 @@ function getLastVehicleInfoCommand(command, params, client) {
 			ownerType = "business";
 			break;
 
+		case VRR_VEHOWNER_PUBLIC:
+			ownerName = "None";
+			ownerType = "public";
+			break;
+
 		default:
+			ownerName = "None";
+			ownerType = "unowned";
 			break;
 	}
 
@@ -1273,7 +1307,6 @@ function spawnVehicle(vehicleData) {
 	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
 	setVehicleHeading(vehicle, vehicleData.spawnRotation);
 	setElementTransient(vehicle, false);
-	addToWorld(vehicle);
 
 	if(!vehicle) {
 		return false;
@@ -1281,7 +1314,6 @@ function spawnVehicle(vehicleData) {
 
 	setVehicleHeading(vehicle, vehicleData.spawnRotation);
 	setElementDimension(vehicle, vehicleData.dimension);
-	addToWorld(vehicle);
 
 	vehicleData.vehicle = vehicle;
 
@@ -1320,7 +1352,6 @@ function spawnVehicle(vehicleData) {
 
 	forcePlayerToSyncElementProperties(null, vehicle);
 
-
 	return vehicle;
 }
 
@@ -1350,6 +1381,9 @@ function getVehicleOwnerTypeText(ownerType) {
 
 		case VRR_VEHOWNER_BIZ:
 			return "business";
+
+		case VRR_VEHOWNER_PUBLIC:
+			return "public";
 
 		default:
 			return "unknown";
@@ -1647,6 +1681,17 @@ function removeAllOccupantsFromVehicle(vehicle) {
 		if(vehicle.getOccupant(i) != null) {
 			removePlayerFromVehicle(vehicle.getOccupant(i));
 		}
+	}
+}
+
+// ===========================================================================
+
+function getVehicleColourInfoString(colour, isRGBA) {
+	if(isRGBA) {
+		let arrayColour = rgbaArrayFromToColour(colour);
+		return `RGBA [${arrayColour[0]}, ${arrayColour[1]}, ${arrayColour[2]}, ${arrayColour[3]}]`;
+	} else {
+		return `GAME [${colour}]`;
 	}
 }
 
