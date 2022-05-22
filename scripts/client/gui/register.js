@@ -21,7 +21,7 @@ let register = {
 
 function initRegisterGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Creating register GUI ...`);
-	register.window = mexui.window(game.width/2-150, game.height/2-150, 300, 300, 'Register', {
+	register.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-150, 300, 300, 'Register', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -162,7 +162,7 @@ function showRegistrationGUI() {
 	mexui.focusedControl = register.passwordInput;
 	guiSubmitKey = checkRegistration;
 
-	showLocaleChooserGUI();
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), register.window.position.y+register.window.size.y+20));
 
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }

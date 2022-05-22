@@ -133,16 +133,17 @@ function checkChangePassword() {
 
 // ===========================================================================
 
-function showChangePasswordGUI() {
+function showChangePasswordGUI(errorMessage) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing change password window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	passwordChange.window.shown = true;
+	passwordChange.messageLabel = errorMessage;
 	mexui.focusedControl = passwordChange.passwordInput;
 	guiSubmitKey = checkChangePassword;
 
-	showLocaleChooserGUI();
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), passwordChange.window.position.y+passwordChange.window.size.y+20));
 }
 
 // ===========================================================================

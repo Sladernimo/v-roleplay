@@ -52,8 +52,8 @@ function closeLocaleChooserGUI() {
 
 // ===========================================================================
 
-function showLocaleChooserGUI(position = toVector2(0, 0)) {
-	if(position.x != 0 && position.y != 0) {
+function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
+	if(position.x != 0.0 && position.y != 0.0) {
 		localeChooser.window.position = position;
 	} else {
 		localeChooser.window.position = toVector2((getScreenWidth()/2)-(localeChooser.window.size.x/2), getScreenHeight()-100);

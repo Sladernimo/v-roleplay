@@ -171,7 +171,7 @@ function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, ski
 	guiLeftKey = selectPreviousCharacter;
 	guiRightKey = selectNextCharacter;
 
-	showLocaleChooserGUI();
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), characterSelect.window.position.y+characterSelect.window.size.y+20));
 }
 
 // ===========================================================================

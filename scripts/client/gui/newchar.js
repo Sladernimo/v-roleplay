@@ -20,7 +20,7 @@ let newCharacter = {
 
 function initNewCharacterGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(game.width/2-130, game.height/2-115, 300, 230, 'NEW CHARACTER', {
+	newCharacter.window = mexui.window(getScreenWidth()/2-130, getScreenHeight()/2-115, 300, 230, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -158,9 +158,9 @@ function showNewCharacterGUI() {
 	mexui.setInput(true);
 	newCharacter.window.shown = true;
 	mexui.focusedInput = newCharacter.firstNameInput;
-	guiSubmitButton = checkNewCharacter;
+	guiSubmitKey = checkNewCharacter;
 
-	showLocaleChooserGUI();
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), newCharacter.window.position.y+newCharacter.window.size.y+20));
 }
 
 // ===========================================================================

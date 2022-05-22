@@ -43,7 +43,7 @@ let loginHTML =
 
 function initLoginGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Creating login GUI ...`);
-	login.window = mexui.window(game.width/2-150, game.height/2-135, 300, 275, 'LOGIN', {
+	login.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-135, 300, 275, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -118,7 +118,7 @@ function initLoginGUI() {
 		},
 	}, checkLogin);
 
-	login.forgotPasswordButton = login.window.button(200, 240, 80, 15, 'RESET PASS', {
+	login.forgotPasswordButton = login.window.button(180, 240, 100, 15, 'RESET PASS', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(0, 0, 0, 255),
@@ -131,7 +131,7 @@ function initLoginGUI() {
 		},
 	}, switchToPasswordResetGUI);
 
-	login.resetPasswordLabel = login.window.text(125, 240, 60, 15, 'Forgot your password?', {
+	login.resetPasswordLabel = login.window.text(110, 240, 60, 15, 'Forgot your password?', {
 		main: {
 			textSize: 8.0,
 			textAlign: 1.0,
@@ -157,7 +157,7 @@ function showLoginGUI() {
 	mexui.focusedControl = login.passwordInput;
 	guiSubmitKey = checkLogin;
 
-	showLocaleChooserGUI();
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), login.window.position.y+login.window.size.y+20));
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 
