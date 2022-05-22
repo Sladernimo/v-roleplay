@@ -201,9 +201,6 @@ function loadServerConfigFromId(tempServerId) {
 
 function applyConfigToServer(tempServerConfig) {
 	logToConsole(LOG_INFO, "[VRR.Config]: Applying server config ...");
-	getServerConfig().devServer = intToBool(toInteger(server.getCVar("vrr_devserver")));
-	getServerConfig().testerOnly = intToBool(toInteger(server.getCVar("vrr_testeronly")));
-
 	logToConsole(LOG_DEBUG, "[VRR.Config]: Server config applied successfully!");
 
 	if(isTimeSupported()) {
