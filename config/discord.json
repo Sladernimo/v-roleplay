@@ -1,12 +1,12 @@
 {
-	"sendChat": true,
-	"sendEvents": true,
-	"sendConnectEvents": true,
-	"sendVehicleEvents": true,
-	"sendDeathEvents": true,
-	"sendAdmin": true,
+	"sendChat": false,
+	"sendEvents": false,
+	"sendConnectEvents": false,
+	"sendVehicleEvents": false,
+	"sendDeathEvents": false,
+	"sendAdmin": false,
 	"webhook": {
-		"enabled": true,
+		"enabled": false,
 		"webhookBaseURL": "http://127.0.0.1:8090/discord.php?message={0}&server={1}&type={2}&pass={3}",
 		"pass": "LWb7T3ZyCam7Nzen"
 	}
