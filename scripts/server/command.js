@@ -411,8 +411,10 @@ function loadCommands() {
 		npc: [
 			new CommandData("addnpc", createNPCCommand, "<skin id/name>", getStaffFlagValue("ManageNPCs"), true, false, "Creates an NPC with the specified skin"),
 			new CommandData("delnpc", deleteNPCCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Deletes the nearest NPC"),
-			//new CommandData("npcinfo", getNPCInfoCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Shows info about the nearest NPC"),
+			new CommandData("npcinfo", getNPCInfoCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Shows info about the nearest NPC"),
 			new CommandData("npcanim", setNPCAnimationCommand, "<animation name>", getStaffFlagValue("ManageNPCs"), true, false, "Plays the specified animation on the nearest NPC"),
+			new CommandData("npcname", setNPCNameCommand, "<name>", getStaffFlagValue("ManageNPCs"), true, false, "Sets the name of the nearest NPC"),
+			new CommandData("npclookatplr", toggleNPCLookAtClosestPlayerCommand, "<name>", getStaffFlagValue("ManageNPCs"), true, false, "Makes the NPC look at the closest player"),
 			//new CommandData("npcrespawnall", respawnAllNPCsCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Respawns all NPCs"),
 			//new CommandData("npcrespawn", respawnNPCCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Respawns the nearest NPC"),
 		],
@@ -523,6 +525,8 @@ function loadCommands() {
 		utilities: [],
 		vehicle: [
 			new CommandData("addveh", createVehicleCommand, "<model id/name>", getStaffFlagValue("ManageVehicles"), true, false),
+			//new CommandData("spawnveh", createVehicleCommand, "<model id/name>", getStaffFlagValue("ManageVehicles"), true, false),
+			//new CommandData("createveh", createVehicleCommand, "<model id/name>", getStaffFlagValue("ManageVehicles"), true, false),
 			new CommandData("tempveh", createTemporaryVehicleCommand, "<model id/name>", getStaffFlagValue("ManageVehicles"), true, false),
 			new CommandData("delveh", deleteVehicleCommand, "", getStaffFlagValue("ManageVehicles"), true, false),
 			new CommandData("nearveh", getNearbyVehiclesCommand, "", getStaffFlagValue("None"), true, false),
