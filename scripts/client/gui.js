@@ -179,7 +179,7 @@ addNetworkEventHandler("vrr.switchCharacterSelect", function(firstName, lastName
 
 addNetworkEventHandler("vrr.showError", function(errorMessage, errorTitle, buttonText) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show error window`);
-	showError(errorMessage, errorTitle, buttonText);
+	showErrorGUI(errorMessage, errorTitle, buttonText);
 });
 
 // ===========================================================================
@@ -191,9 +191,9 @@ addNetworkEventHandler("vrr.showPrompt", function(promptMessage, promptTitle, ye
 
 // ===========================================================================
 
-addNetworkEventHandler("vrr.showInfo", function(infoMessage, buttonText) {
+addNetworkEventHandler("vrr.showInfo", function(infoMessage, infoTitle, buttonText) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show info dialog`);
-	showInfo(infoMessage, buttonText);
+	showInfoGUI(infoMessage, infoTitle, buttonText);
 });
 
 // ===========================================================================
