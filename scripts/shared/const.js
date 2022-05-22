@@ -97,7 +97,7 @@ const VRR_VEHBUYSTATE_EXITVEH = 2;
 const VRR_VEHBUYSTATE_FARENOUGH = 3;
 const VRR_VEHBUYSTATE_WRONGVEH = 4;
 
-// Body Parts for Skin Select
+// Body Parts for Skin Select (IV for now, but might do other games when I can add accessory objects)
 const VRR_SKINSELECT_NONE = 0;
 const VRR_SKINSELECT_SKIN = 1;
 const VRR_SKINSELECT_HAT = 2;
@@ -111,3 +111,13 @@ const VRR_SKINSELECT_RIGHTWRIST = 10;
 const VRR_SKINSELECT_LEFTHAND = 11;
 const VRR_SKINSELECT_RIGHTHAND = 12;
 const VRR_SKINSELECT_HEAD = 13;
+
+// Action States for NPCs
+const VRR_NPC_ACTION_NONE = 0;
+const VRR_NPC_ACTION_ANIM = 1;
+const VRR_NPC_ACTION_WALKTO = 2;
+const VRR_NPC_ACTION_RUNTO = 3;
+const VRR_NPC_ACTION_SPRINTTO = 4;
+const VRR_NPC_ACTION_FOLLOW = 5;
+const VRR_NPC_ACTION_DEFEND = 6;
+const VRR_NPC_ACTION_GUARD_AREA = 7;
