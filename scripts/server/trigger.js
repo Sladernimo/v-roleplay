@@ -46,6 +46,9 @@ const triggerTypes = [
 	"onVehicleRepaired",
 	"onVehicleColourChange",
 	"onVehicleExtraChange",
+	"onPlayerShout",
+	"onPlayerTalk",
+	"onPlayerWhisper",
 ];
 
 // ===========================================================================
