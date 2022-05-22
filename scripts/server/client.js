@@ -272,13 +272,6 @@ function sendJobRouteLocationToPlayer(client, position, colour) {
 
 // ===========================================================================
 
-function showPlayerChangePasswordGUI(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("vrr.changePassword", client);
-}
-
-// ===========================================================================
-
 function showPlayerLoginSuccessGUI(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending login success GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("vrr.loginSuccess", client);
@@ -344,14 +337,21 @@ function showPlayerNewCharacterGUI(client) {
 
 function showPlayerChangePasswordGUI(client, errorMessage = "") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("vrr.showChangePassword", client);
+	sendNetworkEventToPlayer("vrr.showChangePassword", client, errorMessage);
 }
 
 // ===========================================================================
 
 function showPlayerResetPasswordCodeInputGUI(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password code input GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("vrr.showResetPasswordCodeInput", client);
+}
+
+// ===========================================================================
+
+function showPlayerResetPasswordEmailInputGUI(client) {
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password email input GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("vrr.showResetPasswordEmailInput", client);
 }
 
 // ===========================================================================
@@ -400,7 +400,7 @@ function showPlayerInfoGUI(client, infoMessage, infoTitle, buttonText = "OK") {
 
 function showPlayerErrorGUI(client, errorMessage, errorTitle, buttonText = "OK") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show error GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${errorTitle}, Message: ${errorMessage})`);
-	sendNetworkEventToPlayer("vrr.showInfo", client, errorMessage, errorTitle, buttonText);
+	sendNetworkEventToPlayer("vrr.showError", client, errorMessage, errorTitle, buttonText);
 }
 
 // ===========================================================================
