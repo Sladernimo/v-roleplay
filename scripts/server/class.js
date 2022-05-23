@@ -162,6 +162,7 @@ class ClientData {
 		this.connectTime = 0;
 		this.clientVersion = "0.0.0";
 		this.loginAttemptsRemaining = 3;
+		this.passwordResetAttemptsRemaining = 3;
 		this.afk = false;
 
 		this.jobRoute = -1;
