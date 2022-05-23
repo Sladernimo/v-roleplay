@@ -467,12 +467,12 @@ function loadCommands() {
 			new CommandData("dn", teleportDownCommand, "[distance in meters]", getStaffFlagValue("BasicModeration"), true, true, "Teleports you downward a certain distance in meters."),
 			new CommandData("int", playerInteriorCommand, "<player name/id> [interior id]", getStaffFlagValue("BasicModeration"), true, true, "Gets or sets a player's game interior."),
 			new CommandData("vw", playerVirtualWorldCommand, "<player name/id> [virtual world id]", getStaffFlagValue("BasicModeration"), true, true, "Gets or sets a player's virtual world/dimension."),
-			new CommandData("addstaffflag", addPlayerStaffFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("ManageAdmins"), true, true, "Gives a player a staff flag by name (this server only)."),
-			new CommandData("delstaffflag", removePlayerStaffFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("ManageAdmins"), true, true, "Takes a player's staff flag by name (this server only)."),
-			new CommandData("getstaffflags", getPlayerStaffFlagsCommand, "<player name/id>", getStaffFlagValue("ManageAdmins"), true, true, "Shows a list of all staff flags a player has (this server only)."),
+			new CommandData("addplrstaffflag", addPlayerStaffFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("ManageAdmins"), true, true, "Gives a player a staff flag by name (this server only)."),
+			new CommandData("delplrstaffflag", removePlayerStaffFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("ManageAdmins"), true, true, "Takes a player's staff flag by name (this server only)."),
+			new CommandData("plrstaffflags", getPlayerStaffFlagsCommand, "<player name/id>", getStaffFlagValue("ManageAdmins"), true, true, "Shows a list of all staff flags a player has (this server only)."),
 			new CommandData("clearstaffflags", removePlayerStaffFlagsCommand, "<player name/id>", getStaffFlagValue("ManageAdmins"), true, true, "Removes all staff flags for a player (this server only)."),
-			new CommandData("staffflags", getStaffFlagsCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Shows a list of all valid staff flag names."),
-			new CommandData("stafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
+			new CommandData("allstaffflags", getStaffFlagsCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Shows a list of all valid staff flag names."),
+			new CommandData("plrstafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
 			new CommandData("givemoney", givePlayerMoneyCommand, "<player name/id> <amount>", getStaffFlagValue("serverManager"), true, true),
 			new CommandData("nonrpname", forceCharacterNameChangeCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Forces a player to change their current character's name."),
 			new CommandData("setname", setCharacterNameCommand, "<player name/id> <first name> <last name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's name directly."),
@@ -547,9 +547,13 @@ function loadCommands() {
 			new CommandData("vehjob", setVehicleJobCommand, "[job id/name]", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehdelowner", removeVehicleOwnerCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehrank", setVehicleRankCommand, "<rank id/name>", getStaffFlagValue("None"), true, true),
+			new CommandData("vehiclerank", setVehicleRankCommand, "<rank id/name>", getStaffFlagValue("None"), true, true),
 			new CommandData("vehinfo", getVehicleInfoCommand, "", getStaffFlagValue("None"), true, true),
+			new CommandData("vehicleinfo", getVehicleInfoCommand, "", getStaffFlagValue("None"), true, true),
 			new CommandData("vehpark", toggleVehicleSpawnLockCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
-
+			new CommandData("parkveh", toggleVehicleSpawnLockCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
+			new CommandData("vehiclepark", toggleVehicleSpawnLockCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
+			new CommandData("parkvehicle", toggleVehicleSpawnLockCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehrespawnall", respawnAllVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all vehicles (also respawns all traffic vehicles)"),
 			new CommandData("vehrespawnempty", respawnEmptyVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all empty/unoccupied vehicles"),
 			new CommandData("vehrespawnjob", respawnJobVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all job vehicles"),
@@ -559,7 +563,6 @@ function loadCommands() {
 			new CommandData("vehrespawnbiz", respawnBusinessVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all business-owned vehicles"),
 			new CommandData("vehrespawn", respawnVehicleCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns your current vehicle"),
 			new CommandData("vehreloadall", reloadAllVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Deletes and reloads all vehicles from database"),
-
 			new CommandData("carrespawnall", respawnAllVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all vehicles (also respawns all traffic vehicles)"),
 			new CommandData("carrespawnempty", respawnEmptyVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all empty/unoccupied vehicles"),
 			new CommandData("carrespawnjob", respawnJobVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all job vehicles"),
@@ -569,15 +572,34 @@ function loadCommands() {
 			new CommandData("carrespawnbiz", respawnBusinessVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns all business-owned vehicles"),
 			new CommandData("carrespawn", respawnVehicleCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Respawns your current vehicle"),
 			new CommandData("carreloadall", reloadAllVehiclesCommand, "", getStaffFlagValue("ManageVehicles"), true, true, "Deletes and reloads all vehicles from database"),
-
 			new CommandData("vehrent", rentVehicleCommand, "", getStaffFlagValue("None"), true, true, "Starts renting your current vehicle (if rentable)"),
+			new CommandData("rentveh", rentVehicleCommand, "", getStaffFlagValue("None"), true, true, "Starts renting your current vehicle (if rentable)"),
+			new CommandData("vehiclerent", rentVehicleCommand, "", getStaffFlagValue("None"), true, true, "Starts renting your current vehicle (if rentable)"),
+			new CommandData("rentvehicle", rentVehicleCommand, "", getStaffFlagValue("None"), true, true, "Starts renting your current vehicle (if rentable)"),
 			new CommandData("vehrentprice", setVehicleRentPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
 			new CommandData("vehbuyprice", setVehicleBuyPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("vehiclebuyprice", setVehicleBuyPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("vehprice", setVehicleBuyPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("vehicleprice", setVehicleBuyPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("rentpriceveh", setVehicleRentPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("buypriceveh", setVehicleBuyPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("stoprentveh", stopRentingVehicleCommand, "", getStaffFlagValue("None"), true, true, "Stops renting your vehicle"),
 			new CommandData("vehstoprent", stopRentingVehicleCommand, "", getStaffFlagValue("None"), true, true, "Stops renting your vehicle"),
+			new CommandData("vehiclerentprice", setVehicleRentPriceCommand, "", getStaffFlagValue("None"), true, true, "Sets your vehicle's rent price"),
+			new CommandData("vehiclestoprent", stopRentingVehicleCommand, "", getStaffFlagValue("None"), true, true, "Stops renting your vehicle"),
 			new CommandData("vehbuy", buyVehicleCommand, "", getStaffFlagValue("None"), true, true, "Purchases your vehicle"),
+			new CommandData("vehiclebuy", buyVehicleCommand, "", getStaffFlagValue("None"), true, true, "Purchases your vehicle"),
+			new CommandData("buyveh", buyVehicleCommand, "", getStaffFlagValue("None"), true, true, "Purchases your vehicle"),
+			new CommandData("buyvehicle", buyVehicleCommand, "", getStaffFlagValue("None"), true, true, "Purchases your vehicle"),
 			new CommandData("vehcolour", vehicleAdminColourCommand, "<colour1> <colour2>", getStaffFlagValue("None"), true, true, "Sets a vehicle's colour"),
+			new CommandData("vehiclecolour", vehicleAdminColourCommand, "<colour1> <colour2>", getStaffFlagValue("None"), true, true, "Sets a vehicle's colour"),
 			new CommandData("vehlivery", vehicleAdminLiveryCommand, "<livery id>", getStaffFlagValue("None"), true, true, "Sets your vehicle's livery/paintjob"),
+			new CommandData("vehiclelivery", vehicleAdminLiveryCommand, "<livery id>", getStaffFlagValue("None"), true, true, "Sets your vehicle's livery/paintjob"),
 			new CommandData("vehrepair", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
+			new CommandData("vehiclerepair", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
+			new CommandData("repairveh", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
+			new CommandData("repairvehicle", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
+
 			new CommandData("passenger", enterVehicleAsPassengerCommand, "", getStaffFlagValue("None"), true, true, "Enters a vehicle as passenger"),
 		],
 	};
@@ -803,7 +825,7 @@ function processPlayerCommand(command, params, client) {
 	if(!isConsole(client)) {
 		if(!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(command)))) {
 			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
-			messagePlayerError(client, "CommandNoPermissions", `{ALTCOLOUR}/${toLowerCase(command)}{MAINCOLOUR}`);
+			messagePlayerError(client, getLocaleString(client, "CommandNoPermissions", `{ALTCOLOUR}/${toLowerCase(command)}{MAINCOLOUR}`));
 			return false;
 		}
 	}
