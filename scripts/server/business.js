@@ -2499,10 +2499,19 @@ function cacheBusinessItems(businessId) {
 	clearArray(getBusinessData(businessId).floorItemCache);
 	clearArray(getBusinessData(businessId).storageItemCache);
 
-	let businessData = getBusinessData(businessId);
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId);
-	getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+	//let businessData = getBusinessData(businessId);
+	//logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
+	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
+	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+
+	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
+	for(let i in getServerData().items) {
+		if(getItemData(i).ownerType == VRR_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+			getBusinessData(businessId).floorItemCache.push(i);
+		} else if(getItemData(i).ownerType == VRR_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+			getBusinessData(businessId).storageItemCache.push(i);
+		}
+	}
 
 	logToConsole(LOG_VERBOSE, `[VRR.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
 }

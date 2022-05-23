@@ -1034,14 +1034,21 @@ function checkAccountResetPasswordRequest(client, inputText) {
 		}
 
 		case VRR_RESETPASS_STATE_CODEINPUT: {
-			if(getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
-				getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
-				showPlayerChangePasswordGUI(client, getLocaleString(client));
-				logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
-			} else {
-				getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
-				disconnectPlayer(client);
-				logToConsole(LOG_INFO|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct)`);
+			if(inputText != "") {
+				if(getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
+					getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
+					showPlayerChangePasswordGUI(client, getLocaleString(client));
+					logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
+				} else {
+					getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
+					getPlayerData(client).passwordResetAttemptsRemaining = getPlayerData(client).passwordResetAttemptsRemaining - 1;
+					logToConsole(LOG_INFO|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, ${getPlayerData(client).passwordResetAttemptsRemaining} attempts remaining)`);
+					if(getPlayerData(client).passwordResetAttemptsRemaining <= 0) {
+						logToConsole(LOG_INFO|LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, no more attempts remaining, kicking ...)`);
+						disconnectPlayer(client);
+						return false;
+					}
+				}
 			}
 			break;
 		}
