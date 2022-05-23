@@ -41,7 +41,7 @@ function playerPayDay(client) {
 		grossIncome = grossIncome*2;
 	}
 
-	let incomeTaxAmount = calculateIncomeTax(wealth);
+	let incomeTaxAmount = Math.round(calculateIncomeTax(wealth));
 
 	let netIncome = grossIncome-incomeTaxAmount;
 
