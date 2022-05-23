@@ -301,17 +301,20 @@ function getPlayerInfoCommand(command, params, client) {
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${getClanData(getClanIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan)).name}[${getPlayerCurrentSubAccount(targetClient).clan}] (Rank: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).name}[Level: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).level}, DBID: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).databaseId}` : `(None)`;
 	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${getJobData(getJobIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job)).name}[${getPlayerCurrentSubAccount(targetClient).job}] (Rank: ${getPlayerCurrentSubAccount(targetClient).jobRank})` : `(None)`;
 
-	let stats = [
-		`{MAINCOLOUR}Account: {ALTCOLOUR}${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`,
-		`{MAINCOLOUR}Character: {ALTCOLOUR}${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`,
-		`{MAINCOLOUR}Connected: {ALTCOLOUR}${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`,
-		`{MAINCOLOUR}Registered: ${getPlayerData(targetClient).accountData.registerDate}`,
-		`{MAINCOLOUR}Game Version: {ALTCOLOUR}${targetClient.gameVersion}`,
-		`{MAINCOLOUR}Client Version: {ALTCOLOUR}${getPlayerData(targetClient).clientVersion}`,
-		`{MAINCOLOUR}Skin: {ALTCOLOUR}${getSkinNameFromModel(getPlayerCurrentSubAccount(targetClient).skin)}[${getPlayerCurrentSubAccount(targetClient).skin}]`,
-		`{MAINCOLOUR}Clan: {ALTCOLOUR}${clan}`,
-		`{MAINCOLOUR}Job: {ALTCOLOUR}${job}`,
+	let tempStats = [
+		["Account", `${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`],
+		["Character", `${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`],
+		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
+		["Registered", `${getPlayerData(targetClient).accountData.registerDate}`],
+		["Game Version", `${targetClient.gameVersion}`],
+		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
+		["Skin", `${getSkinNameFromModel(getPlayerCurrentSubAccount(targetClient).skin)}[${getPlayerCurrentSubAccount(targetClient).skin}]`],
+		["Clan", `${clan}`],
+		["Job", `${job}`],
+		["Cash", `${getPlayerCurrentSubAccount(client).cash}`],
 	]
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	let chunkedList = splitArrayIntoChunks(stats, 6);
 	for(let i in chunkedList) {
