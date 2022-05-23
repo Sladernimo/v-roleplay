@@ -84,8 +84,8 @@ function setStaffTitleCommand(command, params, client) {
 
 	getPlayerData(targetClient).accountData.staffTitle = staffTitle;
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} staff title to ${staffTitle}`);
-	messagePlayerAlert(client, `${getPlayerName(client)} set your staff title to ${staffTitle}`);
-	targetdisconnectPlayer(client);
+	messagePlayerAlert(targetClient, `${getPlayerName(client)} set your staff title to ${staffTitle}`);
+	//targetdisconnectPlayer(client);
 }
 
 // ===========================================================================
