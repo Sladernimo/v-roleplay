@@ -1596,20 +1596,20 @@ function getBestItemToTake(client, slot) {
  *
  */
 function listPlayerInventoryCommand(command, params, client) {
-	let targetClient = client;
+	//let targetClient = client;
+	//if(!areParamsEmpty(client)) {
+	//	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
+	//		if(targetClient == false) {
+	//			sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
+	//			return false;
+	//		}
+	//
+	//		targetClient = getPlayerFromParams(params);
+	//	}
+	//}
+	//showPlayerInventoryToPlayer(client, targetClient);
 
-	if(!areParamsEmpty(client)) {
-		if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
-			if(targetClient == false) {
-				sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
-				return false;
-			}
-
-			targetClient = getPlayerFromParams(params);
-		}
-	}
-	showPlayerInventoryToPlayer(client, targetClient);
-	//showPlayerInventoryToPlayer(client, client);
+	showPlayerInventoryToPlayer(client, client);
 }
 
 // ===========================================================================
