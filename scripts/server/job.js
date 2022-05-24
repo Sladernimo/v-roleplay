@@ -496,7 +496,7 @@ function startWorkingCommand(command, params, client) {
 	}
 
 	messagePlayerSuccess(client, `💼 You are now working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
-	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} is now working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} started working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 
 	startWorking(client);
 	//messagePlayerNewbieTip(client, `Enter a job vehicle to get started!`);
@@ -650,6 +650,7 @@ function stopWorking(client) {
 	restorePlayerJobLockerItems(client);
 	respawnJobVehicle(client);
 	sendPlayerStopJobRoute(client);
+	messageDiscordEventChannel(`💼 ${getPlayerName(client)} has stopped working as a ${getJobData(jobId).name}`);
 
 	let jobId = getPlayerJob(client);
 	switch(getJobType(jobId)) {
@@ -1760,7 +1761,7 @@ function startJobRoute(client, forceRoute = -1) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} is starting job route ${jobRoute} for job ${jobId}`);
+	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} is starting job route ${getJobRouteData(jobId, jobRoute).name} (${jobRoute}) for the ${getJobData(jobId).name} (${jobId}) job`);
 
 	getPlayerData(client).jobRoute = jobRoute;
 	getPlayerData(client).jobRouteLocation = 0;
@@ -1770,6 +1771,12 @@ function startJobRoute(client, forceRoute = -1) {
 	getPlayerVehicle(client).colour2 = getJobRouteData(jobId, jobRoute).vehicleColour2;
 
 	messagePlayerNormal(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, jobRoute).startMessage, jobId, jobRoute));
+
+	// Don't announce routes that an admin just created
+	if(forceRoute == -1) {
+		messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} started the ${getJobRouteData(jobId, jobRoute).name} route for the ${getJobData(jobId).name} job`);
+	}
+
 	if(getJobRouteData(jobId, jobRoute).locations.length > 0) {
 		showCurrentJobLocation(client);
 	} else {
@@ -1781,15 +1788,18 @@ function startJobRoute(client, forceRoute = -1) {
 
 function stopJobRoute(client, successful = false, alertPlayer = true) {
 	let jobId = getPlayerJob(client);
+	let routeId = getPlayerJobRoute(client);
 
 	if(alertPlayer) {
-		messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).finishMessage), jobId, getPlayerJobRoute(client));
+		messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, routeId).finishMessage, jobId, routeId));
 	}
 
 	if(successful == true) {
 		finishSuccessfulJobRoute(client);
 		return false;
 	}
+
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and didn't earn anything.`);
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
@@ -3000,6 +3010,7 @@ function finishSuccessfulJobRoute(client) {
 	let payout = toInteger(applyServerInflationMultiplier(jobRouteData.pay));
 	getPlayerData(client).payDayAmount = getPlayerData(client).payDayAmount + payout;
 
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and earned $${getJobRouteData(jobId, jobRouteId).pay}!`);
 	messagePlayerSuccess(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, jobRouteData.index));
 
 	stopReturnToJobVehicleCountdown(client);
