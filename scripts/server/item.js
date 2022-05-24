@@ -872,6 +872,8 @@ function playerUseItem(client, hotBarSlot) {
 				if(getItemData(itemIndex).value <= 0) {
 					destroyItem(itemIndex);
 				}
+			} else {
+				messagePlayerError(client, getLocaleString(client, "VehicleRepairFailedTooFar"));
 			}
 			break;
 		}
