@@ -253,3 +253,13 @@ function messagePlayerHelpContent(client, messageString) {
 }
 
 // ===========================================================================
+
+function messagePlayersInRace(raceId, message) {
+	for(let i in clients) {
+		if(getPlayerRace(clients[i]) == raceId) {
+			messagePlayerNormal(clients[i], message);
+		}
+	}
+}
+
+// ===========================================================================

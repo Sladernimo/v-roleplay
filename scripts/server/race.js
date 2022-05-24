@@ -78,3 +78,72 @@ function createRaceCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function createRaceCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let raceId = createRace(params, getPlayerPosition(client));
+	getRaceData(raceId).enabled = false;
+	initRace(raceId);
+	joinRace(client, raceId);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created race {ALTCOLOUR}${params}`);
+}
+
+// ===========================================================================
+
+function createRaceLocationCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let raceId = getPlayerRace(client);
+	if(raceId == false) {
+		messagePlayerError(client, "You are not in a race!");
+		return false;
+	}
+
+	let raceLocationName = params;
+	createRaceLocation(raceId, raceLocationName, getPlayerPosition(client));
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created race {ALTCOLOUR}${params}`);
+}
+
+// ===========================================================================
+
+function createRaceLocationCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let raceId = getPlayerRace(client);
+	if(raceId == false) {
+		messagePlayerError(client, "You are not in a race!");
+		return false;
+	}
+
+	let raceLocationName = params;
+	createRaceLocation(raceId, raceLocationName, getPlayerPosition(client));
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created race {ALTCOLOUR}${params}`);
+}
+
+// ===========================================================================
+
+function stopRacingCommand(command, params, client) {
+	if(!isPlayerInARace(client)) {
+		messagePlayerError(client, "You aren't in a race!");
+		return false;
+	}
+
+	leaveRace(client);
+	messagePlayerSuccess(client, "You left the race!");
+	messagePlayersInRace(`${getCharacterFullName(client)} left the race!`);
+	checkRemainingPlayersInRace(raceId)
+}
+
+// ===========================================================================
