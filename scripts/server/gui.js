@@ -189,7 +189,8 @@ function playerPromptAnswerYes(client) {
 			getHouseData(houseId).needsSaved = true;
 			updateHousePickupLabelData(houseId);
 
-			messagePlayerSuccess(client, `You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
+			messageDiscordEventChannel(`🏘️ ${getCharacterFullName(client)} is now the owner of *${getHouseData(houseId).description}*!`);
+			messagePlayerSuccess(client, `🏘️ You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
 			break;
 		}
 
@@ -206,7 +207,7 @@ function playerPromptAnswerYes(client) {
 			}
 
 			if(getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
-				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
+				messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
 				return false;
 			}
 
@@ -216,7 +217,8 @@ function playerPromptAnswerYes(client) {
 			getBusinessData(businessId).needsSaved = true;
 			updateBusinessPickupLabelData(businessId);
 
-			messagePlayerSuccess(client, `You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
+			messageDiscordEventChannel(`🏢 ${getCharacterFullName(client)} is now the owner of *${getBusinessData(businessId).name}*!`);
+			messagePlayerSuccess(client, `🏢 You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
 			break;
 		}
 
