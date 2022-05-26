@@ -275,14 +275,14 @@ function spawnNPC(npcIndex) {
 	if(ped) {
 		getNPCData(npcIndex).ped = ped;
 		setEntityData(ped, "vrr.dataIndex", npcIndex, false);
-		setElementInterior(ped, npcData.interior);
 		if(npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
-			if(getAnimationData(animationId) != false) {
-				setEntityData(ped, "vrr.animation", animationId, true);
+			if(animationId != false) {
+				setEntityData(ped, "vrr.anim", animationId, true);
 			}
 		}
-		forcePlayerToSyncElementProperties(null, ped);
+		setElementDimension(ped, npcData.dimension);
+		setElementInterior(ped, npcData.interior);
 	}
 }
 
