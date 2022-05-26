@@ -60,6 +60,10 @@ function onPlayerJoin(event, client) {
 		fadeCamera(client, true, 1.0);
 	}
 
+	//if(isCustomCameraSupported()) {
+	//	showConnectCameraToPlayer(client);
+	//}
+
 	let messageText = `👋 ${getPlayerName(client)} is connecting to the server ...`;
 	messageDiscordEventChannel(messageText);
 
@@ -621,7 +625,6 @@ function onPlayerSpawn(client) {
 		sendAllHousesToPlayer(client);
 		sendAllJobsToPlayer(client);
 		//sendAllVehiclesToPlayer(client);
-
 		requestPlayerPedNetworkId(client);
 	}
 
@@ -629,6 +632,22 @@ function onPlayerSpawn(client) {
 	updatePlayerSpawnedState(client, true);
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
+
+	// Stop playing intro music and any other radio
+	stopRadioStreamForPlayer(client);
+
+	// Start playing business/house radio if in one
+	let businessId = getPlayerBusiness(client);
+	let houseId = getPlayerHouse(client);
+	if(businessId != -1) {
+		if(getBusinessData(businessId).streamingRadioStation != -1) {
+			playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(businessId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
+		}
+	} else if(houseId != -1) {
+		if(getHouseData(houseId).streamingRadioStation != -1) {
+			playRadioStreamForPlayer(client, getRadioStationData(getHouseData(houseId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
+		}
+	}
 
 	messageDiscordEventChannel(`🧍 ${getPlayerName(client)} spawned as ${getCharacterFullName(client)}`);
 }
