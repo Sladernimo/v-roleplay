@@ -8,9 +8,10 @@
 // ===========================================================================
 
 class HouseData {
-	constructor(houseId, entrancePosition, blipModel, pickupModel, hasInterior) {
+	constructor(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
 		this.index = -1;
 		this.houseId = houseId;
+		this.description = description;
 		this.entrancePosition = entrancePosition;
 		this.blipModel = blipModel;
 		this.pickupModel = pickupModel;
@@ -21,12 +22,13 @@ class HouseData {
 
 // ===========================================================================
 
-function receiveHouseFromServer(houseId, entrancePosition, blipModel, pickupModel, hasInterior) {
+function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
 	logToConsole(LOG_DEBUG, `[VRR.House] Received house ${houseId} (${name}) from server`);
 
-	if(getGame() == VRR_GAME_GTA_IV) {
+	if(!areServerElementsSupported()) {
 		if(getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
+			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
 			houseData.blipModel = blipModel;
 			houseData.pickupModel = pickupModel;
@@ -65,7 +67,7 @@ function receiveHouseFromServer(houseId, entrancePosition, blipModel, pickupMode
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId} doesn't exist. Adding ...`);
-			let tempHouseData = new HouseData(houseId, entrancePosition, blipModel, pickupModel, hasInterior);
+			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
 			if(blipModel != -1) {
 				let blipId = createGameBlip(tempHouseData.blipModel, tempHouseData.entrancePosition, "House");
 				if(blipId != -1) {
