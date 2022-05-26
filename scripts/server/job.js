@@ -264,16 +264,7 @@ function createAllJobBlips() {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Spawning all job location blips ...`);
 	for(let i in getServerData().jobs) {
 		for(let j in getServerData().jobs[i].locations) {
-			getServerData().jobs[i].locations[j].blip = game.createBlip((getServerData().jobs[i].blipModel!=0) ? getServerData().jobs[i].blipModel : 0, getServerData().jobs[i].locations[j].position, 2, getColourByName("yellow"));
-			if(getGlobalConfig().jobBlipStreamInDistance == -1 || getGlobalConfig().jobBlipStreamOutDistance == -1)	{
-				getServerData().jobs[i].locations[j].blip.netFlags.distanceStreaming = false;
-			} else {
-				setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
-				setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
-			}
-
-			//addToWorld(getServerData().jobs[i].locations[j].blip);
-			logToConsole(LOG_DEBUG, `[VRR.Job] Job '${getServerData().jobs[i].name}' location blip ${j} spawned!`);
+			createJobLocationBlip(i, j);
 		}
 	}
 	logToConsole(LOG_DEBUG, `[VRR.Job] All job location blips spawned!`);
@@ -936,6 +927,7 @@ function quitJob(client) {
 	stopWorking(client);
 	getPlayerCurrentSubAccount(client).job = 0;
 	sendPlayerJobType(client, 0);
+	updateJobBlipsForPlayer(client);
 }
 
 // ===========================================================================
@@ -943,6 +935,7 @@ function quitJob(client) {
 function takeJob(client, jobId) {
 	getPlayerCurrentSubAccount(client).job = getJobData(jobId).databaseId;
 	sendPlayerJobType(client, getJobData(jobId).databaseId);
+	updateJobBlipsForPlayer(client);
 }
 
 // ===========================================================================
@@ -2426,24 +2419,46 @@ function createJobLocationBlip(jobId, locationId) {
 
 	let tempJobData = getJobData(jobId);
 
-	if(getJobData(jobId).blipModel != -1) {
-		let blipModelId = getGameConfig().blipSprites[getGame()].Job;
+	if(getJobData(jobId).blipModel == -1) {
+		return false;
+	}
 
-		if(getJobData(jobId).blipModel != 0) {
-			blipModelId = getJobData(jobId).blipModel;
-		}
+	let blipModelId = getGameConfig().blipSprites[getGame()].Job;
 
-		if(areServerElementsSupported()) {
-			let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, getColourByType("jobYellow"));
-			if(blip != false) {
-				tempJobData.locations[locationId].blip = blip;
+	if(getJobData(jobId).blipModel != 0) {
+		blipModelId = getJobData(jobId).blipModel;
+	}
+
+	if(areServerElementsSupported()) {
+		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 1, getColourByName("yellow"));
+		if(blip != false) {
+			tempJobData.locations[locationId].blip = blip;
+
+			if(getGlobalConfig().jobBlipStreamInDistance == -1 || getGlobalConfig().jobBlipStreamOutDistance == -1)	{
+				blip.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
+				setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
 			}
+
 			setElementOnAllDimensions(blip, false);
 			setElementDimension(blip, tempJobData.locations[locationId].dimension);
-			addToWorld(blip);
-		} else {
-			sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId);
+
+			let clients  = getClients();
+			for(let i in clients) {
+				if(getPlayerJob(client) == false) {
+					showElementForPlayer(blip, clients[i]);
+				} else {
+					if(getPlayerJob(clients[i]) == getServerData().jobs[i].databaseId) {
+						showElementForPlayer(blip, clients[i]);
+					} else {
+						hideElementForPlayer(blip, clients[i]);
+					}
+				}
+			}
 		}
+	} else {
+		sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId);
 	}
 }
 
@@ -3077,6 +3092,20 @@ function replaceJobRouteStringsInMessage(messageText, jobId, jobRouteId) {
 	messageText = messageText.replace(tempRegex, getJobData(tempJobRouteData.jobIndex).name);
 
 	return messageText;
+}
+
+// ===========================================================================
+
+function updateJobBlipsForPlayer(client) {
+	for(let i in getServerData().jobs) {
+		for(let j in getServerData().jobs[i].locations) {
+			if(getPlayerJob(client) == 0 || getPlayerJob(client) == i) {
+				showElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+			} else {
+				hideElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+			}
+		}
+	}
 }
 
 // ===========================================================================
