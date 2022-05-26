@@ -246,8 +246,9 @@ function syncCivilianProperties(civilian) {
 	}
 
 	if(doesEntityDataExist(civilian, "vrr.anim")) {
-		let animData = getEntityData(civilian, "vrr.anim");
-		civilian.addAnimation(animData[0], animData[1]);
+		let animationSlot = getEntityData(civilian, "vrr.anim");
+		let animationData = getAnimationData(animationSlot);
+		civilian.addAnimation(animationData.groupId, animationData.animId);
 	}
 }
 
@@ -366,26 +367,6 @@ function syncPlayerProperties(player) {
 
 // ===========================================================================
 
-function syncObjectProperties(object) {
-	if(!areServerElementsSupported()) {
-		return false;
-	}
-
-	if(getGame() == VRR_GAME_GTA_III || getGame() == VRR_GAME_GTA_VC) {
-		if(doesEntityDataExist(object, "vrr.scale")) {
-			let scaleFactor = getEntityData(object, "vrr.scale");
-			let tempMatrix = object.matrix;
-			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
-			let tempPosition = object.position;
-			object.matrix = tempMatrix;
-			tempPosition.z += scaleFactor.z;
-			object.position = tempPosition;
-		}
-	}
-}
-
-// ===========================================================================
-
 function syncElementProperties(element) {
 	if(!areServerElementsSupported()) {
 		return false;
@@ -426,10 +407,6 @@ function syncElementProperties(element) {
 
 			case ELEMENT_PLAYER:
 				syncPlayerProperties(element);
-				break;
-
-			case ELEMENT_OBJECT:
-				syncObjectProperties(element);
 				break;
 
 			default:
