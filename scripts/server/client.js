@@ -990,21 +990,21 @@ function sendPlayerEnterPropertyKey(client, key) {
 
 function makePedPlayAnimation(ped, animationSlot, positionOffset) {
 	setEntityData(ped, "vrr.anim", animationSlot, true);
-	sendNetworkEventToPlayer("vrr.pedAnim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
+	sendNetworkEventToPlayer("vrr.anim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 
 // ===========================================================================
 
 function makePedStopAnimation(ped) {
 	removeEntityData(ped, "vrr.anim");
-	sendNetworkEventToPlayer("vrr.pedStopAnim", null, getPedForNetworkEvent(ped));
+	sendNetworkEventToPlayer("vrr.stopAnim", null, getPedForNetworkEvent(ped));
 }
 
 // ===========================================================================
 
 function forcePedAnimation(ped, animationSlot, positionOffset = 0) {
 	addEntityData(ped, "vrr.anim", animationSlot, true);
-	sendNetworkEventToPlayer("vrr.forcePedAnim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
+	sendNetworkEventToPlayer("vrr.forceAnim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 
 // ===========================================================================
@@ -1094,8 +1094,8 @@ function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipMo
 
 // ==========================================================================
 
-function sendHouseToPlayer(client, houseId, entrancePosition, blipModel, pickupModel, hasInterior) {
-	sendNetworkEventToPlayer("vrr.house", client, houseId, entrancePosition, blipModel, pickupModel, hasInterior);
+function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
+	sendNetworkEventToPlayer("vrr.house", client, houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
 }
 
 // ==========================================================================
