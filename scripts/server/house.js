@@ -841,10 +841,6 @@ function createAllHouseBlips() {
 // ===========================================================================
 
 function createHouseEntrancePickup(houseId) {
-	if(!areServerElementsSupported()) {
-		return false;
-	}
-
 	if(!getServerConfig().createHousePickups) {
 		return false;
 	}
@@ -869,16 +865,25 @@ function createHouseEntrancePickup(houseId) {
 		pickupModelId = getHouseData(houseId).entrancePickupModel;
 	}
 
-	let entrancePickup = createGamePickup(pickupModelId, getHouseData(houseId).entrancePosition, getGameConfig().pickupTypes[getGame()].house);
-	if(entrancePickup != null) {
-		setElementOnAllDimensions(entrancePickup, false);
-		setElementDimension(entrancePickup, getHouseData(houseId).entranceDimension);
-		setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
-		setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamOutDistance);
-		setElementTransient(entrancePickup, false);
+	if(areServerElementsSupported()) {
+		let entrancePickup = createGamePickup(pickupModelId, getHouseData(houseId).entrancePosition, getGameConfig().pickupTypes[getGame()].house);
+		if(entrancePickup != null) {
+			setElementOnAllDimensions(entrancePickup, false);
+			setElementDimension(entrancePickup, getHouseData(houseId).entranceDimension);
+			setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
+			setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamOutDistance);
+			setElementTransient(entrancePickup, false);
 
-		getHouseData(houseId).entrancePickup = entrancePickup;
-		updateHousePickupLabelData(houseId);
+			getHouseData(houseId).entrancePickup = entrancePickup;
+			updateHousePickupLabelData(houseId);
+		}
+	} else {
+		let pickupModelId = getGameConfig().pickupModels[getGame()].House;
+
+		if(houseData.entrancePickupModel != 0) {
+			pickupModelId = houseData.entrancePickupModel;
+		}
+		sendHouseToPlayer(null, houseId, houseId.description, houseId.entrancePosition, blipModelId, pickupModelId, houseId.hasInterior);
 	}
 }
 
@@ -912,7 +917,7 @@ function createHouseEntranceBlip(houseId) {
 		blipModelId = getHouseData(houseId).entranceBlipModel;
 	}
 
-	let entranceBlip = createGameBlip(houseData.entrancePosition, blipModelId, getColourByName("houseGreen"));
+	let entranceBlip = createGameBlip(houseData.entrancePosition, blipModelId, 1, getColourByName("houseGreen"));
 	if(entranceBlip != null) {
 		if(houseData.exitDimension != -1) {
 			setElementDimension(entranceBlip, houseData.entranceDimension);
