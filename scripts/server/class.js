@@ -928,21 +928,7 @@ class VehicleData {
 		this.colour4 = (vehicle) ? vehicle.colour4 : 1;
 		this.livery = 3;
 
-		this.extras = [
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-		];
+		this.mods = [];
 
 		// Vehicle Attributes
 		this.locked = false;
@@ -965,6 +951,7 @@ class VehicleData {
 		this.needsSaved = false;
 		this.whoAdded = 0;
 		this.whenAdded = 0;
+		this.licensePlate = "";
 
 		this.interior = 0;
 		this.dimension = 0;
@@ -1001,23 +988,6 @@ class VehicleData {
 			this.colour4 = toInteger(dbAssoc["veh_col4"]);
 			this.livery = toInteger(dbAssoc["veh_livery"]);
 
-			// Extras (components on SA, extras on IV+)
-			this.extras = [
-				toInteger(dbAssoc["veh_extra1"]),
-				toInteger(dbAssoc["veh_extra2"]),
-				toInteger(dbAssoc["veh_extra3"]),
-				toInteger(dbAssoc["veh_extra4"]),
-				toInteger(dbAssoc["veh_extra5"]),
-				toInteger(dbAssoc["veh_extra6"]),
-				toInteger(dbAssoc["veh_extra7"]),
-				toInteger(dbAssoc["veh_extra8"]),
-				toInteger(dbAssoc["veh_extra9"]),
-				toInteger(dbAssoc["veh_extra10"]),
-				toInteger(dbAssoc["veh_extra11"]),
-				toInteger(dbAssoc["veh_extra12"]),
-				toInteger(dbAssoc["veh_extra13"]),
-			];
-
 			// Vehicle Attributes
 			this.locked = intToBool(toInteger(dbAssoc["veh_locked"]));
 			this.engine = intToBool(toInteger(dbAssoc["veh_engine"]));
@@ -1034,6 +1004,7 @@ class VehicleData {
 			this.needsSaved = false;
 			this.whoAdded = toInteger(dbAssoc["veh_who_added"]);
 			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
+			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 
 			this.interior = toInteger(dbAssoc["veh_int"]);
 			this.dimension = toInteger(dbAssoc["veh_vw"]);
