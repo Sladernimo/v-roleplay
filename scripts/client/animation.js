@@ -139,7 +139,7 @@ function makePedStopAnimation(pedId) {
 
 /**
  * @param {number} animationSlot - The slot index of the animation
- * @return {Array} The animation's data (array)
+ * @return {AnimationData} The animation's data (array)
  */
  function getAnimationData(animationSlot, gameId = getGame()) {
 	return getGameConfig().animations[gameId][animationSlot];
