@@ -27,7 +27,7 @@ class BusinessData {
 function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems) {
 	logToConsole(LOG_DEBUG, `[VRR.Business] Received business ${businessId} (${name}) from server`);
 
-	if(getGame() == VRR_GAME_GTA_IV) {
+	if(!areServerElementsSupported()) {
 		if(getBusinessData(businessId) != false) {
 			let businessData = getBusinessData(businessId);
 			businessData.name = name;
