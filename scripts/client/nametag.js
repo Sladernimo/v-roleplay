@@ -80,7 +80,6 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// -------------------------------------------
 	// Health Bar
 
-	/*
 	if(getMultiplayerMod() == VRR_MPMOD_GTAC) {
 		if(getGame() == VRR_GAME_GTA_III) {
 			// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
@@ -95,7 +94,6 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	} else {
 		y -= 5;
 	}
-	*/
 
 	if(health > 0.0) {
 		let hx = x-width/2;
