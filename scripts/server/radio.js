@@ -239,6 +239,10 @@ function setAllRadioStationIndexes() {
 
 // ===========================================================================
 
+/**
+ * @param {number} radioStationId - The data index of the radio station
+ * @return {RadioStationData} The radio station's data (class instance)
+ */
 function getRadioStationData(radioStationId) {
 	return getServerData().radioStations[radioStationId];
 }
