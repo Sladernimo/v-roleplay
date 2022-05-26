@@ -1034,15 +1034,15 @@ function getVehicleInfoCommand(command, params, client) {
 	}
 
 	let tempStats = [
-		[`Type`, `${getGameConfig().vehicles[vehicleData.model][1]} (${getGameConfig().vehicles[vehicleData.model][0]})`],
+		[`Type`, `${getGameConfig().vehicles[getGame()][vehicleData.model][1]} (${getGameConfig().vehicles[getGame()][vehicleData.model][0]})`],
 		[`ID`, `${vehicleData.index}/${vehicleData.databaseId}`],
 		[`Owner`, `${ownerName} (${getVehicleOwnerTypeText(vehicleData.ownerType)})`],
-		[`Locked`, `${getLockedUnlockedFromBool(vehicleData.locked)}`],
+		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
 		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
 		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
 		[`Buy Price`, `${vehicleData.buyPrice}`],
 		[`Rent Price`, `${vehicleData.rentPrice}`],
-		[`Radio Station`, `${vehicleData.streamingRadioStation}`],
+		[`Radio Station`, `${(vehicleData.streamingRadioStation == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStation).name}`],
 		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
 		[`License Plate`, `${vehicleData.licensePlate}`],
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
