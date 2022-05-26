@@ -477,11 +477,11 @@ function createGamePickup(modelIndex, position, type) {
 
 // ===========================================================================
 
-function createGameBlip(position, type = 0, colour = toColour(255, 255, 255, 255)) {
+function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255, 255, 255)) {
 	if(!isGameFeatureSupported("blips")) {
 		return false;
 	}
-	return game.createBlip(type, position, 1, colour);
+	return game.createBlip(type, position, size, colour);
 }
 
 // ===========================================================================
@@ -1354,6 +1354,24 @@ function bindServerEventHandler(eventName, bindTo, handlerFunction) {
 
 function setElementName(element, name) {
 	element.name = name;
+}
+
+// ===========================================================================
+
+function hideElementForPlayer(element, client) {
+	element.setExistsFor(client, false);
+}
+
+// ===========================================================================
+
+function showElementForPlayer(element, client) {
+	element.setExistsFor(client, true);
+}
+
+// ===========================================================================
+
+function setElementShownByDefault(element, state) {
+	element.netFlags.defaultExistance = state;
 }
 
 // ===========================================================================
