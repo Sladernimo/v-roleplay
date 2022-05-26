@@ -738,14 +738,14 @@ function getBusinessInfoCommand(command, params, client) {
 		[`ID`, `${businessData.index}/${businessData.databaseId}`],
 		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
-		[`BuyPrice`, `${businessData.buyPrice}`],
-		[`RentPrice`, `${businessData.rentPrice}`],
+		[`BuyPrice`, `$${businessData.buyPrice}`],
+		//[`RentPrice`, `${businessData.rentPrice}`],
 		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
 		[`HasBuyableItems`, `${getYesNoFromBool(doesBusinessHaveAnyItemsToBuy(businessId))}`],
-		[`EntranceFee`, `${businessData.entranceFee}`],
+		[`EntranceFee`, `$${businessData.entranceFee}`],
 		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
-		[`Balance`, `${businessData.till}`],
+		[`Balance`, `$${businessData.till}`],
 		[`RadioStation`, `${businessData.streamingRadioStation}`],
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
@@ -902,6 +902,65 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderInteriorTypes")));
+			for(let i in chunkedList) {
+				messagePlayerInfo(client, chunkedList[i].join(", "));
+			}
+			return false;
+		}
+
+		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
+		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
+		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId+getGlobalConfig().businessDimensionStart;
+		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getBusinessData(businessId).hasInterior = true;
+		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
+	}
+
+	//deleteBusinessExitPickup(businessId);
+	//deleteBusinessExitBlip(businessId);
+	//createBusinessExitBlip(businessId);
+	//createBusinessExitPickup(businessId);
+
+	resetBusinessPickups(businessId);
+
+	getBusinessData(businessId).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function addBusinessPropertyTemplateEntities(command, params, client) {
+	let propertyTemplateParam = getParam(params, " ", 1) || "business";
+	let businessId = getPlayerBusiness(client);
+
+	if(!getBusinessData(businessId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	if(typeof getGameConfig().interiors[getGame()] == "undefined") {
+		messagePlayerError(client, `There are no property templates available for this game!`);
+		return false;
+	}
+
+	if(isNaN(propertyTemplateParam)) {
+		if(isNull(getGameConfig().interiors[getGame()][typeParam])) {
+			messagePlayerError(client, "Invalid interior type! Use an interior type name");
+			let interiorTypesList = Object.keys(getGameConfig().properties[getGame()]);
+			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
+
+			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPropertyTemplateTypes")));
 			for(let i in chunkedList) {
 				messagePlayerInfo(client, chunkedList[i].join(", "));
 			}
@@ -1640,6 +1699,8 @@ function saveBusinessToDatabase(businessId) {
 			["biz_label_help_type", tempBusinessData.labelHelpType],
 			["biz_radiostation", tempBusinessData.streamingRadioStation],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
+			["biz_buy_price", boolToInt(tempBusinessData.buyPrice)],
+			//["biz_rent_price", boolToInt(tempBusinessData.rentPrice)],
 		];
 
 		let dbQuery = null;
@@ -1740,24 +1801,33 @@ function createBusinessEntrancePickup(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name} (model ${pickupModelId})`);
 
-	let entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
-	if(entrancePickup != null) {
-		if(businessData.entranceDimension != -1) {
-			setElementDimension(entrancePickup, businessData.entranceDimension);
-			setElementOnAllDimensions(entrancePickup, false);
-		} else {
-			setElementOnAllDimensions(entrancePickup, true);
-		}
+	if(areServerElementsSupported()) {
+		let entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+		if(entrancePickup != null) {
+			if(businessData.entranceDimension != -1) {
+				setElementDimension(entrancePickup, businessData.entranceDimension);
+				setElementOnAllDimensions(entrancePickup, false);
+			} else {
+				setElementOnAllDimensions(entrancePickup, true);
+			}
 
-		if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
-			entrancePickup.netFlags.distanceStreaming = false;
-		} else {
-			setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
-			setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
+			if(getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1)	{
+				entrancePickup.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
+			}
+			setElementTransient(entrancePickup, false);
+			getBusinessData(businessId).entrancePickup = entrancePickup;
+			updateBusinessPickupLabelData(businessId);
 		}
-		setElementTransient(entrancePickup, false);
-		getBusinessData(businessId).entrancePickup = entrancePickup;
-		updateBusinessPickupLabelData(businessId);
+	} else {
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+
+		if(businessData.entrancePickupModel != 0) {
+			pickupModelId = businessData.entrancePickupModel;
+		}
+		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, doesBusinessHaveAnyItemsToBuy(businessId));
 	}
 
 	return false;
@@ -1773,10 +1843,6 @@ function createBusinessEntrancePickup(businessId) {
  *
  */
 function createBusinessEntranceBlip(businessId) {
-	if(!areServerElementsSupported()) {
-		return false;
-	}
-
 	if(!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -1799,23 +1865,25 @@ function createBusinessEntranceBlip(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
-	let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, getColourByType("businessBlue"));
-	if(entranceBlip != null) {
-		if(businessData.entranceDimension != -1) {
-			setElementDimension(entranceBlip, businessData.entranceDimension);
-			setElementOnAllDimensions(entranceBlip, false);
-		} else {
-			setElementOnAllDimensions(entranceBlip, true);
-		}
+	if(areServerElementsSupported()) {
+		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
+		if(entranceBlip != null) {
+			if(businessData.entranceDimension != -1) {
+				setElementDimension(entranceBlip, businessData.entranceDimension);
+				setElementOnAllDimensions(entranceBlip, false);
+			} else {
+				setElementOnAllDimensions(entranceBlip, true);
+			}
 
-		if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
-			entranceBlip.netFlags.distanceStreaming = false;
-		} else {
-			setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
-			setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
+			if(getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1)	{
+				entranceBlip.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
+				setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
+			}
+			setElementTransient(entranceBlip, false);
+			businessData.entranceBlip = entranceBlip;
 		}
-		setElementTransient(entranceBlip, false);
-		businessData.entranceBlip = entranceBlip;
 	}
 }
 
@@ -1947,6 +2015,9 @@ function deleteBusiness(businessId, deletedBy = 0) {
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
 
+	deleteBusinessBlips(businessId);
+	deleteBusinessPickups(businessId);
+
 	if(dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `DELETE FROM biz_main WHERE biz_id = ${tempBusinessData.databaseId}`);
 		if(dbQuery) {
@@ -1954,9 +2025,6 @@ function deleteBusiness(businessId, deletedBy = 0) {
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-
-	deleteBusinessBlips(businessId);
-	deleteBusinessPickups(businessId);
 
 	removePlayersFromBusiness(businessId);
 
