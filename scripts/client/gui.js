@@ -163,106 +163,7 @@ function isAnyGUIActive() {
 
 // ===========================================================================
 
-addNetworkEventHandler("vrr.showCharacterSelect", function(firstName, lastName, cash, clan, lastPlayed, skinId) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show character selection window`);
-	showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, skinId);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.switchCharacterSelect", function(firstName, lastName, cash, clan, lastPlayed, skinId) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to update character selection window with new info`);
-	switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, skinId);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.showError", function(errorMessage, errorTitle, buttonText) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show error window`);
-	showErrorGUI(errorMessage, errorTitle, buttonText);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.showPrompt", function(promptMessage, promptTitle, yesButtonText, noButtonText) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show prompt window`);
-	showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonText);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.showInfo", function(infoMessage, infoTitle, buttonText) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received request from server to show info dialog`);
-	showInfoGUI(infoMessage, infoTitle, buttonText);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.loginSuccess", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of successful login from server`);
-	loginSuccess();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.characterSelectSuccess", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of successful character selection from server`);
-	characterSelectSuccess();
-	setChatWindowEnabled(true);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.loginFailed", function(remainingAttempts) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of failed login from server`);
-	loginFailed(remainingAttempts);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.registrationSuccess", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of successful registration from server`);
-	registrationSuccess();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.registrationFailed", function(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of failed registration from server`);
-	registrationFailed(errorMessage);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.newCharacterFailed", function(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal of failed registration from server`);
-	newCharacterFailed(errorMessage);
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.changePassword", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal to change password from server`);
-	showChangePasswordGUI();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.showResetPasswordCodeInput", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal to input reset password code from server`);
-	resetPasswordCodeInputGUI();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.showLocaleChooser", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received signal to show locale chooser from server`);
-	showLocaleChooserGUI();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.guiColour", function(red1, green1, blue1, red2, green2, blue2, red3, green3, blue3) {
+function setGUIColours(red1, green1, blue1, red2, green2, blue2, red3, green3, blue3) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Received new GUI colours from server: ${red1}, ${green1}, ${blue1} / ${red2}, ${green2}, ${blue2} / ${red3}, ${green3}, ${blue3}`);
 	primaryColour = [red1, green1, blue1];
 	secondaryColour = [red2, green2, blue2];
@@ -270,15 +171,7 @@ addNetworkEventHandler("vrr.guiColour", function(red1, green1, blue1, red2, gree
 	focusedColour = [red1+focusedColourOffset, green1+focusedColourOffset, blue1+focusedColourOffset];
 
 	initGUI();
-});
-
-// ===========================================================================
-
-addNetworkEventHandler("vrr.guiInit", function() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Initializing MexUI app`);
-	//initGUI();
-	sendNetworkEventToServer("vrr.guiReady", true);
-});
+}
 
 // ===========================================================================
 
