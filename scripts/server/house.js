@@ -659,20 +659,22 @@ function getClosestHouseExit(position, dimension) {
 // ===========================================================================
 
 function getPlayerHouse(client) {
-	if(getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
-		let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if(getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
-			return getHouseData(closestEntrance).index;
-		}
-	} else {
-		let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if(getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
-			return getHouseData(closestEntrance).index;
-		}
+	if(getServerData().houses.length > 0) {
+		if(getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
+			let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
+			if(getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+				return getHouseData(closestEntrance).index;
+			}
+		} else {
+			let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
+			if(getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+				return getHouseData(closestEntrance).index;
+			}
 
-		for(let i in getServerData().houses) {
-			if(getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
-				return i;
+			for(let i in getServerData().houses) {
+				if(getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+					return i;
+				}
 			}
 		}
 	}
