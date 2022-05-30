@@ -46,8 +46,6 @@ function addKeyBindCommand(command, params, client) {
 // ===========================================================================
 
 function removeKeyBindCommand(command, params, client) {
-	let splitParams = params.split(" ");
-
 	let keyId = getKeyIdFromParams(getParam(params, " ", 1));
 
 	if(!keyId) {
