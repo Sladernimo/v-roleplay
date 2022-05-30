@@ -723,11 +723,12 @@ function getBusinessInfoCommand(command, params, client) {
 			break;
 
 		case VRR_BIZOWNER_NONE:
-			submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
-			ownerName = "INVALID";
+			//submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
+			ownerName = "None";
 			break;
 
 		default:
+			submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType ${businessData.ownerType} for business ${businessId}/${getBusinessData(businessId).databaseId}`);
 			ownerName = "None";
 			break;
 	}
