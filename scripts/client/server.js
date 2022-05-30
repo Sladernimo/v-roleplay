@@ -207,16 +207,16 @@ function onServerSpawnedLocalPlayer(state) {
 			calledDeathEvent = false;
 		}, 1000);
 
-		getPeds().filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
+		getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
 			syncCivilianProperties(ped);
 		});
 
-		getPlayers().forEach(player => {
+		getElementsByType(ELEMENT_PLAYER).forEach(player => {
 			syncPlayerProperties(player);
 		});
 
-		getVehicles().forEach(veh => {
-			syncVehicleProperties(veh);
+		getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
+			syncVehicleProperties(vehicle);
 		});
 	}
 }
