@@ -11,6 +11,11 @@ let scriptVersion = "1.1";
 let serverStartTime = 0;
 let logLevel = LOG_INFO|LOG_DEBUG|LOG_VERBOSE; // LOG_ERROR|LOG_WARN;
 
+let playerResourceReady = new Array(server.maxClients).fill(false);
+let playerResourceStarted = new Array(server.maxClients).fill(false);
+let playerInitialized = new Array(server.maxClients).fill(false);
+let playerGUI = new Array(server.maxClients).fill(false);
+
 // ===========================================================================
 
 /**

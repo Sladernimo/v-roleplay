@@ -126,6 +126,11 @@ function onPlayerQuit(event, client, quitReasonId) {
 		resetClientStuff(client);
 		getServerData().clients[getPlayerId(client)] = null;
 	}
+
+	playerResourceReady[client.index] = false;
+	playerResourceStarted[client.index] = false;
+	playerInitialized[client.index] = false;
+	playerGUIReady[client.index] = false;
 }
 
 // ===========================================================================
@@ -623,7 +628,7 @@ function onPlayerSpawn(client) {
 	if(!areServerElementsSupported()) {
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
-		sendAllJobsToPlayer(client);
+		//sendAllJobsToPlayer(client);
 		//sendAllVehiclesToPlayer(client);
 		requestPlayerPedNetworkId(client);
 	}

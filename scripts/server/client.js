@@ -107,9 +107,9 @@ function updatePlayerPing(client) {
 // ===========================================================================
 
 function playerClientReady(client) {
-	setEntityData(client, "vrr.isReady", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready!`);
-	if(getEntityData(client, "vrr.isStarted") == true) {
+	playerResourceReady[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
+	if(playerResourceStarted[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -117,16 +117,16 @@ function playerClientReady(client) {
 // ===========================================================================
 
 function playerGUIReady(client) {
-	setEntityData(client, "vrr.guiReady", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
+	playerGUI[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
 }
 
 // ===========================================================================
 
 function playerClientStarted(client) {
-	setEntityData(client, "vrr.isStarted", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources are started and running!`);
-	if(getEntityData(client, "vrr.isReady") == true) {
+	playerResourceStarted[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
+	if(playerResourceReady[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -134,7 +134,7 @@ function playerClientStarted(client) {
 // ===========================================================================
 
 function playerClientStopped(client) {
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
 	disconnectPlayer(client);
 }
 
@@ -1100,6 +1100,18 @@ function sendHouseToPlayer(client, houseId, description, entrancePosition, blipM
 
 // ==========================================================================
 
+function sendJobToPlayer(client, jobId, jobLocationId, name, position) {
+	sendNetworkEventToPlayer("vrr.job", client, jobId, jobLocationId, name, position);
+}
+
+// ==========================================================================
+
+function sendVehicleToPlayer(client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4) {
+	sendNetworkEventToPlayer("vrr.vehicle", client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4);
+}
+
+// ==========================================================================
+
 function sendAllBusinessesToPlayer(client) {
 	let businesses = getServerData().businesses;
 	for(let i in businesses) {
@@ -1119,12 +1131,21 @@ function sendAllHousesToPlayer(client) {
 // ==========================================================================
 
 function sendAllJobsToPlayer(client) {
-	//let jobs = getServerData().jobs;
-	//for(let i in jobs) {
-	//    for(let j in jobs[i].locations) {
-	//        sendJobToPlayer(client, jobs[i].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
-	//    }
-	//}
+	let jobs = getServerData().jobs;
+	for(let i in jobs) {
+	    for(let j in jobs[i].locations) {
+	        sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
+	    }
+	}
+}
+
+// ==========================================================================
+
+function sendAllVehiclesToPlayer(client) {
+	let vehicles = getServerData().vehicles;
+	for(let i in vehicles) {
+		sendVehicleToPlayer(client, vehicles[i].index, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
+	}
 }
 
 // ==========================================================================
