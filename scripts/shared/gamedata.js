@@ -6631,7 +6631,7 @@ let gameData = {
 					["Apartment 107", 0, 200, toVector3(209.76, -1273.40, 19.27), toVector3(26.67, -1328.89, 13.00), 11, null],
 				],
 				npcs: [
-					["Front Desk Clerk", 160, toVector(215.11, -1272.65, 12.09), 2.95],
+					["Front Desk Clerk", 160, toVector3(215.11, -1272.65, 12.09), 2.95],
 				]
 			}
 		}
