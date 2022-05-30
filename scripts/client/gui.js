@@ -101,6 +101,8 @@ function closeAllWindows() {
 	guiRightKey = false;
 	guiUpKey = false;
 	guiDownKey = false;
+
+	setChatWindowEnabled(true);
 }
 
 // ===========================================================================
