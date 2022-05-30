@@ -61,12 +61,30 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 
 function getRawLocaleString(stringName, localeId) {
 	return getLocaleStrings()[localeId][stringName];
+
+	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
+	//	return "";
+	//}
+
+	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
+	//if(tempString == "" || tempString == null || tempString == undefined) {
+	//	return "";
+	//}
 }
 
 // ===========================================================================
 
 function getRawGroupedLocaleString(stringName, localeId, index) {
 	return getLocaleStrings()[localeId][stringName][index];
+
+	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
+	//	return "";
+	//}
+
+	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
+	//if(tempString == "" || tempString == null || tempString == undefined) {
+	//	return "";
+	//}
 }
 
 // ===========================================================================
