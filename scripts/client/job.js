@@ -20,9 +20,10 @@ let jobBlipBlinkTimer = null;
 // ===========================================================================
 
 class JobData {
-	constructor(jobId, name, position, blipModel, pickupModel) {
+	constructor(jobId, jobLocationId, name, position, blipModel, pickupModel) {
 		this.index = -1;
 		this.jobId = jobId;
+		this.jobLocationId = jobLocationId;
 		this.name = name;
 		this.position = position;
 		this.blipModel = blipModel;
@@ -134,12 +135,13 @@ function hideJobRouteLocation() {
 
 // ===========================================================================
 
-function receiveJobFromServer(jobId, name, position, blipModel, pickupModel) {
+function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, pickupModel) {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Received job ${jobId} (${name}) from server`);
 
 	if(getGame() == VRR_GAME_GTA_IV) {
 		if(getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
+			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
 			jobData.position = position;
 			jobData.blipModel = blipModel;
@@ -178,9 +180,9 @@ function receiveJobFromServer(jobId, name, position, blipModel, pickupModel) {
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId} doesn't exist. Adding ...`);
-			let tempJobData = new JobData(jobId, name, position, blipModel, pickupModel);
+			let tempJobData = new JobData(jobId, jobLocationId, name, position, blipModel, pickupModel);
 			if(blipModel != -1) {
-				let blipId = createGameBlip(tempJobData.blipModel, tempJobData.position, tempJobData.name);
+				let blipId = createGameBlip(blipModel, tempJobData.position, tempJobData.name);
 				if(blipId != -1) {
 					tempJobData.blipId = blipId;
 				}
@@ -188,7 +190,7 @@ function receiveJobFromServer(jobId, name, position, blipModel, pickupModel) {
 			} else {
 				logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId} has no blip.`);
 			}
-			jobs.push(tempJobData);
+			getServerData().jobs.push(tempJobData);
 			setAllJobDataIndexes();
 		}
 	}
@@ -201,9 +203,9 @@ function receiveJobFromServer(jobId, name, position, blipModel, pickupModel) {
  * @return {JobData} The job's data (class instance)
  */
  function getJobData(jobId) {
-	for(let i in jobs) {
-		if(jobs[i].jobId == jobId) {
-			return jobs[i];
+	for(let i in getServerData().jobs) {
+		if(getServerData().jobs[i].jobId == jobId) {
+			return getServerData().jobs[i];
 		}
 	}
 
@@ -213,7 +215,7 @@ function receiveJobFromServer(jobId, name, position, blipModel, pickupModel) {
 // ===========================================================================
 
 function setAllJobDataIndexes() {
-	for(let i in jobs) {
+	for(let i in getServerData().jobs) {
 		jobs[i].index = i;
 	}
 }
