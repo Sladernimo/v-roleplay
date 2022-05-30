@@ -1169,28 +1169,41 @@ function savePlayerToDatabase(client) {
 // ===========================================================================
 
 function initClient(client) {
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+
 	if(isConsole(client)) {
+		logToConsole(LOG_DEBUG|LOG_ERROR, `[VRR.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
 		return false;
 	}
 
-	if(doesEntityDataExist(client, "vrr.isInitialized") || getEntityData(client, "vrr.isInitialized") == true) {
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+
+	if(playerInitialized[client.index] == true) {
+		logToConsole(LOG_DEBUG|LOG_ERROR, `[VRR.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
 		return false;
 	}
 
 	setEntityData(client, "vrr.isInitialized", true, false);
 
 	sendPlayerGUIColours(client);
+
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
 	sendPlayerGUIInit(client);
 	updatePlayerSnowState(client);
 
+	logToConsole(LOG_DEBUG, `[VRR.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
 	showConnectCameraToPlayer(client);
 
 	messageClient(`Please wait ...`, client, getColourByName("softGreen"));
 
+	logToConsole(LOG_DEBUG, `[VRR.Account] Waiting for 2.5 seconds to prevent race attack ...`);
 	setTimeout(function() {
 		if(client != null) {
 			clearChatBox(client);
+			logToConsole(LOG_DEBUG, `[VRR.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
 			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
+
+			logToConsole(LOG_DEBUG, `[VRR.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
 			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
 
 			getServerData().clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
