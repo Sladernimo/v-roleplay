@@ -733,7 +733,7 @@ function playerUseItem(client, hotBarSlot) {
 	let itemTypeData = getItemTypeData(itemIndex);
 	let hotBarItems = getPlayerData(client).hotBarItems;
 
-	switch(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useType) {
+	switch(itemTypeData.useType) {
 		case VRR_ITEM_USETYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
 			forcePlayerIntoSkinSelect(client);
@@ -744,10 +744,12 @@ function playerUseItem(client, hotBarSlot) {
 			for(let i in hotBarItems) {
 				if(hotBarItems[i] != -1) {
 					if(getItemData(hotBarItems[i]) != false) {
-						if(itemTypeData.useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
-							if(itemTypeData.useId == itemTypeData.databaseId) {
-								givePlayerWeaponAmmo(client, getItemData(hotBarItems[i]).value);
-								getItemData(hotBarItems[hotBarSlot]).value = getItemData(hotBarItems[hotBarSlot]).value + getItemData(hotBarItems[i]).value;
+						if(getItemData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+							let ammoItemData = getItemData(hotBarItems[i]);
+							let ammoItemTypeData = getItemData(ammoItemData.itemTypeIndex);
+							if(ammoItemTypeData.useId == itemTypeData.databaseId) {
+								givePlayerWeaponAmmo(client, ammoItemData.value);
+								itemData.value = itemData.value + ammoItemData.value;
 								deleteItem(hotBarItems[i]);
 								meActionToNearbyPlayers(client, `loads some ammo into their ${itemTypeData.name}`);
 								return true;
@@ -929,7 +931,7 @@ function playerUseItem(client, hotBarSlot) {
 					}
 
 					itemData.value = itemData.value - itemTypeData.useValue;
-					//if(getItemData(itemIndex).value <= 0) {
+					//if(itemData.value <= 0) {
 					//	destroyItem(itemIndex);
 					//}
 				}
