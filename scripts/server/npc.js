@@ -473,9 +473,13 @@ function getNPCInfoCommand(command, params, client) {
 
 function getClosestNPC(position) {
 	let npcs = getServerData().npcs;
+
+	let interior = getPlayerInterior(client);
+	let dimension = getPlayerDimension(client);
+
 	let closest = 0;
 	for(let i in npcs) {
-		if(getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position)) {
+		if(getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position) && npcs[closest].interior == interior && npcs[closest].dimension == dimension) {
 			closest = i;
 		}
 	}
