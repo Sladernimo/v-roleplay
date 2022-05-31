@@ -729,6 +729,10 @@ function playerUseItem(client, hotBarSlot) {
 		return false;
 	}
 
+	let itemData = getItemData(itemIndex);
+	let itemTypeData = getItemTypeData(itemIndex);
+	let hotBarItems = getPlayerData(client).hotBarItems;
+
 	switch(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useType) {
 		case VRR_ITEM_USETYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
@@ -737,22 +741,22 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_WEAPON: {
-			for(let i in getPlayerData(client).hotBarItems) {
-				if(getPlayerData(client).hotBarItems[i] != -1) {
-					if(getItemData(getPlayerData(client).hotBarItems[i]) != false) {
-						if(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
-							if(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useId == getItemTypeData(getItemData(itemIndex).itemTypeIndex).databaseId) {
-								givePlayerWeaponAmmo(client, getItemData(getPlayerData(client).hotBarItems[i]).value);
-								getItemData(getPlayerData(client).hotBarItems[hotBarSlot]).value = getItemData(getPlayerData(client).hotBarItems[hotBarSlot]).value + getItemData(getPlayerData(client).hotBarItems[i]).value;
-								deleteItem(getPlayerData(client).hotBarItems[i]);
-								meActionToNearbyPlayers(client, `loads some ammo into their ${getItemTypeData(getItemData(itemIndex).itemTypeIndex).name}`);
+			for(let i in hotBarItems) {
+				if(hotBarItems[i] != -1) {
+					if(getItemData(hotBarItems[i]) != false) {
+						if(itemTypeData.useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+							if(itemTypeData.useId == itemTypeData.databaseId) {
+								givePlayerWeaponAmmo(client, getItemData(hotBarItems[i]).value);
+								getItemData(hotBarItems[hotBarSlot]).value = getItemData(hotBarItems[hotBarSlot]).value + getItemData(hotBarItems[i]).value;
+								deleteItem(hotBarItems[i]);
+								meActionToNearbyPlayers(client, `loads some ammo into their ${itemTypeData.name}`);
 								return true;
 							}
 						}
 					}
 				}
 			}
-			messagePlayerError(client, `You don't have any ammo to load into your ${getItemTypeData(getItemData(itemIndex).itemTypeIndex).name}!`);
+			messagePlayerError(client, `You don't have any ammo to load into your ${itemTypeData.name}!`);
 			break;
 		}
 
@@ -767,9 +771,9 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_FOOD: {
-			meActionToNearbyPlayers(client, `eats some of their ${getItemName(itemIndex)}`);
-			givePlayerHealth(client, getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue);
-			getItemData(itemIndex).value = getItemData(itemIndex).value - getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue;
+			meActionToNearbyPlayers(client, `eats some of their ${itemTypeData.name}`);
+			givePlayerHealth(client, itemTypeData.useValue);
+			itemData.value = itemData.value - tempItemTypeData.useValue;
 			if(getItemData(itemIndex).value <= 0) {
 				deleteItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
@@ -778,10 +782,10 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_DRINK: {
-			meActionToNearbyPlayers(client, `drinks some of their ${getItemName(itemIndex)}`);
-			givePlayerHealth(client, getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue);
-			getItemData(itemIndex).value = getItemData(itemIndex).value - getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue;
-			if(getItemData(itemIndex).value <= 0) {
+			meActionToNearbyPlayers(client, `drinks some of their ${itemTypeData.name}`);
+			givePlayerHealth(client, itemTypeData.useValue);
+			itemData.value = itemData.value - itemTypeData.useValue;
+			if(itemData.value <= 0) {
 				deleteItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
@@ -789,8 +793,8 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_ARMOUR: {
-			meActionToNearbyPlayers(client, `puts on a ${getItemName(itemIndex)}`);
-			givePlayerArmour(client, getItemData(itemIndex).useValue);
+			meActionToNearbyPlayers(client, `puts on a ${itemTypeData.name}`);
+			givePlayerArmour(client, itemTypeData.useValue);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -868,8 +872,8 @@ function playerUseItem(client, hotBarSlot) {
 				meActionToNearbyPlayers(client, `takes their repair kit and fixes the vehicle`);
 				repairVehicle(vehicle);
 
-				getItemData(itemIndex).value = getItemData(itemIndex).value - getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue;
-				if(getItemData(itemIndex).value <= 0) {
+				itemData.value = itemData.value - itemTypeData.useValue;
+				if(itemData.value <= 0) {
 					destroyItem(itemIndex);
 				}
 			} else {
@@ -881,8 +885,8 @@ function playerUseItem(client, hotBarSlot) {
 		case VRR_ITEM_USETYPE_VEHUPGRADE_PART: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
-				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${getItemName(itemIndex)} to the vehicle.`);
-				addVehicleUpgrade(vehicle, getItemData(itemIndex).useId);
+				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
+				addVehicleUpgrade(vehicle, itemTypeData.useId);
 			}
 			break;
 		}
@@ -891,7 +895,7 @@ function playerUseItem(client, hotBarSlot) {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their decal kit and adds some decals to the vehicle.`);
-				setVehicleLivery(vehicle, getItemData(itemIndex).value);
+				setVehicleLivery(vehicle, itemData.value);
 			}
 			break;
 		}
@@ -899,13 +903,13 @@ function playerUseItem(client, hotBarSlot) {
 		case VRR_ITEM_USETYPE_VEHCOLOUR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
-				if(getItemData(itemIndex).useId == 1) {
+				if(itemData.useId == 1) {
 					meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
-					vehicle.colour1 = getItemData(itemIndex).value;
+					vehicle.colour1 = itemData.value;
 				} else {
-					if(getItemData(itemIndex).useId == 1) {
+					if(itemTypeData.useId == 1) {
 						meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the secondary colour of the vehicle.`);
-						vehicle.colour2 = getItemData(itemIndex).value;
+						vehicle.colour2 = itemData.value;
 					}
 				}
 			}
@@ -918,26 +922,26 @@ function playerUseItem(client, hotBarSlot) {
 			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position)) {
 				if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 					meActionToNearbyPlayers(client, `takes their fuel can and refills the vehicle`);
-					if(getItemData(itemIndex).value < getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue) {
-						getVehicleData(vehicle).fuel += getItemData(itemIndex).value;
+					if(itemData.value < itemTypeData.useValue) {
+						getVehicleData(vehicle).fuel += itemData.value;
 					} else {
-						getVehicleData(vehicle).fuel += getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue;
+						getVehicleData(vehicle).fuel += itemTypeData.useValue;
 					}
 
-					getItemData(itemIndex).value = getItemData(itemIndex).value - getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue;
+					itemData.value = itemData.value - itemTypeData.useValue;
 					//if(getItemData(itemIndex).value <= 0) {
 					//	destroyItem(itemIndex);
 					//}
 				}
 			} else {
 				if(getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= getGlobalConfig().vehicleRepairDistance) {
-					if(getItemData(itemIndex).useId == 1) {
+					if(itemData.useId == 1) {
 						meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
-						vehicle.colour1 = getItemTypeData(itemIndex).value;
+						vehicle.colour1 = itemTypeData.value;
 					} else {
-						if(getItemData(itemIndex).useId == 1) {
+						if(itemData.useId == 1) {
 							meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the secondary colour of the vehicle.`);
-							vehicle.colour2 = getItemData(itemIndex).value;
+							vehicle.colour2 = itemData.value;
 						}
 					}
 				}
@@ -946,20 +950,19 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_WALKIETALKIE: {
-			getItemData(itemIndex).enabled = !getItemData(itemIndex).enabled;
-			//messagePlayerAlert(client, `You turned ${getBoolRedGreenInlineColour(getItemData(itemIndex).enabled)}${toUpperCase(getOnOffFromBool(getItemData(itemIndex).enabled))} {MAINCOLOUR}your walkie talkie in slot ${getPlayerData(client).activeHotBarSlot+1} {ALTCOLOUR}${getItemValueDisplayForItem(itemIndex)}`);
-			meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(getItemData(itemIndex).enabled))} their walkie-talkie`);
+			itemData.enabled = !itemData.enabled;
+			meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(itemData.enabled))} their walkie-talkie`);
 			break;
 		}
 
 		case VRR_ITEM_USETYPE_PHONE: {
-			if(getItemData(itemIndex).value == 0) {
+			if(itemData.value == 0) {
 				let phoneNumber = generateRandomPhoneNumber();
-				getItemData(itemIndex).value = phoneNumber;
-				messagePlayerAlert(client, `Your ${getItemName(itemIndex)} has been set up with number ${phoneNumber}`);
+				itemData.value = phoneNumber;
+				messagePlayerAlert(client, `Your ${itemTypeData.name} has been set up with number ${phoneNumber}`);
 			} else {
-				getItemData(itemIndex).enabled = !getItemData(itemIndex).enabled;
-				if(getItemData(itemIndex).enabled) {
+				itemData.enabled = !itemData.enabled;
+				if(itemData.enabled) {
 					//messagePlayerAlert(client, `You turned on your phone in slot ${getPlayerData(client).activeHotBarSlot+1} ${getItemValueDisplayForItem(itemIndex)}`);
 					meActionToNearbyPlayers(client, `turns on their phone`);
 				} else {
@@ -971,8 +974,8 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_SMOKEDRUG: {
-			meActionToNearbyPlayers(client, `smokes some ${getItemName(itemIndex)}`);
-			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue/100);
+			meActionToNearbyPlayers(client, `smokes some ${itemTypeData.name}`);
+			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(itemTypeData.useValue/100);
 			if(getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
@@ -982,8 +985,8 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_SNORTDRUG: {
-			meActionToNearbyPlayers(client, `snorts some ${getItemName(itemIndex)}`);
-			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue/100);
+			meActionToNearbyPlayers(client, `snorts some ${itemTypeData.name}`);
+			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(itemTypeData.useValue/100);
 			if(getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
@@ -993,8 +996,8 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_INJECTDRUG: {
-			meActionToNearbyPlayers(client, `shoots up some ${getItemName(itemIndex)}`);
-			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(getItemTypeData(getItemData(itemIndex).itemTypeIndex).useValue/100);
+			meActionToNearbyPlayers(client, `shoots up some ${itemTypeData.name}`);
+			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier-(itemTypeData.useValue/100);
 			if(getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
@@ -1004,9 +1007,9 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_PLANT: {
-			meActionToNearbyPlayers(client, `bends down and plants a ${getItemName(itemIndex)} in the ground`);
+			meActionToNearbyPlayers(client, `bends down and plants a ${itemTypeData.name} in the ground`);
 			createGroundPlant(itemIndex);
-			if(getItemData(itemIndex).value == 0) {
+			if(itemData.value == 0) {
 				destroyItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
@@ -1048,25 +1051,25 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_LOTTOTICKET: {
-
 			break;
 		}
 
 		case VRR_ITEM_USETYPE_AREARADIO: {
-			let state = getItemData(itemIndex)
-			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(state)} the boombox radio`);
+			itemData.enabled = !itemData.enabled;
+			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
 			messagePlayerAlert(client, `Use /radiostation to set the radio station and drop it on the ground to play`);
 			break;
 		}
 
 		case VRR_ITEM_USETYPE_PERSONALRADIO: {
-			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(state)} the boombox radio`);
+			itemData.enabled = !itemData.enabled;
+			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
 			messagePlayerAlert(client, `Use /radiostation to set the radio station`);
 			break;
 		}
 
 		default: {
-			messagePlayerError(client, `The ${getItemName(itemIndex)} doesn't do anything when you try to use it.`);
+			messagePlayerError(client, `The ${itemTypeData.name} doesn't do anything when you try to use it.`);
 			break;
 		}
 	}
