@@ -641,9 +641,10 @@ function stopWorking(client) {
 	restorePlayerJobLockerItems(client);
 	respawnJobVehicle(client);
 	sendPlayerStopJobRoute(client);
-	messageDiscordEventChannel(`💼 ${getPlayerName(client)} has stopped working as a ${getJobData(jobId).name}`);
 
 	let jobId = getPlayerJob(client);
+	messageDiscordEventChannel(`💼 ${getPlayerName(client)} has stopped working as a ${getJobData(jobId).name}`);
+
 	switch(getJobType(jobId)) {
 		case VRR_JOB_POLICE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the police station");
