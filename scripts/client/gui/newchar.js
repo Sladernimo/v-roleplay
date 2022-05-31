@@ -9,11 +9,10 @@
 
 let newCharacter = {
 	window: null,
+	messageLabel: null,
 	firstNameInput: null,
 	lastNameInput: null,
-	skinDropDown: null,
-	spawnAreaDropDown: null,
-	createButton: null,
+	createCharacterButton: null,
 	mainLogoImage: null,
 };
 
@@ -21,13 +20,14 @@ let newCharacter = {
 
 function initNewCharacterGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(game.width/2-130, game.height/2-115, 300, 230, 'New Character', {
+	newCharacter.window = mexui.window(getScreenWidth()/2-130, getScreenHeight()/2-115, 300, 230, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
 		},
 		title: {
-			textSize: 0.0,
+			textSize: 12.0,
+			textFont: mainFont,
 			textColour: toColour(0, 0, 0, 0),
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		},
@@ -37,10 +37,12 @@ function initNewCharacterGUI() {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		}
 	});
-	newCharacter.window.titleBarIconSize = toVector2(0,0);
-	newCharacter.window.titleBarHeight = 0;
+	newCharacter.window.titleBarIconSize = toVector2(0, 0);
+	newCharacter.window.titleBarIconShown = false;
+	newCharacter.window.titleBarShown = false;
+	newCharacter.window.titleBarHeight = 30;
 
-	newCharacter.mainLogoImage = newCharacter.window.image(5, 20, 290, 80, mainLogoPath, {
+	newCharacter.mainLogoImage = newCharacter.window.image(80, 20, 80, 80, mainLogoPath, {
 		focused: {
 			borderColour: toColour(0, 0, 0, 0),
 		},
@@ -133,8 +135,6 @@ function newCharacterFailed(errorMessage) {
 
 function checkNewCharacter() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking new character with server ...`);
-	let skinId = false;
-
 	if(newCharacter.firstNameInput.lines[0].length < 2) {
 		return false;
 	}
@@ -158,7 +158,9 @@ function showNewCharacterGUI() {
 	mexui.setInput(true);
 	newCharacter.window.shown = true;
 	mexui.focusedInput = newCharacter.firstNameInput;
-	guiSubmitButton = checkNewCharacter;
+	guiSubmitKey = checkNewCharacter;
+
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), newCharacter.window.position.y+newCharacter.window.size.y+20));
 }
 
 // ===========================================================================

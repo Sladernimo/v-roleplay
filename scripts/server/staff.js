@@ -14,17 +14,26 @@ function initStaffScript() {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function kickClientCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent kicking admins with really high permissions
 	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
@@ -34,25 +43,35 @@ function kickClientCommand(command, params, client) {
 		}
 	}
 
-	messageAdminAction(`${getPlayerName(targetClient)} has been kicked from the server.`);
-	targetClient.disconnect();
+	//getPlayerData(targetClient).customDisconnectReason = reason;
+	announceAdminAction(`PlayerKicked`, getPlayerName(targetClient));
+	targetdisconnectPlayer(client);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setStaffTitleCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	let splitParams = params.split("");
+	let splitParams = params.split(" ");
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let staffTitle = splitParams.slice(1).join(" ");
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	// Prevent setting titles on staff with really high permissions
@@ -64,24 +83,33 @@ function setStaffTitleCommand(command, params, client) {
 	}
 
 	getPlayerData(targetClient).accountData.staffTitle = staffTitle;
-	messageAdmins(`${client.name} {MAINCOLOUR}set ${getPlayerName(targetClient)}'s staff title to ${staffTitle}`);
-	messagePlayerAlert(client, `${getPlayerName(client)} set your staff title to ${staffTitle}`);
-	targetClient.disconnect();
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} staff title to ${staffTitle}`);
+	messagePlayerAlert(targetClient, `${getPlayerName(client)} set your staff title to ${staffTitle}`);
+	//targetdisconnectPlayer(client);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function muteClientCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent muting admins with really high permissions
 	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
@@ -91,104 +119,139 @@ function muteClientCommand(command, params, client) {
 		}
 	}
 
-	messageAdmins(`${targetClient.name} {MAINCOLOUR}has been muted by ${client.name}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been muted by {adminOrange}${getPlayerName(client)}`);
 	getPlayerData(targetClient).muted = true;
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function unMuteClientCommand(command, params, client) {
-
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent unmuting admins with really high permissions
-    if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
+	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer")) && !doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer"))) {
 			messagePlayerError(client, "You cannot unmute this person!");
 			return false;
 		}
 	}
 
-	messageAdmins(`${targetClient.name} {MAINCOLOUR}has been un-muted by ${client.name}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been un-muted by {adminOrange}${getPlayerName(client)}`);
 	getPlayerData(targetClient).muted = false;
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function freezeClientCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent freeze admins with really high permissions
-    if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
+	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer")) && !doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer"))) {
 			messagePlayerError(client, "You cannot freeze this person!");
 			return false;
 		}
 	}
 
-	messageAdmins(`${targetClient.name} {MAINCOLOUR}has been frozen by ${client.name}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been frozen by ${getPlayerName(client)}`);
 	//setPlayerFrozenState(client, state);
 	setPlayerControlState(client, false);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function unFreezeClientCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent unfreezing admins with really high permissions
-    if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
+	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer")) && !doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer"))) {
 			messagePlayerError(client, "You cannot freeze this person!");
 			return false;
 		}
 	}
 
-	messageAdmins(`${targetClient.name} {MAINCOLOUR}has been un-frozen by ${client.name}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been un-frozen by ${getPlayerName(client)}`);
 	//sendPlayerFrozenState(client, false);
 	setPlayerControlState(client, true);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getPosBehindPos(getPlayerPosition(targetClient), getPlayerHeading(targetClient), 2));
@@ -210,44 +273,71 @@ function gotoPlayerCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function getPlayerGeoIPInformationCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, targetClient.ip);
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, targetClient.ip);
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, targetClient.ip);
+	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
+	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
 
-	messagePlayerInfo(client, `{ALTCOLOUR}${targetClient.name} {MAINCOLOUR}is from {ALTCOLOUR}${cityName}, ${subDivisionName}, ${countryName}`);
+	messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} is from {ALTCOLOUR}${cityName}, ${subDivisionName}, ${countryName}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function getPlayerIPInformationCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
-	messagePlayerInfo(client, `{ALTCOLOUR}${targetClient.name}'s{MAINCOLOUR} IP is ${targetClient.ip}`);
+	messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} IP is ${getPlayerIP(targetClient)}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoVehicleCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -278,6 +368,15 @@ function gotoVehicleCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function getVehicleCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -294,11 +393,20 @@ function getVehicleCommand(command, params, client) {
 	setElementInterior(vehicle, getPlayerInterior(client));
 	setElementDimension(vehicle, getPlayerDimension(client));
 
-	messageAdmins(`${client.name} {MAINCOLOUR}teleported a {vehiclePurple}${getVehicleName(vehicle)} {ALTCOLOUR}(ID ${vehicle.id}) {MAINCOLOUR}to you`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function warpIntoVehicleCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
@@ -329,6 +437,15 @@ function warpIntoVehicleCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoBusinessCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -360,6 +477,15 @@ function gotoBusinessCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoGameLocationCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -368,29 +494,39 @@ function gotoGameLocationCommand(command, params, client) {
 
 	let gameLocationId = getGameLocationFromParams(params);
 
-	if(!gameLocationId) {
+	if(gameLocationId == false) {
 		messagePlayerError(client, "That game location doesn't exist!");
 		return false;
 	}
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
-	setPlayerPosition(client, getGameConfig().locations[getServerGame()][gameLocationId][1]);
+	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	setPlayerHeading(client, getGameConfig().locations[getGame()][gameLocationId][1]);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
 
 	//setTimeout(function() {
-	//	setPlayerPosition(client, getGameConfig().locations[getServerGame()][gameLocationId][1]);
+	//	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
 	//	setPlayerInterior(client, 0);
 	//	setPlayerDimension(client, 0);
 	//	updateInteriorLightsForPlayer(client, true);
 	//}, 500);
 
-	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${getGameConfig().locations[getServerGame()][gameLocationId][0]}`);
+	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${getGameConfig().locations[getGame()][gameLocationId][0]}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoHouseCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -422,6 +558,15 @@ function gotoHouseCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoJobLocationCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -442,7 +587,7 @@ function gotoJobLocationCommand(command, params, client) {
 		return false;
 	}
 
-	client.player.velocity = toVector3(0.0, 0.0, 0.0);
+	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getJobData(jobId).locations[jobLocationId].position);
 	setPlayerInterior(client, getJobData(jobId).locations[jobLocationId].interior);
 	setPlayerDimension(client, getJobData(jobId).locations[jobLocationId].dimension);
@@ -453,8 +598,17 @@ function gotoJobLocationCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoNewPlayerSpawnCommand(command, params, client) {
-	client.player.velocity = toVector3(0.0, 0.0, 0.0);
+	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getServerConfig().newCharacter.spawnPosition);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
@@ -465,6 +619,15 @@ function gotoNewPlayerSpawnCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gotoPositionCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -478,7 +641,7 @@ function gotoPositionCommand(command, params, client) {
 	let int = getParam(params, " ", 4);
 	let vw = getParam(params, " ", 5);
 
-	client.player.velocity = toVector3(0.0, 0.0, 0.0);
+	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerInterior(client, toInteger(int));
 	setPlayerDimension(client, toInteger(vw));
 	setPlayerPosition(client, toVector3(toFloat(x), toFloat(y), toFloat(z)));
@@ -489,6 +652,15 @@ function gotoPositionCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function teleportForwardCommand(command, params, client) {
 	let distance = 1.0;
 	if(!areParamsEmpty(params)) {
@@ -504,6 +676,15 @@ function teleportForwardCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function teleportBackwardCommand(command, params, client) {
 	let distance = 1.0;
 	if(!areParamsEmpty(params)) {
@@ -519,6 +700,15 @@ function teleportBackwardCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function teleportLeftCommand(command, params, client) {
 	let distance = 1.0;
 	if(!areParamsEmpty(params)) {
@@ -534,6 +724,15 @@ function teleportLeftCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function teleportUpCommand(command, params, client) {
 	let distance = 1.0;
 	if(!areParamsEmpty(params)) {
@@ -549,6 +748,15 @@ function teleportUpCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function teleportDownCommand(command, params, client) {
 	let distance = 1.0;
 	if(!areParamsEmpty(params)) {
@@ -579,6 +787,15 @@ function teleportRightCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function playerInteriorCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -598,11 +815,20 @@ function playerInteriorCommand(command, params, client) {
 
 	let interiorId = getParam(params, " ", 2);
 	setPlayerInterior(targetClient, Number(interiorId));
-	messageAdmins(`${client.name} {MAINCOLOUR}set ${getPlayerName(targetClient)}'s interior to {ALTCOLOUR}${interiorId}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} interior to {ALTCOLOUR}${interiorId}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function playerVirtualWorldCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -616,27 +842,36 @@ function playerVirtualWorldCommand(command, params, client) {
 	}
 
 	if(getParamsCount(params, " ") == 1) {
-		messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}'s {MAINCOLOUR}virtual world is {ALTCOLOUR}${getPlayerDimension(targetClient)}`);
+		messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} virtual world is {ALTCOLOUR}${getPlayerDimension(targetClient)}`);
 		return false;
 	}
 
 	let dimensionId = getParam(params, " ", 2);
 	setPlayerDimension(targetClient, Number(dimensionId));
-	messageAdmins(`${client.name} {MAINCOLOUR}set {ALTCOLOUR}${getPlayerName(targetClient)}'s {MAINCOLOUR}virtual world to {ALTCOLOUR}${dimensionId}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} virtual world to {ALTCOLOUR}${dimensionId}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function getPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	removePlayerFromVehicle(targetClient);
@@ -647,43 +882,43 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
 	getPlayerData(targetClient).returnToType = VRR_RETURNTO_TYPE_ADMINGET;
 
-	if(isPlayerInAnyHouse(targetClient)) {
-		getPlayerData(targetClient).returnToHouse = getPlayerHouse(targetClient);
-	}
-
-	if(isPlayerInAnyBusiness(targetClient)) {
-		getPlayerData(targetClient).returnToBusiness = getPlayerBusiness(targetClient);
-	}
-
-	removePlayerFromVehicle(targetClient);
 	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
 	setPlayerHeading(targetClient, getPlayerHeading(client));
 	setPlayerInterior(targetClient, getPlayerInterior(client));
 	setPlayerDimension(targetClient, getPlayerDimension(client));
 
-	messageAdmins(`${client.name} {MAINCOLOUR}teleported {ALTCOLOUR}${getPlayerName(targetClient)} {MAINCOLOUR}to their position.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their position.`);
 	messagePlayerAlert(targetClient, `An admin has teleported you to their location`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function returnPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getPlayerFromParams(params);
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	let targetClient = getPlayerFromParams(params);
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	removePlayerFromVehicle(targetClient);
 
 	if(getPlayerData(targetClient).returnToPosition == null) {
-        messagePlayerError(client, "There is nowhere to return that player to!");
-        return false;
+		messagePlayerError(client, "There is nowhere to return that player to!");
+		return false;
 	}
 
 	setPlayerPosition(targetClient, getPlayerData(targetClient).returnToPosition);
@@ -699,13 +934,22 @@ function returnPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToBusiness = null;
 	getPlayerData(targetClient).returnToType = VRR_RETURNTO_TYPE_NONE;
 
-	messageAdmins(`${client.name} {MAINCOLOUR}returned {ALTCOLOUR}${getPlayerName(targetClient)} {MAINCOLOUR}to their previous position.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);
 }
 
 // ===========================================================================
 
-function addStaffFlagCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function addPlayerStaffFlagCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -714,18 +958,18 @@ function addStaffFlagCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let flagName = getParam(params, " ", 2) || "None";
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	if(getStaffFlagValue(flagName) == false) {
 		messagePlayerError(client, getLocaleString(client, "InvalidStaffFlag"));
-        return false;
+		return false;
 	}
 
 	// Prevent setting flags on admins with really high permissions
-    if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
+	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer")) && !doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer"))) {
 			messagePlayerError(client, "You cannot give staff flags to this person!");
 			return false;
@@ -733,12 +977,21 @@ function addStaffFlagCommand(command, params, client) {
 	}
 
 	givePlayerStaffFlag(targetClient, flagName);
-	messageAdmins(`${client.name} has {MAINCOLOUR}given {ALTCOLOUR}${getPlayerName(targetClient)} {MAINCOLOUR}the {ALTCOLOUR}${flagName} {MAINCOLOUR}staff flag`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} has given {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} the {ALTCOLOUR}${flagName}{MAINCOLOUR} staff flag`);
 }
 
 // ===========================================================================
 
-function takeStaffFlagCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function removePlayerStaffFlagCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -747,18 +1000,18 @@ function takeStaffFlagCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let flagName = getParam(params, " ", 2) || "None";
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	if(getStaffFlagValue(flagName) == false) {
 		messagePlayerError(client, "That staff flag doesn't exist!");
-        return false;
+		return false;
 	}
 
 	// Prevent setting flags on admins with really high permissions
-    if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
+	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
 		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer")) && !doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer"))) {
 			messagePlayerError(client, "You cannot take staff flags from this person!");
 			return false;
@@ -766,12 +1019,21 @@ function takeStaffFlagCommand(command, params, client) {
 	}
 
 	takePlayerStaffFlag(targetClient, flagName);
-	messageAdmins(`${client.name} {MAINCOLOUR}has taken the {ALTCOLOUR}${flagName} {MAINCOLOUR}staff flag from {ALTCOLOUR}${getPlayerName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} has taken the {ALTCOLOUR}${flagName}{MAINCOLOUR} staff flag from {ALTCOLOUR}${getPlayerName(targetClient)}`);
 }
 
 // ===========================================================================
 
-function clearStaffFlagsCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function removePlayerStaffFlagsCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -779,10 +1041,10 @@ function clearStaffFlagsCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
-    }
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
 
 	// Prevent setting flags on admins with really high permissions
 	if(doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("ManageServer")) || doesPlayerHaveStaffPermission(targetClient, getStaffFlagValue("Developer"))) {
@@ -793,12 +1055,21 @@ function clearStaffFlagsCommand(command, params, client) {
 	}
 
 	clearPlayerStaffFlags(targetClient);
-	messageAdmins(`${client.name} {MAINCOLOUR}removed all staff flags from {ALTCOLOUR}${getPlayerName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed all staff flags from {ALTCOLOUR}${getPlayerName(targetClient)}`);
 }
 
 // ===========================================================================
 
-function getStaffFlagsCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getPlayerStaffFlagsCommand(command, params, client) {
 	if(getCommand(command).requireLogin) {
 		if(!isPlayerLoggedIn(client)) {
 			messagePlayerError(client, "You must be logged in to use this command!");
@@ -818,9 +1089,9 @@ function getStaffFlagsCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	let tempStaffFlags = [];
@@ -852,7 +1123,16 @@ function getStaffFlagsCommand(command, params, client) {
 
 // ===========================================================================
 
-function allStaffFlagsCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getStaffFlagsCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -861,9 +1141,9 @@ function allStaffFlagsCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let flagName = getParam(params, " ", 2) || "None";
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	let chunkedList = splitArrayIntoChunks(getServerBitFlagKeys().staffFlagKeys, 8);
@@ -876,6 +1156,15 @@ function allStaffFlagsCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function givePlayerMoneyCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -885,21 +1174,30 @@ function givePlayerMoneyCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let amount = toInteger(getParam(params, " ", 2));
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	givePlayerCash(targetClient, toInteger(amount));
 	updatePlayerCash(targetClient);
 	//messagePlayerSuccess(client, `You gave {ALTCOLOUR}$${amount} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
-	messageAdmins(`${client.name} {MAINCOLOUR}gave {ALTCOLOUR}$${amount} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}$${amount}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
 	messagePlayerAlert(targetClient, `An admin gave you {ALTCOLOUR}$${amount}`);
 }
 
 // ===========================================================================
 
-function forcePlayerAccentCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setPlayerAccentCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -908,9 +1206,9 @@ function forcePlayerAccentCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let newAccent = getParam(params, " ", 2) || "None";
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	if(toLowerCase(newAccent) == "None") {
@@ -921,17 +1219,26 @@ function forcePlayerAccentCommand(command, params, client) {
 
 	if(newAccent == "") {
 		//messagePlayerSuccess(client, `You removed {ALTCOLOUR}${getCharacterFullName(targetClient)}'s {MAINCOLOUR}accent.`);
-		messageAdmins(client, `${client.name} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}'s {MAINCOLOUR}accent.`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} accent.`);
 		messagePlayerAlert(client, `An admin removed your accent.`);
 	} else {
 		//messagePlayerSuccess(client, `You set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s {MAINCOLOUR}accent to {ALTCOLOUR}${newAccent}`);
-		messageAdmins(`${client.name} set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s {MAINCOLOUR}accent to {ALTCOLOUR}${newAccent}`)
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} accent to {ALTCOLOUR}${newAccent}`)
 		messagePlayerAlert(client, `An admin set your accent to {ALTCOLOUR}${newAccent}`);
 	}
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function forceCharacterNameChangeCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -940,20 +1247,29 @@ function forceCharacterNameChangeCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	getPlayerData(targetClient).changingCharacterName = true;
 
-	messageAdmins(`${client.name} {MAINCOLOUR}forced {ALTCOLOUR}${getPlayerName(targetClient)} (${getCharacterFullName(targetClient)}) {MAINCOLOUR}to change their character's name.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} forced {ALTCOLOUR}${getPlayerName(targetClient)} (${getCharacterFullName(targetClient)}){MAINCOLOUR} to change their character's name.`);
 	showPlayerNewCharacterFailedGUI(targetClient, getLocaleString(targetClient, "NonRPName"));
 }
 
 // ===========================================================================
 
-function forceCharacterNameCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setCharacterNameCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -968,9 +1284,9 @@ function forceCharacterNameCommand(command, params, client) {
 	let firstName = getParam(params, " ", 2);
 	let lastName = getParam(params, " ", 3);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	firstName = fixCharacterName(firstName);
@@ -981,14 +1297,23 @@ function forceCharacterNameCommand(command, params, client) {
 	getPlayerCurrentSubAccount(targetClient).firstName = firstName;
 	getPlayerCurrentSubAccount(targetClient).lastName = lastName;
 
-	messageAdmins(`${getPlayerName(client)} {MAINCOLOUR}forced {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} current character name from {ALTCOLOUR}${oldName}{MAINCOLOUR} to {ALTCOLOUR}${newName}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} current character name from {ALTCOLOUR}${oldName}{MAINCOLOUR} to {ALTCOLOUR}${newName}`);
 
 	updateAllPlayerNameTags();
 }
 
 // ===========================================================================
 
-function forcePlayerSkinCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setPlayerSkinCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -999,32 +1324,66 @@ function forcePlayerSkinCommand(command, params, client) {
 	//	return false;
 	//}
 
-	let splitParams = params.split("");
+	let splitParams = params.split(" ");
 	let targetClient = getPlayerFromParams(splitParams[0]);
 	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
 
-	console.warn(targetClient.name);
-	console.warn(splitParams.slice(1).join(" "));
-	console.warn(skinIndex);
-
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
-	if(skinIndex == false) {
-        messagePlayerError(client, getLocaleString(client, "InvalidSkin"));
-        return false;
+	if(!skinIndex) {
+		messagePlayerError(client, getLocaleString(client, "InvalidSkin"));
+		return false;
 	}
 
 	getPlayerCurrentSubAccount(targetClient).skin = skinIndex;
 	setPlayerSkin(targetClient, skinIndex);
 
-	messageAdmins(`${getPlayerName(client)} {MAINCOLOUR}set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]}`);
+}
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function setPlayerStaffTitleCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let targetClient = getPlayerFromParams(splitParams[0]);
+	let newTitle = splitParams.slice(1).join(" ");
+
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	getPlayerData(client).accountData.staffTitle = newTitle;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} staff title to {ALTCOLOUR}${newTitle}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setPlayerHealthCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -1036,71 +1395,98 @@ function setPlayerHealthCommand(command, params, client) {
 	//	return false;
 	//}
 
-	let splitParams = params.split("");
-	let targetClient = getParam(params, " ", 1);
+	let splitParams = params.split(" ");
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let health = getParam(params, " ", 2);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	setPlayerHealth(targetClient, health);
 
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} health to {ALTCOLOUR}${health}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} health to {ALTCOLOUR}${health}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setPlayerArmourCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getParam(params, " ", 1);
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let armour = getParam(params, " ", 2);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	setPlayerArmour(targetClient, armour);
 
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} armour to {ALTCOLOUR}${armour}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} armour to {ALTCOLOUR}${armour}`);
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setPlayerInfiniteRunCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-    let targetClient = getParam(params, " ", 1);
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let state = getParam(params, " ", 2) || 0;
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
-    if(isNaN(state)) {
-        messagePlayerError(client, `The infinite run state must be a number!`);
-        return false;
-    }
+	if(isNaN(state)) {
+		messagePlayerError(client, `The infinite run state must be a number!`);
+		return false;
+	}
 
-    state = toInteger(state);
+	state = toInteger(state);
 	setPlayerInfiniteRun(targetClient, intToBool(state));
 
-	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} ${getBoolRedGreenInlineColour(state)}${(state) ? "enabled" : "disabled"}{MAINCOLOUR} infinite run for {ALTCOLOUR}${getPlayerName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getBoolRedGreenInlineColour(state)}${(state) ? "enabled" : "disabled"}{MAINCOLOUR} infinite run for {ALTCOLOUR}${getPlayerName(targetClient)}`);
 }
 
 // ===========================================================================
 
-function forcePlayerWantedLevelCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setPlayerWantedLevelCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1109,19 +1495,28 @@ function forcePlayerWantedLevelCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let wantedLevel = getParam(params, " ", 2);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
-	forcePlayerWantedLevel(targetClient, wantedLevel);
+	setPlayerWantedLevel(targetClient, wantedLevel);
 
-	//messageAdmins(`${getPlayerName(client)} {MAINCOLOUR}set ${getPlayerName(targetClient)}'s {MAINCOLOUR}skin to {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} wanted level to {ALTCOLOUR}${wantedLevel}`);
 }
 
 // ===========================================================================
 
-function getAllVehiclesOwnedByPlayerCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getVehiclesOwnedByPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1129,9 +1524,9 @@ function getAllVehiclesOwnedByPlayerCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(params);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	let vehicles = getAllVehiclesOwnedByPlayer(targetClient);
@@ -1144,7 +1539,16 @@ function getAllVehiclesOwnedByPlayerCommand(command, params, client) {
 
 // ===========================================================================
 
-function getAllBusinessesOwnedByPlayerCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getBusinessesOwnedByPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1152,22 +1556,36 @@ function getAllBusinessesOwnedByPlayerCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(params);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	let businesses = getAllBusinessesOwnedByPlayer(targetClient);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerBusinessesList", getCharacterFullName(targetClient))));
 	for(let i in businesses) {
-		messagePlayerNormal(client, `🏢 {businessBlue}[Business Info] {MAINCOLOUR}Name: {ALTCOLOUR}${businesses[i].name}, {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(businesses[i].locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${businesses[i].index}/${businesses[i].databaseId}`);
+		let info = [
+			`Name: ${businesses[i].name}`,
+			`Locked: ${businesses[i].locked}`,
+			`ID: ${businesses[i].index}/${businesses[i].databaseId}`,
+		]
+		messagePlayerNormal(client, `🏢 {businessBlue}[Business Info] {MAINCOLOUR}${info.join(", ")}`);
 	}
 }
 
 // ===========================================================================
 
-function getAllHousesOwnedByPlayerCommand(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getHousesOwnedByPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1175,9 +1593,9 @@ function getAllHousesOwnedByPlayerCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(params);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	let houses = getAllHousesOwnedByPlayer(targetClient);
@@ -1190,6 +1608,15 @@ function getAllHousesOwnedByPlayerCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function forceAccountPasswordResetCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -1198,15 +1625,24 @@ function forceAccountPasswordResetCommand(command, params, client) {
 
 	let targetClient = getPlayerFromParams(params);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 }
 
 // ===========================================================================
 
-function toggleSyncForElementsSpawnedByPlayer(command, params, client) {
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function toggleSyncForElementsSpawnedByPlayerCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1214,17 +1650,17 @@ function toggleSyncForElementsSpawnedByPlayer(command, params, client) {
 
 	let targetClient = getPlayerFromParams(params);
 
-    if(!targetClient) {
-        messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-        return false;
+	if(!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
 	}
 
 	if(!hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
 		getPlayerData(client).accountData.flags.moderation = addBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"));
-		messageAdmins(`${getPlayerName(client)} {MAINCOLOUR}turned {softGreen}ON client element sync for {ALTCOLOUR}${getPlayerName(targetClient)}`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} turned {softGreen}ON{MAINCOLOUR} client element sync for {ALTCOLOUR}${getPlayerName(targetClient)}`);
 	} else {
 		getPlayerData(client).accountData.flags.moderation = removeBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"));
-		messageAdmins(`${getPlayerName(client)} {MAINCOLOUR}turned {softRed}OFF client element sync for {ALTCOLOUR}${getPlayerName(targetClient)}`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} turned {softRed}OFF{MAINCOLOUR} client element sync for {ALTCOLOUR}${getPlayerName(targetClient)}`);
 	}
 }
 
@@ -1265,6 +1701,116 @@ function isPlayerPoliceBanned(client) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function forceFightStyleCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let fightStyleId = getFightStyleFromParams(getParam(params, " ", 2));
+
+	//if(!targetClient) {
+	//	messagePlayerError(client, `Player not found!`);
+	//	return false;
+	//}
+
+	//if(!getPlayerData(targetClient)) {
+	//	messagePlayerError(client, `Player not found!`);
+	//	return false;
+	//}
+
+	//if(!isPlayerSpawned(targetClient)) {
+	//	messagePlayerError(client, `That player isn't spawned`);
+	//	return false;
+	//}
+
+	if(!fightStyleId) {
+		messagePlayerError(client, `That fight style doesn't exist!`);
+		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
+		return false;
+	}
+
+	getPlayerCurrentSubAccount(client).fightStyle = fightStyleId;
+	setPlayerFightStyle(client, fightStyleId);
+	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${getGameConfig().fightStyles[getGame()][fightStyleId][0]}`)
+
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function getPlayerCurrentHouseCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+
+	let houseId = getPlayerHouse(targetClient);
+
+	if(!houseId) {
+		messagePlayerAlert(client, `${getPlayerName(targetClient)} isn't in or at a house!`);
+		return false;
+	}
+
+	let houseData = getHouseData(houseId);
+	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in house '${houseData.description}' (ID ${houseId}/${houseData.databaseId})`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function getPlayerCurrentBusinessCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+
+	let businessId = getPlayerBusiness(targetClient);
+
+	if(!businessId) {
+		messagePlayerAlert(client, `${getPlayerName(targetClient)} isn't in or at a house!`);
+		return false;
+	}
+
+	let businessData = getBusinessData(houseId);
+	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in business '${businessData.name}' (ID ${businessId}/${businessData.databaseId})`);
+	return true;
 }
 
 // ===========================================================================

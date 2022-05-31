@@ -10,7 +10,6 @@
 
 function initKeyBindScript() {
 	logToConsole(LOG_INFO, "[VRR.KeyBind]: Initializing key bind script ...");
-	getGlobalConfig().keyBind = loadKeyBindConfiguration();
 	logToConsole(LOG_INFO, "[VRR.KeyBind]: Key bind script initialized!");
 }
 
@@ -47,8 +46,6 @@ function addKeyBindCommand(command, params, client) {
 // ===========================================================================
 
 function removeKeyBindCommand(command, params, client) {
-	let splitParams = params.split(" ");
-
 	let keyId = getKeyIdFromParams(getParam(params, " ", 1));
 
 	if(!keyId) {
@@ -90,15 +87,16 @@ function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
 // ===========================================================================
 
 function removePlayerKeyBind(client, keyId) {
-	if(isPlayerLoggedIn(client)) {
-		quickDatabaseQuery(`DELETE FROM acct_hotkey WHERE acct_hotkey_acct = ${getPlayerData(client).accountData.databaseId} AND acct_hotkey_key = ${keyId}`);
-	}
+	//if(isPlayerLoggedIn(client)) {
+	//	quickDatabaseQuery(`DELETE FROM acct_hotkey WHERE acct_hotkey_acct = ${getPlayerData(client).accountData.databaseId} AND acct_hotkey_key = ${keyId}`);
+	//}
 
-	for(let i in getPlayerData(client).keyBinds) {
-		if(getPlayerData(client).keyBinds[i].key == keyId) {
-			getPlayerData(client).keyBinds.splice(i, 1);
-		}
-	}
+	//for(let i in getPlayerData(client).keyBinds) {
+	//	if(getPlayerData(client).keyBinds[i].key == keyId) {
+	//		getPlayerData(client).keyBinds.splice(i, 1);
+	//	}
+	//}
+	getPlayerData(client).keyBinds = getPlayerData(client).keyBinds.filter(keyBind => keyBind.key != keyId);
 	sendRemoveAccountKeyBindToClient(client, keyId);
 
 	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
@@ -194,13 +192,6 @@ function sendAccountKeyBindsToClient(client) {
 	for(let i in getPlayerData(client).keyBinds) {
 		sendAddAccountKeyBindToClient(client, getPlayerData(client).keyBinds[i].key, getPlayerData(client).keyBinds[i].keyState);
 	}
-}
-
-// ===========================================================================
-
-function loadKeyBindConfiguration() {
-	let keyBindConfigFile = loadTextFile("config/keybind.json");
-	return JSON.parse(keyBindConfigFile);
 }
 
 // ===========================================================================

@@ -67,14 +67,17 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("vrr.itemActionDelayComplete", playerItemActionDelayComplete);
 	addNetworkEventHandler("vrr.weaponDamage", playerDamagedByPlayer);
 
+	// Locale
+	addNetworkEventHandler("vrr.localeSelect", playerSelectedNewLocale);
+
 	// Misc
-	addNetworkEventHandler("vrr.player.position", updatePositionInPlayerData);
-	addNetworkEventHandler("vrr.player.heading", updateHeadingInPlayerData);
-	addNetworkEventHandler("vrr.player.lookat", setPlayerHeadLookPosition);
+	addNetworkEventHandler("vrr.plr.pos", updatePositionInPlayerData);
+	addNetworkEventHandler("vrr.plr.rot", updateHeadingInPlayerData);
 	addNetworkEventHandler("vrr.skinSelected", playerFinishedSkinSelection);
 	addNetworkEventHandler("vrr.clientInfo", updateConnectionLogOnClientInfoReceive);
 	addNetworkEventHandler("vrr.vehBuyState", receiveVehiclePurchaseStateUpdateFromClient);
 	addNetworkEventHandler("vrr.playerPedId", receivePlayerPedNetworkId);
+	addNetworkEventHandler("vrr.playerCop", setPlayerAsCopState);
 }
 
 // ===========================================================================
@@ -98,15 +101,15 @@ function updateAllPlayerNameTags() {
 
 function updatePlayerPing(client) {
 	//logToConsole(LOG_DEBUG, `[VRR.Client] Sending ${getPlayerDisplayForConsole(client)}'s ping to all players`);
-	sendNetworkEventToPlayer("vrr.ping", null, getPlayerName(client), client.ping);
+	sendNetworkEventToPlayer("vrr.ping", null, getPlayerName(client), getPlayerPing(client));
 }
 
 // ===========================================================================
 
 function playerClientReady(client) {
-	setEntityData(client, "vrr.isReady", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready!`);
-	if(client.getData("vrr.isStarted") == true) {
+	playerResourceReady[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
+	if(playerResourceStarted[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -114,16 +117,16 @@ function playerClientReady(client) {
 // ===========================================================================
 
 function playerGUIReady(client) {
-	setEntityData(client, "vrr.guiReady", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
+	playerGUI[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
 }
 
 // ===========================================================================
 
 function playerClientStarted(client) {
-	setEntityData(client, "vrr.isStarted", true, false);
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources are started and running!`);
-	if(client.getData("vrr.isReady") == true) {
+	playerResourceStarted[client.index] = true;
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
+	if(playerResourceReady[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -131,15 +134,15 @@ function playerClientStarted(client) {
 // ===========================================================================
 
 function playerClientStopped(client) {
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
-	client.disconnect();
+	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
+	disconnectPlayer(client);
 }
 
 // ===========================================================================
 
-function showGameMessage(client, text, colour, duration) {
+function showGameMessage(client, text, colour, duration, fontName = "Pricedown") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Showing game message to ${getPlayerDisplayForConsole(client)} (${text}) for ${duration} milliseconds`);
-	sendNetworkEventToPlayer("vrr.smallGameMessage", client, text, colour, duration);
+	sendNetworkEventToPlayer("vrr.smallGameMessage", client, text, colour, duration, fontName);
 }
 
 // ===========================================================================
@@ -210,13 +213,13 @@ function setPlayer2DRendering(client, hudState = false, labelState = false, smal
 
 function syncPlayerProperties(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending signal to sync ${getPlayerDisplayForConsole(client)}'s player ped properties`);
-	sendNetworkEventToPlayer("vrr.player.sync", null, client.player);
+	sendNetworkEventToPlayer("vrr.syncElement", null, getPlayerPed(client).id);
 }
 
 // ===========================================================================
 
 function updatePlayerSnowState(client) {
-	if(isSnowSupported(getServerGame())) {
+	if(isSnowSupported(getGame())) {
 		logToConsole(LOG_DEBUG, `[VRR.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(getServerConfig().fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(getServerConfig().groundSnow))})`);
 		sendNetworkEventToPlayer("vrr.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow);
 	}
@@ -265,13 +268,6 @@ function setPlayerWeaponDamageEvent(client, eventType) {
 function sendJobRouteLocationToPlayer(client, position, colour) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending job route stop data to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("vrr.showJobRouteLocation", client, position, colour);
-}
-
-// ===========================================================================
-
-function showPlayerChangePasswordGUI(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("vrr.changePassword", client);
 }
 
 // ===========================================================================
@@ -341,14 +337,21 @@ function showPlayerNewCharacterGUI(client) {
 
 function showPlayerChangePasswordGUI(client, errorMessage = "") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("vrr.showChangePassword", client);
+	sendNetworkEventToPlayer("vrr.showChangePassword", client, errorMessage);
 }
 
 // ===========================================================================
 
 function showPlayerResetPasswordCodeInputGUI(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password code input GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("vrr.showResetPasswordCodeInput", client);
+}
+
+// ===========================================================================
+
+function showPlayerResetPasswordEmailInputGUI(client) {
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show reset password email input GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("vrr.showResetPasswordEmailInput", client);
 }
 
 // ===========================================================================
@@ -381,8 +384,8 @@ function showPlayerCharacterSelectFailedGUI(client) {
 
 // ===========================================================================
 
-function showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage})`);
+function showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText = "Yes", noButtonText = "No") {
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage}, YesButton: ${yesButtonText}, NoButton: ${noButtonText})`);
 	sendNetworkEventToPlayer("vrr.showPrompt", client, promptMessage, promptTitle, yesButtonText, noButtonText);
 }
 
@@ -397,14 +400,14 @@ function showPlayerInfoGUI(client, infoMessage, infoTitle, buttonText = "OK") {
 
 function showPlayerErrorGUI(client, errorMessage, errorTitle, buttonText = "OK") {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending show error GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${errorTitle}, Message: ${errorMessage})`);
-	sendNetworkEventToPlayer("vrr.showInfo", client, errorMessage, errorTitle, buttonText);
+	sendNetworkEventToPlayer("vrr.showError", client, errorMessage, errorTitle, buttonText);
 }
 
 // ===========================================================================
 
 function sendRunCodeToClient(client, code, returnTo) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending runcode to ${getPlayerDisplayForConsole(client)} (returnTo: ${getPlayerDisplayForConsole(getClientFromIndex(returnTo))}, Code: ${code})`);
-	sendNetworkEventToPlayer("vrr.runCode", client, code, returnTo);
+	sendNetworkEventToPlayer("vrr.runCode", client, code, getPlayerId(returnTo));
 }
 
 // ===========================================================================
@@ -500,9 +503,9 @@ function sendPlayerFrozenState(client, state) {
 
 // ===========================================================================
 
-function clearPlayerWeapons(client) {
+function clearPlayerWeapons(client, clearData = true) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to clear weapons`);
-	sendNetworkEventToPlayer("vrr.clearWeapons", client);
+	sendNetworkEventToPlayer("vrr.clearWeapons", client, clearData);
 }
 
 // ===========================================================================
@@ -521,9 +524,9 @@ function sendPlayerRemoveFromVehicle(client) {
 
 // ===========================================================================
 
-function sendChatBoxMessageToPlayer(client, message, colour) {
-	sendNetworkEventToPlayer("vrr.m", client, message, colour)
-	//messageClient(message, client, colour);
+function sendChatBoxMessageToPlayer(client, messageText, colour) {
+	//messageClient(messageText, client, colour);
+	sendNetworkEventToPlayer("m", client, messageText, colour);
 }
 
 // ===========================================================================
@@ -716,18 +719,30 @@ function updateHeadingInPlayerData(client, heading) {
 
 // ===========================================================================
 
+function updatePositionInVehicleData(client, vehicle, position) {
+	getVehicleData(vehicle).syncPosition = position;
+}
+
+// ===========================================================================
+
+function updateHeadingInVehicleData(client, vehicle, heading) {
+	getVehicleData(vehicle).syncHeading = heading;
+}
+
+// ===========================================================================
+
 function forcePlayerIntoSkinSelect(client) {
-	if(getGameConfig().skinChangePosition[getServerGame()].length > 0) {
+	if(typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
 		getPlayerData(client).returnToPosition = getPlayerPosition(client);
 		getPlayerData(client).returnToHeading = getPlayerHeading(client);
 		getPlayerData(client).returnToInterior = getPlayerInterior(client);
 		getPlayerData(client).returnToDimension = getPlayerDimension(client);
 		getPlayerData(client).returnToType = VRR_RETURNTO_TYPE_SKINSELECT;
 
-		setPlayerPosition(client, getGameConfig().skinChangePosition[getServerGame()][0]);
-		setPlayerHeading(client, getGameConfig().skinChangePosition[getServerGame()][1]);
-		setPlayerInterior(client, getGameConfig().skinChangePosition[getServerGame()][2]);
-		setPlayerDimension(client, client.index+500);
+		setPlayerPosition(client, getGameConfig().skinChangePosition[getGame()][0]);
+		setPlayerHeading(client, getGameConfig().skinChangePosition[getGame()][1]);
+		setPlayerInterior(client, getGameConfig().skinChangePosition[getGame()][2]);
+		setPlayerDimension(client, getPlayerId(client)+500);
 	}
 
 	sendNetworkEventToPlayer("vrr.skinSelect", client, true);
@@ -742,14 +757,14 @@ function updatePlayerCash(client) {
 // ===========================================================================
 
 function sendAllPoliceStationBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].policeStation != -1) {
+	if(getGameConfig().blipSprites[getGame()].policeStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().policeStations[getServerGame()]) {
+		for(let i in getServerData().policeStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].policeStation,
-				getServerData().policeStations[getServerGame()][i].position.x,
-				getServerData().policeStations[getServerGame()][i].position.y,
-				getServerData().policeStations[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].policeStation,
+				getServerData().policeStations[getGame()][i].position.x,
+				getServerData().policeStations[getGame()][i].position.y,
+				getServerData().policeStations[getGame()][i].position.z,
 				3,
 				getColourByName("policeBlue"),
 			]);
@@ -761,14 +776,14 @@ function sendAllPoliceStationBlips(client) {
 // ===========================================================================
 
 function sendAllFireStationBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].fireStation != -1) {
+	if(getGameConfig().blipSprites[getGame()].fireStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().fireStations[getServerGame()]) {
+		for(let i in getServerData().fireStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].fireStation,
-				getServerData().fireStations[getServerGame()][i].position.x,
-				getServerData().fireStations[getServerGame()][i].position.y,
-				getServerData().fireStations[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].fireStation,
+				getServerData().fireStations[getGame()][i].position.x,
+				getServerData().fireStations[getGame()][i].position.y,
+				getServerData().fireStations[getGame()][i].position.z,
 				3,
 				getColourByName("firefighterRed"),
 			]);
@@ -780,14 +795,14 @@ function sendAllFireStationBlips(client) {
 // ===========================================================================
 
 function sendAllHospitalBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].hospital != -1) {
+	if(getGameConfig().blipSprites[getGame()].hospital != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().hospitals[getServerGame()]) {
+		for(let i in getServerData().hospitals[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].hospital,
-				getServerData().hospitals[getServerGame()][i].position.x,
-				getServerData().hospitals[getServerGame()][i].position.y,
-				getServerData().hospitals[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].hospital,
+				getServerData().hospitals[getGame()][i].position.x,
+				getServerData().hospitals[getGame()][i].position.y,
+				getServerData().hospitals[getGame()][i].position.z,
 				3,
 				getColourByName("medicPink"),
 			]);
@@ -799,14 +814,14 @@ function sendAllHospitalBlips(client) {
 // ===========================================================================
 
 function sendAllAmmunationBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].ammunation != -1) {
+	if(getGameConfig().blipSprites[getGame()].ammunation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().ammunations[getServerGame()]) {
+		for(let i in getServerData().ammunations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].ammunation,
-				getServerData().ammunations[getServerGame()][i].position.x,
-				getServerData().ammunations[getServerGame()][i].position.y,
-				getServerData().ammunations[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].ammunation,
+				getServerData().ammunations[getGame()][i].position.x,
+				getServerData().ammunations[getGame()][i].position.y,
+				getServerData().ammunations[getGame()][i].position.z,
 				3,
 				0
 			]);
@@ -818,14 +833,14 @@ function sendAllAmmunationBlips(client) {
 // ===========================================================================
 
 function sendAllPayAndSprayBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].payAndSpray != -1) {
+	if(getGameConfig().blipSprites[getGame()].payAndSpray != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().payAndSprays[getServerGame()]) {
+		for(let i in getServerData().payAndSprays[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].payAndSpray,
-				getServerData().payAndSprays[getServerGame()][i].position.x,
-				getServerData().payAndSprays[getServerGame()][i].position.y,
-				getServerData().payAndSprays[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].payAndSpray,
+				getServerData().payAndSprays[getGame()][i].position.x,
+				getServerData().payAndSprays[getGame()][i].position.y,
+				getServerData().payAndSprays[getGame()][i].position.z,
 				3,
 				0
 			]);
@@ -837,14 +852,14 @@ function sendAllPayAndSprayBlips(client) {
 // ===========================================================================
 
 function sendAllFuelStationBlips(client) {
-	if(getGameConfig().blipSprites[getServerGame()].fuelStation != -1) {
+	if(getGameConfig().blipSprites[getGame()].fuelStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().fuelStations[getServerGame()]) {
+		for(let i in getServerData().fuelStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getServerGame()].fuelStation,
-				getServerData().fuelStations[getServerGame()][i].position.x,
-				getServerData().fuelStations[getServerGame()][i].position.y,
-				getServerData().fuelStations[getServerGame()][i].position.z,
+				getGameConfig().blipSprites[getGame()].fuelStation,
+				getServerData().fuelStations[getGame()][i].position.x,
+				getServerData().fuelStations[getGame()][i].position.y,
+				getServerData().fuelStations[getGame()][i].position.z,
 				3,
 				getColourByName("burntOrange"),
 			]);
@@ -856,9 +871,8 @@ function sendAllFuelStationBlips(client) {
 // ===========================================================================
 
 function sendPlayerSetHealth(client, health) {
-	sendNetworkEventToPlayer("vrr.health", client, health);
+	sendNetworkEventToPlayer("vrr.health", client, toInteger(health));
 }
-
 
 // ===========================================================================
 
@@ -887,7 +901,7 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 		}
 		return false;
 	} else {
-		getPlayerCurrentSubAccount(client).skin = getSkinIndexFromModel(allowedSkins[allowedSkinIndex][0]);
+		getPlayerCurrentSubAccount(client).skin = getSkinIndexFromModel(getServerData().allowedSkins[allowedSkinIndex][0]);
 		if(isPlayerWorking(client)) {
 			messagePlayerAlert(client, "Your new skin has been saved but won't be shown until you stop working.");
 			setPlayerSkin(client, getJobData(getPlayerCurrentSubAccount(client).job).uniforms[getPlayerData(client).jobUniform].skinId);
@@ -914,7 +928,7 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 		switchPlayerActiveHotBarSlot(client, -1);
 		cachePlayerHotBarItems(client);
 
-		meActionToNearbyPlayers(client, `changes their skin to ${allowedSkins[allowedSkinIndex][1]}`);
+		meActionToNearbyPlayers(client, `changes their skin to ${getServerData().allowedSkins[allowedSkinIndex][1]}`);
 	}
 }
 
@@ -922,6 +936,12 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 
 function sendPlayerChatScrollLines(client, amount) {
 	sendNetworkEventToPlayer("vrr.chatScrollLines", client, amount);
+}
+
+// ===========================================================================
+
+function sendPlayerChatAutoHideDelay(client, delay) {
+	sendNetworkEventToPlayer("vrr.chatAutoHideDelay", client, delay);
 }
 
 // ===========================================================================
@@ -969,64 +989,28 @@ function sendPlayerEnterPropertyKey(client, key) {
 // ===========================================================================
 
 function makePedPlayAnimation(ped, animationSlot, positionOffset) {
-	let animationData = getAnimationData(animationSlot);
-	let freezePlayer = false;
-	//if(animationData[9] != VRR_ANIMMOVE_NONE) {
-		switch(animationData[9]) {
-			case VRR_ANIMMOVE_FORWARD:
-				setElementCollisionsEnabled(ped, false);
-				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
-				freezePlayer = true;
-				break;
-
-			case VRR_ANIMMOVE_BACK:
-				setElementCollisionsEnabled(ped, false);
-				setElementPosition(ped, getPosBehindPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
-				freezePlayer = true;
-				break;
-
-			case VRR_ANIMMOVE_LEFT:
-				setElementCollisionsEnabled(ped, false);
-				setElementPosition(ped, getPosToLeftOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
-				freezePlayer = true;
-				break;
-
-			case VRR_ANIMMOVE_RIGHT:
-				setElementCollisionsEnabled(ped, false);
-				setElementPosition(ped, getPosToRightOfPos(getElementPosition(ped), fixAngle(getElementHeading(ped)), positionOffset));
-				freezePlayer = true;
-				break;
-		}
-	//}
-	sendNetworkEventToPlayer("vrr.pedAnim", null, ped.id, animationData[1], animationData[2], animationData[3], animationData[4], animationData[5], positionOffset, freezePlayer);
+	setEntityData(ped, "vrr.anim", animationSlot, true);
+	sendNetworkEventToPlayer("vrr.anim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 
 // ===========================================================================
 
 function makePedStopAnimation(ped) {
-	sendNetworkEventToPlayer("vrr.pedStopAnim", null, ped.id);
+	removeEntityData(ped, "vrr.anim");
+	sendNetworkEventToPlayer("vrr.stopAnim", null, getPedForNetworkEvent(ped));
 }
 
 // ===========================================================================
 
-function forcePedAnimation(ped, animationSlot) {
-	let animationData = getAnimationData(animationSlot);
-
-	sendNetworkEventToPlayer("vrr.forcePedAnim", null, ped.id, animationData[1], animationData[2], animationData[3], animationData[4]);
+function forcePedAnimation(ped, animationSlot, positionOffset = 0) {
+	addEntityData(ped, "vrr.anim", animationSlot, true);
+	sendNetworkEventToPlayer("vrr.forceAnim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 
 // ===========================================================================
 
 function hideAllPlayerGUI(client) {
 	sendNetworkEventToPlayer("vrr.hideAllGUI", client);
-}
-
-// ===========================================================================
-
-function setPlayerHeadLookPosition(client, position) {
-	if(client.player != null) {
-		setEntityData(client.player, "vrr.headLook", position, true);
-	}
 }
 
 // ===========================================================================
@@ -1054,13 +1038,6 @@ function sendPlayerPedPartsAndProps(client) {
 	let bodyProps = getPlayerCurrentSubAccount(client).bodyProps;
 
 	sendNetworkEventToPlayer("vrr.ped", client, [bodyParts.hair, bodyParts.head, bodyParts.upper, bodyParts.lower], [bodyProps.hair, bodyProps.eyes, bodyProps.head, bodyProps.leftHand, bodyProps.rightHand, bodyProps.leftWrist, bodyProps.rightWrist, bodyParts.hip, bodyProps.leftFoot, bodyProps.rightFoot]);
-}
-
-// ===========================================================================
-
-function forcePlayerWantedLevel(client, wantedLevel) {
-	sendNetworkEventToPlayer("vrr.wantedLevel", client, wantedLevel);
-	return true;
 }
 
 // ===========================================================================
@@ -1093,7 +1070,7 @@ function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
 
 function receiveVehiclePurchaseStateUpdateFromClient(client, state) {
 	if(getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
-		checkVehicleBuying(client);
+		checkVehiclePurchasing(client);
 	}
 }
 
@@ -1111,54 +1088,138 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessEntranceToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems) {
+function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems) {
 	sendNetworkEventToPlayer("vrr.business", client, businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems);
 }
 
 // ==========================================================================
 
-function sendHouseEntranceToPlayer(client, houseId, entrancePosition, blipModel, pickupModel, hasInterior) {
-	sendNetworkEventToPlayer("vrr.house", client, houseId, entrancePosition, blipModel, pickupModel, hasInterior);
+function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
+	sendNetworkEventToPlayer("vrr.house", client, houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
 }
 
 // ==========================================================================
 
-function sendAllBusinessEntrancesToPlayer(client) {
+function sendJobToPlayer(client, jobId, jobLocationId, name, position) {
+	sendNetworkEventToPlayer("vrr.job", client, jobId, jobLocationId, name, position);
+}
+
+// ==========================================================================
+
+function sendVehicleToPlayer(client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4) {
+	sendNetworkEventToPlayer("vrr.vehicle", client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4);
+}
+
+// ==========================================================================
+
+function sendAllBusinessesToPlayer(client) {
 	let businesses = getServerData().businesses;
 	for(let i in businesses) {
-		if(businesses[i].entranceBlipModel > 0) {
-			sendBusinessEntranceToPlayer(client, businesses[i].index, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].hasInterior, false);
-		}
+		sendBusinessToPlayer(client, businesses[i].index, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].hasInterior, false);
 	}
 }
 
 // ==========================================================================
 
-function sendAllHouseEntrancesToPlayer(client) {
+function sendAllHousesToPlayer(client) {
 	let houses = getServerData().houses;
 	for(let i in houses) {
-		if(houses[i].entranceBlipModel > 0) {
-			sendBusinessEntranceToPlayer(client, businesses[i].index, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].hasInterior);
-		}
+		sendHouseToPlayer(client, houses[i].index, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].hasInterior);
+	}
+}
+
+// ==========================================================================
+
+function sendAllJobsToPlayer(client) {
+	let jobs = getServerData().jobs;
+	for(let i in jobs) {
+	    for(let j in jobs[i].locations) {
+	        sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
+	    }
+	}
+}
+
+// ==========================================================================
+
+function sendAllVehiclesToPlayer(client) {
+	let vehicles = getServerData().vehicles;
+	for(let i in vehicles) {
+		sendVehicleToPlayer(client, vehicles[i].index, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
 	}
 }
 
 // ==========================================================================
 
 function makePlayerHoldObjectModel(client, modelIndex) {
-	sendNetworkEventToPlayer("vrr.holdObject", client, getPlayerData(client).pedId, modelIndex);
+	sendNetworkEventToPlayer("vrr.holdObject", client, getPlayerData(client).ped, modelIndex);
 }
 
 // ==========================================================================
 
 function receivePlayerPedNetworkId(client, pedId) {
-	getPlayerData(client).pedId = pedId;
+	getPlayerData(client).ped = pedId;
 }
 
 // ==========================================================================
 
 function requestPlayerPedNetworkId(client) {
 	sendNetworkEventToPlayer("vrr.playerPedId", client);
+}
+
+// ==========================================================================
+
+function setPlayerInCutsceneInterior(client, cutsceneName) {
+	getPlayerData(client).interiorCutscene = cutsceneName;
+	sendNetworkEventToPlayer("vrr.cutsceneInterior", client, cutsceneName);
+}
+
+// ==========================================================================
+
+function makePlayerPedSpeak(client, pedSpeechName) {
+	sendNetworkEventToPlayer("vrr.pedSpeak", client, pedSpeechName);
+}
+
+// ==========================================================================
+
+function setPlayerAsCopState(client, state) {
+	sendNetworkEventToPlayer("vrr.playerCop", client, state);
+}
+
+// ==========================================================================
+
+function tellPlayerToSpawn(client, skinId, position) {
+	sendNetworkEventToPlayer("vrr.spawn", client, skinId, position);
+}
+
+// ==========================================================================
+
+function sendNameTagDistanceToClient(client, distance) {
+	sendNetworkEventToPlayer("vrr.nameTagDistance", client, distance);
+}
+
+// ==========================================================================
+
+function sendGPSBlipToPlayer(client, position, colour) {
+	sendNetworkEventToPlayer("vrr.showGPSBlip", client, position, colour);
+}
+
+// ==========================================================================
+
+function playerSelectedNewLocale(client, localeId) {
+	getPlayerData(client).locale = localeId;
+	sendPlayerLocaleId(client, localeId);
+}
+
+// ==========================================================================
+
+function sendPlayerLocaleId(client, localeId) {
+	sendNetworkEventToPlayer("vrr.locale", client, localeId);
+}
+
+// ==========================================================================
+
+function showLocaleChooserForPlayer(client) {
+	sendNetworkEventToPlayer("vrr.localeChooser", client);
 }
 
 // ==========================================================================

@@ -38,14 +38,22 @@ function initServerScripts() {
 	initEconomyScript();
 	initRadioScript();
 	initLocaleScript();
-
 	initCommandScript();
 
-	serverStartTime = getCurrentUnixTimestamp();
+	// Load config and stuff
+	loadGlobalConfig();
+	loadServerConfig();
+	applyConfigToServer(getServerConfig());
+
+	// Load all the server data
+	loadServerDataFromDatabase();
+	setAllServerDataIndexes();
+	createAllServerElements();
 
 	initAllClients();
-
 	initTimers();
+
+	serverStartTime = getCurrentUnixTimestamp();
 }
 
 // ===========================================================================
@@ -83,24 +91,89 @@ function checkForAllRequiredModules() {
 	logToConsole(LOG_DEBUG, "[VRR.Startup]: Checking for required modules ...");
 
 	if(!checkForHashingModule()) {
-		console.warn("[VRR.Startup]: Hashing module is not loaded!");
-		console.warn("[VRR.Startup]: This resource will now shutdown.");
+		logToConsole(LOG_WARN, "[VRR.Startup]: Hashing module is not loaded!");
+		logToConsole(LOG_WARN, "[VRR.Startup]: This resource will now shutdown.");
 		thisResource.stop();
 	}
 
 	if(!checkForMySQLModule()) {
-		console.warn("[VRR.Startup]: MySQL module is not loaded!");
-		console.warn("[VRR.Startup]: This resource will now shutdown.");
+		logToConsole(LOG_WARN, "[VRR.Startup]: MySQL module is not loaded!");
+		logToConsole(LOG_WARN, "[VRR.Startup]: This resource will now shutdown.");
 		thisResource.stop();
 	}
 
 	if(!checkForSMTPModule()) {
-		console.warn("[VRR.Startup]: SMTP Email module is not loaded!");
-		console.warn("[VRR.Startup]: Email features will NOT be available!");
+		logToConsole(LOG_WARN, "[VRR.Startup]: SMTP Email module is not loaded!");
+		logToConsole(LOG_WARN, "[VRR.Startup]: Email features will NOT be available!");
 	}
 
 	logToConsole(LOG_DEBUG, "[VRR.Startup]: All required modules loaded!");
 	return true;
+}
+
+// ===========================================================================
+
+function loadServerDataFromDatabase() {
+	logToConsole(LOG_INFO, "[VRR.Config]: Loading server data ...");
+
+	// Always load these regardless of "test server" status
+	getServerData().localeStrings = loadAllLocaleStrings();
+	getServerData().allowedSkins = getAllowedSkins(getGame());
+
+	// Translation Cache
+	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
+	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
+	getServerData().cachedTranslationFrom.fill([]);
+	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
+
+	// Only load these if the server isn't a testing/dev server
+	if(!getServerConfig().devServer) {
+		getServerData().itemTypes = loadItemTypesFromDatabase();
+		getServerData().items = loadItemsFromDatabase();
+		getServerData().businesses = loadBusinessesFromDatabase();
+		getServerData().houses = loadHousesFromDatabase();
+		getServerData().vehicles = loadVehiclesFromDatabase();
+		getServerData().clans = loadClansFromDatabase();
+		getServerData().npcs = loadNPCsFromDatabase();
+		getServerData().races = loadRacesFromDatabase();
+		getServerData().radioStations = loadRadioStationsFromDatabase();
+		getServerData().gates = loadGatesFromDatabase();
+		getServerData().jobs = loadJobsFromDatabase();
+	}
+
+	getServerData().commands = loadCommands();
+}
+
+// ===========================================================================
+
+function setAllServerDataIndexes() {
+	setAllItemTypeDataIndexes();
+	setAllItemDataIndexes();
+	setBusinessDataIndexes();
+	setHouseDataIndexes();
+	setAllClanDataIndexes();
+	setAllJobDataIndexes();
+	setNPCDataIndexes();
+	setAllRaceDataIndexes();
+	setAllRadioStationIndexes();
+	cacheAllGroundItems();
+	cacheAllBusinessItems();
+	cacheAllCommandsAliases();
+}
+
+// ===========================================================================
+
+function createAllServerElements() {
+	createAllBusinessPickups();
+	createAllBusinessBlips();
+	createAllHousePickups();
+	createAllHouseBlips();
+	createAllJobPickups();
+	createAllJobBlips();
+	createAllGroundItemObjects();
+	spawnAllVehicles();
+	spawnAllNPCs();
+	addAllCommandHandlers();
 }
 
 // ===========================================================================

@@ -7,8 +7,6 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-// ===========================================================================
-
 function initFishingScript() {
 	logToConsole(LOG_INFO, "[VRR.Fishing]: Initializing fishing script ...");
 	logToConsole(LOG_INFO, "[VRR.Fishing]: Fishing script initialized successfully!");

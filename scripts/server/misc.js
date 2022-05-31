@@ -35,19 +35,23 @@ function toggleMouseCursorCommand(command, params, client) {
 // ===========================================================================
 
 function toggleMouseCameraCommand(command, params, client) {
-	sendPlayerMouseCameraToggle(client);
+	if(getGame() != VRR_GAME_GTA_VC) {
+		sendPlayerMouseCameraToggle(client);
+	}
 	return true;
 }
 
 // ===========================================================================
 
 function setNewCharacterSpawnPositionCommand(command, params, client) {
-	let position = client.player.position;
+	let position = getPlayerPosition(client);
+	let heading = getPlayerHeading(client);
+
 	getServerConfig().newCharacter.spawnPosition = position;
-	getServerConfig().newCharacter.spawnHeading = client.player.heading;
+	getServerConfig().newCharacter.spawnHeading = heading;
 	getServerConfig().needsSaved = true;
 
-    messagePlayerNormal(client, `The new character spawn position has been set to ${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)}`)
+	messagePlayerNormal(client, `The new character spawn position has been set to ${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)}`)
 	return true;
 }
 
@@ -64,7 +68,7 @@ let amount = toInteger(getParam(params, " ", 1)) || 1000;
 	getServerConfig().newCharacter.cash = amount;
 	getServerConfig().needsSaved = true;
 
-    messagePlayerNormal(client, `The new character money has been set to $${amount}`);
+	messagePlayerNormal(client, `The new character money has been set to $${amount}`);
 	return true;
 }
 
@@ -81,7 +85,7 @@ function setNewCharacterSkinCommand(command, params, client) {
 	getServerConfig().newCharacter.skin = skinId;
 	getServerConfig().needsSaved = true;
 
-    messagePlayerNormal(client, `The new character skin has been set to ${getSkinNameFromModel(skinId)} (Index ${skinId})`);
+	messagePlayerNormal(client, `The new character skin has been set to ${getSkinNameFromModel(skinId)} (Index ${skinId})`);
 	return true;
 }
 
@@ -95,7 +99,7 @@ function submitIdeaCommand(command, params, client) {
 
 	submitIdea(client, params);
 
-    messagePlayerNormal(client, `Your suggestion/idea has been sent to the developers!`);
+	messagePlayerNormal(client, `Your suggestion/idea has been sent to the developers!`);
 	return true;
 }
 
@@ -109,7 +113,7 @@ function submitBugReportCommand(command, params, client) {
 
 	submitBugReport(client, params);
 
-    messagePlayerNormal(client, `Your bug report has been sent to the developers!`);
+	messagePlayerNormal(client, `Your bug report has been sent to the developers!`);
 	return true;
 }
 
@@ -127,47 +131,47 @@ function enterExitPropertyCommand(command, params, client) {
 
 		let ownerType = getEntityData(getPlayerData(client).currentPickup, "vrr.owner.type");
 		let ownerId = getEntityData(getPlayerData(client).currentPickup, "vrr.owner.id");
-	
+
 		switch(ownerType) {
 			case VRR_PICKUP_BUSINESS_ENTRANCE:
 				isBusiness = true;
 				isEntrance = true;
 				closestProperty = getServerData().businesses[ownerId];
 				break;
-	
+
 			case VRR_PICKUP_BUSINESS_EXIT:
 				isBusiness = true;
 				isEntrance = false;
 				closestProperty = getServerData().businesses[ownerId];
 				break;
-	
+
 			case VRR_PICKUP_HOUSE_ENTRANCE:
 				isBusiness = false;
 				isEntrance = true;
 				closestProperty = getServerData().houses[ownerId];
 				break;
-	
+
 			case VRR_PICKUP_HOUSE_EXIT:
 				isBusiness = false;
 				isEntrance = false;
 				closestProperty = getServerData().houses[ownerId];
 				break;
-	
+
 			default:
 				return false;
-		}		
+		}
 	} else {
 		for(let i in getServerData().businesses) {
 			if(getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
 				let businessId = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
 				isBusiness = true;
 				isEntrance = true;
-				closestProperty = getServerData().businesses[businessId];		
+				closestProperty = getServerData().businesses[businessId];
 			} else {
 				let businessId = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
 				isBusiness = true;
 				isEntrance = false;
-				closestProperty = getServerData().businesses[businessId];	
+				closestProperty = getServerData().businesses[businessId];
 			}
 		}
 
@@ -176,12 +180,12 @@ function enterExitPropertyCommand(command, params, client) {
 				let houseId = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
 				isBusiness = false;
 				isEntrance = true;
-				closestProperty = getServerData().businesses[houseId];	
+				closestProperty = getServerData().businesses[houseId];
 			} else {
 				let houseId = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
 				isBusiness = false;
 				isEntrance = false;
-				closestProperty = getServerData().businesses[houseId];	
+				closestProperty = getServerData().businesses[houseId];
 			}
 		}
 	}
@@ -213,6 +217,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			setTimeout(function() {
+				setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
 				setPlayerPosition(client, closestProperty.exitPosition);
 				setPlayerHeading(client, closestProperty.exitRotation);
 				setPlayerDimension(client, closestProperty.exitDimension);
@@ -223,6 +228,7 @@ function enterExitPropertyCommand(command, params, client) {
 					}
 					updateInteriorLightsForPlayer(client, closestProperty.interiorLights);
 				}, 1000);
+				//setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
 				//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
 			}, 1100);
 			if(closestProperty.streamingRadioStation != -1) {
@@ -249,6 +255,7 @@ function enterExitPropertyCommand(command, params, client) {
 
 			disableCityAmbienceForPlayer(client, true);
 			setTimeout(function() {
+				setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
 				setPlayerPosition(client, closestProperty.entrancePosition);
 				setPlayerHeading(client, closestProperty.entranceRotation);
 				setPlayerDimension(client, closestProperty.entranceDimension);
@@ -257,11 +264,14 @@ function enterExitPropertyCommand(command, params, client) {
 					if(isFadeCameraSupported()) {
 						fadeCamera(client, true, 1.0);
 					}
+
 					updateInteriorLightsForPlayer(client, true);
 				}, 1000);
 			}, 1100);
+			//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
 			stopRadioStreamForPlayer(client);
 			getPlayerData(client).streamingRadioStation = -1;
+
 			//logToConsole(LOG_DEBUG, `[VRR.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 			return true;
 		}
@@ -286,23 +296,25 @@ function getPlayerInfoCommand(command, params, client) {
 		}
 	}
 
-	messagePlayerNormal(client, `{clanOrange}== {jobYellow}Player Info {clanOrange}==============================`);
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo")));
 
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${getClanData(getClanIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan)).name}[${getPlayerCurrentSubAccount(targetClient).clan}] (Rank: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).name}[Level: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).level}, DBID: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).databaseId}` : `(None)`;
 	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${getJobData(getJobIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job)).name}[${getPlayerCurrentSubAccount(targetClient).job}] (Rank: ${getPlayerCurrentSubAccount(targetClient).jobRank})` : `(None)`;
 
-	let stats = [
-		`{MAINCOLOUR}Account: {ALTCOLOUR}${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`,
-		`{MAINCOLOUR}Character: {ALTCOLOUR}${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`,
-		`{MAINCOLOUR}Connected: {ALTCOLOUR}${getTimeDifferenceDisplay(Math.ceil(sdl.tick/1000), getPlayerData(targetClient).connectTime)} ago`,
-		`{MAINCOLOUR}Registered: ${getPlayerData(targetClient).accountData}`,
-		`{MAINCOLOUR}Game Version: {ALTCOLOUR}${targetClient.gameVersion}`,
-		`{MAINCOLOUR}Client Version: {ALTCOLOUR}${getPlayerData(targetClient).clientVersion}`,
-		`{MAINCOLOUR}Skin: {ALTCOLOUR}${getSkinNameFromModel(getPlayerCurrentSubAccount(targetClient).skin)}[${getPlayerCurrentSubAccount(targetClient).skin}]`,
-		`{MAINCOLOUR}Clan: {ALTCOLOUR}${clan}`,
-		`{MAINCOLOUR}Job: {ALTCOLOUR}${job}`,
-
+	let tempStats = [
+		["Account", `${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`],
+		["Character", `${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`],
+		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
+		["Registered", `${getPlayerData(targetClient).accountData.registerDate}`],
+		["Game Version", `${targetClient.gameVersion}`],
+		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
+		["Skin", `${getSkinNameFromModel(getPlayerCurrentSubAccount(targetClient).skin)}[${getPlayerCurrentSubAccount(targetClient).skin}]`],
+		["Clan", `${clan}`],
+		["Job", `${job}`],
+		["Cash", `${getPlayerCurrentSubAccount(client).cash}`],
 	]
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	let chunkedList = splitArrayIntoChunks(stats, 6);
 	for(let i in chunkedList) {
@@ -313,7 +325,11 @@ function getPlayerInfoCommand(command, params, client) {
 // ===========================================================================
 
 function playerChangeAFKState(client, afkState) {
-    getPlayerData(client).afk = afkState;
+	if(!getPlayerData(client)) {
+		return false;
+	}
+
+	getPlayerData(client).afk = afkState;
 	updateAllPlayerNameTags();
 }
 
@@ -324,7 +340,7 @@ function checkPlayerSpawning() {
 	for(let i in clients) {
 		if(!isConsole(clients[i])) {
 			if(getPlayerData(clients[i])) {
-				if(getPlayerData(clients[i]).loggedIn) {
+				if(isPlayerLoggedIn(clients[i])) {
 					if(!getPlayerData(clients[i]).ped) {
 						if(clients[i].player != null) {
 							//getPlayerData(clients[i]).ped = clients[i].player;
@@ -339,23 +355,26 @@ function checkPlayerSpawning() {
 
 // ===========================================================================
 
-function showPlayerPrompt(client, promptType, promptMessage, promptTitle) {
-	if(promptType == VRR_PROMPT_NONE) {
-		return false;
-	}
-
-	getPlayerData(client).promptType = promptType;
-
+function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
 	if(canPlayerUseGUI(client)) {
-		showPlayerPromptGUI(client, promptMessage, promptTitle);
+		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
 		messagePlayerNormal(client, `❓ ${promptMessage}`);
-		messagePlayerInfo(client, `{MAINCOLOUR}Use {ALTCOLOUR}/yes or {ALTCOLOUR}/no`);
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
 	}
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function updateServerGameTime() {
 	if(isTimeSupported()) {
 		game.time.hour = getServerConfig().hour;
@@ -365,6 +384,15 @@ function updateServerGameTime() {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function listOnlineAdminsCommand(command, params, client) {
 	//== Admins ===================================
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderAdminsList")));
@@ -389,6 +417,15 @@ function listOnlineAdminsCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function gpsCommand(command, params, client) {
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessList")));
 
@@ -398,17 +435,18 @@ function gpsCommand(command, params, client) {
 
 	switch(toLowerCase(params)) {
 		case "police":
-			blipColour = "businessBlue"
+		case "policestation":
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_POLICE;
 			break;
 
 		case "hospital":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_HOSPITAL;
 			break;
 
 		case "job":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_JOB;
 			break;
 
@@ -416,7 +454,7 @@ function gpsCommand(command, params, client) {
 		case "skins":
 		case "clothes":
 		case "player":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_SKIN;
 			break;
@@ -427,20 +465,20 @@ function gpsCommand(command, params, client) {
 		case "weapons":
 		case "wep":
 		case "weps":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_WEAPON;
 			break;
 
 		case "food":
 		case "eat":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_FOOD;
 			break;
 
 		case "drink":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_DRINK;
 			break;
@@ -448,7 +486,7 @@ function gpsCommand(command, params, client) {
 		case "alcohol":
 		case "booze":
 		case "bar":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_ALCOHOL;
 			break;
@@ -458,7 +496,7 @@ function gpsCommand(command, params, client) {
 		case "vehrepair":
 		case "spray":
 		case "fix":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_VEHREPAIR;
 			break;
@@ -467,7 +505,7 @@ function gpsCommand(command, params, client) {
 		case "vehcolour":
 		case "carcolour":
 		case "colour":
-			blipColour = "businessBlue"
+			blipColour = "mediumGrey"
 			locationType = VRR_GPS_TYPE_BUSINESS;
 			useType = VRR_ITEM_USETYPE_VEHCOLOUR;
 			break;
@@ -475,15 +513,15 @@ function gpsCommand(command, params, client) {
 		default: {
 			let itemTypeId = getItemTypeFromParams(params);
 			if(getItemTypeData(itemTypeId) != false) {
-                locationType = VRR_GPS_TYPE_BUSINESS;
-                blipColour = "businessBlue";
+				locationType = VRR_GPS_TYPE_BUSINESS;
+				blipColour = "mediumGrey";
 				useType = getItemTypeData(itemTypeId).useType;
 			} else {
-                let gameLocationId = getGameLocationFromParams(params);
-                if(gameLocationId != false) {
-                    position = getGameConfig().locations[getServerGame()][gameLocationId][1]
-                }
-            }
+				let gameLocationId = getGameLocationFromParams(params);
+				if(gameLocationId != false) {
+					position = getGameConfig().locations[getGame()][gameLocationId][1]
+				}
+			}
 		}
 	}
 
@@ -504,87 +542,300 @@ function gpsCommand(command, params, client) {
 			return false;
 		}
 
-        hideAllBlipsForPlayerGPS(client);
+		hideAllBlipsForPlayerGPS(client);
 		blinkGenericGPSBlipForPlayer(client, getBusinessData(businessId).entrancePosition, getBusinessData(businessId).entranceBlipModel, getColourByType(blipColour), 10);
-        messagePlayerSuccess(client, "Look for the blinking icon on your mini map");
+		messagePlayerSuccess(client, "Look for the blinking icon on your mini map");
 	}
 
-    if(locationType == VRR_GPS_TYPE_GAMELOC) {
-        hideAllBlipsForPlayerGPS(client);
-        blinkGenericGPSBlipForPlayer(client, position, 0, getColourByType(blipColour), 10);
-        messagePlayerSuccess(client, "Look for the blinking icon on your mini map");
-        return true;
-    }
+	if(locationType == VRR_GPS_TYPE_GAMELOC) {
+		hideAllBlipsForPlayerGPS(client);
+		blinkGenericGPSBlipForPlayer(client, position, 0, getColourByType(blipColour), 10);
+		messagePlayerSuccess(client, "Look for the blinking icon on your mini map");
+		return true;
+	}
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function stuckPlayerCommand(command, params, client) {
-    if((getCurrentUnixTimestamp()-getPlayerData(client).lastStuckCommand) < getGlobalConfig().stuckCommandInterval) {
-        messagePlayerError(client, "CantUseCommandYet");
-        return false;
-    }
+	if((getCurrentUnixTimestamp()-getPlayerData(client).lastStuckCommand) < getGlobalConfig().stuckCommandInterval) {
+		messagePlayerError(client, "CantUseCommandYet");
+		return false;
+	}
 
-    let dimension = getPlayerDimension(client);
-    let interior = getPlayerInterior(client);
+	let dimension = getPlayerDimension(client);
+	let interior = getPlayerInterior(client);
 
-    messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
+	messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
 
-    if(getGameConfig().skinChangePosition[getServerGame()].length > 0) {
-        if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
-            messagePlayerAlert(client, "You canceled the skin change.");
-            restorePlayerCamera(client);
+	if(getGameConfig().skinChangePosition[getGame()].length > 0) {
+		if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+			messagePlayerAlert(client, "You canceled the skin change.");
+			restorePlayerCamera(client);
 
-            setPlayerPosition(client, getPlayerData(client).returnToPosition);
-            setPlayerHeading(client, getPlayerData(client).returnToHeading);
-            setPlayerInterior(client, getPlayerData(client).returnToInterior);
-            setPlayerDimension(client, getPlayerData(client).returnToDimension);
+			setPlayerPosition(client, getPlayerData(client).returnToPosition);
+			setPlayerHeading(client, getPlayerData(client).returnToHeading);
+			setPlayerInterior(client, getPlayerData(client).returnToInterior);
+			setPlayerDimension(client, getPlayerData(client).returnToDimension);
 
-            getPlayerData(client).returnToPosition = null;
-            getPlayerData(client).returnToHeading = null;
-            getPlayerData(client).returnToInterior = null;
-            getPlayerData(client).returnToDimension = null;
+			getPlayerData(client).returnToPosition = null;
+			getPlayerData(client).returnToHeading = null;
+			getPlayerData(client).returnToInterior = null;
+			getPlayerData(client).returnToDimension = null;
 
-            getPlayerData(client).returnToType = VRR_RETURNTO_TYPE_NONE;
-        }
-    }
+			getPlayerData(client).returnToType = VRR_RETURNTO_TYPE_NONE;
+		}
+	}
 
-    //if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_ADMINGET) {
-    //    messagePlayerError(client, `You were teleported by an admin and can't use the stuck command`);
-    //    return false;
-    //}
+	//if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_ADMINGET) {
+	//    messagePlayerError(client, `You were teleported by an admin and can't use the stuck command`);
+	//    return false;
+	//}
 
-    if(dimension > 0) {
-        let businesses = getServerData().businesses;
-        for(let i in businesses) {
-            if(businesses[i].exitDimension == dimension) {
-                setPlayerPosition(client, businesses[i].entrancePosition);
-                setPlayerDimension(client, businesses[i].entranceDimension);
-                setPlayerInterior(client, businesses[i].entranceInterior);
+	if(dimension > 0) {
+		let businesses = getServerData().businesses;
+		for(let i in businesses) {
+			if(businesses[i].exitDimension == dimension) {
+				setPlayerPosition(client, businesses[i].entrancePosition);
+				setPlayerDimension(client, businesses[i].entranceDimension);
+				setPlayerInterior(client, businesses[i].entranceInterior);
 
-                return true;
-            }
-        }
+				return true;
+			}
+		}
 
-        let houses = getServerData().houses;
-        for(let i in houses) {
-            if(houses[i].exitDimension == dimension) {
-                setPlayerPosition(client, houses[i].entrancePosition);
-                setPlayerDimension(client, houses[i].entranceDimension);
-                setPlayerInterior(client, houses[i].entranceInterior);
+		let houses = getServerData().houses;
+		for(let i in houses) {
+			if(houses[i].exitDimension == dimension) {
+				setPlayerPosition(client, houses[i].entrancePosition);
+				setPlayerDimension(client, houses[i].entranceDimension);
+				setPlayerInterior(client, houses[i].entranceInterior);
 
-                return true;
-            }
-        }
-    } else {
-        setPlayerDimension(client, 1);
-        setPlayerDimension(client, getGameConfig().mainWorldDimension[getGame()]);
-        setPlayerInterior(client, getGameConfig().mainWorldInterior[getGame()]);
-        setPlayerPosition(client, getPosAbovePos(getPlayerPosition(client), 2.0));
-    }
+				return true;
+			}
+		}
+	} else {
+		setPlayerDimension(client, 1);
+		setPlayerDimension(client, getGameConfig().mainWorldDimension[getGame()]);
+		setPlayerInterior(client, getGameConfig().mainWorldInterior[getGame()]);
+		setPlayerPosition(client, getPosAbovePos(getPlayerPosition(client), 2.0));
+	}
 
-    setPlayerInterior(client, 0);
-    setPlayerDimension(client, 0);
+	setPlayerInterior(client, 0);
+	setPlayerDimension(client, 0);
 }
 
 // ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function playerPedSpeakCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	makePlayerPedSpeak(client, params);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function lockCommand(command, params, client) {
+	if(isPlayerInAnyVehicle(client)) {
+		let vehicle = getPlayerVehicle(client);
+
+		if(!getVehicleData(vehicle)) {
+			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+			return false;
+		}
+
+		if(!isPlayerInFrontVehicleSeat(client)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
+			return false;
+		}
+
+		getVehicleData(vehicle).locked = !getVehicleData(vehicle).locked;
+		setVehicleLocked(vehicle, getVehicleData(vehicle).locked);
+		getVehicleData(vehicle).needsSaved = true;
+
+		meActionToNearbyPlayers(client, `${toLowerCase(getLockedUnlockedFromBool(getVehicleData(vehicle).locked))} the ${getVehicleName(vehicle)}`);
+		return true;
+	} else {
+		let vehicle = getClosestVehicle(getPlayerPosition(client));
+		if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleLockDistance) {
+			if(!getVehicleData(vehicle)) {
+				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+				return false;
+			}
+
+			if(!doesPlayerHaveVehicleKeys(client, vehicle)) {
+				messagePlayerError(client, getLocaleString(client, "DontHaveVehicleKey"));
+				return false;
+			}
+
+			getVehicleData(vehicle).locked = !getVehicleData(vehicle).locked;
+			setVehicleLocked(vehicle, getVehicleData(vehicle).locked);
+			getVehicleData(vehicle).needsSaved = true;
+
+			meActionToNearbyPlayers(client, `${toLowerCase(getLockedUnlockedFromBool(getVehicleData(vehicle).locked))} the ${getVehicleName(vehicle)}`);
+
+			return true;
+		}
+
+		let businessId = getPlayerBusiness(client);
+		if(businessId != -1) {
+			if(!canPlayerManageBusiness(client, businessId)) {
+				messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+				return false;
+			}
+
+			getBusinessData(businessId).locked = !getBusinessData(businessId).locked;
+			updateBusinessPickupLabelData(businessId);
+			getBusinessData(businessId).needsSaved = true;
+
+			messagePlayerSuccess(client, `${getLockedUnlockedEmojiFromBool((getBusinessData(businessId).locked))} Business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}${getLockedUnlockedFromBool((getBusinessData(businessId).locked))}!`);
+			return true;
+		}
+
+		let houseId = getPlayerHouse(client);
+		if(houseId != -1) {
+			if(!canPlayerManageHouse(client, houseId)) {
+				messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
+				return false;
+			}
+
+			getHouseData(houseId).locked = !getHouseData(houseId).locked;
+			updateHousePickupLabelData(houseId);
+			getHouseData(houseId).needsSaved = true;
+
+			messagePlayerSuccess(client, `House {houseGreen}${getHouseData(houseId).description} {MAINCOLOUR}${getLockedUnlockedFromBool((getHouseData(houseId).locked))}!`);
+			return true;
+		}
+	}
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+ function lightsCommand(command, params, client) {
+	if(isPlayerInAnyVehicle(client)) {
+		let vehicle = getPlayerVehicle(client);
+
+		if(!getVehicleData(vehicle)) {
+			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+			return false;
+		}
+
+		if(!isPlayerInFrontVehicleSeat(client)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
+			return false;
+		}
+
+		getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
+		setVehicleLights(vehicle, getVehicleData(vehicle).lights)
+		getVehicleData(vehicle).needsSaved = true;
+
+		meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).lights))} the ${getVehicleName(vehicle)}'s lights`);
+	} else {
+		/*
+		let vehicle = getClosestVehicle(getPlayerPosition(client));
+		if(vehicle != false) {
+			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleLockDistance) {
+				return false;
+			}
+
+			if(!getVehicleData(vehicle)) {
+				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+				return false;
+			}
+
+			if(!doesPlayerHaveVehicleKeys(client, vehicle)) {
+				messagePlayerError(client, getLocaleString(client, "DontHaveVehicleKey"));
+				return false;
+			}
+
+			getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
+			setVehicleLights(vehicle, getVehicleData(vehicle).lights);
+			getVehicleData(vehicle).needsSaved = true;
+
+			meActionToNearbyPlayers(client, `${toLowerCase(getLockedUnlockedFromBool(getVehicleData(vehicle).locked))} the ${getVehicleName(vehicle)}`);
+			return true;
+		}
+		*/
+
+		let businessId = getPlayerBusiness(client);
+		if(businessId != -1) {
+			if(!canPlayerManageBusiness(client, businessId)) {
+				messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+				return false;
+			}
+
+			getBusinessData(businessId).interiorLights = !getBusinessData(businessId).interiorLights;
+			getBusinessData(businessId).needsSaved = true;
+
+			let clients = getClients();
+			for(let i in clients) {
+				if(getPlayerBusiness(client) == getPlayerBusiness(clients[i]) && getPlayerDimension(clients[i]) == getBusinessData(businessId).exitDimension) {
+					updateInteriorLightsForPlayer(clients[i], getBusinessData(businessId).interiorLights);
+				}
+			}
+
+			meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool((getBusinessData(businessId).interiorLights)))} on the business lights`);
+			return true;
+		}
+
+		let houseId = getPlayerHouse(client);
+		if(houseId != -1) {
+			if(!canPlayerManageHouse(client, houseId)) {
+				messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
+				return false;
+			}
+
+			getHouseData(houseId).interiorLights = !getHouseData(houseId).interiorLights;
+			getHouseData(houseId).needsSaved = true;
+
+			let clients = getClients();
+			for(let i in clients) {
+				if(getPlayerHouse(client) == getPlayerHouse(clients[i]) && getPlayerDimension(clients[i]) == getHouseData(houseId).exitDimension) {
+					updateInteriorLightsForPlayer(clients[i], getHouseData(houseId).interiorLights);
+				}
+			}
+
+			meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool((getHouseData(houseId).interiorLights)))} on the house lights`);
+			return true;
+		}
+	}
+}

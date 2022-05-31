@@ -30,13 +30,18 @@ function playerPayDay(client) {
 	let wealth = calculateWealth(client);
 	let grossIncome = getPlayerData(client).payDayAmount;
 
-    // Passive income
+	// Passive income
 	grossIncome = grossIncome + getGlobalConfig().economy.passiveIncomePerPayDay;
 
-    // Payday bonus
+	// Payday bonus
 	grossIncome = grossIncome*getGlobalConfig().economy.grossIncomeMultiplier;
 
-	let incomeTaxAmount = calculateIncomeTax(wealth);
+	// Double bonus
+	if(isDoubleBonusActive()) {
+		grossIncome = grossIncome*2;
+	}
+
+	let incomeTaxAmount = Math.round(calculateIncomeTax(wealth));
 
 	let netIncome = grossIncome-incomeTaxAmount;
 
@@ -49,11 +54,11 @@ function playerPayDay(client) {
 		let canPayNow = totalCash+netIncome;
 		if(incomeTaxAmount <= canPayNow) {
 			takePlayerCash(client, canPayNow);
-			messagePlayerInfo(client, `You covered the remaining taxes with {ALTCOLOUR}$${canPayNow} {MAINCOLOUR}in cash.`);
-			messagePlayerAlert(client, `{orange}You lost money since your taxes are more than your paycheck!`);
-			messagePlayerAlert(client, `{orange}If you don't have enough cash to cover taxes on next paycheck, you will lose stuff!`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${canPayNow}{MAINCOLOUR}`)}`);
+			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
+			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
 		} else {
-			messagePlayerInfo(client, `{orange}You don't have enough cash to pay your taxes!`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "NotEnoughCashForTax")}`);
 			takePlayerCash(client, canPayNow);
 
 			let vehicleCount = getAllVehiclesOwnedByPlayer(client).length;
@@ -65,7 +70,7 @@ function playerPayDay(client) {
 			let newVehicleCount = getAllVehiclesOwnedByPlayer(client).length;
 			let newHouseCount = getAllHousesOwnedByPlayer(client).length;
 			let newBusinessCount = getAllBusinessesOwnedByPlayer(client).length;
-			messagePlayerInfo(client, `{orange}You lost ${newVehicleCount-vehicleCount} vehicles, ${newHouseCount-houseCount} houses, and ${newBusinessCount-businessCount} businesses to cover the remaining tax.`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "AssetsRepossessedForTaxes", newVehicleCount-vehicleCount, newHouseCount-houseCount, newBusinessCount-businessCount)}`);
 		}
 	}
 
@@ -106,7 +111,7 @@ function forcePlayerPayDayCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`${client.name} gave ${targetClient.name} an instant payday`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} an instant payday`);
 	playerPayDay(targetClient);
 }
 
@@ -120,14 +125,14 @@ function setPayDayBonusMultiplier(command, params, client) {
 
 	let newMultiplier = params;
 
-    if(isNaN(newMultiplier)) {
-        messagePlayerError(client, getLocaleString(client, "AmountNotNumber"));
-        return false;
-    }
+	if(isNaN(newMultiplier)) {
+		messagePlayerError(client, getLocaleString(client, "AmountNotNumber"));
+		return false;
+	}
 
-    getGlobalConfig().economy.grossIncomeMultiplier = newMultiplier;
+	getGlobalConfig().economy.grossIncomeMultiplier = newMultiplier;
 
-	messageAdminAction(`${client.name} set payday bonus to ${newMultiplier*100}%`);
+	announceAdminAction(`PaydayBonusSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${newMultiplier*100}%{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -142,7 +147,7 @@ function taxInfoCommand(command, params, client) {
 
 function wealthInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
-	messagePlayerInfo(client, `Your wealth is: $${wealth}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, `Your wealth is: {ALTCOLOUR}$${wealth}{MAINCOLOUR}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
 }
 
 // ===========================================================================
@@ -156,6 +161,8 @@ function attemptRepossession(client, totalToPay) {
 	}
 	return true;
 }
+
+// ===========================================================================
 
 function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
@@ -194,3 +201,15 @@ function getAllBusinessesOwnedByPlayer(client) {
 function getAllHousesOwnedByPlayer(client) {
 	return getServerData().houses.filter((h) => h.ownerType == VRR_HOUSEOWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
+
+// ===========================================================================
+
+function isDoubleBonusActive() {
+	if(isWeekend()) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================

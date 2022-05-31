@@ -16,15 +16,15 @@ function getPlayerActiveWalkieTalkieFrequency(client) {
 				return getItemData(getPlayerData(client).hotBarItems[walkieTalkieSlot]).value;
 			}
 		}
-    }
+	}
 
-    return false;
+	return false;
 }
 
 // ===========================================================================
 
 function walkieTalkieTransmit(radioFrequency, messageText, transmittingPlayer) {
-    walkieTalkieOutgoingToNearbyPlayers(transmittingPlayer, messageText);
+	walkieTalkieOutgoingToNearbyPlayers(transmittingPlayer, messageText);
 
 	//let clients = getServerData().items;
 	//for(let i in clients) {

@@ -32,7 +32,7 @@ function loadJobsFromDatabase() {
 					tempJobData.locations = loadJobLocationsFromDatabase(tempJobData.databaseId);
 					tempJobData.equipment = loadJobEquipmentsFromDatabase(tempJobData.databaseId);
 					tempJobData.uniforms = loadJobUniformsFromDatabase(tempJobData.databaseId);
-					//tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
+					tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
 					tempJobs.push(tempJobData);
 					logToConsole(LOG_DEBUG, `[VRR.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
 				}
@@ -264,11 +264,7 @@ function createAllJobBlips() {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Spawning all job location blips ...`);
 	for(let i in getServerData().jobs) {
 		for(let j in getServerData().jobs[i].locations) {
-			getServerData().jobs[i].locations[j].blip = game.createBlip((getServerData().jobs[i].blipModel!=0) ? getServerData().jobs[i].blipModel : 0, getServerData().jobs[i].locations[j].position, 2, getColourByName("yellow"));
-			//setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
-			//setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
-			addToWorld(getServerData().jobs[i].locations[j].blip);
-			logToConsole(LOG_DEBUG, `[VRR.Job] Job '${getServerData().jobs[i].name}' location blip ${j} spawned!`);
+			createJobLocationBlip(i, j);
 		}
 	}
 	logToConsole(LOG_DEBUG, `[VRR.Job] All job location blips spawned!`);
@@ -394,13 +390,31 @@ function showJobInformationToPlayer(client, jobType) {
 
 // ===========================================================================
 
+function jobListCommand(command, params, client) {
+	if(!canPlayerUseJobs(client)) {
+		messagePlayerError(client, "You are not allowed to use any jobs!");
+		return false;
+	}
+
+	let jobList = getServerData().jobs.map(function(x) { return `${x.name}`});
+	let chunkedList = splitArrayIntoChunks(jobList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobList")));
+	for(let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+	return true;
+}
+
+// ===========================================================================
+
 function takeJobCommand(command, params, client) {
 	if(!canPlayerUseJobs(client)) {
 		messagePlayerError(client, "You are not allowed to use any jobs!");
 		return false;
 	}
 
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = getJobData(closestJobLocation.jobIndex);
 
 	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().takeJobDistance) {
@@ -430,7 +444,7 @@ function startWorkingCommand(command, params, client) {
 		return false;
 	}
 
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
 	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
@@ -472,7 +486,9 @@ function startWorkingCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, `You are now working for the {jobYellow}${jobData.name} {MAINCOLOUR}job`);
+	messagePlayerSuccess(client, `💼 You are now working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} started working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+
 	startWorking(client);
 	//messagePlayerNewbieTip(client, `Enter a job vehicle to get started!`);
 	return true;
@@ -513,27 +529,27 @@ function startWorking(client) {
 	let jobId = getPlayerCurrentSubAccount(client).job;
 	switch(getJobIndexFromDatabaseId(jobId)) {
 		case VRR_JOB_POLICE:
-			messagePlayerInfo(client, "Use {ALTCOLOUR}/uniform {MAINCOLOUR}and {ALTCOLOUR}/equip {MAINCOLOUR}to get your equipment.");
+			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
 		case VRR_JOB_MEDICAL:
-			messagePlayerInfo(client, "Use {ALTCOLOUR}/uniform {MAINCOLOUR}and {ALTCOLOUR}/equip {MAINCOLOUR}to get your equipment.");
+			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
 		case VRR_JOB_FIRE:
-			messagePlayerInfo(client, "Use {ALTCOLOUR}/uniform {MAINCOLOUR}and {ALTCOLOUR}/equip {MAINCOLOUR}to get your equipment.");
+			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
 		case VRR_JOB_BUS:
-			messagePlayerInfo(client, "Get in a bus to get started.");
+			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Bus")));
 			break;
 
 		case VRR_JOB_TAXI:
-			messagePlayerInfo(client, "Get in a taxi to get started.");
+			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Taxi")));
 			break;
 
 		case VRR_JOB_GARBAGE:
-			messagePlayerInfo(client, "Get in a trash truck to get started.");
+			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "GarbageTruck")));
 			break;
 
 		case VRR_JOB_WEAPON:
@@ -554,7 +570,7 @@ function startWorking(client) {
 // ===========================================================================
 
 function getJobInfoCommand(command, params, client) {
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
 	messagePlayerInfo(client, `{jobYellow}[Job Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).name}, {MAINCOLOUR}Enabled: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).enabled))}, {MAINCOLOUR}Whitelisted: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).whiteListEnabled))}, {MAINCOLOUR}Blacklisted: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).blackListEnabled))}, {MAINCOLOUR}ID: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}`);
 }
@@ -562,7 +578,7 @@ function getJobInfoCommand(command, params, client) {
 // ===========================================================================
 
 function getJobLocationInfoCommand(command, params, client) {
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
 	messagePlayerInfo(client, `{jobYellow}[Job Location Info] {MAINCOLOUR}Job: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).name} (${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}), {MAINCOLOUR}Enabled: {ALTCOLOUR}${getYesNoFromBool(closestJobLocation.enabled)}, {MAINCOLOUR}Database ID: {ALTCOLOUR}${closestJobLocation.databaseId}`);
 }
@@ -627,6 +643,8 @@ function stopWorking(client) {
 	sendPlayerStopJobRoute(client);
 
 	let jobId = getPlayerJob(client);
+	messageDiscordEventChannel(`💼 ${getPlayerName(client)} has stopped working as a ${getJobData(jobId).name}`);
+
 	switch(getJobType(jobId)) {
 		case VRR_JOB_POLICE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the police station");
@@ -668,6 +686,7 @@ function stopWorking(client) {
 
 	updatePlayerNameTag(client);
 	sendPlayerWorkingState(client, false);
+	//cachePlayerHotBarItems(client); // Done in restorePlayerJobLockerItems
 }
 
 // ===========================================================================
@@ -683,23 +702,23 @@ function jobUniformCommand(command, params, client) {
 		return false;
 	}
 
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
 	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
-		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) < getGlobalConfig().startWorkingDistance) {
+		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
 			return false;
 		}
 
-		if(getVehicleData(closestVehicle).ownerType == VRR_VEHOWNER_JOB) {
-			messagePlayerError(client, "This is not a job vehicle!");
+		if(getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
 
 		if(getPlayerCurrentSubAccount(client).job != getVehicleData(closestVehicle).ownerId) {
-			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
+			messagePlayerError(client, getLocaleString(client, "NotYourJobVehicle"));
 			return false;
 		}
 
@@ -768,31 +787,31 @@ function jobEquipmentCommand(command, params, client) {
 		return false;
 	}
 
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
-	if(getDistance(closestJobLocation.position, getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+	if(closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
 		if(getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
 			return false;
 		}
 
-		if(getVehicleData(closestVehicle).ownerType == VRR_VEHOWNER_JOB) {
-			messagePlayerError(client, "This is not a job vehicle!");
+		if(getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
 
 		if(getPlayerCurrentSubAccount(client).job != getVehicleData(closestVehicle).ownerId) {
-			messagePlayerError(client, "This is not your job vehicle!");
+			messagePlayerError(client, getLocaleString(client, "NotYourJobVehicle"));
 			return false;
 		}
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
 		if(getPlayerCurrentSubAccount(client).job == VRR_JOB_NONE) {
-			messagePlayerError(client, "You don't have a job!");
-			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
+			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
+			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
 			return false;
 		}
 
@@ -909,6 +928,7 @@ function quitJob(client) {
 	stopWorking(client);
 	getPlayerCurrentSubAccount(client).job = 0;
 	sendPlayerJobType(client, 0);
+	updateJobBlipsForPlayer(client);
 }
 
 // ===========================================================================
@@ -916,6 +936,7 @@ function quitJob(client) {
 function takeJob(client, jobId) {
 	getPlayerCurrentSubAccount(client).job = getJobData(jobId).databaseId;
 	sendPlayerJobType(client, getJobData(jobId).databaseId);
+	updateJobBlipsForPlayer(client);
 }
 
 // ===========================================================================
@@ -923,17 +944,15 @@ function takeJob(client, jobId) {
 function reloadAllJobsCommand(command, params, client) {
 	forceAllPlayersToStopWorking();
 
+	deleteAllJobBlips();
+	deleteAllJobPickups();
 	clearArray(getServerData().jobs);
-	getServerData().jobs = loadJobsFromDatabase();
 
-	for(let i in getServerData().jobs) {
-		for(let j in getServerData().jobs[i].locations) {
-			deleteJobLocationPickup(i, j);
-			deleteJobLocationBlip(i, j);
-			createJobLocationPickup(i, j);
-			createJobLocationBlip(i, j);
-		}
-	}
+	Promise.resolve().then(() => {
+		getServerData().jobs = loadJobsFromDatabase();
+		createJobLocationPickup(i, j);
+		createJobLocationBlip(i, j);
+    });
 
 	announceAdminAction("AllJobsReloaded");
 }
@@ -955,8 +974,9 @@ function createJob(name) {
 	tempJobData.name = name;
 	tempJobData.enabled = true;
 	tempJobData.needsSaved = true;
-	tempJobData.blipModel = getGameConfig().blipSprites[getGame()].job;
-	tempJobData.pickupModel = getGameConfig().pickupModels[getGame()].job;
+	tempJobData.blipModel = getGameConfig().blipSprites[getGame()].Job;
+	tempJobData.pickupModel = getGameConfig().pickupModels[getGame()].Job;
+	tempJobData.colour = toColour(255, 255, 255, 255);
 
 	getServerData().jobs.push(tempJobData);
 	saveJobToDatabase(tempJobData);
@@ -979,16 +999,16 @@ function createJobLocationCommand(command, params, client) {
 	}
 
 	createJobLocation(jobId, getPlayerPosition(client), getPlayerInterior(client), getPlayerDimension(client));
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} created a location for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a location for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 	return true;
 }
 
 // ===========================================================================
 
 function deleteJobLocationCommand(command, params, client) {
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} deleted location {ALTCOLOUR}${closestJobLocation.index} (DB ID ${closestJobLocation.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted location {ALTCOLOUR}${closestJobLocation.index} (DB ID ${closestJobLocation.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
 
 
 	deleteJobLocation(closestJobLocation);
@@ -1002,10 +1022,10 @@ function toggleJobLocationEnabledCommand(command, params, client) {
 		return false;
 	}
 
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
 	closestJobLocation.enabled = !closestJobLocation.enabled;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(closestJobLocation.enabled)} location {ALTCOLOUR}${closestJobLocation.databaseId} {MAINCOLOUR}for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(closestJobLocation.enabled)} location {ALTCOLOUR}${closestJobLocation.databaseId} {MAINCOLOUR}for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1016,10 +1036,45 @@ function toggleJobEnabledCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	getJobData(jobId).enabled = !getJobData(jobId).enabled;
-	messageAdmins(`{adminRed}${getPlayerName(client)} {MAINCOLOUR}${getEnabledDisabledFromBool(getJobData(jobId).enabled)}{MAINCOLOUR} the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}${getEnabledDisabledFromBool(getJobData(jobId).enabled)}{MAINCOLOUR} the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
+}
+
+// ===========================================================================
+
+function addJobUniformCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if(!areThereEnoughParams(params, 4, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
+	let skinIndex = getSkinIndexFromParams(getParam(params, " ", 2));
+	let rankLevel = getParam(params, " ", 2) || 0;
+
+	createJobUniform(jobId, skinIndex, rankLevel);
+	getJobData(jobId).needsSaved = true;
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} added a {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)}{MAINCOLOUR} to job {jobYellow}${getJobData(jobId).name}{MAINCOLOUR}`);
+}
+
+// ===========================================================================
+
+function createJobUniform(jobId, skinIndex, rankLevel) {
+	let tempJobUniformData = new JobUniformData(false);
+	tempJobUniformData.skin = skinIndex;
+	tempJobUniformData.job = getJobData(jobId).databaseId;
+	tempJobUniformData.jobIndex = jobId;
+	tempJobUniformData.requiredRank = rankLevel;
+
+	getJobData(jobId).uniforms.push(tempJobUniformData);
+	return true;
 }
 
 // ===========================================================================
@@ -1035,14 +1090,14 @@ function setJobColourCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 	let red = getParam(params, " ", 2) || 255;
 	let green = getParam(params, " ", 3) || 255;
 	let blue = getParam(params, " ", 4) || 255;
 
 	getJobData(jobId).colour = toColour(toInteger(red), toInteger(green), toInteger(blue), 255);
 	getJobData(jobId).needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} colour to ${red}, ${green}, ${blue}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} colour to ${red}, ${green}, ${blue}`);
 
 	// Force nametag update in case somebody is using this job
 	updateAllPlayerNameTags();
@@ -1061,7 +1116,7 @@ function setJobBlipCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 	let blipParam = getParam(params, " ", 2);
 
 	let blipId = getJobData(jobId).blipModel;
@@ -1071,7 +1126,7 @@ function setJobBlipCommand(command, params, client) {
 		if(toLowerCase(blipParam) == "none") {
 			blipId = -1;
 		} else {
-			let blipTypes = Object.keys(getGameConfig().blipSprites[getServerGame()]).join(", ");
+			let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]).join(", ");
 			let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBlipTypes")));
@@ -1079,7 +1134,7 @@ function setJobBlipCommand(command, params, client) {
 				messagePlayerInfo(client, chunkedList[i].join(", "));
 			}
 
-			blipId = getGameConfig().blipSprites[getServerGame()][blipParam];
+			blipId = getGameConfig().blipSprites[getGame()][blipParam];
 			blipString = toString(blipParam);
 		}
 	} else {
@@ -1089,7 +1144,7 @@ function setJobBlipCommand(command, params, client) {
 
 	getJobData(jobId).blipModel = blipId;
 	getJobData(jobId).needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} blip model to ${blipString}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} blip model to ${blipString}`);
 	resetAllJobBlips();
 }
 
@@ -1106,7 +1161,7 @@ function setJobPickupCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 	let pickupParam = getParam(params, " ", 2);
 
 	let pickupId = getJobData(jobId).pickupModel;
@@ -1116,7 +1171,7 @@ function setJobPickupCommand(command, params, client) {
 		if(toLowerCase(pickupParam) == "none") {
 			pickupId = -1;
 		} else {
-			let pickupTypes = Object.keys(getGameConfig().pickupModels[getServerGame()]).join(", ");
+			let pickupTypes = Object.keys(getGameConfig().pickupModels[getGame()]).join(", ");
 			let chunkedList = splitArrayIntoChunks(pickupTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPickupTypes")));
@@ -1124,7 +1179,7 @@ function setJobPickupCommand(command, params, client) {
 				messagePlayerInfo(client, chunkedList[i].join(", "));
 			}
 
-			pickupId = getGameConfig().pickupModels[getServerGame()][pickupParam];
+			pickupId = getGameConfig().pickupModels[getGame()][pickupParam];
 			pickupString = toString(pickupParam);
 		}
 	} else {
@@ -1134,7 +1189,7 @@ function setJobPickupCommand(command, params, client) {
 
 	getJobData(jobId).pickupModel = pickupId;
 	getJobData(jobId).needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} pickup to ${pickupString}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} pickup to ${pickupString}`);
 	resetAllJobPickups();
 }
 
@@ -1157,7 +1212,7 @@ function toggleJobRouteEnabledCommand(command, params, client) {
 	}
 
 	getJobData(jobId).routes[jobRoute].enabled = !getJobData(jobId).routes[jobRoute].enabled;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobRouteData(jobId, jobRoute).enabled)} route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobRouteData(jobId, jobRoute).enabled)} route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1183,7 +1238,7 @@ function setJobRouteNameCommand(command, params, client) {
 
 	let oldName = getJobData(jobId).routes[jobRoute].name;
 	getJobData(jobId).routes[jobRoute].name = params;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${oldName}{MAINCOLOUR} to {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${oldName}{MAINCOLOUR} to {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1218,7 +1273,7 @@ function setJobRouteAllLocationDelaysCommand(command, params, client) {
 		getJobData(jobId).routes[jobRoute].locations[i].needsSaved = true;
 	}
 
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${oldName}{MAINCOLOUR} location's stop delays to {ALTCOLOUR}${delay/1000}{MAINCOLOUR} seconds for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${oldName}{MAINCOLOUR} location's stop delays to {ALTCOLOUR}${delay/1000}{MAINCOLOUR} seconds for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1245,24 +1300,23 @@ function setJobRouteVehicleColoursCommand(command, params, client) {
 	let colour1 = getParam(params, " ", 1);
 	let colour2 = getParam(params, " ", 2);
 
-	getJobData(jobId).routes[jobRoute].vehicleColour1 = toInteger(colour1);
-	getJobData(jobId).routes[jobRoute].vehicleColour1 = toInteger(colour2);
-	getJobData(jobId).routes[jobRoute].needsSaved = true;
+	getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).vehicleColour1 = toInteger(colour1);
+	getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).vehicleColour2 = toInteger(colour2);
+	getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).needsSaved = true;
 
 	let clients = getClients();
 	for(let i in clients) {
 		if(isPlayerWorking(clients[i])) {
 			if(isPlayerOnJobRoute(clients[i])) {
 				if(getPlayerJob(clients[i]) == jobId && getPlayerJobRoute(clients[i]) == jobRoute) {
-					setVehicleColours(getPlayerVehicle(clients[i]), getJobRouteData(getPlayerJob(clients[i]), getPlayerJobRoute(clients[i])).vehicleColour1, toInteger(colour1), toInteger(colour2), 1, 1);
-					messagePlayerAlert(clients[i], );
+					setVehicleColours(getPlayerVehicle(clients[i]), toInteger(colour1), toInteger(colour2), 1, 1);
 					messagePlayerAlert(clients[i], getLocaleString(client, "CurrentJobRouteVehicleColoursChanged"));
 				}
 			}
 		}
 	}
 
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set the vehicle colours to {ALTCOLOUR}${colour1}, ${colour2}{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the vehicle colours to {ALTCOLOUR}${colour1}, ${colour2}{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1288,7 +1342,7 @@ function setJobRouteFinishMessageCommand(command, params, client) {
 
 	getJobData(jobId).routes[jobRoute].finishMessage = params;
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set the finish message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the finish message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1314,7 +1368,35 @@ function setJobRouteStartMessageCommand(command, params, client) {
 
 	getJobData(jobId).routes[jobRoute].startMessage = params;
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set the start message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the start message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+}
+
+// ===========================================================================
+
+function setJobRouteLocationPositionCommand(command, params, client) {
+	if(!isPlayerWorking(client)) {
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", "{ALTCOLOUR}/startwork{MAINCOLOUR}"));
+		return false;
+	}
+
+	if(!isPlayerOnJobRoute(client)) {
+		messagePlayerError(client, getLocaleString(client, "NeedToBeOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
+		return false;
+	}
+
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getPlayerJob(client);
+	let jobRoute = getPlayerJobRoute(client);
+	let jobRouteLocation = getPlayerJobRouteLocation(client);
+
+	getJobData(jobId).routes[jobRoute].locations[jobRouteLocation].position = position;
+	getJobData(jobId).routes[jobRoute].locations[jobRouteLocation].needsSaved = true;
+	showCurrentJobLocation(client);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)} set the position for location ${getJobRouteLocationData(jobId, jobRoute, jobRouteLocation).name} on route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1340,7 +1422,7 @@ function setJobRouteLocationArriveMessageCommand(command, params, client) {
 
 	getJobData(jobId).routes[jobRoute].locationArriveMessage = params;
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)} set the location arrival message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)} set the location arrival message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1366,7 +1448,7 @@ function setJobRouteLocationNextMessageCommand(command, params, client) {
 
 	getJobData(jobId).routes[jobRoute].locationNextMessage = params;
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)}{MAINCOLOUR} set the location next message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).enabled)}{MAINCOLOUR} set the location next message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1394,11 +1476,12 @@ function setJobRoutePayCommand(command, params, client) {
 
 	if(isNaN(amount)) {
 		getLocaleString(client, "MustBeNumber", "amount");
+		return false;
 	}
 
 	getJobData(jobId).routes[jobRoute].pay = amount;
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} set the start message to {ALTCOLOUR}"${params}"{MAINCOLOUR} for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the pay for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job to {ALTCOLOUR}${makeLargeNumberReadable(amount)}{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -1409,10 +1492,10 @@ function toggleJobWhiteListCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	getJobData(jobId).whiteListEnabled = !getJobData(jobId).whiteListEnabled;
-	messageAdmins(`{adminRed}${getPlayerName(client)} {MAINCOLOUR}${getEnabledDisabledFromBool(getJobData(jobId).whiteListEnabled)} {MAINCOLOUR}the whitelist for the {ALTCOLOUR}${getJobData(jobId).name} {MAINCOLOUR}job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}${getEnabledDisabledFromBool(getJobData(jobId).whiteListEnabled)} {MAINCOLOUR}the whitelist for the {ALTCOLOUR}${getJobData(jobId).name} {MAINCOLOUR}job`);
 }
 
 // ===========================================================================
@@ -1423,10 +1506,10 @@ function toggleJobBlackListCommand(command, params, client) {
 		return false;
 	}
 
-	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	getJobData(jobId).blackListEnabled = !getJobData(jobId).blackListEnabled;
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).blackListEnabled)} the blacklist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).blackListEnabled)} the blacklist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1438,15 +1521,15 @@ function addPlayerToJobBlackListCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	if(!targetClient) {
-		messagePlayerError(client, `That player was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
 	if(!getJobData(jobId)) {
-		messagePlayerError(client, `That job was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
@@ -1456,7 +1539,7 @@ function addPlayerToJobBlackListCommand(command, params, client) {
 	}
 
 	addPlayerToJobBlackList(targetClient, jobId);
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} added {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} to the blacklist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} added {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} to the blacklist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1468,15 +1551,15 @@ function removePlayerFromJobBlackListCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	if(!targetClient) {
-		messagePlayerError(client, `That player was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
 	if(!getJobData(jobId)) {
-		messagePlayerError(client, `That job was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
@@ -1486,7 +1569,7 @@ function removePlayerFromJobBlackListCommand(command, params, client) {
 	}
 
 	removePlayerFromJobBlackList(targetClient, jobId);
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the blacklist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the blacklist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1498,15 +1581,15 @@ function addPlayerToJobWhiteListCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	if(!targetClient) {
-		messagePlayerError(client, `That player was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
 	if(!getJobData(jobId)) {
-		messagePlayerError(client, `That job was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
@@ -1516,7 +1599,7 @@ function addPlayerToJobWhiteListCommand(command, params, client) {
 	}
 
 	addPlayerToJobWhiteList(targetClient, jobId);
-	messageAdmins(`{adminRed}${getPlayerName(client)} {MAINCOLOUR}added {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} to the whitelist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}added {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} to the whitelist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1528,15 +1611,15 @@ function removePlayerFromJobWhiteListCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client)).jobIndex;
+	let jobId = getJobFromParams(getParam(params, " ", 2)) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	if(!targetClient) {
-		messagePlayerError(client, `That player was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
 	if(!getJobData(jobId)) {
-		messagePlayerError(client, `That job was not found!`);
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
@@ -1546,7 +1629,7 @@ function removePlayerFromJobWhiteListCommand(command, params, client) {
 	}
 
 	removePlayerFromJobWhiteList(targetClient, jobId);
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the whitelist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the whitelist for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -1624,6 +1707,11 @@ function jobStopRouteCommand(command, params, client) {
 		return false;
 	}
 
+	if(!getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).enabled) {
+		setAllJobDataIndexes();
+		getJobRouteData(getPlayerJob(client), getPlayerJobRoute(client)).enabled = true;
+	}
+
 	stopJobRoute(client, false, false);
 	return true;
 }
@@ -1667,7 +1755,7 @@ function startJobRoute(client, forceRoute = -1) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} is starting job route ${jobRoute} for job ${jobId}`);
+	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} is starting job route ${getJobRouteData(jobId, jobRoute).name} (${jobRoute}) for the ${getJobData(jobId).name} (${jobId}) job`);
 
 	getPlayerData(client).jobRoute = jobRoute;
 	getPlayerData(client).jobRouteLocation = 0;
@@ -1677,6 +1765,12 @@ function startJobRoute(client, forceRoute = -1) {
 	getPlayerVehicle(client).colour2 = getJobRouteData(jobId, jobRoute).vehicleColour2;
 
 	messagePlayerNormal(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, jobRoute).startMessage, jobId, jobRoute));
+
+	// Don't announce routes that an admin just created
+	if(forceRoute == -1) {
+		messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} started the ${getJobRouteData(jobId, jobRoute).name} route for the ${getJobData(jobId).name} job`);
+	}
+
 	if(getJobRouteData(jobId, jobRoute).locations.length > 0) {
 		showCurrentJobLocation(client);
 	} else {
@@ -1688,15 +1782,18 @@ function startJobRoute(client, forceRoute = -1) {
 
 function stopJobRoute(client, successful = false, alertPlayer = true) {
 	let jobId = getPlayerJob(client);
+	let routeId = getPlayerJobRoute(client);
 
 	if(alertPlayer) {
-		messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).finishMessage), jobId, getPlayerJobRoute(client));
+		messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, routeId).finishMessage, jobId, routeId));
 	}
 
 	if(successful == true) {
 		finishSuccessfulJobRoute(client);
 		return false;
 	}
+
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and didn't earn anything.`);
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
@@ -1735,7 +1832,7 @@ function startReturnToJobVehicleCountdown(client) {
 		//logToConsole(LOG_DEBUG, getPlayerData(client).returnToJobVehicleTick);
 		if(getPlayerData(client).returnToJobVehicleTick > 0) {
 			getPlayerData(client).returnToJobVehicleTick = getPlayerData(client).returnToJobVehicleTick - 1;
-			//console.warn(`You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`);
+			//logToConsole(LOG_WARN, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`);
 			showGameMessage(client, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`, getColourByName("softRed"), 1500);
 		} else {
 			clearInterval(getPlayerData(client).returnToJobVehicleTimer);
@@ -2287,7 +2384,7 @@ function createJobLocationPickup(jobId, locationId) {
 	let tempJobData = getJobData(jobId);
 
 	if(tempJobData.pickupModel != -1) {
-		let pickupModelId = getGameConfig().pickupModels[getServerGame()].Job;
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Job;
 
 		if(tempJobData.pickupModel != 0) {
 			pickupModelId = tempJobData.pickupModel;
@@ -2296,7 +2393,7 @@ function createJobLocationPickup(jobId, locationId) {
 		logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
 
 		if(areServerElementsSupported()) {
-			let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getServerGame()].job);
+			let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
 			if(pickup != false) {
 				tempJobData.locations[locationId].pickup = pickup;
 				setElementDimension(pickup, tempJobData.locations[locationId].dimension);
@@ -2323,24 +2420,46 @@ function createJobLocationBlip(jobId, locationId) {
 
 	let tempJobData = getJobData(jobId);
 
-	if(getJobData(jobId).blipModel != -1) {
-		let blipModelId = getGameConfig().blipSprites[getServerGame()].Job;
+	if(getJobData(jobId).blipModel == -1) {
+		return false;
+	}
 
-		if(getJobData(jobId).blipModel != 0) {
-			blipModelId = getJobData(jobId).blipModel;
-		}
+	let blipModelId = getGameConfig().blipSprites[getGame()].Job;
 
-		if(areServerElementsSupported()) {
-			let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, getColourByType("job"));
-			if(blip != false) {
-				tempJobData.locations[locationId].blip = blip;
+	if(getJobData(jobId).blipModel != 0) {
+		blipModelId = getJobData(jobId).blipModel;
+	}
+
+	if(areServerElementsSupported()) {
+		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 1, getColourByName("yellow"));
+		if(blip != false) {
+			tempJobData.locations[locationId].blip = blip;
+
+			if(getGlobalConfig().jobBlipStreamInDistance == -1 || getGlobalConfig().jobBlipStreamOutDistance == -1)	{
+				blip.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamInDistance);
+				setElementStreamOutDistance(getServerData().jobs[i].locations[j].blip, getGlobalConfig().jobBlipStreamOutDistance);
 			}
+
 			setElementOnAllDimensions(blip, false);
 			setElementDimension(blip, tempJobData.locations[locationId].dimension);
-			addToWorld(blip);
-		} else {
-			sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId);
+
+			let clients  = getClients();
+			for(let i in clients) {
+				if(getPlayerJob(client) == false) {
+					showElementForPlayer(blip, clients[i]);
+				} else {
+					if(getPlayerJob(clients[i]) == getServerData().jobs[i].databaseId) {
+						showElementForPlayer(blip, clients[i]);
+					} else {
+						hideElementForPlayer(blip, clients[i]);
+					}
+				}
+			}
 		}
+	} else {
+		sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId);
 	}
 }
 
@@ -2525,7 +2644,7 @@ function createJobRouteCommand(command, params, client) {
 	}
 
 	let jobId = getPlayerJob(client);
-	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
 	if(!getJobData(jobId)) {
 		messagePlayerError(client, `You need to take the job that you want to make a route for.`);
@@ -2537,8 +2656,14 @@ function createJobRouteCommand(command, params, client) {
 		return false;
 	}
 
-	createJobRoute(params, closestJobLocation);
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} created route {ALTCOLOUR}${params}{MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	if(isPlayerOnJobRoute(client)) {
+		messagePlayerError(client, getLocaleString(client, "AlreadyOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
+		return false;
+	}
+
+	let routeId = createJobRoute(params, closestJobLocation);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created route {ALTCOLOUR}${params}{MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	startJobRoute(client, routeId);
 	return true;
 }
 
@@ -2562,7 +2687,7 @@ function createJobRouteLocationCommand(command, params, client) {
 		return false;
 	}
 
-	if(!getPlayerData(client).jobRoute) {
+	if(!isPlayerOnJobRoute(client)) {
 		messagePlayerError(client, getLocaleString(client, "NeedToBeOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
 		return false;
 	}
@@ -2572,7 +2697,33 @@ function createJobRouteLocationCommand(command, params, client) {
 	let routeLocationName = params;
 
 	createJobRouteLocation(routeLocationName, getPlayerPosition(client), jobRouteData);
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} created location {ALTCOLOUR}${routeLocationName}{MAINCOLOUR} for route {ALTCOLOUR}${jobRouteData.name}{MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {ALTCOLOUR}${routeLocationName}{MAINCOLOUR} for route {ALTCOLOUR}${jobRouteData.name}{MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	return true;
+}
+
+// ===========================================================================
+
+function createJobUniformCommand(command, params, client) {
+	if(areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getJobFromParams(getParam(params, " ", 1));
+	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
+
+	if(!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if(!skinIndex) {
+		messagePlayerError(client, getLocaleString(client, "InvalidSkin"));
+		return false;
+	}
+
+	createJobUniform(jobId, skinIndex);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getGameConfig().skins[skinIndex][1]} (}${getGameConfig().skins[skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
 	return true;
 }
 
@@ -2583,7 +2734,7 @@ function createJobRoute(routeName, closestJobLocation) {
 	tempJobRouteData.name = routeName;
 	tempJobRouteData.jobId = closestJobLocation.jobId;
 	tempJobRouteData.locationId = closestJobLocation.databaseId;
-	tempJobRouteData.enabled = true;
+	tempJobRouteData.enabled = false;
 	tempJobRouteData.needsSaved = true;
 	tempJobRouteData.vehicleColour1 = 1;
 	tempJobRouteData.vehicleColour2 = 1;
@@ -2594,9 +2745,10 @@ function createJobRoute(routeName, closestJobLocation) {
 	tempJobRouteData.locationArriveMessage = `You arrived at a stop.`;
 	tempJobRouteData.locationNextMessage = `Drive to the next stop.`;
 
-	getJobData(closestJobLocation.jobIndex).routes.push(tempJobRouteData);
+	let routeId = getJobData(closestJobLocation.jobIndex).routes.push(tempJobRouteData);
 	saveJobRouteToDatabase(tempJobRouteData);
 	setAllJobDataIndexes();
+	return routeId-1;
 }
 
 // ===========================================================================
@@ -2611,7 +2763,20 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData) {
 	tempJobRouteLocationData.routeIndex = jobRouteData.index;
 
 	getJobData(jobRouteData.jobIndex).routes[jobRouteData.index].locations.push(tempJobRouteLocationData);
-	saveJobRouteLocationToDatabase(tempJobRouteLocationData);
+	//saveJobRouteLocationToDatabase(tempJobRouteLocationData);
+	//setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function createJobUniform(jobId, skinIndex) {
+	let tempJobUniformData = new JobUniformData(false);
+	tempJobUniformData.skin = skinIndex;
+	tempJobUniformData.jobIndex = jobId;
+	tempJobUniformData.job = getJobData(jobId);
+	tempJobUniformData.needsSaved = true;
+
+	getJobData(jobId).uniforms.push(tempJobUniformData);
 	setAllJobDataIndexes();
 }
 
@@ -2620,7 +2785,7 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData) {
 function deleteJobRouteLocationCommand(command, params, client) {
 	let closestJobRouteLocation = getClosestJobRouteLocation(getPlayerPosition(client));
 
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} deleted route location {ALTCOLOUR}${closestJobRouteLocation.index} (DB ID ${closestJobRouteLocation.databaseId}){MAINCOLOUR} for the {ALTCOLOUR}${closestJobRouteLocation.name}{jobYellow} route of the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted route location {ALTCOLOUR}${closestJobRouteLocation.index} (DB ID ${closestJobRouteLocation.databaseId}){MAINCOLOUR} for the {ALTCOLOUR}${closestJobRouteLocation.name}{jobYellow} route of the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
 
 	if(closestJobRouteLocation.databaseId > 0) {
 		quickDatabaseQuery(`DELETE FROM job_route_loc WHERE job_route_loc_id = ${closestJobRouteLocation.databaseId}`);
@@ -2658,7 +2823,7 @@ function deleteJobRouteCommand(command, params, client) {
 		}
 	}
 
-	messageAdmins(`{adminRed}${getPlayerName(client)}{MAINCOLOUR} deleted route {ALTCOLOUR}${jobRouteData.name} (DB ID ${jobRouteData.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted route {ALTCOLOUR}${jobRouteData.name} (DB ID ${jobRouteData.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 
 	if(jobRouteData.databaseId > 0) {
 		quickDatabaseQuery(`DELETE FROM job_route WHERE job_route_id = ${jobRouteData.databaseId}`);
@@ -2667,6 +2832,34 @@ function deleteJobRouteCommand(command, params, client) {
 
 	clearArray(getServerData().jobs[jobId].routes[jobRoute].locations);
 	getServerData().jobs[jobId].routes.splice(jobRoute, 1);
+
+	setAllJobDataIndexes();
+	collectAllGarbage();
+}
+
+// ===========================================================================
+
+function deleteJobUniformCommand(command, params, client) {
+	let jobId = getJobFromParams(getParam(params, " ", 1));
+	let uniformIndex = getParam(params, " ", 1);
+
+	if(!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if(isNaN(uniformIndex)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber", "uniform ID"));
+		return false;
+	}
+
+	if(typeof getJobData(jobId).uniforms[uniformIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
+		return false;
+	}
+
+	quickDatabaseQuery(`DELETE FROM job_uniform WHERE job_uniform_id = ${getJobData(jobId).uniforms[uniformIndex].databaseId}`);
+	getJobData(jobId).uniforms.splice(uniformIndex, 1);
 
 	setAllJobDataIndexes();
 	collectAllGarbage();
@@ -2694,14 +2887,26 @@ function getJobFromParams(params) {
 
 /**
  * @param {Vector3} position - The position to get the closest job location for
+ * @param {Number} dimension - The dimension to get the closest job location for
  * @return {JobLocationData} The job location's data (class instance)
  */
-function getClosestJobLocation(position) {
+function getClosestJobLocation(position, dimension = 0) {
 	let closestJobLocation = false;
-	for(let i in getServerData().jobs) {
-		for(let j in getServerData().jobs[i].locations) {
-			if(!closestJobLocation || getServerData().jobs[i].locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
-				closestJobLocation = getServerData().jobs[i].locations[j];
+	let jobs = getServerData().jobs;
+	for(let i in jobs) {
+		let locations = jobs[i].locations;
+		for(let j in locations) {
+			if(locations[j].dimension != dimension) {
+				let businessId = getClosestBusinessExit(locations[j].position, locations[j].dimension);
+				if(getBusinessData(businessId) != false) {
+					if(!closestJobLocation || getBusinessData(businessId).entrancePosition.distance(position) < closestJobLocation.position.distance(position)) {
+						closestJobLocation = locations[j];
+					}
+				}
+			}
+
+			if(!closestJobLocation || locations[j].position.distance(position) < closestJobLocation.position.distance(position)) {
+				closestJobLocation = locations[j];
 			}
 		}
 	}
@@ -2731,7 +2936,7 @@ function getClosestJobRouteLocation(position) {
 // ===========================================================================
 
 function getJobPointsInRange(position, distance) {
-	return getServerData().jobs[getServerGame()].filter(x => x.position.distance(position) <= distance);
+	return getServerData().jobs[getGame()].filter(x => x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
@@ -2752,6 +2957,9 @@ function getRandomJobRouteForLocation(closestJobLocation) {
 	if(closestJobLocation.routeCache.length > 0) {
 		let randomRoute = getRandom(0, closestJobLocation.routeCache.length-1);
 		let routeId = closestJobLocation.routeCache[randomRoute];
+		if(!getJobRouteData(closestJobLocation.jobIndex, routeId).enabled) {
+			return getRandomJobRouteForLocation(closestJobLocation);
+		}
 		return getJobRouteData(closestJobLocation.jobIndex, routeId).index;
 	}
 	return -1;
@@ -2818,6 +3026,7 @@ function finishSuccessfulJobRoute(client) {
 	let payout = toInteger(applyServerInflationMultiplier(jobRouteData.pay));
 	getPlayerData(client).payDayAmount = getPlayerData(client).payDayAmount + payout;
 
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and earned $${getJobRouteData(jobId, jobRouteId).pay}!`);
 	messagePlayerSuccess(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, jobRouteData.index));
 
 	stopReturnToJobVehicleCountdown(client);
@@ -2884,6 +3093,20 @@ function replaceJobRouteStringsInMessage(messageText, jobId, jobRouteId) {
 	messageText = messageText.replace(tempRegex, getJobData(tempJobRouteData.jobIndex).name);
 
 	return messageText;
+}
+
+// ===========================================================================
+
+function updateJobBlipsForPlayer(client) {
+	for(let i in getServerData().jobs) {
+		for(let j in getServerData().jobs[i].locations) {
+			if(getPlayerJob(client) == 0 || getPlayerJob(client) == i) {
+				showElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+			} else {
+				hideElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+			}
+		}
+	}
 }
 
 // ===========================================================================

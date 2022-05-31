@@ -8,12 +8,7 @@
 // ===========================================================================
 
 function initEmailScript() {
-	if(!checkForSMTPModule()) {
-		return false;
-	}
-
 	logToConsole(LOG_INFO, "[VRR.Email]: Initializing email script ...");
-	emailConfig = loadEmailConfiguration();
 	logToConsole(LOG_INFO, "[VRR.Email]: Email script initialized successfully!");
 }
 
@@ -40,15 +35,8 @@ function sendEmail(toEmail, toName, subject, body) {
 
 // ===========================================================================
 
-function loadEmailConfiguration() {
-	let emailConfigFile = loadTextFile("config/email.json");
-	return JSON.parse(emailConfigFile);
-}
-
-// ===========================================================================
-
 function getEmailConfig() {
-	return emailConfig;
+	return getGlobalConfig().email;
 }
 
 // ===========================================================================

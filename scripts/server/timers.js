@@ -11,7 +11,7 @@ let serverTimers = {};
 
 // ===========================================================================
 
-function saveAllServerDataToDatabase() {
+function saveServerDataToDatabase() {
 	if(getServerConfig().pauseSavingToDatabase) {
 		return false;
 	}
@@ -19,9 +19,9 @@ function saveAllServerDataToDatabase() {
 	logToConsole(LOG_DEBUG, "[VRR.Utilities]: Saving all server data to database ...");
 
 	try {
-		saveAllClientsToDatabase();
+		saveAllPlayersToDatabase();
 	} catch(error) {
-		logToConsole(LOG_ERROR, `Could not save clients to database: ${error}`);
+		logToConsole(LOG_ERROR, `Could not save players to database: ${error}`);
 	}
 
 	try {
@@ -40,12 +40,6 @@ function saveAllServerDataToDatabase() {
 		saveAllBusinessesToDatabase();
 	} catch(error) {
 		logToConsole(LOG_ERROR, `Could not save businesses to database: ${error}`);
-	}
-
-	try {
-		saveServerConfigToDatabase();
-	} catch(error) {
-		logToConsole(LOG_ERROR, `Could not save server config to database: ${error}`);
 	}
 
 	try {
@@ -70,6 +64,18 @@ function saveAllServerDataToDatabase() {
 		saveAllJobsToDatabase();
 	} catch(error) {
 		logToConsole(LOG_ERROR, `Could not save jobs to database: ${error}`);
+	}
+
+	try {
+		saveAllNPCsToDatabase();
+	} catch(error) {
+		logToConsole(LOG_ERROR, `Could not save NPCs to database: ${error}`);
+	}
+
+	try {
+		saveAllGatesToDatabase();
+	} catch(error) {
+		logToConsole(LOG_ERROR, `Could not save gates to database: ${error}`);
 	}
 
 	try {
@@ -99,7 +105,7 @@ function oneMinuteTimerFunction() {
 	checkServerGameTime();
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking rentable vehicles`);
-	vehicleRentCheck();
+	checkVehicleRenting();
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
 	updateAllPlayerNameTags();
@@ -112,7 +118,7 @@ function oneMinuteTimerFunction() {
 
 function tenMinuteTimerFunction() {
 	showRandomTipToAllPlayers();
-	saveAllServerDataToDatabase();
+	saveServerDataToDatabase();
 	checkInactiveVehicleRespawns();
 }
 
@@ -124,19 +130,18 @@ function thirtyMinuteTimerFunction() {
 
 // ===========================================================================
 
-function vehicleRentCheck() {
-	// Loop through players, not vehicles. Much more efficient (and doesn't consume resources when no players are connected)
-	let clients = getClients();
-	for(let i in clients) {
-		if(isClientInitialized(clients[i])) {
-			if(getPlayerData(clients[i]) != false) {
-				if(isPlayerLoggedIn(clients[i] && isPlayerSpawned(clients[i]))) {
-					if(getPlayerData(clients[i]).rentingVehicle != false) {
-						if(getPlayerCurrentSubAccount(clients[i]).cash < getServerData().vehicles[getPlayerData(clients[i]).rentingVehicle].rentPrice) {
-							messagePlayerAlert(clients[i], `You do not have enough money to continue renting this vehicle!`);
-							stopRentingVehicle(clients[i]);
+function checkVehicleRenting() {
+	let renting = getServerData().rentingVehicleCache;
+	for(let i in renting) {
+		if(isClientInitialized(renting[i])) {
+			if(getPlayerData(renting[i]) != false) {
+				if(isPlayerLoggedIn(renting[i] && isPlayerSpawned(renting[i]))) {
+					if(getPlayerData(renting[i]).rentingVehicle != false) {
+						if(getPlayerCurrentSubAccount(renting[i]).cash < getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {
+							messagePlayerAlert(renting[i], `You do not have enough money to continue renting this vehicle!`);
+							stopRentingVehicle(renting[i]);
 						} else {
-							takePlayerCash(clients[i], getServerData().vehicles[getPlayerData(clients[i]).rentingVehicle].rentPrice);
+							takePlayerCash(renting[i], getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice);
 						}
 					}
 				}
@@ -251,18 +256,18 @@ function showRandomTipToAllPlayers() {
 function checkInactiveVehicleRespawns() {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for(let i in vehicles) {
-        if(getVehicleData(vehicles[i] != false)) {
-            if(isVehicleUnoccupied(vehicles[i])) {
-                if(getVehicleData(vehicles[i]).lastActiveTime != false) {
-                    if(getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= getGlobalConfig().vehicleInactiveRespawnDelay) {
-                        respawnVehicle(vehicles[i]);
-                        getVehicleData(vehicles[i]).lastActiveTime = false;
-                    }
-                }
-            } else {
-                getVehicleData(vehicles[i]).lastActiveTime = getCurrentUnixTimestamp();
-            }
-        }
+		if(getVehicleData(vehicles[i] != false)) {
+			if(isVehicleUnoccupied(vehicles[i])) {
+				if(getVehicleData(vehicles[i]).lastActiveTime != false) {
+					if(getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= getGlobalConfig().vehicleInactiveRespawnDelay) {
+						respawnVehicle(vehicles[i]);
+						getVehicleData(vehicles[i]).lastActiveTime = false;
+					}
+				}
+			} else {
+				getVehicleData(vehicles[i]).lastActiveTime = getCurrentUnixTimestamp();
+			}
+		}
 	}
 }
 

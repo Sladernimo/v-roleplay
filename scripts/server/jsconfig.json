@@ -1,10 +1,10 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es6",
-		"moduleResolution": "classic"
-	},
-	"include": [
+  "compilerOptions": {
+	"module": "commonjs",
+	"target": "es6",
+	"moduleResolution": "classic"
+  },
+  "include": [
 	"*.js",
 	"job/*.js",
 	"business/*.js",
@@ -12,5 +12,5 @@
 	"npc/*.js",
 	"native/*.js",
 	"../shared/*.js"
-	]
+  ]
 }

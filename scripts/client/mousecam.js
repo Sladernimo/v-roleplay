@@ -20,7 +20,7 @@ function SetStandardControlsEnabled(bEnabled)
 
 	if (game.standardControls === undefined)
 	{
-		console.warn("game.standardControls not implemented");
+		logToConsole(LOG_WARN, "game.standardControls not implemented");
 		return;
 	}
 	game.standardControls = bEnabled;
@@ -93,7 +93,7 @@ function GetMouseSensitivity()
 {
 	if (game.getMouseSensitivity === undefined)
 	{
-		//console.error("game.getMouseSensitivity not implemented");
+		//logToConsole(LOG_ERROR, "game.getMouseSensitivity not implemented");
 		return [0.0025,0.003];
 	}
 	let MouseSensitivity = game.getMouseSensitivity();
@@ -124,7 +124,7 @@ function ProcessLineOfSight(vecStartX, vecStartY, vecStartZ, vecEndX, vecEndY, v
 {
 	if (game.processLineOfSight === undefined)
 	{
-		console.warn("game.processLineOfSight not implemented");
+		logToConsole(LOG_WARN, "game.processLineOfSight not implemented");
 		return [null];
 	}
 	let Result = game.processLineOfSight([vecStartX, vecStartY, vecStartZ], [vecEndX, vecEndY, vecEndZ], bCheckBuildings, bCheckVehicles, bCheckPeds, bCheckObjects, bCheckDummies, bCheckSeeThroughStuff, bIgnoreSomeObjectsForCamera);
@@ -632,10 +632,10 @@ function update()
 
 addEventHandler("OnCameraProcess", (event) =>
 {
-    if(mouseCameraEnabled) {
-        update();
-        event.preventDefault();
-    }
+	if(mouseCameraEnabled) {
+		update();
+		event.preventDefault();
+	}
 });
 
 function toggleMouseCamera() {

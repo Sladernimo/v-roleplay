@@ -24,23 +24,26 @@ let characterSelect = {
 
 function initCharacterSelectGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Creating character select GUI ...`);
-	characterSelect.window = mexui.window(game.width/2-215, game.height/2-83, 430, 190, 'Select Character', {
+	characterSelect.window = mexui.window(game.width/2-215, game.height/2-83, 430, 190, 'SELECT CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 		},
         title: {
-            textSize: 12.0,
-            textColour: toColour(0, 0, 0, 0),
+			textSize: 12.0,
+			textFont: mainFont,
+            textColour: toColour(0, 0, 0, 255),
             backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
         },
         icon: {
-            textSize: 12.0,
-            textColour: toColour(0, 0, 0, 0),
+			textSize: 10.0,
+			textFont: mainFont,
+            textColour: toColour(0, 0, 0, 255),
             backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
         }
 	});
-	characterSelect.window.titleBarIconSize = toVector2(0,0);
-	characterSelect.window.titleBarHeight = 0;
+	characterSelect.window.titleBarIconSize = toVector2(0, 0);
+	characterSelect.window.titleBarIconShown = false;
+	characterSelect.window.titleBarHeight = 30;
 
 	characterSelect.nameText = characterSelect.window.text(5, 40, 200, 25, 'Lastname, Firstname', {
 		main: {
@@ -163,6 +166,12 @@ function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, ski
 	characterSelect.lastPlayedText.text = `Last Played: ${lastPlayed}`;
 	characterSelect.skinImage = characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
 	characterSelect.window.shown = true;
+
+	guiSubmitKey = selectThisCharacter;
+	guiLeftKey = selectPreviousCharacter;
+	guiRightKey = selectNextCharacter;
+
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), characterSelect.window.position.y+characterSelect.window.size.y+20));
 }
 
 // ===========================================================================
@@ -211,6 +220,7 @@ function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, s
 	characterSelect.skinImage = (getGame() == VRR_GAME_GTA_III) ? characterSelect.window.image(310, 32, 100, 90, `files/images/skins/gta3/${getSkinImage(skinId)}.png`) : characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
 
 	characterSelect.window.shown = true;
+
 	guiSubmitKey = selectThisCharacter;
 	guiLeftKey = selectPreviousCharacter;
 	guiRightKey = selectNextCharacter;

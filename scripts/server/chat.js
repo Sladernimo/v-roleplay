@@ -13,31 +13,39 @@ function initChatScript() {
 	return true;
 }
 
+// ===========================================================================
+
 function processPlayerChat(client, messageText) {
-    if(!getPlayerData(client)) {
-        messagePlayerError(client, "You need to login before you can chat!");
-        return false;
-    }
+	if(!isConsole(client)) {
+		if(!getPlayerData(client)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeLoggedInAndSpawnedToChat"));
+			return false;
+		}
 
-    if(!isPlayerLoggedIn(client)) {
-        messagePlayerError(client, "You need to login before you can chat!");
-        return false;
-    }
+		if(!isPlayerLoggedIn(client)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeLoggedInAndSpawnedToChat"));
+			return false;
+		}
 
-    if(!isPlayerSpawned(client)) {
-        messagePlayerError(client, "You need to spawn before you can chat!");
-        return false;
-    }
+		if(!isPlayerSpawned(client)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeLoggedInAndSpawnedToChat"));
+			return false;
+		}
 
-    if(isPlayerMuted(client)) {
-        messagePlayerError(client, "You are muted and can't chat!");
-        return false;
-    }
+		if(isPlayerMuted(client)) {
+			messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+			return false;
+		}
 
-    messageText = messageText.substring(0, 128);
+		messageText = messageText.substring(0, 128);
+		messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}${messageText}`, getPlayerColour(client));
+		messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
+	} else {
+		messagePlayerNormal(null, `🛡️ (ADMIN) - ${messageText}`);
+	}
 
-    /*
-    let clients = getClients();
+	/*
+	let clients = getClients();
 	for(let i in clients) {
 		let translatedText;
 		translatedText = await translateMessage(messageText, getPlayerData(client).locale, getPlayerData(clients[i]).locale);
@@ -45,9 +53,9 @@ function processPlayerChat(client, messageText) {
 		let original = (getPlayerData(client).locale == getPlayerData(clients[i]).locale) ? `` : ` {ALTCOLOUR}(${messageText})`;
 		messagePlayerNormal(clients[i], `💬 ${getCharacterFullName(client)}: [#FFFFFF]${translatedText}${original}`, clients[i], getColourByName("mediumGrey"));
 	}
-    */
-    messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: ${messageText}`);
-    messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
+	*/
+
+	//messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
 }
 
 // ===========================================================================
@@ -66,7 +74,7 @@ function meActionCommand(command, params, client) {
 
 function doActionCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -83,7 +91,7 @@ function doActionCommand(command, params, client) {
 
 function shoutCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -100,7 +108,7 @@ function shoutCommand(command, params, client) {
 
 function megaphoneChatCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -110,7 +118,7 @@ function megaphoneChatCommand(command, params, client) {
 	}
 
 	if(!canPlayerUseMegaphone(client)) {
-		messagePlayerError(client, "You must have a megaphone item or be in an emergency vehicle!");
+		messagePlayerError(client, getLocaleString(client, "CantUseMegaphone"));
 		return false;
 	}
 
@@ -122,7 +130,7 @@ function megaphoneChatCommand(command, params, client) {
 
 function talkCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -139,7 +147,7 @@ function talkCommand(command, params, client) {
 
 function whisperCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -156,7 +164,7 @@ function whisperCommand(command, params, client) {
 
 function adminChatCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 
@@ -165,14 +173,14 @@ function adminChatCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`{jobYellow}[Admin Chat] {ALTCOLOUR}${getPlayerName(client)} [#CCCCCC](${getPlayerStaffTitle(client)}){MAINCOLOUR}: ${params}`);
+	messageAdmins(`{jobYellow}[Admin Chat] {ALTCOLOUR}${getPlayerName(client)}: ${params}`);
 }
 
 // ===========================================================================
 
 function clanChatCommand(command, params, client) {
 	if(isPlayerMuted(client)) {
-		messagePlayerError(client, "You are muted and can't chat!");
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
 		return false;
 	}
 

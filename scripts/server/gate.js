@@ -7,6 +7,13 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+function initGateScript() {
+	logToConsole(LOG_INFO, `[VRR.Gate]: Initializing gate script ...`);
+	logToConsole(LOG_INFO, `[VRR.Gate]: Gate script initialized successfully!`);
+}
+
+// ===========================================================================
+
 function doesPlayerHaveGateKeys(client, vehicle) {
 	let gateData = getGateData(vehicle);
 
@@ -54,7 +61,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-    if(gateData.ownerType == VRR_GATEOWNER_BUSINESS) {
+	if(gateData.ownerType == VRR_GATEOWNER_BUSINESS) {
 		if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -64,7 +71,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-    if(gateData.ownerType == VRR_GATEOWNER_HOUSE) {
+	if(gateData.ownerType == VRR_GATEOWNER_HOUSE) {
 		if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
 			return true;
 		}
@@ -80,18 +87,18 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 // ===========================================================================
 
 function getGateData(gateId) {
-    if(typeof getServerData().gates[gateId] != "undefined") {
-        return getServerData().gates[gateId];
-    }
+	if(typeof getServerData().gates[gateId] != "undefined") {
+		return getServerData().gates[gateId];
+	}
 
-    return false;
+	return false;
 }
 
 // ===========================================================================
 
 function getClosestGate(position) {
 	let closest = 0;
-	for(let i in getServerData().gates[getServerGame()]) {
+	for(let i in getServerData().gates[getGame()]) {
 		if(getDistance(getServerData().gates[i].position, position) < getDistance(getServerData().gates[closest].position, position)) {
 			closest = i;
 		}
@@ -109,12 +116,111 @@ function triggerGateCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidGate"));
 	}
 
-	if(!canPlayerUseGate(client, closestGate)) {
+	if(!doesPlayerHaveGateKeys(client, closestGate)) {
 		messagePlayerError(client, getLocaleString(client, "NoGateAccess"));
 		return false;
 	}
 
 	triggerGate(getGateData(closestGate).scriptName);
+}
+
+// ===========================================================================
+
+function saveAllGatesToDatabase() {
+	if(getServerConfig().devServer) {
+		return false;
+	}
+
+	for(let i in getServerData().gates) {
+		saveGateToDatabase(i);
+	}
+}
+
+// ===========================================================================
+
+function saveGateToDatabase(gateId) {
+	if(getGateData(gateId) == null) {
+		// Invalid gate data
+		return false;
+	}
+
+	let tempGateData = getGateData(gateId);
+
+	if(tempGateData.databaseId == -1) {
+		// Temp gate, no need to save
+		return false;
+	}
+
+	if(!tempGateData.needsSaved) {
+		// Gate hasn't changed. No need to save.
+		return false;
+	}
+
+	logToConsole(LOG_VERBOSE, `[VRR.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
+	let dbConnection = connectToDatabase();
+	if(dbConnection) {
+		let safeGateName = escapeDatabaseString(tempGateData.name);
+		let safeGateScriptName = escapeDatabaseString(tempGateData.scriptName);
+
+		let data = [
+			["gate_server", getServerId()],
+			["gate_name", safeGateName],
+			["gate_script_name", safeGateScriptName],
+			["gate_owner_type", toInteger(tempGateData.ownerType)],
+			["gate_owner_id", toInteger(tempGateData.ownerId)],
+			["gate_pos_x", toFloat(tempGateData.position.x)],
+			["gate_pos_y", toFloat(tempGateData.position.y)],
+			["gate_pos_z", toFloat(tempGateData.position.z)],
+			["gate_radius", toFloat(tempGateData.radius)],
+		];
+
+		let dbQuery = null;
+		if(tempGateData.databaseId == 0) {
+			let queryString = createDatabaseInsertQuery("gate_main", data);
+			dbQuery = queryDatabase(dbConnection, queryString);
+			tempGateData.databaseId = getDatabaseInsertId(dbConnection);
+			tempGateData.needsSaved = false;
+		} else {
+			let queryString = createDatabaseUpdateQuery("gate_main", data, `gate_id=${tempGateData.databaseId}`);
+			dbQuery = queryDatabase(dbConnection, queryString);
+			tempGateData.needsSaved = false;
+		}
+
+		freeDatabaseQuery(dbQuery);
+		disconnectFromDatabase(dbConnection);
+		return true;
+	}
+	logToConsole(LOG_VERBOSE, `[VRR.Gate]: Saved gate ${gateDataId} to database!`);
+
+	return true;
+}
+
+// ===========================================================================
+
+function loadGatesFromDatabase() {
+	logToConsole(LOG_INFO, "[VRR.Gate]: Loading gates from database ...");
+
+	let tempGates = [];
+	let dbConnection = connectToDatabase();
+	let dbAssoc;
+
+	if(dbConnection) {
+		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM gate_main WHERE gate_server = ${getServerId()}`);
+		if(dbQuery) {
+			if(dbQuery.numRows > 0) {
+				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+					let tempGateData = new GateData(dbAssoc);
+					tempGates.push(tempGateData);
+					logToConsole(LOG_DEBUG, `[VRR.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
+				}
+			}
+			freeDatabaseQuery(dbQuery);
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+
+	logToConsole(LOG_INFO, `[VRR.Gate]: ${tempGates.length} gates loaded from database successfully!`);
+	return tempGates;
 }
 
 // ===========================================================================

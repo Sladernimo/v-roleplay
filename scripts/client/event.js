@@ -51,14 +51,17 @@ function addAllEventHandlers() {
 	addEventHandler("OnFocus", onFocus);
 
 	addEventHandler("OnCameraProcess", onCameraProcess);
+
+	addEventHandler("OnMouseWheel", onMouseWheel);
+
+	addEventHandler("OnEntityProcess", onEntityProcess);
 }
 
 // ===========================================================================
 
 function onResourceStart(event, resource) {
 	sendResourceStartedSignalToServer();
-	setUpInitialGame();
-	garbageCollectorInterval = setInterval(collectAllGarbage, 1000*60);
+	//garbageCollectorInterval = setInterval(collectAllGarbage, 1000*60);
 }
 
 // ===========================================================================
@@ -95,7 +98,10 @@ function onProcess(event, deltaTime) {
 	processGameSpecifics();
 	processNearbyPickups();
 	processVehiclePurchasing();
-	processVehicleFires();
+	processVehicleBurning();
+	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
+	//processVehicleFires();
+
 }
 
 // ===========================================================================
@@ -145,9 +151,7 @@ function onElementStreamIn(event, element) {
 
 function onLocalPlayerExitedVehicle(event, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
-	if(areServerElementsSupported()) {
-		sendNetworkEventToServer("vrr.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
-	}
+	sendNetworkEventToServer("vrr.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if(inVehicleSeat) {
 		parkedVehiclePosition = false;
@@ -160,19 +164,15 @@ function onLocalPlayerExitedVehicle(event, vehicle, seat) {
 function onLocalPlayerEnteredVehicle(event, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered vehicle`);
 
-	if(areServerElementsSupported()) {
-		sendNetworkEventToServer("vrr.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	sendNetworkEventToServer("vrr.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
-		if(inVehicleSeat == 0) {
-			if(inVehicle.owner != -1) {
-				inVehicle.engine = false;
-				if(!inVehicle.engine) {
-					parkedVehiclePosition = inVehicle.position;
-					parkedVehicleHeading = inVehicle.heading;
-				}
-			}
-		}
-	}
+	//if(inVehicleSeat == 0) {
+		//setVehicleEngine(vehicle, false);
+		//if(!inVehicle.engine) {
+		//	parkedVehiclePosition = inVehicle.position;
+		//	parkedVehicleHeading = inVehicle.heading;
+		//}
+	//}
 }
 
 // ===========================================================================
@@ -185,7 +185,7 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 		if(damagedEntity.isType(ELEMENT_PLAYER)) {
 			if(damagedEntity == localPlayer) {
 				//if(!weaponDamageEnabled[damagerEntity.name]) {
-					event.preventDefault();
+					preventDefaultEventAction(event);
 					sendNetworkEventToServer("vrr.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
 				//}
 			}
@@ -223,11 +223,31 @@ function onFocus(event) {
 // ===========================================================================
 
 function onLocalPlayerSwitchWeapon(oldWeapon, newWeapon) {
+
 }
 
 // ===========================================================================
 
 function onCameraProcess(event) {
+
+}
+
+// ===========================================================================
+
+function onMouseWheel(event, mouseId, deltaCoordinates, flipped) {
+	processMouseWheelForChatBox(mouseId, deltaCoordinates, flipped);
+}
+
+// ===========================================================================
+
+function onEntityProcess(event, entity) {
+	if(!isSpawned) {
+		return false;
+	}
+
+	//if(entity.isType(ELEMENT_PED) && !entity.isType(ELEMENT_PLAYER)) {
+	//	processNPCMovement(entity);
+	//}
 }
 
 // ===========================================================================

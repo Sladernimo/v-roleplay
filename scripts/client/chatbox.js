@@ -16,6 +16,9 @@ let maxChatBoxHistory = 500;
 let scrollAmount = 1;
 let maxChatBoxLines = 6;
 
+let chatAutoHideDelay = 0;
+let chatLastUse = 0;
+
 let scrollUpKey = false;
 let scrollDownKey = false;
 
@@ -46,19 +49,34 @@ function unBindChatBoxKeys() {
 // ===========================================================================
 
 function receiveChatBoxMessageFromServer(messageString, colour) {
+	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Received chatbox message from server: ${messageString}`);
+
+	// Just in case it's hidden by auto hide
+	//setChatWindowEnabled(true);
+
 	let colouredString = replaceColoursInMessage(messageString);
 
-	if(bottomMessageIndex >= chatBoxHistory.length-1) {
+	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Changed colours in string: ${colouredString}`);
+
+	addToChatBoxHistory(colouredString, colour);
+	//if(bottomMessageIndex >= chatBoxHistory.length-1) {
 		message(colouredString, colour);
 		bottomMessageIndex = chatBoxHistory.length-1;
-	}
-	addToChatBoxHistory(colouredString, colour);
+	//}
+
+	chatLastUse = getCurrentUnixTimestamp();
 }
 
 // ===========================================================================
 
 function setChatScrollLines(amount) {
 	scrollAmount = amount;
+}
+
+// ===========================================================================
+
+function setChatAutoHideDelay(delay) {
+	chatAutoHideDelay = delay*1000;
 }
 
 // ===========================================================================
@@ -103,6 +121,50 @@ function updateChatBox() {
 		} else {
 			message("", COLOUR_WHITE);
 		}
+	}
+	chatLastUse = getCurrentUnixTimestamp();
+}
+
+// ===========================================================================
+
+function processMouseWheelForChatBox(mouseId, deltaCoordinates, flipped) {
+	// There isn't a way to detect whether chat input is active, but mouse cursor is forced shown when typing so ¯\_(ツ)_/¯
+	if(!gui.cursorEnabled) {
+		return false;
+	}
+
+	if(!flipped) {
+		if(deltaCoordinates.y > 0) {
+			chatBoxScrollUp();
+		} else {
+			chatBoxScrollDown();
+		}
+	} else {
+		if(deltaCoordinates.y > 0) {
+			chatBoxScrollDown();
+		} else {
+			chatBoxScrollUp();
+		}
+	}
+}
+
+// ===========================================================================
+
+function checkChatAutoHide() {
+	return false;
+
+	// Make sure chat input isn't active
+	if(gui.cursorEnabled) {
+		return false;
+	}
+
+	// Don't process auto-hide if it's disabled
+	if(chatAutoHideDelay == 0) {
+		return false;
+	}
+
+	if(getCurrentUnixTimestamp()-chatLastUse >= chatAutoHideDelay) {
+		setChatWindowEnabled(false);
 	}
 }
 

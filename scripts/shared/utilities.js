@@ -2,171 +2,128 @@
 // Vortrex's Roleplay Resource
 // https://github.com/VortrexFTW/gtac_roleplay
 // ===========================================================================
-// FILE: v.js
+// FILE: utilities.js
 // DESC: Provides shared utilities
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
 let bindableKeys = {
-    8: "backspace",
-    9: "tab",
-    13: "return",
-    27: "escape",
-    32: "space",
-    33: "exclamation",
-    34: "doublequote",
-    35: "hashtag",
-    36: "dollar",
-    37: "percent",
-    38: "ampersand",
-    39: "quote",
-    40: "leftparenthesis",
-    41: "rightparenthesis",
-    42: "asterisk",
-    43: "plus",
-    44: "comma",
-    45: "minus",
-    46: "period",
-    47: "slash",
-    48: "0",
-    49: "1",
-    50: "2",
-    51: "3",
-    52: "4",
-    53: "5",
-    54: "6",
-    55: "7",
-    56: "8",
-    57: "9",
-    58: "colon",
-    59: "semicolon",
-    60: "less",
-    61: "equals",
-    62: "greater",
-    63: "questionmark",
-    64: "at",
-    91: "leftbracket",
-    92: "backslash",
-    93: "rightbracket",
-    95: "underscore",
-    97: "a",
-    98: "b",
-    99: "c",
-    100: "d",
-    101: "e",
-    102: "f",
-    103: "g",
-    104: "h",
-    105: "i",
-    106: "j",
-    107: "k",
-    108: "l",
-    109: "m",
-    110: "n",
-    111: "o",
-    112: "p",
-    113: "q",
-    114: "r",
-    115: "s",
-    116: "t",
-    117: "u",
-    118: "v",
-    119: "w",
-    120: "x",
-    121: "y",
-    122: "z",
-    127: "delete",
-    1073741881: "capslock",
-    1073741882: "f12",
-    1073741883: "f2",
-    1073741884: "f3",
-    1073741885: "f4",
-    1073741886: "f5",
-    1073741887: "f6",
-    1073741888: "f7",
-    1073741889: "f8",
-    1073741890: "f9",
-    1073741891: "f10",
-    1073741892: "f11",
-    1073741893: "f12",
-    1073741894: "printscreen",
-    1073741895: "scrolllock",
-    1073741896: "pause",
-    1073741897: "insert",
-    1073741898: "home",
-    1073741899: "pageup",
-    1073741901: "end",
-    1073741902: "pagedown",
-    1073741903: "right",
-    1073741904: "left",
-    1073741905: "down",
-    1073741906: "up",
-    1073741908: "numdivide",
-    1073741909: "nummultiply",
-    1073741910: "numminus",
-    1073741911: "numplus",
-    1073741912: "numenter",
-    1073741913: "num1",
-    1073741914: "num2",
-    1073741915: "num3",
-    1073741916: "num4",
-    1073741917: "num5",
-    1073741918: "num6",
-    1073741919: "num7",
-    1073741920: "num8",
-    1073741921: "num9",
-    1073741922: "num0",
-    1073741923: "numperiod",
-    1073742048: "leftctrl",
-    1073742049: "leftshift",
-    1073742050: "leftalt",
-    1073742052: "rightctrl",
-    1073742053: "rightshift",
-    1073742054: "rightalt",
+	8: "backspace",
+	9: "tab",
+	13: "return",
+	27: "escape",
+	32: "space",
+	33: "exclamation",
+	34: "doublequote",
+	35: "hashtag",
+	36: "dollar",
+	37: "percent",
+	38: "ampersand",
+	39: "quote",
+	40: "leftparenthesis",
+	41: "rightparenthesis",
+	42: "asterisk",
+	43: "plus",
+	44: "comma",
+	45: "minus",
+	46: "period",
+	47: "slash",
+	48: "0",
+	49: "1",
+	50: "2",
+	51: "3",
+	52: "4",
+	53: "5",
+	54: "6",
+	55: "7",
+	56: "8",
+	57: "9",
+	58: "colon",
+	59: "semicolon",
+	60: "less",
+	61: "equals",
+	62: "greater",
+	63: "questionmark",
+	64: "at",
+	91: "leftbracket",
+	92: "backslash",
+	93: "rightbracket",
+	95: "underscore",
+	97: "a",
+	98: "b",
+	99: "c",
+	100: "d",
+	101: "e",
+	102: "f",
+	103: "g",
+	104: "h",
+	105: "i",
+	106: "j",
+	107: "k",
+	108: "l",
+	109: "m",
+	110: "n",
+	111: "o",
+	112: "p",
+	113: "q",
+	114: "r",
+	115: "s",
+	116: "t",
+	117: "u",
+	118: "v",
+	119: "w",
+	120: "x",
+	121: "y",
+	122: "z",
+	127: "delete",
+	1073741881: "capslock",
+	1073741882: "f12",
+	1073741883: "f2",
+	1073741884: "f3",
+	1073741885: "f4",
+	1073741886: "f5",
+	1073741887: "f6",
+	1073741888: "f7",
+	1073741889: "f8",
+	1073741890: "f9",
+	1073741891: "f10",
+	1073741892: "f11",
+	1073741893: "f12",
+	1073741894: "printscreen",
+	1073741895: "scrolllock",
+	1073741896: "pause",
+	1073741897: "insert",
+	1073741898: "home",
+	1073741899: "pageup",
+	1073741901: "end",
+	1073741902: "pagedown",
+	1073741903: "right",
+	1073741904: "left",
+	1073741905: "down",
+	1073741906: "up",
+	1073741908: "numdivide",
+	1073741909: "nummultiply",
+	1073741910: "numminus",
+	1073741911: "numplus",
+	1073741912: "numenter",
+	1073741913: "num1",
+	1073741914: "num2",
+	1073741915: "num3",
+	1073741916: "num4",
+	1073741917: "num5",
+	1073741918: "num6",
+	1073741919: "num7",
+	1073741920: "num8",
+	1073741921: "num9",
+	1073741922: "num0",
+	1073741923: "numperiod",
+	1073742048: "leftctrl",
+	1073742049: "leftshift",
+	1073742050: "leftalt",
+	1073742052: "rightctrl",
+	1073742053: "rightshift",
+	1073742054: "rightalt",
 };
-
-// ===========================================================================
-
-let weekDays = [
-	"Sunday",
-	"Monday",
-	"Tuesday",
-	"Wednesday",
-	"Thursday",
-	"Friday",
-	"Saturday"
-];
-
-// ===========================================================================
-
-let months = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December"
-];
-
-// ===========================================================================
-
-let cardinalDirections = [
-	"North",
-	"Northeast",
-	"East",
-	"Southeast",
-	"South",
-	"Southwest",
-	"West",
-	"Northwest",
-	"Unknown"
-];
 
 // ===========================================================================
 
@@ -189,6 +146,7 @@ let serverColours = {
 			clanOrange: "FF9900",
 			vehiclePurple: "960096",
 			jobYellow: "FFFF00",
+			npcPink: "DB7093",
 		},
 		byName: {
 			white: "FFFFFF",
@@ -220,6 +178,7 @@ let serverColours = {
 			clanOrange: "FF9900",
 			vehiclePurple: "960096",
 			jobYellow: "FFFF00",
+			adminOrange: "ED4337",
 		},
 	},
 
@@ -235,6 +194,22 @@ let serverColours = {
 		alertMessage: toColour(255, 255, 0, 255),
 		successMessage: toColour(0, 180, 0, 255),
 		clanChatMessage: toColour(0, 190, 0, 255),
+		policeBlue: toColour(50, 80, 200, 255),
+		medicPink: toColour(219, 112, 147, 255),
+		firefighterRed: toColour(205, 60, 60, 255),
+		busDriverGreen: toColour(50, 160, 50, 255),
+		taxiDriverYellow: toColour(240, 230, 100, 255),
+		deliveryPurple: toColour(177, 156, 217, 255),
+		civilianWhite: toColour(200, 200, 200, 255),
+		burntYellow: toColour(210, 210, 0, 255),
+		burntOrange: toColour(210, 120, 0, 255),
+		bankGreen: toColour(0, 150, 0, 255),
+		softYellow: toColour(234, 198, 126, 255),
+		businessBlue: toColour(0, 153, 255, 255),
+		houseGreen: toColour(17, 204, 17, 255),
+		clanOrange: toColour(255, 153, 0, 255),
+		npcPink: toColour(219, 112, 147, 255),
+		adminOrange: toColour(205, 60, 60, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
@@ -264,8 +239,12 @@ let serverColours = {
 		businessBlue: toColour(0, 153, 255, 255),
 		houseGreen: toColour(17, 204, 17, 255),
 		clanOrange: toColour(255, 153, 0, 255),
+		npcPink: toColour(219, 112, 147, 255),
+		adminOrange: toColour(205, 60, 60, 255),
 	},
 };
+
+// ===========================================================================
 
 let serverEmoji = [
 	[":hash:", "#"],
@@ -1125,6 +1104,21 @@ let serverEmoji = [
 
 // ===========================================================================
 
+let placesOfOrigin = [
+	"Liberty City",
+	"Vice City",
+	"Los Santos",
+	"San Fierro",
+	"Las Venturas",
+	"San Andreas",
+	"Blaine County",
+	"Red County",
+	"Bone County",
+	"Other",
+];
+
+// ===========================================================================
+
 function getGameConfig() {
 	return gameData;
 }
@@ -1138,24 +1132,24 @@ function makeLargeNumberReadable(num) {
 // ===========================================================================
 
 function getKeyIdFromParams(params) {
-    let tempParams = toLowerCase(toString(params));
+	let tempParams = toLowerCase(toString(params));
 
-    //let sdlName = sdl.getKeyFromName(tempParams);
-    //if(sdlName != null) {
-    //    return sdlName;
-    //}
+	//let sdlName = sdl.getKeyFromName(tempParams);
+	//if(sdlName != null) {
+	//    return sdlName;
+	//}
 
-    for(let i in bindableKeys) {
-        if(toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
-            return i;
-        }
-    }
+	for(let i in bindableKeys) {
+		if(toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
+			return i;
+		}
+	}
 }
 
 // ===========================================================================
 
 function getKeyNameFromId(params) {
-    return bindableKeys[toInteger(params)];
+	return bindableKeys[toInteger(params)];
 }
 
 // ===========================================================================
@@ -1350,36 +1344,6 @@ function getEntityData(entity, dataName) {
 			return entity.getData(dataName);
 		}
 	}
-    return null;
-}
-
-// ===========================================================================
-
-function setEntityData(entity, dataName, dataValue, syncToClients = true) {
-	if(entity != null) {
-		if(typeof server != "undefined") {
-			return entity.setData(dataName, dataValue, syncToClients);
-		} else {
-			return entity.setData(dataName, dataValue);
-		}
-	}
-}
-
-// ===========================================================================
-
-function removeEntityData(entity, dataName) {
-	if(entity != null) {
-		return entity.removeData(dataName);
-	}
-    return null;
-}
-
-// ===========================================================================
-
-function doesEntityDataExist(entity, dataName) {
-	if(entity != null) {
-		return (entity.getData(dataName) != null);
-	}
 	return null;
 }
 
@@ -1389,25 +1353,23 @@ function getDistance(vec1, vec2) {
 	if(isNull(vec1) || isNull(vec2)) {
 		return false;
 	}
-    return vec1.distance(vec2);
+	return vec1.distance(vec2);
 }
 
 // ===========================================================================
 
 function logToConsole(tempLogLevel, text) {
-    if(typeof server != "undefined") {
-        text = removeColoursInMessage(text);
-    }
+	text = removeColoursInMessage(text);
 
-	if((logLevel & tempLogLevel) || logLevel == LOG_ALL) {
-		if(tempLogLevel == LOG_ERROR) {
-			console.error(text);
+	if(hasBitFlag(logLevel|LOG_WARN|LOG_ERROR, tempLogLevel)) {
+		if(tempLogLevel & LOG_ERROR) {
+			consoleError(text);
 			return true;
-		} else if(tempLogLevel == LOG_WARN) {
-			console.warn(text);
+		} else if(tempLogLevel & LOG_WARN) {
+			consoleWarn(text);
 			return true;
 		} else {
-			console.log(text);
+			consolePrint(text);
 			return true;
 		}
 	}
@@ -1417,19 +1379,17 @@ function logToConsole(tempLogLevel, text) {
 // ===========================================================================
 
 function Enum(constantsList) {
-    let tempTable = {};
+	let tempTable = {};
 	for(let i in constantsList) {
-        tempTable[constantsList[i]] = i;
-    }
+		tempTable[constantsList[i]] = i;
+	}
 	return tempTable;
 }
 
 // ===========================================================================
 
 function clearArray(array) {
-	if(array != null) {
-		array.splice(0, array.length);
-	}
+	array.length = 0;
 }
 
 // ===========================================================================
@@ -1448,16 +1408,6 @@ function getPercentage(num, per) {
 
 function getMultiplayerMod() {
 	return (getGame() >= 10) ? VRR_MPMOD_MAFIAC : VRR_MPMOD_GTAC;
-}
-
-// ===========================================================================
-
-function getGame() {
-	if(isServerScript()) {
-		return server.game;
-	} else {
-		return game.game;
-	}
 }
 
 // ===========================================================================
@@ -1499,13 +1449,13 @@ function arePickupsSupported() {
 // ===========================================================================
 
 function areBlipsSupported() {
-    return supportedFeatures.blips[getGame()];
+	return supportedFeatures.blips[getGame()];
 }
 
 // ===========================================================================
 
 function areMarkersSupported() {
-    return supportedFeatures.markers[getGame()];
+	return supportedFeatures.markers[getGame()];
 }
 
 // ===========================================================================
@@ -1547,6 +1497,7 @@ function getAllowedSkins(gameId = getGame()) {
 // ===========================================================================
 
 function getAllowedSkinIndexFromSkin(skin) {
+	let allowedSkins = getAllowedSkins();
 	for(let i in allowedSkins) {
 		if(allowedSkins[i][0] == skin) {
 			return i;
@@ -1714,6 +1665,16 @@ function getSkinNameFromModel(model, gameId = getGame()) {
 
 // ===========================================================================
 
+function getSkinNameFromIndex(index, gameId = getGame()) {
+	if(typeof getGameConfig().skins[gameId][index] != "undefined") {
+		return getGameConfig().skins[gameId][index][1];
+	}
+
+	return "Unknown";
+}
+
+// ===========================================================================
+
 function getSkinModelFromName(name, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
 	for(let i in skins) {
@@ -1766,11 +1727,9 @@ function getObjectModelFromName(name, gameId = getGame()) {
 
 // ===========================================================================
 
-// ===========================================================================
-
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((-angle+1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((-angle+1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x+((Math.cos((angle-1.57)+(Math.PI/2)))*distance));
+	let y = (pos.y+((Math.sin((angle-1.57)+(Math.PI/2)))*distance));
 
 	let rightPos = toVector3(x, y, pos.z);
 
@@ -1800,7 +1759,7 @@ function getPosInFrontOfPos(pos, angle, distance) {
 		y = (pos.y+((Math.sin(angle+(Math.PI/2)))*distance));
 	} else {
 		while(angle < 0.0)
-        	angle += 360.0;
+			angle += 360.0;
 
 		while(angle > 360.0)
 			angle -= 360.0;
@@ -2056,23 +2015,23 @@ function removeHexColoursFromString(str) {
 // ===========================================================================
 
 async function waitUntil(condition) {
-    return new Promise((resolve) => {
-        let interval = setInterval(() => {
-            if (!condition()) {
-                return
-            }
+	return new Promise((resolve) => {
+		let interval = setInterval(() => {
+			if (!condition()) {
+				return;
+			}
 
-            clearInterval(interval);
-            resolve();
-        }, 1);
-    });
+			clearInterval(interval);
+			resolve();
+		}, 1);
+	});
 }
 
 // ===========================================================================
 
 function getGameLocationFromParams(params) {
 	if(isNaN(params)) {
-        let locations = getGameConfig().locations[getGame()];
+		let locations = getGameConfig().locations[getGame()];
 		for(let i in locations) {
 			if(toLowerCase(locations[i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
@@ -2204,16 +2163,16 @@ function getCardinalDirection(pos1, pos2) {
 function getTimeDifferenceDisplay(timeStamp2, timeStamp1) {
 	timeStamp1 = timeStamp1 * 1000;
 	timeStamp2 = timeStamp2 * 1000;
-    if(isNaN(timeStamp1) || isNaN(timeStamp2)) {
-        return "Unknown";
-    }
+	if(isNaN(timeStamp1) || isNaN(timeStamp2)) {
+		return "Unknown";
+	}
 
 	let millisecondDiff = timeStamp2 - timeStamp1;
 
-    let days = Math.floor(millisecondDiff / 1000 / 60 / (60 * 24));
-    let diffDate = new Date(millisecondDiff);
+	let days = Math.floor(millisecondDiff / 1000 / 60 / (60 * 24));
+	let diffDate = new Date(millisecondDiff);
 
-    return `${days} days, ${diffDate.getHours()} hours, ${diffDate.getMinutes()} minutes`;
+	return `${days} days, ${diffDate.getHours()} hours, ${diffDate.getMinutes()} minutes`;
 }
 
 // ===========================================================================
@@ -2318,34 +2277,51 @@ function ArrayBufferToString(buffer) {
 // ===========================================================================
 
 function getElementTypeName(typeId) {
-	switch(typeId) {
-		case ELEMENT_VEHICLE:
-			return "Vehicle";
+	if(getGame() == VRR_GAME_MAFIA_ONE) {
+		switch(typeId) {
+			case ELEMENT_VEHICLE:
+				return "Vehicle";
 
-		case ELEMENT_OBJECT:
-			return "Object";
+			case ELEMENT_PED:
+				return "Ped";
 
-		case ELEMENT_PED:
-			return "Ped";
+			case ELEMENT_PLAYER:
+				return "Player Ped";
 
-		case ELEMENT_PLAYER:
-			return "Player Ped";
+			default:
+				return "Unknown"
+		}
+	} else {
+		switch(typeId) {
+			case ELEMENT_VEHICLE:
+				return "Vehicle";
 
-		case ELEMENT_PICKUP:
-			return "Pickup";
+			case ELEMENT_OBJECT:
+				return "Object";
 
-		case ELEMENT_BLIP:
-			return "Blip";
+			case ELEMENT_PED:
+				return "Ped";
 
-		case ELEMENT_MARKER:
-			return "Marker";
+			case ELEMENT_PLAYER:
+				return "Player Ped";
 
-		case ELEMENT_BUILDING:
-			return "Building";
+			case ELEMENT_PICKUP:
+				return "Pickup";
 
-		default:
-			return "Unknown"
+			case ELEMENT_BLIP:
+				return "Blip";
+
+			case ELEMENT_MARKER:
+				return "Marker";
+
+			case ELEMENT_BUILDING:
+				return "Building";
+
+			default:
+				return "Unknown"
+		}
 	}
+
 
 	return "Unknown";
 }
@@ -2399,12 +2375,24 @@ function isConsole(client) {
 
 // ===========================================================================
 
+/**
+ * Gets the console client (only valid on server)
+ *
+ * @return {Boolean} Whether or not the two clients are the same
+ *
+ */
 function isSamePlayer(client1, client2) {
 	return (client1 == client2);
 }
 
 // ===========================================================================
 
+/**
+ * Gets the console client (only valid on server)
+ *
+ * @return {Client} Console client
+ *
+ */
 function getConsoleClient() {
 	let clients = getClients();
 	for(let i in clients) {
@@ -2416,24 +2404,51 @@ function getConsoleClient() {
 
 // ===========================================================================
 
+/**
+ * Gets the entire colours table
+ *
+ * @return {Object} Colours table
+ *
+ */
 function getServerColours() {
 	return serverColours;
 }
 
 // ===========================================================================
 
+/**
+ * Gets an RGB value for a colour type name
+ *
+ * @param {String} typeName - Colour type name (red, blue, etc)
+ * @return {Number} Colour value (same as from toColour)
+ *
+ */
 function getColourByType(typeName) {
 	return getServerColours().byType[typeName];
 }
 
 // ===========================================================================
 
+/**
+ * Gets an RGB value for a colour name
+ *
+ * @param {String} colourName - Colour name (error, businessBlue, etc)
+ * @return {Number} Colour value (same as from toColour)
+ *
+ */
 function getColourByName(colourName) {
 	return getServerColours().byName[colourName];
 }
 
 // ===========================================================================
 
+/**
+ * Gets a hex value for a colour type
+ *
+ * @param {String} colourName - Colour name (red, blue, etc)
+ * @return {String} Hex value as string without brackets (has only the hashtag)
+ *
+ */
 function getHexColourByName(colourName) {
 	//let rgbaColour = getServerColours().byName[colourName];
 	//let rgbaArray = rgbaArrayFromToColour(rgbaColour);
@@ -2444,7 +2459,14 @@ function getHexColourByName(colourName) {
 
 // ===========================================================================
 
-function getHexColourByType(colourName) {
+/**
+ * Gets a hex value for a colour type
+ *
+ * @param {String} typeName - Colour type name (error, businessBlue, etc)
+ * @return {String} Hex value as string without brackets (has only the hashtag)
+ *
+ */
+function getHexColourByType(typeName) {
 	//let rgbaColour = getServerColours().byType[colourName];
 	//let rgbaArray = rgbaArrayFromToColour(rgbaColour);
 	//return rgbToHex(rgbaArray[0], rgbaArray[1], rgbaArray[2]);
@@ -2585,29 +2607,43 @@ function getInlineChatColourByType(colourName) {
  *
  */
 function rgbaArrayFromToColour(colour) {
-    //return [
-    //    (colour >> 24) & 0xFF, // red
-    //    (colour >> 16) & 0xFF,
-    //    (colour >> 8) & 0xFF,
-    //    colour & 0xFF // alpha
-    //];
-    return [
-        (colour >> 16) & 0xFF, // red
-        (colour >> 8) & 0xFF,
-        colour & 0xFF,
-        (colour >> 24) & 0xFF// alpha
-    ];
+	//return [
+	//    (colour >> 24) & 0xFF, // red
+	//    (colour >> 16) & 0xFF,
+	//    (colour >> 8) & 0xFF,
+	//    colour & 0xFF // alpha
+	//];
+	return [
+		(colour >> 16) & 0xFF, // red
+		(colour >> 8) & 0xFF,
+		colour & 0xFF,
+		(colour >> 24) & 0xFF// alpha
+	];
 }
 
 // ===========================================================================
 
+/**
+ * Gets a hex formatting colour by type for use inline in chatbox messages (example: [#FFFFFF]).
+ *
+ * @param {Number} colourValue - Colour value (from toColour)
+ * @return {String} HEX-formatted colour string without brackets (just the hashtag)
+ *
+ */
 function hexFromToColour(colour) {
 	let rgba = rgbaArrayFromToColour(colour);
-    return rgbToHex(rgba[0], rgba[1], rgba[2]);
+	return rgbToHex(rgba[0], rgba[1], rgba[2]);
 }
 
 // ===========================================================================
 
+/**
+ * Replaces colour types with HEX values in a message string
+ *
+ * @param {String} colouredString - String with colours
+ * @return {String} String with replaced colours for inline chatbox usage
+ *
+ */
 function replaceColoursInMessage(messageText) {
 	if(messageText == null) {
 		return "";
@@ -2642,8 +2678,23 @@ function replaceColoursInMessage(messageText) {
 
 // ===========================================================================
 
+/**
+ * Removes colour types from a message
+ *
+ * @param {String} colouredString - String with colours
+ * @return {String} String without colours
+ *
+ */
 function removeColoursInMessage(messageText) {
 	if(messageText == null) {
+		return "";
+	}
+
+	if(typeof messageText != "string") {
+		return "";
+	}
+
+	if(messageText == "") {
 		return "";
 	}
 
@@ -2676,6 +2727,13 @@ function removeColoursInMessage(messageText) {
 
 // ===========================================================================
 
+/**
+ * Replaces emoji texts with actual emoji
+ *
+ * @param {String} colouredString - String with emoji names
+ * @return {String} String with actual emoji images
+ *
+ */
 function replaceEmojiInString(messageString) {
 	for(let i in emojiReplaceString) {
 		while(messageString.indexOf(emojiReplaceString[i][0]) != -1) {
@@ -2683,6 +2741,107 @@ function replaceEmojiInString(messageString) {
 		}
 	}
 	return messageString;
+}
+
+// ===========================================================================
+
+function isWeekend() {
+	let d = new Date();
+	return d.getDay() == 6 || d.getDay() == 0;
+}
+
+// ===========================================================================
+
+/*
+function getPlayerLocationName(client) {
+	if(getPlayerBusiness(client)) {
+		return `at ${getBusinessData(getPlayerBusiness(client)).name}`;
+	}
+
+	if(getPlayerHouse(client)) {
+		return `at ${getHouseData(getPlayerHouse(client)).description}`;
+	}
+
+	let closestBusiness = getClosestBusinessEntrance(client.position, getPlayerDimension(client));
+	if(getBusinessData(closestBusiness)) {
+		return `near ${getBusinessData(closestBusiness).name} in ${getGameAreaFromPos(getPlayerPosition(client))}`;
+	}
+
+	let closestHouse = getClosestHouseEntrance(client.position, getPlayerDimension(client));
+	if(getHouseData(closestHouse)) {
+		let areaId = getGameAreaFromPos(getPlayerPosition(client));
+		if(getDistance(getHouseData(closestHouse).entrancePosition) > 7) {
+			return `near ${getHouseData(closestHouse).description} in ${getGameConfig().areas[getGame()][areaId][1]}`;
+		}
+	}
+}
+*/
+
+// ===========================================================================
+
+function getGameAreaFromPos(position) {
+	let areas = getGameConfig().areas[getGame()];
+	for(let i in areas) {
+		if(isPointInPoly(areas[i].borders, position)) {
+			return i;
+		}
+	}
+}
+
+// ===========================================================================
+
+function isPosInPoly(poly, position) {
+	for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+		((poly[i].y <= position.y && position.y < poly[j].y) || (poly[j].y <= position.y && position.y < poly[i].y))
+		&& (position.x < (poly[j].x - poly[i].x) * (position[1] - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
+		&& (c = !c);
+	return c;
+}
+
+// ===========================================================================
+
+function createBitFlagTable(keyNames) {
+	let bitVal = 0;
+	let bitTable = {};
+	let incVal = 1;
+
+	for(let i in keyNames) {
+		let key = keyNames[i];
+		bitTable[key] = bitVal;
+		bitVal = 1 << incVal;
+		incVal++;
+	}
+	return bitTable;
+}
+
+// ===========================================================================
+
+function hasBitFlag(allFlags, checkForFlag) {
+	if(allFlags == 0) {
+		return false;
+	}
+
+	if(allFlags == -1) {
+		return true;
+	}
+
+	if((allFlags & checkForFlag) == checkForFlag) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function addBitFlag(allFlags, flagValue) {
+	return allFlags | flagValue;
+}
+
+// ===========================================================================
+
+function removeBitFlag(allFlags, flagValue) {
+	return allFlags ^ flagValue;
 }
 
 // ===========================================================================

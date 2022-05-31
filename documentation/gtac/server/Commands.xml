@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<Commands>
+    <Command Name="dumpdoc" Hash="3404143852" />
+    <Command Name="refresh" Hash="1619108091" />
+    <Command Name="restart" Hash="3891864071" />
+    <Command Name="stop" Hash="3109426870" />
+    <Command Name="cmd" Hash="794565824" />
+    <Command Name="start" Hash="2675529103" />
+    <Command Name="stopall" Hash="1683731152" />
+    <Command Name="exit" Hash="2483651598" />
+    <Command Name="quit" Hash="1135269781" />
+    <Command Name="help" Hash="143088812" />
+    <Command Name="say" Hash="4241071205" />
+</Commands>

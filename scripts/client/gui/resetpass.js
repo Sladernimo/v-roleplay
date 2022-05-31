@@ -7,11 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-let resetPassword = {
+let passwordReset = {
 	window: null,
 	logoImage: null,
 	messageLabel: null,
-	emailLabel: null,
 	emailInput: null,
 	resetPasswordButton: null,
 	backToLoginButton: null,
@@ -22,7 +21,7 @@ let resetPassword = {
 
 function initResetPasswordGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password reset GUI ...`);
-	resetPassword.window = mexui.window(game.width/2-150, game.height/2-130, 300, 260, 'RESET PASSWORD', {
+	passwordReset.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-135, 300, 275, 'RESET PASSWORD', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -39,16 +38,17 @@ function initResetPasswordGUI() {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
-	resetPassword.window.titleBarIconSize = toVector2(0,0);
-	resetPassword.window.titleBarHeight = 0;
+	passwordReset.window.titleBarIconSize = toVector2(0,0);
+	passwordReset.window.titleBarHeight = 0;
+	passwordReset.window.titleBarShown = false;
 
-	resetPassword.logoImage = resetPassword.window.image(5, 20, 290, 80, mainLogoPath, {
+	passwordReset.logoImage = passwordReset.window.image(100, 20, 100, 100, mainLogoPath, {
 		focused: {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
 
-	resetPassword.messageLabel = resetPassword.window.text(20, 135, 260, 20, 'Please confirm your email', {
+	passwordReset.messageLabel = passwordReset.window.text(20, 135, 260, 20, 'Please confirm your email', {
 		main: {
 			textSize: 10.0,
 			textAlign: 0.5,
@@ -60,7 +60,7 @@ function initResetPasswordGUI() {
 		},
 	});
 
-	resetPassword.emailInput = resetPassword.window.textInput(20, 170, 260, 25, '', {
+	passwordReset.emailInput = passwordReset.window.textInput(20, 170, 260, 25, '', {
 		main: {
 			backgroundColour: toColour(0, 0, 0, 120),
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], textInputAlpha),
@@ -80,9 +80,9 @@ function initResetPasswordGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 255),
 		},
 	});
-	resetPassword.emailInput.placeholder = "Email";
+	passwordReset.emailInput.placeholder = "Email";
 
-	resetPassword.resetPasswordButton = resetPassword.window.button(20, 205, 260, 30, 'RESET PASSWORD', {
+	passwordReset.resetPasswordButton = passwordReset.window.button(180, 240, 100, 15, 'RESET PASSWORD', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -95,7 +95,7 @@ function initResetPasswordGUI() {
 		},
 	}, checkResetPassword);
 
-	resetPassword.backToLoginButton = resetPassword.window.button(200, 240, 80, 15, 'LOGIN', {
+	passwordReset.backToLoginButton = passwordReset.window.button(200, 240, 80, 15, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -108,7 +108,7 @@ function initResetPasswordGUI() {
 		},
 	}, switchToLoginGUI);
 
-	resetPassword.backToLoginLabel = resetPassword.window.text(125, 240, 60, 15, 'Remember your password?', {
+	passwordReset.backToLoginLabel = passwordReset.window.text(110, 240, 60, 15, 'Remember your password?', {
 		main: {
 			textSize: 8.0,
 			textAlign: 1.0,
@@ -130,9 +130,11 @@ function showResetPasswordGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing password reset window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
-	resetPassword.window.shown = true;
-	mexui.focusedControl = resetPassword.emailInput;
-	guiSubmitButton = checkResetPassword;
+	passwordReset.window.shown = true;
+	mexui.focusedControl = passwordReset.emailInput;
+	guiSubmitKey = checkResetPassword;
+
+	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), passwordReset.window.position.y+passwordReset.window.size.y+20));
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 
@@ -140,30 +142,46 @@ function showResetPasswordGUI() {
 
 function checkResetPassword() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password reset with server ...`);
-	sendNetworkEventToServer("vrr.checkResetPassword", resetPassword.emailInput.lines[0]);
+	sendNetworkEventToServer("vrr.checkResetPassword", passwordReset.emailInput.lines[0]);
 }
 
 // ===========================================================================
 
 function resetPasswordFailed(errorMessage) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports password reset failed`);
-	resetPassword.messageLabel.text = errorMessage;
-	resetPassword.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
-	resetPassword.emailInput.text = "";
+	passwordReset.messageLabel.text = errorMessage;
+	passwordReset.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
+	passwordReset.emailInput.text = "";
 }
 
 // ===========================================================================
 
 function resetPasswordCodeInputGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports password reset was successful`);
-
-	resetPassword.messageLabel.text = "Check your email for a verification code";
-	resetPassword.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
-	resetPassword.emailInput.text = "";
-	resetPassword.emailInput.placeholder = "Verification Code";
-
-	guiSubmitButton = checkResetPassword;
+	logToConsole(LOG_DEBUG|LOG_WARN, `[VRR.GUI] Server reports password reset email confirmation was successful. Asking for code ...`);
 	closeAllWindows();
+
+	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordCodeInputLabel");
+	//passwordReset.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
+	passwordReset.emailInput.text = "";
+	passwordReset.emailInput.placeholder = getLocaleString("GUIResetPasswordCodePlaceholder");
+
+	guiSubmitKey = checkResetPassword;
+	showResetPasswordGUI();
+}
+
+// ===========================================================================
+
+function resetPasswordEmailInputGUI() {
+	logToConsole(LOG_DEBUG|LOG_WARN, `[VRR.GUI] Server reports password reset request was approved. Asking for email ...`);
+	closeAllWindows();
+
+	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordConfirmEmailLabel");
+	//passwordReset.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
+	passwordReset.emailInput.text = "";
+	passwordReset.emailInput.placeholder = getLocaleString("GUIResetPasswordEmailPlaceholder");
+
+	guiSubmitKey = checkResetPassword;
+	showResetPasswordGUI();
 }
 
 // ===========================================================================

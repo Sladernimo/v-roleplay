@@ -14,11 +14,16 @@ function initMessagingScript() {
 
 // ===========================================================================
 
-function messageAdminAction(messageText) {
-	messagePlayerNormal(null, `⚠️ ${messageText}`, getColourByName("orange"));
-	if(getServerConfig().discordEnabled) {
-		messageDiscord(`:warning: ${messageText}`);
+function announceAdminAction(localeString, ...args) {
+	let clients = getClients();
+	for(let i in clients) {
+		let argsArray = [clients[i], localeString];
+		argsArray = argsArray.concat(args);
+		let messageText = getLocaleString.apply(null, argsArray);
+		messagePlayerNormal(clients[i], `⚠️ ${messageText}`, getColourByName("orange"));
 	}
+
+	messageDiscordEventChannel(getLanguageLocaleString.apply(null, [0, localeString].concat(args)));
 }
 
 // ===========================================================================
@@ -37,6 +42,14 @@ function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 	//    logToConsole(LOG_INFO, `${removeColoursInMessage(messageText)}`);
 	//}
 
+	//messageText = replaceColoursInMessage(messageText);
+
+	//if(client == null) {
+	//	message(messageText, colour);
+	//} else {
+	//	messageClient(messageText, client, colour);
+	//}
+
 	sendChatBoxMessageToPlayer(client, messageText, colour);
 	return true;
 }
@@ -44,8 +57,8 @@ function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 // ===========================================================================
 
 function messageAdmins(messageText, colour = getColourByName("softRed")) {
-	//let plainMessage = removeColoursInMessage(messageText);
-	//console.warn(`🛡️ ${plainMessage}`);
+	//
+	//logToConsole(LOG_WARN, `🛡️ ${plainMessage}`);
 
 	let clients = getClients();
 	for(let i in clients) {
@@ -54,9 +67,8 @@ function messageAdmins(messageText, colour = getColourByName("softRed")) {
 		}
 	}
 
-	//if(getServerConfig().discordConfig.sendAdminEvents) {
-	//    messageDiscordAdminChannel(plainMessage);
-	//}
+	let plainMessage = removeColoursInMessage(messageText);
+	messageDiscordAdminChannel(plainMessage);
 }
 
 // ===========================================================================
@@ -238,6 +250,16 @@ function clearChatBox(client) {
 
 function messagePlayerHelpContent(client, messageString) {
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}${messageString}`);
+}
+
+// ===========================================================================
+
+function messagePlayersInRace(raceId, message) {
+	for(let i in clients) {
+		if(getPlayerRace(clients[i]) == raceId) {
+			messagePlayerNormal(clients[i], message);
+		}
+	}
 }
 
 // ===========================================================================

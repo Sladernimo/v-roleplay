@@ -7,58 +7,89 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+let disconnectReasons = [
+	"Lost Connection",
+	"Disconnected",
+	"Unsupported Client",
+	"Wrong Game",
+	"Incorrect Password",
+	"Unsupported Executable",
+	"Disconnected",
+	"Banned",
+	"Failed",
+	"Invalid Name",
+	"Crashed",
+	"Modified Game"
+];
+
+// ===========================================================================
+
 function sendNetworkEventToPlayer(networkEvent, client, ...args) {
-    triggerNetworkEvent.apply(null, networkEvent, client, args);
+	triggerNetworkEvent.apply(null, networkEvent, client, args);
 }
 
 // ===========================================================================
 
 function getPlayerPosition() {
-    return localPlayer.position;
+	return localPlayer.position;
 }
 
 // ===========================================================================
 
 function setPlayerPosition(position) {
-    localPlayer.position = position;
+	if(getGame() == VRR_GAME_GTA_IV) {
+		natives.setCharCoordinates(localPlayer, position);
+	} else {
+		localPlayer.position = position;
+	}
 }
 
 // ===========================================================================
 
-function getElementPosition(element) {
-    return element.position;
+function getElementPosition(elementId) {
+	return getElementFromId(elementId).position;
 }
 
 // ===========================================================================
 
-function setElementPosition(element, position) {
-    if(!element.isSyncer) {
-        return false;
-    }
-
-    element.position = position;
+function getElementHeading(elementId) {
+	return getElementFromId(elementId).heading;
 }
 
 // ===========================================================================
 
-function deleteGameElement(element, position) {
-    if(!element.isOwner) {
-        return false;
-    }
+function setElementPosition(elementId, position) {
+	if(getElementFromId(elementId) == null) {
+		return false;
+	}
 
-    destroyGameElement(element);
+	if(!getElementFromId(elementId).isSyncer) {
+		return false;
+	}
+
+	getElementFromId(elementId).position = position;
+}
+
+// ===========================================================================
+
+function deleteGameElement(elementId, position) {
+	if(!getElementFromId(elementId).isOwner) {
+		return false;
+	}
+
+	destroyGameElement(getElementFromId(elementId));
 }
 
 // ===========================================================================
 
 function createGameVehicle(modelIndex, position, heading) {
-    return game.createVehicle(getGameConfig().vehicles[getGame()][modelIndex][0], position, heading);
+	return game.createVehicle(getGameConfig().vehicles[getGame()][modelIndex][0], position, heading);
 }
 
 // ===========================================================================
 
 function addNetworkEventHandler(eventName, handlerFunction) {
-    addNetworkHandler(eventName, handlerFunction);
+	addNetworkHandler(eventName, handlerFunction);
 }
 
 // ===========================================================================
@@ -101,7 +132,7 @@ function getClientsInRange(position, distance) {
 // ===========================================================================
 
 function getCiviliansInRange(position, distance) {
-	return getElementsByType(ELEMENT_PED).filter(x => !x.isType(ELEMENT_PLAYER) && getElementPosition(x).position.distance(position) <= distance);
+	return getElementsByType(ELEMENT_PED).filter(x => !x.isType(ELEMENT_PLAYER) && x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
@@ -113,13 +144,19 @@ function getPlayersInRange(position, distance) {
 // ===========================================================================
 
 function getElementsByTypeInRange(elementType, position, distance) {
-	return getElementsByType(elementType).filter(x => getElementPosition(x).position.distance(position) <= distance);
+	return getElementsByType(elementType).filter(x => x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
 
 function getClosestCivilian(position) {
 	return getElementsByType(ELEMENT_PED).reduce((i, j) => ((i.position.distance(position) <= j.position.distance(position)) ? i : j));
+}
+
+// ===========================================================================
+
+function getClosestPlayer(position) {
+	return getElementsByType(ELEMENT_PLAYER).reduce((i, j) => ((i.position.distance(position) <= j.position.distance(position)) ? i : j));
 }
 
 // ===========================================================================
@@ -143,6 +180,31 @@ function getVehiclesInRange(position, range) {
 
 // ===========================================================================
 
+function createGameBlip(blipModel, position, name = "") {
+	if(getGame() == VRR_GAME_GTA_IV) {
+		let blipId = natives.addBlipForCoord(position);
+		if(blipId) {
+			natives.changeBlipSprite(blipId, blipModel);
+			natives.setBlipMarkerLongDistance(blipId, false);
+			natives.setBlipAsShortRange(blipId, true);
+			natives.changeBlipNameFromAscii(blipId, `${name.substr(0, 24)}${(name.length > 24) ? " ...": ""}`);
+			return blipId;
+		}
+	}
+
+	return -1;
+}
+
+// ===========================================================================
+
+function setEntityData(entity, dataName, dataValue, syncToClients = true) {
+	if(entity != null) {
+		return entity.setData(dataName, dataValue);
+	}
+}
+
+// ===========================================================================
+
 function setVehicleEngine(vehicleId, state) {
 	getElementFromId(vehicleId).engine = state;
 }
@@ -150,19 +212,7 @@ function setVehicleEngine(vehicleId, state) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
-	if(getGame() != VRR_GAME_MAFIA_ONE) {
-		if(!state) {
-			getElementFromId(vehicleId).lightStatus = 2;
-		} else {
-			getElementFromId(vehicleId).lightStatus = 1;
-		}
-	} else {
-		if(!state) {
-			getElementFromId(vehicleId).lights = false;
-		} else {
-			getElementFromId(vehicleId).lights = true;
-		}
-	}
+	getElementFromId(vehicleId).lights = state;
 }
 
 // ===========================================================================
@@ -176,11 +226,7 @@ function repairVehicle(syncId) {
 function syncVehicleProperties(vehicle) {
 	if(doesEntityDataExist(vehicle, "vrr.lights")) {
 		let lightStatus = getEntityData(vehicle, "vrr.lights");
-		if(!lightStatus) {
-			vehicle.lightStatus = 2;
-		} else {
-			vehicle.lightStatus = 1;
-		}
+		vehicle.lights = lightStatus;
 	}
 
 	if(doesEntityDataExist(vehicle, "vrr.invincible")) {
@@ -240,6 +286,24 @@ function syncVehicleProperties(vehicle) {
 			}
 		}
 	}
+}
+
+// ===========================================================================
+
+function removeEntityData(entity, dataName) {
+	if(entity != null) {
+		return entity.removeData(dataName);
+	}
+	return null;
+}
+
+// ===========================================================================
+
+function doesEntityDataExist(entity, dataName) {
+	if(entity != null) {
+		return (entity.getData(dataName) != null);
+	}
+	return null;
 }
 
 // ===========================================================================
@@ -332,6 +396,12 @@ function syncCivilianProperties(civilian) {
 		let animData = getEntityData(vehicle, "vrr.anim");
 		civilian.addAnimation(animData[0], animData[1]);
 	}
+}
+
+// ===========================================================================
+
+function preventDefaultEventAction(event) {
+	event.preventDefault();
 }
 
 // ===========================================================================
@@ -461,6 +531,42 @@ function syncObjectProperties(object) {
 
 // ===========================================================================
 
+function consolePrint(text) {
+	console.log(text);
+}
+
+// ===========================================================================
+
+function consoleWarn(text) {
+	console.warn(text);
+}
+
+// ===========================================================================
+
+function consoleError(text) {
+	console.error(text);
+}
+
+// ===========================================================================
+
+function getPlayerName(client) {
+	return client.name;
+}
+
+// ===========================================================================
+
+function getGame() {
+	return game.game;
+}
+
+// ===========================================================================
+
+function getPlayerId(client) {
+	return client.index;
+}
+
+// ===========================================================================
+
 function syncElementProperties(element) {
 	if(doesEntityDataExist(element, "vrr.interior")) {
 		if(typeof element.interior != "undefined") {
@@ -488,6 +594,107 @@ function syncElementProperties(element) {
 		default:
 			break;
 	}
+}
+
+// ===========================================================================
+
+function getPlayerPed(client) {
+	return client.player;
+}
+
+// ===========================================================================
+
+function getScreenWidth() {
+	return game.width;
+}
+
+// ===========================================================================
+
+function getScreenHeight() {
+	return game.height;
+}
+
+// ===========================================================================
+
+// ===========================================================================
+
+function openAllGarages() {
+	switch(getGame()) {
+		case VRR_GAME_GTA_III:
+			for(let i=0;i<=26;i++) {
+				openGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_VC:
+			for(let i=0;i<=32;i++) {
+				openGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_SA:
+			for(let i=0;i<=44;i++) {
+				openGarage(i);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+function closeAllGarages() {
+	switch(getGame()) {
+		case VRR_GAME_GTA_III:
+			for(let i=0;i<=26;i++) {
+				closeGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_VC:
+			for(let i=0;i<=32;i++) {
+				closeGarage(i);
+				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
+			}
+			break;
+
+		case VRR_GAME_GTA_SA:
+			for(let i=0;i<=44;i++) {
+				closeGarage(i);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+function setPedInvincible(ped, state) {
+	ped.invincible = state;
+}
+
+// ===========================================================================
+
+function setPedLookAt(ped, position) {
+	if(getGame() == VRR_GAME_GTA_SA) {
+		ped.lookAt(position, 10000);
+		return true;
+	} else {
+		setElementHeading(ped.id, getHeadingFromPosToPos(getElementPosition(ped.id), position));
+	}
+}
+
+// ===========================================================================
+
+function setElementHeading(elementId, heading) {
+	getElementFromId(elementId).heading = heading;
 }
 
 // ===========================================================================

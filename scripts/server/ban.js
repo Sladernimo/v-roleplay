@@ -7,8 +7,6 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-// ===========================================================================
-
 function initBanScript() {
 	logToConsole(LOG_INFO, "[VRR.Ban]: Initializing ban script ...");
 	logToConsole(LOG_INFO, "[VRR.Ban]: Ban script initialized!");
@@ -39,7 +37,7 @@ function accountBanCommand(command, params, client) {
 
 	logToConsole(LOG_WARN, `[VRR.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name}) account was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
 
-	messageAdminAction(`{ALTCOLOUR}${getPlayerData(targetClient).currentSubAccountData.name} {MAINCOLOUR}has been account banned.`);
+	announceAdminAction(`PlayerAccountBanned`, `{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR}`);
 	banAccount(getPlayerData(targetClient).accountData.databaseId, getPlayerData(client).accountData.databaseId, reason);
 	disconnectPlayer(client);
 }
@@ -69,7 +67,7 @@ function subAccountBanCommand(command, params, client, fromDiscord) {
 
 	logToConsole(LOG_WARN, `[VRR.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name})'s subaccount was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
 
-	messageAdminAction(`{ALTCOLOUR}${getPlayerData(targetClient).currentSubAccountData.name} {MAINCOLOUR}has been character banned.`);
+	announceAdminAction(`PlayerCharacterBanned`, `{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR}`);
 	banSubAccount(getPlayerData(targetClient).currentSubAccountData.databaseId, getPlayerData(client).accountData.databaseId, reason);
 
 	disconnectPlayer(client);
@@ -98,11 +96,11 @@ function ipBanCommand(command, params, client, fromDiscord) {
 		return false;
 	}
 
-	messageAdminAction(`{ALTCOLOUR}${getPlayerData(targetClient).currentSubAccountData.name} {MAINCOLOUR}has been IP banned.`);
-	banIPAddress(targetClient.ip, getPlayerData(client).accountData.databaseId, reason);
+	announceAdminAction(`PlayerIPBanned`, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR}`);
+	banIPAddress(getPlayerIP(targetClient), getPlayerData(client).accountData.databaseId, reason);
 
-	server.banIP(targetClient.ip);
-	targetClient.disconnect();
+	serverBanIP(getPlayerIP(targetClient));
+	disconnectPlayer(targetClient);
 }
 
 // ===========================================================================
@@ -129,10 +127,10 @@ function subNetBanCommand(command, params, client, fromDiscord) {
 		return false;
 	}
 
-	messageAdminAction(`{ALTCOLOUR}${getPlayerData(targetClient).currentSubAccountData.name} {MAINCOLOUR}has been subnet banned`);
-	banSubNet(targetClient.ip, getSubNet(targetClient.ip, octetAmount), getPlayerData(client).accountData.databaseId, reason);
+	announceAdminAction(`PlayerSubNetBanned`, `{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR}`);
+	banSubNet(getPlayerIP(targetClient), getSubNet(getPlayerIP(targetClient), octetAmount), getPlayerData(client).accountData.databaseId, reason);
 
-	server.banIP(targetClient.ip);
+	serverBanIP(getPlayerIP(targetClient));
 }
 
 // ===========================================================================
@@ -254,13 +252,9 @@ function unbanSubNet(ipAddressStart, ipAddressEnd, adminAccountId) {
 // ===========================================================================
 
 function isAccountBanned(accountId) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_ACCOUNT) {
-			if(bans[i].detail == accountId) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_ACCOUNT && ban.detail === accountId);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;
@@ -269,13 +263,9 @@ function isAccountBanned(accountId) {
 // ===========================================================================
 
 function isSubAccountBanned(subAccountId) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_SUBACCOUNT) {
-			if(bans[i].detail == subAccountId) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_SUBACCOUNT && ban.detail === subAccountId);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;
@@ -284,13 +274,9 @@ function isSubAccountBanned(subAccountId) {
 // ===========================================================================
 
 function isIpAddressBanned(ipAddress) {
-	let bans = getServerData().bans;
-	for(let i in bans) {
-		if(bans[i].type == VRR_BANTYPE_IPADDRESS) {
-			if(bans[i].detail == ipAddress) {
-				return true;
-			}
-		}
+	let bans = getServerData().bans.filter(ban => ban.type === VRR_BANTYPE_IPADDRESS && ban.detail === ipAddress);
+	if(bans.length > 0) {
+		return true;
 	}
 
 	return false;

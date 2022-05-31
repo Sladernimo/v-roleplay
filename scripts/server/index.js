@@ -38,6 +38,7 @@ require("scripts/server/messaging.js");
 require("scripts/server/misc.js");
 require("scripts/server/npc.js");
 require("scripts/server/staff.js");
+require("scripts/server/race.js");
 require("scripts/server/radio.js");
 require("scripts/server/security.js");
 require("scripts/server/subaccount.js");

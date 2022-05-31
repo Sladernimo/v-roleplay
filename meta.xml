@@ -9,8 +9,8 @@
 	<script src="scripts/shared/gamedata.js" type="server" language="javascript" />
 	<script src="scripts/shared/gamedata.js" type="client" language="javascript" />
 
-
 	<!-- Multiplayer Mod (Wrapped Natives) -->
+	<!-- The goal is to just swap only these out when I port the script to a new mod, like Oakwood -->
 	<script src="scripts/server/native/connected.js" type="server" language="javascript" />
 	<script src="scripts/client/native/connected.js" type="client" language="javascript" />
 
@@ -34,6 +34,7 @@
 	<script src="scripts/server/email.js" type="server" language="javascript" />
 	<script src="scripts/server/event.js" type="server" language="javascript" />
 	<script src="scripts/server/fishing.js" type="server" language="javascript" />
+	<script src="scripts/server/gate.js" type="server" language="javascript" />
 	<script src="scripts/server/gui.js" type="server" language="javascript" />
 	<script src="scripts/server/help.js" type="server" language="javascript" />
 	<script src="scripts/server/house.js" type="server" language="javascript" />
@@ -44,9 +45,11 @@
 	<script src="scripts/server/messaging.js" type="server" language="javascript" />
 	<script src="scripts/server/misc.js" type="server" language="javascript" />
 	<script src="scripts/server/npc.js" type="server" language="javascript" />
-	<script src="scripts/server/staff.js" type="server" language="javascript" />
+	<script src="scripts/server/race.js" type="server" language="javascript" />
+	<script src="scripts/server/radio.js" type="server" language="javascript" />
 	<script src="scripts/server/radio.js" type="server" language="javascript" />
 	<script src="scripts/server/security.js" type="server" language="javascript" />
+	<script src="scripts/server/staff.js" type="server" language="javascript" />
 	<script src="scripts/server/subaccount.js" type="server" language="javascript" />
 	<script src="scripts/server/timers.js" type="server" language="javascript" />
 	<script src="scripts/server/trigger.js" type="server" language="javascript" />
@@ -55,19 +58,6 @@
 	<script src="scripts/server/config.js" type="server" language="javascript" />
 	<script src="scripts/server/core.js" type="server" language="javascript" />
 	<script src="scripts/server/command.js" type="server" language="javascript" />
-
-	<!-- Server Business Scripts -->
-	<script src="scripts/server/business/bakery.js" type="server" language="javascript" />
-	<script src="scripts/server/business/bar.js" type="server" language="javascript" />
-	<script src="scripts/server/business/burger.js" type="server" language="javascript" />
-	<script src="scripts/server/business/clothing.js" type="server" language="javascript" />
-	<script src="scripts/server/business/club.js" type="server" language="javascript" />
-	<script src="scripts/server/business/fuel.js" type="server" language="javascript" />
-	<script src="scripts/server/business/mechanic.js" type="server" language="javascript" />
-	<script src="scripts/server/business/pizza.js" type="server" language="javascript" />
-	<script src="scripts/server/business/restaurant.js" type="server" language="javascript" />
-	<script src="scripts/server/business/vehicle.js" type="server" language="javascript" />
-	<script src="scripts/server/business/weapon.js" type="server" language="javascript" />
 
 	<!-- Server Job Scripts -->
 	<script src="scripts/server/job/bus.js" type="server" language="javascript" />
@@ -94,7 +84,34 @@
 	<file type="client" src="files/images/skins/none.png" />
 	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/gtac-logo.png" />
-	<file type="client" src="files/images/server-logo.png" />
+	<file type="client" src="files/images/asshat-logo.png" />
+
+	<!-- Locale Files -->
+	<file type="client" src="config/client/locale.json" />
+	<file type="client" src="locale/english.json" />
+	<file type="client" src="locale/russian.json" />
+	<file type="client" src="locale/polish.json" />
+	<file type="client" src="locale/spanish.json" />
+	<file type="client" src="locale/french.json" />
+	<file type="client" src="locale/japanese.json" />
+	<file type="client" src="locale/german.json" />
+	<file type="client" src="locale/slovak.json" />
+	<file type="client" src="locale/finnish.json" />
+	<file type="client" src="locale/chinese.json" />
+	<file type="client" src="locale/arabic.json" />
+
+	<!-- International Flag Images -->
+	<file type="client" src="files/images/flags/uk.png" />
+	<file type="client" src="files/images/flags/de.png" />
+	<file type="client" src="files/images/flags/fr.png" />
+	<file type="client" src="files/images/flags/pl.png" />
+	<file type="client" src="files/images/flags/es.png" />
+	<file type="client" src="files/images/flags/jp.png" />
+	<file type="client" src="files/images/flags/sk.png" />
+	<file type="client" src="files/images/flags/sa.png" />
+	<file type="client" src="files/images/flags/cn.png" />
+	<file type="client" src="files/images/flags/fi.png" />
+	<file type="client" src="files/images/flags/ru.png" />
 
 	<!-- GUI -->
 	<script src="scripts/client/gui/login.js" type="client" language="javascript" />
@@ -111,6 +128,7 @@
 	<script src="scripts/client/gui/bizmgr.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/list.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/localechooser.js" type="client" language="javascript" />
 
 	<!-- Client Scripts -->
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
@@ -119,22 +137,27 @@
 	<script src="scripts/client/chatbox.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
+	<script src="scripts/client/gps.js" type="client" language="javascript" />
+	<script src="scripts/client/house.js" type="client" language="javascript" />
 	<script src="scripts/client/item.js" type="client" language="javascript" />
 	<script src="scripts/client/job.js" type="client" language="javascript" />
 	<script src="scripts/client/keybind.js" type="client" language="javascript" />
 	<script src="scripts/client/label.js" type="client" language="javascript" />
+	<script src="scripts/client/locale.js" type="client" language="javascript" />
 	<script src="scripts/client/logo.js" type="client" language="javascript" />
 	<script src="scripts/client/main.js" type="client" language="javascript" />
 	<script src="scripts/client/messaging.js" type="client" language="javascript" />
 	<script src="scripts/client/mousecam.js" type="client" language="javascript" />
 	<script src="scripts/client/nametag.js" type="client" language="javascript" />
+	<script src="scripts/client/npc.js" type="client" language="javascript" />
 	<script src="scripts/client/radio.js" type="client" language="javascript" />
 	<script src="scripts/client/scoreboard.js" type="client" language="javascript" />
 	<script src="scripts/client/server.js" type="client" language="javascript" />
 	<script src="scripts/client/skin-select.js" type="client" language="javascript" />
 	<script src="scripts/client/sync.js" type="client" language="javascript" />
 	<script src="scripts/client/utilities.js" type="client" language="javascript" />
-	
+	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
+
 	<!-- MexUI -->
 	<file type="client" src="third-party/mexui/Images/down-arrow.png" />
 	<script language="javascript" type="client" src="third-party/mexui/mexui.js" />

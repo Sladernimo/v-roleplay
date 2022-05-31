@@ -88,53 +88,59 @@ function getDiscordUserData(discordUserId) {
 
 // ===========================================================================
 
-function messageDiscordChatChannel(message) {
-	if(!getServerConfig().discordConfig.sendChat) {
+function messageDiscordChatChannel(messageString) {
+	if(getServerConfig().devServer == true) {
 		return false;
 	}
 
-	message = removeColoursInMessage(message);
-	console.warn(message);
-	let payloadData = {
-		"username": "Chat",
-		"content": message,
-	};
+	if(!getGlobalConfig().discord.sendChat) {
+		return false;
+	}
 
-	triggerWebHook(getServerConfig().discordConfig.chatChannelWebHookURL, JSON.stringify(payloadData));
+	if(!getServerConfig().discord.sendChat) {
+		return false;
+	}
+
+	messageString = removeColoursInMessage(messageString);
+	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
-function messageDiscordAdminChannel(message) {
-	if(!getServerConfig().discordConfig.sendAdminEvents) {
+function messageDiscordEventChannel(messageString) {
+	if(getServerConfig().devServer == true) {
 		return false;
 	}
 
-	message = removeColoursInMessage(message);
-	console.warn(message);
-	let payloadData = {
-		"username": "Admin Event",
-		"content": message,
-	};
+	if(!getGlobalConfig().discord.sendEvents) {
+		return false;
+	}
 
-	triggerWebHook(getServerConfig().discordConfig.adminChannelWebHookURL, JSON.stringify(payloadData));
+	if(!getServerConfig().discord.sendEvents) {
+		return false;
+	}
+
+	messageString = removeColoursInMessage(messageString);
+	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
-function messageDiscordEventChannel(message) {
-	if(!getServerConfig().discordConfig.sendEvents) {
+function messageDiscordAdminChannel(messageString) {
+	if(getServerConfig().devServer == true) {
 		return false;
 	}
 
-	message = removeColoursInMessage(message);
-	console.warn(message);
-	let payloadData = {
-		"username": "Event",
-		"content": message,
-	};
+	if(!getGlobalConfig().discord.sendAdmin) {
+		return false;
+	}
 
-	triggerWebHook(getServerConfig().discordConfig.eventChannelWebHookURL, JSON.stringify(payloadData));
+	if(!getServerConfig().discord.sendAdmin) {
+		return false;
+	}
+
+	messageString = removeColoursInMessage(messageString);
+	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_ADMIN);
 }
 
 // ===========================================================================

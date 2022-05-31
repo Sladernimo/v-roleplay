@@ -40,7 +40,7 @@ function setStreamingRadioVolume(volume) {
 // ===========================================================================
 
 function playAudioFile(audioName, loop, volume) {
-	playCustomAudio(audioName, volume/100, loop);
+	findResourceByName("connectedrp-extra").exports.playCustomAudio(audioName, volume/100, loop);
 }
 
 // ===========================================================================

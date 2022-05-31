@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Commands>
+    <Command Name="gamestats" Hash="3782704029" />
+    <Command Name="say" Hash="4241071205" />
+    <Command Name="exit" Hash="2483651598" />
+    <Command Name="quit" Hash="1135269781" />
+    <Command Name="clear" Hash="3853644038" />
+    <Command Name="connect" Hash="1959786783" />
+    <Command Name="reconnect" Hash="1240758083" />
+    <Command Name="console" Hash="906219446" />
+    <Command Name="cvar" Hash="2588334565" />
+    <Command Name="netstats" Hash="2015089090" />
+    <Command Name="q" Hash="4110462503" />
+    <Command Name="disconnect" Hash="3820433" />
+    <Command Name="fpscounter" Hash="2973827809" />
+    <Command Name="dumpdoc" Hash="3404143852" />
+    <Command Name="chatscale" Hash="402639070" />
+</Commands>
