@@ -56,7 +56,7 @@ function onPlayerConnect(event, ipAddress, port) {
 function onPlayerJoin(event, client) {
 	logToConsole(LOG_INFO, `[VRR.Event] Client ${getPlayerName(client)}[${getPlayerId(client)}] joining from ${getPlayerIP(client)}`);
 
-	if(isFadeCameraSupported()) {
+	if (isFadeCameraSupported()) {
 		fadeCamera(client, true, 1.0);
 	}
 
@@ -68,7 +68,7 @@ function onPlayerJoin(event, client) {
 	messageDiscordEventChannel(messageText);
 
 	let clients = getClients();
-	for(let i in clients) {
+	for (let i in clients) {
 		messagePlayerNormal(clients[i], getLocaleString(clients[i], "PlayerConnecting", getPlayerName(client)));
 	}
 
@@ -88,8 +88,8 @@ function onElementStreamIn(event, element, client) {
 	//    event.preventDefault();
 	//}
 
-	if(getPlayerData(getClientFromIndex(element.owner)) != false    ) {
-		if(hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
+	if (getPlayerData(getClientFromIndex(element.owner)) != false) {
+		if (hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
 			event.preventDefault();
 			destroyGameElement(element);
 		}
@@ -109,7 +109,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	updateConnectionLogOnQuit(client, quitReasonId);
 
 	let reasonText = disconnectReasons[quitReasonId];
-	if(getPlayerData(client).customDisconnectReason != "" && getPlayerData(client).customDisconnectReason != undefined && getPlayerData(client).customDisconnectReason != false && getPlayerData(client).customDisconnectReason != null) {
+	if (getPlayerData(client).customDisconnectReason != "" && getPlayerData(client).customDisconnectReason != undefined && getPlayerData(client).customDisconnectReason != false && getPlayerData(client).customDisconnectReason != null) {
 		reasonText = getPlayerData(client).customDisconnectReason;
 	}
 
@@ -121,7 +121,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	});
 	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
 
-	if(isPlayerLoggedIn(client)) {
+	if (isPlayerLoggedIn(client)) {
 		savePlayerToDatabase(client);
 		resetClientStuff(client);
 		getServerData().clients[getPlayerId(client)] = null;
@@ -159,17 +159,17 @@ function onEntityProcess(event, entity) {
 // ===========================================================================
 
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
-	if(ped.isType(ELEMENT_PLAYER)) {
+	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		getPlayerData(client).pedState = VRR_PEDSTATE_ENTERINGVEHICLE;
 
-		if(!getVehicleData(vehicle)) {
+		if (!getVehicleData(vehicle)) {
 			return false;
 		}
 
-		if(getVehicleData(vehicle).locked) {
-			if(doesPlayerHaveVehicleKeys(client, vehicle)) {
-				if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
+		if (getVehicleData(vehicle).locked) {
+			if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+				if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
 					messagePlayerTip(client, `🔒 This ${getVehicleName(vehicle)} is locked. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))} {MAINCOLOUR}to unlock it.`);
 				} else {
 					messagePlayerNormal(client, `🔒 This ${getVehicleName(vehicle)} is locked. Use /lock to unlock it`);
@@ -190,16 +190,16 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle) {
-	if(!getVehicleData(vehicle)) {
+	if (!getVehicleData(vehicle)) {
 		return false;
 	}
 
-	if(ped.isType(ELEMENT_PLAYER)) {
+	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		getPlayerData(client).pedState = VRR_PEDSTATE_EXITINGVEHICLE;
 	}
 
-	if(!getVehicleData(vehicle).spawnLocked) {
+	if (!getVehicleData(vehicle).spawnLocked) {
 		getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
 		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
 		getVehicleData(vehicle).needsSaved = true;
@@ -225,7 +225,7 @@ function onResourceStop(event, resource) {
 	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} stopped!`);
 	//}
 
-	if(resource == thisResource) {
+	if (resource == thisResource) {
 		kickAllClients();
 		saveServerDataToDatabase();
 		collectAllGarbage();
@@ -247,16 +247,16 @@ function onPlayerExitedSphere(client, sphere) {
 // ===========================================================================
 
 async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
 	let vehicle = null;
 
-	if(getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == VRR_GAME_GTA_IV) {
 		vehicle = getVehicleFromIVNetworkId(clientVehicle);
 	} else {
-		if(getPlayerPed(client) == null) {
+		if (getPlayerPed(client) == null) {
 			return false;
 		}
 
@@ -265,7 +265,7 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 		vehicle = getPlayerVehicle(client);
 	}
 
-	if(!getVehicleData(vehicle)) {
+	if (!getVehicleData(vehicle)) {
 		return false;
 	}
 
@@ -274,14 +274,14 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 	getPlayerData(client).lastVehicle = vehicle;
 	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-	if(getPlayerVehicleSeat(client) == VRR_VEHSEAT_DRIVER) {
+	if (getPlayerVehicleSeat(client) == VRR_VEHSEAT_DRIVER) {
 		vehicle.engine = getVehicleData(vehicle).engine;
 
-		if(getVehicleData(vehicle).buyPrice > 0) {
+		if (getVehicleData(vehicle).buyPrice > 0) {
 			messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
 			resetVehiclePosition(vehicle);
-		} else if(getVehicleData(vehicle).rentPrice > 0) {
-			if(getVehicleData(vehicle).rentedBy != client) {
+		} else if (getVehicleData(vehicle).rentPrice > 0) {
+			if (getVehicleData(vehicle).rentedBy != client) {
 				messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
 				resetVehiclePosition(vehicle);
 			} else {
@@ -291,7 +291,7 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 			let ownerName = "Nobody";
 			let ownerType = "None";
 			ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
-			switch(getVehicleData(vehicle).ownerType) {
+			switch (getVehicleData(vehicle).ownerType) {
 				case VRR_VEHOWNER_CLAN:
 					ownerName = getClanData(getClanIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 					ownerType = "clan";
@@ -319,10 +319,10 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 			messagePlayerAlert(client, `This ${getVehicleName(vehicle)} belongs to {ALTCOLOUR}${ownerName} (${ownerType})`);
 		}
 
-		if(!getVehicleData(vehicle).engine) {
-			if(getVehicleData(vehicle).buyPrice == 0 && getVehicleData(vehicle).rentPrice == 0) {
-				if(doesPlayerHaveVehicleKeys(client, vehicle)) {
-					if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
+		if (!getVehicleData(vehicle).engine) {
+			if (getVehicleData(vehicle).buyPrice == 0 && getVehicleData(vehicle).rentPrice == 0) {
+				if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+					if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
 						messagePlayerTip(client, `This ${getVehicleName(vehicle)}'s engine is off. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))} {MAINCOLOUR}to start it.`);
 					} else {
 						messagePlayerAlert(client, `This ${getVehicleName(vehicle)}'s engine is off. Use /engine to start it`);
@@ -337,26 +337,26 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 
 		let currentSubAccount = getPlayerCurrentSubAccount(client);
 
-		if(isPlayerWorking(client)) {
-			if(getVehicleData(vehicle).ownerType == VRR_VEHOWNER_JOB) {
-				if(getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
+		if (isPlayerWorking(client)) {
+			if (getVehicleData(vehicle).ownerType == VRR_VEHOWNER_JOB) {
+				if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
 					getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
 					messagePlayerInfo(client, `Use /startroute to start working in this vehicle`);
 				}
 			}
 		}
 
-		if(isPlayerWorking(client)) {
-			if(isPlayerOnJobRoute(client)) {
-				if(vehicle == getPlayerJobRouteVehicle(client)) {
+		if (isPlayerWorking(client)) {
+			if (isPlayerOnJobRoute(client)) {
+				if (vehicle == getPlayerJobRouteVehicle(client)) {
 					stopReturnToJobVehicleCountdown(client);
 				}
 			}
 		}
 	}
 
-	if(getVehicleData(vehicle).streamingRadioStation != -1) {
-		if(getPlayerData(client).streamingRadioStation != getVehicleData(vehicle).streamingRadioStation) {
+	if (getVehicleData(vehicle).streamingRadioStation != -1) {
+		if (getPlayerData(client).streamingRadioStation != getVehicleData(vehicle).streamingRadioStation) {
 			playRadioStreamForPlayer(client, getServerData().radioStations[getVehicleData(vehicle).streamingRadioStation].url, true, getPlayerStreamingRadioVolume(client));
 		}
 	}
@@ -369,13 +369,13 @@ function onPlayerExitedVehicle(client, vehicle) {
 
 	stopRadioStreamForPlayer(client);
 
-	if(!getVehicleData(vehicle)) {
+	if (!getVehicleData(vehicle)) {
 		return false;
 	}
 
-	if(isPlayerWorking(client)) {
-		if(isPlayerOnJobRoute(client)) {
-			if(vehicle == getPlayerJobRouteVehicle(client)) {
+	if (isPlayerWorking(client)) {
+		if (isPlayerOnJobRoute(client)) {
+			if (vehicle == getPlayerJobRouteVehicle(client)) {
 				startReturnToJobVehicleCountdown(client);
 			}
 		}
@@ -393,56 +393,58 @@ function onPlayerDeath(client, position) {
 	getPlayerData(client).pedState = VRR_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
-	setTimeout(function() {
-		if(isFadeCameraSupported()) {
+	setTimeout(function () {
+		if (isFadeCameraSupported()) {
 			fadeCamera(client, false, 1.0);
 		}
-		setTimeout(function() {
-			if(getPlayerCurrentSubAccount(client).inJail) {
+		setTimeout(function () {
+			if (getPlayerCurrentSubAccount(client).inJail) {
 				let closestJail = getClosestPoliceStation(getPlayerPosition(client));
 				despawnPlayer(client);
 				getPlayerCurrentSubAccount(client).interior = closestJail.interior;
 				getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
 
-				if(isPlayerWorking(client)) {
+				if (isPlayerWorking(client)) {
 					stopWorking(client);
 				}
 
-				if(getGame() == VRR_GAME_MAFIA_ONE) {
+				if (getGame() == VRR_GAME_MAFIA_ONE) {
 					spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
 				} else {
 					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 				}
 
-				if(isFadeCameraSupported()) {
+				if (isFadeCameraSupported()) {
 					fadeCamera(client, true, 1.0);
 				}
 				updatePlayerSpawnedState(client, true);
 				makePlayerStopAnimation(client);
 				setPlayerControlState(client, true);
+				resetPlayerBlip(client);
 			} else {
 				let closestHospital = getClosestHospital(getPlayerPosition(client));
 				despawnPlayer(client);
 				getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
 				getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
 
-				if(isPlayerWorking(client)) {
+				if (isPlayerWorking(client)) {
 					stopWorking(client);
 				}
 
-				if(getGame() == VRR_GAME_MAFIA_ONE) {
+				if (getGame() == VRR_GAME_MAFIA_ONE) {
 					spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
 				} else {
 					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 				}
 
-				if(isFadeCameraSupported()) {
+				if (isFadeCameraSupported()) {
 					fadeCamera(client, true, 1.0);
 				}
 
 				updatePlayerSpawnedState(client, true);
 				makePlayerStopAnimation(client);
 				setPlayerControlState(client, true);
+				resetPlayerBlip(client);
 			}
 		}, 2000);
 	}, 1000);
@@ -455,14 +457,14 @@ function onPlayerDeath(client, position) {
 		["log_death_pos_y", position.y],
 		["log_death_pos_z", position.x],
 	];
-	let queryString = createDatabaseInsertQuery("log_death", data);
+	let queryString = createDatabaseInsertQuery("log_death", queryData);
 	addToQueryQueue(queryString);
 }
 
 // ===========================================================================
 
 function onPedSpawn(ped) {
-	if(ped.type == ELEMENT_PLAYER) {
+	if (ped.type == ELEMENT_PLAYER) {
 		//setTimeout(onPlayerSpawn, 250, ped);
 		onPlayerSpawn();
 	}
@@ -470,32 +472,35 @@ function onPedSpawn(ped) {
 
 // ===========================================================================
 
-function onPlayerSpawn(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
+async function onPlayerSpawn(client) {
+	//logToConsole(LOG_DEBUG, `[VRR.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
 	//if(getPlayerPed(client) == null) {
 	//    logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player element not set yet. Rechecking ...`);
 	//    setTimeout(onPlayerSpawn, 500, client);
 	//    return false;
 	//}
+	//logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
+	if (areServerElementsSupported()) {
+		await waitUntil(() => client != null && getPlayerPed(client) != null);
+	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
-	if(!getPlayerData(client)) {
+	if (!getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
 		disconnectPlayer(client);
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
-	if(!isPlayerLoggedIn(client)) {
+	if (!isPlayerLoggedIn(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
 		disconnectPlayer(client);
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
-	if(getPlayerData(client).currentSubAccount == -1) {
+	if (getPlayerData(client).currentSubAccount == -1) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
 		disconnectPlayer(client);
 		return false;
@@ -503,7 +508,7 @@ function onPlayerSpawn(client) {
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
-	if(getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == VRR_GAME_GTA_IV) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped body parts and props`);
 		setEntityData(getPlayerPed(client), "vrr.bodyParts", getPlayerCurrentSubAccount(client).bodyParts, true);
 		setEntityData(getPlayerPed(client), "vrr.bodyProps", getPlayerCurrentSubAccount(client).bodyProps, true);
@@ -512,17 +517,17 @@ function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 	setEntityData(getPlayerPed(client), "vrr.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 
-	if(isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
+	if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
 		return false;
 	}
 
-	if(isCustomCameraSupported()) {
+	if (isCustomCameraSupported()) {
 		restorePlayerCamera(client);
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data `);
-	if(areServerElementsSupported()) {
+	if (areServerElementsSupported()) {
 		getPlayerData(client).ped = getPlayerPed(client);
 	}
 
@@ -530,6 +535,12 @@ function onPlayerSpawn(client) {
 	messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
 	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
+
+	if (getGame() == VRR_GAME_MAFIA_ONE) {
+		setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
+		setPlayerHeading(client, getPlayerCurrentSubAccount(client).spawnHeading);
+		setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
+	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 	setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
@@ -554,11 +565,11 @@ function onPlayerSpawn(client) {
 	setPlayer2DRendering(client, true, true, true, true, true, true);
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
-	if(isSnowSupported()) {
+	if (isSnowSupported()) {
 		updatePlayerSnowState(client);
 	}
 
-	if(areServerElementsSupported() && getGame() == VRR_GAME_GTA_SA) {
+	if (areServerElementsSupported() && getGame() == VRR_GAME_GTA_SA) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting player walk and fightstyle for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "vrr.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 
@@ -566,7 +577,7 @@ function onPlayerSpawn(client) {
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
-	if(getServerConfig().showLogo && doesPlayerHaveLogoEnabled(client)) {
+	if (getServerConfig().showLogo && doesPlayerHaveLogoEnabled(client)) {
 		updatePlayerShowLogoState(client, true);
 	}
 
@@ -579,7 +590,7 @@ function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s switchchar state to false`);
 	getPlayerData(client).switchingCharacter = false;
 
-	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
 		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
@@ -602,14 +613,14 @@ function onPlayerSpawn(client) {
 	//    setEntityData(getPlayerPed(client), "vrr.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
 	//}
 
-	if(isGTAIV()) {
+	if (isGTAIV()) {
 		//sendPlayerPedPartsAndProps(client);
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
 	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
 
-	if(areServerElementsSupported()) {
+	if (areServerElementsSupported()) {
 		syncPlayerProperties(client);
 		//setTimeout(function() {
 		//    syncPlayerProperties(client);
@@ -625,7 +636,7 @@ function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
 	sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
 
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
 		//sendAllJobsToPlayer(client);
@@ -638,21 +649,25 @@ function onPlayerSpawn(client) {
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
+	sendPlayerLocaleStrings(client);
+
 	// Stop playing intro music and any other radio
 	stopRadioStreamForPlayer(client);
 
 	// Start playing business/house radio if in one
 	let businessId = getPlayerBusiness(client);
 	let houseId = getPlayerHouse(client);
-	if(businessId != -1) {
-		if(getBusinessData(businessId).streamingRadioStation != -1) {
+	if (businessId != -1) {
+		if (getBusinessData(businessId).streamingRadioStation != -1) {
 			playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(businessId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
 		}
-	} else if(houseId != -1) {
-		if(getHouseData(houseId).streamingRadioStation != -1) {
+	} else if (houseId != -1) {
+		if (getHouseData(houseId).streamingRadioStation != -1) {
 			playRadioStreamForPlayer(client, getRadioStationData(getHouseData(houseId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
 		}
 	}
+
+	resetPlayerBlip(client)
 
 	messageDiscordEventChannel(`🧍 ${getPlayerName(client)} spawned as ${getCharacterFullName(client)}`);
 }
@@ -660,7 +675,7 @@ function onPlayerSpawn(client) {
 // ===========================================================================
 
 function onPlayerCommand(event, client, command, params) {
-	if(!doesCommandExist(command)) {
+	if (!doesCommandExist(command)) {
 		processPlayerCommand(command, params, client);
 	}
 }
