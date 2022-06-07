@@ -108,55 +108,55 @@ function closeAllWindows() {
 // ===========================================================================
 
 function isAnyGUIActive() {
-	if(!guiReady) {
+	if (!guiReady) {
 		return false;
 	}
 
-	if(infoDialog.window.shown == true) {
+	if (infoDialog.window.shown == true) {
 		return true;
 	}
 
-	if(yesNoDialog.window.shown == true) {
+	if (yesNoDialog.window.shown == true) {
 		return true;
 	}
 
-	if(errorDialog.window.shown == true) {
+	if (errorDialog.window.shown == true) {
 		return true;
 	}
 
-	if(register.window.shown == true) {
+	if (register.window.shown == true) {
 		return true;
 	}
 
-	if(login.window.shown == true) {
+	if (login.window.shown == true) {
 		return true;
 	}
 
-	if(newCharacter.window.shown == true) {
+	if (newCharacter.window.shown == true) {
 		return true;
 	}
 
-	if(characterSelect.window.shown == true) {
+	if (characterSelect.window.shown == true) {
 		return true;
 	}
 
-	if(twoFactorAuth.window.shown == true) {
+	if (twoFactorAuth.window.shown == true) {
 		return true;
 	}
 
-	if(listDialog.window.shown == true) {
+	if (listDialog.window.shown == true) {
 		return true;
 	}
 
-	if(passwordReset.window.shown == true) {
+	if (passwordReset.window.shown == true) {
 		return true;
 	}
 
-	if(passwordChange.window.shown == true) {
+	if (passwordChange.window.shown == true) {
 		return true;
 	}
 
-	if(localeChooser.window.shown == true) {
+	if (localeChooser.window.shown == true) {
 		return true;
 	}
 
@@ -170,7 +170,7 @@ function setGUIColours(red1, green1, blue1, red2, green2, blue2, red3, green3, b
 	primaryColour = [red1, green1, blue1];
 	secondaryColour = [red2, green2, blue2];
 	primaryTextColour = [red3, green3, blue3];
-	focusedColour = [red1+focusedColourOffset, green1+focusedColourOffset, blue1+focusedColourOffset];
+	focusedColour = [red1 + focusedColourOffset, green1 + focusedColourOffset, blue1 + focusedColourOffset];
 
 	initGUI();
 }
@@ -188,38 +188,38 @@ function hideAllGUI() {
 function processGUIKeyPress(keyCode) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Processing key press: ${keyCode}`);
 
-	if(!isAnyGUIActive()) {
+	if (!isAnyGUIActive()) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] GUI is not active. Cancelling keypress processing.`);
 		return false;
 	}
 
-	if(keyCode == SDLK_RETURN || keyCode == SDLK_RETURN2) {
+	if (keyCode == SDLK_RETURN || keyCode == SDLK_RETURN2) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is submit (${guiSubmitKey})`);
-		if(guiSubmitKey != false) {
+		if (guiSubmitKey != false) {
 			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling submit key function`);
 			guiSubmitKey.call();
 		}
-	} else if(keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
+	} else if (keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is left (${guiLeftKey})`);
-		if(guiLeftKey != false) {
+		if (guiLeftKey != false) {
 			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling left key function`);
 			guiLeftKey.call();
 		}
-	} else if(keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
+	} else if (keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is right (${guiRightKey})`);
-		if(guiRightKey != false) {
+		if (guiRightKey != false) {
 			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling right key function`);
 			guiRightKey.call();
 		}
-	} else if(keyCode == getKeyIdFromParams("down") || keyCode == getKeyIdFromParams("s")) {
+	} else if (keyCode == getKeyIdFromParams("down") || keyCode == getKeyIdFromParams("s")) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is down (${guiDownKey})`);
-		if(guiDownKey != false) {
+		if (guiDownKey != false) {
 			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling down key function`);
 			guiDownKey.call();
 		}
-	} else if(keyCode == getKeyIdFromParams("up") || keyCode == getKeyIdFromParams("w")) {
+	} else if (keyCode == getKeyIdFromParams("up") || keyCode == getKeyIdFromParams("w")) {
 		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is up (${guiUpKey})`);
-		if(guiUpKey != false) {
+		if (guiUpKey != false) {
 			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling up key function`);
 			guiUpKey.call();
 		}
@@ -229,7 +229,7 @@ function processGUIKeyPress(keyCode) {
 // ===========================================================================
 
 function processToggleGUIKeyPress(keyCode) {
-	if(keyCode == disableGUIKey) {
+	if (keyCode == disableGUIKey) {
 		sendNetworkEventToServer("vrr.toggleGUI");
 	}
 }
