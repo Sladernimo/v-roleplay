@@ -124,7 +124,7 @@ function removeClanRank(clanId, rankId) {
 		return false;
 	}
 
-	quickDatabaseQuery(`DELETE FROM clan_rank WHERE clan_rank_id = ${tempClanRankData.database}`);
+	quickDatabaseQuery(`UPDATE clan_rank SET clan_rank_deleted = 1, clan_rank_when_deleted = UNIX_TIMESTAMP(), clan_rank_who_deleted = ${getPlayerData(client).accountData.databaseId} WHERE biz_id ${tempClanRankData.database}`);
 	getClanData(clanId).ranks.splice(tempClanRankData.index, 1);
 }
 
@@ -210,7 +210,7 @@ function deleteClanCommand(command, params, client) {
 	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}deleted clan {clanOrange}${getClanData(clanId).name}`);
-	deleteClan(clanId);
+	deleteClan(clanId, getPlayerData(client).accountData.databaseId);
 }
 
 // ===========================================================================
@@ -879,12 +879,12 @@ function createClan(name) {
 
 // ===========================================================================
 
-function deleteClan(clanId) {
+function deleteClan(clanId, whoDeleted = 0) {
 	//saveAllClansToDatabase();
 
 	let dbConnection = connectToDatabase();
 	if(dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `UPDATE clan_main SET clan_deleted = 1 WHERE clan_id = ${clanId}`);
+		let dbQuery = queryDatabase(dbConnection, `UPDATE clan_main SET clan_deleted = 1, clan_when_deleted = UNIX_TIMESTAMP, clan_who_deleted = ${whoDeleted} WHERE clan_id = ${clanId}`);
 		freeDatabaseQuery(dbQuery);
 		disconnectFromDatabase(dbConnection);
 
