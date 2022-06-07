@@ -91,7 +91,7 @@ class ServerConfigData {
 			sendAdmin: true,
 		};
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["svr_id"];
 			this.newCharacter = {
 				spawnPosition: toVector3(dbAssoc["svr_newchar_pos_x"], dbAssoc["svr_newchar_pos_y"], dbAssoc["svr_newchar_pos_z"]),
@@ -101,7 +101,7 @@ class ServerConfigData {
 				skin: dbAssoc["svr_newchar_skin"],
 			},
 
-			this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
+				this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
 			this.connectCameraLookAt = toVector3(dbAssoc["svr_connectcam_lookat_x"], dbAssoc["svr_connectcam_lookat_y"], dbAssoc["svr_connectcam_lookat_z"]);
 
 			this.hour = toInteger(dbAssoc["svr_start_time_hour"]);
@@ -118,6 +118,7 @@ class ServerConfigData {
 			this.createJobBlips = intToBool(toInteger(dbAssoc["svr_job_blips"]));
 			this.createBusinessBlips = intToBool(toInteger(dbAssoc["svr_biz_blips"]));
 			this.createHouseBlips = intToBool(toInteger(dbAssoc["svr_house_blips"]));
+			this.createPlayerBlips = intToBool(toInteger(dbAssoc["svr_player_blips"]));
 			this.guiColourPrimary = [toInteger(dbAssoc["svr_gui_col1_r"]), toInteger(dbAssoc["svr_gui_col1_g"]), toInteger(dbAssoc["svr_gui_col1_b"])];
 			this.guiColourSecondary = [toInteger(dbAssoc["svr_gui_col2_r"]), toInteger(dbAssoc["svr_gui_col2_g"]), toInteger(dbAssoc["svr_gui_col2_b"])];
 			this.guiTextColourPrimary = [toInteger(dbAssoc["svr_gui_textcol1_r"]), toInteger(dbAssoc["svr_gui_textcol1_g"]), toInteger(dbAssoc["svr_gui_textcol1_b"])];
@@ -276,11 +277,11 @@ class AccountData {
 		this.staffTitle = "";
 		this.ircAccount = "";
 		this.discordAccount = 0,
-		this.settings = 0,
-		this.emailAddress = "";
+			this.settings = 0,
+			this.emailAddress = "";
 		this.ipAddress = 0,
 
-		this.notes = [];
+			this.notes = [];
 		this.messages = [];
 		this.contacts = [];
 		this.subAccounts = [];
@@ -294,7 +295,7 @@ class AccountData {
 		this.streamingRadioVolume = 20;
 		this.locale = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_id"];
 			this.name = dbAssoc["acct_name"];
 			this.password = dbAssoc["acct_pass"];
@@ -338,7 +339,7 @@ class AccountContactData {
 		this.whenAdded = 0;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_contact_id"];
 			this.accountId = dbAssoc["acct_contact_acct"];
 			this.contactAccountId = dbAssoc["acct_contact_contact"];
@@ -364,7 +365,7 @@ class AccountMessageData {
 		this.message = "";
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_msg_id"];
 			this.account = dbAssoc["acct_msg_acct"];
 			this.whoSent = dbAssoc["acct_msg_who_sent"];
@@ -393,7 +394,7 @@ class AccountStaffNoteData {
 		this.note = "";
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_note_id"];
 			this.account = dbAssoc["acct_note_acct"];
 			this.whoAdded = dbAssoc["acct_note_who_added"];
@@ -444,26 +445,26 @@ class SubAccountData {
 		this.accent = "";
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["sacct_id"];
 			this.serverId = toInteger(dbAssoc["sacct_server"]);
 			this.firstName = dbAssoc["sacct_name_first"];
@@ -567,7 +568,7 @@ class BusinessData {
 
 		this.customInterior = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_id"]);
 			this.name = toString(dbAssoc["biz_name"]);
 			this.ownerType = toInteger(dbAssoc["biz_owner_type"]);
@@ -621,7 +622,7 @@ class BusinessLocationData {
 		this.interior = 0;
 		this.dimension = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_loc_id"]);
 			this.name = toString(dbAssoc["biz_loc_name"]);
 			this.type = toInteger(dbAssoc["biz_loc_type"]);
@@ -648,7 +649,7 @@ class BusinessGameScriptData {
 		this.businessIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_script_id"]);
 			this.name = toString(dbAssoc["biz_script_name"]);
 			this.state = toInteger(dbAssoc["biz_script_state"]);
@@ -703,7 +704,7 @@ class HouseData {
 
 		this.customInterior = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_id"]);
 			this.description = toString(dbAssoc["house_description"]);
 			this.ownerType = toInteger(dbAssoc["house_owner_type"]);
@@ -754,7 +755,7 @@ class HouseLocationData {
 		this.interior = 0;
 		this.dimension = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_loc_id"]);
 			this.name = toString(dbAssoc["house_loc_name"]);
 			this.type = toInteger(dbAssoc["house_loc_type"]);
@@ -786,7 +787,7 @@ class HouseGameScriptData {
 		this.houseIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_script_id"]);
 			this.name = toString(dbAssoc["house_script_name"]);
 			this.state = toInteger(dbAssoc["house_script_state"]);
@@ -814,7 +815,7 @@ class ClanData {
 		this.needsSaved = false;
 		this.motd = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_id"]);
 			this.name = dbAssoc["clan_name"];
 			this.owner = toInteger(dbAssoc["clan_owner"]);
@@ -843,7 +844,7 @@ class ClanRankData {
 		this.clanIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_rank_id"]);
 			this.clan = toInteger(dbAssoc["clan_rank_clan"]);
 			this.name = dbAssoc["clan_rank_name"];
@@ -873,7 +874,7 @@ class ClanMemberData {
 		this.rankIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_member_id"]);
 			this.subAccount = toInteger(dbAssoc["clan_member_sacct"]);
 			this.clan = toInteger(dbAssoc["clan_member_clan"]);
@@ -960,7 +961,7 @@ class VehicleData {
 
 		this.triggers = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
 			this.serverId = toInteger(dbAssoc["veh_server"]);
@@ -1081,7 +1082,7 @@ class JobData {
 		this.blackList = [];
 		this.routes = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_id"];
 			this.serverId = dbAssoc["job_server"];
 			this.type = dbAssoc["job_type"];
@@ -1119,7 +1120,7 @@ class JobEquipmentData {
 		this.needsSaved = false;
 		this.items = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_id"];
 			this.job = dbAssoc["job_equip_job"];
 			this.name = dbAssoc["job_equip_name"];
@@ -1143,7 +1144,7 @@ class JobEquipmentItemData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_item_id"];
 			this.equipmentId = dbAssoc["job_equip_item_equip"];
 			this.itemType = dbAssoc["job_equip_item_type"];
@@ -1169,26 +1170,26 @@ class JobUniformData {
 		this.needsSaved = false;
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_uniform_id"];
 			this.job = dbAssoc["job_uniform_job"];
 			this.name = dbAssoc["job_uniform_name"];
@@ -1237,7 +1238,7 @@ class JobLocationData {
 		this.needsSaved = false;
 		this.routeCache = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_loc_id"]);
 			this.jobId = toInteger(dbAssoc["job_loc_job"]);
 			this.position = toVector3(toFloat(dbAssoc["job_loc_pos_x"]), toFloat(dbAssoc["job_loc_pos_y"]), toFloat(dbAssoc["job_loc_pos_z"]));
@@ -1258,7 +1259,7 @@ class JobWhiteListData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_wl_id"];
 			this.job = dbAssoc["job_wl_job"];
 			this.subAccount = dbAssoc["job_wl_sacct"]
@@ -1277,7 +1278,7 @@ class JobBlackListData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_bl_id"];
 			this.job = dbAssoc["job_bl_job"];
 			this.subAccount = dbAssoc["job_bl_sacct"]
@@ -1298,7 +1299,7 @@ class KeyBindData {
 		this.index = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_hotkey_id"];
 			this.key = toInteger(dbAssoc["acct_hotkey_key"]);
 			this.account = toInteger(dbAssoc["acct_hotkey_acct"]);
@@ -1319,7 +1320,7 @@ class RadioStationData {
 		this.codec = "";
 		this.index = -1;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["radio_id"];
 			this.name = dbAssoc["radio_name"];
 			this.url = dbAssoc["radio_url"];
@@ -1349,7 +1350,7 @@ class ItemData {
 		this.enabled = false;
 		this.extra = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["item_id"]);
 			this.index = 0;
 			this.itemTypeIndex = 0;
@@ -1412,7 +1413,7 @@ class ItemTypeData {
 		this.takeAnimationIndex = false;
 		this.switchAnimationIndex = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["item_type_id"]);
 			this.serverId = toInteger(dbAssoc["item_type_server"]);
 			this.name = dbAssoc["item_type_name"];
@@ -1486,28 +1487,28 @@ class NPCData {
 		this.ownerId = 0;
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
 		this.triggers = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_id"]);
 			this.serverId = toInteger(dbAssoc["npc_server"]);
 			this.name = dbAssoc["npc_name"];
@@ -1567,7 +1568,7 @@ class NPCTriggerData {
 		this.conditions = [];
 		this.responses = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_npc"]);
 			this.triggerType = toInteger(dbAssoc["npc_trig_type"]);
@@ -1585,7 +1586,7 @@ class NPCTriggerConditionData {
 		this.conditionValue = false;
 		this.matchType = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_cond_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_cond_trig"]);
 			this.conditionType = toInteger(dbAssoc["npc_trig_cond_type"]);
@@ -1604,7 +1605,7 @@ class NPCTriggerResponseData {
 		this.responseType = 0;
 		this.responseValue = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_resp_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_resp_trig"]);
 			this.responseType = toInteger(dbAssoc["npc_trig_resp_type"]);
@@ -1622,7 +1623,7 @@ class BanData {
 		this.name = "";
 		this.reason = "";
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["ban_id"]);
 			this.type = dbAssoc["ban_type"];
 			this.detail = toInteger(dbAssoc["ban_detail"]);
@@ -1653,7 +1654,7 @@ class JobRouteData {
 		this.locationNextMessage = "";
 		this.locations = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_id"]);
 			this.name = toString(dbAssoc["job_route_name"]);
 			this.jobId = toInteger(dbAssoc["job_route_job"]);
@@ -1685,7 +1686,7 @@ class JobRouteLocationData {
 		this.stopDelay = 0;
 		this.pay = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_loc_id"]);
 			this.name = toString(dbAssoc["job_route_loc_name"]);
 			this.routeId = toInteger(dbAssoc["job_route_loc_route"]);
@@ -1708,7 +1709,7 @@ class GateData {
 		this.ownerType = VRR_GATEOWNER_NONE;
 		this.ownerId = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["gate_id"]);
 			this.name = toString(dbAssoc["gate_name"]);
 			this.scriptName = toString(dbAssoc["gate_script_name"]);
