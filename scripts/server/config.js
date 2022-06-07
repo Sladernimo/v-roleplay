@@ -85,8 +85,11 @@ let globalConfig = {
 	houseBlipStreamOutDistance: 120,
 	jobBlipStreamInDistance: -1,
 	jobBlipStreamOutDistance: -1,
+	playerBlipStreamInDistance: -1,
+	playerBlipStreamOutDistance: -1,
 	handcuffPlayerDistance: 3,
 	firstAidKitPlayerDistance: 3,
+	droppedItemPickupRange: 2,
 	passwordRequiredCapitals: 0,
 	passwordRequiredNumbers: 0,
 	passwordRequiredSymbols: 0,
@@ -107,49 +110,49 @@ function loadGlobalConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading global configuration ...");
 	try {
 		getGlobalConfig().database = loadDatabaseConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load global configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().economy = loadEconomyConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load economy configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().locale = loadLocaleConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load locale configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().accents = loadAccentConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load accent configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().discord = loadDiscordConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load discord configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().keyBind = loadKeyBindConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load keybind configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().email = loadEmailConfig();
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load email configuration. Error: ${error}`);
 		thisResource.stop();
 	}
@@ -161,11 +164,11 @@ function loadGlobalConfig() {
 
 function loadServerConfigFromGameAndPort(gameId, port) {
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} AND svr_port = ${port} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
-			if(dbQuery.numRows > 0) {
+		if (dbQuery) {
+			if (dbQuery.numRows > 0) {
 				let dbAssoc = fetchQueryAssoc(dbQuery);
 				let tempServerConfigData = new ServerConfigData(dbAssoc);
 				freeDatabaseQuery(dbQuery);
@@ -181,11 +184,11 @@ function loadServerConfigFromGameAndPort(gameId, port) {
 
 function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_id = ${tempServerId} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
-			if(dbQuery.numRows > 0) {
+		if (dbQuery) {
+			if (dbQuery.numRows > 0) {
 				let dbAssoc = fetchQueryAssoc(dbQuery);
 				let tempServerConfigData = new ServerConfigData(dbAssoc);
 				freeDatabaseQuery(dbQuery);
@@ -203,12 +206,12 @@ function applyConfigToServer(tempServerConfig) {
 	logToConsole(LOG_INFO, "[VRR.Config]: Applying server config ...");
 	logToConsole(LOG_DEBUG, "[VRR.Config]: Server config applied successfully!");
 
-	if(isTimeSupported()) {
+	if (isTimeSupported()) {
 		logToConsole(LOG_DEBUG, `[VRR.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
 		setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
 	}
 
-	if(isWeatherSupported()) {
+	if (isWeatherSupported()) {
 		logToConsole(LOG_DEBUG, `[VRR.Config]: Setting weather to ${tempServerConfig.weather}`);
 		game.forceWeather(tempServerConfig.weather);
 	}
@@ -220,9 +223,9 @@ function applyConfigToServer(tempServerConfig) {
 
 function saveServerConfigToDatabase() {
 	logToConsole(LOG_DEBUG, `[VRR.Config]: Saving server ${getServerConfig().databaseId} configuration to database ...`);
-	if(getServerConfig().needsSaved) {
+	if (getServerConfig().needsSaved) {
 		let dbConnection = connectToDatabase();
-		if(dbConnection) {
+		if (dbConnection) {
 			let data = [
 				//["svr_settings", toInteger(getServerConfig().settings)],
 				["svr_start_time_hour", getServerConfig().hour],
@@ -261,7 +264,7 @@ function saveServerConfigToDatabase() {
 				["svr_inflation_multiplier", getServerConfig().inflationMultiplier],
 				["svr_intro_music", getServerConfig().introMusicURL],
 				["svr_gui", getServerConfig().useGUI],
-				["svr_logo", getServerConfig().useLogo],
+				["svr_logo", getServerConfig().showLogo],
 				["svr_snow_falling", getServerConfig().fallingSnow],
 				["svr_snow_ground", getServerConfig().groundSnow],
 				["svr_biz_blips", getServerConfig().createBusinessBlips],
@@ -329,7 +332,7 @@ function getServerId() {
  *
  */
 function setTimeCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -337,12 +340,12 @@ function setTimeCommand(command, params, client) {
 	let hour = toInteger(getParam(params, " ", 1));
 	let minute = toInteger(getParam(params, " ", 2)) || 0;
 
-	if(hour > 23 || hour < 0) {
+	if (hour > 23 || hour < 0) {
 		messagePlayerError(client, "The hour must be between 0 and 23!");
 		return false;
 	}
 
-	if(minute > 59 || minute < 0) {
+	if (minute > 59 || minute < 0) {
 		messagePlayerError(client, "The minute must be between 0 and 59!");
 		return false;
 	}
@@ -374,7 +377,7 @@ function setTimeCommand(command, params, client) {
  *
  */
 function setMinuteDurationCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -401,14 +404,14 @@ function setMinuteDurationCommand(command, params, client) {
  *
  */
 function setWeatherCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let weatherId = getWeatherFromParams(getParam(params, " ", 1));
 
-	if(!weatherId) {
+	if (!weatherId) {
 		messagePlayerError(client, `That weather ID or name is invalid!`);
 		return false;
 	}
@@ -435,7 +438,7 @@ function setWeatherCommand(command, params, client) {
  *
  */
 function setSnowingCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -468,7 +471,7 @@ function setSnowingCommand(command, params, client) {
  *
  */
 function setServerGUIColoursCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -481,7 +484,7 @@ function setServerGUIColoursCommand(command, params, client) {
 	getServerConfig().guiColour = [colourRed, colourGreen, colourBlue];
 
 	let clients = getClients();
-	for(let i in clients) {
+	for (let i in clients) {
 		sendPlayerGUIColours(clients[i]);
 	}
 
@@ -525,7 +528,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerJobBlipsCommand(command, params, client) {
+function toggleServerJobBlipsCommand(command, params, client) {
 	getServerConfig().createJobBlips = !getServerConfig().createJobBlips;
 	getServerConfig().needsSaved = true;
 
@@ -545,7 +548,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerJobPickupsCommand(command, params, client) {
+function toggleServerJobPickupsCommand(command, params, client) {
 	getServerConfig().createJobPickups = !getServerConfig().createJobPickups;
 	getServerConfig().needsSaved = true;
 
@@ -565,7 +568,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerBusinessBlipsCommand(command, params, client) {
+function toggleServerBusinessBlipsCommand(command, params, client) {
 	getServerConfig().createBusinessBlips = !getServerConfig().createBusinessBlips;
 	getServerConfig().needsSaved = true;
 
@@ -585,7 +588,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerBusinessPickupsCommand(command, params, client) {
+function toggleServerBusinessPickupsCommand(command, params, client) {
 	getServerConfig().createBusinessPickups = !getServerConfig().createBusinessPickups;
 	getServerConfig().needsSaved = true;
 
@@ -605,7 +608,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerHouseBlipsCommand(command, params, client) {
+function toggleServerHouseBlipsCommand(command, params, client) {
 	getServerConfig().createHouseBlips = !getServerConfig().createHouseBlips;
 	getServerConfig().needsSaved = true;
 
@@ -625,7 +628,7 @@ function toggleServerLogoCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function toggleServerHousePickupsCommand(command, params, client) {
+function toggleServerHousePickupsCommand(command, params, client) {
 	getServerConfig().createHousePickups = !getServerConfig().createHousePickups;
 	getServerConfig().needsSaved = true;
 
@@ -690,7 +693,7 @@ function toggleServerUseRealWorldTimeCommand(command, params, client) {
  *
  */
 function setServerRealWorldTimeZoneCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -756,7 +759,7 @@ function reloadEmailConfigurationCommand(command, params, client) {
  *
  */
 function reloadDatabaseConfigurationCommand(command, params, client) {
-	if(getDatabaseConfig().usePersistentConnection && isDatabaseConnected(persistentDatabaseConnection)) {
+	if (getDatabaseConfig().usePersistentConnection && isDatabaseConnected(persistentDatabaseConnection)) {
 		logToConsole(LOG_WARN, `[VRR.Database] Closing persistent database connection`);
 		persistentDatabaseConnection.close();
 		persistentDatabaseConnection = null;
@@ -765,7 +768,7 @@ function reloadDatabaseConfigurationCommand(command, params, client) {
 	getGlobalConfig().database = loadDatabaseConfig();
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reloaded the database config`);
 	databaseEnabled = true;
-	if(getDatabaseConfig().usePersistentConnection) {
+	if (getDatabaseConfig().usePersistentConnection) {
 		connectToDatabase();
 	}
 	return true;
@@ -782,8 +785,8 @@ function reloadDatabaseConfigurationCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function setServerNameTagDistanceCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+function setServerNameTagDistanceCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -807,7 +810,7 @@ function getServerIntroMusicURL() {
 function loadLocaleConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading locale configuration");
 	let localeConfig = JSON.parse(loadTextFile(`config/locale.json`));
-	if(localeConfig != null) {
+	if (localeConfig != null) {
 		return localeConfig;
 	}
 }
@@ -817,7 +820,7 @@ function loadLocaleConfig() {
 function loadEconomyConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading economy configuration");
 	let economyConfig = JSON.parse(loadTextFile(`config/economy.json`));
-	if(economyConfig != null) {
+	if (economyConfig != null) {
 		return economyConfig;
 	}
 }
@@ -827,7 +830,7 @@ function loadEconomyConfig() {
 function loadAccentConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading accents configuration");
 	let accentConfig = JSON.parse(loadTextFile(`config/accents.json`));
-	if(accentConfig != null) {
+	if (accentConfig != null) {
 		return accentConfig;
 	}
 }
@@ -837,7 +840,7 @@ function loadAccentConfig() {
 function loadDiscordConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading discord configuration");
 	let discordConfig = JSON.parse(loadTextFile(`config/discord.json`));
-	if(discordConfig != null) {
+	if (discordConfig != null) {
 		return discordConfig;
 	}
 	return false;
@@ -848,7 +851,7 @@ function loadDiscordConfig() {
 function loadDatabaseConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading database configuration");
 	let databaseConfig = JSON.parse(loadTextFile("config/database.json"));
-	if(databaseConfig != null) {
+	if (databaseConfig != null) {
 		return databaseConfig;
 	}
 	return false;
@@ -859,7 +862,7 @@ function loadDatabaseConfig() {
 function loadKeyBindConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading keybind configuration");
 	let keyBindConfig = JSON.parse(loadTextFile("config/keybind.json"));
-	if(keyBindConfig != null) {
+	if (keyBindConfig != null) {
 		return keyBindConfig;
 	}
 	return false;
@@ -870,7 +873,7 @@ function loadKeyBindConfig() {
 function loadEmailConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading email configuration");
 	let emailConfig = JSON.parse(loadTextFile("config/email.json"));
-	if(emailConfig != null) {
+	if (emailConfig != null) {
 		return emailConfig;
 	}
 	return false;
@@ -954,7 +957,7 @@ function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading server configuration");
 	try {
 		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
-	} catch(error) {
+	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
 		thisResource.stop();
 	}
