@@ -92,7 +92,7 @@ function updatePlayerNameTag(client) {
 function updateAllPlayerNameTags() {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending updated nametags to all players`);
 	let clients = getClients();
-	for(let i in clients) {
+	for (let i in clients) {
 		updatePlayerNameTag(clients[i]);
 	}
 }
@@ -109,7 +109,7 @@ function updatePlayerPing(client) {
 function playerClientReady(client) {
 	playerResourceReady[client.index] = true;
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
-	if(playerResourceStarted[client.index] == true) {
+	if (playerResourceStarted[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -126,7 +126,7 @@ function playerGUIReady(client) {
 function playerClientStarted(client) {
 	playerResourceStarted[client.index] = true;
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
-	if(playerResourceReady[client.index] == true) {
+	if (playerResourceReady[client.index] == true) {
 		initClient(client);
 	}
 }
@@ -219,7 +219,7 @@ function syncPlayerProperties(client) {
 // ===========================================================================
 
 function updatePlayerSnowState(client) {
-	if(isSnowSupported(getGame())) {
+	if (isSnowSupported(getGame())) {
 		logToConsole(LOG_DEBUG, `[VRR.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(getServerConfig().fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(getServerConfig().groundSnow))})`);
 		sendNetworkEventToPlayer("vrr.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow);
 	}
@@ -230,12 +230,12 @@ function updatePlayerSnowState(client) {
 function updatePlayerHotBar(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending updated hotbar data to ${getPlayerDisplayForConsole(client)}`);
 	let tempHotBarItems = [];
-	for(let i in getPlayerData(client).hotBarItems) {
+	for (let i in getPlayerData(client).hotBarItems) {
 		let itemImage = "";
 		let itemValue = 0;
 		let itemExists = false;
-		if(getPlayerData(client).hotBarItems[i] != -1) {
-			if(getItemData(getPlayerData(client).hotBarItems[i])) {
+		if (getPlayerData(client).hotBarItems[i] != -1) {
+			if (getItemData(getPlayerData(client).hotBarItems[i])) {
 				let itemData = getItemData(getPlayerData(client).hotBarItems[i]);
 				let itemTypeData = getItemTypeData(itemData.itemTypeIndex);
 				itemExists = true;
@@ -532,9 +532,9 @@ function sendChatBoxMessageToPlayer(client, messageText, colour) {
 // ===========================================================================
 
 function showPlayerItemTakeDelay(client, itemId) {
-	if(getItemData(itemId)) {
+	if (getItemData(itemId)) {
 		let delay = getItemTypeData(getItemData(itemId).itemTypeIndex).pickupDelay;
-		if(delay > 0) {
+		if (delay > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.Client] Showing item TAKE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
 		} else {
@@ -547,9 +547,9 @@ function showPlayerItemTakeDelay(client, itemId) {
 // ===========================================================================
 
 function showPlayerItemUseDelay(client, itemSlot) {
-	if(getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
+	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).useDelay;
-		if(delay > 0) {
+		if (delay > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.Client] Showing item USE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
 		} else {
@@ -562,9 +562,9 @@ function showPlayerItemUseDelay(client, itemSlot) {
 // ===========================================================================
 
 function showPlayerItemDropDelay(client, itemSlot) {
-	if(getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
+	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).dropDelay;
-		if(delay > 0) {
+		if (delay > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.Client] Showing item DROP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
 		} else {
@@ -577,9 +577,9 @@ function showPlayerItemDropDelay(client, itemSlot) {
 // ===========================================================================
 
 function showPlayerItemPickupDelay(client, itemId) {
-	if(getItemData(itemId)) {
+	if (getItemData(itemId)) {
 		let delay = getItemTypeData(getItemData(itemId).itemTypeIndex).pickupDelay;
-		if(delay > 0) {
+		if (delay > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.Client] Showing item PICKUP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
 		} else {
@@ -592,9 +592,9 @@ function showPlayerItemPickupDelay(client, itemId) {
 // ===========================================================================
 
 function showPlayerItemPutDelay(client, itemSlot) {
-	if(getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
+	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).putDelay;
-		if(delay > 0) {
+		if (delay > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.Client] Showing item PUT delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
 		} else {
@@ -607,13 +607,13 @@ function showPlayerItemPutDelay(client, itemSlot) {
 // ===========================================================================
 
 function showPlayerItemSwitchDelay(client, itemSlot) {
-	if(itemSlot != -1) {
-		if(getPlayerData(client).hotBarItems[itemSlot] != -1) {
+	if (itemSlot != -1) {
+		if (getPlayerData(client).hotBarItems[itemSlot] != -1) {
 			let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).switchDelay;
-			if(delay > 0) {
+			if (delay > 0) {
 				logToConsole(LOG_DEBUG, `[VRR.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 				sendNetworkEventToPlayer("vrr.showItemActionDelay", client, delay);
-			} else{
+			} else {
 				logToConsole(LOG_DEBUG, `[VRR.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 				playerItemActionDelayComplete(client);
 			}
@@ -646,29 +646,29 @@ function sendPlayerClearPedState(client) {
 function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, healthLoss) {
 	let damagerEntity = getPlayerFromParams(damagerEntityName);
 
-	if(isNull(damagerEntity)) {
+	if (isNull(damagerEntity)) {
 		logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager entity from ID is null`);
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)} was damaged by ${damagerEntity}`);
 
-	if(isNull(damagerEntity)) {
+	if (isNull(damagerEntity)) {
 		logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager client is INVALID`);
 		return false;
 	}
 
-	if(!getPlayerData(damagerEntity) || !getPlayerData(client)) {
+	if (!getPlayerData(damagerEntity) || !getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager's client data is INVALID`);
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager is ${getPlayerDisplayForConsole(damagerEntity)}`);
 
-	switch(getPlayerData(damagerEntity).weaponDamageEvent) {
+	switch (getPlayerData(damagerEntity).weaponDamageEvent) {
 		case VRR_WEAPON_DAMAGE_EVENT_TAZER:
 			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} is using a tazer`);
-			if(!isPlayerTazed(client) && !isPlayerHandCuffed(client) && !isPlayerInAnyVehicle(client)) {
+			if (!isPlayerTazed(client) && !isPlayerHandCuffed(client) && !isPlayerInAnyVehicle(client)) {
 				logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)} was not previously tazed, binded, or in a vehicle. Taze successful`);
 				meActionToNearbyPlayers(damagerEntity, `electrifies ${getCharacterFullName(client)} with their tazer`);
 				tazePlayer(client);
@@ -682,13 +682,13 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 			break;
 
 		case VRR_WEAPON_DAMAGE_EVENT_NORMAL:
-			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss*getPlayerData(client).incomingDamageMultiplier)})`);
-			setPlayerHealth(client, getPlayerHealth(client)-(healthLoss*getPlayerData(client).incomingDamageMultiplier));
+			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
+			setPlayerHealth(client, getPlayerHealth(client) - (healthLoss * getPlayerData(client).incomingDamageMultiplier));
 			break;
 
 		default:
-			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss*getPlayerData(client).incomingDamageMultiplier)})`);
-			setPlayerHealth(client, getPlayerHealth(client)-(healthLoss*getPlayerData(client).incomingDamageMultiplier));
+			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
+			setPlayerHealth(client, getPlayerHealth(client) - (healthLoss * getPlayerData(client).incomingDamageMultiplier));
 			break;
 	}
 }
@@ -732,7 +732,7 @@ function updateHeadingInVehicleData(client, vehicle, heading) {
 // ===========================================================================
 
 function forcePlayerIntoSkinSelect(client) {
-	if(typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
+	if (typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
 		getPlayerData(client).returnToPosition = getPlayerPosition(client);
 		getPlayerData(client).returnToHeading = getPlayerHeading(client);
 		getPlayerData(client).returnToInterior = getPlayerInterior(client);
@@ -742,7 +742,7 @@ function forcePlayerIntoSkinSelect(client) {
 		setPlayerPosition(client, getGameConfig().skinChangePosition[getGame()][0]);
 		setPlayerHeading(client, getGameConfig().skinChangePosition[getGame()][1]);
 		setPlayerInterior(client, getGameConfig().skinChangePosition[getGame()][2]);
-		setPlayerDimension(client, getPlayerId(client)+500);
+		setPlayerDimension(client, getPlayerId(client) + 500);
 	}
 
 	sendNetworkEventToPlayer("vrr.skinSelect", client, true);
@@ -757,9 +757,9 @@ function updatePlayerCash(client) {
 // ===========================================================================
 
 function sendAllPoliceStationBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].policeStation != -1) {
+	if (getGameConfig().blipSprites[getGame()].policeStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().policeStations[getGame()]) {
+		for (let i in getServerData().policeStations[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].policeStation,
 				getServerData().policeStations[getGame()][i].position.x,
@@ -776,9 +776,9 @@ function sendAllPoliceStationBlips(client) {
 // ===========================================================================
 
 function sendAllFireStationBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].fireStation != -1) {
+	if (getGameConfig().blipSprites[getGame()].fireStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().fireStations[getGame()]) {
+		for (let i in getServerData().fireStations[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].fireStation,
 				getServerData().fireStations[getGame()][i].position.x,
@@ -795,9 +795,9 @@ function sendAllFireStationBlips(client) {
 // ===========================================================================
 
 function sendAllHospitalBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].hospital != -1) {
+	if (getGameConfig().blipSprites[getGame()].hospital != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().hospitals[getGame()]) {
+		for (let i in getServerData().hospitals[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].hospital,
 				getServerData().hospitals[getGame()][i].position.x,
@@ -814,9 +814,9 @@ function sendAllHospitalBlips(client) {
 // ===========================================================================
 
 function sendAllAmmunationBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].ammunation != -1) {
+	if (getGameConfig().blipSprites[getGame()].ammunation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().ammunations[getGame()]) {
+		for (let i in getServerData().ammunations[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].ammunation,
 				getServerData().ammunations[getGame()][i].position.x,
@@ -833,9 +833,9 @@ function sendAllAmmunationBlips(client) {
 // ===========================================================================
 
 function sendAllPayAndSprayBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].payAndSpray != -1) {
+	if (getGameConfig().blipSprites[getGame()].payAndSpray != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().payAndSprays[getGame()]) {
+		for (let i in getServerData().payAndSprays[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].payAndSpray,
 				getServerData().payAndSprays[getGame()][i].position.x,
@@ -852,9 +852,9 @@ function sendAllPayAndSprayBlips(client) {
 // ===========================================================================
 
 function sendAllFuelStationBlips(client) {
-	if(getGameConfig().blipSprites[getGame()].fuelStation != -1) {
+	if (getGameConfig().blipSprites[getGame()].fuelStation != -1) {
 		let tempBlips = [];
-		for(let i in getServerData().fuelStations[getGame()]) {
+		for (let i in getServerData().fuelStations[getGame()]) {
 			tempBlips.push([
 				getGameConfig().blipSprites[getGame()].fuelStation,
 				getServerData().fuelStations[getGame()][i].position.x,
@@ -884,11 +884,11 @@ function sendPlayerSetArmour(client, armour) {
 
 function playerFinishedSkinSelection(client, allowedSkinIndex) {
 	sendNetworkEventToPlayer("vrr.skinSelect", client, false);
-	if(allowedSkinIndex == -1) {
+	if (allowedSkinIndex == -1) {
 		messagePlayerAlert(client, "You canceled the skin change.");
 		restorePlayerCamera(client);
 
-		if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
 			setPlayerPosition(client, getPlayerData(client).returnToPosition);
 			setPlayerHeading(client, getPlayerData(client).returnToHeading);
 			setPlayerInterior(client, getPlayerData(client).returnToInterior);
@@ -902,14 +902,14 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 		return false;
 	} else {
 		getPlayerCurrentSubAccount(client).skin = getSkinIndexFromModel(getServerData().allowedSkins[allowedSkinIndex][0]);
-		if(isPlayerWorking(client)) {
+		if (isPlayerWorking(client)) {
 			messagePlayerAlert(client, "Your new skin has been saved but won't be shown until you stop working.");
 			setPlayerSkin(client, getJobData(getPlayerCurrentSubAccount(client).job).uniforms[getPlayerData(client).jobUniform].skinId);
 		} else {
 			setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 		}
 
-		if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
 			setPlayerPosition(client, getPlayerData(client).returnToPosition);
 			setPlayerHeading(client, getPlayerData(client).returnToHeading);
 			setPlayerInterior(client, getPlayerData(client).returnToInterior);
@@ -1049,9 +1049,9 @@ function onPlayerNearPickup(client, pickupId) {
 // ===========================================================================
 
 function updateAllInteriorVehiclesForPlayer(client, interior, dimension) {
-	for(let i in getServerData().vehicles) {
-		if(getServerData().vehicles[i].vehicle != false) {
-			if(getServerData().vehicles[i].interior == interior && getServerData().vehicles[i].dimension == dimension) {
+	for (let i in getServerData().vehicles) {
+		if (getServerData().vehicles[i].vehicle != false) {
+			if (getServerData().vehicles[i].interior == interior && getServerData().vehicles[i].dimension == dimension) {
 				forcePlayerToSyncElementProperties(client, getServerData().vehicles[i].vehicle);
 			}
 		}
@@ -1061,7 +1061,7 @@ function updateAllInteriorVehiclesForPlayer(client, interior, dimension) {
 // ===========================================================================
 
 function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
-	if(getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
 		sendNetworkEventToPlayer("vrr.vehBuyState", client, state, vehicleId, position);
 	}
 }
@@ -1069,7 +1069,7 @@ function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
 // ==========================================================================
 
 function receiveVehiclePurchaseStateUpdateFromClient(client, state) {
-	if(getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
 		checkVehiclePurchasing(client);
 	}
 }
@@ -1114,7 +1114,7 @@ function sendVehicleToPlayer(client, vehicleId, model, position, heading, colour
 
 function sendAllBusinessesToPlayer(client) {
 	let businesses = getServerData().businesses;
-	for(let i in businesses) {
+	for (let i in businesses) {
 		sendBusinessToPlayer(client, businesses[i].index, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].hasInterior, false);
 	}
 }
@@ -1123,7 +1123,7 @@ function sendAllBusinessesToPlayer(client) {
 
 function sendAllHousesToPlayer(client) {
 	let houses = getServerData().houses;
-	for(let i in houses) {
+	for (let i in houses) {
 		sendHouseToPlayer(client, houses[i].index, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].hasInterior);
 	}
 }
@@ -1132,10 +1132,10 @@ function sendAllHousesToPlayer(client) {
 
 function sendAllJobsToPlayer(client) {
 	let jobs = getServerData().jobs;
-	for(let i in jobs) {
-	    for(let j in jobs[i].locations) {
-	        sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
-	    }
+	for (let i in jobs) {
+		for (let j in jobs[i].locations) {
+			sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
+		}
 	}
 }
 
@@ -1143,7 +1143,7 @@ function sendAllJobsToPlayer(client) {
 
 function sendAllVehiclesToPlayer(client) {
 	let vehicles = getServerData().vehicles;
-	for(let i in vehicles) {
+	for (let i in vehicles) {
 		sendVehicleToPlayer(client, vehicles[i].index, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
 	}
 }
@@ -1220,6 +1220,15 @@ function sendPlayerLocaleId(client, localeId) {
 
 function showLocaleChooserForPlayer(client) {
 	sendNetworkEventToPlayer("vrr.localeChooser", client);
+}
+
+// ==========================================================================
+
+function sendPlayerLocaleStrings(client) {
+	let strings = getGlobalConfig().locale.sendStringsToClient;
+	for (let i in strings) {
+		sendNetworkEventToPlayer("vrr.localeString", client, strings[i], getLocaleString(client, strings[i]));
+	}
 }
 
 // ==========================================================================
