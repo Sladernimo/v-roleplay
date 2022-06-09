@@ -649,7 +649,7 @@ async function onPlayerSpawn(client) {
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
-	sendPlayerLocaleStrings(client);
+	//sendPlayerLocaleStrings(client);
 
 	// Stop playing intro music and any other radio
 	stopRadioStreamForPlayer(client);
