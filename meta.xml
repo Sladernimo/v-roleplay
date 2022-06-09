@@ -87,7 +87,6 @@
 	<file type="client" src="files/images/asshat-logo.png" />
 
 	<!-- Locale Files -->
-	<!--
 	<file type="client" src="config/client/locale.json" />
 	<file type="client" src="locale/english.json" />
 	<file type="client" src="locale/russian.json" />
@@ -100,10 +99,8 @@
 	<file type="client" src="locale/finnish.json" />
 	<file type="client" src="locale/chinese.json" />
 	<file type="client" src="locale/arabic.json" />
-	-->
 
 	<!-- International Flag Images -->
-	<!--
 	<file type="client" src="files/images/flags/uk.png" />
 	<file type="client" src="files/images/flags/de.png" />
 	<file type="client" src="files/images/flags/fr.png" />
@@ -115,10 +112,8 @@
 	<file type="client" src="files/images/flags/cn.png" />
 	<file type="client" src="files/images/flags/fi.png" />
 	<file type="client" src="files/images/flags/ru.png" />
-	-->
 
 	<!-- GUI -->
-	<!--
 	<script src="scripts/client/gui/login.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/newchar.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/charselect.js" type="client" language="javascript" />
@@ -134,7 +129,6 @@
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/list.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/localechooser.js" type="client" language="javascript" />
-	-->
 
 	<!-- Client Scripts -->
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
@@ -142,7 +136,7 @@
 	<script src="scripts/client/business.js" type="client" language="javascript" />
 	<script src="scripts/client/chatbox.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
-	<!--<script src="scripts/client/gui.js" type="client" language="javascript" />-->
+	<script src="scripts/client/gui.js" type="client" language="javascript" />
 	<script src="scripts/client/gps.js" type="client" language="javascript" />
 	<script src="scripts/client/house.js" type="client" language="javascript" />
 	<script src="scripts/client/item.js" type="client" language="javascript" />
@@ -165,7 +159,6 @@
 	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
 
 	<!-- MexUI -->
-	<!--
 	<file type="client" src="third-party/mexui/Images/down-arrow.png" />
 	<script language="javascript" type="client" src="third-party/mexui/mexui.js" />
 	<script language="javascript" type="client" src="third-party/mexui/Core/Native.js" />
@@ -228,7 +221,6 @@
 	<script language="javascript" type="client" src="third-party/mexui/Core/Control/WeekDay.js" />
 	<script language="javascript" type="client" src="third-party/mexui/Core/Control/Year.js" />
 	<script language="javascript" type="client" src="third-party/mexui/Core/Init.js" />
-	-->
 
 	<!-- Startup -->
 	<script src="scripts/server/startup.js" type="server" language="javascript" />
