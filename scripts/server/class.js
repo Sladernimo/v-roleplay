@@ -154,8 +154,12 @@ class ServerConfigData {
  */
 class ClientData {
 	constructor(client, accountData, subAccounts) {
+		/** @member {AccountData} accountData */
 		this.accountData = accountData;
+
+		/** @member {Array.<SubAccountData>} subAccounts */
 		this.subAccounts = subAccounts; // Characters
+
 		this.client = client;
 		this.currentSubAccount = -1;
 		this.loggedIn = false;
@@ -276,15 +280,14 @@ class AccountData {
 		};
 		this.staffTitle = "";
 		this.ircAccount = "";
-		this.discordAccount = 0,
-			this.settings = 0,
-			this.emailAddress = "";
-		this.ipAddress = 0,
+		this.discordAccount = 0;
+		this.settings = 0;
+		this.emailAddress = "";
+		this.ipAddress = 0;
 
-			this.notes = [];
+		this.notes = [];
 		this.messages = [];
 		this.contacts = [];
-		this.subAccounts = [];
 
 		this.emailVerificationCode = "";
 		this.twoFactorAuthVerificationCode = "";
