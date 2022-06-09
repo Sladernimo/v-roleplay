@@ -99,9 +99,9 @@ class ServerConfigData {
 				money: dbAssoc["svr_newchar_money"],
 				bank: dbAssoc["svr_newchar_bank"],
 				skin: dbAssoc["svr_newchar_skin"],
-			},
+			};
 
-				this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
+			this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
 			this.connectCameraLookAt = toVector3(dbAssoc["svr_connectcam_lookat_x"], dbAssoc["svr_connectcam_lookat_y"], dbAssoc["svr_connectcam_lookat_z"]);
 
 			this.hour = toInteger(dbAssoc["svr_start_time_hour"]);
