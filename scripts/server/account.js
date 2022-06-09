@@ -1191,8 +1191,8 @@ function initClient(client) {
 	sendPlayerGUIInit(client);
 	updatePlayerSnowState(client);
 
-	logToConsole(LOG_DEBUG, `[VRR.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
-	showConnectCameraToPlayer(client);
+	//logToConsole(LOG_DEBUG, `[VRR.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
+	//showConnectCameraToPlayer(client);
 
 	messageClient(`Please wait ...`, client, getColourByName("softGreen"));
 
