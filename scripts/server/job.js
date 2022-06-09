@@ -3106,6 +3106,10 @@ function replaceJobRouteStringsInMessage(messageText, jobId, jobRouteId) {
 // ===========================================================================
 
 function updateJobBlipsForPlayer(client) {
+	if (!areServerElementsSupported()) {
+		return false;
+	}
+
 	for (let i in getServerData().jobs) {
 		for (let j in getServerData().jobs[i].locations) {
 			if (getPlayerJob(client) == 0 || getPlayerJob(client) == i) {
