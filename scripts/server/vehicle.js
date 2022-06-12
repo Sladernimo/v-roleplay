@@ -346,7 +346,7 @@ function deleteVehicleCommand(command, params, client) {
 	let dataIndex = getEntityData(vehicle, "vrr.dataSlot");
 	let vehicleName = getVehicleName(vehicle);
 
-	quickDatabaseQuery(`DELETE FROM veh_main WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
+	quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
 
 	getServerData().vehicles.splice(dataIndex, 1);
 	destroyElement(vehicle);
