@@ -169,6 +169,16 @@ let supportedFeatures = {
 		[VRR_GAME_MAFIA_ONE]: false,
 		[VRR_GAME_MAFIA_TWO]: false,
 		[VRR_GAME_MAFIA_THREE]: false
+	},
+	interior: {
+		[VRR_GAME_GTA_III]: false,
+		[VRR_GAME_GTA_VC]: true,
+		[VRR_GAME_GTA_SA]: true,
+		[VRR_GAME_GTA_IV]: false,
+		[VRR_GAME_GTA_IV_EFLC]: false,
+		[VRR_GAME_MAFIA_ONE]: false,
+		[VRR_GAME_MAFIA_TWO]: false,
+		[VRR_GAME_MAFIA_THREE]: false
 	}
 };
 
@@ -4769,6 +4779,8 @@ let gameData = {
 		[VRR_GAME_GTA_III]: [1],
 		[VRR_GAME_GTA_VC]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
 		[VRR_GAME_GTA_SA]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+		[VRR_GAME_GTA_IV]: [1, 2, 3],
+		[VRR_GAME_GTA_IV_EFLC]: [1, 2, 3],
 	},
 	blipSprites: {
 		[VRR_GAME_GTA_III]: {	// GTA III
