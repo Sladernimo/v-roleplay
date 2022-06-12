@@ -15,13 +15,13 @@ function initEconomyScript() {
 // ===========================================================================
 
 function getTimeDisplayUntilPlayerPayDay(client) {
-	return getTimeDifferenceDisplay(sdl.ticks-getPlayerData(client).payDayTickStart);
+	return getTimeDifferenceDisplay(sdl.ticks - getPlayerData(client).payDayTickStart);
 }
 
 // ===========================================================================
 
 function applyServerInflationMultiplier(value) {
-	return toInteger(Math.round(value*getServerConfig().inflationMultiplier))
+	return toInteger(Math.round(value * getServerConfig().inflationMultiplier))
 }
 
 // ===========================================================================
@@ -31,28 +31,28 @@ function playerPayDay(client) {
 	let grossIncome = getPlayerData(client).payDayAmount;
 
 	// Passive income
-	grossIncome = grossIncome + getGlobalConfig().economy.passiveIncomePerPayDay;
+	grossIncome = Math.round(grossIncome + getGlobalConfig().economy.passiveIncomePerPayDay);
 
 	// Payday bonus
-	grossIncome = grossIncome*getGlobalConfig().economy.grossIncomeMultiplier;
+	grossIncome = Math.round(grossIncome * getGlobalConfig().economy.grossIncomeMultiplier);
 
 	// Double bonus
-	if(isDoubleBonusActive()) {
-		grossIncome = grossIncome*2;
+	if (isDoubleBonusActive()) {
+		grossIncome = Math.round(grossIncome * 2);
 	}
 
 	let incomeTaxAmount = Math.round(calculateIncomeTax(wealth));
 
-	let netIncome = grossIncome-incomeTaxAmount;
+	let netIncome = Math.round(grossIncome - incomeTaxAmount);
 
 	messagePlayerAlert(client, "== Payday! =============================");
 	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}$${grossIncome}`);
 	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}$${incomeTaxAmount}`);
 	messagePlayerInfo(client, `You receive: {ALTCOLOUR}$${netIncome}`);
-	if(netIncome < incomeTaxAmount) {
+	if (netIncome < incomeTaxAmount) {
 		let totalCash = getPlayerCash(client);
-		let canPayNow = totalCash+netIncome;
-		if(incomeTaxAmount <= canPayNow) {
+		let canPayNow = totalCash + netIncome;
+		if (incomeTaxAmount <= canPayNow) {
 			takePlayerCash(client, canPayNow);
 			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${canPayNow}{MAINCOLOUR}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
@@ -65,12 +65,12 @@ function playerPayDay(client) {
 			let houseCount = getAllHousesOwnedByPlayer(client).length;
 			let businessCount = getAllBusinessesOwnedByPlayer(client).length;
 
-			attemptRepossession(client, incomeTaxAmount-canPayNow);
+			attemptRepossession(client, incomeTaxAmount - canPayNow);
 
 			let newVehicleCount = getAllVehiclesOwnedByPlayer(client).length;
 			let newHouseCount = getAllHousesOwnedByPlayer(client).length;
 			let newBusinessCount = getAllBusinessesOwnedByPlayer(client).length;
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "AssetsRepossessedForTaxes", newVehicleCount-vehicleCount, newHouseCount-houseCount, newBusinessCount-businessCount)}`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "AssetsRepossessedForTaxes", newVehicleCount - vehicleCount, newHouseCount - houseCount, newBusinessCount - businessCount)}`);
 		}
 	}
 
@@ -84,29 +84,29 @@ function calculateWealth(client) {
 	let houses = getAllHousesOwnedByPlayer(client);
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 
-	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length*getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle);
-	let houseUpKeep = applyServerInflationMultiplier(houses.length*getGlobalConfig().economy.upKeepCosts.upKeepPerHouse);
-	let businessUpKeep = applyServerInflationMultiplier(businesses.length*getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness);
+	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle);
+	let houseUpKeep = applyServerInflationMultiplier(houses.length * getGlobalConfig().economy.upKeepCosts.upKeepPerHouse);
+	let businessUpKeep = applyServerInflationMultiplier(businesses.length * getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness);
 
-	return vehicleUpKeep+houseUpKeep+businessUpKeep;
+	return vehicleUpKeep + houseUpKeep + businessUpKeep;
 }
 
 // ===========================================================================
 
 function calculateIncomeTax(amount) {
-	return amount*getGlobalConfig().economy.incomeTaxRate;
+	return amount * getGlobalConfig().economy.incomeTaxRate;
 }
 
 // ===========================================================================
 
 function forcePlayerPayDayCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let targetClient = getPlayerFromParams(params);
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, "That player is not connected!");
 		return false;
 	}
@@ -118,21 +118,21 @@ function forcePlayerPayDayCommand(command, params, client) {
 // ===========================================================================
 
 function setPayDayBonusMultiplier(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let newMultiplier = params;
 
-	if(isNaN(newMultiplier)) {
+	if (isNaN(newMultiplier)) {
 		messagePlayerError(client, getLocaleString(client, "AmountNotNumber"));
 		return false;
 	}
 
 	getGlobalConfig().economy.grossIncomeMultiplier = newMultiplier;
 
-	announceAdminAction(`PaydayBonusSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${newMultiplier*100}%{MAINCOLOUR}`);
+	announceAdminAction(`PaydayBonusSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${newMultiplier * 100}%{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -155,7 +155,7 @@ function wealthInfoCommand(command, params, client) {
 function attemptRepossession(client, totalToPay) {
 	let leftToPay = totalToPay;
 
-	while(leftToPay > 0) {
+	while (leftToPay > 0) {
 		let repossessionValue = repossessFirstAsset(client);
 		leftToPay = leftToPay - repossessionValue;
 	}
@@ -166,19 +166,19 @@ function attemptRepossession(client, totalToPay) {
 
 function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
-	if(vehicles.length > 0) {
-		deleteVehicle(vehicles[0])
+	if (vehicles.length > 0) {
+		deleteVehicle(vehicles[0]);
 		return getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle;
 	}
 
 	let houses = getAllHousesOwnedByPlayer(client);
-	if(houses.length > 0) {
+	if (houses.length > 0) {
 		deleteHouse(houses[0].index);
 		return getGlobalConfig().economy.upKeepCosts.upKeepPerHouse;
 	}
 
 	let businesses = getAllBusinessesOwnedByPlayer(client);
-	if(businesses.length > 0) {
+	if (businesses.length > 0) {
 		deleteBusiness(businesses[0].index);
 		return getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness;
 	}
@@ -205,7 +205,7 @@ function getAllHousesOwnedByPlayer(client) {
 // ===========================================================================
 
 function isDoubleBonusActive() {
-	if(isWeekend()) {
+	if (isWeekend()) {
 		return true;
 	}
 
