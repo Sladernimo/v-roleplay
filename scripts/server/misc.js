@@ -218,10 +218,10 @@ function enterExitPropertyCommand(command, params, client) {
 
 			setTimeout(function () {
 				setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
-				setPlayerPosition(client, closestProperty.exitPosition);
-				setPlayerHeading(client, closestProperty.exitRotation);
 				setPlayerDimension(client, closestProperty.exitDimension);
 				setPlayerInterior(client, closestProperty.exitInterior);
+				setPlayerPosition(client, closestProperty.exitPosition);
+				setPlayerHeading(client, closestProperty.exitRotation);
 				setTimeout(function () {
 					if (isFadeCameraSupported()) {
 						fadeCamera(client, true, 1.0);
@@ -881,8 +881,10 @@ function deletePlayerBlip(client) {
 		return false;
 	}
 
-	if (getPlayerData(client).playerBlip != false) {
+	if (getPlayerData(client).playerBlip != null) {
 		destroyElement(getPlayerData(client).playerBlip);
-		getPlayerData(client).playerBlip = false;
+		getPlayerData(client).playerBlip = null;
 	}
 }
+
+// ===========================================================================
