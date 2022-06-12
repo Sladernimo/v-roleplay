@@ -22,7 +22,7 @@ function loadHousesFromDatabase() {
 	let dbAssoc;
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM house_main WHERE house_server = ${getServerId()}`);
+		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM house_main WHERE house_deleted = 0 AND house_server = ${getServerId()}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
