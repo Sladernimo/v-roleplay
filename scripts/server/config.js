@@ -653,7 +653,7 @@ function toggleServerGUICommand(command, params, client) {
 
 	getServerConfig().needsSaved = true;
 
-	announceAdminAction(`ServerGUISet`, `${getPlayerName(client)}{MAINCOLOUR}`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `${getBoolRedGreenInlineColour(getServerConfig().useGUI)}${toUpperCase(getOnOffFromBool(getServerConfig().useGUI))}{MAINCOLOUR}`);
+	announceAdminAction(`ServerGUISet`, `${getPlayerName(client)}{MAINCOLOUR}`, `${getBoolRedGreenInlineColour(getServerConfig().useGUI)}${toUpperCase(getOnOffFromBool(getServerConfig().useGUI))}{MAINCOLOUR}`);
 	updateServerRules();
 	return true;
 }
