@@ -244,6 +244,7 @@ class ClientData {
 		this.incomingDamageMultiplier = 1;
 		this.weaponDamageEvent = VRR_WEAPON_DAMAGE_EVENT_NORMAL;
 
+		// Animation
 		this.currentAnimation = -1;
 		this.currentAnimationPositionOffset = false;
 		this.currentAnimationPositionReturnTo = false;
@@ -252,16 +253,13 @@ class ClientData {
 
 		this.passwordResetState = VRR_RESETPASS_STATE_NONE;
 		this.passwordResetCode = "";
-
 		this.lastJobVehicle = null;
 		this.health = 100;
 		this.locale = 0;
-
 		this.enteringVehicle = null;
-
 		this.customDisconnectReason = "";
-
 		this.interiorCutscene = -1;
+		this.playerBlip = null;
 	}
 };
 
