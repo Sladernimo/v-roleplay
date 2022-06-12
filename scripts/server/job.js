@@ -24,7 +24,7 @@ function loadJobsFromDatabase() {
 	let dbAssoc;
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_main WHERE job_enabled = 1 AND job_server = ${getServerId()}`);
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_main WHERE job_deleted = 0 AND job_enabled = 1 AND job_server = ${getServerId()}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
@@ -89,7 +89,7 @@ function loadJobRoutesFromDatabase(jobDatabaseId) {
 	let dbAssoc;
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route WHERE job_route_enabled = 1 AND job_route_job = ${jobDatabaseId}`);
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route WHERE job_route_deleted = 0 AND job_route_enabled = 1 AND job_route_job = ${jobDatabaseId}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
@@ -119,7 +119,7 @@ function loadJobRouteLocationsFromDatabase(jobRouteId) {
 	let dbAssoc;
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route_loc WHERE job_route_loc_enabled = 1 AND job_route_loc_route = ${jobRouteId}`);
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route_loc WHERE job_route_loc_deleted = 0 AND job_route_loc_enabled = 1 AND job_route_loc_route = ${jobRouteId}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
@@ -148,7 +148,7 @@ function loadJobEquipmentsFromDatabase(jobDatabaseId) {
 	let dbAssoc;
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, "SELECT * FROM `job_equip` WHERE `job_equip_enabled` = 1 AND `job_equip_job` = " + toString(jobDatabaseId));
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_equip WHERE job_equip_deleted = 0 AND job_equip_enabled = 1 AND job_equip_job = ${jobDatabaseId}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
@@ -178,7 +178,7 @@ function loadJobLocationsFromDatabase(jobDatabaseId) {
 	let dbAssoc;
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, "SELECT * FROM `job_loc` WHERE `job_loc_enabled` = 1 AND `job_loc_job` = " + toString(jobDatabaseId));
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_loc WHERE job_loc_deleted = 0 AND job_loc_enabled = 1 AND job_loc_job = ${jobDatabaseId}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
@@ -950,8 +950,8 @@ function reloadAllJobsCommand(command, params, client) {
 
 	Promise.resolve().then(() => {
 		getServerData().jobs = loadJobsFromDatabase();
-		createJobLocationPickup(i, j);
-		createJobLocationBlip(i, j);
+		createAllJobPickups();
+		createAllJobBlips();
 	});
 
 	announceAdminAction("AllJobsReloaded");
