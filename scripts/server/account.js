@@ -801,9 +801,10 @@ function createAccount(name, password, email = "") {
 
 // ===========================================================================
 
-function checkLogin(client, password) {
+async function checkLogin(client, password) {
 	getPlayerData(client).loginAttemptsRemaining = getPlayerData(client).loginAttemptsRemaining - 1;
 	if (getPlayerData(client).loginAttemptsRemaining <= 0) {
+		getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
 		disconnectPlayer(client);
 	}
 
@@ -842,7 +843,7 @@ function checkLogin(client, password) {
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
 		//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-		//	sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+		//	await sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		//}
 		return false;
 	}
@@ -859,7 +860,7 @@ function checkLogin(client, password) {
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
 		//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-		//	sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+		//	await sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		//}
 		return false;
 	}
@@ -879,7 +880,7 @@ function checkLogin(client, password) {
 
 	// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
 	//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-	//	sendAccountLoginSuccessNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+	//	await sendAccountLoginSuccessNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 	//}
 }
 
@@ -987,6 +988,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 	if (doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
 		setTimeout(function () {
+			getPlayerData(client).customDisconnectReason = "Kicked - Not a tester";
 			disconnectPlayer(client);
 		}, 5000);
 
@@ -1032,22 +1034,23 @@ function checkAccountResetPasswordRequest(client, inputText) {
 			getPlayerData(client).passwordResetCode = passwordResetCode;
 			showPlayerResetPasswordCodeInputGUI(client);
 			sendPasswordResetEmail(client, passwordResetCode);
-			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} submitted successful email for password reset. Sending email and awaiting verification code input ...`);
+			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} submitted successful email for password reset. Sending email and awaiting verification code input (${passwordResetCode}) ...`);
 			break;
 		}
 
 		case VRR_RESETPASS_STATE_CODEINPUT: {
+			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} submitted code for password reset (${inputText}) ...`);
 			if (inputText != "") {
 				if (getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
 					getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
-					showPlayerChangePasswordGUI(client, getLocaleString(client));
+					showPlayerChangePasswordGUI(client);
 					logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
 				} else {
-					getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
 					getPlayerData(client).passwordResetAttemptsRemaining = getPlayerData(client).passwordResetAttemptsRemaining - 1;
 					logToConsole(LOG_INFO | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, ${getPlayerData(client).passwordResetAttemptsRemaining} attempts remaining)`);
 					if (getPlayerData(client).passwordResetAttemptsRemaining <= 0) {
 						logToConsole(LOG_INFO | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, no more attempts remaining, kicking ...)`);
+						getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
 						disconnectPlayer(client);
 						return false;
 					}
@@ -1570,6 +1573,7 @@ function checkPlayerTwoFactorAuthentication(client, authCode) {
 		}
 	}
 
+	getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
 	disconnectPlayer(client);
 	return false;
 }

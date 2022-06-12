@@ -20,8 +20,8 @@ let passwordReset = {
 // ===========================================================================
 
 function initResetPasswordGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password reset GUI ...`);
-	passwordReset.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-135, 300, 275, 'RESET PASSWORD', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password reset GUI ...`);
+	passwordReset.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 135, 300, 275, 'RESET PASSWORD', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -38,7 +38,7 @@ function initResetPasswordGUI() {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
-	passwordReset.window.titleBarIconSize = toVector2(0,0);
+	passwordReset.window.titleBarIconSize = toVector2(0, 0);
 	passwordReset.window.titleBarHeight = 0;
 	passwordReset.window.titleBarShown = false;
 
@@ -82,7 +82,7 @@ function initResetPasswordGUI() {
 	});
 	passwordReset.emailInput.placeholder = "Email";
 
-	passwordReset.resetPasswordButton = passwordReset.window.button(180, 240, 100, 15, 'RESET PASSWORD', {
+	passwordReset.resetPasswordButton = passwordReset.window.button(20, 205, 260, 30, 'RESET PASSWORD', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -134,14 +134,14 @@ function showResetPasswordGUI() {
 	mexui.focusedControl = passwordReset.emailInput;
 	guiSubmitKey = checkResetPassword;
 
-	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), passwordReset.window.position.y+passwordReset.window.size.y+20));
+	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), passwordReset.window.position.y + passwordReset.window.size.y + 20));
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 
 // ===========================================================================
 
 function checkResetPassword() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password reset with server ...`);
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password reset with server (${passwordReset.emailInput.lines[0]}) ...`);
 	sendNetworkEventToServer("vrr.checkResetPassword", passwordReset.emailInput.lines[0]);
 }
 
@@ -157,12 +157,12 @@ function resetPasswordFailed(errorMessage) {
 // ===========================================================================
 
 function resetPasswordCodeInputGUI() {
-	logToConsole(LOG_DEBUG|LOG_WARN, `[VRR.GUI] Server reports password reset email confirmation was successful. Asking for code ...`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Server reports password reset email confirmation was successful. Asking for code ...`);
 	closeAllWindows();
 
 	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordCodeInputLabel");
 	//passwordReset.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
-	passwordReset.emailInput.text = "";
+	passwordReset.emailInput.lines[0] = "";
 	passwordReset.emailInput.placeholder = getLocaleString("GUIResetPasswordCodePlaceholder");
 
 	guiSubmitKey = checkResetPassword;
@@ -172,7 +172,7 @@ function resetPasswordCodeInputGUI() {
 // ===========================================================================
 
 function resetPasswordEmailInputGUI() {
-	logToConsole(LOG_DEBUG|LOG_WARN, `[VRR.GUI] Server reports password reset request was approved. Asking for email ...`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Server reports password reset request was approved. Asking for email ...`);
 	closeAllWindows();
 
 	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordConfirmEmailLabel");
@@ -188,8 +188,8 @@ function resetPasswordEmailInputGUI() {
 
 function switchToLoginGUI() {
 	guiSubmitKey = false;
-    closeAllWindows();
-    showLoginGUI();
+	closeAllWindows();
+	showLoginGUI();
 }
 
 // ===========================================================================
