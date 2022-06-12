@@ -109,8 +109,10 @@ function onPlayerQuit(event, client, quitReasonId) {
 	updateConnectionLogOnQuit(client, quitReasonId);
 
 	let reasonText = disconnectReasons[quitReasonId];
-	if (getPlayerData(client).customDisconnectReason != "" && getPlayerData(client).customDisconnectReason != undefined && getPlayerData(client).customDisconnectReason != false && getPlayerData(client).customDisconnectReason != null) {
-		reasonText = getPlayerData(client).customDisconnectReason;
+	if (getPlayerData(client) != false) {
+		if (getPlayerData(client).customDisconnectReason != "") {
+			reasonText = getPlayerData(client).customDisconnectReason;
+		}
 	}
 
 	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
@@ -488,6 +490,7 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
 	if (!getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
+		getPlayerData(targetClient).customDisconnectReason = `Kicked - Spawn bug. Data invalid.`;
 		disconnectPlayer(client);
 		return false;
 	}
@@ -495,6 +498,7 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
 	if (!isPlayerLoggedIn(client)) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
+		getPlayerData(targetClient).customDisconnectReason = `Kicked - Tried to force spawn without logging in.`;
 		disconnectPlayer(client);
 		return false;
 	}
@@ -502,6 +506,7 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
 	if (getPlayerData(client).currentSubAccount == -1) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
+		getPlayerData(targetClient).customDisconnectReason = `Kicked - Tried to force spawn without selecting a character.`;
 		disconnectPlayer(client);
 		return false;
 	}
