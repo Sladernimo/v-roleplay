@@ -135,6 +135,7 @@ function playerClientStarted(client) {
 
 function playerClientStopped(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
+	getPlayerData(targetClient).customDisconnectReason = `Kicked - Client script verification failed. Possible hacks.`;
 	disconnectPlayer(client);
 }
 
