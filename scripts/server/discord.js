@@ -53,7 +53,7 @@ function messageDiscordUser(discordUser, messageText) {
 // ===========================================================================
 
 function sendDiscordSocketData(socketData) {
-	if(!getDiscordSocket()) {
+	if (!getDiscordSocket()) {
 		return false;
 	}
 
@@ -63,11 +63,11 @@ function sendDiscordSocketData(socketData) {
 // ===========================================================================
 
 function isClientFromDiscord(client) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
-	if(client instanceof Client) {
+	if (client instanceof Client) {
 		return false;
 	} else {
 		return true;
@@ -89,58 +89,82 @@ function getDiscordUserData(discordUserId) {
 // ===========================================================================
 
 function messageDiscordChatChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendChat) {
+	if (!getGlobalConfig().discord.sendChat) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendChat) {
+	if (!getServerConfig().discord.sendChat) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
 function messageDiscordEventChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendEvents) {
+	if (!getGlobalConfig().discord.sendEvents) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendEvents) {
+	if (!getServerConfig().discord.sendEvents) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
 function messageDiscordAdminChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendAdmin) {
+	if (!getGlobalConfig().discord.sendAdmin) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendAdmin) {
+	if (!getServerConfig().discord.sendAdmin) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_ADMIN);
+	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_ADMIN);
+}
+
+// ===========================================================================
+
+function triggerDiscordWebHook(messageString, serverId = getServerId(), type = VRR_DISCORD_WEBHOOK_LOG) {
+	if (!getGlobalConfig().discord.webhook.enabled) {
+		return false;
+	}
+
+	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{1}", serverId);
+	tempURL = tempURL.replace("{2}", type);
+	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+
+	httpGet(
+		tempURL,
+		"",
+		function (data) {
+
+		},
+		function (data) {
+		}
+	);
 }
 
 // ===========================================================================
