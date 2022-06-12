@@ -19,8 +19,8 @@ let passwordChange = {
 // ===========================================================================
 
 function initChangePasswordGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password change GUI ...`);
-	passwordChange.window = mexui.window(game.width/2-130, game.height/2-125, 300, 250, 'Change Password', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password change GUI ...`);
+	passwordChange.window = mexui.window(game.width / 2 - 130, game.height / 2 - 125, 300, 250, 'Change Password', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -36,17 +36,17 @@ function initChangePasswordGUI() {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		}
 	});
-	passwordChange.window.titleBarIconSize = toVector2(0,0);
+	passwordChange.window.titleBarIconSize = toVector2(0, 0);
 	passwordChange.window.titleBarHeight = 0;
 	passwordChange.window.titleBarShown = false;
 
-	passwordChange.window.image(85, -10, 140, 140, mainLogoPath, {
+	passwordChange.window.image(100, 20, 75, 75, mainLogoPath, {
 		focused: {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
 
-	passwordChange.messageLabel = passwordChange.window.text(20, 75, 260, 20, 'Enter a new password', {
+	passwordChange.messageLabel = passwordChange.window.text(20, 95, 260, 20, 'Enter a new password', {
 		main: {
 			textSize: 10.0,
 			textAlign: 0.5,
@@ -143,7 +143,7 @@ function showChangePasswordGUI(errorMessage) {
 	mexui.focusedControl = passwordChange.passwordInput;
 	guiSubmitKey = checkChangePassword;
 
-	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), passwordChange.window.position.y+passwordChange.window.size.y+20));
+	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), passwordChange.window.position.y + passwordChange.window.size.y + 20));
 }
 
 // ===========================================================================
