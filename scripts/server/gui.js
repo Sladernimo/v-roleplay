@@ -15,31 +15,32 @@ function initGUIScript() {
 // ===========================================================================
 
 function playerPromptAnswerNo(client) {
-	if(getPlayerData(client).promptType == VRR_PROMPT_NONE) {
+	if (getPlayerData(client).promptType == VRR_PROMPT_NONE) {
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
 
-	switch(getPlayerData(client).promptType) {
+	switch (getPlayerData(client).promptType) {
 		case VRR_PROMPT_CREATEFIRSTCHAR:
 			logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} chose not to create a first character. Kicking them from the server ...`);
 			showPlayerErrorGUI(client, "You don't have a character to play. Goodbye!", "No Characters");
-			setTimeout(function() { disconnectPlayer(client); }, 5000);
+			getPlayerData(targetClient).customDisconnectReason = `Kicked - Didn't create a character`;
+			setTimeout(function () { disconnectPlayer(client); }, 5000);
 			break;
 
-			case VRR_PROMPT_BIZORDER:
-				if(getPlayerData(client).businessOrderAmount > 0) {
-					if(canPlayerUseGUI(client)) {
-						showPlayerErrorGUI(client, "You canceled the order.", "Business Order Canceled");
-					} else {
-						logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} canceled the order of ${getPlayerData(client).businessOrderAmount} ${getPlayerData(client).businessOrderItem} at ${getPlayerData(client).businessOrderCost/getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness)}`);
-						messagePlayerError(client, "You canceled the order!");
-					}
+		case VRR_PROMPT_BIZORDER:
+			if (getPlayerData(client).businessOrderAmount > 0) {
+				if (canPlayerUseGUI(client)) {
+					showPlayerErrorGUI(client, "You canceled the order.", "Business Order Canceled");
 				} else {
-					showPlayerErrorGUI(client, "You aren't ordering anything for a business!", "Business Order Canceled");
+					logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} canceled the order of ${getPlayerData(client).businessOrderAmount} ${getPlayerData(client).businessOrderItem} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness)}`);
+					messagePlayerError(client, "You canceled the order!");
 				}
-				break;
+			} else {
+				showPlayerErrorGUI(client, "You aren't ordering anything for a business!", "Business Order Canceled");
+			}
+			break;
 
 		default:
 			break;
@@ -51,29 +52,29 @@ function playerPromptAnswerNo(client) {
 // ===========================================================================
 
 function playerPromptAnswerYes(client) {
-	if(getPlayerData(client).promptType == VRR_PROMPT_NONE) {
+	if (getPlayerData(client).promptType == VRR_PROMPT_NONE) {
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
 
-	switch(getPlayerData(client).promptType) {
+	switch (getPlayerData(client).promptType) {
 		case VRR_PROMPT_CREATEFIRSTCHAR: {
 			showPlayerNewCharacterGUI(client);
 			break;
 		}
 
 		case VRR_PROMPT_BIZORDER: {
-			if(getPlayerData(client).businessOrderAmount > 0) {
-				if(getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
-					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost/getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
+			if (getPlayerData(client).businessOrderAmount > 0) {
+				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
+					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
 					showPlayerErrorGUI(client, "This business doesn't have enough money! Deposit some using /bizdeposit", "Business Order Canceled");
 					getPlayerData(client).businessOrderAmount = 0;
 					getPlayerData(client).businessOrderBusiness = false;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
 				} else {
-					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost/getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
+					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
 					showPlayerInfoGUI(client, `You ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} (${getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue)}) for ${getPlayerData(client).businessOrderCost}!`, "Business Order Successful");
 					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, VRR_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);
@@ -91,22 +92,22 @@ function playerPromptAnswerYes(client) {
 		}
 
 		case VRR_PROMPT_GIVEVEHTOCLAN: {
-			if(!isPlayerInAnyVehicle(client)) {
+			if (!isPlayerInAnyVehicle(client)) {
 				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
 				return false;
 			}
 
-			if(!getVehicleData(getPlayerVehicle(client))) {
+			if (!getVehicleData(getPlayerVehicle(client))) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				return false;
 			}
 
-			if(getVehicleData(getPlayerVehicle(client)).ownerType != VRR_VEHOWNER_PLAYER) {
+			if (getVehicleData(getPlayerVehicle(client)).ownerType != VRR_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				return false;
 			}
 
-			if(getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+			if (getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				return false;
 			}
@@ -120,17 +121,17 @@ function playerPromptAnswerYes(client) {
 
 		case VRR_PROMPT_GIVEHOUSETOCLAN: {
 			let houseId = getPlayerHouse(client);
-			if(!houseId) {
+			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 				return false;
 			}
 
-			if(getHouseData(houseId).ownerType != VRR_VEHOWNER_PLAYER) {
+			if (getHouseData(houseId).ownerType != VRR_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 				return false;
 			}
 
-			if(getHouseData(houseId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+			if (getHouseData(houseId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 				return false;
 			}
@@ -144,17 +145,17 @@ function playerPromptAnswerYes(client) {
 
 		case VRR_PROMPT_GIVEBIZTOCLAN: {
 			let businessId = getPlayerBusiness(client);
-			if(!businessId) {
+			if (!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 				return false;
 			}
 
-			if(getBusinessData(businessId).ownerType != VRR_VEHOWNER_PLAYER) {
+			if (getBusinessData(businessId).ownerType != VRR_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
 
-			if(getBusinessData(businessId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+			if (getBusinessData(businessId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
@@ -168,17 +169,17 @@ function playerPromptAnswerYes(client) {
 
 		case VRR_PROMPT_BUYHOUSE: {
 			let houseId = getPlayerHouse(client);
-			if(!houseId) {
+			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 				return false;
 			}
 
-			if(getHouseData(houseId).buyPrice <= 0) {
+			if (getHouseData(houseId).buyPrice <= 0) {
 				messagePlayerError(client, getLocaleString(client, "HouseNotForSale"));
 				return false;
 			}
 
-			if(getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
+			if (getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
 				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
 				return false;
 			}
@@ -196,17 +197,17 @@ function playerPromptAnswerYes(client) {
 
 		case VRR_PROMPT_BUYBIZ: {
 			let businessId = getPlayerBusiness(client);
-			if(!businessId) {
+			if (!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 				return false;
 			}
 
-			if(getBusinessData(businessId).buyPrice <= 0) {
+			if (getBusinessData(businessId).buyPrice <= 0) {
 				messagePlayerError(client, getLocaleString(client, "BusinessNotForSale"));
 				return false;
 			}
 
-			if(getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
+			if (getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
 				messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
 				return false;
 			}
