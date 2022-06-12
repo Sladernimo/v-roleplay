@@ -20,7 +20,7 @@ function loadItemsFromDatabase() {
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_main WHERE item_server = ${getServerId()}`);
+		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_main WHERE item_deleted = 0 AND item_server = ${getServerId()}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
@@ -42,7 +42,7 @@ function loadItemTypesFromDatabase() {
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_type WHERE item_type_enabled = 1 AND item_type_server = ${getServerId()}`);
+		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_type WHERE item_type_deleted = 0 AND item_type_enabled = 1 AND item_type_server = ${getServerId()}`);
 		if (dbQuery) {
 			if (getQueryNumRows(dbQuery) > 0) {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
@@ -732,7 +732,7 @@ function playerUseItem(client, hotBarSlot) {
 	}
 
 	let itemData = getItemData(itemIndex);
-	let itemTypeData = getItemTypeData(itemIndex);
+	let itemTypeData = getItemTypeData(itemData.itemTypeIndex);
 	let hotBarItems = getPlayerData(client).hotBarItems;
 
 	switch (itemTypeData.useType) {
@@ -866,11 +866,6 @@ function playerUseItem(client, hotBarSlot) {
 				handCuffPlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their cuffs and places them on ${getCharacterFullName(closestPlayer)}`);
 			}
-			break;
-		}
-
-		case VRR_ITEM_USETYPE_NONE: {
-			messagePlayerError(client, `The ${getItemName(itemIndex)} doesn't do anything when you try to use it.`);
 			break;
 		}
 
@@ -1059,6 +1054,7 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_LOTTOTICKET: {
+			messagePlayerError(client, `The ${itemTypeData.name} doesn't do anything when you try to use it.`);
 			break;
 		}
 
@@ -1455,7 +1451,7 @@ function cachePlayerHotBarItems(client) {
 
 // ===========================================================================
 
-function deleteItem(itemId) {
+function deleteItem(itemId, whoDeleted = -1) {
 	let owner = -1;
 	let ownerTypeString = "Unknown";
 	switch (getItemData(itemId).ownerType) {
@@ -1526,7 +1522,7 @@ function deleteItem(itemId) {
 	logToConsole(LOG_DEBUG, `Deleted item ${itemId} (DBID: ${getItemData(itemId).databaseId}, Owner Type: ${ownerTypeString}, Owner ID: ${getItemData(itemId).ownerId})`);
 
 	if (getItemData(itemId).databaseId > 0) {
-		quickDatabaseQuery(`DELETE FROM item_main WHERE item_id = ${getItemData(itemId).databaseId}`);
+		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP() WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
 	getServerData().items[itemId] = false;
 	setAllItemDataIndexes();
@@ -2234,9 +2230,54 @@ function getOrderPriceForItemType(itemType) {
 // ===========================================================================
 
 function clearPlayerItemActionState(client) {
+	if (getPlayerData(client).itemActionItem != -1) {
+		switch (getPlayerData(client).itemActionState) {
+			case VRR_ITEM_ACTION_DROP: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).dropAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+
+			case VRR_ITEM_ACTION_USE: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).useAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+
+			case VRR_ITEM_ACTION_PICKUP: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).pickupAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+
+			case VRR_ITEM_ACTION_TAKE: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).takeAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+
+			case VRR_ITEM_ACTION_PUT: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).putAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+
+			case VRR_ITEM_ACTION_SWITCH: {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).switchAnimationIndex != -1) {
+					makePlayerStopAnimation(client);
+				}
+				break;
+			}
+		}
+	}
+
 	getPlayerData(client).itemActionState = VRR_ITEM_ACTION_NONE;
 	getPlayerData(client).itemActionItem = -1;
-	makePlayerStopAnimation(client);
 }
 
 // ===========================================================================
