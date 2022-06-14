@@ -42,21 +42,6 @@ let serverCommands = [];
 
 // ===========================================================================
 
-let builtInCommands = [
-	"refresh",
-	"restart",
-	"stop",
-	"start",
-	"reconnect",
-	"setname",
-	"connect",
-	"disconnect",
-	"say",
-	"dumpdoc",
-];
-
-// ===========================================================================
-
 function initCommandScript() {
 	logToConsole(LOG_INFO, "[VRR.Command]: Initializing commands script ...");
 	logToConsole(LOG_INFO, "[VRR.Command]: Initialized commands script!");
