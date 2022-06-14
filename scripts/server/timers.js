@@ -242,7 +242,7 @@ function showRandomTipToAllPlayers() {
 		if (isClientInitialized(clients[i])) {
 			if (isPlayerLoggedIn(clients[i]) && isPlayerSpawned(clients[i])) {
 				if (!doesPlayerHaveRandomTipsDisabled(clients[i])) {
-					let localeId = getPlayerLocaleId(clients[i]);
+					let localeId = getPlayerData(clients[i]).locale;
 					let tipId = getRandom(0, getServerData().localeStrings[localeId]["RandomTips"].length - 1);
 					messagePlayerTip(clients[i], getGroupedLocaleString(clients[i], "RandomTips", tipId));
 				}
