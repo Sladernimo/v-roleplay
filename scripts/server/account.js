@@ -43,7 +43,7 @@ const VRR_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter ne
 /**
  * @class Representing an account, loaded/saved in the database
  */
- class AccountData {
+class AccountData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
@@ -55,10 +55,10 @@ const VRR_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter ne
 		};
 		this.staffTitle = "";
 		this.ircAccount = "";
-		this.discordAccount = 0,
-		this.settings = 0,
+		this.discordAccount = 0;
+		this.settings = 0;
 		this.emailAddress = "";
-		this.ipAddress = 0,
+		this.ipAddress = 0;
 
 		this.notes = [];
 		this.messages = [];
@@ -73,7 +73,7 @@ const VRR_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter ne
 		this.streamingRadioVolume = 20;
 		this.locale = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_id"];
 			this.name = dbAssoc["acct_name"];
 			this.password = dbAssoc["acct_pass"];
@@ -118,7 +118,7 @@ class AccountContactData {
 		this.whenAdded = 0;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_contact_id"];
 			this.accountId = dbAssoc["acct_contact_acct"];
 			this.contactAccountId = dbAssoc["acct_contact_contact"];
@@ -146,7 +146,7 @@ class AccountMessageData {
 		this.message = "";
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_msg_id"];
 			this.account = dbAssoc["acct_msg_acct"];
 			this.whoSent = dbAssoc["acct_msg_who_sent"];
@@ -177,7 +177,7 @@ class AccountStaffNoteData {
 		this.note = "";
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["acct_note_id"];
 			this.account = dbAssoc["acct_note_acct"];
 			this.whoAdded = dbAssoc["acct_note_who_added"];
