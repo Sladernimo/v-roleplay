@@ -105,8 +105,6 @@ function createGroundItemObject(itemId) {
 		//setEntityData(getItemData(itemId).object, "vrr.scale", getItemTypeData(getItemData(itemId).itemTypeIndex).dropScale, true);
 		addToWorld(getItemData(itemId).object);
 	}
-
-	getServerData().groundItemCache.push(itemId);
 }
 
 // ===========================================================================
@@ -296,26 +294,26 @@ function pickupItemCommand(command, params, client) {
 
 	if (!getItemData(itemId)) {
 		//messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
-		messagePlayerError(client, getPlayerLocale(client, "NoItemCloseEnough"));
+		messagePlayerError(client, getLocaleString(client, "NoItemCloseEnough"));
 		submitBugReport(client, `(AUTOMATED REPORT) Pickup Item: Getting item data for item ${itemId} on ground returned false.`);
 		return false;
 	}
 
 	if (!getItemTypeData(getItemData(itemId).itemTypeIndex)) {
 		//messagePlayerError(client, `The item you're trying to pick up is bugged. A bug report has been sent to the server developers.`);
-		messagePlayerError(client, getPlayerLocale(client, "NoItemCloseEnough"));
+		messagePlayerError(client, getLocaleString(client, "NoItemCloseEnough"));
 		submitBugReport(client, `(AUTOMATED REPORT) Pickup Item: Getting item type ${getItemData(itemId).itemType} data for item ${itemId}/${getItemData(itemId).databaseId} on ground returned false.`);
 		return false;
 	}
 
 	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > getGlobalConfig().droppedItemPickupRange) {
-		messagePlayerError(client, getPlayerLocale(client, "NoItemCloseEnough"));
+		messagePlayerError(client, getLocaleString(client, "NoItemCloseEnough"));
 		return false;
 	}
 
 	let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
 	if (firstSlot == -1) {
-		messagePlayerError(client, getPlayerLocale(client, "NoSpaceSelfInventory"));
+		messagePlayerError(client, getLocaleString(client, "NoSpaceSelfInventory"));
 		return false;
 	}
 
@@ -459,8 +457,8 @@ function putItemCommand(command, params, client) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex, 0.0);
 	}
 
-	getPlayerData(client).itemActionItem = hotBarSlot;
 	getPlayerData(client).itemActionState = VRR_ITEM_ACTION_PUT;
+	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemPutDelay(client, hotBarSlot);
 
 	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
@@ -790,7 +788,7 @@ function playerUseItem(client, hotBarSlot) {
 		case VRR_ITEM_USETYPE_FOOD: {
 			meActionToNearbyPlayers(client, `eats some of their ${itemTypeData.name}`);
 			givePlayerHealth(client, itemTypeData.useValue);
-			itemData.value = itemData.value - tempItemTypeData.useValue;
+			itemData.value = itemData.value - itemTypeData.useValue;
 			if (getItemData(itemIndex).value <= 0) {
 				deleteItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
@@ -1115,10 +1113,12 @@ function playerDropItem(client, hotBarSlot) {
 
 		getItemData(itemId).ownerType = VRR_ITEM_OWNER_GROUND;
 		getItemData(itemId).ownerId = 0;
-		getItemData(itemId).position = getPlayerPosition(client);
+		getItemData(itemId).position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
 		getItemData(itemId).dimension = getPlayerDimension(client);
+		//getItemData(itemId).interior = getPlayerInterior(client);
 		createGroundItemObject(itemId);
 		getItemData(itemId).needsSaved = true;
+		getServerData().groundItemCache.push(itemId);
 	}
 }
 
@@ -1129,9 +1129,12 @@ function playerPutItem(client, hotBarSlot) {
 
 	let bestNewOwner = getBestNewOwnerToPutItem(client);
 
+	if (bestNewOwner[0] == VRR_ITEM_OWNER_NONE) {
+		return false;
+	}
+
 	getItemData(itemId).ownerType = bestNewOwner[0];
-	getItemData(itemId).ownerId = bestNewOwner[1];
-	getItemData(itemId).position = toVector(0.0, 0.0, 0.0);
+	getItemData(itemId).position = toVector3(0.0, 0.0, 0.0);
 	getItemData(itemId).dimension = 0;
 	getItemData(itemId).needsSaved = true;
 
@@ -1143,19 +1146,33 @@ function playerPutItem(client, hotBarSlot) {
 
 	switch (bestNewOwner[0]) {
 		case VRR_ITEM_OWNER_HOUSE:
-			meActionToNearbyPlayers(client, `places ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the house`);
+			getItemData(itemId).ownerId = getHouseData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the house`);
 			break;
 
 		case VRR_ITEM_OWNER_BIZFLOOR:
-			meActionToNearbyPlayers(client, `places ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} for sale in the business`);
+			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} for sale in the business`);
 			break;
 
 		case VRR_ITEM_OWNER_BIZSTORAGE:
-			meActionToNearbyPlayers(client, `places ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
+			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
 			break;
 
 		case VRR_ITEM_OWNER_VEHTRUNK:
-			meActionToNearbyPlayers(client, `places ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s trunk`);
+			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s trunk`);
+			break;
+
+		case VRR_ITEM_OWNER_VEHDASH:
+			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s dash compartment`);
+			break;
+
+		case VRR_ITEM_OWNER_ITEM:
+			getItemData(itemId).ownerId = getItemData(bestNewOwner[1]).databaseId;
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getItemName(bestNewOwner[1])}`);
 			break;
 	}
 }
@@ -1364,15 +1381,19 @@ function playerSwitchHotBarSlotCommand(command, params, client) {
 // ===========================================================================
 
 function getClosestItemOnGround(position) {
-	let items = getServerData().groundItemCache;
-	let closest = 0;
-	for (let i in items) {
-		if (getDistance(getItemData(items[i]).position, position) <= getDistance(getItemData(items[closest]).position, position)) {
-			closest = i;
+	let groundItems = getServerData().groundItemCache;
+	if (groundItems.length != 0) {
+		let closest = 0;
+		for (let i in groundItems) {
+			if (getDistance(getItemData(groundItems[i]).position, position) <= getDistance(getItemData(groundItems[closest]).position, position)) {
+				closest = i;
+			}
 		}
+
+		return groundItems[closest];
 	}
 
-	return items[closest];
+	return -1;
 }
 
 // ===========================================================================
@@ -1545,22 +1566,34 @@ function deleteItem(itemId, whoDeleted = -1) {
 // ===========================================================================
 
 function getBestNewOwnerToPutItem(client) {
-	let closestDistance = 100.0;
 	let position = getPlayerPosition(client);
 
 	let possibleHouse = getPlayerHouse(client);
-	if (getHouseData(possibleHouse)) {
-		return [VRR_ITEM_OWNER_HOUSE, possibleHouse];
+	if (possibleHouse != -1) {
+		if (getHouseData(possibleHouse) != false) {
+			return [VRR_ITEM_OWNER_HOUSE, possibleHouse];
+		}
 	}
 
 	let possibleBusiness = getPlayerBusiness(client);
-	if (getBusinessData(possibleBusiness)) {
-		return [VRR_ITEM_OWNER_BIZSTORAGE, possibleBusiness];
+	if (possibleBusiness != -1) {
+		if (getBusinessData(possibleBusiness) != false) {
+			return [VRR_ITEM_OWNER_BIZSTORAGE, possibleBusiness];
+		}
 	}
 
 	let possibleVehicle = getClosestVehicle(position);
-	if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= closestDistance) {
-		return [VRR_ITEM_OWNER_VEHTRUNK, possibleVehicle];
+	if (possibleVehicle != false) {
+		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+			return [VRR_ITEM_OWNER_VEHTRUNK, possibleVehicle];
+		}
+	}
+
+	let possibleItem = getClosestItemOnGround(position);
+	if (possibleItem != -1) {
+		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
+			return [VRR_ITEM_OWNER_ITEM, possibleItem];
+		}
 	}
 
 	return [VRR_ITEM_OWNER_NONE, 0];
@@ -1813,6 +1846,8 @@ function saveItemToDatabase(itemId) {
 
 	logToConsole(LOG_VERBOSE, `[VRR.Item]: Saving item '${itemData.index}' to database ...`);
 
+	let position = getItemPosition(itemId);
+
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -1821,9 +1856,9 @@ function saveItemToDatabase(itemId) {
 			["item_owner_type", itemData.ownerType],
 			["item_owner_id", itemData.ownerId],
 			["item_amount", itemData.amount],
-			["item_pos_x", itemData.position.x],
-			["item_pos_y", itemData.position.y],
-			["item_pos_z", itemData.position.z],
+			["item_pos_x", position.x],
+			["item_pos_y", position.y],
+			["item_pos_z", position.z],
 			["item_int", itemData.interior],
 			["item_vw", itemData.dimension],
 			["item_buy_price", itemData.buyPrice],
@@ -2354,7 +2389,7 @@ function showItemInventoryToPlayer(client, itemId) {
 		}
 	}
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderItemItemsList")));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderItemItemList", getItemName(itemId))));
 
 	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
 	for (let i in chunkedList) {
@@ -2499,6 +2534,17 @@ function getPlayerFirstAmmoItemForWeapon(client, weaponId) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getItemPosition(itemId) {
+	if (getItemData(itemId).ownerType == VRR_ITEM_OWNER_GROUND) {
+		if (getItemData(itemId).object != null) {
+			return getElementPosition(getItemData(itemId).object);
+		}
+	}
+	return getItemData(itemId).position;
 }
 
 // ===========================================================================
