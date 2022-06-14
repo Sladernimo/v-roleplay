@@ -10,7 +10,7 @@
 /**
  * @class Representing data for server configuration
  */
-class ServerData {
+class ServerConfigData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.needsSaved = false;
@@ -126,6 +126,8 @@ class ServerData {
 	}
 };
 
+// ===========================================================================
+
 let serverConfig = false;
 let gameConfig = false;
 
@@ -220,7 +222,6 @@ let globalConfig = {
 
 function initConfigScript() {
 	logToConsole(LOG_INFO, "[VRR.Config]: Initializing config script ...");
-	applyConfigToServer(serverConfig);
 	logToConsole(LOG_INFO, "[VRR.Config]: Config script initialized!");
 }
 
@@ -1081,6 +1082,8 @@ function loadServerConfig() {
 		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
 		thisResource.stop();
 	}
+
+	logToConsole(LOG_DEBUG | LOG_WARN, `Server ID: ${serverConfig.databaseId}`);
 }
 
 // ===========================================================================
