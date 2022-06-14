@@ -17,6 +17,33 @@ const VRR_GATEOWNER_PUBLIC = 5;                 // Public gate. Technically not 
 const VRR_GATEOWNER_BUSINESS = 6;               // Owned by a business. Back lots, unloading areas, and other stuff like that
 const VRR_GATEOWNER_HOUSE = 7;                  // Owned by a house. Like for mansions with closed private areas.
 
+// ===========================================================================
+
+class GateData {
+	constructor(dbAssoc = false) {
+		this.databaseId = 0;
+		this.name = "";
+		this.scriptName = "";
+		this.enabled = false;
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.locked = true;
+		this.ownerType = VRR_GATEOWNER_NONE;
+		this.ownerId = 0;
+
+		if (dbAssoc) {
+			this.databaseId = toInteger(dbAssoc["gate_id"]);
+			this.name = toString(dbAssoc["gate_name"]);
+			this.scriptName = toString(dbAssoc["gate_script_name"]);
+			this.enabled = intToBool(toInteger(dbAssoc["gate_enabled"]));
+			this.position = toVector3(toFloat(dbAssoc["gate_pos_x"]), toFloat(dbAssoc["gate_pos_y"]), toFloat(dbAssoc["gate_pos_z"]));
+			this.ownerType = toInteger(dbAssoc["gate_owner_type"]);
+			this.ownerId = toInteger(dbAssoc["gate_owner_id"]);
+		}
+	}
+}
+
+// ===========================================================================
+
 function initGateScript() {
 	logToConsole(LOG_INFO, `[VRR.Gate]: Initializing gate script ...`);
 	logToConsole(LOG_INFO, `[VRR.Gate]: Gate script initialized successfully!`);
