@@ -12,12 +12,17 @@ const VRR_RETURNTO_TYPE_NONE = 0;                // "Return to" data is invalid
 const VRR_RETURNTO_TYPE_ADMINGET = 1;            // "Return to" data is from admin teleporting
 const VRR_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin select
 
+// ===========================================================================
+
 /**
  * @class Representing extra data for a client
  */
- class ClientData {
+class ClientData {
 	constructor(client, accountData, subAccounts) {
+		/** @member {AccountData} accountData */
 		this.accountData = accountData;
+
+		/** @member {Array.<SubAccountData>} subAccounts */
 		this.subAccounts = subAccounts; // Characters
 		this.client = client;
 		this.currentSubAccount = -1;
@@ -101,21 +106,20 @@ const VRR_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from ski
 		this.sessionId = 0;
 		this.incomingDamageMultiplier = 1;
 		this.weaponDamageEvent = VRR_WEAPON_DAMAGE_EVENT_NORMAL;
-
 		this.currentAnimation = -1;
 		this.currentAnimationPositionOffset = false;
 		this.currentAnimationPositionReturnTo = false;
 		this.animationStart = 0;
 		this.animationForced = false;
-
 		this.passwordResetState = VRR_RESETPASS_STATE_NONE;
 		this.passwordResetCode = "";
-
 		this.lastJobVehicle = null;
 		this.health = 100;
 		this.locale = 0;
-
 		this.enteringVehicle = null;
+		this.customDisconnectReason = "";
+		this.interiorCutscene = -1;
+		this.playerBlip = null;
 	}
 };
 
