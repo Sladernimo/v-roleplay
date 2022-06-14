@@ -513,12 +513,6 @@ async function onPlayerSpawn(client) {
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
-	if (getGame() == VRR_GAME_GTA_IV) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped body parts and props`);
-		setEntityData(getPlayerPed(client), "vrr.bodyParts", getPlayerCurrentSubAccount(client).bodyParts, true);
-		setEntityData(getPlayerPed(client), "vrr.bodyProps", getPlayerCurrentSubAccount(client).bodyProps, true);
-	}
-
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 	setEntityData(getPlayerPed(client), "vrr.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 
@@ -527,7 +521,7 @@ async function onPlayerSpawn(client) {
 		return false;
 	}
 
-	if (isCustomCameraSupported()) {
+	if (isCustomCameraSupported() && getGame() != VRR_GAME_GTA_IV && getGame() != VRR_GAME_GTA_IV_EFLC) {
 		restorePlayerCamera(client);
 	}
 
