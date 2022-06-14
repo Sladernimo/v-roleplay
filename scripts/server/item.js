@@ -561,15 +561,16 @@ function setItemTypeDropModelCommand(command, params, client) {
 	}
 
 	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -1).join(" "));
-	let modelId = splitParams[splitParams.length - 1];
+	let modelIndex = getObjectModelIndexFromParams(splitParams.slice(-1).join(" "));
 
 	if (!getItemTypeData(itemTypeIndex)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
 		return false;
 	}
 
-	getItemTypeData(itemTypeIndex).dropModel = modelId;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} dropped object model to ${modelId}`);
+	getItemTypeData(itemTypeIndex).dropModel = modelIndex;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s dropped object model index to ${modelIndex}`);
 }
 
 // ===========================================================================
@@ -598,6 +599,7 @@ function setItemTypeOrderPriceCommand(command, params, client) {
 	}
 
 	getItemTypeData(itemTypeIndex).orderPrice = orderPrice;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} {MAINCOLOUR}base price to {ALTCOLOUR}$${orderPrice}`);
 }
 
@@ -627,7 +629,8 @@ function setItemTypeRiskMultiplierCommand(command, params, client) {
 	}
 
 	getItemTypeData(itemTypeIndex).riskMultiplier = riskMultiplier;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} {MAINCOLOUR}risk multilier to {ALTCOLOUR}$${riskMultiplier}`);
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}$${riskMultiplier}`);
 }
 
 // ===========================================================================
@@ -655,6 +658,7 @@ function toggleItemTypeEnabledCommand(command, params, client) {
 	}
 
 	getItemTypeData(itemTypeIndex).enabled = !getItemTypeData(itemTypeIndex).enabled;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} ${getEnabledDisabledFromBool(getItemTypeData(itemTypeIndex).enabled)} item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}`);
 }
 
@@ -684,7 +688,8 @@ function setItemTypeUseTypeCommand(command, params, client) {
 	}
 
 	getItemTypeData(itemTypeIndex).useType = useType;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} {MAINCOLOUR}use type to {ALTCOLOUR}$${useType}`);
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}$${useType}`);
 }
 
 // ===========================================================================
@@ -713,7 +718,8 @@ function setItemTypeUseValueCommand(command, params, client) {
 	}
 
 	getItemTypeData(itemTypeIndex).useValue = useValue;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} {MAINCOLOUR}use value to {ALTCOLOUR}$${useValue}`);
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}$${useValue}`);
 }
 
 // ===========================================================================
@@ -722,6 +728,7 @@ function playerUseItem(client, hotBarSlot) {
 	let itemIndex = getPlayerData(client).hotBarItems[hotBarSlot];
 
 	if (itemIndex == -1) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.Item] ${getPlayerDisplayForConsole(client)} tried to use an empty hotbar slot ${hotBarSlot}`);
 		return false;
 	}
 
@@ -735,7 +742,9 @@ function playerUseItem(client, hotBarSlot) {
 	let itemTypeData = getItemTypeData(itemData.itemTypeIndex);
 	let hotBarItems = getPlayerData(client).hotBarItems;
 
-	switch (itemTypeData.useType) {
+	logToConsole(LOG_DEBUG, `[VRR.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
+
+	switch (toInteger(itemTypeData.useType)) {
 		case VRR_ITEM_USETYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
 			forcePlayerIntoSkinSelect(client);
@@ -746,9 +755,9 @@ function playerUseItem(client, hotBarSlot) {
 			for (let i in hotBarItems) {
 				if (hotBarItems[i] != -1) {
 					if (getItemData(hotBarItems[i]) != false) {
-						if (getItemData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+						if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
 							let ammoItemData = getItemData(hotBarItems[i]);
-							let ammoItemTypeData = getItemData(ammoItemData.itemTypeIndex);
+							let ammoItemTypeData = getItemTypeData(ammoItemData.itemTypeIndex);
 							if (ammoItemTypeData.useId == itemTypeData.databaseId) {
 								givePlayerWeaponAmmo(client, ammoItemData.value);
 								itemData.value = itemData.value + ammoItemData.value;
@@ -1054,26 +1063,31 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_LOTTOTICKET: {
-			messagePlayerError(client, `The ${itemTypeData.name} doesn't do anything when you try to use it.`);
+			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
 
 		case VRR_ITEM_USETYPE_AREARADIO: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
-			messagePlayerAlert(client, `Use /radiostation to set the radio station and drop it on the ground to play`);
+			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
 			break;
 		}
 
 		case VRR_ITEM_USETYPE_PERSONALRADIO: {
 			itemData.enabled = !itemData.enabled;
-			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
-			messagePlayerAlert(client, `Use /radiostation to set the radio station`);
+			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} their personal radio`);
+			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
+			break;
+		}
+
+		case VRR_ITEM_USETYPE_NONE: {
+			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
 
 		default: {
-			messagePlayerError(client, `The ${itemTypeData.name} doesn't do anything when you try to use it.`);
+			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
 	}
