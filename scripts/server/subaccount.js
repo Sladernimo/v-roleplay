@@ -126,12 +126,12 @@ function initSubAccountScript() {
 
 function loadSubAccountFromName(firstName, lastName) {
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		firstName = escapeDatabaseString(dbConnection, firstName);
 		lastName = escapeDatabaseString(dbConnection, lastName);
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
+		if (dbQuery) {
 			let dbAssoc = fetchQueryAssoc(dbQuery);
 			freeDatabaseQuery(dbQuery);
 			return new SubAccountData(dbAssoc);
@@ -146,10 +146,10 @@ function loadSubAccountFromName(firstName, lastName) {
 
 function loadSubAccountFromId(subAccountId) {
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_id = ${subAccountId} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
+		if (dbQuery) {
 			let dbAssoc = fetchQueryAssoc(dbQuery);
 			freeDatabaseQuery(dbQuery);
 			return new SubAccountData(dbAssoc);
@@ -165,31 +165,31 @@ function loadSubAccountFromId(subAccountId) {
 function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
-	if(accountId > 0) {
+	if (accountId > 0) {
 		let dbConnection = connectToDatabase();
-		if(dbConnection) {
+		if (dbConnection) {
 			let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_acct = ${accountId} AND sacct_server = ${getServerId()}`;
 			let dbQuery = queryDatabase(dbConnection, dbQueryString);
-			if(dbQuery) {
-				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+			if (dbQuery) {
+				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempSubAccount = new SubAccountData(dbAssoc);
 
 					// Make sure skin is valid
-					if(tempSubAccount.skin == -1) {
+					if (tempSubAccount.skin == -1) {
 						tempSubAccount.skin = getServerConfig().newCharacter.skin;
 					}
 
 					// Check if clan and rank are still valid
-					if(tempSubAccount.clan != 0) {
+					if (tempSubAccount.clan != 0) {
 						let clanId = getClanIdFromDatabaseId(tempSubAccount.clan);
-						if(!getClanData(clanId)) {
+						if (!getClanData(clanId)) {
 							tempSubAccount.clan = 0;
 							tempSubAccount.clanRank = 0;
 							tempSubAccount.clanTitle = "";
 							tempSubAccount.clanFlags = 0;
 						} else {
 							let rankId = getClanRankIdFromDatabaseId(clanId, tempSubAccount.clanRank);
-							if(!getClanRankData(clanId, rankId)) {
+							if (!getClanRankData(clanId, rankId)) {
 								tempSubAccount.clanRank = 0;
 							}
 						}
@@ -211,7 +211,7 @@ function loadSubAccountsFromAccount(accountId) {
 function saveSubAccountToDatabase(subAccountData) {
 	let dbConnection = connectToDatabase();
 
-	if(dbConnection) {
+	if (dbConnection) {
 		let safeClanTag = escapeDatabaseString(dbConnection, subAccountData.ClanTag);
 		let safeClanTitle = escapeDatabaseString(dbConnection, subAccountData.clanTitle);
 		let safeFirstName = escapeDatabaseString(dbConnection, subAccountData.firstName);
@@ -281,7 +281,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_hd_prop_rightwrist_model", subAccountData.bodyProps.rightWrist[0]],
 			["sacct_svr_hd_prop_rightwrist_texture", subAccountData.bodyProps.rightWrist[1]],
 			["sacct_svr_hd_prop_hip_model", subAccountData.bodyProps.hip[0]],
-			["sacct_svr_hd_prop_hip_texture",subAccountData.bodyProps.hip[1]],
+			["sacct_svr_hd_prop_hip_texture", subAccountData.bodyProps.hip[1]],
 			["sacct_svr_hd_prop_leftfoot_model", subAccountData.bodyProps.leftFoot[0]],
 			["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
 			["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
@@ -295,7 +295,7 @@ function saveSubAccountToDatabase(subAccountData) {
 		freeDatabaseQuery(dbQuery);
 
 		disconnectFromDatabase(dbConnection);
-    }
+	}
 }
 
 // ===========================================================================
@@ -306,7 +306,7 @@ function createSubAccount(accountId, firstName, lastName) {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
 
-	if(dbConnection) {
+	if (dbConnection) {
 		firstName = fixCharacterName(firstName);
 		lastName = fixCharacterName(lastName);
 		let safeFirstName = escapeDatabaseString(dbConnection, firstName);
@@ -314,13 +314,13 @@ function createSubAccount(accountId, firstName, lastName) {
 
 		dbQuery = queryDatabase(dbConnection, `INSERT INTO sacct_main (sacct_acct, sacct_name_first, sacct_name_last, sacct_pos_x, sacct_pos_y, sacct_pos_z, sacct_rot_z, sacct_cash, sacct_server, sacct_health, sacct_when_made, sacct_when_lastlogin) VALUES (${accountId}, '${safeFirstName}', '${safeLastName}', ${getServerConfig().newCharacter.spawnPosition.x}, ${getServerConfig().newCharacter.spawnPosition.y}, ${getServerConfig().newCharacter.spawnPosition.z}, ${getServerConfig().newCharacter.spawnHeading}, ${getServerConfig().newCharacter.money}, ${getServerId()}, 100, CURRENT_TIMESTAMP(), 0)`);
 		//if(dbQuery) {
-			if(getDatabaseInsertId(dbConnection) > 0) {
-				let dbInsertId = getDatabaseInsertId(dbConnection);
-				createDefaultSubAccountServerData(dbInsertId, getServerConfig().newCharacter.skin);
-				let tempSubAccount = loadSubAccountFromId(dbInsertId);
-				return tempSubAccount;
-			}
-			//freeDatabaseQuery(dbQuery);
+		if (getDatabaseInsertId(dbConnection) > 0) {
+			let dbInsertId = getDatabaseInsertId(dbConnection);
+			createDefaultSubAccountServerData(dbInsertId, getServerConfig().newCharacter.skin);
+			let tempSubAccount = loadSubAccountFromId(dbInsertId);
+			return tempSubAccount;
+		}
+		//freeDatabaseQuery(dbQuery);
 		//}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -333,21 +333,21 @@ function createSubAccount(accountId, firstName, lastName) {
 function showCharacterSelectToClient(client) {
 	getPlayerData(client).switchingCharacter = true;
 
-	if(doesPlayerHaveAutoSelectLastCharacterEnabled(client)) {
-		if(getPlayerData(client).subAccounts.length > 0) {
+	if (doesPlayerHaveAutoSelectLastCharacterEnabled(client)) {
+		if (getPlayerData(client).subAccounts.length > 0) {
 			logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is being auto-spawned as character ID ${getPlayerLastUsedSubAccount(client)}`);
 			selectCharacter(client, getPlayerLastUsedSubAccount(client));
 			return true;
 		}
 	}
 
-	if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
+	if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 		getPlayerData(client).currentSubAccount = 0;
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 		let tempSubAccount = getPlayerData(client).subAccounts[0];
-		let ClanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
-		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp()-tempSubAccount.lastLogin)} ago` : "Never";
-		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, ClanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
+		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
+		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
+		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
 		//spawnPlayer(client, getServerConfig().characterSelectPedPosition, getServerConfig().characterSelectPedHeading, getPlayerCurrentSubAccount(client).skin, getServerConfig().characterSelectInterior, getServerConfig().characterSelectDimension);
 		//setTimeout(function() {
@@ -355,16 +355,12 @@ function showCharacterSelectToClient(client) {
 		//}, 500);
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
 	} else {
-		//let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"];
-		//let emojiNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"];
-		//let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
-		messagePlayerNormal(client, `You have the following characters. Use /usechar <id> to select one:`, getColourByName("teal"));
-		getPlayerData(client).subAccounts.forEach(function(subAccount, index) {
-			let tempSubAccount = getPlayerData(client).subAccounts[0];
-			//let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
-			let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp()-tempSubAccount.lastLogin)} ago` : "Never";
-			messagePlayerNormal(client, `${index+1} • [#BBBBBB]${subAccount.firstName} ${subAccount.lastName} ($${tempSubAccount.cash}, ${lastPlayedText})`);
-		});
+		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{teal}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
+		let chunkedList = splitArrayIntoChunks(charactersList, 5);
+		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCharactersListSelf")));
+		for (let i in chunkedList) {
+			messagePlayerNormal(client, chunkedList[i].join("{MAINCOLOUR}, "));
+		}
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
 	}
 }
@@ -372,25 +368,25 @@ function showCharacterSelectToClient(client) {
 // ===========================================================================
 
 function checkNewCharacter(client, firstName, lastName) {
-	if(areParamsEmpty(firstName)) {
+	if (areParamsEmpty(firstName)) {
 		showPlayerNewCharacterFailedGUI(client, "First name cannot be blank!");
 		return false;
 	}
 	firstName = firstName.trim();
 
-	if(areParamsEmpty(lastName)) {
+	if (areParamsEmpty(lastName)) {
 		showPlayerNewCharacterFailedGUI(client, "Last name cannot be blank!");
 		return false;
 	}
 	lastName = lastName.trim();
 
-	if(doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
-		logToConsole(LOG_WARN, `[VRR.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
+	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
+		logToConsole(LOG_INFO | LOG_WARN, `[VRR.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
 		return false;
 	}
 
-	if(getPlayerData(client).changingCharacterName) {
+	if (getPlayerData(client).changingCharacterName) {
 		getPlayerCurrentSubAccount(client).firstName = fixCharacterName(firstName);
 		getPlayerCurrentSubAccount(client).lastName = fixCharacterName(lastName);
 		updateAllPlayerNameTags(client);
@@ -399,8 +395,8 @@ function checkNewCharacter(client, firstName, lastName) {
 	}
 
 	let subAccountData = createSubAccount(getPlayerData(client).accountData.databaseId, firstName, lastName);
-	if(!subAccountData) {
-		if(doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
+	if (!subAccountData) {
+		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerNewCharacterFailedGUI(client, "Your character could not be created!");
 		} else {
 			messagePlayerError(client, "Your character could not be created!");
@@ -412,16 +408,15 @@ function checkNewCharacter(client, firstName, lastName) {
 	getPlayerData(client).subAccounts = loadSubAccountsFromAccount(getPlayerData(client).accountData.databaseId);
 	getPlayerData(client).currentSubAccount = 0;
 	getPlayerData(client).creatingCharacter = false;
-	let tempSubAccount = getPlayerData(client).subAccounts[0];
 	showCharacterSelectToClient(client);
 }
 
 // ===========================================================================
 
 function checkPreviousCharacter(client) {
-	if(getPlayerData(client).subAccounts.length > 1) {
-		if(getPlayerData(client).currentSubAccount <= 0) {
-			getPlayerData(client).currentSubAccount = getPlayerData(client).subAccounts.length-1;
+	if (getPlayerData(client).subAccounts.length > 1) {
+		if (getPlayerData(client).currentSubAccount <= 0) {
+			getPlayerData(client).currentSubAccount = getPlayerData(client).subAccounts.length - 1;
 		} else {
 			getPlayerData(client).currentSubAccount--;
 		}
@@ -430,7 +425,7 @@ function checkPreviousCharacter(client) {
 		let tempSubAccount = getPlayerData(client).subAccounts[subAccountId];
 
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
-		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp()-tempSubAccount.lastLogin)} ago` : "Never";
+		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
@@ -440,8 +435,8 @@ function checkPreviousCharacter(client) {
 // ===========================================================================
 
 function checkNextCharacter(client) {
-	if(getPlayerData(client).subAccounts.length > 1) {
-		if(getPlayerData(client).currentSubAccount >= getPlayerData(client).subAccounts.length-1) {
+	if (getPlayerData(client).subAccounts.length > 1) {
+		if (getPlayerData(client).currentSubAccount >= getPlayerData(client).subAccounts.length - 1) {
 			getPlayerData(client).currentSubAccount = 0;
 		} else {
 			getPlayerData(client).currentSubAccount++;
@@ -451,7 +446,7 @@ function checkNextCharacter(client) {
 		let tempSubAccount = getPlayerData(client).subAccounts[subAccountId];
 
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
-		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp()-tempSubAccount.lastLogin)} ago` : "Never";
+		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
@@ -462,7 +457,7 @@ function checkNextCharacter(client) {
 
 function selectCharacter(client, characterId = -1) {
 	logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} character select called (Character ID ${characterId})`);
-	if(characterId != -1) {
+	if (characterId != -1) {
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} provided character ID (${characterId}) to spawn with`);
 		getPlayerData(client).currentSubAccount = characterId;
 	}
@@ -481,16 +476,20 @@ function selectCharacter(client, characterId = -1) {
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = VRR_PEDSTATE_SPAWNING;
 
-	if(getGame() < VRR_GAME_GTA_IV) {
+	if (getGame() <= VRR_GAME_GTA_SA) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
-	} else if(getGame() == VRR_GAME_GTA_IV) {
+	} else if (getGame() == VRR_GAME_GTA_IV) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
+		//clearPlayerWeapons(client);
 		//setPlayerSkin(client, skin);
 		//setPlayerPosition(client, spawnPosition);
 		//setPlayerHeading(client, spawnHeading);
 		//setPlayerInterior(client, spawnInterior);
 		//setPlayerDimension(client, spawnDimension);
-	} else if(getGame() >= VRR_GAME_MAFIA_ONE) {
+		//restorePlayerCamera(client);
+	} else if (getGame() == VRR_GAME_MAFIA_ONE) {
+		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
+		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, getGameConfig().skins[getGame()][skin][0], spawnPosition, spawnHeading);
 	}
 
@@ -498,7 +497,7 @@ function selectCharacter(client, characterId = -1) {
 
 	logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 
-	setTimeout(function() {
+	setTimeout(function () {
 		onPlayerSpawn(client);
 	}, 500);
 
@@ -511,12 +510,12 @@ function selectCharacter(client, characterId = -1) {
 
 function switchCharacterCommand(command, params, client) {
 	logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is requesting to switch characters (current character: ${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}])`);
-	if(!isPlayerSpawned(client)) {
+	if (!isPlayerSpawned(client)) {
 		logToConsole(LOG_WARN, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (not spawned)`);
 		return false;
 	}
 
-	if(isPlayerSwitchingCharacter(client)) {
+	if (isPlayerSwitchingCharacter(client)) {
 		logToConsole(LOG_WARN, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
 		messagePlayerError(client, "You are already selecting/switching characters!");
 		return false;
@@ -528,12 +527,12 @@ function switchCharacterCommand(command, params, client) {
 // ===========================================================================
 
 function newCharacterCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-let firstName = getParam(params, " ", 1);
+	let firstName = getParam(params, " ", 1);
 	let lastName = getParam(params, " ", 2);
 
 	checkNewCharacter(client, firstName, lastName);
@@ -542,19 +541,19 @@ let firstName = getParam(params, " ", 1);
 // ===========================================================================
 
 function useCharacterCommand(command, params, client) {
-	if(!getPlayerData(client).switchingCharacter) {
+	if (!getPlayerData(client).switchingCharacter) {
 		messagePlayerError(client, "Use /switchchar to save this character and return to the characters screen first!");
 		return false;
 	}
 
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let characterId = toInteger(params) || 1;
 
-	selectCharacter(client, characterId-1);
+	selectCharacter(client, characterId - 1);
 }
 
 // ===========================================================================
@@ -562,8 +561,8 @@ function useCharacterCommand(command, params, client) {
 function getPlayerLastUsedSubAccount(client) {
 	let subAccounts = getPlayerData(client).subAccounts;
 	let lastUsed = 0;
-	for(let i in subAccounts) {
-		if(subAccounts[i].lastLogin > subAccounts[lastUsed].lastLogin) {
+	for (let i in subAccounts) {
+		if (subAccounts[i].lastLogin > subAccounts[lastUsed].lastLogin) {
 			lastUsed = i;
 		}
 	}
@@ -602,16 +601,16 @@ function isPlayerCreatingCharacter(client) {
  *
  */
 function getPlayerCurrentSubAccount(client) {
-	if(!getPlayerData(client)) {
+	if (!getPlayerData(client)) {
 		return false;
 	}
 
 	let subAccountId = getPlayerData(client).currentSubAccount;
-	if(subAccountId == -1) {
+	if (subAccountId == -1) {
 		return false;
 	}
 
-	if(typeof getPlayerData(client).subAccounts[subAccountId] == "undefined") {
+	if (typeof getPlayerData(client).subAccounts[subAccountId] == "undefined") {
 		return false;
 	}
 
@@ -628,67 +627,28 @@ function getClientSubAccountName(client) {
 // ===========================================================================
 
 function setFightStyleCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let fightStyleId = getFightStyleFromParams(params);
 
-	if(!fightStyle) {
+	if (!fightStyle) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
-		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getServerGame()].map(fs => fs[0]).join(", ")}`);
+		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
 		return false;
 	}
 
-	if(!isPlayerAtGym(client)) {
-		if(!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
+	if (!isPlayerAtGym(client)) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
 			messagePlayerError(client, `You need to be at a gym!`);
 			return false
 		}
 	}
 
 	setPlayerFightStyle(client, fightStyleId);
-	messagePlayerSuccess(client, `Your fight style has been set to ${getGameConfig().fightStyles[getServerGame()][fightStyleId][0]}`)
-
-	return true;
-}
-
-// ===========================================================================
-
-function forceFightStyleCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let fightStyleId = getFightStyleFromParams(getParam(params, " ", 2));
-
-	//if(!targetClient) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!getPlayerData(targetClient)) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!isPlayerSpawned(targetClient)) {
-	//	messagePlayerError(client, `That player isn't spawned`);
-	//	return false;
-	//}
-
-	if(!fightStyleId) {
-		messagePlayerError(client, `That fight style doesn't exist!`);
-		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getServerGame()].map(fs => fs[0]).join(", ")}`);
-		return false;
-	}
-
-	getPlayerCurrentSubAccount(client).fightStyle = fightStyleId;
-	setPlayerFightStyle(client, fightStyleId);
-	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${getGameConfig().fightStyles[getServerGame()][fightStyleId][0]}`)
+	messagePlayerSuccess(client, `Your fight style has been set to ${getGameConfig().fightStyles[getGame()][fightStyleId][0]}`)
 
 	return true;
 }
@@ -696,8 +656,8 @@ function forceFightStyleCommand(command, params, client) {
 // ===========================================================================
 
 function createDefaultSubAccountServerData(databaseId, thisServerSkin) {
-	for(let i = 1 ; i <= 5 ; i++) {
-		if(i == getServerId()) {
+	for (let i = 1; i <= 5; i++) {
+		if (i == getServerId()) {
 			let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${i}, ${thisServerSkin})`;
 			quickDatabaseQuery(dbQueryString);
 		} else {
@@ -727,5 +687,6 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 	getPlayerData(client).switchingCharacter = true;
 
 	showConnectCameraToPlayer(client);
+
 	showCharacterSelectToClient(client);
 }

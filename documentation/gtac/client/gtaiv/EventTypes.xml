@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<EventTypes>
+    <!---->
+    <EventType Name="OnLocalPlayerEnterSphere" Hash="3890156725" Arguments="1" CanPreventDefault="false" />
+    <!--**UNUSED**-->
+    <EventType Name="OnBeforeProcessCamera" Hash="1763657124" Arguments="0" CanPreventDefault="false" />
+    <!--Called right before the hud is drawn, you should draw your HUD here if you want it under the hud-->
+    <EventType Name="OnDrawHUD" Hash="2504546524" Arguments="0" CanPreventDefault="true" />
+    <!--Called when a mouse moves-->
+    <EventType Name="OnMouseMove" Hash="1865196431" Arguments="3" CanPreventDefault="false" />
+    <!--Called before the hud is drawn-->
+    <EventType Name="OnBeforeDrawHUD" Hash="3008683449" Arguments="0" CanPreventDefault="true" />
+    <!--Called when a keyboard key is down-->
+    <EventType Name="OnKeyDown" Hash="3091440445" Arguments="3" CanPreventDefault="false" />
+    <!--Called when a resource starts-->
+    <EventType Name="OnResourceStart" Hash="1143708828" Arguments="1" CanPreventDefault="true" />
+    <!--Called when an element is about to stream in-->
+    <EventType Name="OnElementStreamIn" Hash="2759455221" Arguments="2" CanPreventDefault="true" />
+    <!--Called when a resource stops-->
+    <EventType Name="OnResourceStop" Hash="1347867548" Arguments="2" CanPreventDefault="true" />
+    <!--Called after all the hud is drawn, you should draw your HUD here if you want it over the hud-->
+    <EventType Name="OnDrawnHUD" Hash="1969344644" Arguments="0" CanPreventDefault="false" />
+    <!--Called after OnRender2D, usually post processing would be done here-->
+    <EventType Name="OnPostRender2D" Hash="1025891209" Arguments="0" CanPreventDefault="false" />
+    <!--Called when all the files are downloaded-->
+    <EventType Name="OnResourceReady" Hash="4089924796" Arguments="1" CanPreventDefault="false" />
+    <!--Called whenever an entity is processed-->
+    <EventType Name="OnEntityProcess" Hash="850679850" Arguments="1" CanPreventDefault="true" />
+    <!--Called when a ped is created/spawned-->
+    <EventType Name="OnPedSpawn" Hash="3880839897" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a ped finished dying or is instantly killed-->
+    <EventType Name="OnPedDead" Hash="3023102245" Arguments="1" CanPreventDefault="false" />
+    <!--Called when the camera is about to be processed-->
+    <EventType Name="OnCameraProcess" Hash="4077277522" Arguments="0" CanPreventDefault="true" />
+    <!--Called when a ped is damaged-->
+    <EventType Name="OnPedInflictDamage" Hash="1391854299" Arguments="5" CanPreventDefault="true" />
+    <!--Called when a ped dies-->
+    <EventType Name="OnPedWasted" Hash="3129373940" Arguments="4" CanPreventDefault="false" />
+    <!---->
+    <EventType Name="OnLocalPlayerExitSphere" Hash="105319985" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a GUIElement is clicked on-->
+    <EventType Name="OnGUIClick" Hash="1620463676" Arguments="1" CanPreventDefault="false" />
+    <!--Called when dodo flight time ends-->
+    <EventType Name="OnRegisterDodoFlightTime" Hash="3998584707" Arguments="1" CanPreventDefault="true" />
+    <!--Called when an element is about to be destroyed-->
+    <EventType Name="OnElementDestroy" Hash="696839637" Arguments="1" CanPreventDefault="true" />
+    <!--Called when anchor tags are clicked in a GUIHtmlView-->
+    <EventType Name="OnGUIAnchorClick" Hash="1882824246" Arguments="3" CanPreventDefault="true" />
+    <!--Called when the mouse leaves the window-->
+    <EventType Name="OnMouseLeave" Hash="3102340603" Arguments="0" CanPreventDefault="false" />
+    <!--Called when a cursor button is up-->
+    <EventType Name="OnCursorUp" Hash="2031527000" Arguments="1" CanPreventDefault="false" />
+    <!--Called every process-->
+    <EventType Name="OnProcess" Hash="3150131130" Arguments="1" CanPreventDefault="false" />
+    <!--Called every prerender-->
+    <EventType Name="OnPreRender" Hash="2235820386" Arguments="0" CanPreventDefault="false" />
+    <!--Called every render-->
+    <EventType Name="OnRender" Hash="2466144783" Arguments="0" CanPreventDefault="false" />
+    <!--Called when 2D shit should be rendered-->
+    <EventType Name="OnRender2D" Hash="3260181898" Arguments="0" CanPreventDefault="false" />
+    <!--Called when a line will be output to the chatbox-->
+    <EventType Name="OnChatOutput" Hash="2275472839" Arguments="2" CanPreventDefault="true" />
+    <!--Called when a mouse button is down-->
+    <EventType Name="OnMouseDown" Hash="2632778956" Arguments="2" CanPreventDefault="false" />
+    <!--Called when a mouse button is up-->
+    <EventType Name="OnMouseUp" Hash="3080252785" Arguments="2" CanPreventDefault="false" />
+    <!--Called when a cursor button is down-->
+    <EventType Name="OnCursorDown" Hash="3618352285" Arguments="1" CanPreventDefault="false" />
+    <!--Called when the cursor moves-->
+    <EventType Name="OnCursorMove" Hash="610929630" Arguments="1" CanPreventDefault="false" />
+    <!--Called when the mouse scrolls-->
+    <EventType Name="OnMouseWheel" Hash="1116330591" Arguments="3" CanPreventDefault="false" />
+    <!--Called when a mouse is connected-->
+    <EventType Name="OnMouseConnected" Hash="4137684318" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a mouse is disconnected-->
+    <EventType Name="OnMouseDisconnected" Hash="2332645211" Arguments="1" CanPreventDefault="false" />
+    <!--Called when the window is focused-->
+    <EventType Name="OnFocus" Hash="1989030060" Arguments="0" CanPreventDefault="false" />
+    <!--Called when the window is defocused-->
+    <EventType Name="OnLostFocus" Hash="1036525539" Arguments="0" CanPreventDefault="false" />
+    <!--Called when a keyboard key is up-->
+    <EventType Name="OnKeyUp" Hash="1763402597" Arguments="3" CanPreventDefault="false" />
+    <!--Called when a key is typed-->
+    <EventType Name="OnCharacter" Hash="318128971" Arguments="1" CanPreventDefault="false" />
+    <!--Called when an element is about to stream out-->
+    <EventType Name="OnElementStreamOut" Hash="3852636898" Arguments="2" CanPreventDefault="true" />
+    <!--Called when disconnected from the server-->
+    <EventType Name="OnDisconnect" Hash="3221334991" Arguments="1" CanPreventDefault="false" />
+    <!---->
+    <EventType Name="OnLocalPlayerEnteredVehicle" Hash="3395021369" Arguments="1" CanPreventDefault="false" />
+    <!---->
+    <EventType Name="OnLocalPlayerExitedVehicle" Hash="1654569001" Arguments="1" CanPreventDefault="false" />
+    <!---->
+    <EventType Name="OnLocalPlayerSwitchWeapon" Hash="3670373318" Arguments="2" CanPreventDefault="false" />
+</EventTypes>

@@ -8,48 +8,48 @@
 // ===========================================================================
 
 function getItemWithPhoneNumber(phoneNumber) {
-    for(let i in getServerData().items) {
-        if(getItemTypeData(getItemData(i).itemTypeIndex).useType == VRR_ITEM_USETYPE_PHONE) {
-            if(getItemData(i).value == phoneNumber) {
-                return i;
-            }
-        }
-    }
-    return -1;
+	for(let i in getServerData().items) {
+		if(getItemTypeData(getItemData(i).itemTypeIndex).useType == VRR_ITEM_USETYPE_PHONE) {
+			if(getItemData(i).value == phoneNumber) {
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 // ===========================================================================
 
 function isPhoneItemEnabled(itemIndex) {
-    return getItemData(itemIndex).enabled;
+	return getItemData(itemIndex).enabled;
 }
 
 // ===========================================================================
 
 function ringPhoneForNearbyPlayers(itemIndex) {
-    /*
-    if(isPhoneItemEnabled(itemIndex)) {
-        switch(getItemData(itemIndex).ownerType) {
-            case VRR_ITEM_OWNER_GROUND:
-                playRingtoneForPlayersInRange(getItemData(itemIndex).position, getItemData(i).extra);
-                break;
+	/*
+	if(isPhoneItemEnabled(itemIndex)) {
+		switch(getItemData(itemIndex).ownerType) {
+			case VRR_ITEM_OWNER_GROUND:
+				playRingtoneForPlayersInRange(getItemData(itemIndex).position, getItemData(i).extra);
+				break;
 
-            case VRR_ITEM_OWNER_VEHTRUNK:
-                playRingtoneForPlayersInRange(getVehiclePosition(getItemData(itemIndex).ownerId), getItemData(i).extra);
-                break;
+			case VRR_ITEM_OWNER_VEHTRUNK:
+				playRingtoneForPlayersInRange(getVehiclePosition(getItemData(itemIndex).ownerId), getItemData(i).extra);
+				break;
 
-            case VRR_ITEM_OWNER_VEHDASH:
-                playRingtoneForPlayersInRange(getVehiclePosition(getItemData(itemIndex).ownerId), getItemData(i).extra);
-                break;
-        }
-    }
-    */
+			case VRR_ITEM_OWNER_VEHDASH:
+				playRingtoneForPlayersInRange(getVehiclePosition(getItemData(itemIndex).ownerId), getItemData(i).extra);
+				break;
+		}
+	}
+	*/
 }
 
 // ===========================================================================
 
 function phoneTransmit(radioFrequency, messageText, transmittingPlayer) {
-    phoneOutgoingToNearbyPlayers(transmittingPlayer, messageText);
+	phoneOutgoingToNearbyPlayers(transmittingPlayer, messageText);
 }
 
 // ===========================================================================

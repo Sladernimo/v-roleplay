@@ -23,40 +23,40 @@ function initItemScript() {
 // ===========================================================================
 
 function processItemActionRendering() {
-    if(renderItemActionDelay) {
-        if(itemActionDelayEnabled) {
-            let finishTime = itemActionDelayStart+itemActionDelayDuration;
-            if(sdl.ticks >= finishTime) {
-                itemActionDelayEnabled = false;
-                itemActionDelayDuration = 0;
-                itemActionDelayStart = 0;
-                tellServerItemActionDelayComplete();
-            } else {
-                let currentTick = sdl.ticks-itemActionDelayStart;
-                let progressPercent = Math.ceil(currentTick*100/itemActionDelayDuration);
-                let width = Math.ceil(getPercentage(itemActionDelaySize.x, progressPercent));
+	if(renderItemActionDelay) {
+		if(itemActionDelayEnabled) {
+			let finishTime = itemActionDelayStart+itemActionDelayDuration;
+			if(sdl.ticks >= finishTime) {
+				itemActionDelayEnabled = false;
+				itemActionDelayDuration = 0;
+				itemActionDelayStart = 0;
+				tellServerItemActionDelayComplete();
+			} else {
+				let currentTick = sdl.ticks-itemActionDelayStart;
+				let progressPercent = Math.ceil(currentTick*100/itemActionDelayDuration);
+				let width = Math.ceil(getPercentage(itemActionDelaySize.x, progressPercent));
 
-                let backgroundColour = toColour(0, 0, 0, 255);
-                graphics.drawRectangle(null, [itemActionDelayPosition.x-(itemActionDelaySize.x/2)-1, itemActionDelayPosition.y-(itemActionDelaySize.y/2)-1], [itemActionDelaySize.x+2, itemActionDelaySize.y+2], backgroundColour, backgroundColour, backgroundColour, backgroundColour);
-                graphics.drawRectangle(null, [itemActionDelayPosition.x-(itemActionDelaySize.x/2), itemActionDelayPosition.y-(itemActionDelaySize.y/2)-2], [width, itemActionDelaySize.y], COLOUR_LIME, COLOUR_LIME, COLOUR_LIME, COLOUR_LIME);
-            }
-        }
-    }
+				let backgroundColour = toColour(0, 0, 0, 255);
+				graphics.drawRectangle(null, [itemActionDelayPosition.x-(itemActionDelaySize.x/2)-1, itemActionDelayPosition.y-(itemActionDelaySize.y/2)-1], [itemActionDelaySize.x+2, itemActionDelaySize.y+2], backgroundColour, backgroundColour, backgroundColour, backgroundColour);
+				graphics.drawRectangle(null, [itemActionDelayPosition.x-(itemActionDelaySize.x/2), itemActionDelayPosition.y-(itemActionDelaySize.y/2)-2], [width, itemActionDelaySize.y], COLOUR_LIME, COLOUR_LIME, COLOUR_LIME, COLOUR_LIME);
+			}
+		}
+	}
 }
 
 // ===========================================================================
 
 function updatePlayerHotBar(activeSlot, itemsArray) {
-    logToConsole(LOG_DEBUG, `[VRR.Main] Updating hotbar`);
+	logToConsole(LOG_DEBUG, `[VRR.Main] Updating hotbar`);
 }
 
 // ===========================================================================
 
 function showItemActionDelay(duration) {
-    itemActionDelayDuration = duration;
-    itemActionDelayStart = sdl.ticks;
-    itemActionDelayEnabled = true;
-    logToConsole(LOG_DEBUG, `Item action delay started. Duration: ${itemActionDelayDuration}, Start: ${itemActionDelayStart}, Rendering Enabled: ${renderItemActionDelay}`);
+	itemActionDelayDuration = duration;
+	itemActionDelayStart = sdl.ticks;
+	itemActionDelayEnabled = true;
+	logToConsole(LOG_DEBUG, `Item action delay started. Duration: ${itemActionDelayDuration}, Start: ${itemActionDelayStart}, Rendering Enabled: ${renderItemActionDelay}`);
 }
 
 // ===========================================================================

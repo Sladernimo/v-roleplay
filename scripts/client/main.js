@@ -7,6 +7,9 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let resourceReady = false;
+let resourceStarted = false;
+
 let inSphere = false;
 let inVehicle = false;
 let inVehicleSeat = false;
@@ -27,7 +30,7 @@ let renderHotBar = true;
 let renderItemActionDelay = true;
 let renderInteriorLights = true;
 
-let logLevel = LOG_ERROR|LOG_WARN|LOG_INFO;
+let logLevel = LOG_INFO|LOG_DEBUG|LOG_VERBOSE;
 
 let weaponDamageEnabled = {};
 let weaponDamageEvent = {};
@@ -66,12 +69,24 @@ let vehiclePurchasePosition = null;
 
 let forceWantedLevel = 0;
 
+let guiSubmitKey = false;
+let guiLeftKey = false;
+let guiRightKey = false;
+let guiUpKey = false;
+let guiDownKey = false;
+
 // Pre-cache all allowed skins
 let allowedSkins = getAllowedSkins(getGame());
 
-let businesses = [];
-let houses = [];
-let jobs = [];
-let vehicles = [];
+let localLocaleId = 0;
+
+let serverData = {
+	houses: [],
+	businesses: [],
+	localeStrings: [],
+	localeOptions: [],
+	vehicles: [],
+	jobs: [],
+};
 
 // ===========================================================================

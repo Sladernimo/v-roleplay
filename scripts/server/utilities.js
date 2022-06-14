@@ -7,30 +7,18 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let disconnectReasons = [
-	"Lost Connection",
-	"Disconnected",
-	"Unsupported Client",
-	"Wrong Game",
-	"Incorrect Password",
-	"Unsupported Executable",
-	"Disconnected",
-	"Banned",
-	"Failed",
-	"Invalid Name",
-	"Crashed"
-];
+
 
 // ===========================================================================
 
 function getPositionArea(position) {
-	if(typeof position == "Vec3") {
+	if (typeof position == "Vec3") {
 		position = vec3ToVec2(position);
 	}
 
-	let gameAreas = getGameAreas(getServerGame());
-	for(let i in gameAreas) {
-		if(isPositionInArea(position, gameAreas[i][1])) {
+	let gameAreas = getGameAreas(getGame());
+	for (let i in gameAreas) {
+		if (isPositionInArea(position, gameAreas[i][1])) {
 			return i;
 		}
 	}
@@ -42,7 +30,7 @@ function getPositionArea(position) {
 
 function getAreaName(position) {
 	let areaId = getPositionArea(position);
-	if(!areaId) {
+	if (!areaId) {
 		return false;
 	}
 
@@ -62,9 +50,9 @@ function getGameAreas(gameId) {
  * @return {ClientData} The player/client's data (class instancee)
  */
 function getPlayerData(client) {
-	if(client != null) {
-		if(isClientInitialized(client)) {
-			return getServerData().clients[client.index];
+	if (client != null) {
+		if (isClientInitialized(client)) {
+			return getServerData().clients[getPlayerId(client)];
 		}
 	}
 	return false;
@@ -73,7 +61,7 @@ function getPlayerData(client) {
 // ===========================================================================
 
 function initAllClients() {
-	getClients().forEach(function(client) {
+	getClients().forEach(function (client) {
 		initClient(client);
 	});
 }
@@ -82,26 +70,28 @@ function initAllClients() {
 
 function updateServerRules() {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Updating all server rules ...`);
-	
+
 	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Time support: ${isTimeSupported()}`);
-	if(isTimeSupported()) {
-		if(getServerConfig() != false) {
+	if (isTimeSupported()) {
+		if (getServerConfig() != false) {
 			let value = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
 			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Time" as ${value}`);
 			server.setRule("Time", value);
 		}
 	}
 
-	if(isWeatherSupported()) {
-		if(getServerConfig() != false) {
-			let value = getGameConfig().weatherNames[getServerGame()][getServerConfig().weather];
-			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Weather" as ${value}`);
-			server.setRule("Weather", value);
+	if (isWeatherSupported()) {
+		if (getServerConfig() != false) {
+			if (typeof getGameConfig().weatherNames[getGame()] != "undefined") {
+				let value = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
+				logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Weather" as ${value}`);
+				server.setRule("Weather", value);
+			}
 		}
 	}
 
-	if(isSnowSupported()) {
-		if(getServerConfig() != false) {
+	if (isSnowSupported()) {
+		if (getServerConfig() != false) {
 			let value = getYesNoFromBool(getServerConfig().fallingSnow);
 			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Snowing" as ${value}`);
 			server.setRule("Snowing", value);
@@ -113,14 +103,14 @@ function updateServerRules() {
 // ===========================================================================
 
 function getWeatherFromParams(params) {
-	if(isNaN(params)) {
-		for(let i in getGameConfig().weatherNames[getServerGame()]) {
-			if(toLowerCase(getGameConfig().weatherNames[getServerGame()][i]).indexOf(toLowerCase(params)) != -1) {
+	if (isNaN(params)) {
+		for (let i in getGameConfig().weatherNames[getGame()]) {
+			if (toLowerCase(getGameConfig().weatherNames[getGame()][i]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getGameConfig().weatherNames[getServerGame()][params] != "undefined") {
+		if (typeof getGameConfig().weatherNames[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -131,14 +121,14 @@ function getWeatherFromParams(params) {
 // ===========================================================================
 
 function getFightStyleFromParams(params) {
-	if(isNaN(params)) {
-		for(let i in getGameConfig().fightStyles[getServerGame()]) {
-			if(toLowerCase(getGameConfig().fightStyles[getServerGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
+	if (isNaN(params)) {
+		for (let i in getGameConfig().fightStyles[getGame()]) {
+			if (toLowerCase(getGameConfig().fightStyles[getGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getGameConfig().fightStyles[getServerGame()][params] != "undefined") {
+		if (typeof getGameConfig().fightStyles[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -149,42 +139,50 @@ function getFightStyleFromParams(params) {
 // ===========================================================================
 
 function getClosestHospital(position) {
-	let closest = 0;
-	for(let i in getGameConfig().hospitals[getServerGame()]) {
-		if(getDistance(getGameConfig().hospitals[getServerGame()][i].position, position) < getDistance(getGameConfig().hospitals[getServerGame()][closest].position, position)) {
-			closest = i;
+	if (typeof getGameConfig().hospitals[getGame()] == "undefined") {
+		return { position: getServerConfig().newCharacter.spawnPosition };
+	} else {
+		let closest = 0;
+		for (let i in getGameConfig().hospitals[getGame()]) {
+			if (getDistance(getGameConfig().hospitals[getGame()][i].position, position) < getDistance(getGameConfig().hospitals[getGame()][closest].position, position)) {
+				closest = i;
+			}
 		}
-	}
 
-	return getGameConfig().hospitals[getServerGame()][closest];
+		return getGameConfig().hospitals[getGame()][closest];
+	}
 }
 
 // ===========================================================================
 
 function getClosestPoliceStation(position) {
-	let closest = 0;
-	for(let i in getGameConfig().policeStations[getServerGame()]) {
-		if(getDistance(getGameConfig().policeStations[getServerGame()][i].position, position) < getDistance(getGameConfig().policeStations[getServerGame()][closest].position, position)) {
-			closest = i;
+	if (typeof getGameConfig().policeStations[getGame()] == "undefined") {
+		return { position: getServerConfig().newCharacter.spawnPosition };
+	} else {
+		let closest = 0;
+		for (let i in getGameConfig().policeStations[getGame()]) {
+			if (getDistance(getGameConfig().policeStations[getGame()][i].position, position) < getDistance(getGameConfig().policeStations[getGame()][closest].position, position)) {
+				closest = i;
+			}
 		}
-	}
 
-	return getGameConfig().policeStations[getServerGame()][closest];
+		return getGameConfig().policeStations[getGame()][closest];
+	}
 }
 
 // ===========================================================================
 
 function getPlayerDisplayForConsole(client) {
-	if(isNull(client)) {
+	if (isNull(client)) {
 		return "(Unknown client)";
 	}
-	return `${getPlayerName(client)}[${client.index}]`;
+	return `${getPlayerName(client)}[${getPlayerId(client)}]`;
 }
 
 // ===========================================================================
 
 function getPlayerNameForNameTag(client) {
-	if(isPlayerSpawned(client)) {
+	if (isPlayerSpawned(client)) {
 		return `${getPlayerCurrentSubAccount(client).firstName} ${getPlayerCurrentSubAccount(client).lastName}`;
 	}
 	return getPlayerName(client);
@@ -193,7 +191,7 @@ function getPlayerNameForNameTag(client) {
 // ===========================================================================
 
 function isPlayerSpawned(client) {
-	if(!getPlayerData(client)) {
+	if (!getPlayerData(client)) {
 		return false;
 	}
 	return getPlayerData(client).spawned;
@@ -208,8 +206,8 @@ function getPlayerIsland(client) {
 // ===========================================================================
 
 function isAtPayAndSpray(position) {
-	for(let i in getGameConfig().payAndSprays[getServerGame()]) {
-		if(getDistance(position, getGameConfig().payAndSprays[getServerGame()][i]) <= getGlobalConfig().payAndSprayDistance) {
+	for (let i in getGameConfig().payAndSprays[getGame()]) {
+		if (getDistance(position, getGameConfig().payAndSprays[getGame()][i]) <= getGlobalConfig().payAndSprayDistance) {
 			return true;
 		}
 	}
@@ -222,15 +220,15 @@ function isAtPayAndSpray(position) {
 function resetClientStuff(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
 
-	if(!getPlayerData(client)) {
+	if (!getPlayerData(client)) {
 		return false;
 	}
 
-	if(isPlayerOnJobRoute(client)) {
+	if (isPlayerOnJobRoute(client)) {
 		stopJobRoute(client, false, false);
 	}
 
-	if(getPlayerData(client).rentingVehicle) {
+	if (getPlayerData(client).rentingVehicle) {
 		stopRentingVehicle(client);
 	}
 
@@ -243,9 +241,9 @@ function resetClientStuff(client) {
 
 function getPlayerFromCharacterId(subAccountId) {
 	let clients = getClients();
-	for(let i in clients) {
-		for(let j in getPlayerData(clients[i]).subAccounts) {
-			if(getPlayerData(clients[i]).subAccounts[j].databaseId == subAccountId) {
+	for (let i in clients) {
+		for (let j in getPlayerData(clients[i]).subAccounts) {
+			if (getPlayerData(clients[i]).subAccounts[j].databaseId == subAccountId) {
 				return clients[i];
 			}
 		}
@@ -258,11 +256,11 @@ function getPlayerFromCharacterId(subAccountId) {
 
 function checkPlayerPedStates() {
 	let clients = getClients();
-	for(let i in clients) {
-		if(getPlayerData(clients[i])) {
-			if(getPlayerData(clients[i]).pedState) {
-				if(isPlayerInAnyVehicle(clients[i])) {
-					if(getPlayerData(clients[i]).pedState == VRR_PEDSTATE_EXITINGVEHICLE) {
+	for (let i in clients) {
+		if (getPlayerData(clients[i])) {
+			if (getPlayerData(clients[i]).pedState) {
+				if (isPlayerInAnyVehicle(clients[i])) {
+					if (getPlayerData(clients[i]).pedState == VRR_PEDSTATE_EXITINGVEHICLE) {
 						getPlayerData(clients[i]).pedState == VRR_PEDSTATE_READY;
 					}
 				}
@@ -274,11 +272,11 @@ function checkPlayerPedStates() {
 // ===========================================================================
 
 function showConnectCameraToPlayer(client) {
-	if(isFadeCameraSupported()) {
+	if (isFadeCameraSupported()) {
 		fadeCamera(client, true, 1);
 	}
 
-	if(isCustomCameraSupported()) {
+	if (isCustomCameraSupported()) {
 		//setPlayerInterior(client, 0);
 		//setPlayerDimension(client, 0);
 		setPlayerCameraLookAt(client, getServerConfig().connectCameraPosition, getServerConfig().connectCameraLookAt);
@@ -295,19 +293,16 @@ function showCharacterSelectCameraToPlayer(client) {
 // ===========================================================================
 
 function getClosestPlayer(position, exemptPlayer) {
-	//let clients = getClients();
-	//let closest = 0;
-	//for(let i in clients) {
-	//	if(exemptClient != clients[i]) {
-	//		if(getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
-	//			closest = i;
-	//		}
-	//	}
-	//}
-
-	return getElementsByType(ELEMENT_PLAYER).filter((fp) => fp != exemptPlayer).reduce((i, j) => ((i.position.distance(position) <= j.position.distance(position)) ? i : j));
-
-	//return clients[closest];
+	let clients = getClients();
+	let closest = 0;
+	for (let i in clients) {
+		if (exemptClient != clients[i]) {
+			if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
+				closest = i;
+			}
+		}
+	}
+	return clients[closest];
 }
 
 // ===========================================================================
@@ -320,20 +315,20 @@ function isPlayerMuted(client) {
 
 function getPlayerFromParams(params) {
 	let clients = getClients();
-	if(isNaN(params)) {
-		for(let i in clients) {
-			if(!clients[i].console) {
-				if(toLowerCase(clients[i].name).indexOf(toLowerCase(params)) != -1) {
+	if (isNaN(params)) {
+		for (let i in clients) {
+			if (!clients[i].console) {
+				if (toLowerCase(clients[i].name).indexOf(toLowerCase(params)) != -1) {
 					return clients[i];
 				}
 
-				if(toLowerCase(getCharacterFullName(clients[i])).indexOf(toLowerCase(params)) != -1) {
+				if (toLowerCase(getCharacterFullName(clients[i])).indexOf(toLowerCase(params)) != -1) {
 					return clients[i];
 				}
 			}
 		}
 	} else {
-		if(typeof clients[toInteger(params)] != "undefined") {
+		if (typeof clients[toInteger(params)] != "undefined") {
 			return clients[toInteger(params)];
 		}
 	}
@@ -344,7 +339,7 @@ function getPlayerFromParams(params) {
 // ===========================================================================
 
 function updateConnectionLogOnQuit(client, quitReasonId) {
-	if(getPlayerData(client) != false) {
+	if (getPlayerData(client) != false) {
 		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW(), conn_how_disconnect=${quitReasonId} WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
@@ -358,12 +353,16 @@ function updateConnectionLogOnAuth(client, authId) {
 // ===========================================================================
 
 function updateConnectionLogOnClientInfoReceive(client, clientVersion, screenWidth, screenHeight) {
+	if (getPlayerData(client) != false) {
+		getPlayerData(client).clientVersion = clientVersion;
+	}
+
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let safeClientVersion = escapeDatabaseString(dbConnection, clientVersion);
 		let safeScreenWidth = escapeDatabaseString(dbConnection, toString(screenWidth));
 		let safeScreenHeight = escapeDatabaseString(dbConnection, toString(screenHeight));
-    	quickDatabaseQuery(`UPDATE conn_main SET conn_client_version='${safeClientVersion}', conn_screen_width='${safeScreenWidth}', conn_screen_height='${safeScreenHeight}' WHERE conn_id = ${getPlayerData(client).sessionId}`);
+		quickDatabaseQuery(`UPDATE conn_main SET conn_client_version='${safeClientVersion}', conn_screen_width='${safeScreenWidth}', conn_screen_height='${safeScreenHeight}' WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
 
@@ -378,8 +377,8 @@ function generateRandomPhoneNumber() {
 function doesNameContainInvalidCharacters(name) {
 	let disallowedCharacters = getGlobalConfig().subAccountNameAllowedCharacters;
 	name = toLowerCase(name);
-	for(let i = 0; i < name.length; i++) {
-		if(disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
+	for (let i = 0; i < name.length; i++) {
+		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
 			return true;
 		}
 	}
@@ -395,29 +394,12 @@ function getClientFromSyncerId(syncerId) {
 
 // ===========================================================================
 
-async function triggerWebHook(webHookURL, payloadData) {
-	return new Promise(resolve => {
-		//console.warn(webHookURL);
-		httpGet(
-			webHookURL,
-			`data=${payloadData}`,
-			function(data) {
-				//console.warn(JSON.parse(data));
-			},
-			function(data) {
-			}
-		);
-	});
-}
-
-// ===========================================================================
-
 function clearTemporaryVehicles() {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
-	for(let i in vehicles) {
-		if(!getVehicleData(vehicles[i])) {
+	for (let i in vehicles) {
+		if (!getVehicleData(vehicles[i])) {
 			let occupants = vehicles[i].getOccupants();
-			for(let j in occupants) {
+			for (let j in occupants) {
 				destroyGameElement(occupants[j]);
 			}
 			destroyGameElement(vehicles[i]);
@@ -429,11 +411,11 @@ function clearTemporaryVehicles() {
 
 function clearTemporaryPeds() {
 	let peds = getElementsByType(ELEMENT_PED);
-	for(let i in peds) {
-		if(peds[i].owner == -1) {
-			if(!peds[i].isType(ELEMENT_PLAYER)) {
-				if(peds[i].vehicle == null) {
-					if(!getNPCData(peds[i])) {
+	for (let i in peds) {
+		if (peds[i].owner == -1) {
+			if (!peds[i].isType(ELEMENT_PLAYER)) {
+				if (peds[i].vehicle == null) {
+					if (!getNPCData(peds[i])) {
 						destroyElement(peds[i]);
 					}
 				}
@@ -445,15 +427,16 @@ function clearTemporaryPeds() {
 // ===========================================================================
 
 function kickAllClients() {
-    getClients().forEach((client) => {
-        client.disconnect();
-    })
+	getClients().forEach((client) => {
+		getPlayerData(client).customDisconnectReason = `Kicked - All clients are being disconnected`;
+		disconnectPlayer(client);
+	})
 }
 
 // ===========================================================================
 
 function updateTimeRule() {
-	if(isTimeSupported()) {
+	if (isTimeSupported()) {
 		server.setRule("Time", makeReadableTime(game.time.hour, game.time.minute));
 	}
 }
@@ -461,7 +444,43 @@ function updateTimeRule() {
 // ===========================================================================
 
 function isClientInitialized(client) {
-	return (typeof getServerData().clients[client.index] != "undefined");
+	return (typeof getServerData().clients[getPlayerId(client)] != "undefined");
+}
+
+// ===========================================================================
+
+function getPedForNetworkEvent(ped) {
+	if (getGame() == VRR_GAME_GTA_IV) {
+		return ped;
+	} else {
+		return ped.id;
+	}
+}
+
+// ===========================================================================
+
+// Get how many times a player connected in the last month by name
+function getPlayerConnectionsInLastMonthByName(name) {
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let safeName = escapeDatabaseString(dbConnection, name);
+		let result = quickDatabaseQuery(`SELECT COUNT(*) AS count FROM conn_main WHERE conn_when_connect >= NOW() - INTERVAL 1 MONTH AND conn_name = '${safeName}'`);
+		if (result) {
+			return result[0].count;
+		}
+	}
+
+	return 0;
+}
+
+// ===========================================================================
+
+function addPrefixNumberFill(number, amount) {
+	let numberString = toString(number);
+	while (numberString.length < amount) {
+		numberString = toString(`0${numberString}`);
+	}
+	return toString(numberString);
 }
 
 // ===========================================================================

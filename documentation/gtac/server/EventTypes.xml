@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<EventTypes>
+    <!--Called when a pickup is collected-->
+    <EventType Name="OnPickupCollected" Hash="4105239817" Arguments="2" CanPreventDefault="false" />
+    <!--Called when a ped starts uncrouching-->
+    <EventType Name="OnPedUncrouch" Hash="561660263" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a ped starts jumping-->
+    <EventType Name="OnPedJump" Hash="4272336407" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a ped starts falling to floor-->
+    <EventType Name="OnPedFall" Hash="2722461453" Arguments="4" CanPreventDefault="false" />
+    <!--Called when a ped starts crouching-->
+    <EventType Name="OnPedCrouch" Hash="1096855702" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a ped is spawned.-->
+    <EventType Name="OnPedSpawn" Hash="3880839897" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a ped is wasted (from attacker client).-->
+    <EventType Name="OnWastePed" Hash="1462492871" Arguments="4" CanPreventDefault="false" />
+    <!--Called when a ped is exiting a vehicle.-->
+    <EventType Name="OnPedExitVehicle" Hash="3163626874" Arguments="2" CanPreventDefault="false" />
+    <!--Called when a resource starts-->
+    <EventType Name="OnResourceStart" Hash="1143708828" Arguments="1" CanPreventDefault="true" />
+    <!--Called when a player types a command-->
+    <EventType Name="OnPlayerCommand" Hash="1638826555" Arguments="3" CanPreventDefault="true" />
+    <!--Called every process-->
+    <EventType Name="OnProcess" Hash="3150131130" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a resource stops-->
+    <EventType Name="OnResourceStop" Hash="1347867548" Arguments="2" CanPreventDefault="true" />
+    <!--Called when an element is about to stream in-->
+    <EventType Name="OnElementStreamIn" Hash="2759455221" Arguments="2" CanPreventDefault="true" />
+    <!--Called when a player has connected and is joining-->
+    <EventType Name="OnPlayerJoin" Hash="3624951888" Arguments="1" CanPreventDefault="false" />
+    <!--Called when the player has joined the game-->
+    <EventType Name="OnPlayerJoined" Hash="3833973824" Arguments="1" CanPreventDefault="false" />
+    <!--Called when a player disconnects-->
+    <EventType Name="OnPlayerQuit" Hash="3017502482" Arguments="2" CanPreventDefault="false" />
+    <!--Called when a player is attempting to connect-->
+    <EventType Name="OnPlayerConnect" Hash="2611712496" Arguments="1" CanPreventDefault="true" />
+    <!--Called when the server finished the start sequence-->
+    <EventType Name="OnServerStart" Hash="3318682471" Arguments="0" CanPreventDefault="false" />
+    <!--Called when a player chats-->
+    <EventType Name="OnPlayerChat" Hash="2515290669" Arguments="2" CanPreventDefault="true" />
+    <!--Called when an element is about to be destroyed-->
+    <EventType Name="OnElementDestroy" Hash="696839637" Arguments="1" CanPreventDefault="true" />
+    <!--Called when a ped is wasted.-->
+    <EventType Name="OnPedWasted" Hash="3129373940" Arguments="4" CanPreventDefault="false" />
+    <!--Called when a ped is entering a vehicle.-->
+    <EventType Name="OnPedEnterVehicle" Hash="2529136464" Arguments="3" CanPreventDefault="false" />
+</EventTypes>

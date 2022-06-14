@@ -15,38 +15,38 @@ let logoSize = toVector2(128, 128);
 
 function initLogoScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Logo]: Initializing logo script ...");
-    //logoImage = loadLogoImage();
+	//logoImage = loadLogoImage();
 	logToConsole(LOG_DEBUG, "[VRR.Logo]: Logo script initialized!");
 }
 
 // ===========================================================================
 
 function loadLogoImage() {
-    let logoStream = openFile(mainLogoPath);
-    let tempLogoImage = null;
-    if(logoStream != null) {
-        tempLogoImage = graphics.loadPNG(logoStream);
-        logoStream.close();
-    }
+	let logoStream = openFile(mainLogoPath);
+	let tempLogoImage = null;
+	if(logoStream != null) {
+		tempLogoImage = graphics.loadPNG(logoStream);
+		logoStream.close();
+	}
 
-    return tempLogoImage;
+	return tempLogoImage;
 }
 
 // ===========================================================================
 
 function processLogoRendering() {
-    if(renderLogo) {
-        if(logoImage != null) {
-            graphics.drawRectangle(logoImage, logoPos, logoSize);
-        }
-    }
+	if(renderLogo) {
+		if(logoImage != null) {
+			graphics.drawRectangle(logoImage, logoPos, logoSize);
+		}
+	}
 }
 
 // ===========================================================================
 
 function setServerLogoRenderState(state) {
-    logToConsole(LOG_DEBUG, `[VRR.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
-    renderLogo = state;
+	logToConsole(LOG_DEBUG, `[VRR.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
+	renderLogo = state;
 }
 
 // ===========================================================================

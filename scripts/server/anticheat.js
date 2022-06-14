@@ -8,14 +8,14 @@
 // ===========================================================================
 
 function initAntiCheatScript() {
-    logToConsole(LOG_DEBUG, "[VRR.AntiCheat]: Initializing anticheat script ...");
+	logToConsole(LOG_DEBUG, "[VRR.AntiCheat]: Initializing anticheat script ...");
 	logToConsole(LOG_DEBUG, "[VRR.AntiCheat]: Anticheat script initialized!");
 }
 
 // ===========================================================================
 
 function clearPlayerStateToEnterExitProperty(client) {
-    if(getPlayerData(client).pedState != VRR_PEDSTATE_READY) {
+	if(getPlayerData(client).pedState != VRR_PEDSTATE_READY) {
 		if(getPlayerData(client).pedState == VRR_PEDSTATE_ENTERINGVEHICLE) {
 			sendPlayerClearPedState(client);
 			getPlayerData(client).pedState = VRR_PEDSTATE_READY;

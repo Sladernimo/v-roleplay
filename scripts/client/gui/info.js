@@ -17,7 +17,7 @@ let infoDialog = {
 
 function initInfoDialogGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Creating info dialog GUI ...`);
-	infoDialog.window = mexui.window(game.width/2-200, game.height/2-70, 400, 140, 'Information', {
+	infoDialog.window = mexui.window(getScreenWidth()/2-200, getScreenHeight()/2-70, 400, 140, 'Information', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 		},
@@ -70,11 +70,13 @@ function closeInfoDialog() {
 
 // ===========================================================================
 
-function showInfo(infoMessage, infoTitle) {
+function showInfoGUI(infoMessage, infoTitle, buttonText) {
 	closeAllWindows();
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing info dialog window. Info: ${infoTitle} - ${infoMessage}`);
 	mexui.setInput(true);
 	infoDialog.messageLabel.text = infoMessage;
+	infoDialog.okayButton.text = buttonText;
+	infoDialog.window.title = infoTitle;
 	infoDialog.window.shown = true;
 }
 

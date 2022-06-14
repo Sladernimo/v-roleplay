@@ -48,7 +48,7 @@ function initYesNoDialogGUI() {
         },
     });
 
-    yesNoDialog.yesButton = yesNoDialog.window.button(5, 100, 197, 25, 'YES', {
+    yesNoDialog.yesButton = yesNoDialog.window.button(5, 105, 193, 30, 'YES', {
         main: {
             backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
             textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -61,7 +61,7 @@ function initYesNoDialogGUI() {
         },
     }, yesNoDialogAnswerYes);
 
-    yesNoDialog.noButton = yesNoDialog.window.button(202, 105, 197, 25, 'NO', {
+    yesNoDialog.noButton = yesNoDialog.window.button(203, 105, 192, 30, 'NO', {
         main: {
             backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
             textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -78,11 +78,21 @@ function initYesNoDialogGUI() {
 
 // ===========================================================================
 
-function showYesNoPromptGUI(promptMessage, promptTitle) {
+function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonText) {
 	closeAllWindows();
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
 	mexui.setInput(true);
+
+	yesNoDialog.messageLabel.text = "";
+	yesNoDialog.yesButton.text = "";
+	yesNoDialog.noButton.text = "";
+	yesNoDialog.window.title = "";
+
 	yesNoDialog.messageLabel.text = promptMessage;
+	yesNoDialog.yesButton.text = yesButtonText;
+	yesNoDialog.noButton.text = noButtonText;
+	yesNoDialog.window.title = promptTitle;
+
 	yesNoDialog.window.shown = true;
 }
 

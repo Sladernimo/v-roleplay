@@ -1,0 +1,439 @@
+<?xml version="1.0" ?>
+<Documentation>
+    <!--
+        Mask Values
+
+        b - bool
+        i - int32
+        f - float
+        s - string
+        c - function/callback
+        x - class/instance
+        z - vector2D
+        v - vector3D
+        t - thiscall
+        | - optional arguments
+        * - infinite arguments
+        . - any type
+    -->
+    <Namespace Name="global">
+        <Property Name="platform" ReadOnly="true" Obsolete="false" Type="string" />
+        <Property Name="thisResource" ReadOnly="true" Obsolete="false" Type="Object" />
+        <Property Name="localClient" ReadOnly="true" Obsolete="false" Type="Object" />
+        <Property Name="localPlayer" ReadOnly="true" Obsolete="false" Type="Object" />
+        <Function Name="toColour" Mask="iii|i" RequiredArguments="3" Obsolete="false" />
+        <Function Name="collectAllGarbage" Mask="" RequiredArguments="0" Obsolete="false" />
+        <Function Name="inPoly" Mask="z*" RequiredArguments="1" Obsolete="false" />
+        <Function Name="addEvent" Mask="s|i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="addEventHandler" Mask="sf" RequiredArguments="2" Obsolete="false" />
+        <Function Name="removeEventHandler" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="bindEventHandler" Mask="sxf" RequiredArguments="3" Obsolete="false" />
+        <Function Name="unbindEventHandler" Mask="sx" RequiredArguments="2" Obsolete="false" />
+        <Function Name="triggerEvent" Mask="s|x*" RequiredArguments="1" Obsolete="false" />
+        <Function Name="addCommandHandler" Mask="sc|b" RequiredArguments="2" Obsolete="false" />
+        <Function Name="removeCommandHandler" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="consoleCommand" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="setTimeout" Mask="ci*" RequiredArguments="2" Obsolete="false" />
+        <Function Name="setInterval" Mask="ci*" RequiredArguments="2" Obsolete="false" />
+        <Function Name="setImmediate" Mask="c*" RequiredArguments="1" Obsolete="false" />
+        <Function Name="clearTimeout" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="clearInterval" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="clearImmediate" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="bindKey" Mask="iic" RequiredArguments="3" Obsolete="false" />
+        <Function Name="unbindKey" Mask="i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="unbindAllKeys" Mask="" RequiredArguments="0" Obsolete="false" />
+        <Function Name="findResourceByName" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="getResources" Mask="" RequiredArguments="0" Obsolete="false" />
+        <Function Name="exportFunction" Mask="c" RequiredArguments="1" Obsolete="false" />
+        <Function Name="openFile" Mask="s|b" RequiredArguments="1" Obsolete="false" />
+        <Function Name="createFile" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="loadTextFile" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="saveTextFile" Mask="ss" RequiredArguments="2" Obsolete="false" />
+        <Function Name="addNetworkHandler" Mask="sc" RequiredArguments="2" Obsolete="false" />
+        <Function Name="removeNetworkHandler" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="httpGet" Mask="sscc" RequiredArguments="4" Obsolete="false" />
+        <Function Name="message" Mask="s|i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="messageClient" Mask="sx|i" RequiredArguments="2" Obsolete="false" />
+        <Function Name="messageAllExcept" Mask="sx|i" RequiredArguments="2" Obsolete="false" />
+        <Function Name="getConsole" Mask="" RequiredArguments="0" Obsolete="false" />
+        <Function Name="getClients" Mask="" RequiredArguments="0" Obsolete="false" />
+        <Function Name="getClient" Mask="i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="destroyElement" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="getClientFromPlayerElement" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="getElementsByType" Mask="i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="getElementFromId" Mask="i" RequiredArguments="1" Obsolete="false" />
+        <Function Name="getElementFromName" Mask="s" RequiredArguments="1" Obsolete="false" />
+        <Function Name="addToWorld" Mask="x" RequiredArguments="1" Obsolete="false" />
+        <Function Name="triggerNetworkEvent" Mask="sx*" RequiredArguments="2" Obsolete="false" />
+        <Function Name="fadeCamera" Mask="xb|fi" RequiredArguments="2" Obsolete="false" />
+        <Function Name="spawnPlayer" Mask="xv|fiii" RequiredArguments="2" Obsolete="false" />
+        <Class Name="Stream">
+            <Property Name="length" ReadOnly="true" Obsolete="false" Type="int64" />
+            <Property Name="position" ReadOnly="true" Obsolete="false" Type="int64" />
+            <Function Name="close" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readBytes" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="readString" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readLine" Mask="t" RequiredArguments="0" Obsolete="true" />
+            <Function Name="writeBytes" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeString" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="readInt8" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readUInt8" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readInt16" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readUInt16" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readInt32" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readUInt32" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readInt64" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readUInt64" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readFloat" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readDouble" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="writeInt8" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeUInt8" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeInt16" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeUInt16" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeInt32" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeUInt32" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeInt64" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeUInt64" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeFloat" Mask="tf" RequiredArguments="1" Obsolete="false" />
+            <Function Name="writeDouble" Mask="tf" RequiredArguments="1" Obsolete="false" />
+        </Class>
+        <Class Name="TextReader">
+            <Function Name="close" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="loadText" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readLine" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="readCharacter" Mask="t" RequiredArguments="0" Obsolete="false" />
+        </Class>
+        <Class Name="Matrix4x4">
+            <Property Name="m11" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m12" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m13" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m14" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m21" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m22" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m23" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m24" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m31" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m32" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m33" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m34" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m41" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m42" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m43" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="m44" ReadOnly="false" Obsolete="false" Type="number" />
+            <Function Name="setIdentity" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="setTranslate" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setScale" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setRotateX" Mask="tf" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setRotateY" Mask="tf" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setRotateZ" Mask="tf" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setRotate" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setMultiply" Mask="txx*" RequiredArguments="2" Obsolete="false" />
+            <Function Name="multiply" Mask="tx*" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setInverse" Mask="tx" RequiredArguments="1" Obsolete="false" />
+            <Function Name="transformCoordinate" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="getElement" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setElement" Mask="tif" RequiredArguments="2" Obsolete="false" />
+            <Function Name="getVector3" Mask="ti" RequiredArguments="1" Obsolete="false" />
+        </Class>
+        <Class Name="Vec2">
+            <Property Name="x" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="y" ReadOnly="false" Obsolete="false" Type="number" />
+            <Function Name="addPolar" Mask="tff" RequiredArguments="2" Obsolete="false" />
+            <Function Name="interpolate" Mask="tzf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="extrapolate" Mask="tzf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="sphericalInterpolate" Mask="tzf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="sphericalExtrapolate" Mask="tzf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="cartesianToPolar" Mask="t" RequiredArguments="0" Obsolete="false" />
+        </Class>
+        <Class Name="Vec3">
+            <Property Name="x" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="y" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="z" ReadOnly="false" Obsolete="false" Type="number" />
+            <Property Name="length" ReadOnly="true" Obsolete="false" Type="number" />
+            <Property Name="squaredLength" ReadOnly="true" Obsolete="false" Type="number" />
+            <Function Name="distance" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="squaredDistance" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="dotProduct" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="absDotProduct" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="normalise" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="crossProduct" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="midPoint" Mask="tv" RequiredArguments="1" Obsolete="false" />
+            <Function Name="addPolar" Mask="tff" RequiredArguments="2" Obsolete="false" />
+            <Function Name="addSpherical" Mask="tfff" RequiredArguments="3" Obsolete="false" />
+            <Function Name="interpolate" Mask="tvf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="extrapolate" Mask="tvf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="sphericalInterpolate" Mask="tvf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="sphericalExtrapolate" Mask="tvf" RequiredArguments="2" Obsolete="false" />
+            <Function Name="cartesianToPolar" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="cartesianToSpherical" Mask="t" RequiredArguments="0" Obsolete="false" />
+        </Class>
+        <Class Name="Event">
+            <Class Name="CancellableEvent">
+                <Function Name="preventDefault" Mask="t" RequiredArguments="0" Obsolete="false" />
+                <Function Name="isDefaultPrevented" Mask="t" RequiredArguments="0" Obsolete="false" />
+            </Class>
+        </Class>
+        <Class Name="Timer" />
+        <Class Name="KeyEvent">
+            <Property Name="keyCode" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="scanCode" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="mod" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="repeat" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="down" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Function Name="preventDefault" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="isDefaultPrevented" Mask="t" RequiredArguments="0" Obsolete="false" />
+        </Class>
+        <Class Name="XmlElement">
+            <Property Name="childrenCount" ReadOnly="true" Obsolete="false" Type="Object" />
+            <Property Name="children" ReadOnly="true" Obsolete="false" />
+            <Property Name="parent" ReadOnly="true" Obsolete="false" Type="Object" />
+            <Property Name="name" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="text" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="attributes" ReadOnly="true" Obsolete="false" />
+            <Function Name="clear" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="getStringAttribute" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="getBoolAttribute" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="getIntegerAttribute" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="getFloatAttribute" Mask="ts" RequiredArguments="1" Obsolete="false" />
+        </Class>
+        <Class Name="XmlDocument">
+            <Property Name="rootElement" ReadOnly="true" Obsolete="false" Type="Object" />
+            <Function Name="load" Mask="tx" RequiredArguments="1" Obsolete="false" />
+        </Class>
+        <Class Name="Resource">
+            <Property Name="name" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="isStarted" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="isStarting" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="exports" ReadOnly="true" Obsolete="false" />
+            <Function Name="start" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="stop" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="restart" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="getExport" Mask="ts" RequiredArguments="1" Obsolete="false" />
+        </Class>
+        <Class Name="Client">
+            <Property Name="index" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="name" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="game" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="gameVersion" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="player" ReadOnly="false" Obsolete="false" Type="Object" />
+            <Property Name="administrator" ReadOnly="false" Obsolete="false" Type="bool" />
+            <Property Name="console" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="ip" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="ping" ReadOnly="true" Obsolete="false" Type="int" />
+            <Function Name="despawnPlayer" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="disconnect" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="getData" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setData" Mask="ts.|b" RequiredArguments="2" Obsolete="false" />
+            <Function Name="removeData" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="removeAllData" Mask="t" RequiredArguments="0" Obsolete="false" />
+        </Class>
+        <Class Name="Element">
+            <Property Name="id" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="type" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="isLocal" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="isSyncer" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="isOwner" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="syncer" ReadOnly="false" Obsolete="false" Type="int" />
+            <Property Name="owner" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="dimension" ReadOnly="false" Obsolete="false" Type="int" />
+            <Property Name="onAllDimensions" ReadOnly="false" Obsolete="false" Type="bool" />
+            <Property Name="parent" ReadOnly="false" Obsolete="false" Type="Object" />
+            <Property Name="children" ReadOnly="true" Obsolete="false" />
+            <Property Name="name" ReadOnly="false" Obsolete="false" Type="string" />
+            <Property Name="resource" ReadOnly="false" Obsolete="false" Type="Object" />
+            <Function Name="isType" Mask="ti" RequiredArguments="1" Obsolete="false" />
+            <Function Name="getData" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="setData" Mask="ts.|b" RequiredArguments="2" Obsolete="false" />
+            <Function Name="removeData" Mask="ts" RequiredArguments="1" Obsolete="false" />
+            <Function Name="removeAllData" Mask="t" RequiredArguments="0" Obsolete="false" />
+            <Function Name="setSyncer" Mask="ti|b" RequiredArguments="1" Obsolete="false" />
+            <Class Name="Transformable">
+                <Property Name="position" ReadOnly="false" Obsolete="false" Type="Vector3D" />
+                <Property Name="streamInDistance" ReadOnly="false" Obsolete="false" Type="number" />
+                <Property Name="streamOutDistance" ReadOnly="false" Obsolete="false" Type="number" />
+                <Function Name="getRotation" Mask="t" RequiredArguments="0" Obsolete="false" />
+                <Function Name="setRotation" Mask="tv" RequiredArguments="1" Obsolete="false" />
+                <Class Name="Entity">
+                    <Property Name="modelIndex" ReadOnly="false" Obsolete="false" Type="int" />
+                    <Property Name="interior" ReadOnly="false" Obsolete="false" Type="int" />
+                    <Property Name="matrix" ReadOnly="false" Obsolete="false" Type="Matrix4x4" />
+                    <Property Name="heading" ReadOnly="false" Obsolete="false" Type="number" />
+                    <Class Name="Physical">
+                        <Property Name="velocity" ReadOnly="false" Obsolete="false" Type="Vector3D" />
+                        <Property Name="turnVelocity" ReadOnly="false" Obsolete="false" Type="Vector3D" />
+                        <Class Name="Ped">
+                            <Property Name="vehicle" ReadOnly="true" Obsolete="false" Type="Object" />
+                            <Property Name="seat" ReadOnly="true" Obsolete="false" Type="int" />
+                            <Property Name="health" ReadOnly="true" Obsolete="false" Type="number" />
+                            <Property Name="armour" ReadOnly="true" Obsolete="false" Type="number" />
+                            <Property Name="weapon" ReadOnly="true" Obsolete="false" Type="int" />
+                            <Property Name="weaponAmmunition" ReadOnly="true" Obsolete="false" Type="int" />
+                            <Property Name="weaponClipAmmunition" ReadOnly="true" Obsolete="false" Type="int" />
+                            <Property Name="weaponState" ReadOnly="true" Obsolete="false" Type="int" />
+                            <Property Name="isEnteringVehicle" ReadOnly="true" Obsolete="false" Type="bool" />
+                            <Property Name="isExitingVehicle" ReadOnly="true" Obsolete="false" Type="bool" />
+                            <Function Name="warpIntoVehicle" Mask="txi" RequiredArguments="2" Obsolete="false" />
+                            <Class Name="Player" />
+                        </Class>
+                        <Class Name="Vehicle">
+                            <Property Name="locked" ReadOnly="false" Obsolete="false" Type="bool" />
+                            <Property Name="carLock" ReadOnly="false" Obsolete="false" Type="int" />
+                            <Property Name="engine" ReadOnly="false" Obsolete="false" Type="bool" />
+                            <Property Name="colour1" ReadOnly="false" Obsolete="false" Type="int" />
+                            <Property Name="colour2" ReadOnly="false" Obsolete="false" Type="int" />
+                            <Property Name="colour3" ReadOnly="false" Obsolete="false" Type="int" />
+                            <Property Name="colour4" ReadOnly="false" Obsolete="false" Type="int" />
+                            <Property Name="strongGrip" ReadOnly="false" Obsolete="false" Type="bool" />
+                            <Function Name="setColours" Mask="tii" RequiredArguments="2" Obsolete="false" />
+                            <Function Name="setRGBColours" Mask="tii" RequiredArguments="2" Obsolete="false" />
+                            <Function Name="randomiseColours" Mask="t" RequiredArguments="0" Obsolete="false" />
+                            <Function Name="fix" Mask="t" RequiredArguments="0" Obsolete="false" />
+                            <Function Name="getOccupant" Mask="ti" RequiredArguments="1" Obsolete="false" />
+                            <Function Name="getOccupants" Mask="t" RequiredArguments="0" Obsolete="false" />
+                            <Class Name="Train">
+                                <Property Name="track" ReadOnly="false" Obsolete="false" Type="int" />
+                                <Property Name="trackPosition" ReadOnly="false" Obsolete="false" Type="number" />
+                                <Property Name="speed" ReadOnly="false" Obsolete="false" Type="number" />
+                                <Property Name="derailed" ReadOnly="false" Obsolete="false" Type="bool" />
+                                <Property Name="headlights" ReadOnly="false" Obsolete="false" Type="bool" />
+                                <Property Name="taillights" ReadOnly="false" Obsolete="false" Type="bool" />
+                            </Class>
+                        </Class>
+                        <Class Name="Object" />
+                    </Class>
+                    <Class Name="Building" />
+                </Class>
+                <Class Name="Blip" />
+                <Class Name="Pickup" />
+                <Class Name="Marker" />
+                <Class Name="CarGenerator" />
+            </Class>
+        </Class>
+        <Namespace Name="reflection">
+            <Function Name="clone" Mask="x" RequiredArguments="1" Obsolete="false" />
+            <Function Name="move" Mask="xx" RequiredArguments="2" Obsolete="false" />
+            <Function Name="tostring" Mask="x" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createFunction" Mask="c" RequiredArguments="1" Obsolete="false" />
+            <Function Name="call" Mask="x" RequiredArguments="1" Obsolete="false" />
+            <Class Name="Function" />
+        </Namespace>
+        <Namespace Name="module">
+            <Namespace Name="hashing">
+                <Function Name="encodeBase64" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="decodeBase64" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="md5" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="sha1" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="sha224" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="sha256" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="sha384" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="sha512" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="ripemd128" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="ripemd160" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="ripemd256" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="ripemd320" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="whirlpool" Mask="" RequiredArguments="0" Obsolete="false" />
+            </Namespace>
+            <Namespace Name="geoip">
+                <Function Name="getCountryName" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getCountryISO" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getContinentName" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getContinentCode" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getCityName" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getPostalCode" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getSubdivisionName" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getSubdivisionISO" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Function Name="getTimeZoneName" Mask="" RequiredArguments="0" Obsolete="false" />
+            </Namespace>
+            <Namespace Name="mysql">
+                <Function Name="connect" Mask="" RequiredArguments="0" Obsolete="false" />
+                <Class Name="Connection">
+                    <Property Name="ping" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Property Name="insertId" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Property Name="affectedRows" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Property Name="warningCount" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Property Name="errorNum" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Property Name="error" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Function Name="query" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="close" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="escapeString" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="selectDatabase" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="changeUser" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="info" Mask="" RequiredArguments="0" Obsolete="false" />
+                </Class>
+                <Class Name="Result">
+                    <Property Name="numRows" ReadOnly="true" Obsolete="false" Type="void" />
+                    <Function Name="free" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="fetchAssoc" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="fetchAssoc" Mask="" RequiredArguments="0" Obsolete="false" />
+                    <Function Name="fetchRow" Mask="" RequiredArguments="0" Obsolete="false" />
+                </Class>
+            </Namespace>
+            <Namespace Name="smtp">
+                <Function Name="send" Mask="" RequiredArguments="0" Obsolete="false" />
+            </Namespace>
+        </Namespace>
+        <Namespace Name="sdl">
+            <Property Name="platform" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="ticks" ReadOnly="true" Obsolete="false" Type="int" />
+            <Function Name="getModState" Mask="" RequiredArguments="0" Obsolete="false" />
+        </Namespace>
+        <Namespace Name="platform">
+            <Property Name="name" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="modState" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="ticks" ReadOnly="true" Obsolete="false" Type="int" />
+        </Namespace>
+        <Namespace Name="server">
+            <Property Name="game" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="name" ReadOnly="false" Obsolete="false" Type="string" />
+            <Property Name="gameMode" ReadOnly="false" Obsolete="false" Type="string" />
+            <Property Name="port" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="maxClients" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="rcon" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="rconPort" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="listed" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="httpServer" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="httpPort" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="minClientVersion" ReadOnly="true" Obsolete="false" Type="string" />
+            <Property Name="syncInterval" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="syncMethod" ReadOnly="true" Obsolete="false" Type="int" />
+            <Property Name="duplicateNames" ReadOnly="true" Obsolete="false" Type="bool" />
+            <Property Name="streamInDistance" ReadOnly="true" Obsolete="false" Type="number" />
+            <Property Name="streamOutDistance" ReadOnly="true" Obsolete="false" Type="number" />
+            <Property Name="pickupStreamInDistance" ReadOnly="true" Obsolete="false" Type="number" />
+            <Property Name="pickupStreamOutDistance" ReadOnly="true" Obsolete="false" Type="number" />
+            <Property Name="logPath" ReadOnly="true" Obsolete="false" Type="string" />
+            <Function Name="setRule" Mask="ss" RequiredArguments="2" Obsolete="false" />
+            <Function Name="getRule" Mask="s" RequiredArguments="1" Obsolete="false" />
+            <Function Name="banIP" Mask="s|i" RequiredArguments="1" Obsolete="false" />
+            <Function Name="unbanIP" Mask="s" RequiredArguments="1" Obsolete="false" />
+            <Function Name="unbanAllIPs" Mask="" RequiredArguments="0" Obsolete="false" />
+            <Function Name="isIPBanned" Mask="s" RequiredArguments="1" Obsolete="false" />
+            <Function Name="shutdown" Mask="" RequiredArguments="0" Obsolete="false" />
+            <Function Name="getCVar" Mask="s" RequiredArguments="1" Obsolete="false" />
+        </Namespace>
+        <Namespace Name="gta">
+            <Property Name="weather" ReadOnly="false" Obsolete="false" Type="int" />
+            <Property Name="ssvBridgeEnabled" ReadOnly="false" Obsolete="false" Type="bool" />
+            <Function Name="forceWeather" Mask="i" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createVehicle" Mask="i|v" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createBlipAttachedTo" Mask="xi|iibb" RequiredArguments="2" Obsolete="false" />
+            <Function Name="createBuilding" Mask="i|v" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createObject" Mask="i|v" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createBlip" Mask="iv|ii" RequiredArguments="2" Obsolete="false" />
+            <Function Name="createPickup" Mask="i|vi" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createSphere" Mask="v|f" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createPlayer" Mask="i|v" RequiredArguments="1" Obsolete="false" />
+            <Function Name="createCivilian" Mask="i|v" RequiredArguments="1" Obsolete="false" />
+            <Function Name="hostSession" Mask="xii" RequiredArguments="3" Obsolete="false" />
+            <Function Name="joinSession" Mask="xx" RequiredArguments="2" Obsolete="false" />
+            <Class Name="World" />
+            <Namespace Name="time">
+                <Property Name="minuteDuration" ReadOnly="false" Obsolete="false" Type="int" />
+                <Property Name="hour" ReadOnly="false" Obsolete="false" Type="int" />
+                <Property Name="minute" ReadOnly="false" Obsolete="false" Type="int" />
+                <Property Name="second" ReadOnly="false" Obsolete="false" Type="number" />
+                <Property Name="day" ReadOnly="false" Obsolete="false" Type="number" />
+            </Namespace>
+        </Namespace>
+    </Namespace>
+</Documentation>

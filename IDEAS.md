@@ -374,3 +374,8 @@ Obviously this would still be using slashes for commands still. The way this wor
     * Place item on ground (crate)
     * Take second beer from crate
     * Store second beer in trunk
+---
+### Animation/emote, action, and message menu wheels
+So with new Steam Deck being available now, and all the other attempts to use mobile devices that either emulate or stream the older GTA PC games, I figure we'd need a way for players to interact with each other using them. Roleplay is usually a very chat-oriented gamemode, but I can probably make things easier with simple controls. Also customizable messages, animations, and actions for each menu/wheel slot
+The inventory system is already planned to use a hotbar/wheel but I don't have all the images for it yet
+---

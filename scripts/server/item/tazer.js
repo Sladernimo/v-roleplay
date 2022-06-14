@@ -10,34 +10,34 @@
 // ===========================================================================
 
 function isPlayerTazed(client) {
-    return (getPlayerData(client).pedState == VRR_PEDSTATE_TAZED);
+	return (getPlayerData(client).pedState == VRR_PEDSTATE_TAZED);
 }
 
 // ===========================================================================
 
 function tazePlayer(client) {
-    getPlayerData(client).pedState = VRR_PEDSTATE_TAZED;
-    setPlayerControlState(client, false);
+	getPlayerData(client).pedState = VRR_PEDSTATE_TAZED;
+	setPlayerControlState(client, false);
 
-    let animationId = getAnimationFromParams("tazed");
-    if(animationId != false) {
-        forcePlayerPlayAnimation(client, animationId);
-    }
+	let animationId = getAnimationFromParams("tazed");
+	if(animationId != false) {
+		forcePlayerPlayAnimation(client, animationId);
+	}
 
-    setTimeout(function() {
-        unTazePlayer(client);
-        doActionToNearbyPlayers(client, `The tazer effect wears off`);
-    }, getGlobalConfig().tazerEffectDuration);
+	setTimeout(function() {
+		unTazePlayer(client);
+		doActionToNearbyPlayers(client, `The tazer effect wears off`);
+	}, getGlobalConfig().tazerEffectDuration);
 }
 
 // ===========================================================================
 
 function unTazePlayer(client) {
-    getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
 
-    setPlayerControlState(client, true);
-    setPlayerPosition(client, getPlayerData(client).currentAnimationPositionReturnTo);
-    makePedStopAnimation(getPlayerData(client).ped);
+	setPlayerControlState(client, true);
+	setPlayerPosition(client, getPlayerData(client).currentAnimationPositionReturnTo);
+	makePedStopAnimation(getPlayerData(client).ped);
 
 }
 

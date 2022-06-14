@@ -20,17 +20,17 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
-    let animationPositionOffset = 1;
+	let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
+	let animationPositionOffset = 1;
 
 	if(!animationSlot) {
-		messagePlayerError(client, getLocaleString(client, "AnimationNotFound"));
-		messagePlayerInfo(client, getLocaleString(client, "AnimationHelpTip"), `{ALTCOLOUR}/animlist{MAINCOLOUR}`);
+		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
+		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
 		return false;
 	}
 
 	if(toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
-		messagePlayerError(client, getLocaleString(client, "AnimationInvalidDistance"));
+		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
 	}
 
@@ -39,7 +39,7 @@ let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
 	}
 
 	if(isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
-		messagePlayerError(client, `You aren't able to do that`);
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -51,26 +51,26 @@ let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
 
 function stopPlayerAnimationCommand(command, params, client) {
 	if(isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
-		messagePlayerError(client, `You aren't able to do that`);
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
 	setPlayerPosition(client, getPlayerData(client).currentAnimationPositionReturnTo);
-	makePedStopAnimation(getPlayerData(client).ped);
+	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
 	getPlayerData(client).currentAnimationPositionOffset = false;
 	getPlayerData(client).currentAnimationPositionReturnTo = false;
-    getPlayerData(client).animationStart = 0;
+	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 
-	setPlayerMouseCameraState(client, false);
+	//setPlayerMouseCameraState(client, false);
 }
 
 // ===========================================================================
 
 function showAnimationListCommand(command, params, client) {
-	let animList = getGameConfig().animations[getServerGame()].map(function(x) { return x[0]; });
+	let animList = getGameConfig().animations[getGame()].map(function(x) { return x.name; });
 
 	let chunkedList = splitArrayIntoChunks(animList, 10);
 
@@ -87,8 +87,8 @@ function showAnimationListCommand(command, params, client) {
  * @param {number} animationSlot - The slot index of the animation
  * @return {Array} The animation's data (array)
  */
-function getAnimationData(animationSlot, gameId = getServerGame()) {
-    return getGameConfig().animations[gameId][animationSlot];
+function getAnimationData(animationSlot, gameId = getGame()) {
+	return getGameConfig().animations[gameId][animationSlot];
 }
 
 // ===========================================================================
@@ -100,14 +100,14 @@ function isPlayerInForcedAnimation(client) {
 // ===========================================================================
 
 function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-    getPlayerData(client).currentAnimation = animationSlot;
+	getPlayerData(client).currentAnimation = animationSlot;
 	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
 	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-    getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
 	getPlayerData(client).animationForced = false;
 
-    makePedPlayAnimation(getPlayerData(client).ped, animationSlot, offsetPosition);
-
+	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
+	setEntityData(getPlayerPed(client), "vrr.anim", animationSlot, true);
 	//if(getAnimationData(animationSlot)[9] != VRR_ANIMMOVE_NONE) {
 	//	if(getGame() < VRR_GAME_GTA_SA) {
 	//		setPlayerMouseCameraState(client, true);
@@ -118,40 +118,41 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 // ===========================================================================
 
 function forcePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-    getPlayerData(client).currentAnimation = animationSlot;
+	getPlayerData(client).currentAnimation = animationSlot;
 	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
 	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-    getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
 	getPlayerData(client).animationForced = true;
 
 	setPlayerControlState(client, false);
-   	forcePedAnimation(getPlayerData(client).ped, animationSlot, offsetPosition);
+   	forcePedAnimation(getPlayerPed(client), animationSlot, offsetPosition);
 }
 
 // ===========================================================================
 
 function makePlayerStopAnimation(client) {
 	//setPlayerPosition(client, getPlayerData(client).currentAnimationPositionReturnTo);
-	makePedStopAnimation(getPlayerData(client).ped);
+	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
 	getPlayerData(client).currentAnimationPositionOffset = false;
 	getPlayerData(client).currentAnimationPositionReturnTo = false;
-    getPlayerData(client).animationStart = 0;
+	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 }
 
 // ===========================================================================
 
 function getAnimationFromParams(params) {
+	let animations = getGameConfig().animations[getGame()];
 	if(isNaN(params)) {
-		for(let i in getGameConfig().animations[getServerGame()]) {
-			if(toLowerCase(getGameConfig().animations[getServerGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
+		for(let i in animations) {
+			if(toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getGameConfig().animations[getServerGame()][params] != "undefined") {
+		if(typeof getGameConfig().animations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}

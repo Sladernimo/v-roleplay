@@ -30,8 +30,6 @@ class RadioStationData {
 
 function initRadioScript() {
 	logToConsole(LOG_INFO, "[VRR.Radio]: Initializing radio script ...");
-    getServerData().radioStations = loadRadioStationsFromDatabase();
-	setRadioStationIndexes();
 	logToConsole(LOG_INFO, "[VRR.Radio]: Radio script initialized successfully!");
 	return true;
 }
@@ -62,6 +60,15 @@ function loadRadioStationsFromDatabase() {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function playStreamingRadioCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -77,13 +84,16 @@ function playStreamingRadioCommand(command, params, client) {
 	}
 
 	if(isPlayerInAnyVehicle(client)) {
-		if(!getVehicleData(getPlayerVehicle(client))) {
+		let vehicle = getPlayerVehicle(client);
+
+		if(!getVehicleData(vehicle)) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
 
 		if(radioStationId == 0) {
-			getVehicleData(getPlayerVehicle(client)).streamingRadioStation = -1;
+			getVehicleData(vehicle).streamingRadioStation = -1;
+			getVehicleData(vehicle).needsSaved = true;
 			getPlayerData(client).streamingRadioStation = -1;
 			meActionToNearbyPlayers(client, `turns off their vehicle's radio`);
 
@@ -96,13 +106,13 @@ function playStreamingRadioCommand(command, params, client) {
 			return false;
 		}
 
-		getVehicleData(getPlayerVehicle(client)).streamingRadioStation = radioStationId-1;
+		getVehicleData(vehicle).streamingRadioStation = radioStationId-1;
 		getPlayerData(client).streamingRadioStation = radioStationId-1;
 		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
 
 		let clients = getClients();
 		for(let i in clients) {
-			if(getPlayerVehicle(client) == getPlayerVehicle(clients[i])) {
+			if(vehicle == getPlayerVehicle(clients[i])) {
 				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId-1).url, true, getPlayerStreamingRadioVolume(client));
 			}
 		}
@@ -111,6 +121,7 @@ function playStreamingRadioCommand(command, params, client) {
 			let houseId = getEntityData(client, "vrr.inHouse");
 			if(radioStationId == 0) {
 				getHouseData(houseId).streamingRadioStation = -1;
+				getHouseData(houseId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the house radio`);
 
@@ -122,6 +133,7 @@ function playStreamingRadioCommand(command, params, client) {
 				}
 			} else {
 				getHouseData(houseId).streamingRadioStation = radioStationId-1;
+				getHouseData(houseId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = radioStationId-1;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
 
@@ -136,6 +148,7 @@ function playStreamingRadioCommand(command, params, client) {
 			let businessId = getPlayerBusiness(client);
 			if(radioStationId == 0) {
 				getBusinessData(businessId).streamingRadioStation = -1;
+				getBusinessData(businessId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the business radio`);
 
@@ -147,6 +160,7 @@ function playStreamingRadioCommand(command, params, client) {
 				}
 			} else {
 				getBusinessData(businessId).streamingRadioStation = radioStationId-1;
+				getBusinessData(businessId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = radioStationId-1;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
 
@@ -166,6 +180,15 @@ function playStreamingRadioCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setStreamingRadioVolumeCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -206,6 +229,15 @@ function getPlayerStreamingRadioVolume(client) {
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function showRadioStationListCommand(command, params, client) {
 	let stationList = getServerData().radioStations.map(function(x) { return `{ALTCOLOUR}${toInteger(x.index)+1}: {MAINCOLOUR}${x.name}`; });
 
@@ -220,7 +252,7 @@ function showRadioStationListCommand(command, params, client) {
 
 // ===========================================================================
 
-function setRadioStationIndexes() {
+function setAllRadioStationIndexes() {
 	for(let i in getServerData().radioStations) {
 		getServerData().radioStations[i].index = i;
 	}
@@ -228,19 +260,32 @@ function setRadioStationIndexes() {
 
 // ===========================================================================
 
+/**
+ * @param {number} radioStationId - The data index of the radio station
+ * @return {RadioStationData} The radio station's data (class instance)
+ */
 function getRadioStationData(radioStationId) {
 	return getServerData().radioStations[radioStationId];
 }
 
 // ===========================================================================
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function reloadAllRadioStationsCommand(command, params, client) {
 	stopRadioStreamForPlayer(null);
 	clearArray(getServerData().radioStations);
 	getServerData().radioStations = loadRadioStationsFromDatabase();
 	setRadioStationIndexes();
 
-	messageAdminAction(`All radio stations have been reloaded by an admin!`);
+	announceAdminAction(`AllRadioStationsReloaded`);
 }
 
 // ===========================================================================

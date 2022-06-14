@@ -3,7 +3,7 @@
 // https://github.com/VortrexFTW/gtac_roleplay
 // ===========================================================================
 // FILE: const.js
-// DESC: Provides constants
+// DESC: Provides shared constants
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
@@ -34,6 +34,7 @@ const VRR_GAME_GTA_III = 1;
 const VRR_GAME_GTA_VC = 2;
 const VRR_GAME_GTA_SA = 3;
 const VRR_GAME_GTA_IV = 5;
+const VRR_GAME_GTA_IV_EFLC = 6;
 const VRR_GAME_GTA_V = 50;
 const VRR_GAME_MAFIA_ONE = 10;
 const VRR_GAME_MAFIA_TWO = 11;
@@ -80,6 +81,8 @@ const VRR_ANIMMOVE_RIGHT = 4;
 const VRR_MPMOD_NONE = 0;
 const VRR_MPMOD_GTAC = 1;
 const VRR_MPMOD_MAFIAC = 2;
+const VRR_MPMOD_OAKWOOD = 3;
+const VRR_MPMOD_RAGEMP = 4;
 
 // Business/House Game Script States
 //const VRR_GAMESCRIPT_NONE = 0;
@@ -107,3 +110,28 @@ const VRR_ISLAND_SANFIERRO = 2;                  // San Fierro
 const VRR_ISLAND_REDCOUNTYNORTH = 4;             // Red County North (spans all the way from Palamino/shore on the east east to border of Flint County on the west)
 const VRR_ISLAND_BONECOUNTYNORTH = 5;            // Bone County North (usually called Tierra Robada)
 const VRR_ISLAND_BONECOUNTYSOUTH = 6;            // Bone County South
+
+// Body Parts for Skin Select (IV for now, but might do other games when I can add accessory objects)
+const VRR_SKINSELECT_NONE = 0;
+const VRR_SKINSELECT_SKIN = 1;
+const VRR_SKINSELECT_HAT = 2;
+const VRR_SKINSELECT_HAIR = 3;
+const VRR_SKINSELECT_EYES = 5;
+const VRR_SKINSELECT_UPPER = 6;
+const VRR_SKINSELECT_LOWER = 7;
+const VRR_SKINSELECT_SHOES = 8;
+const VRR_SKINSELECT_LEFTWRIST = 9;
+const VRR_SKINSELECT_RIGHTWRIST = 10;
+const VRR_SKINSELECT_LEFTHAND = 11;
+const VRR_SKINSELECT_RIGHTHAND = 12;
+const VRR_SKINSELECT_HEAD = 13;
+
+// Action States for NPCs
+const VRR_NPC_ACTION_NONE = 0;
+const VRR_NPC_ACTION_ANIM = 1;
+const VRR_NPC_ACTION_WALKTO = 2;
+const VRR_NPC_ACTION_RUNTO = 3;
+const VRR_NPC_ACTION_SPRINTTO = 4;
+const VRR_NPC_ACTION_FOLLOW = 5;
+const VRR_NPC_ACTION_DEFEND = 6;
+const VRR_NPC_ACTION_GUARD_AREA = 7;

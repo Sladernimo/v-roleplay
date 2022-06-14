@@ -1,155 +1,133 @@
 var mexui = {};
 
 // data initialization
-mexui.Entity			= {};
-mexui.Component			= {};
-mexui.Control			= {};
-mexui.Entry				= {};
+mexui.Entity = {};
+mexui.Component = {};
+mexui.Control = {};
+mexui.Entry = {};
 
-mexui.windows			= [];
+mexui.windows = [];
 
-mexui.fonts				= {};
-mexui.images			= {};
+mexui.fonts = {};
+mexui.images = {};
 
-mexui.focusedControl	= null;
-mexui.hoveredComponent	= null;
+mexui.focusedControl = null;
+mexui.hoveredComponent = null;
 
 // initialization
-mexui.init = function()
-{
-	mexui.native.loadImage('third-party/mexui/Images/down-arrow.png', 'downArrow');
+mexui.init = function () {
+	mexui.native.loadImage('mexui/Images/down-arrow.png', 'downArrow');
 	mexui.bindEvents();
 	mexui.startTimers();
 };
 
 // events
-mexui.bindEvents = function()
-{
-	addEventHandler('onMouseDown', function(event, mouse, button)
-	{
-		var e = mexui.triggerEvent('onMouseDown', {button: button});
-		if(!e.clickedAControl)
-		{
+mexui.bindEvents = function () {
+	addEventHandler('onMouseDown', function (event, mouse, button) {
+		var e = mexui.triggerEvent('onMouseDown', { button: button });
+		if (!e.clickedAControl) {
 			mexui.focusedControl = null;
 		}
 	});
 
-	addEventHandler('onMouseUp', function(event, mouse, button)
-	{
-		mexui.triggerEvent('onMouseUp', {button: button});
+	addEventHandler('onMouseUp', function (event, mouse, button) {
+		mexui.triggerEvent('onMouseUp', { button: button });
 	});
 
-	addEventHandler('onMouseMove', function(event, mouse, isAbsolute, position)
-	{
-		if(isAbsolute)
+	addEventHandler('onMouseMove', function (event, mouse, isAbsolute, position) {
+		if (isAbsolute)
 			return;
 
 		mexui.triggerEvent('onMouseMove', new Vec2(position.x, position.y), true);
 	});
 
-	addEventHandler('onMouseWheel', function(event, mouse, offset, flipped)
-	{
+	addEventHandler('onMouseWheel', function (event, mouse, offset, flipped) {
 		mexui.triggerEvent('onMouseWheel', offset);
 	});
 
-	addEventHandler('onKeyDown', function(event, key, pkey, mods)
-	{
+	addEventHandler('onKeyDown', function (event, key, pkey, mods) {
 		mexui.triggerEvent('onKeyDown', key, mods);
 
-		if(key == SDLK_TAB)
-		{
+		if (key == SDLK_TAB) {
 			mexui.cycleFocusedControl();
 		}
 	});
 
-	addEventHandler('onCharacter', function(event, character)
-	{
+	addEventHandler('onCharacter', function (event, character) {
 		mexui.triggerEvent('onCharacter', character);
 
-		if(character == 't' || character == 'T')
-		{
+		if (character == 't' || character == 'T') {
 			var textInput = mexui.getFocusedTextInput();
-			if(textInput)
-			{
+			if (textInput) {
 				//event.preventDefault();
 			}
 		}
 	});
 
-	addEventHandler('onDrawnHUD', function(event)
 	{
-		mexui.render();
-	});
+		var eventName = (game.game == VRR_GAME_GTA_SA || game.game == VRR_GAME_MAFIA_ONE) ? 'onDrawnHUD' : 'onBeforeDrawHUD';
+		addEventHandler(eventName, function (event) {
+			mexui.render();
+		});
+	}
 };
 
-mexui.unbindEvents = function()
-{
+mexui.unbindEvents = function () {
 	removeEventHandler('onMouseDown');
 	removeEventHandler('onMouseUp');
 	removeEventHandler('onMouseMove');
 	removeEventHandler('onMouseWheel');
 	removeEventHandler('onKeyDown');
 	removeEventHandler('onCharacter');
-	removeEventHandler('onDrawnHUD');
+	removeEventHandler('onBeforeDrawHUD');
 };
 
 // timers
-mexui.startTimers = function()
-{
+mexui.startTimers = function () {
 	setInterval(mexui.toggleTextInputCaretShownForBlink, 400);
 };
 
 // render
-mexui.render = function()
-{
-	for(var i in mexui.windows)
-	{
-		if(mexui.windows[i].shown)
+mexui.render = function () {
+	for (var i in mexui.windows) {
+		if (mexui.windows[i].shown)
 			mexui.windows[i].render.call(mexui.windows[i]);
 	}
-	for(var i in mexui.windows)
-	{
-		if(mexui.windows[i].shown)
+	for (var i in mexui.windows) {
+		if (mexui.windows[i].shown)
 			mexui.windows[i].renderAfter.call(mexui.windows[i]);
 	}
 };
 
 // model
-mexui.triggerEvent = function(eventName, data, callBaseMethodFirst)
-{
+mexui.triggerEvent = function (eventName, data, callBaseMethodFirst) {
 	var e = new mexui.Component.Event();
 
-	if(data.button !== undefined)
+	if (data.button !== undefined)
 		e.button = data.button;
 
 	var windows = mexui.windows.slice(0, mexui.windows.length).reverse();
-	for(var i in windows)
-	{
-		if(windows[i].shown)
-		{
-			if(callBaseMethodFirst)
-			{
-				if(mexui.Entity.Component.prototype[eventName])
-				{
+	for (var i in windows) {
+		if (windows[i].shown) {
+			if (callBaseMethodFirst) {
+				if (mexui.Entity.Component.prototype[eventName]) {
 					mexui.Entity.Component.prototype[eventName].call(windows[i], e, data);
-					if(e.used)
+					if (e.used)
 						break;
 				}
 
 				windows[i][eventName].call(windows[i], e, data);
-				if(e.used)
+				if (e.used)
 					break;
 			}
-			else
-			{
+			else {
 				windows[i][eventName].call(windows[i], e, data);
-				if(e.used)
+				if (e.used)
 					break;
 
-				if(mexui.Entity.Component.prototype[eventName])
-				{
+				if (mexui.Entity.Component.prototype[eventName]) {
 					mexui.Entity.Component.prototype[eventName].call(windows[i], e, data);
-					if(e.used)
+					if (e.used)
 						break;
 				}
 			}
@@ -158,29 +136,24 @@ mexui.triggerEvent = function(eventName, data, callBaseMethodFirst)
 	return e;
 };
 
-mexui.getTopWindow = function()
-{
-	for(var i = mexui.windows.length - 1, j = 0; i >= j; i--)
-	{
-		if(mexui.windows[i].shown)
+mexui.getTopWindow = function () {
+	for (var i = mexui.windows.length - 1, j = 0; i >= j; i--) {
+		if (mexui.windows[i].shown)
 			return mexui.windows[i];
 	}
 	return null;
 };
 
-mexui.getShownWindows = function()
-{
+mexui.getShownWindows = function () {
 	var shownWindows = [];
-	for(var i = mexui.windows.length - 1, j = 0; i >= j; i--)
-	{
-		if(mexui.windows[i].shown)
+	for (var i = mexui.windows.length - 1, j = 0; i >= j; i--) {
+		if (mexui.windows[i].shown)
 			shownWindows.push(mexui.windows[i]);
 	}
 	return shownWindows;
 };
 
-mexui.getNextShownWindows = function(afterWindow)
-{
+mexui.getNextShownWindows = function (afterWindow) {
 	var shownWindows = mexui.getShownWindows();
 
 	var windowIndex = shownWindows.indexOf(afterWindow);
@@ -194,17 +167,15 @@ mexui.getNextShownWindows = function(afterWindow)
 	return shownWindows;
 };
 
-mexui.cycleFocusedControl = function()
-{
+mexui.cycleFocusedControl = function () {
 	// no windows are created
-	if(mexui.windows.length == 0)
+	if (mexui.windows.length == 0)
 		return;
 
 	// no control is focused
-	if(!mexui.focusedControl)
-	{
+	if (!mexui.focusedControl) {
 		var topWindow = mexui.getTopWindow();
-		if(!topWindow)
+		if (!topWindow)
 			return;
 
 		mexui.focusedControl = topWindow.getFirstShownControl();
@@ -214,87 +185,73 @@ mexui.cycleFocusedControl = function()
 	// a control is focused
 	var focusedControlWindow = mexui.focusedControl.window;
 	var nextControl = focusedControlWindow.getNextShownControl(mexui.focusedControl);
-	if(nextControl)
-	{
+	if (nextControl) {
 		mexui.focusedControl = nextControl;
 		return;
 	}
 
 	// set focus to first control on next window that has a control shown
 	var shownWindows = mexui.getNextShownWindows(focusedControlWindow);
-	for(var i in shownWindows)
-	{
+	for (var i in shownWindows) {
 		var window = shownWindows[i];
 		var firstControl = window.getFirstShownControl();
-		if(firstControl)
-		{
+		if (firstControl) {
 			mexui.focusedControl = firstControl;
 			return;
 		}
 	}
 };
 
-mexui.getFocusedTextInput = function()
-{
-	if(!mexui.focusedControl)
+mexui.getFocusedTextInput = function () {
+	if (!mexui.focusedControl)
 		return null;
 
-	if(!(mexui.focusedControl instanceof mexui.Control.TextInput))
+	if (!(mexui.focusedControl instanceof mexui.Control.TextInput))
 		return null;
 
 	return mexui.focusedControl;
 };
 
-mexui.toggleTextInputCaretShownForBlink = function()
-{
+mexui.toggleTextInputCaretShownForBlink = function () {
 	var textInput = mexui.getFocusedTextInput();
-	if(!textInput)
+	if (!textInput)
 		return;
 
 	textInput.caretShownForBlink = !textInput.caretShownForBlink;
 };
 
-mexui.setHoveredComponent = function(component)
-{
+mexui.setHoveredComponent = function (component) {
 	//component.hovered = true;
 	mexui.hoveredComponent = component;
 };
 
-mexui.clearHoveredComponent = function()
-{
+mexui.clearHoveredComponent = function () {
 	//mexui.hoveredComponent.hovered = false;
 	mexui.hoveredComponent = null;
 };
 
 // api
-mexui.window = function(x, y, w, h, title, styles)
-{
+mexui.window = function (x, y, w, h, title, styles) {
 	var window = new mexui.Component.Window(x, y, w, h, title, styles);
 	mexui.windows.push(window);
 	return window;
 };
 
-mexui.isAnyWindowShown = function()
-{
-	for(var i in mexui.windows)
-	{
-		if(mexui.windows[i].shown)
+mexui.isAnyWindowShown = function () {
+	for (var i in mexui.windows) {
+		if (mexui.windows[i].shown)
 			return true;
 	}
 	return false;
 };
 
-mexui.setInput = function(showInput)
-{
+mexui.setInput = function (showInput) {
 	gui.showCursor(showInput, !showInput);
-	//if(game.game != VRR_GAME_GTA_IV) {
-	//	if(localPlayer)
-	//	{
-	//		if(showInput)
-	//			game.setCameraLookAt(new Vec3(game.cameraMatrix.m41, game.cameraMatrix.m42, game.cameraMatrix.m43), localPlayer.position, false);
-	//		else
-	//			game.restoreCamera(false);
-	//	}
-	//}
-};
 
+	if (localClient.player && game.game >= GAME_GTA_IV) {
+		if (showInput)
+			game.setCameraLookAtEntity(new Vec3(game.cameraMatrix.m41, game.cameraMatrix.m42, game.cameraMatrix.m43), localPlayer, false);
+		else
+			game.restoreCamera(false);
+	}
+};
