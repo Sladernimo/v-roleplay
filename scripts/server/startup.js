@@ -10,7 +10,6 @@
 function initServerScripts() {
 	checkForAllRequiredModules();
 
-	initClassScript();
 	initDatabaseScript();
 	initConfigScript();
 	initEmailScript();
@@ -119,7 +118,6 @@ function loadServerDataFromDatabase() {
 	// Always load these regardless of "test server" status
 	getServerData().localeStrings = loadAllLocaleStrings();
 	getServerData().allowedSkins = getAllowedSkins(getGame());
-
 	getServerData().itemTypes = loadItemTypesFromDatabase();
 
 	// Translation Cache
