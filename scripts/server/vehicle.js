@@ -29,7 +29,7 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 /**
  * @class Representing a vehicle's data. Loaded and saved in the database
  */
- class VehicleData {
+class VehicleData {
 	constructor(dbAssoc = false, vehicle = false) {
 		// General Info
 		this.databaseId = 0;
@@ -56,6 +56,8 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 		this.spawnPosition = (vehicle) ? vehicle.position : toVector3(0.0, 0.0, 0.0);
 		this.spawnRotation = (vehicle) ? vehicle.heading : 0.0;
 		this.spawnLocked = false;
+		this.interior = 0;
+		this.dimension = 0;
 
 		// Colour Info
 		this.colour1IsRGBA = 0;
@@ -67,22 +69,6 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 		this.colour3 = (vehicle) ? vehicle.colour3 : 1;
 		this.colour4 = (vehicle) ? vehicle.colour4 : 1;
 		this.livery = 3;
-
-		this.extras = [
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-		];
 
 		// Vehicle Attributes
 		this.locked = false;
@@ -105,13 +91,11 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 		this.needsSaved = false;
 		this.whoAdded = 0;
 		this.whenAdded = 0;
-
-		this.interior = 0;
-		this.dimension = 0;
+		this.licensePlate = "";
 
 		this.lastActiveTime = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
 			this.serverId = toInteger(dbAssoc["veh_server"]);
@@ -127,6 +111,8 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 			this.spawnPosition = toVector3(dbAssoc["veh_pos_x"], dbAssoc["veh_pos_y"], dbAssoc["veh_pos_z"]);
 			this.spawnRotation = toInteger(dbAssoc["veh_rot_z"]);
 			this.spawnLocked = intToBool(toInteger(dbAssoc["veh_spawn_lock"]));
+			this.interior = toInteger(dbAssoc["veh_int"]);
+			this.dimension = toInteger(dbAssoc["veh_vw"]);
 
 			// Colour Info
 			this.colour1IsRGBA = intToBool(toInteger(dbAssoc["veh_col1_isrgba"]));
@@ -172,9 +158,7 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 			this.needsSaved = false;
 			this.whoAdded = toInteger(dbAssoc["veh_who_added"]);
 			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
-
-			this.interior = toInteger(dbAssoc["veh_int"]);
-			this.dimension = toInteger(dbAssoc["veh_vw"]);
+			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 		}
 	}
 };
