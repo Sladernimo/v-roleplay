@@ -19,19 +19,28 @@ const VRR_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case se
 const VRR_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
 const VRR_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
 
+// NPC Owner Types
+const VRR_NPC_OWNER_NONE = 0;                     // Not owned
+const VRR_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const VRR_NPC_OWNER_JOB = 2;                      // Owned by a job
+const VRR_NPC_OWNER_CLAN = 3;                     // Owned by a clan
+const VRR_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const VRR_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
+const VRR_NPC_OWNER_BIZ = 6;                      // Owned by a business
+
 // ===========================================================================
 
 class NPCData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
-		this.firstName = "John";
-		this.lastName = "Doe";
-		this.middleName = "Q";
+		this.name = "NPC";
 		this.skin = 0;
 		this.cash = 0;
-		this.spawnPosition = toVector3(0.0, 0.0, 0.0);
-		this.spawnHeading = 0.0;
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.rotation = toVector3(0.0, 0.0, 0.0);
+		this.scale = toVector3(1.0, 1.0, 1.0);
+		this.heading = 0.0;
 		this.clan = 0;
 		this.isWorking = false;
 		this.jobUniform = this.skin;
@@ -40,57 +49,67 @@ class NPCData {
 		this.weapons = [];
 		this.interior = 0;
 		this.dimension = 0;
-		this.pedScale = toVector3(1.0, 1.0, 1.0);
 		this.walkStyle = 0;
 		this.fightStyle = 0;
 		this.health = 100;
 		this.armour = 100;
-		this.currentAction = VRR_NPCACTION_NONE;
+		this.currentAction = VRR_NPC_ACTION_NONE;
 		this.triggers = [];
+		this.typeFlags = 0;
+		this.heedThreats = false;
+		this.threats = 0;
+		this.invincible = false;
+		this.animationName = "";
+		this.ownerType = VRR_NPC_OWNER_NONE;
+		this.ownerId = 0;
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
-		if(dbAssoc) {
+		this.triggers = [];
+
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_id"]);
 			this.serverId = toInteger(dbAssoc["npc_server"]);
-			this.firstName = dbAssoc["npc_name_first"];
-			this.lastName = dbAssoc["npc_name_last"];
-			this.middleName = dbAssoc["npc_name_middle"] || "";
+			this.name = dbAssoc["npc_name"];
 			this.skin = toInteger(dbAssoc["npc_skin"]);
 			this.cash = toInteger(dbAssoc["npc_cash"]);
-			this.spawnPosition = toVector3(toFloat(dbAssoc["npc_pos_x"]), toFloat(dbAssoc["npc_pos_y"]), toFloat(dbAssoc["npc_pos_z"]));
-			this.spawnHeading = toFloat(dbAssoc["npc_angle"]);
+			this.position = toVector3(toFloat(dbAssoc["npc_pos_x"]), toFloat(dbAssoc["npc_pos_y"]), toFloat(dbAssoc["npc_pos_z"]));
+			this.rotation = toVector3(toFloat(dbAssoc["npc_rot_x"]), toFloat(dbAssoc["npc_rot_y"]), toFloat(dbAssoc["npc_rot_z"]));
+			this.scale = toVector3(toFloat(dbAssoc["npc_scale_x"]), toFloat(dbAssoc["npc_scale_y"]), toFloat(dbAssoc["npc_scale_z"]));
+			this.heading = toFloat(dbAssoc["npc_rot_z"]);
 			this.lastLogin = toInteger(dbAssoc["npc_when_lastlogin"]);
-			this.clan = toInteger(dbAssoc["npc_clan"]);
-			this.clanFlags = toInteger(dbAssoc["npc_clan_flags"]);
-			this.clanRank = toInteger(dbAssoc["npc_clan_rank"]);
-			this.clanTitle = toInteger(dbAssoc["npc_clan_title"]);
+			this.rank = toInteger(dbAssoc["npc_rank"]);
+			this.title = toInteger(dbAssoc["npc_title"]);
 			this.job = toInteger(dbAssoc["npc_job"]);
 			this.interior = toInteger(dbAssoc["npc_int"]);
 			this.dimension = toInteger(dbAssoc["npc_vw"]);
-			this.pedScale = toVector3(toFloat(dbAssoc["npc_scale_x"]), toFloat(dbAssoc["npc_scale_y"]), toFloat(dbAssoc["npc_scale_z"]));
 			this.walkStyle = toInteger(dbAssoc["npc_walkstyle"]);
 			this.fightStyle = toInteger(dbAssoc["npc_fightstyle"]);
 			this.health = toInteger(dbAssoc["npc_health"]);
 			this.armour = toInteger(dbAssoc["npc_armour"]);
+			this.typeFlags = toInteger(dbAssoc["npc_type_flags"]);
+			this.heedThreats = intToBool(dbAssoc["npc_headthreats"]);
+			this.threats = toInteger(dbAssoc["npc_threats"]);
+			this.invincible = intToBool(dbAssoc["npc_invincible"]);
+			this.animationName = intToBool(dbAssoc["npc_animation"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["npc_hd_part_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_part_hair_texture"]) || 0],
@@ -128,7 +147,7 @@ class NPCTriggerData {
 		this.conditions = [];
 		this.responses = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_npc"]);
 			this.triggerType = toInteger(dbAssoc["npc_trig_type"]);
@@ -148,7 +167,7 @@ class NPCTriggerConditionData {
 		this.conditionValue = false;
 		this.matchType = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_cond_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_cond_trig"]);
 			this.conditionType = toInteger(dbAssoc["npc_trig_cond_type"]);
@@ -169,7 +188,7 @@ class NPCTriggerResponseData {
 		this.responseType = 0;
 		this.responseValue = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["npc_trig_resp_id"]);
 			this.npc = toInteger(dbAssoc["npc_trig_resp_trig"]);
 			this.responseType = toInteger(dbAssoc["npc_trig_resp_type"]);
@@ -596,28 +615,28 @@ function getNPCInfoCommand(command, params, client) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (npcData.ownerType) {
-		case VRR_NPCOWNER_CLAN:
+		case VRR_NPC_OWNER_CLAN:
 			ownerName = getClanData(getClanIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
-		case VRR_NPCOWNER_JOB:
+		case VRR_NPC_OWNER_JOB:
 			ownerName = getJobData(getJobIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "job";
 			break;
 
-		case VRR_NPCOWNER_PLAYER:
+		case VRR_NPC_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(npcData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			ownerType = "player";
 			break;
 
-		case VRR_NPCOWNER_BIZ:
+		case VRR_NPC_OWNER_BIZ:
 			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "business";
 			break;
 
-		case VRR_NPCOWNER_PUBLIC:
+		case VRR_NPC_OWNER_PUBLIC:
 			ownerName = "Nobody";
 			ownerType = "public";
 			break;
