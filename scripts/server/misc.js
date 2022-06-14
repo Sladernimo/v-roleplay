@@ -882,7 +882,7 @@ function deletePlayerBlip(client) {
 	}
 
 	if (getPlayerData(client).playerBlip != null) {
-		destroyElement(getPlayerData(client).playerBlip);
+		deleteGameElement(getPlayerData(client).playerBlip);
 		getPlayerData(client).playerBlip = null;
 	}
 }
