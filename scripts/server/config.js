@@ -216,6 +216,7 @@ let globalConfig = {
 	passwordRequiredSymbols: 0,
 	minChatLines: 1,
 	maxChatLines: 6,
+	vehicleTrunkDistance: 2.0,
 };
 
 // ===========================================================================

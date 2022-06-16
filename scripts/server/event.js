@@ -172,12 +172,12 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 		if (getVehicleData(vehicle).locked) {
 			if (doesPlayerHaveVehicleKeys(client, vehicle)) {
 				if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
-					messagePlayerTip(client, `🔒 This ${getVehicleName(vehicle)} is locked. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))} {MAINCOLOUR}to unlock it.`);
+					messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
 				} else {
-					messagePlayerNormal(client, `🔒 This ${getVehicleName(vehicle)} is locked. Use /lock to unlock it`);
+					messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
 				}
 			} else {
-				messagePlayerNormal(client, `🔒 This ${getVehicleName(vehicle)} is locked and you don't have the keys to unlock it`);
+				messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
 			}
 
 			//getPlayerData(client).enteringVehicle = null;
@@ -287,38 +287,38 @@ async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
 				messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
 				resetVehiclePosition(vehicle);
 			} else {
-				messagePlayerAlert(client, `You are renting this ${getVehicleName(vehicle)} for {ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)} per minute. {MAINCOLOUR}Use {ALTCOLOUR}/stoprent {MAINCOLOUR}if you want to stop renting it.`);
+				messagePlayerAlert(client, getLocaleString(client, "CurrentlyRentingThisVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}`, `{ALTCOLOUR}/stoprent{MAINCOLOUR}`));
 			}
 		} else {
 			let ownerName = "Nobody";
-			let ownerType = "None";
+			let ownerType = getLocaleString(client, "NotOwned");
 			ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
 			switch (getVehicleData(vehicle).ownerType) {
 				case VRR_VEHOWNER_CLAN:
 					ownerName = getClanData(getClanIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
-					ownerType = "clan";
+					ownerType = getLocaleString(client, "Clan");
 					break;
 
 				case VRR_VEHOWNER_JOB:
 					ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
-					ownerType = "job";
+					ownerType = getLocaleString(client, "Job");
 					break;
 
 				case VRR_VEHOWNER_PLAYER:
 					let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
 					ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
-					ownerType = "player";
+					ownerType = getLocaleString(client, "Player");
 					break;
 
 				case VRR_VEHOWNER_BIZ:
 					ownerName = getBusinessData(getVehicleData(vehicle).ownerId).name;
-					ownerType = "business";
+					ownerType = getLocaleString(client, "Business");
 					break;
 
 				default:
 					break;
 			}
-			messagePlayerAlert(client, `This ${getVehicleName(vehicle)} belongs to {ALTCOLOUR}${ownerName} (${ownerType})`);
+			messagePlayerAlert(client, getLocaleString(client, "VehicleBelongsTo", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerName}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerType}{MAINCOLOUR}`));
 		}
 
 		if (!getVehicleData(vehicle).engine) {
@@ -513,12 +513,6 @@ async function onPlayerSpawn(client) {
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
-	if (getGame() == VRR_GAME_GTA_IV) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped body parts and props`);
-		setEntityData(getPlayerPed(client), "vrr.bodyParts", getPlayerCurrentSubAccount(client).bodyParts, true);
-		setEntityData(getPlayerPed(client), "vrr.bodyProps", getPlayerCurrentSubAccount(client).bodyProps, true);
-	}
-
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 	setEntityData(getPlayerPed(client), "vrr.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 
@@ -527,7 +521,7 @@ async function onPlayerSpawn(client) {
 		return false;
 	}
 
-	if (isCustomCameraSupported()) {
+	if (isCustomCameraSupported() && getGame() != VRR_GAME_GTA_IV && getGame() != VRR_GAME_GTA_IV_EFLC) {
 		restorePlayerCamera(client);
 	}
 

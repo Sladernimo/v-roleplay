@@ -48,14 +48,12 @@ let randomTips = [
 // ===========================================================================
 
 function helpCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		showMainHelpMessage(client);
 		return false;
 	}
 
-	let splitParams = params.split(" ");
-
-	switch(toLowerCase(getParam(params, " ", 1))) {
+	switch (toLowerCase(getParam(params, " ", 1))) {
 		case "account":
 			showAccountHelpMessage(client);
 			break;
@@ -328,7 +326,7 @@ function showRadioHelpMessage(client) {
 
 function showWealthAndTaxHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWealthandTaxHelp")));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100*getGlobalConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * getGlobalConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 1));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 3, `{ALTCOLOUR}/wealth{MAINCOLOUR}`, `{ALTCOLOUR}/tax{MAINCOLOUR}`));
@@ -337,7 +335,7 @@ function showWealthAndTaxHelpMessage(client) {
 // ===========================================================================
 
 function showCommandHelpMessage(client, commandName) {
-	if(!commandName) {
+	if (!commandName) {
 		messagePlayerSyntax(client, `${getCommandSyntaxText("help")}command <command name>`);
 		return false;
 	}
@@ -345,7 +343,7 @@ function showCommandHelpMessage(client, commandName) {
 	commandName = toLowerCase(commandName);
 	commandName = commandName.trim();
 
-	if(commandName.slice(0, 1) == "/") {
+	if (commandName.slice(0, 1) == "/") {
 		commandName = commandName.slice(1);
 	}
 
@@ -355,7 +353,7 @@ function showCommandHelpMessage(client, commandName) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandInfo", commandName)));
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Description: ${command.helpDescription}`);
 
-	if(aliases.length > 0) {
+	if (aliases.length > 0) {
 		messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Aliases: ${aliases.join(", ")}`);
 	} else {
 		messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Aliases: (None)`);
@@ -394,7 +392,7 @@ function helpGetCarCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
- function helpGetSkinCommand(command, params, client) {
+function helpGetSkinCommand(command, params, client) {
 	messagePlayerAlert(client, getLocaleString(client, "SkinCommandHelp", `{ALTCOLOUR}/info skin{MAINCOLOUR}`));
 	messagePlayerAlert(client, ``);
 }

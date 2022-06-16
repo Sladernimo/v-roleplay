@@ -4856,7 +4856,6 @@ let gameData = {
 			Job: 56,
 			Bar: 49,
 			Club: 48,
-			RepairGarage: 27,
 			Trophy: 33,
 			Race: 53,
 			Job: 56,
@@ -5751,7 +5750,8 @@ let gameData = {
 			JailCell: [toVector3(328.40, -1093.31, 25.98), 0, false, -1],
 			Church: [toVector3(13.87, -1122.43, 26.12), 0, false, -1],
 			Mansion: [toVector3(1461.00, -173.87, 55.78), 0, false, -1],
-			Garage: [toVector3(-420.69, 289.86, 62.96), 0, false, -1],
+			SmallGarage: [toVector3(-420.69, 289.86, 62.96), 0, false, -1],
+			JoeyGarage: [toVector3(1189.40, -867.69, 15.18), 0, false, -1],
 		},
 		[VRR_GAME_GTA_VC]: { // GTA VC
 			Mall: [toVector3(379.62, 1007.00, 19.22), 4, false, -1],

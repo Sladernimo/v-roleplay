@@ -1383,3 +1383,14 @@ function createAttachedGameBlip(element, type, size, colour = toColour(255, 255,
 }
 
 // ===========================================================================
+
+function deletePlayerPed(client) {
+	if (areServerElementsSupported()) {
+		destroyElement(client.player);
+	} else {
+		sendNetworkEventToPlayer("vrr.deleteLocalPlayerPed", client);
+	}
+
+}
+
+// ===========================================================================
