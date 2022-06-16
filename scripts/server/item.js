@@ -123,7 +123,7 @@ class ItemData {
 		this.enabled = false;
 		this.extra = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["item_id"]);
 			this.index = 0;
 			this.itemTypeIndex = 0;
@@ -160,6 +160,7 @@ class ItemTypeData {
 		this.dropRotation = toVector3(0.0, 0.0, 0.0);
 		this.dropScale = toVector3(0.0, 0.0, 0.0);
 		this.dropModel = 0;
+		this.dropFrontDistance = 0.0;
 		this.orderPrice = 0;
 		this.orderValue = 0;
 		this.demandMultiplier = 1;
@@ -188,7 +189,7 @@ class ItemTypeData {
 		this.takeAnimationIndex = false;
 		this.switchAnimationIndex = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["item_type_id"]);
 			this.serverId = toInteger(dbAssoc["item_type_server"]);
 			this.name = dbAssoc["item_type_name"];
@@ -200,6 +201,7 @@ class ItemTypeData {
 			this.dropRotation = toVector3(toFloat(dbAssoc["item_type_drop_rot_x"]), toFloat(dbAssoc["item_type_drop_rot_y"]), toFloat(dbAssoc["item_type_drop_rot_z"]));
 			this.dropScale = toVector3(toFloat(dbAssoc["item_type_drop_scale_x"]), toFloat(dbAssoc["item_type_drop_scale_y"]), toFloat(dbAssoc["item_type_drop_scale_z"]));
 			this.dropModel = toInteger(dbAssoc["item_type_drop_model"]);
+			this.dropFrontDistance = toInteger(dbAssoc["item_type_drop_front_distance"]);
 			this.useId = toInteger(dbAssoc["item_type_use_id"]);
 			this.useValue = toInteger(dbAssoc["item_type_use_value"]);
 			this.maxValue = toInteger(dbAssoc["item_type_max_value"]);
