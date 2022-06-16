@@ -1927,6 +1927,7 @@ function saveItemTypeToDatabase(itemTypeId) {
 			["item_type_drop_rot_x", itemTypeData.dropRotation.x],
 			["item_type_drop_rot_y", itemTypeData.dropRotation.y],
 			["item_type_drop_rot_z", itemTypeData.dropRotation.z],
+			["item_type_drop_front_distance", itemTypeData.dropFrontDistance],
 			["item_type_drop_scale_x", itemTypeData.dropScale.x],
 			["item_type_drop_scale_y", itemTypeData.dropScale.y],
 			["item_type_drop_scale_z", itemTypeData.dropScale.z],
