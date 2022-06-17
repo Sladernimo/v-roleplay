@@ -270,6 +270,14 @@ function enterExitPropertyCommand(command, params, client) {
 				//setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
 				//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
 			}, 1100);
+
+			if (isBusiness) {
+				if (closestProperty.entranceType == VRR_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
+					startPaintBall(client);
+				}
+			}
+
 			if (closestProperty.streamingRadioStation != -1) {
 				if (getRadioStationData(closestProperty.streamingRadioStation)) {
 					playRadioStreamForPlayer(client, getRadioStationData(closestProperty.streamingRadioStation).url);
@@ -307,9 +315,37 @@ function enterExitPropertyCommand(command, params, client) {
 					updateInteriorLightsForPlayer(client, true);
 				}, 1000);
 			}, 1100);
+
+			if (isBusiness) {
+				if (closestProperty.entranceType == VRR_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
+					startPaintBall(client);
+				}
+			}
+
 			//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
 			stopRadioStreamForPlayer(client);
 			getPlayerData(client).streamingRadioStation = -1;
+
+			// Check if exiting property was into another house/business and set radio station accordingly
+			let inHouse = getPlayerHouse(client);
+			let inBusiness = getPlayerBusiness(client);
+
+			if (inBusiness != -1) {
+				if (getBusinessData(inBusiness).streamingRadioStation != -1) {
+					if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStation)) {
+						playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStation).url);
+						getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStation;
+					}
+				}
+			} else if (inHouse != -1) {
+				if (getHouseData(inHouse).streamingRadioStation != -1) {
+					if (getRadioStationData(getHouseData(inHouse).streamingRadioStation)) {
+						playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStation).url);
+						getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStation;
+					}
+				}
+			}
 
 			//logToConsole(LOG_DEBUG, `[VRR.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 			return true;
