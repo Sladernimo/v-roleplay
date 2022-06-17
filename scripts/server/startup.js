@@ -49,6 +49,8 @@ function initServerScripts() {
 	setAllServerDataIndexes();
 	createAllServerElements();
 
+	addAllNetworkEventHandlers();
+
 	initAllClients();
 	initTimers();
 

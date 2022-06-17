@@ -9,7 +9,6 @@
 
 function initNetworkEventsScript() {
 	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Initializing network events script ...");
-	addAllNetworkEventHandlers();
 	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Network events script initialized!");
 }
 
