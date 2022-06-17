@@ -7,6 +7,13 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+// Discord Webhook Types
+const VRR_DISCORD_WEBHOOK_NONE = 0;
+const VRR_DISCORD_WEBHOOK_LOG = 1;
+const VRR_DISCORD_WEBHOOK_ADMIN = 2;
+
+// ===========================================================================
+
 function initDiscordScript() {
 	logToConsole(LOG_INFO, "[VRR.Discord]: Initializing discord script ...");
 	logToConsole(LOG_INFO, "[VRR.Discord]: Discord script initialized successfully!");
