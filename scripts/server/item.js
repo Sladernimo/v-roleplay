@@ -241,14 +241,15 @@ class ItemTypeData {
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_INFO, "[VRR.Item]: Initializing item script ...");
-	logToConsole(LOG_INFO, "[VRR.Item]: Item script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
+	logToConsole(LOG_DEBUG, "[VRR.Item]: Item script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadItemsFromDatabase() {
+	logToConsole(LOG_DEBUG, `[VRR.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
@@ -259,18 +260,21 @@ function loadItemsFromDatabase() {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempItemData = new ItemData(dbFetchAssoc);
 					tempItems.push(tempItemData);
+					logToConsole(LOG_VERBOSE, `[VRR.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
+	logToConsole(LOG_DEBUG, `[VRR.Item]: Loaded ${tempItems.length} items from database ...`);
 	return tempItems;
 }
 
 // ===========================================================================
 
 function loadItemTypesFromDatabase() {
+	logToConsole(LOG_DEBUG, `[VRR.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
@@ -281,6 +285,7 @@ function loadItemTypesFromDatabase() {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempItemTypeData = new ItemTypeData(dbFetchAssoc);
 					tempItemTypes.push(tempItemTypeData);
+					logToConsole(LOG_VERBOSE, `[VRR.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -288,6 +293,7 @@ function loadItemTypesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
+	logToConsole(LOG_DEBUG, `[VRR.Item]: Loaded ${tempItemTypes.length} item types from database ...`);
 	return tempItemTypes;
 }
 

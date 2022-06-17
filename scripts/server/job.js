@@ -348,8 +348,8 @@ class JobBlackListData {
 // ===========================================================================
 
 function initJobScript() {
-	logToConsole(LOG_INFO, "[VRR.Job]: Initializing job script ...");
-	logToConsole(LOG_INFO, "[VRR.Job]: Job script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[VRR.Job]: Initializing job script ...");
+	logToConsole(LOG_DEBUG, "[VRR.Job]: Job script initialized successfully!");
 	return true;
 }
 
@@ -374,7 +374,7 @@ function loadJobsFromDatabase() {
 					tempJobData.uniforms = loadJobUniformsFromDatabase(tempJobData.databaseId);
 					tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
 					tempJobs.push(tempJobData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -436,7 +436,7 @@ function loadJobRoutesFromDatabase(jobDatabaseId) {
 					let tempJobRouteData = new JobRouteData(dbAssoc);
 					tempJobRouteData.locations = loadJobRouteLocationsFromDatabase(tempJobRouteData.databaseId);
 					tempJobRoutes.push(tempJobRouteData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -465,7 +465,7 @@ function loadJobRouteLocationsFromDatabase(jobRouteId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempJobRouteLocationData = new JobRouteLocationData(dbAssoc);
 					tempJobRouteLocations.push(tempJobRouteLocationData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -495,7 +495,7 @@ function loadJobEquipmentsFromDatabase(jobDatabaseId) {
 					let tempJobEquipmentData = new JobEquipmentData(dbAssoc);
 					tempJobEquipmentData.items = loadJobEquipmentItemsFromDatabase(tempJobEquipmentData.databaseId);
 					tempJobEquipments.push(tempJobEquipmentData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -524,7 +524,7 @@ function loadJobLocationsFromDatabase(jobDatabaseId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempJobLocationData = new JobLocationData(dbAssoc);
 					tempJobLocations.push(tempJobLocationData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -553,7 +553,7 @@ function loadJobUniformsFromDatabase(jobDatabaseId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempJobUniformData = new JobUniformData(dbAssoc);
 					tempJobUniforms.push(tempJobUniformData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -582,7 +582,7 @@ function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempJobEquipmentItemData = new JobEquipmentItemData(dbAssoc);
 					tempJobEquipmentItems.push(tempJobEquipmentItemData);
-					logToConsole(LOG_DEBUG, `[VRR.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -633,7 +633,7 @@ function createAllJobPickups() {
 				setElementDimension(getServerData().jobs[i].locations[j].pickup, getServerData().jobs[i].locations[j].dimension);
 				addToWorld(getServerData().jobs[i].locations[j].pickup);
 
-				logToConsole(LOG_DEBUG, `[VRR.Job] Job '${getServerData().jobs[i].name}' location pickup ${j} spawned!`);
+				logToConsole(LOG_VERBOSE, `[VRR.Job] Job '${getServerData().jobs[i].name}' location pickup ${j} spawned!`);
 			}
 		}
 	}
