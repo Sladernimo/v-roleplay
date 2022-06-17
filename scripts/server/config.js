@@ -114,7 +114,7 @@ class ServerConfigData {
 			this.introMusicURL = dbAssoc["svr_intro_music"];
 			this.realTimeZone = dbAssoc["svr_time_realtime_timezone"];
 
-			this.discordConfig = {
+			this.discord = {
 				eventChannelWebHookURL: dbAssoc["svr_discord_event_webhook"],
 				chatChannelWebHookURL: dbAssoc["svr_discord_chat_webhook"],
 				adminChannelWebHookURL: dbAssoc["svr_discord_admin_webhook"],
