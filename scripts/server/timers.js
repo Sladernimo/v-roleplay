@@ -117,7 +117,7 @@ function oneMinuteTimerFunction() {
 // ===========================================================================
 
 function tenMinuteTimerFunction() {
-	showRandomTipToAllPlayers();
+	//showRandomTipToAllPlayers();
 	saveServerDataToDatabase();
 	checkInactiveVehicleRespawns();
 }
