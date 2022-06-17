@@ -2033,6 +2033,10 @@ function listItemInventoryCommand(command, params, client) {
  * @return {ItemData} The item's data (class instance)
  */
 function getItemData(itemId) {
+	if (itemId == -1) {
+		return false;
+	}
+
 	if (typeof getServerData().items[itemId] != "undefined") {
 		return getServerData().items[itemId];
 	}
@@ -2047,6 +2051,10 @@ function getItemData(itemId) {
  * @return {ItemTypeData} The item type's data (class instance)
  */
 function getItemTypeData(itemTypeId) {
+	if (itemTypeId == -1) {
+		return false;
+	}
+
 	if (typeof getServerData().itemTypes[itemTypeId] != "undefined") {
 		return getServerData().itemTypes[itemTypeId];
 	}
