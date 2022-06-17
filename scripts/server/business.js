@@ -1724,7 +1724,11 @@ function moveBusinessExitCommand(command, params, client) {
 // ===========================================================================
 
 function getBusinessDataFromDatabaseId(databaseId) {
-	let matchingBusinesses = getServerData().businesses.filter(b => b.databaseId == businessId)
+	if (databaseId <= 0) {
+		return false;
+	}
+
+	let matchingBusinesses = getServerData().businesses.filter(b => b.databaseId == databaseId)
 	if (matchingBusinesses.length == 1) {
 		return matchingBusinesses[0];
 	}
@@ -2361,6 +2365,10 @@ function getBusinessOwnerTypeText(ownerType) {
  * @return {BusinessData} The business's data (class instance)
  */
 function getBusinessData(businessId) {
+	if (businessId == -1) {
+		return false;
+	}
+
 	if (typeof getServerData().businesses[businessId] != null) {
 		return getServerData().businesses[businessId];
 	}
