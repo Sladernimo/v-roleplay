@@ -19,6 +19,8 @@ const VRR_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case se
 const VRR_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
 const VRR_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
 
+// ===========================================================================
+
 // NPC Owner Types
 const VRR_NPC_OWNER_NONE = 0;                     // Not owned
 const VRR_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
