@@ -242,7 +242,7 @@ function showChatHelpMessage(client) {
 // ===========================================================================
 
 function showRulesHelpMessage(client) {
-	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderServerRulesList")));
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderServerRules")));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 0));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 1));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "RulesHelp", 2));
