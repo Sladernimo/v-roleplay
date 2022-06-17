@@ -402,53 +402,57 @@ function onPlayerDeath(client, position) {
 			fadeCamera(client, false, 1.0);
 		}
 		setTimeout(function () {
-			if (getPlayerCurrentSubAccount(client).inJail) {
-				let closestJail = getClosestPoliceStation(getPlayerPosition(client));
-				despawnPlayer(client);
-				getPlayerCurrentSubAccount(client).interior = closestJail.interior;
-				getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
-
-				if (isPlayerWorking(client)) {
-					stopWorking(client);
-				}
-
-				if (getGame() == VRR_GAME_MAFIA_ONE) {
-					spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
-				} else {
-					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-				}
-
-				if (isFadeCameraSupported()) {
-					fadeCamera(client, true, 1.0);
-				}
-				updatePlayerSpawnedState(client, true);
-				makePlayerStopAnimation(client);
-				setPlayerControlState(client, true);
-				resetPlayerBlip(client);
+			if (isPlayerInPaintBall(client)) {
+				respawnPlayerForPaintBall(client);
 			} else {
-				let closestHospital = getClosestHospital(getPlayerPosition(client));
-				despawnPlayer(client);
-				getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
-				getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
+				if (getPlayerCurrentSubAccount(client).inJail) {
+					let closestJail = getClosestPoliceStation(getPlayerPosition(client));
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = closestJail.interior;
+					getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
 
-				if (isPlayerWorking(client)) {
-					stopWorking(client);
-				}
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
 
-				if (getGame() == VRR_GAME_MAFIA_ONE) {
-					spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
+					if (getGame() == VRR_GAME_MAFIA_ONE) {
+						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
+					} else {
+						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					}
+
+					if (isFadeCameraSupported()) {
+						fadeCamera(client, true, 1.0);
+					}
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
 				} else {
-					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-				}
+					let closestHospital = getClosestHospital(getPlayerPosition(client));
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
+					getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
 
-				if (isFadeCameraSupported()) {
-					fadeCamera(client, true, 1.0);
-				}
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
 
-				updatePlayerSpawnedState(client, true);
-				makePlayerStopAnimation(client);
-				setPlayerControlState(client, true);
-				resetPlayerBlip(client);
+					if (getGame() == VRR_GAME_MAFIA_ONE) {
+						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
+					} else {
+						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					}
+
+					if (isFadeCameraSupported()) {
+						fadeCamera(client, true, 1.0);
+					}
+
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
+				}
 			}
 		}, 2000);
 	}, 1000);
