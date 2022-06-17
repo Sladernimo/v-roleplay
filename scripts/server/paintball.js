@@ -9,6 +9,8 @@
 
 let paintBallItems = [];
 
+// ===========================================================================
+
 let paintBallItemNames = {
 	[VRR_GAME_GTA_III]: [
 		"Colt 45",
@@ -61,6 +63,9 @@ function startPaintBall(client) {
 	storePlayerItemsInTempLocker(client);
 	getPlayerData(client).tempLockerType = VRR_TEMP_LOCKER_TYPE_PAINTBALL;
 
+	getPlayerData(client).inPaintBall = true;
+	getPlayerData(client).paintBallBusiness = getPlayerBusiness(client);
+
 	givePlayerPaintBallItems(client);
 }
 
@@ -100,11 +105,22 @@ function deletePaintBallItems(client) {
 
 function cacheAllPaintBallItemTypes() {
 	for (let i in paintBallItemNames[getGame()]) {
-		let itemType = getItemTypeFromParams(paintBallItems[getGame()][i]);
-		if (getItemTypeData(itemType) != false) {
-			paintBallItems.push(itemType);
+		let itemTypeId = getItemTypeFromParams(paintBallItems[getGame()][i]);
+		if (itemTypeId != -1 && getItemTypeData(itemTypeId) != false) {
+			paintBallItems.push(getItemTypeData(itemTypeId));
 		}
 	}
+}
+
+// ===========================================================================
+
+function respawnPlayerForPaintBall(client) {
+	despawnPlayer(client);
+
+	let businessId = getPlayerData(client).paintBallBusiness;
+	let spawnId = getRandom(0, getBusinessData(businessId).paintBallSpawns.length - 1);
+
+	spawnPlayer(client, getBusinessData(businessId).paintBallSpawns[spawnId], 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitPosition, getBusinessData(businessId).exitDimension);
 }
 
 // ===========================================================================
