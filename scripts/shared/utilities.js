@@ -2080,6 +2080,12 @@ function getOpenedClosedFromBool(boolVal) {
 
 // ===========================================================================
 
+function getTrueFalseFromBool(boolVal) {
+	return (boolVal) ? "True" : "False";
+}
+
+// ===========================================================================
+
 function breakText(text, maxLength) {
 	let lines = [];
 	let j = Math.floor(text.length / maxLength);
