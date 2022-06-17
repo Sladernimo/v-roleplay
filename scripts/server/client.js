@@ -129,6 +129,11 @@ class ClientData {
 		this.alcoholLevel = 0;
 		this.pedState = VRR_PEDSTATE_NONE;
 		this.promptType = VRR_PROMPT_NONE;
+
+		this.inPaintBall = false;
+		this.paintBallBusiness = -1;
+		this.paintBallDeaths = 0;
+		this.paintBallKills = 0;
 	}
 };
 
