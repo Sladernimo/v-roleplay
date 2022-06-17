@@ -159,6 +159,7 @@ function setAllServerDataIndexes() {
 	cacheAllBusinessItems();
 	cacheAllItemItems();
 	cacheAllCommandsAliases();
+	cacheAllPaintBallItemTypes();
 }
 
 // ===========================================================================
