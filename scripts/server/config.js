@@ -49,7 +49,8 @@ class ServerConfigData {
 		this.showLogo = true;
 		this.inflationMultiplier = 1;
 		this.testerOnly = false;
-		this.settings = 0;
+		this.devServer = false;
+		this.nameTagDistance = 50.0;
 
 		this.antiCheat = {
 			enabled: false,
@@ -78,12 +79,9 @@ class ServerConfigData {
 		this.realTimeZone = 0;
 
 		this.discordConfig = {
-			eventChannelWebHookURL: "",
-			chatChannelWebHookURL: "",
-			adminChannelWebHookURL: "",
 			sendEvents: true,
 			sendChat: true,
-			sendAdminEvents: true,
+			sendAdmin: true,
 		};
 
 		if (dbAssoc) {
@@ -94,8 +92,7 @@ class ServerConfigData {
 				money: dbAssoc["svr_newchar_money"],
 				bank: dbAssoc["svr_newchar_bank"],
 				skin: dbAssoc["svr_newchar_skin"],
-			},
-				this.settings = toInteger(dbAssoc["svr_settings"]);
+			};
 
 			this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
 			this.connectCameraLookAt = toVector3(dbAssoc["svr_connectcam_lookat_x"], dbAssoc["svr_connectcam_lookat_y"], dbAssoc["svr_connectcam_lookat_z"]);
@@ -104,24 +101,43 @@ class ServerConfigData {
 			this.minute = toInteger(dbAssoc["svr_start_time_min"]);
 			this.minuteDuration = toInteger(dbAssoc["svr_time_min_duration"]);
 			this.weather = toInteger(dbAssoc["svr_start_weather"]);
+			this.fallingSnow = intToBool(toInteger(dbAssoc["svr_snow_falling"]));
+			this.groundSnow = intToBool(toInteger(dbAssoc["svr_snow_ground"]));
+			this.useGUI = intToBool(toInteger(dbAssoc["svr_gui"]));
+			this.showLogo = intToBool(toInteger(dbAssoc["svr_logo"]));
+			this.createJobPickups = intToBool(toInteger(dbAssoc["svr_job_pickups"]));
+			this.createBusinessPickups = intToBool(toInteger(dbAssoc["svr_biz_pickups"]));
+			this.createHousePickups = intToBool(toInteger(dbAssoc["svr_house_pickups"]));
+			this.createJobBlips = intToBool(toInteger(dbAssoc["svr_job_blips"]));
+			this.createBusinessBlips = intToBool(toInteger(dbAssoc["svr_biz_blips"]));
+			this.createHouseBlips = intToBool(toInteger(dbAssoc["svr_house_blips"]));
+			this.createPlayerBlips = intToBool(toInteger(dbAssoc["svr_player_blips"]));
 			this.guiColourPrimary = [toInteger(dbAssoc["svr_gui_col1_r"]), toInteger(dbAssoc["svr_gui_col1_g"]), toInteger(dbAssoc["svr_gui_col1_b"])];
 			this.guiColourSecondary = [toInteger(dbAssoc["svr_gui_col2_r"]), toInteger(dbAssoc["svr_gui_col2_g"]), toInteger(dbAssoc["svr_gui_col2_b"])];
 			this.guiTextColourPrimary = [toInteger(dbAssoc["svr_gui_textcol1_r"]), toInteger(dbAssoc["svr_gui_textcol1_g"]), toInteger(dbAssoc["svr_gui_textcol1_b"])];
 			//this.guiTextColourSecondary = [toInteger(dbAssoc["svr_gui_textcol2_r"]), toInteger(dbAssoc["svr_gui_textcol2_g"]), toInteger(dbAssoc["svr_gui_textcol2_b"])];
 			this.inflationMultiplier = toFloat(dbAssoc["svr_inflation_multiplier"]);
-
+			this.nameTagDistance = toFloat(dbAssoc["svr_nametag_distance"]);
 			this.discordBotToken = intToBool(dbAssoc["svr_discord_bot_token"]);
 			this.introMusicURL = dbAssoc["svr_intro_music"];
-			this.realTimeZone = dbAssoc["svr_time_realtime_timezone"];
+
+			//this.useRealTime = intToBool(toInteger(dbAssoc["svr_real_time_enabled"]));
+			//this.realTimeZone = dbAssoc["svr_real_time_timezone"];
 
 			this.discord = {
-				eventChannelWebHookURL: dbAssoc["svr_discord_event_webhook"],
-				chatChannelWebHookURL: dbAssoc["svr_discord_chat_webhook"],
-				adminChannelWebHookURL: dbAssoc["svr_discord_admin_webhook"],
-				sendEvents: true,
-				sendChat: true,
-				sendAdminEvents: true,
+				sendEvents: intToBool(dbAssoc["svr_discord_send_events"]),
+				sendChat: intToBool(dbAssoc["svr_discord_send_chat"]),
+				sendAdmin: intToBool(dbAssoc["svr_discord_send_admin"]),
 			};
+
+			this.economy = {
+				inflationMultiplier: toFloat(dbAssoc["svr_inflation_multiplier"]),
+				incomeTaxRate: toFloat(dbAssoc["svr_income_tax_rate"]),
+				passiveIncome: toFloat(dbAssoc["svr_passive_income"]),
+			}
+
+			this.devServer = intToBool(toInteger(server.getCVar("vrr_devserver")));
+			this.testerOnly = intToBool(toInteger(server.getCVar("vrr_testeronly")));
 		}
 	}
 };
