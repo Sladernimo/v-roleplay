@@ -8,9 +8,9 @@
 // ===========================================================================
 
 function initNetworkEventsScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Client]: Initializing client script ...");
+	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Initializing network events script ...");
 	addAllNetworkEventHandlers();
-	logToConsole(LOG_DEBUG, "[VRR.Client]: Client script initialized!");
+	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Network events script initialized!");
 }
 
 // ===========================================================================
@@ -35,8 +35,8 @@ function addAllNetworkEventHandlers() {
 	addNetworkEventHandler("vrr.enteredSphere", onPlayerEnteredSphere);
 	addNetworkEventHandler("vrr.exitedSphere", onPlayerExitedSphere);
 	addNetworkEventHandler("vrr.playerDeath", onPlayerDeath);
-	addNetworkEventHandler("vrr.onPlayerEnterVehicle", onPlayerEnteredVehicle);
-	addNetworkEventHandler("vrr.onPlayerExitVehicle", onPlayerExitedVehicle);
+	//addNetworkEventHandler("vrr.onPlayerEnterVehicle", onPlayerEnteredVehicle);
+	//addNetworkEventHandler("vrr.onPlayerExitVehicle", onPlayerExitedVehicle);
 
 	// Job
 	addNetworkEventHandler("vrr.arrivedAtJobRouteLocation", playerArrivedAtJobRouteLocation);
