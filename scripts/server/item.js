@@ -122,6 +122,7 @@ class ItemData {
 		this.value = 0;
 		this.enabled = false;
 		this.extra = false;
+		this.itemCache = [];
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["item_id"]);
@@ -651,6 +652,16 @@ function putItemCommand(command, params, client) {
 
 	let itemId = getPlayerData(client).hotBarItems[hotBarSlot];
 
+	if (hotBarSlot == -1) {
+		messagePlayerError(client, getLocaleString(client, "NoItemEquipped"));
+		return false;
+	}
+
+	if (itemId == -1) {
+		messagePlayerError(client, getLocaleString(client, "NoItemInActiveSlot"));
+		return false;
+	}
+
 	if (!getItemData(itemId)) {
 		messagePlayerError(client, `The item you're trying to store is bugged. A bug report has been sent to the server developers.`);
 		submitBugReport(client, `(AUTOMATED REPORT) Put Item: Getting item data for item ${itemId} in player hotbar slot ${hotBarSlot} (cache ${getPlayerData(client).hotBarItems[hotBarSlot]}) returned false.`);
@@ -658,7 +669,7 @@ function putItemCommand(command, params, client) {
 	}
 
 	if (!getItemTypeData(getItemData(itemId).itemTypeIndex)) {
-		messagePlayerError(client, `The item you're trying to store is bugged. A bug report has been sent to the server developers.`);
+		messagePlayerError(client, `The item type you're trying to store is bugged. A bug report has been sent to the server developers.`);
 		submitBugReport(client, `(AUTOMATED REPORT) Put Item: Getting item type ${getItemData(itemId).itemType} data for item ${itemId}/${getItemData(itemId).databaseId} in player hotbar slot ${hotBarSlot} (cache ${getPlayerData(client).hotBarItems[hotBarSlot]}) returned false.`);
 		return false;
 	}
@@ -1333,6 +1344,7 @@ function playerDropItem(client, hotBarSlot) {
 		resyncWeaponItemAmmo(client);
 
 		getPlayerData(client).hotBarItems[hotBarSlot] = -1;
+		//cachePlayerHotBarItems(client);
 		updatePlayerHotBar(client);
 		clearPlayerWeapons(client);
 
@@ -1354,8 +1366,46 @@ function playerPutItem(client, hotBarSlot) {
 
 	let bestNewOwner = getBestNewOwnerToPutItem(client);
 
-	if (bestNewOwner[0] == VRR_ITEM_OWNER_NONE) {
-		return false;
+	//if (bestNewOwner[0] == VRR_ITEM_OWNER_NONE) {
+	//	return false;
+	//}
+
+	switch (bestNewOwner[0]) {
+		case VRR_ITEM_OWNER_ITEM:
+			getItemData(itemId).ownerId = getItemData(bestNewOwner[1]).databaseId;
+			getItemData(bestNewOwner[1]).itemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getItemName(bestNewOwner[1])}`);
+			break;
+
+		case VRR_ITEM_OWNER_VEHTRUNK:
+			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
+			getVehicleData(bestNewOwner[1]).trunkItemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s trunk`);
+			break;
+
+		case VRR_ITEM_OWNER_VEHDASH:
+			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
+			getVehicleData(bestNewOwner[1]).dashItemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s dash compartment`);
+			break;
+
+		case VRR_ITEM_OWNER_HOUSE:
+			getItemData(itemId).ownerId = getHouseData(bestNewOwner[1]).databaseId;
+			getHouseData(bestNewOwner[1]).itemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the house`);
+			break;
+
+		case VRR_ITEM_OWNER_BIZFLOOR:
+			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
+			getBusinessData(bestNewOwner[1]).floorItemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} for sale in the business`);
+			break;
+
+		case VRR_ITEM_OWNER_BIZSTORAGE:
+			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
+			getBusinessData(bestNewOwner[1]).storageItemCache.push(itemId);
+			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
+			break;
 	}
 
 	getItemData(itemId).ownerType = bestNewOwner[0];
@@ -1368,38 +1418,6 @@ function playerPutItem(client, hotBarSlot) {
 
 	getPlayerData(client).hotBarItems[hotBarSlot] = -1;
 	updatePlayerHotBar(client);
-
-	switch (bestNewOwner[0]) {
-		case VRR_ITEM_OWNER_HOUSE:
-			getItemData(itemId).ownerId = getHouseData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the house`);
-			break;
-
-		case VRR_ITEM_OWNER_BIZFLOOR:
-			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} for sale in the business`);
-			break;
-
-		case VRR_ITEM_OWNER_BIZSTORAGE:
-			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
-			break;
-
-		case VRR_ITEM_OWNER_VEHTRUNK:
-			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s trunk`);
-			break;
-
-		case VRR_ITEM_OWNER_VEHDASH:
-			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s dash compartment`);
-			break;
-
-		case VRR_ITEM_OWNER_ITEM:
-			getItemData(itemId).ownerId = getItemData(bestNewOwner[1]).databaseId;
-			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getItemName(bestNewOwner[1])}`);
-			break;
-	}
 }
 
 // ===========================================================================
@@ -2771,6 +2789,26 @@ function getItemPosition(itemId) {
 		}
 	}
 	return getItemData(itemId).position;
+}
+
+// ===========================================================================
+
+function cacheAllItemItems() {
+	let items = getServerData().items;
+	for (let i in items) {
+		cacheItemItems(i);
+	}
+}
+
+// ===========================================================================
+
+function cacheItemItems(itemId) {
+	let items = getServerData().items;
+	for (let i in items) {
+		if (items[i].ownerType == VRR_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
+			getItemData(itemId).itemCache.push(i);
+		}
+	}
 }
 
 // ===========================================================================
