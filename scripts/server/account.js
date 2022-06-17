@@ -852,7 +852,7 @@ function saveAccountToDatabase(accountData) {
 			["acct_svr_staff_flags", accountData.flags.admin],
 			["acct_svr_mod_flags", accountData.flags.moderation],
 			["acct_svr_chat_scroll_lines", accountData.chatScrollLines],
-			["acct_svr_chat_auto_hide_delay", accountData.chatAutoHideDelay],
+			//["acct_svr_chat_auto_hide_delay", accountData.chatAutoHideDelay],
 		];
 
 		let queryString1 = createDatabaseUpdateQuery("acct_main", data, `acct_id=${accountData.databaseId}`);
