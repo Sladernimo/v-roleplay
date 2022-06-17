@@ -35,6 +35,12 @@ const VRR_BIZOWNER_PUBLIC = 5;                   // Public Business. Used for go
 
 // ===========================================================================
 
+// Business Entrance Types (For special business with specific triggers)
+const VRR_BIZ_ENTRANCE_TYPE_NONE = 0;			 // None
+const VRR_BIZ_ENTRANCE_TYPE_PAINTBALL = 1;		 // Joins paintball/airsoft when player enters business
+
+// ===========================================================================
+
 /**
  * @class Representing a businesses' data. Loaded and saved in the database
  */
@@ -50,6 +56,7 @@ class BusinessData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
+		this.entranceType = VRR_BIZ_ENTRANCE_TYPE_NONE;
 
 		this.floorItemCache = [];
 		this.storageItemCache = [];
@@ -90,6 +97,7 @@ class BusinessData {
 			this.locked = intToBool(toInteger(dbAssoc["biz_locked"]));
 			this.hasInterior = intToBool(toInteger(dbAssoc["biz_has_interior"]));
 			this.interiorLights = intToBool(toInteger(dbAssoc["biz_interior_lights"]));
+			this.entranceType = toInteger(dbAssoc["biz_entrance_type"]);
 
 			this.entrancePosition = toVector3(toFloat(dbAssoc["biz_entrance_pos_x"]), toFloat(dbAssoc["biz_entrance_pos_y"]), toFloat(dbAssoc["biz_entrance_pos_z"]));
 			this.entranceRotation = toInteger(dbAssoc["biz_entrance_rot_z"]);
@@ -397,8 +405,8 @@ function deleteBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`);
 	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`);
 }
 
 // ===========================================================================
@@ -837,6 +845,35 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}entrance fee to [#AAAAAAA]$${entranceFee}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setBusinessPaintBallCommand(command, params, client) {
+	let businessId = getPlayerBusiness(client);
+
+	if (!getBusinessData(businessId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	if (!canPlayerManageBusiness(client, businessId)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+		return false;
+	}
+
+	getBusinessData(businessId).entranceType = VRR_BIZ_ENTRANCE_TYPE_PAINTBALL;
+	getBusinessData(businessId).needsSaved = true;
+	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
 }
 
 // ===========================================================================
@@ -2204,7 +2241,7 @@ function createBusinessExitBlip(businessId) {
  *
  */
 function deleteBusiness(businessId, whoDeleted = 0) {
-	let tempBusinessData = getServerData().businesses[businessId];
+	let tempBusinessData = getBusinessData(businessId);
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
