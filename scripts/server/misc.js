@@ -318,8 +318,8 @@ function enterExitPropertyCommand(command, params, client) {
 
 			if (isBusiness) {
 				if (closestProperty.entranceType == VRR_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
-					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
-					startPaintBall(client);
+					messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
+					stopPaintBall(client);
 				}
 			}
 
