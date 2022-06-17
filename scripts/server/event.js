@@ -654,15 +654,17 @@ async function onPlayerSpawn(client) {
 	stopRadioStreamForPlayer(client);
 
 	// Start playing business/house radio if in one
-	let businessId = getPlayerBusiness(client);
-	let houseId = getPlayerHouse(client);
-	if (businessId != -1) {
-		if (getBusinessData(businessId).streamingRadioStation != -1) {
-			playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(businessId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
-		}
-	} else if (houseId != -1) {
-		if (getHouseData(houseId).streamingRadioStation != -1) {
-			playRadioStreamForPlayer(client, getRadioStationData(getHouseData(houseId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
+	if (getPlayerCurrentSubAccount(client).interior != getGameConfig().mainWorldInterior || getPlayerCurrentSubAccount(client).dimension != getGameConfig().mainWorldDimension) {
+		let businessId = getPlayerBusiness(client);
+		let houseId = getPlayerHouse(client);
+		if (businessId != -1) {
+			if (getBusinessData(businessId).streamingRadioStation != -1) {
+				playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(businessId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
+			}
+		} else if (houseId != -1) {
+			if (getHouseData(houseId).streamingRadioStation != -1) {
+				playRadioStreamForPlayer(client, getRadioStationData(getHouseData(houseId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
+			}
 		}
 	}
 
