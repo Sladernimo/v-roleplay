@@ -27,7 +27,7 @@ const VRR_HOUSEOWNER_PUBLIC = 5;                 // Is a public house. Technical
 /**
  * @class Representing a house's data. Loaded and saved in the database
  */
- class HouseData {
+class HouseData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0
 		this.description = "";
@@ -66,7 +66,7 @@ const VRR_HOUSEOWNER_PUBLIC = 5;                 // Is a public house. Technical
 
 		this.streamingRadioStation = -1;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_id"]);
 			this.description = toString(dbAssoc["house_description"]);
 			this.ownerType = toInteger(dbAssoc["house_owner_type"]);
@@ -115,7 +115,7 @@ class HouseLocationData {
 		this.interior = 0;
 		this.dimension = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_loc_id"]);
 			this.name = toString(dbAssoc["house_loc_name"]);
 			this.type = toInteger(dbAssoc["house_loc_type"]);
@@ -149,7 +149,7 @@ class HouseGameScriptData {
 		this.houseIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_script_id"]);
 			this.name = toString(dbAssoc["house_script_name"]);
 			this.state = toInteger(dbAssoc["house_script_state"]);
@@ -774,6 +774,10 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 // ===========================================================================
 
 function getHouseDataFromDatabaseId(databaseId) {
+	if (databaseId <= 0) {
+		return false;
+	}
+
 	let matchingHouses = getServerData().houses.filter(b => b.databaseId == databaseId)
 	if (matchingHouses.length == 1) {
 		return matchingHouses[0];
@@ -1431,6 +1435,10 @@ function buyHouseCommand(command, params, client) {
  * @return {HouseData} The house's data (class instance)
  */
 function getHouseData(houseId) {
+	if (houseId == -1) {
+		return false;
+	}
+
 	if (typeof getServerData().houses[houseId] != "undefined") {
 		return getServerData().houses[houseId];
 	}
