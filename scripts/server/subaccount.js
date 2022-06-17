@@ -11,7 +11,7 @@
 /**
  * @class Representing a character's (subaccount) data. Loaded and saved in the database
  */
- class SubAccountData {
+class SubAccountData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
@@ -46,26 +46,26 @@
 		this.accent = "";
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["sacct_id"];
 			this.serverId = toInteger(dbAssoc["sacct_server"]);
 			this.firstName = dbAssoc["sacct_name_first"];
@@ -590,7 +590,7 @@ function isPlayerSwitchingCharacter(client) {
 // ===========================================================================
 
 function isPlayerCreatingCharacter(client) {
-	return getPlayerData(client).creatingCharacter;
+	return false; //getPlayerData(client).creatingCharacter;
 }
 
 // ===========================================================================
