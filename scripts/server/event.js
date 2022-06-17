@@ -34,6 +34,8 @@ function addAllEventHandlers() {
 	addEventHandler("onPedSpawn", onPedSpawn);
 	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
 	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
+	addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
+	addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
 
 	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
 	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
@@ -516,10 +518,10 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 	setEntityData(getPlayerPed(client), "vrr.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 
-	if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
-		return false;
-	}
+	//if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
+	//	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
+	//	return false;
+	//}
 
 	if (isCustomCameraSupported() && getGame() != VRR_GAME_GTA_IV && getGame() != VRR_GAME_GTA_IV_EFLC) {
 		restorePlayerCamera(client);
