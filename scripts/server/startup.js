@@ -157,6 +157,7 @@ function setAllServerDataIndexes() {
 	setAllRadioStationIndexes();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
+	cacheAllItemItems();
 	cacheAllCommandsAliases();
 }
 
