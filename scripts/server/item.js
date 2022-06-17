@@ -18,7 +18,7 @@ const VRR_ITEM_OWNER_HOUSE = 6;                  // Item is in a house
 const VRR_ITEM_OWNER_SAFE = 7;                   // Item is in a safe (safes can be anywhere)
 const VRR_ITEM_OWNER_ITEM = 8;                   // Item is in another item (trashbag, briefcase, wallet, suitcase, crate/box, barrel, etc)
 const VRR_ITEM_OWNER_GROUND = 9;                 // Item is on the ground
-const VRR_ITEM_OWNER_JOBLOCKER = 10;             // Item is in player's job locker
+const VRR_ITEM_OWNER_TEMPLOCKER = 10;            // Item is in player's temp locker (used for paintball, jobs, etc)
 const VRR_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
 
 // ===========================================================================
@@ -100,6 +100,13 @@ const VRR_ITEM_ACTION_DROP = 3;                  // Dropping item
 const VRR_ITEM_ACTION_SWITCH = 4;                // Switching item
 const VRR_ITEM_ACTION_PUT = 5;                   // Putting item (into trunk, dash, crate, etc)
 const VRR_ITEM_ACTION_TAKE = 6;                  // Taking item (from trunk, dash, crate, etc)
+
+// ===========================================================================
+
+// Player Temporary Locker Types
+const VRR_TEMP_LOCKER_TYPE_NONE = 0;             // None
+const VRR_TEMP_LOCKER_TYPE_JOB = 1;				 // Job locker
+const VRR_TEMP_LOCKER_TYPE_PAINTBALL = 2;		 // Paintball locker
 
 // ===========================================================================
 
@@ -1749,11 +1756,11 @@ function deleteItem(itemId, whoDeleted = -1) {
 			}
 			break;
 
-		case VRR_ITEM_OWNER_JOBLOCKER:
+		case VRR_ITEM_OWNER_TEMPLOCKER:
 			ownerTypeString = "Job Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
 			if (getPlayerData(owner) != false) {
-				getPlayerData(owner).jobLockerCache.splice(getPlayerData(owner).jobLockerCache.indexOf(itemId), 1);
+				getPlayerData(owner).tempLockerCache.splice(getPlayerData(owner).tempLockerCache.indexOf(itemId), 1);
 			}
 			break;
 
@@ -2220,9 +2227,9 @@ function saveItemTypeToDatabase(itemTypeId) {
 
 // ===========================================================================
 
-function storePlayerItemsInJobLocker(client) {
+function storePlayerItemsInTempLocker(client) {
 	for (let i = 0; i < 9; i++) {
-		getPlayerData(client).jobLockerCache[i] = getPlayerData(client).hotBarItems[i];
+		getPlayerData(client).tempLockerCache[i] = getPlayerData(client).hotBarItems[i];
 		getPlayerData(client).hotBarItems[i] = -1;
 	}
 
@@ -2232,7 +2239,7 @@ function storePlayerItemsInJobLocker(client) {
 
 // ===========================================================================
 
-function restorePlayerJobLockerItems(client) {
+function restorePlayerTempLockerItems(client) {
 	for (let i in getPlayerData(client).jobEquipmentCache) {
 		if (getPlayerData(client).jobEquipmentCache[i] != -1) {
 			deleteItem(getPlayerData(client).jobEquipmentCache[i]);
@@ -2240,12 +2247,13 @@ function restorePlayerJobLockerItems(client) {
 	}
 
 	for (let i = 0; i < 9; i++) {
-		getPlayerData(client).hotBarItems[i] = getPlayerData(client).jobLockerCache[i];
-		getPlayerData(client).jobLockerCache[i] = -1;
+		getPlayerData(client).hotBarItems[i] = getPlayerData(client).tempLockerCache[i];
+		getPlayerData(client).tempLockerCache[i] = -1;
 	}
 
 	cachePlayerHotBarItems(client);
 	updatePlayerHotBar(client);
+	getPlayerData(client).tempLockerType = VRR_TEMP_LOCKER_TYPE_NONE;
 }
 
 // ===========================================================================

@@ -34,7 +34,7 @@ const VRR_JOBROUTESTATE_ATSTOP = 4;              // For bus/trash stops that fre
 /**
  * @class Representing a job's data. Loaded and saved in the database
  */
- class JobData {
+class JobData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
@@ -57,7 +57,7 @@ const VRR_JOBROUTESTATE_ATSTOP = 4;              // For bus/trash stops that fre
 		this.blackList = [];
 		this.routes = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_id"];
 			this.serverId = dbAssoc["job_server"];
 			this.type = dbAssoc["job_type"];
@@ -103,7 +103,7 @@ class JobRouteData {
 		this.locationNextMessage = "";
 		this.locations = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_id"]);
 			this.name = toString(dbAssoc["job_route_name"]);
 			this.jobId = toInteger(dbAssoc["job_route_job"]);
@@ -112,7 +112,7 @@ class JobRouteData {
 			this.pay = toInteger(dbAssoc["job_route_pay"]);
 			this.startMessage = toString(dbAssoc["job_route_start_msg"]);
 			this.finishMessage = toString(dbAssoc["job_route_finish_msg"]);
-            this.locationArriveMessage = toString(dbAssoc["job_route_loc_arrive_msg"]);
+			this.locationArriveMessage = toString(dbAssoc["job_route_loc_arrive_msg"]);
 			this.locationNextMessage = toString(dbAssoc["job_route_loc_next_msg"]);
 			this.vehicleColour1 = toInteger(dbAssoc["job_route_veh_colour1"]);
 			this.vehicleColour2 = toInteger(dbAssoc["job_route_veh_colour2"]);
@@ -130,14 +130,14 @@ class JobRouteLocationData {
 		this.routeId = 0;
 		this.enabled = false;
 		this.index = -1;
-        this.jobIndex = -1;
+		this.jobIndex = -1;
 		this.routeIndex = -1;
 		this.needsSaved = false;
 		this.position = toVector3(0.0, 0.0, 0.0);
 		this.stopDelay = 0;
 		this.pay = 0;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_loc_id"]);
 			this.name = toString(dbAssoc["job_route_loc_name"]);
 			this.routeId = toInteger(dbAssoc["job_route_loc_route"]);
@@ -166,7 +166,7 @@ class JobEquipmentData {
 		this.needsSaved = false;
 		this.items = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_id"];
 			this.job = dbAssoc["job_equip_job"];
 			this.name = dbAssoc["job_equip_name"];
@@ -192,7 +192,7 @@ class JobEquipmentItemData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_item_id"];
 			this.equipmentId = dbAssoc["job_equip_item_equip"];
 			this.itemType = dbAssoc["job_equip_item_type"];
@@ -220,26 +220,26 @@ class JobUniformData {
 		this.needsSaved = false;
 
 		this.bodyParts = {
-			hair: [0,0],
-			head: [0,0],
-			upper: [0,0],
-			lower: [0,0],
+			hair: [0, 0],
+			head: [0, 0],
+			upper: [0, 0],
+			lower: [0, 0],
 		};
 
 		this.bodyProps = {
-			hair: [0,0],
-			eyes: [0,0],
-			head: [0,0],
-			leftHand: [0,0],
-			rightHand: [0,0],
-			leftWrist: [0,0],
-			rightWrist: [0,0],
-			hip: [0,0],
-			leftFoot: [0,0],
-			rightFoot: [0,0],
+			hair: [0, 0],
+			eyes: [0, 0],
+			head: [0, 0],
+			leftHand: [0, 0],
+			rightHand: [0, 0],
+			leftWrist: [0, 0],
+			rightWrist: [0, 0],
+			hip: [0, 0],
+			leftFoot: [0, 0],
+			rightFoot: [0, 0],
 		};
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_uniform_id"];
 			this.job = dbAssoc["job_uniform_job"];
 			this.name = dbAssoc["job_uniform_name"];
@@ -290,7 +290,7 @@ class JobLocationData {
 		this.needsSaved = false;
 		this.routeCache = [];
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_loc_id"];
 			this.jobId = dbAssoc["job_loc_job"];
 			this.position = toVector3(dbAssoc["job_loc_pos_x"], dbAssoc["job_loc_pos_y"], dbAssoc["job_loc_pos_z"]);
@@ -315,7 +315,7 @@ class JobWhiteListData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_wl_id"];
 			this.job = dbAssoc["job_wl_job"];
 			this.subAccount = dbAssoc["job_wl_sacct"]
@@ -336,7 +336,7 @@ class JobBlackListData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_bl_id"];
 			this.job = dbAssoc["job_bl_job"];
 			this.subAccount = dbAssoc["job_bl_sacct"]
@@ -861,7 +861,8 @@ function startWorking(client) {
 
 	switchPlayerActiveHotBarSlot(client, -1);
 	getPlayerCurrentSubAccount(client).skin = getPlayerSkin(client);
-	storePlayerItemsInJobLocker(client);
+	storePlayerItemsInTempLocker(client);
+	getPlayerData(client).tempLockerType = VRR_TEMP_LOCKER_TYPE_JOB;
 	messagePlayerInfo(client, "Your personal items have been stored in your locker while you work");
 
 	getPlayerCurrentSubAccount(client).isWorking = true;
@@ -1026,7 +1027,7 @@ function stopWorking(client) {
 
 	updatePlayerNameTag(client);
 	sendPlayerWorkingState(client, false);
-	//cachePlayerHotBarItems(client); // Done in restorePlayerJobLockerItems
+	//cachePlayerHotBarItems(client); // Done in restorePlayerTempLockerItems
 }
 
 // ===========================================================================
