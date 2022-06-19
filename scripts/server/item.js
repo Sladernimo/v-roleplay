@@ -817,7 +817,7 @@ function setItemTypeDropModelCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropModel = modelIndex;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s dropped object model index to ${modelIndex}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s{MAINCOLOUR} dropped object model index to ${modelIndex}`);
 }
 
 // ===========================================================================
@@ -847,7 +847,37 @@ function setItemTypeOrderPriceCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).orderPrice = orderPrice;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name} {MAINCOLOUR}base price to {ALTCOLOUR}$${orderPrice}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}$${orderPrice}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeOrderValueCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -1).join(" "));
+	let orderValue = splitParams[splitParams.length - 1];
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).orderValue = orderValue;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} order value to {ALTCOLOUR}${orderValue}`);
 }
 
 // ===========================================================================
@@ -877,7 +907,7 @@ function setItemTypeRiskMultiplierCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).riskMultiplier = riskMultiplier;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}$${riskMultiplier}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}${riskMultiplier}`);
 }
 
 // ===========================================================================
@@ -936,7 +966,7 @@ function setItemTypeUseTypeCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).useType = useType;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}$${useType}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}${useType}`);
 }
 
 // ===========================================================================
@@ -966,7 +996,259 @@ function setItemTypeUseValueCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).useValue = useValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}$${useValue}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}${useValue}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeDropFrontDistanceCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -1).join(" "));
+	let dropFrontDistance = splitParams.slice(-1);
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).dropFrontDistance = dropFrontDistance;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop front distance to {ALTCOLOUR}${dropFrontDistance}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeDropPositionCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let x = splitParams.slice(-3, -2) || 0.0;
+	let y = splitParams.slice(-2, -1) || 0.0;
+	let z = splitParams.slice(-1) || 0.0;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	let dropPosition = toVector3(x, y, z);
+
+	getItemTypeData(itemTypeIndex).dropPosition = dropPosition;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop position offset to {ALTCOLOUR}${dropPosition.x}, ${dropPosition.y}, ${dropPosition.z}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeDropRotationCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let x = splitParams.slice(-3, -2) || 0.0;
+	let y = splitParams.slice(-2, -1) || 0.0;
+	let z = splitParams.slice(-1) || 0.0;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	let dropRotation = toVector3(x, y, z);
+
+	getItemTypeData(itemTypeIndex).dropRotation = dropRotation;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop rotation to {ALTCOLOUR}${dropRotation.x}, ${dropRotation.y}, ${dropRotation.z}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeDropScaleCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let x = splitParams.slice(-3, -2) || 1.0;
+	let y = splitParams.slice(-2, -1) || 1.0;
+	let z = splitParams.slice(-1) || 1.0;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	let dropScale = toVector3(x, y, z);
+
+	getItemTypeData(itemTypeIndex).dropScale = dropScale;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop scale to {ALTCOLOUR}${dropScale.x}, ${dropScale.y}, ${dropScale.z}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeDemandMultiplierCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let demandMultiplier = splitParams.slice(-1) || 100;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).demandMultiplier = demandMultiplayer / 100;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} demand multiplier to {ALTCOLOUR}${demandMultiplier}%`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeMaxValueCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let maxValue = splitParams.slice(-1) || 100;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).maxValue = maxValue;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} max value to {ALTCOLOUR}${maxValue}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeSizeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let size = splitParams.slice(-1) || 100;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).size = size;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} size to {ALTCOLOUR}${size}`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setItemTypeCapacityCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let itemTypeIndex = getItemTypeFromParams(splitParams.slice(0, -3).join(" "));
+	let capacity = splitParams.slice(-1) || 100;
+
+	if (!getItemTypeData(itemTypeIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		return false;
+	}
+
+	getItemTypeData(itemTypeIndex).capacity = capacity;
+	getItemTypeData(itemTypeIndex).needsSaved = true;
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} capacity to {ALTCOLOUR}${capacity}`);
 }
 
 // ===========================================================================
