@@ -194,6 +194,55 @@ function clanChatCommand(command, params, client) {
 
 // ===========================================================================
 
+function privateMessageCommand(command, params, client) {
+	if (isPlayerMuted(client)) {
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let targetClient = getPlayerFromParams(splitParams[0]);
+	let messageText = splitParams.slice(1).join(" ");
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	getPlayerData(targetClient).privateMessageReplyTo = client;
+	messagePlayerPrivateMessage(targetClient, client, messageText);
+	messagePlayerTip(client, getLocaleString(client, "PrivateMessageReplyCommandTip", "{ALTCOLOUR}/reply{MAINCOLOUR}"))
+}
+
+// ===========================================================================
+
+function replyToLastPrivateMessageCommand(command, params, client) {
+	if (isPlayerMuted(client)) {
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerData(client).privateMessageReplyTo == null) {
+		messagePlayerError(client, getLocaleString(client, "NoPrivateMessageToReply"));
+		return false;
+	}
+
+	getPlayerData(targetClient).privateMessageReplyTo = client;
+	messagePlayerPrivateMessage(targetClient, client, messageText);
+}
+
+// ===========================================================================
+
 function talkToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
