@@ -150,14 +150,14 @@ function messagePlayerInfo(client, messageText) {
 
 function messagePlayerTip(client, messageText) {
 	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `ℹ️ ${messageText}`);
+		logToConsole(LOG_INFO, `💡 ${messageText}`);
 		return true;
 	}
 
 	if (!isClientFromDiscord(client)) {
-		messagePlayerNormal(client, `ℹ️ ${messageText}`, getColourByName("white"));
+		messagePlayerNormal(client, `💡 ${messageText}`, getColourByName("white"));
 	} else {
-		messageDiscordUser(client, `:information_source: ${messageText}`);
+		messageDiscordUser(client, `:bulb: ${messageText}`);
 	}
 }
 
@@ -260,6 +260,12 @@ function messagePlayersInRace(raceId, message) {
 			messagePlayerNormal(clients[i], message);
 		}
 	}
+}
+
+// ===========================================================================
+
+function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
+	messagePlayerNormal(toClient, `{yellow}[DM] ${getCharacterFullName(fromClient)}{MAINCOLOUR}says: {ALTCOLOUR}${messageText}`);
 }
 
 // ===========================================================================
