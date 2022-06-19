@@ -848,13 +848,13 @@ function saveAllHousesToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_INFO, `[VRR.House]: Saving all server houses to database ...`);
+	logToConsole(LOG_DEBUG, `[VRR.House]: Saving all server houses to database ...`);
 	for (let i in getServerData().houses) {
 		if (getServerData().houses[i].needsSaved) {
 			saveHouseToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, `[VRR.House]: Saving all server houses to database ...`);
+	logToConsole(LOG_INFO, `[VRR.House]: Saved all server houses to database`);
 }
 
 // ===========================================================================
@@ -866,7 +866,7 @@ function saveHouseToDatabase(houseId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house '${tempHouseData.databaseId}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house '${tempHouseData.description}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeHouseDescription = escapeDatabaseString(dbConnection, tempHouseData.description);
@@ -933,11 +933,9 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house location '${locationId}' for house '${getHouseData(houseId).databaseId}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		let safeHouseDescription = escapeDatabaseString(dbConnection, getHouseData(houseId).description);
-
 		let data = [
 			["house_loc_house", getHouseData(houseId).databaseId],
 			["house_loc_type", tempHouseLocationData.type],
@@ -976,7 +974,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saved house '${tempHouseData.description}' to database!`);
+	logToConsole(LOG_VERBOSE, `[VRR.House]: Saved location ${locationId} for house ${houseId} to database`);
 
 	return false;
 }
