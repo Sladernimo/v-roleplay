@@ -129,6 +129,7 @@ class ClientData {
 		this.alcoholLevel = 0;
 		this.pedState = VRR_PEDSTATE_NONE;
 		this.promptType = VRR_PROMPT_NONE;
+		this.privateMessageReplyTo = null;
 
 		this.inPaintBall = false;
 		this.paintBallBusiness = -1;
