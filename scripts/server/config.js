@@ -233,6 +233,7 @@ let globalConfig = {
 	minChatLines: 1,
 	maxChatLines: 6,
 	vehicleTrunkDistance: 2.0,
+	fishingSpotDistance: 10.0,
 };
 
 // ===========================================================================
