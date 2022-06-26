@@ -228,7 +228,7 @@ function checkPayDays() {
 	}
 
 	for (let i in getServerData().businesses) {
-		if (getBusinessData(i).ownerType != VRR_BIZOWNER_NONE && getBusinessData(i).ownerType != VRR_BIZOWNER_PUBLIC && getBusinessData(i).ownerType != VRR_BIZOWNER_FACTION) {
+		if (getBusinessData(i).ownerType != VRR_BIZ_OWNER_NONE && getBusinessData(i).ownerType != VRR_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != VRR_BIZ_OWNER_FACTION) {
 			getBusinessData(i).till += 1000;
 		}
 	}
