@@ -32,13 +32,10 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 
 	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
-	addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
-	addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
-
-	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
+	addEventHandler("onPedEnteringVehicleEx", onPedEnteringVehicle);
+	addEventHandler("onPedExitingVehicleEx", onPedExitingVehicle);
+	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 
 	//addEventHandler("OnPlayerCommand", onPlayerCommand);
 }
@@ -250,24 +247,25 @@ function onPlayerExitedSphere(client, sphere) {
 
 // ===========================================================================
 
-async function onPlayerEnteredVehicle(client, clientVehicle, seat) {
+async function onPlayerEnteredVehicle(client, vehicle, seat) {
 	if (client == null) {
 		return false;
 	}
 
-	let vehicle = null;
+	if (getPlayerData(client) == false) {
+		return false;
+	}
 
 	if (getGame() == VRR_GAME_GTA_IV) {
 		vehicle = getVehicleFromIVNetworkId(clientVehicle);
-	} else {
-		if (getPlayerPed(client) == null) {
-			return false;
-		}
-
-		await waitUntil(() => client != null && getPlayerPed(client) != null && getPlayerVehicle(client) != null);
-
-		vehicle = getPlayerVehicle(client);
 	}
+	//else {
+	//	if (getPlayerPed(client) == null) {
+	//		return false;
+	//	}
+	//	await waitUntil(() => client != null && getPlayerPed(client) != null && getPlayerVehicle(client) != null);
+	//	vehicle = getPlayerVehicle(client);
+	//}
 
 	if (!getVehicleData(vehicle)) {
 		return false;
@@ -684,6 +682,50 @@ async function onPlayerSpawn(client) {
 function onPlayerCommand(event, client, command, params) {
 	if (!doesCommandExist(command)) {
 		processPlayerCommand(command, params, client);
+	}
+}
+
+// ===========================================================================
+
+function onPedEnteredVehicle(ped, vehicle, seat) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+		if (client != null) {
+			onPlayerEnteredVehicle(client, vehicle, seat);
+		}
+	}
+}
+
+// ===========================================================================
+
+function onPedExitedVehicle(ped, vehicle, seat) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+		if (client != null) {
+			onPlayerExitedVehicle(client, vehicle, seat);
+		}
+	}
+}
+
+// ===========================================================================
+
+function onPedEnteringVehicle(ped, vehicle, seat) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+		if (client != null) {
+			onPlayerEnteringVehicle(client, vehicle, seat);
+		}
+	}
+}
+
+// ===========================================================================
+
+function onPedExitingVehicle(ped, vehicle, seat) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+		if (client != null) {
+			onPlayerExitingVehicle(client, vehicle, seat);
+		}
 	}
 }
 
