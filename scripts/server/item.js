@@ -1281,24 +1281,28 @@ function playerUseItem(client, hotBarSlot) {
 		}
 
 		case VRR_ITEM_USETYPE_WEAPON: {
-			for (let i in hotBarItems) {
-				if (hotBarItems[i] != -1) {
-					if (getItemData(hotBarItems[i]) != false) {
-						if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
-							let ammoItemData = getItemData(hotBarItems[i]);
-							let ammoItemTypeData = getItemTypeData(ammoItemData.itemTypeIndex);
-							if (ammoItemTypeData.useId == itemTypeData.databaseId) {
-								givePlayerWeaponAmmo(client, ammoItemData.value);
-								itemData.value = itemData.value + ammoItemData.value;
-								deleteItem(hotBarItems[i]);
-								meActionToNearbyPlayers(client, `loads some ammo into their ${itemTypeData.name}`);
-								return true;
+			if (isMeleeWeapon(itemTypeData.useId, getGame()) == true) {
+				messagePlayerError(client, getLocaleString(client, "WeaponDoesNotUseAmmo", itemTypeData.name));
+			} else {
+				for (let i in hotBarItems) {
+					if (hotBarItems[i] != -1) {
+						if (getItemData(hotBarItems[i]) != false) {
+							if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+								let ammoItemData = getItemData(hotBarItems[i]);
+								let ammoItemTypeData = getItemTypeData(ammoItemData.itemTypeIndex);
+								if (ammoItemTypeData.useId == itemTypeData.databaseId) {
+									givePlayerWeaponAmmo(client, ammoItemData.value);
+									itemData.value = itemData.value + ammoItemData.value;
+									deleteItem(hotBarItems[i]);
+									meActionToNearbyPlayers(client, `loads some ammo into their ${itemTypeData.name}`);
+									return true;
+								}
 							}
 						}
 					}
 				}
+				messagePlayerError(client, getLocaleString(client, "NoAmmoToLoadIntoWeapon", itemTypeData.name));
 			}
-			messagePlayerError(client, getLocaleString(client, "NoAmmoToLoadIntoWeapon", itemTypeData.name));
 			break;
 		}
 
