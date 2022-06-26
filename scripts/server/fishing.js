@@ -7,6 +7,7 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+// Fishing Catch Types (Probably not going to be used, in favor of items and their use type)
 const VRR_FISHING_CATCH_TYPE_NONE = 1;
 const VRR_FISHING_CATCH_TYPE_FISH = 1;
 const VRR_FISHING_CATCH_TYPE_JUNK = 2;
