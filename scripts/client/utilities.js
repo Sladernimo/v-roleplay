@@ -116,15 +116,16 @@ function enterVehicleAsPassenger() {
 			if (tempVehicle != null) {
 				localPlayer.enterVehicle(tempVehicle, false);
 			}
-		} else {
-			// Disable for now. GTA IV has built-in passenger entry
-
-			//for(let i = 0 ; i <= natives.getMaximumNumberOfPassengers(tempVehicle); i++) {
-			//    if(natives.isCarPassengerSeatFree(tempVehicle, i)) {
-			//        natives.taskEnterCarAsPassenger(localPlayer, tempVehicle, i, 10000);
-			//    }
-			//}
 		}
+		// else {
+		// Disable for now. GTA IV has built-in passenger entry
+
+		//for(let i = 0 ; i <= natives.getMaximumNumberOfPassengers(tempVehicle); i++) {
+		//    if(natives.isCarPassengerSeatFree(tempVehicle, i)) {
+		//        natives.taskEnterCarAsPassenger(localPlayer, tempVehicle, i, 10000);
+		//    }
+		//}
+		//}
 	}
 }
 
