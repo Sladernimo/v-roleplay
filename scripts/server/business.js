@@ -12,32 +12,28 @@ const VRR_BIZ_TYPE_NONE = 0;                     // None (invalid)
 const VRR_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
 const VRR_BIZ_TYPE_BANK = 2;                     // Bank
 const VRR_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
+const VRR_BIZ_TYPE_PAINTBALL = 4;				 // Paintball arena. Player joins paintball/airsoft when they enter
 
 // ===========================================================================
 
 // Business Location Types
-const VRR_BIZLOC_NONE = 0;                       // None
-const VRR_BIZLOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
-const VRR_BIZLOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
-const VRR_BIZLOC_FUEL = 3;                       // Fuel pump
-const VRR_BIZLOC_DRIVETHRU = 4;                  // Drivethrough
-const VRR_BIZLOC_VENDMACHINE = 5;                // Vending machine
+const VRR_BIZ_LOC_NONE = 0;                       // None
+const VRR_BIZ_LOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
+const VRR_BIZ_LOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
+const VRR_BIZ_LOC_FUEL = 3;                       // Fuel pump
+const VRR_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
+const VRR_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
+const VRR_BIZ_LOC_ATM = 6;						  // ATM
 
 // ===========================================================================
 
 // Business Owner Types
-const VRR_BIZOWNER_NONE = 0;                     // Not owned
-const VRR_BIZOWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const VRR_BIZOWNER_JOB = 2;                      // Owned by a job
-const VRR_BIZOWNER_CLAN = 3;                     // Owned by a clan
-const VRR_BIZOWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const VRR_BIZOWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
-
-// ===========================================================================
-
-// Business Entrance Types (For special business with specific triggers)
-const VRR_BIZ_ENTRANCE_TYPE_NONE = 0;			 // None
-const VRR_BIZ_ENTRANCE_TYPE_PAINTBALL = 1;		 // Joins paintball/airsoft when player enters business
+const VRR_BIZ_OWNER_NONE = 0;                     // Not owned
+const VRR_BIZ_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const VRR_BIZ_OWNER_JOB = 2;                      // Owned by a job
+const VRR_BIZ_OWNER_CLAN = 3;                     // Owned by a clan
+const VRR_BIZ_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const VRR_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
 
 // ===========================================================================
 
@@ -48,7 +44,7 @@ class BusinessData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.ownerType = VRR_BIZOWNER_NONE;
+		this.ownerType = VRR_BIZ_OWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.locked = false;
@@ -56,7 +52,7 @@ class BusinessData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
-		this.entranceType = VRR_BIZ_ENTRANCE_TYPE_NONE;
+		this.type = VRR_BIZ_TYPE_NONE;
 
 		this.floorItemCache = [];
 		this.storageItemCache = [];
@@ -97,7 +93,7 @@ class BusinessData {
 			this.locked = intToBool(toInteger(dbAssoc["biz_locked"]));
 			this.hasInterior = intToBool(toInteger(dbAssoc["biz_has_interior"]));
 			this.interiorLights = intToBool(toInteger(dbAssoc["biz_interior_lights"]));
-			this.entranceType = toInteger(dbAssoc["biz_entrance_type"]);
+			this.type = toInteger(dbAssoc["biz_type"]);
 
 			this.entrancePosition = toVector3(toFloat(dbAssoc["biz_entrance_pos_x"]), toFloat(dbAssoc["biz_entrance_pos_y"]), toFloat(dbAssoc["biz_entrance_pos_z"]));
 			this.entranceRotation = toInteger(dbAssoc["biz_entrance_rot_z"]);
@@ -218,7 +214,7 @@ function loadBusinessesFromDatabase() {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempBusinessData = new BusinessData(dbAssoc);
-					//tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
+					tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
 					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
 					tempBusinesses.push(tempBusinessData);
 					logToConsole(LOG_VERBOSE, `[VRR.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
@@ -494,7 +490,7 @@ function setBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_PLAYER;
+	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_PLAYER;
 	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(newBusinessOwner).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -536,7 +532,7 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_JOB;
+	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -582,7 +578,7 @@ function setBusinessClanCommand(command, params, client) {
 	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = VRR_PROMPT_BIZGIVETOCLAN;
 
-	//getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
+	//getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_CLAN;
 	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
 	//getBusinessData(businessId).needsSaved = true;
 }
@@ -719,7 +715,7 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_JOB;
+	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -749,7 +745,7 @@ function setBusinessPublicCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_PUBLIC;
+	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_PUBLIC;
 	getBusinessData(businessId).ownerId = 0;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -779,7 +775,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZOWNER_NONE;
+	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_NONE;
 	getBusinessData(businessId).ownerId = -1;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -903,24 +899,24 @@ function getBusinessInfoCommand(command, params, client) {
 
 	let ownerName = "Unknown";
 	switch (businessData.ownerType) {
-		case VRR_BIZOWNER_CLAN:
+		case VRR_BIZ_OWNER_CLAN:
 			ownerName = getClanData(businessData.ownerId).name;
 			break;
 
-		case VRR_BIZOWNER_JOB:
+		case VRR_BIZ_OWNER_JOB:
 			ownerName = getJobData(businessData.ownerId).name;
 			break;
 
-		case VRR_BIZOWNER_PLAYER:
+		case VRR_BIZ_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(businessData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case VRR_BIZOWNER_PUBLIC:
+		case VRR_BIZ_OWNER_PUBLIC:
 			ownerName = "Public";
 			break;
 
-		case VRR_BIZOWNER_NONE:
+		case VRR_BIZ_OWNER_NONE:
 			//submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
 			ownerName = "None";
 			break;
@@ -2340,17 +2336,17 @@ function exitBusiness(client) {
  */
 function getBusinessOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case VRR_BIZOWNER_CLAN:
+		case VRR_BIZ_OWNER_CLAN:
 			return "clan";
 
-		case VRR_BIZOWNER_JOB:
+		case VRR_BIZ_OWNER_JOB:
 			return "job";
 
-		case VRR_BIZOWNER_PLAYER:
+		case VRR_BIZ_OWNER_PLAYER:
 			return "player";
 
-		case VRR_BIZOWNER_NONE:
-		case VRR_BIZOWNER_PUBLIC:
+		case VRR_BIZ_OWNER_NONE:
+		case VRR_BIZ_OWNER_PUBLIC:
 			return "not owned";
 
 		default:
@@ -2998,11 +2994,11 @@ function canPlayerWithdrawFromBusinessTill(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3018,11 +3014,11 @@ function canPlayerSetBusinessInteriorLights(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3038,11 +3034,11 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3058,13 +3054,13 @@ function canPlayerManageBusiness(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_PLAYER) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER) {
 		if (getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZOWNER_CLAN) {
+	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN) {
 		if (getBusinessData(businessId).ownerId == getPlayerClan(client)) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 				return true;
