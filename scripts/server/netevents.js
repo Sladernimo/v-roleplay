@@ -1232,3 +1232,9 @@ function sendPlayerLocaleStrings(client) {
 }
 
 // ==========================================================================
+
+function clearLocalPickupsForPlayer(client) {
+	sendNetworkEventToPlayer(client, "vrr.clearPickups");
+}
+
+// ==========================================================================

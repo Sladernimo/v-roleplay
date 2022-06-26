@@ -122,6 +122,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("vrr.mouseCursor", toggleMouseCursor);
 	addNetworkEventHandler("vrr.mouseCamera", toggleMouseCamera);
 	addNetworkEventHandler("vrr.clearPeds", clearLocalPlayerOwnedPeds);
+	addNetworkEventHandler("vrr.clearPickups", clearLocalPlayerOwnedPickups);
 	addNetworkEventHandler("vrr.passenger", enterVehicleAsPassenger);
 	addNetworkEventHandler("vrr.logo", setServerLogoRenderState);
 	addNetworkEventHandler("vrr.ambience", setCityAmbienceState);
@@ -412,6 +413,15 @@ function serverRequestedLocalPlayerSpawn(skinId, position) {
 
 function sendLocaleSelectToServer(localeId) {
 	sendNetworkEventToServer("vrr.localeSelect", localeId);
+}
+
+// ===========================================================================
+
+function clearLocalPlayerOwnedPickups() {
+	let pickups = getPickups().filter(pickup => pickup.isLocal == true);
+	for (let i in pickups) {
+		deleteLocalGameElement(pickups[i]);
+	}
 }
 
 // ===========================================================================

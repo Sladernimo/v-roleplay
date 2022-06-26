@@ -72,12 +72,18 @@ function setElementPosition(elementId, position) {
 
 // ===========================================================================
 
-function deleteGameElement(elementId, position) {
+function deleteGameElement(elementId, position = toVector3(0.0, 0.0, 0.0)) {
 	if (!getElementFromId(elementId).isOwner) {
 		return false;
 	}
 
 	destroyGameElement(getElementFromId(elementId));
+}
+
+// ===========================================================================
+
+function deleteLocalGameElement(element) {
+	destroyGameElement(element);
 }
 
 // ===========================================================================

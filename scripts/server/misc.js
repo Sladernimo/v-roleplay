@@ -323,6 +323,8 @@ function enterExitPropertyCommand(command, params, client) {
 				}
 			}
 
+			clearLocalPickupsForPlayer(client);
+
 			//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
 			stopRadioStreamForPlayer(client);
 			getPlayerData(client).streamingRadioStation = -1;
