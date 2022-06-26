@@ -193,13 +193,13 @@ function getAllVehiclesOwnedByPlayer(client) {
 // ===========================================================================
 
 function getAllBusinessesOwnedByPlayer(client) {
-	return getServerData().businesses.filter((b) => b.ownerType == VRR_BIZOWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().businesses.filter((b) => b.ownerType == VRR_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllHousesOwnedByPlayer(client) {
-	return getServerData().houses.filter((h) => h.ownerType == VRR_HOUSEOWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().houses.filter((h) => h.ownerType == VRR_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
