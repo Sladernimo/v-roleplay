@@ -90,12 +90,14 @@ function saveServerDataToDatabase() {
 // ===========================================================================
 
 function initTimers() {
-	//if(!isDevelopmentServer()) {
+	//if (isDevelopmentServer()) {
+	//	return false;
+	//}
+
 	serverTimers.updatePingsTimer = setInterval(updatePings, 5000);
 	serverTimers.oneMinuteTimer = setInterval(oneMinuteTimerFunction, 60000);
-	serverTimers.fifteenMinuteTimer = setInterval(tenMinuteTimerFunction, 600000);
+	serverTimers.tenMinuteTimer = setInterval(tenMinuteTimerFunction, 600000);
 	serverTimers.thirtyMinuteTimer = setInterval(thirtyMinuteTimerFunction, 1800000);
-	//}
 }
 
 // ===========================================================================
@@ -104,11 +106,13 @@ function oneMinuteTimerFunction() {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Checking server game time`);
 	checkServerGameTime();
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] Checking rentable vehicles`);
-	checkVehicleRenting();
+	if (getClients().length > 0) {
+		logToConsole(LOG_DEBUG, `[VRR.Event] Checking rentable vehicles`);
+		checkVehicleRenting();
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
-	updateAllPlayerNameTags();
+		logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
+		updateAllPlayerNameTags();
+	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Collecting all garbage`);
 	collectAllGarbage();
@@ -118,14 +122,18 @@ function oneMinuteTimerFunction() {
 
 function tenMinuteTimerFunction() {
 	//showRandomTipToAllPlayers();
-	saveServerDataToDatabase();
-	checkInactiveVehicleRespawns();
+	//saveServerDataToDatabase();
+	//checkInactiveVehicleRespawns();
 }
 
 // ===========================================================================
 
 function thirtyMinuteTimerFunction() {
-	checkPayDays();
+	if (getClients().length > 0) {
+		checkPayDays();
+	}
+	saveServerDataToDatabase();
+	checkInactiveVehicleRespawns();
 }
 
 // ===========================================================================
@@ -173,6 +181,10 @@ function checkVehicleRenting() {
 // ===========================================================================
 
 function updatePings() {
+	if (getClients().length == 0) {
+		return false;
+	}
+
 	let clients = getClients();
 	for (let i in clients) {
 		if (isClientInitialized(clients[i])) {
@@ -190,16 +202,16 @@ function updatePings() {
 
 function checkServerGameTime() {
 	//if(!getServerConfig().useRealTime) {
-	if (getServerConfig().minute >= 59) {
-		getServerConfig().minute = 0;
-		if (getServerConfig().hour >= 23) {
-			getServerConfig().hour = 0;
-		} else {
-			getServerConfig().hour = getServerConfig().hour + 1;
-		}
-	} else {
-		getServerConfig().minute = getServerConfig().minute + 1;
-	}
+	//if (getServerConfig().minute >= 59) {
+	//	getServerConfig().minute = 0;
+	//	if (getServerConfig().hour >= 23) {
+	//		getServerConfig().hour = 0;
+	//	} else {
+	//		getServerConfig().hour = getServerConfig().hour + 1;
+	//	}
+	//} else {
+	//	getServerConfig().minute = getServerConfig().minute + 1;
+	//}
 	//} else {
 	//	let dateTime = getCurrentTimeStampWithTimeZone(getServerConfig().realTimeZone);
 	//	getServerConfig().hour = dateTime.getHours();
@@ -212,6 +224,10 @@ function checkServerGameTime() {
 // ===========================================================================
 
 function checkPayDays() {
+	if (getClients().length == 0) {
+		return false;
+	}
+
 	let clients = getClients();
 	for (let i in clients) {
 		if (isClientInitialized(clients[i])) {
@@ -237,6 +253,10 @@ function checkPayDays() {
 // ===========================================================================
 
 function showRandomTipToAllPlayers() {
+	if (getClients().length == 0) {
+		return false;
+	}
+
 	let clients = getClients();
 	for (let i in clients) {
 		if (isClientInitialized(clients[i])) {
