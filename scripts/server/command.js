@@ -541,6 +541,7 @@ function loadCommands() {
 			new CommandData("setname", setCharacterNameCommand, "<player name/id> <first name> <last name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's name directly."),
 			new CommandData("setskin", setPlayerSkinCommand, "<player name/id> <skin id/name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's skin."),
 			new CommandData("setaccent", setPlayerAccentCommand, "<player name/id> <accent name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's accent."),
+			new CommandData("setfightstyle", setPlayerFightStyleCommand, "<player name/id> <fight style name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's fight style."),
 			//new CommandData("setfightstyle", setPlayerFightStyleCommand, "<player name/id> <fight style name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's fight style."),
 			new CommandData("setstars", setPlayerWantedLevelCommand, "<player name/id> <wanted level>", getStaffFlagValue("BasicModeration"), true, true, "Forces a player to have a wanted level"),
 			new CommandData("plrinfo", getPlayerInfoCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Shows basic info about the specified player"),
