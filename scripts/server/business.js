@@ -24,6 +24,7 @@ const VRR_BIZ_LOC_FUEL = 3;                       // Fuel pump
 const VRR_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
 const VRR_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
 const VRR_BIZ_LOC_ATM = 6;						  // ATM
+const VRR_BIZ_LOC_PAYPHONE = 7;				      // Payphone
 
 // ===========================================================================
 
