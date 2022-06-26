@@ -1398,5 +1398,3 @@ function deletePlayerPed(client) {
 function isPlayerOnBoat(client) {
 	return false;
 }
-
-// ===========================================================================
