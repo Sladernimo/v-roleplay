@@ -143,7 +143,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getHouseData(houseId).ownerType = VRR_HOUSEOWNER_CLAN;
+			getHouseData(houseId).ownerType = VRR_HOUSE_OWNER_CLAN;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
@@ -167,7 +167,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getBusinessData(businessId).ownerType = VRR_BIZOWNER_CLAN;
+			getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_CLAN;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
@@ -191,7 +191,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getHouseData(houseId).ownerType = VRR_HOUSEOWNER_PLAYER;
+			getHouseData(houseId).ownerType = VRR_HOUSE_OWNER_PLAYER;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getHouseData(houseId).buyPrice = 0;
 			getHouseData(houseId).needsSaved = true;
@@ -219,7 +219,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getBusinessData(businessId).ownerType = VRR_BIZOWNER_PLAYER;
+			getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_PLAYER;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getBusinessData(businessId).buyPrice = 0;
 			getBusinessData(businessId).needsSaved = true;
