@@ -5786,7 +5786,9 @@ let gameData = {
 			ConcertHall: [toVector3(-925.417, 1053.4, 13.2005), 8, false, -1],
 			RecordingStudio: [toVector3(-879.767, 1156.88, 17.8115), 9, false, -1],
 			PrintWorks: [toVector3(-1064.98, -279.093, 12.0882), 18, false, -1],
-			Gas: [toVector3(447.26, 789.09, 12.95), 0, false, -1],
+			GasStation: [toVector3(447.26, 789.09, 12.95), 0, false, -1],
+			BusinessOffices: [toVector3(-551.70, 788.04, 97.51), 0, false, -1],
+			BusinessOfficeLobby: [toVector3(-573.64, 794.53, 22.88), 0, false, -1],
 		},
 
 		[VRR_GAME_GTA_SA]: { // GTA SA
@@ -5919,7 +5921,9 @@ let gameData = {
 			Prison: [toVector3(-1082.69, -364.05, 7.404), 0, false, -1],
 			Ship: [toVector3(-336.53, -1494.56, 9.945), 0, false, -1],
 		},
-		[VRR_GAME_GTA_IV_EFLC]: {}, // GTA IV EFLC
+		[VRR_GAME_GTA_IV_EFLC]: { // GTA IV EFLC
+
+		},
 		[VRR_GAME_MAFIA_ONE]: { // Mafia 1
 		},
 		[VRR_GAME_MAFIA_TWO]: { // Mafia 2
@@ -6572,6 +6576,18 @@ let gameData = {
 				npcs: [
 					["Front Desk Clerk", 160, toVector3(215.11, -1272.65, 12.09), 2.95],
 				]
+			},
+			BusinessOffices: {
+				businesses: [
+				],
+				houses: [
+				],
+				npcs: [
+				],
+				businessLocations: [
+					["Sprunk Vending Machine", toVector3(-552.47, 768.33, 97.51), 0, null],
+					["Sprunk Vending Machine", toVector3(-564.14, 768.39, 97.51), 0, null],
+				],
 			}
 		}
 	}
