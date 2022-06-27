@@ -9,7 +9,7 @@
 
 let scriptVersion = "1.1";
 let serverStartTime = 0;
-let logLevel = LOG_INFO|LOG_DEBUG|LOG_VERBOSE; // LOG_ERROR|LOG_WARN;
+let logLevel = LOG_INFO | LOG_DEBUG | LOG_VERBOSE; // LOG_ERROR|LOG_WARN;
 
 let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);
@@ -32,7 +32,8 @@ let playerGUI = new Array(server.maxClients).fill(false);
  * @property {Array.<NPCData>} npcs
  * @property {Array.<RaceData>} races
  * @property {Array.<JobData>} jobs
- * @property {Array.<Gates>} gates
+ * @property {Array.<GateData>} gates
+ * @property {Array.<RadioStationData>} radioStations
  * @property {Array} groundItemCache
  * @property {Array} groundPlantCache
  * @property {Array} purchasingVehicleCache
@@ -55,6 +56,7 @@ let serverData = {
 	races: [],
 	jobs: [],
 	gates: [],
+	radioStations: [],
 	groundItemCache: [],
 	groundPlantCache: [],
 	purchasingVehicleCache: [],
