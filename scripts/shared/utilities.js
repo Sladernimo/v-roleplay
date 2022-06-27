@@ -2670,6 +2670,10 @@ function replaceColoursInMessage(messageText) {
 	tempRegex = new RegExp(tempFind, 'g');
 	messageText = messageText.replace(tempRegex, "[#FFFFFF]");
 
+	tempFind = `{TIMESTAMPCOLOUR}`;
+	tempRegex = new RegExp(tempFind, 'g');
+	messageText = messageText.replace(tempRegex, "[#C8C8C8]");
+
 	for (let i in getServerColours().hex.byName) {
 		let find = `{${i}}`;
 		let re = new RegExp(find, 'g');
