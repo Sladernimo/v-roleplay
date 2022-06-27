@@ -114,7 +114,7 @@ function deletePaintBallItems(client) {
 function cacheAllPaintBallItemTypes() {
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Cacheing all paintball item types ...`);
 	for (let i in paintBallItemNames[getGame()]) {
-		let itemTypeId = getItemTypeFromParams(paintBallItems[getGame()][i]);
+		let itemTypeId = getItemTypeFromParams(paintBallItemNames[getGame()][i]);
 		if (itemTypeId != -1 && getItemTypeData(itemTypeId) != false) {
 			paintBallItems.push(getItemTypeData(itemTypeId));
 		}
