@@ -81,7 +81,8 @@ class BusinessData {
 		this.entranceFee = 0;
 		this.till = 0;
 
-		this.streamingRadioStation = -1;
+		this.streamingRadioStation = 0;
+		//this.streamingRadioStationIndex = -1;
 
 		this.labelHelpType = VRR_PROPLABEL_INFO_NONE;
 
@@ -114,7 +115,7 @@ class BusinessData {
 			this.till = toInteger(dbAssoc["biz_till"]);
 
 			this.labelHelpType = toInteger(dbAssoc["biz_label_help_type"]);
-			this.streamingRadioStation = toInteger(dbAssoc["biz_radiostation"]);
+			this.streamingRadioStation = toInteger(dbAssoc["biz_radio_station"]);
 		}
 	};
 };
@@ -1901,7 +1902,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
-			["biz_radiostation", tempBusinessData.streamingRadioStation],
+			["biz_radio_station", toInteger(tempBusinessData.streamingRadioStation)],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 			["biz_buy_price", boolToInt(tempBusinessData.buyPrice)],
 			//["biz_rent_price", boolToInt(tempBusinessData.rentPrice)],
@@ -2524,6 +2525,13 @@ function reloadAllBusinessesCommand(command, params, client) {
 function setBusinessDataIndexes() {
 	for (let i in getServerData().businesses) {
 		getServerData().businesses[i].index = i;
+
+		//if (getServerData().businesses[i].streamingRadioStation > 0) {
+		//	let radioStationIndex = getRadioStationFromDatabaseId(getServerData().businesses[i].streamingRadioStation);
+		//	if (radioStationIndex != -1) {
+		//		getServerData().businesses[i].streamingRadioStationIndex = radioStationIndex;
+		//	}
+		//}
 	}
 }
 
