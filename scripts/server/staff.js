@@ -1197,7 +1197,7 @@ function givePlayerMoneyCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setPlayerAccentCommand(command, params, client) {
+function forcePlayerAccentCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1269,7 +1269,7 @@ function forceCharacterNameChangeCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setCharacterNameCommand(command, params, client) {
+function forceCharacterNameCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1313,7 +1313,7 @@ function setCharacterNameCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setPlayerSkinCommand(command, params, client) {
+function forcePlayerSkinCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1384,7 +1384,7 @@ function setPlayerStaffTitleCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setPlayerHealthCommand(command, params, client) {
+function forcePlayerHealthCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1420,7 +1420,7 @@ function setPlayerHealthCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setPlayerArmourCommand(command, params, client) {
+function forcePlayerArmourCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1486,7 +1486,7 @@ function setPlayerInfiniteRunCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setPlayerWantedLevelCommand(command, params, client) {
+function forcePlayerWantedLevelCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1714,7 +1714,7 @@ function isPlayerPoliceBanned(client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function forceFightStyleCommand(command, params, client) {
+function forcePlayerFightStyleCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
