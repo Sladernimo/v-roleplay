@@ -1234,13 +1234,13 @@ function sendPlayerLocaleStrings(client) {
 // ==========================================================================
 
 function clearLocalPickupsForPlayer(client) {
-	sendNetworkEventToPlayer(client, "vrr.clearPickups");
+	sendNetworkEventToPlayer("vrr.clearPickups", client);
 }
 
 // ==========================================================================
 
 function sendPlayerChatBoxTimeStampsState(client, state) {
-	sendNetworkEventToPlayer(client, "vrr.chatTimeStamps", state);
+	sendNetworkEventToPlayer("vrr.chatTimeStamps", client, state);
 }
 
 // ==========================================================================
