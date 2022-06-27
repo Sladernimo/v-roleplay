@@ -9,6 +9,7 @@
 
 // ===========================================================================
 
+let chatBoxTimeStampsEnabled = false;
 let chatBoxHistory = [];
 let bottomMessageIndex = 0;
 let maxChatBoxHistory = 500;
@@ -56,12 +57,21 @@ function receiveChatBoxMessageFromServer(messageString, colour) {
 
 	let colouredString = replaceColoursInMessage(messageString);
 
+	let date = new Date();
+	let timeStampText = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
 	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Changed colours in string: ${colouredString}`);
 
-	addToChatBoxHistory(colouredString, colour);
+	addToChatBoxHistory(colouredString, colour, timeStampText);
 	//if(bottomMessageIndex >= chatBoxHistory.length-1) {
-		message(colouredString, colour);
-		bottomMessageIndex = chatBoxHistory.length-1;
+
+	let outputText = colouredString;
+	if (chatBoxTimeStampsEnabled) {
+		outputText = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${colouredString}`;
+	}
+
+	message(outputText, colour);
+	bottomMessageIndex = chatBoxHistory.length - 1;
 	//}
 
 	chatLastUse = getCurrentUnixTimestamp();
@@ -75,8 +85,15 @@ function setChatScrollLines(amount) {
 
 // ===========================================================================
 
+function setChatBoxTimeStampsState(state) {
+	chatBoxTimeStampsEnabled = state;
+	updateChatBox();
+}
+
+// ===========================================================================
+
 function setChatAutoHideDelay(delay) {
-	chatAutoHideDelay = delay*1000;
+	chatAutoHideDelay = delay * 1000;
 }
 
 // ===========================================================================
@@ -88,8 +105,8 @@ function addToChatBoxHistory(messageString, colour) {
 // ===========================================================================
 
 function chatBoxScrollUp() {
-	if(bottomMessageIndex > maxChatBoxLines) {
-		bottomMessageIndex = bottomMessageIndex-scrollAmount;
+	if (bottomMessageIndex > maxChatBoxLines) {
+		bottomMessageIndex = bottomMessageIndex - scrollAmount;
 		updateChatBox();
 	}
 }
@@ -97,8 +114,8 @@ function chatBoxScrollUp() {
 // ===========================================================================
 
 function chatBoxScrollDown() {
-	if(bottomMessageIndex < chatBoxHistory.length-1) {
-		bottomMessageIndex = bottomMessageIndex+scrollAmount;
+	if (bottomMessageIndex < chatBoxHistory.length - 1) {
+		bottomMessageIndex = bottomMessageIndex + scrollAmount;
 		updateChatBox();
 	}
 }
@@ -106,7 +123,7 @@ function chatBoxScrollDown() {
 // ===========================================================================
 
 function clearChatBox() {
-	for(let i = 0 ; i <= maxChatBoxLines ; i++) {
+	for (let i = 0; i <= maxChatBoxLines; i++) {
 		message("", COLOUR_WHITE);
 	}
 }
@@ -115,9 +132,14 @@ function clearChatBox() {
 
 function updateChatBox() {
 	clearChatBox();
-	for(let i = bottomMessageIndex-maxChatBoxLines ; i <= bottomMessageIndex ; i++) {
-		if(typeof chatBoxHistory[i] != "undefined") {
-			message(chatBoxHistory[i][0], chatBoxHistory[i][1]);
+	for (let i = bottomMessageIndex - maxChatBoxLines; i <= bottomMessageIndex; i++) {
+		if (typeof chatBoxHistory[i] != "undefined") {
+			let outputText = chatBoxHistory[i][0];
+			if (chatBoxTimeStampsEnabled) {
+				outputText = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
+			}
+
+			message(outputText, chatBoxHistory[i][1]);
 		} else {
 			message("", COLOUR_WHITE);
 		}
@@ -129,18 +151,18 @@ function updateChatBox() {
 
 function processMouseWheelForChatBox(mouseId, deltaCoordinates, flipped) {
 	// There isn't a way to detect whether chat input is active, but mouse cursor is forced shown when typing so ¯\_(ツ)_/¯
-	if(!gui.cursorEnabled) {
+	if (!gui.cursorEnabled) {
 		return false;
 	}
 
-	if(!flipped) {
-		if(deltaCoordinates.y > 0) {
+	if (!flipped) {
+		if (deltaCoordinates.y > 0) {
 			chatBoxScrollUp();
 		} else {
 			chatBoxScrollDown();
 		}
 	} else {
-		if(deltaCoordinates.y > 0) {
+		if (deltaCoordinates.y > 0) {
 			chatBoxScrollDown();
 		} else {
 			chatBoxScrollUp();
@@ -154,16 +176,16 @@ function checkChatAutoHide() {
 	return false;
 
 	// Make sure chat input isn't active
-	if(gui.cursorEnabled) {
+	if (gui.cursorEnabled) {
 		return false;
 	}
 
 	// Don't process auto-hide if it's disabled
-	if(chatAutoHideDelay == 0) {
+	if (chatAutoHideDelay == 0) {
 		return false;
 	}
 
-	if(getCurrentUnixTimestamp()-chatLastUse >= chatAutoHideDelay) {
+	if (getCurrentUnixTimestamp() - chatLastUse >= chatAutoHideDelay) {
 		setChatWindowEnabled(false);
 	}
 }

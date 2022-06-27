@@ -18,10 +18,11 @@ function initServerScript() {
 function addAllNetworkHandlers() {
 	logToConsole(LOG_DEBUG, "[VRR.Server]: Adding network handlers ...");
 
-	// Chat history
+	// Chat Box
 	addNetworkEventHandler("m", receiveChatBoxMessageFromServer); // Not prefixed with VRR to make it as small as possible
 	addNetworkEventHandler("vrr.chatScrollLines", setChatScrollLines);
 	addNetworkEventHandler("vrr.chatAutoHideDelay", setChatAutoHideDelay);
+	addNetworkEventHandler("vrr.chatTimeStamps", setChatBoxTimeStampsState);
 
 	// Messaging (like textdraws and stuff)
 	addNetworkEventHandler("vrr.smallGameMessage", showSmallGameMessage);

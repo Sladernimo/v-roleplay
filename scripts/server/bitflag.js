@@ -117,6 +117,7 @@ let serverBitFlagKeys = {
 		"NoKeyBinds",
 		"NoRandomTips",
 		"NoActionTips",
+		"ChatBoxTimestamps",
 	],
 
 	// Not going to be used. Use trigger, condition, and response stuff in trigger.js
@@ -243,25 +244,25 @@ function initBitFlagScript() {
 // ===========================================================================
 
 function doesPlayerHaveStaffPermission(client, requiredFlags) {
-	if(isConsole(client)) {
+	if (isConsole(client)) {
 		return true;
 	}
 
-	if(requiredFlags == getStaffFlagValue("None")) {
+	if (requiredFlags == getStaffFlagValue("None")) {
 		return true;
 	}
 
 	let staffFlags = 0;
-	if(getPlayerData(client)) {
+	if (getPlayerData(client)) {
 		staffFlags = getPlayerData(client).accountData.flags.admin;
 	}
 
 	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
-	if(staffFlags == getStaffFlagValue("All")) {
+	if (staffFlags == getStaffFlagValue("All")) {
 		return true;
 	}
 
-	if(hasBitFlag(staffFlags, requiredFlags)) {
+	if (hasBitFlag(staffFlags, requiredFlags)) {
 		return true;
 	}
 
@@ -271,15 +272,15 @@ function doesPlayerHaveStaffPermission(client, requiredFlags) {
 // ===========================================================================
 
 function doesPlayerHaveClanPermission(client, requiredFlags) {
-	if(isConsole(client)) {
+	if (isConsole(client)) {
 		return true;
 	}
 
-	if(requiredFlags == getClanFlagValue("None")) {
+	if (requiredFlags == getClanFlagValue("None")) {
 		return true;
 	}
 
-	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 		return true;
 	}
 
@@ -287,11 +288,11 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 	clanFlags = getPlayerCurrentSubAccount(client).clanFlags | getClanRankFlags(getPlayerCurrentSubAccount(client).clanRank);
 
 	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
-	if(clanFlags == getClanFlagValue("All")) {
+	if (clanFlags == getClanFlagValue("All")) {
 		return true;
 	}
 
-	if(hasBitFlag(clanFlags, requiredFlags)) {
+	if (hasBitFlag(clanFlags, requiredFlags)) {
 		return true;
 	}
 
@@ -301,11 +302,11 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 // ===========================================================================
 
 function getStaffFlagValue(flagName) {
-	if(flagName == "All") {
+	if (flagName == "All") {
 		return -1;
 	}
 
-	if(typeof serverBitFlags.staffFlags[flagName] == "undefined") {
+	if (typeof serverBitFlags.staffFlags[flagName] == "undefined") {
 		return false;
 	}
 
@@ -315,11 +316,11 @@ function getStaffFlagValue(flagName) {
 // ===========================================================================
 
 function getClanFlagValue(flagName) {
-	if(flagName == "All") {
+	if (flagName == "All") {
 		return -1;
 	}
 
-	if(typeof getServerBitFlags().clanFlags[flagName] == "undefined") {
+	if (typeof getServerBitFlags().clanFlags[flagName] == "undefined") {
 		return false;
 	}
 
@@ -329,11 +330,11 @@ function getClanFlagValue(flagName) {
 // ===========================================================================
 
 function getAccountSettingsFlagValue(flagName) {
-	if(flagName == "All") {
+	if (flagName == "All") {
 		return -1;
 	}
 
-	if(typeof serverBitFlags.accountSettingsFlags[flagName] == "undefined") {
+	if (typeof serverBitFlags.accountSettingsFlags[flagName] == "undefined") {
 		return false;
 	}
 
@@ -343,11 +344,11 @@ function getAccountSettingsFlagValue(flagName) {
 // ===========================================================================
 
 function getModerationFlagValue(flagName) {
-	if(flagName == "All") {
+	if (flagName == "All") {
 		return -1;
 	}
 
-	if(typeof serverBitFlags.moderationFlags[flagName] == "undefined") {
+	if (typeof serverBitFlags.moderationFlags[flagName] == "undefined") {
 		return false;
 	}
 
@@ -357,7 +358,7 @@ function getModerationFlagValue(flagName) {
 // ===========================================================================
 
 function givePlayerStaffFlag(client, flagName) {
-	if(!getStaffFlagValue(flagName)) {
+	if (!getStaffFlagValue(flagName)) {
 		return false;
 	}
 
@@ -369,7 +370,7 @@ function givePlayerStaffFlag(client, flagName) {
 
 function takePlayerStaffFlag(client, flagName) {
 	let flagValue = getStaffFlagValue(flagName);
-	if(!flagValue) {
+	if (!flagValue) {
 		return false;
 	}
 
@@ -380,7 +381,7 @@ function takePlayerStaffFlag(client, flagName) {
 // ===========================================================================
 
 function takePlayerStaffFlag(client, flagName) {
-	if(!getStaffFlagValue(flagName)) {
+	if (!getStaffFlagValue(flagName)) {
 		return false;
 	}
 

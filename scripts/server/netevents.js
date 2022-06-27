@@ -1238,3 +1238,9 @@ function clearLocalPickupsForPlayer(client) {
 }
 
 // ==========================================================================
+
+function sendPlayerChatBoxTimeStampsState(client, state) {
+	sendNetworkEventToPlayer(client, "vrr.chatTimeStamps", state);
+}
+
+// ==========================================================================

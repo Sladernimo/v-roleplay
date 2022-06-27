@@ -387,6 +387,23 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 
 // ===========================================================================
 
+function toggleChatBoxTimeStampsCommand(command, params, client) {
+	let flagValue = getAccountSettingsFlagValue("ChatBoxTimestamps");
+
+	if (hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
+		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}`));
+		sendPlayerChatBoxTimeStampsState(client, false);
+	} else {
+		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}`));
+		sendPlayerChatBoxTimeStampsState(client, false);
+	}
+	return true;
+}
+
+// ===========================================================================
+
 function registerCommand(command, params, client) {
 	if (isPlayerRegistered(client)) {
 		messagePlayerError(client, getLocaleString(client, "AccountNameAlreadyRegistered"));
