@@ -16,7 +16,7 @@ class RadioStationData {
 		this.codec = "";
 		this.index = -1;
 
-		if(dbAssoc) {
+		if (dbAssoc) {
 			this.databaseId = dbAssoc["radio_id"];
 			this.name = dbAssoc["radio_name"];
 			this.url = dbAssoc["radio_url"];
@@ -41,11 +41,11 @@ function loadRadioStationsFromDatabase() {
 	let dbConnection = connectToDatabase();
 	let tempRadioStations = [];
 	let dbAssoc;
-	if(dbConnection) {
+	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM radio_main`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
-			while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+		if (dbQuery) {
+			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 				let tempRadioStationData = new RadioStationData(dbAssoc);
 				tempRadioStations.push(tempRadioStationData);
 			}
@@ -70,7 +70,7 @@ function loadRadioStationsFromDatabase() {
  *
  */
 function playStreamingRadioCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		messagePlayerInfo(client, "Use /radiostations for a list of available radio stations.");
 		return false;
@@ -78,96 +78,96 @@ function playStreamingRadioCommand(command, params, client) {
 
 	let radioStationId = getRadioStationFromParams(params);
 
-	if(radioStationId != 0 && typeof getServerData().radioStations[radioStationId-1] == "undefined") {
+	if (radioStationId != 0 && typeof getServerData().radioStations[radioStationId - 1] == "undefined") {
 		messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
 		return false;
 	}
 
-	if(isPlayerInAnyVehicle(client)) {
+	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getPlayerVehicle(client);
 
-		if(!getVehicleData(vehicle)) {
+		if (!getVehicleData(vehicle)) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
 
-		if(radioStationId == 0) {
+		if (radioStationId == 0) {
 			getVehicleData(vehicle).streamingRadioStation = -1;
 			getVehicleData(vehicle).needsSaved = true;
 			getPlayerData(client).streamingRadioStation = -1;
 			meActionToNearbyPlayers(client, `turns off their vehicle's radio`);
 
 			let clients = getClients();
-			for(let i in clients) {
-				if(getPlayerVehicle(client) == getPlayerVehicle(clients[i])) {
+			for (let i in clients) {
+				if (getPlayerVehicle(client) == getPlayerVehicle(clients[i])) {
 					playRadioStreamForPlayer(clients[i], "");
 				}
 			}
 			return false;
 		}
 
-		getVehicleData(vehicle).streamingRadioStation = radioStationId-1;
-		getPlayerData(client).streamingRadioStation = radioStationId-1;
-		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
+		getVehicleData(vehicle).streamingRadioStation = radioStationId - 1;
+		getPlayerData(client).streamingRadioStation = radioStationId - 1;
+		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
 
 		let clients = getClients();
-		for(let i in clients) {
-			if(vehicle == getPlayerVehicle(clients[i])) {
-				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId-1).url, true, getPlayerStreamingRadioVolume(client));
+		for (let i in clients) {
+			if (vehicle == getPlayerVehicle(clients[i])) {
+				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(client));
 			}
 		}
 	} else {
-		if(doesEntityDataExist(client, "vrr.inHouse")) {
+		if (doesEntityDataExist(client, "vrr.inHouse")) {
 			let houseId = getEntityData(client, "vrr.inHouse");
-			if(radioStationId == 0) {
+			if (radioStationId == 0) {
 				getHouseData(houseId).streamingRadioStation = -1;
 				getHouseData(houseId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the house radio`);
 
 				let clients = getClients();
-				for(let i in clients) {
-					if(getEntityData(clients[i], "vrr.inHouse") == houseId) {
+				for (let i in clients) {
+					if (getEntityData(clients[i], "vrr.inHouse") == houseId) {
 						playRadioStreamForPlayer(clients[i], "");
 					}
 				}
 			} else {
-				getHouseData(houseId).streamingRadioStation = radioStationId-1;
+				getHouseData(houseId).streamingRadioStation = radioStationId - 1;
 				getHouseData(houseId).needsSaved = true;
-				getPlayerData(client).streamingRadioStation = radioStationId-1;
-				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
+				getPlayerData(client).streamingRadioStation = radioStationId - 1;
+				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
 
 				let clients = getClients();
-				for(let i in clients) {
-					if(getEntityData(clients[i], "vrr.inHouse") == houseId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId-1).url, true, getPlayerStreamingRadioVolume(clients[i]));
+				for (let i in clients) {
+					if (getEntityData(clients[i], "vrr.inHouse") == houseId) {
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
 			}
-		} else if(isPlayerInAnyBusiness(client)) {
+		} else if (isPlayerInAnyBusiness(client)) {
 			let businessId = getPlayerBusiness(client);
-			if(radioStationId == 0) {
+			if (radioStationId == 0) {
 				getBusinessData(businessId).streamingRadioStation = -1;
 				getBusinessData(businessId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the business radio`);
 
 				let clients = getClients();
-				for(let i in clients) {
-					if(getPlayerBusiness(clients[i]) == businessId) {
+				for (let i in clients) {
+					if (getPlayerBusiness(clients[i]) == businessId) {
 						stopRadioStreamForPlayer(clients[i]);
 					}
 				}
 			} else {
-				getBusinessData(businessId).streamingRadioStation = radioStationId-1;
+				getBusinessData(businessId).streamingRadioStation = radioStationId - 1;
 				getBusinessData(businessId).needsSaved = true;
-				getPlayerData(client).streamingRadioStation = radioStationId-1;
-				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId-1).name, getRadioStationData(radioStationId-1).genre));
+				getPlayerData(client).streamingRadioStation = radioStationId - 1;
+				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
 
 				let clients = getClients();
-				for(let i in clients) {
-					if(getPlayerBusiness(clients[i]) == businessId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId-1).url, true, getPlayerStreamingRadioVolume(clients[i]));
+				for (let i in clients) {
+					if (getPlayerBusiness(clients[i]) == businessId) {
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
 			}
@@ -190,14 +190,14 @@ function playStreamingRadioCommand(command, params, client) {
  *
  */
 function setStreamingRadioVolumeCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let volumeLevel = params;
 
-	if(isNaN(volumeLevel)) {
+	if (isNaN(volumeLevel)) {
 		messagePlayerError(client, getLocaleString(client, "RadioVolumeNotNumber"));
 		return false;
 	}
@@ -205,13 +205,13 @@ function setStreamingRadioVolumeCommand(command, params, client) {
 	setPlayerStreamingRadioVolume(client, toInteger(volumeLevel));
 	getPlayerData(client).accountData.streamingRadioVolume = toInteger(volumeLevel);
 	let volumeEmoji = '';
-	if(volumeLevel >= 60) {
+	if (volumeLevel >= 60) {
 		volumeEmoji = '🔊';
-	} else if(volumeLevel >= 30 && volumeLevel < 60) {
+	} else if (volumeLevel >= 30 && volumeLevel < 60) {
 		volumeEmoji = '🔉';
-	} else if(volumeLevel > 0 && volumeLevel < 30) {
+	} else if (volumeLevel > 0 && volumeLevel < 30) {
 		volumeEmoji = '🔈';
-	} else if(volumeLevel <= 0) {
+	} else if (volumeLevel <= 0) {
 		volumeEmoji = '🔇';
 	}
 
@@ -221,7 +221,7 @@ function setStreamingRadioVolumeCommand(command, params, client) {
 // ===========================================================================
 
 function getPlayerStreamingRadioVolume(client) {
-	if(!getPlayerData(client) || !isPlayerLoggedIn(client) || !isPlayerSpawned(client)) {
+	if (!getPlayerData(client) || !isPlayerLoggedIn(client) || !isPlayerSpawned(client)) {
 		return 20;
 	}
 	return getPlayerData(client).accountData.streamingRadioVolume;
@@ -239,13 +239,13 @@ function getPlayerStreamingRadioVolume(client) {
  *
  */
 function showRadioStationListCommand(command, params, client) {
-	let stationList = getServerData().radioStations.map(function(x) { return `{ALTCOLOUR}${toInteger(x.index)+1}: {MAINCOLOUR}${x.name}`; });
+	let stationList = getServerData().radioStations.map(function (x) { return `{ALTCOLOUR}${toInteger(x.index) + 1}: {MAINCOLOUR}${x.name}`; });
 
 	let chunkedList = splitArrayIntoChunks(stationList, 4);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderRadioStationsList")));
 
-	for(let i in chunkedList) {
+	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
 }
@@ -253,7 +253,7 @@ function showRadioStationListCommand(command, params, client) {
 // ===========================================================================
 
 function setAllRadioStationIndexes() {
-	for(let i in getServerData().radioStations) {
+	for (let i in getServerData().radioStations) {
 		getServerData().radioStations[i].index = i;
 	}
 }
@@ -291,19 +291,35 @@ function reloadAllRadioStationsCommand(command, params, client) {
 // ===========================================================================
 
 function getRadioStationFromParams(params) {
-	if(isNaN(params)) {
-		for(let i in getServerData().radioStations) {
-			if(toLowerCase(getServerData().radioStations[i].name).indexOf(toLowerCase(params)) != -1) {
+	if (isNaN(params)) {
+		for (let i in getServerData().radioStations) {
+			if (toLowerCase(getServerData().radioStations[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getServerData().radioStations[params] != "undefined") {
+		if (typeof getServerData().radioStations[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getRadioStationIdFromDatabaseId(databaseId) {
+	if (databaseId <= 0) {
+		return -1;
+	}
+
+	for (let i in getServerData().radioStations) {
+		if (getServerData().radioStations[i].databaseId == databaseId) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================
