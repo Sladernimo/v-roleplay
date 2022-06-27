@@ -444,6 +444,14 @@ function updateTimeRule() {
 // ===========================================================================
 
 function isClientInitialized(client) {
+	//if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+	//	return false;
+	//}
+
+	//if (playerInitialized[getPlayerId(client)] == false) {
+	//	return false;
+	//}
+
 	return (typeof getServerData().clients[getPlayerId(client)] != "undefined");
 }
 
