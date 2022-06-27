@@ -129,6 +129,7 @@
 	<script src="scripts/client/netevents.js" type="client" language="javascript" />
 	<script src="scripts/client/skin-select.js" type="client" language="javascript" />
 	<script src="scripts/client/sync.js" type="client" language="javascript" />
+	<script src="scripts/client/time.nut" type="client" language="squirrel" />
 	<script src="scripts/client/utilities.js" type="client" language="javascript" />
 	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
 

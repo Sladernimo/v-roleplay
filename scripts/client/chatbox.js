@@ -55,24 +55,26 @@ function receiveChatBoxMessageFromServer(messageString, colour) {
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
 
-	let colouredString = replaceColoursInMessage(messageString);
+	let timeStamp = getCurrentUnixTimeStampSquirrel();
 
-	let date = new Date();
-	let timeStampText = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+	addToChatBoxHistory(messageString, colour, timeStamp);
 
-	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Changed colours in string: ${colouredString}`);
+	//let unixTimeStampMS = new Date().getTime();
+	//let timeStampDate = new Date(unixTimeStampMS);
+	//let timeStampDate = new Date(timeStamp);
+	//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
 
-	addToChatBoxHistory(colouredString, colour, timeStampText);
-	//if(bottomMessageIndex >= chatBoxHistory.length-1) {
-
-	let outputText = colouredString;
-	if (chatBoxTimeStampsEnabled) {
-		outputText = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${colouredString}`;
+	let outputString = messageString;
+	let timeStampString = "";
+	if (chatBoxTimeStampsEnabled == true) {
+		timeStampString = `{TIMESTAMPCOLOUR}[${getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
 	}
 
-	message(outputText, colour);
+	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Changed colours in string: ${outputString}`);
+	let colouredString = replaceColoursInMessage(`${timeStampString}${outputString}`);
+
+	message(colouredString, colour);
 	bottomMessageIndex = chatBoxHistory.length - 1;
-	//}
 
 	chatLastUse = getCurrentUnixTimestamp();
 }
@@ -98,8 +100,8 @@ function setChatAutoHideDelay(delay) {
 
 // ===========================================================================
 
-function addToChatBoxHistory(messageString, colour) {
-	chatBoxHistory.push([messageString, colour]);
+function addToChatBoxHistory(messageString, colour, timeStamp) {
+	chatBoxHistory.push([messageString, colour, timeStamp]);
 }
 
 // ===========================================================================
@@ -134,12 +136,17 @@ function updateChatBox() {
 	clearChatBox();
 	for (let i = bottomMessageIndex - maxChatBoxLines; i <= bottomMessageIndex; i++) {
 		if (typeof chatBoxHistory[i] != "undefined") {
-			let outputText = chatBoxHistory[i][0];
-			if (chatBoxTimeStampsEnabled) {
-				outputText = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
+			let outputString = chatBoxHistory[i][0];
+			if (chatBoxTimeStampsEnabled == true) {
+				//let timeStampDate = new Date(chatBoxHistory[i][2]);
+				//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
+				let timeStampText = getTimeStampOutput(chatBoxHistory[i][2]);
+
+				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
 			}
 
-			message(outputText, chatBoxHistory[i][1]);
+			replaceColoursInMessage(outputString);
+			message(outputString, chatBoxHistory[i][1]);
 		} else {
 			message("", COLOUR_WHITE);
 		}
