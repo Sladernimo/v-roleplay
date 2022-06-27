@@ -392,12 +392,12 @@ function toggleChatBoxTimeStampsCommand(command, params, client) {
 
 	if (hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}`));
+		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
 		sendPlayerChatBoxTimeStampsState(client, false);
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
-		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}`));
-		sendPlayerChatBoxTimeStampsState(client, false);
+		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}{MAINCOLOUR}`));
+		sendPlayerChatBoxTimeStampsState(client, true);
 	}
 	return true;
 }
