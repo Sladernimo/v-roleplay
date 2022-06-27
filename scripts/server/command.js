@@ -70,7 +70,10 @@ function loadCommands() {
 			new CommandData("loginalert", toggleAccountLoginAttemptNotificationsCommand, "", getStaffFlagValue("None"), true, false, "Turn on and off email notifications for attempts to login to your account"),
 			new CommandData("scrolllines", setAccountChatScrollLinesCommand, "<number of lines>", getStaffFlagValue("None"), true, false, "Sets how many chatbox lines to scroll at a time when using pageup/pagedown"),
 			new CommandData("chatautohide", setAccountChatAutoHideDelayCommand, "<time in seconds>", getStaffFlagValue("None"), true, false, "Sets how long to wait to hide the chatbox after last use (in seconds)"),
-
+			new CommandData("chattimestamp", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
+			new CommandData("chattimestamps", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
+			new CommandData("chattime", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
+			new CommandData("chattimes", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
 		],
 		ammunation: [],
 		animation: [
