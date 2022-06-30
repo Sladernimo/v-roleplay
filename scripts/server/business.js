@@ -2646,7 +2646,7 @@ function buyFromBusinessCommand(command, params, client) {
 	}
 
 	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
-	if (useType == VRR_ITEM_USETYPE_WEAPON || VRR_ITEM_USETYPE_TAZER || useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+	if (useType == VRR_ITEM_USE_TYPE_WEAPON || VRR_ITEM_USE_TYPE_TAZER || useType == VRR_ITEM_USE_TYPE_AMMO_CLIP) {
 		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
 			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
 			return false;

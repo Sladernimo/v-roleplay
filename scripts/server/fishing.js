@@ -56,7 +56,7 @@ function castFishingLineCommand(client) {
 		return false;
 	}
 
-	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USETYPE_FISHINGROD)) {
+	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USE_TYPE_FISHINGROD)) {
 		messagePlayerError(client, getLocaleString(client, "NeedFishingRod"));
 		return false;
 	}
@@ -80,7 +80,7 @@ function resetFishingLineCommand(client) {
 		return false;
 	}
 
-	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USETYPE_FISHINGROD)) {
+	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USE_TYPE_FISHINGROD)) {
 		messagePlayerError(client, getLocaleString(client, "CantFishHere"));
 		return false;
 	}

@@ -8,9 +8,9 @@
 // ===========================================================================
 
 function getItemWithPhoneNumber(phoneNumber) {
-	for(let i in getServerData().items) {
-		if(getItemTypeData(getItemData(i).itemTypeIndex).useType == VRR_ITEM_USETYPE_PHONE) {
-			if(getItemData(i).value == phoneNumber) {
+	for (let i in getServerData().items) {
+		if (getItemTypeData(getItemData(i).itemTypeIndex).useType == VRR_ITEM_USE_TYPE_PHONE) {
+			if (getItemData(i).value == phoneNumber) {
 				return i;
 			}
 		}

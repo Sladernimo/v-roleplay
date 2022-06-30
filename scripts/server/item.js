@@ -24,71 +24,76 @@ const VRR_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
 // ===========================================================================
 
 // Item Use Types
-const VRR_ITEM_USETYPE_NONE = 0;                 // Has no effect
-const VRR_ITEM_USETYPE_WEAPON = 1;               // Equips weapon
-const VRR_ITEM_USETYPE_AMMO_CLIP = 2;            // Magazine for weapon. If in inventory, R will load it into gun
-const VRR_ITEM_USETYPE_PHONE = 3;                // Pulls out phone
-const VRR_ITEM_USETYPE_GPS = 4;                  // Not sure how I want this to work yet
-const VRR_ITEM_USETYPE_MAP = 5;                  // Shows minimap on HUD
-const VRR_ITEM_USETYPE_SKIN = 6;                 // Changes skin (uses skin changer)
-const VRR_ITEM_USETYPE_PEDPART = 7;              // Changes ped part (clothing, skin, hair, etc) (UNUSED)
-const VRR_ITEM_USETYPE_PEDPROP = 8;              // Changes ped prop (watches, glasses, hats, etc) (UNUSED)
-const VRR_ITEM_USETYPE_STORAGE = 9;              // Shows stored items. Backpack, crate, briefcase, wallet, etc
-const VRR_ITEM_USETYPE_VEHKEY = 10;              // Locks/unlocks a vehicle and allows starting engine without hotwire
-const VRR_ITEM_USETYPE_BIZKEY = 11;              // Locks/unlocks a business
-const VRR_ITEM_USETYPE_HOUSEKEY = 12;            // Locks/unlocks a house
-const VRR_ITEM_USETYPE_SEED = 13;                // Plants a seed
-const VRR_ITEM_USETYPE_WEED = 14;                // Light drug effect (short term relief of addiction symptoms?)
-const VRR_ITEM_USETYPE_COKE = 15;                // Medium drug effect (medium term relief of addiction symptoms?)
-const VRR_ITEM_USETYPE_METH = 16;                // Heavy drug effect (extended term relief of addiction symptoms?)
-const VRR_ITEM_USETYPE_CIGAR = 17;               // Just for appearance. Makes people look cool I guess
-const VRR_ITEM_USETYPE_WATER = 18;               // Replenishes small amount of health
-const VRR_ITEM_USETYPE_FOOD = 19;                // Eat food. Replenishes a small amount of health
-const VRR_ITEM_USETYPE_BEER = 20;                // Subtle drunk effect. Replenishes small amount of health.
-const VRR_ITEM_USETYPE_WINE = 21;                // Moderate drunk effect. Replenishes moderate amount of health.
-const VRR_ITEM_USETYPE_LIQUOR = 22;              // Heavy drunk effect. Replenishes large amount of health.
-const VRR_ITEM_USETYPE_COFFEE = 23;              // Replenishes moderate amount of health.
-const VRR_ITEM_USETYPE_AMMO_ROUND = 23;          // Bullet. Loads into magazine. Not used at the moment
-const VRR_ITEM_USETYPE_HANDCUFF = 24;            //
-const VRR_ITEM_USETYPE_ROPE = 25;                //
-const VRR_ITEM_USETYPE_BLINDFOLD = 26;           //
-const VRR_ITEM_USETYPE_TAZER = 27;               //
-const VRR_ITEM_USETYPE_ARMOUR = 28;              //
-const VRR_ITEM_USETYPE_HEALTH = 29;              //
-const VRR_ITEM_USETYPE_AED = 30;                 //
-const VRR_ITEM_USETYPE_WALKIETALKIE = 31;        //
-const VRR_ITEM_USETYPE_BOOMBOX = 32;             //
-const VRR_ITEM_USETYPE_EARBUDS = 33;             //
-const VRR_ITEM_USETYPE_BADGE = 34;               //
-const VRR_ITEM_USETYPE_DRINK = 35;               // Drinkable item. Action output shows "Player_Name drinks some (drink name)"
-const VRR_ITEM_USETYPE_EXTINGUISHER = 36;        // Extinguisher item. Allows putting out fires
-const VRR_ITEM_USETYPE_SPRAYPAINT = 37;          // Spraypaint item. Allows spraying custom clan tags on walls
-const VRR_ITEM_USETYPE_PEPPERSPRAY = 38;         // Pepper spray item. Incapacitates nearby player
-const VRR_ITEM_USETYPE_FLASHLIGHT = 39;          // Flashlight item. Unusable for now, but plan to cast a custom light beam
-const VRR_ITEM_USETYPE_AIRPLANETICKET = 40;      // Airplane ticket. Allows a character to move to another server
-const VRR_ITEM_USETYPE_TRAINTICKET = 41;         // Train ticket. Allows a character to move to another server
-const VRR_ITEM_USETYPE_VEHUPGRADE_PART = 42;     // Vehicle update part item. Allows adding custom parts like spoilers, side skirts, roof scoops, etc
-const VRR_ITEM_USETYPE_VEHTIRE = 43;             // Vehicle tire item. Allows changing the tire/rim types
-const VRR_ITEM_USETYPE_FUELCAN = 44;             // Fuel can item. Allows refueling of a nearby vehicle anywhere
-const VRR_ITEM_USETYPE_VEHCOLOUR = 45;           // Vehicle colour item. Changes primary and secondary vehicle colours
-const VRR_ITEM_USETYPE_VEHLIVERY = 46;           // Vehicle livery/paintjob item. Applies decals and special paint jobs
-const VRR_ITEM_USETYPE_VEHREPAIR = 47;           // Vehicle repair item. Much longer use time
-const VRR_ITEM_USETYPE_SMOKEDRUG = 48;           // Smokable drug. Action output shows "Player_Name smokes some (drug)"
-const VRR_ITEM_USETYPE_SNORTDRUG = 49;           // Snortable drug. Action output shows "Player_Name snorts some (drug)"
-const VRR_ITEM_USETYPE_PLANT = 50;               // Plantable item. Pot plants, coke plants, etc
-const VRR_ITEM_USETYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
-const VRR_ITEM_USETYPE_INJECTDRUG = 52;          // Injectable drug. Action output shows "Player_Name injects some (drug)"
-const VRR_ITEM_USETYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
+const VRR_ITEM_USE_TYPE_NONE = 0;                 // Has no effect
+const VRR_ITEM_USE_TYPE_WEAPON = 1;               // Equips weapon
+const VRR_ITEM_USE_TYPE_AMMO_CLIP = 2;            // Magazine for weapon. If in inventory, R will load it into gun
+const VRR_ITEM_USE_TYPE_PHONE = 3;                // Pulls out phone
+const VRR_ITEM_USE_TYPE_GPS = 4;                  // Not sure how I want this to work yet
+const VRR_ITEM_USE_TYPE_MAP = 5;                  // Shows minimap on HUD
+const VRR_ITEM_USE_TYPE_SKIN = 6;                 // Changes skin (uses skin changer)
+const VRR_ITEM_USE_TYPE_PEDPART = 7;              // Changes ped part (clothing, skin, hair, etc) (UNUSED)
+const VRR_ITEM_USE_TYPE_PEDPROP = 8;              // Changes ped prop (watches, glasses, hats, etc) (UNUSED)
+const VRR_ITEM_USE_TYPE_STORAGE = 9;              // Shows stored items. Backpack, crate, briefcase, wallet, etc
+const VRR_ITEM_USE_TYPE_VEHKEY = 10;              // Locks/unlocks a vehicle and allows starting engine without hotwire
+const VRR_ITEM_USE_TYPE_BIZKEY = 11;              // Locks/unlocks a business
+const VRR_ITEM_USE_TYPE_HOUSEKEY = 12;            // Locks/unlocks a house
+const VRR_ITEM_USE_TYPE_SEED = 13;                // Plants a seed
+const VRR_ITEM_USE_TYPE_WEED = 14;                // Light drug effect (short term relief of addiction symptoms?)
+const VRR_ITEM_USE_TYPE_COKE = 15;                // Medium drug effect (medium term relief of addiction symptoms?)
+const VRR_ITEM_USE_TYPE_METH = 16;                // Heavy drug effect (extended term relief of addiction symptoms?)
+const VRR_ITEM_USE_TYPE_CIGAR = 17;               // Just for appearance. Makes people look cool I guess
+const VRR_ITEM_USE_TYPE_WATER = 18;               // Replenishes small amount of health
+const VRR_ITEM_USE_TYPE_FOOD = 19;                // Eat food. Replenishes a small amount of health
+const VRR_ITEM_USE_TYPE_BEER = 20;                // Subtle drunk effect. Replenishes small amount of health.
+const VRR_ITEM_USE_TYPE_WINE = 21;                // Moderate drunk effect. Replenishes moderate amount of health.
+const VRR_ITEM_USE_TYPE_LIQUOR = 22;              // Heavy drunk effect. Replenishes large amount of health.
+const VRR_ITEM_USE_TYPE_COFFEE = 23;              // Replenishes moderate amount of health.
+const VRR_ITEM_USE_TYPE_AMMO_ROUND = 23;          // Bullet. Loads into magazine. Not used at the moment
+const VRR_ITEM_USE_TYPE_HANDCUFF = 24;            //
+const VRR_ITEM_USE_TYPE_ROPE = 25;                //
+const VRR_ITEM_USE_TYPE_BLINDFOLD = 26;           //
+const VRR_ITEM_USE_TYPE_TAZER = 27;               //
+const VRR_ITEM_USE_TYPE_ARMOUR = 28;              //
+const VRR_ITEM_USE_TYPE_HEALTH = 29;              //
+const VRR_ITEM_USE_TYPE_AED = 30;                 //
+const VRR_ITEM_USE_TYPE_WALKIETALKIE = 31;        //
+const VRR_ITEM_USE_TYPE_BOOMBOX = 32;             //
+const VRR_ITEM_USE_TYPE_EARBUDS = 33;             //
+const VRR_ITEM_USE_TYPE_BADGE = 34;               //
+const VRR_ITEM_USE_TYPE_DRINK = 35;               // Drinkable item. Action output shows "Player_Name drinks some (drink name)"
+const VRR_ITEM_USE_TYPE_EXTINGUISHER = 36;        // Extinguisher item. Allows putting out fires
+const VRR_ITEM_USE_TYPE_SPRAYPAINT = 37;          // Spraypaint item. Allows spraying custom clan tags on walls
+const VRR_ITEM_USE_TYPE_PEPPERSPRAY = 38;         // Pepper spray item. Incapacitates nearby player
+const VRR_ITEM_USE_TYPE_FLASHLIGHT = 39;          // Flashlight item. Unusable for now, but plan to cast a custom light beam
+const VRR_ITEM_USE_TYPE_AIRPLANETICKET = 40;      // Airplane ticket. Allows a character to move to another server
+const VRR_ITEM_USE_TYPE_TRAINTICKET = 41;         // Train ticket. Allows a character to move to another server
+const VRR_ITEM_USE_TYPE_VEHUPGRADE_PART = 42;     // Vehicle update part item. Allows adding custom parts like spoilers, side skirts, roof scoops, etc
+const VRR_ITEM_USE_TYPE_VEHTIRE = 43;             // Vehicle tire item. Allows changing the tire/rim types
+const VRR_ITEM_USE_TYPE_FUELCAN = 44;             // Fuel can item. Allows refueling of a nearby vehicle anywhere
+const VRR_ITEM_USE_TYPE_VEHCOLOUR = 45;           // Vehicle colour item. Changes primary and secondary vehicle colours
+const VRR_ITEM_USE_TYPE_VEHLIVERY = 46;           // Vehicle livery/paintjob item. Applies decals and special paint jobs
+const VRR_ITEM_USE_TYPE_VEHREPAIR = 47;           // Vehicle repair item. Much longer use time
+const VRR_ITEM_USE_TYPE_SMOKEDRUG = 48;           // Smokable drug like weed. Action output shows "Player_Name smokes some (drug)"
+const VRR_ITEM_USE_TYPE_SNORTDRUG = 49;           // Snortable drug like cocaine. Action output shows "Player_Name snorts some (drug)"
+const VRR_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants, coke plants, etc
+const VRR_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
+const VRR_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
+const VRR_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
+const VRR_ITEM_USE_TYPE_METH_LAB = 54;  		  // Meth lab item. Allows creating meth
+const VRR_ITEM_USE_TYPE_PLANTER = 55;			  // Plant pot. Can be used to plant item of use type VRR_ITEM_USE_TYPE_PLANT where terrain is not available
+const VRR_ITEM_USE_TYPE_FISH = 56;				  // Fishing catch ... bass, catfish, etc
+const VRR_ITEM_USE_TYPE_JUNK = 57;				  // Worthless junk. Some used as fishing catches
+const VRR_ITEM_USE_TYPE_BAIT = 58;				  // Bait. Used for fishing
 
 // ===========================================================================
 
 // Item Drop Types
-const VRR_ITEM_DROPTYPE_NONE = 0;                // Can't be dropped
-const VRR_ITEM_DROPTYPE_OBJECT = 1;              // Drops as an object on the ground
-const VRR_ITEM_DROPTYPE_PICKUP = 2;              // Drops as a pickup
-const VRR_ITEM_DROPTYPE_OBJECTLIGHT = 3;         // Object that produces an area light effect (lamp, flashlight, etc)
-const VRR_ITEM_DROPTYPE_DESTROY = 4;             // Will destroy the item on drop (keys mostly but for any tiny object)
-const VRR_ITEM_DROPTYPE_OBJECTSTACK = 5;         // Stackable objects (crates and such). Will sit on top of closest other stackable
+const VRR_ITEM_DROP_TYPE_NONE = 0;                // Can't be dropped
+const VRR_ITEM_DROP_TYPE_OBJECT = 1;              // Drops as an object on the ground
+const VRR_ITEM_DROP_TYPE_PICKUP = 2;              // Drops as a pickup
+const VRR_ITEM_DROP_TYPE_OBJECTLIGHT = 3;         // Object that produces an area light effect (lamp, flashlight, etc)
+const VRR_ITEM_DROP_TYPE_DESTROY = 4;             // Will destroy the item on drop (keys mostly but for any tiny object)
+const VRR_ITEM_DROP_TYPE_OBJECTSTACK = 5;         // Stackable objects (crates and such). Will sit on top of closest other stackable
 
 // ===========================================================================
 
@@ -158,11 +163,11 @@ class ItemTypeData {
 		this.index = 0;
 		this.name = "Unknown";
 		this.enabled = false;
-		this.useType = VRR_ITEM_USETYPE_NONE;
+		this.useType = VRR_ITEM_USE_TYPE_NONE;
 		this.useId = 0;
 		this.useValue = 0;
 		this.maxValue = 0;
-		this.dropType = VRR_ITEM_DROPTYPE_NONE;
+		this.dropType = VRR_ITEM_DROP_TYPE_NONE;
 		this.useId = 0;
 		this.dropPosition = toVector3(0.0, 0.0, 0.0);
 		this.dropRotation = toVector3(0.0, 0.0, 0.0);
@@ -1274,20 +1279,20 @@ function playerUseItem(client, hotBarSlot) {
 	logToConsole(LOG_DEBUG, `[VRR.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
 
 	switch (toInteger(itemTypeData.useType)) {
-		case VRR_ITEM_USETYPE_SKIN: {
+		case VRR_ITEM_USE_TYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
 			forcePlayerIntoSkinSelect(client);
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_WEAPON: {
+		case VRR_ITEM_USE_TYPE_WEAPON: {
 			if (isMeleeWeapon(itemTypeData.useId, getGame()) == true) {
 				messagePlayerError(client, getLocaleString(client, "WeaponDoesNotUseAmmo", itemTypeData.name));
 			} else {
 				for (let i in hotBarItems) {
 					if (hotBarItems[i] != -1) {
 						if (getItemData(hotBarItems[i]) != false) {
-							if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+							if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USE_TYPE_AMMO_CLIP) {
 								let ammoItemData = getItemData(hotBarItems[i]);
 								let ammoItemTypeData = getItemTypeData(ammoItemData.itemTypeIndex);
 								if (ammoItemTypeData.useId == itemTypeData.databaseId) {
@@ -1306,7 +1311,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_AMMO_CLIP: {
+		case VRR_ITEM_USE_TYPE_AMMO_CLIP: {
 			if (doesPlayerHaveKeyBindForCommand(client, "use")) {
 				messagePlayerError(client, getLocaleString(client, "LoadAmmoIntoWeaponHelpKeyPress", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "use").key))}{MAINCOLOUR}`));
 			} else {
@@ -1315,12 +1320,12 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_STORAGE: {
+		case VRR_ITEM_USE_TYPE_STORAGE: {
 			showItemInventoryToPlayer(client, itemIndex);
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_FOOD: {
+		case VRR_ITEM_USE_TYPE_FOOD: {
 			meActionToNearbyPlayers(client, `eats some of their ${itemTypeData.name}`);
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
@@ -1331,7 +1336,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_DRINK: {
+		case VRR_ITEM_USE_TYPE_DRINK: {
 			meActionToNearbyPlayers(client, `drinks some of their ${itemTypeData.name}`);
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
@@ -1342,7 +1347,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_ARMOUR: {
+		case VRR_ITEM_USE_TYPE_ARMOUR: {
 			meActionToNearbyPlayers(client, `puts on a ${itemTypeData.name}`);
 			givePlayerArmour(client, itemTypeData.useValue);
 			deleteItem(itemIndex);
@@ -1350,7 +1355,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_ROPE: {
+		case VRR_ITEM_USE_TYPE_ROPE: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1383,7 +1388,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_HANDCUFF: {
+		case VRR_ITEM_USE_TYPE_HANDCUFF: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1411,7 +1416,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_VEHREPAIR: {
+		case VRR_ITEM_USE_TYPE_VEHREPAIR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their repair kit and fixes the vehicle`);
@@ -1427,7 +1432,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_VEHUPGRADE_PART: {
+		case VRR_ITEM_USE_TYPE_VEHUPGRADE_PART: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
@@ -1436,7 +1441,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_VEHLIVERY: {
+		case VRR_ITEM_USE_TYPE_VEHLIVERY: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their decal kit and adds some decals to the vehicle.`);
@@ -1445,7 +1450,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_VEHCOLOUR: {
+		case VRR_ITEM_USE_TYPE_VEHCOLOUR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				if (itemData.useId == 1) {
@@ -1461,7 +1466,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_FUELCAN: {
+		case VRR_ITEM_USE_TYPE_FUELCAN: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			let fuelPump = getClosestFuelPump(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position)) {
@@ -1494,13 +1499,13 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_WALKIETALKIE: {
+		case VRR_ITEM_USE_TYPE_WALKIETALKIE: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(itemData.enabled))} their walkie-talkie`);
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_PHONE: {
+		case VRR_ITEM_USE_TYPE_PHONE: {
 			if (itemData.value == 0) {
 				let phoneNumber = generateRandomPhoneNumber();
 				itemData.value = phoneNumber;
@@ -1518,7 +1523,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_SMOKEDRUG: {
+		case VRR_ITEM_USE_TYPE_SMOKEDRUG: {
 			meActionToNearbyPlayers(client, `smokes some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1529,7 +1534,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_SNORTDRUG: {
+		case VRR_ITEM_USE_TYPE_SNORTDRUG: {
 			meActionToNearbyPlayers(client, `snorts some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1540,7 +1545,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_INJECTDRUG: {
+		case VRR_ITEM_USE_TYPE_INJECTDRUG: {
 			meActionToNearbyPlayers(client, `shoots up some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1551,7 +1556,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_PLANT: {
+		case VRR_ITEM_USE_TYPE_PLANT: {
 			meActionToNearbyPlayers(client, `bends down and plants a ${itemTypeData.name} in the ground`);
 			createGroundPlant(itemIndex);
 			if (itemData.value == 0) {
@@ -1561,7 +1566,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_BADGE: {
+		case VRR_ITEM_USE_TYPE_BADGE: {
 			meActionToNearbyPlayers(client, `shows their badge to everyone nearby.`);
 			let clients = getClients();
 			for (let i in clients) {
@@ -1575,12 +1580,12 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_AMMO_CLIP: {
+		case VRR_ITEM_USE_TYPE_AMMO_CLIP: {
 			messagePlayerError(client, `Equip a compatible weapon and press R to use an ammo clip/magazine`);
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_HEALTH: {
+		case VRR_ITEM_USE_TYPE_HEALTH: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1595,26 +1600,26 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_LOTTOTICKET: {
+		case VRR_ITEM_USE_TYPE_LOTTOTICKET: {
 			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_AREARADIO: {
+		case VRR_ITEM_USE_TYPE_AREARADIO: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
 			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_PERSONALRADIO: {
+		case VRR_ITEM_USE_TYPE_PERSONALRADIO: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} their personal radio`);
 			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
 			break;
 		}
 
-		case VRR_ITEM_USETYPE_NONE: {
+		case VRR_ITEM_USE_TYPE_NONE: {
 			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
@@ -1823,7 +1828,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 
 	if (newHotBarItem != -1) {
 		if (getItemData(newHotBarItem)) {
-			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == VRR_ITEM_USETYPE_WEAPON) {
+			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == VRR_ITEM_USE_TYPE_WEAPON) {
 				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
 					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
 					setPlayerWeaponDamageEnabled(client, true);
@@ -1840,7 +1845,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 						messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
 					}
 				}
-			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == VRR_ITEM_USETYPE_TAZER) {
+			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == VRR_ITEM_USE_TYPE_TAZER) {
 				if (getItemData(newHotBarItem).value > 0) {
 					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
 					setPlayerWeaponDamageEnabled(client, false);
@@ -2310,7 +2315,7 @@ function listItemInventoryCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useType != VRR_ITEM_USETYPE_STORAGE) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useType != VRR_ITEM_USE_TYPE_STORAGE) {
 		messagePlayerError(client, "This item can't hold anything!");
 		return false;
 	}
@@ -2631,20 +2636,20 @@ function getItemValueDisplayForItem(itemId) {
 // ===========================================================================
 
 function getItemValueDisplay(itemType, value) {
-	if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_SKIN) {
+	if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_SKIN) {
 		return "any";
-	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_FOOD || getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_DRINK || getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_EXTINGUISHER || getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_SPRAYPAINT || getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_PEPPERSPRAY) {
+	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_FOOD || getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_DRINK || getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_EXTINGUISHER || getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_SPRAYPAINT || getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_PEPPERSPRAY) {
 		return getPercentage(toString(value), getItemTypeData(itemType).capacity) + "%";
-	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_PHONE) {
+	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_PHONE) {
 		return toString(value);
-	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_WEAPON || getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_TAZER) {
+	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_WEAPON || getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_TAZER) {
 		if (isMeleeWeapon(getItemTypeData(itemType).useId)) {
 			return false;
 		}
 		return toString(value) + " rounds";
-	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_WALKIETALKIE) {
+	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_WALKIETALKIE) {
 		return toString(toString(value).slice(0, -2) + "." + toString(value).slice(-1) + "MHz");
-	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USETYPE_VEHCOLOUR) {
+	} else if (getItemTypeData(itemType).useType == VRR_ITEM_USE_TYPE_VEHCOLOUR) {
 		return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
 	} else {
 		return value;
@@ -3076,7 +3081,7 @@ function getPlayerFirstAmmoItemForWeapon(client, weaponId) {
 	for (let i in getPlayerData(client).hotBarItems) {
 		if (getPlayerData(client).hotBarItems[i] != -1) {
 			if (getItemData(getPlayerData(client).hotBarItems[i]) != false) {
-				if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USETYPE_AMMO_CLIP) {
+				if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useType == VRR_ITEM_USE_TYPE_AMMO_CLIP) {
 					if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useId == weaponId) {
 						return i;
 					}

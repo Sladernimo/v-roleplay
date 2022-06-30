@@ -363,7 +363,7 @@ function clanChat(client, messageText) {
 // ===========================================================================
 
 function canPlayerUseMegaphone(client) {
-	if (getPlayerFirstItemSlotByUseType(client, VRR_ITEM_USETYPE_MEGAPHONE) != -1) {
+	if (getPlayerFirstItemSlotByUseType(client, VRR_ITEM_USE_TYPE_MEGAPHONE) != -1) {
 		if (isPlayerActiveItemEnabled(client)) {
 			return true;
 		}

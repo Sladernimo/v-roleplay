@@ -935,7 +935,7 @@ function givePlayerJobEquipment(client, equipmentId) {
 
 	for (let i in getJobData(jobId).equipment[equipmentId].items) {
 		let value = getJobData(jobId).equipment[equipmentId].items[i].value
-		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == VRR_ITEM_USETYPE_WALKIETALKIE) {
+		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == VRR_ITEM_USE_TYPE_WALKIETALKIE) {
 			value = getJobData(jobId).walkieTalkieFrequency;
 		}
 		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, VRR_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
