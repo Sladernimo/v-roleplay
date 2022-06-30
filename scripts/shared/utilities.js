@@ -2858,3 +2858,32 @@ function removeBitFlag(allFlags, flagValue) {
 }
 
 // ===========================================================================
+
+function getAnimationFromParams(params) {
+	let animations = getGameConfig().animations[getGame()];
+	if (isNaN(params)) {
+		for (let i in animations) {
+			if (toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
+				return i;
+			}
+		}
+	} else {
+		if (typeof getGameConfig().animations[getGame()][params] != "undefined") {
+			return toInteger(params);
+		}
+	}
+
+	return -1;
+}
+
+// ===========================================================================
+
+/**
+ * @param {number} animationSlot - The slot index of the animation
+ * @return {AnimationData} The animation's data (array)
+ */
+function getAnimationData(animationSlot, gameId = getGame()) {
+	return getGameConfig().animations[gameId][animationSlot];
+}
+
+// ===========================================================================
