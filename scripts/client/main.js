@@ -63,7 +63,7 @@ let mouseCameraEnabled = false;
 
 let currentPickup = false;
 
-let vehiclePurchaseState = VRR_VEHBUYSTATE_NONE;
+let vehiclePurchaseState = AGRP_VEHBUYSTATE_NONE;
 let vehiclePurchasing = null;
 let vehiclePurchasePosition = null;
 

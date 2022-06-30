@@ -168,8 +168,8 @@ function enterExitPropertyCommand(command, params, client) {
 			return false;
 		}
 
-		let ownerType = getEntityData(getPlayerData(client).currentPickup, "vrr.owner.type");
-		let ownerId = getEntityData(getPlayerData(client).currentPickup, "vrr.owner.id");
+		let ownerType = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.type");
+		let ownerId = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.id");
 
 		switch (ownerType) {
 			case VRR_PICKUP_BUSINESS_ENTRANCE:

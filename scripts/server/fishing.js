@@ -8,37 +8,37 @@
 // ===========================================================================
 
 // Fishing Catch Types (Probably not going to be used, in favor of items and their use type)
-const VRR_FISHING_CATCH_TYPE_NONE = 1;
-const VRR_FISHING_CATCH_TYPE_FISH = 1;
-const VRR_FISHING_CATCH_TYPE_JUNK = 2;
+const AGRP_FISHING_CATCH_TYPE_NONE = 1;
+const AGRP_FISHING_CATCH_TYPE_FISH = 1;
+const AGRP_FISHING_CATCH_TYPE_JUNK = 2;
 
 // ===========================================================================
 
 let fishingCollectables = [
 	// Fish
-	["Salmon", VRR_FISHING_CATCH_TYPE_FISH],
-	["Tuna", VRR_FISHING_CATCH_TYPE_FISH],
-	["Crab", VRR_FISHING_CATCH_TYPE_FISH],
-	["Trout", VRR_FISHING_CATCH_TYPE_FISH],
-	["Sea Bass", VRR_FISHING_CATCH_TYPE_FISH],
-	["Shark", VRR_FISHING_CATCH_TYPE_FISH],
-	["Turtle", VRR_FISHING_CATCH_TYPE_FISH],
-	["Manta Ray", VRR_FISHING_CATCH_TYPE_FISH],
-	["Cat Fish", VRR_FISHING_CATCH_TYPE_FISH],
-	["Blue Marlin", VRR_FISHING_CATCH_TYPE_FISH],
+	["Salmon", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Tuna", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Crab", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Trout", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Sea Bass", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Shark", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Turtle", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Manta Ray", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Cat Fish", AGRP_FISHING_CATCH_TYPE_FISH],
+	["Blue Marlin", AGRP_FISHING_CATCH_TYPE_FISH],
 
 	// Junk
-	["Rusty Can", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Old Pants", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Old Shoes", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Garbage", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Baby Diaper", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Old Tire", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Old Car Battery", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Horse Hoove", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Soggy Log", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Soggy Dildo", VRR_FISHING_CATCH_TYPE_JUNK],
-	["Clump of Seaweed", VRR_FISHING_CATCH_TYPE_JUNK],
+	["Rusty Can", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Old Pants", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Old Shoes", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Garbage", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Baby Diaper", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Old Tire", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Old Car Battery", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Horse Hoove", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Soggy Log", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Soggy Dildo", AGRP_FISHING_CATCH_TYPE_JUNK],
+	["Clump of Seaweed", AGRP_FISHING_CATCH_TYPE_JUNK],
 ];
 
 // ===========================================================================
@@ -56,7 +56,7 @@ function castFishingLineCommand(client) {
 		return false;
 	}
 
-	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USE_TYPE_FISHINGROD)) {
+	if (doesPlayerHaveItemOfUseTypeEquipped(client, AGRP_ITEM_USE_TYPE_FISHINGROD)) {
 		messagePlayerError(client, getLocaleString(client, "NeedFishingRod"));
 		return false;
 	}
@@ -80,7 +80,7 @@ function resetFishingLineCommand(client) {
 		return false;
 	}
 
-	if (doesPlayerHaveItemOfUseTypeEquipped(client, VRR_ITEM_USE_TYPE_FISHINGROD)) {
+	if (doesPlayerHaveItemOfUseTypeEquipped(client, AGRP_ITEM_USE_TYPE_FISHINGROD)) {
 		messagePlayerError(client, getLocaleString(client, "CantFishHere"));
 		return false;
 	}

@@ -8,36 +8,36 @@
 // ===========================================================================
 
 // GPS State Types
-const VRR_GPS_TYPE_NONE = 0;                     // None (invalid)
-const VRR_GPS_TYPE_BUSINESS = 1;                 // Business
-const VRR_GPS_TYPE_POLICE = 2;                   // Police Station
-const VRR_GPS_TYPE_HOSPITAL = 3;                 // Hospital
-const VRR_GPS_TYPE_JOB = 4;                      // Job
-const VRR_GPS_TYPE_GAMELOC = 5;                  // Game Location
+const AGRP_GPS_TYPE_NONE = 0;                     // None (invalid)
+const AGRP_GPS_TYPE_BUSINESS = 1;                 // Business
+const AGRP_GPS_TYPE_POLICE = 2;                   // Police Station
+const AGRP_GPS_TYPE_HOSPITAL = 3;                 // Hospital
+const AGRP_GPS_TYPE_JOB = 4;                      // Job
+const AGRP_GPS_TYPE_GAMELOC = 5;                  // Game Location
 
 // ===========================================================================
 
 function gpsCommand(command, params, client) {
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessList")));
 
-	let locationType = VRR_GPS_TYPE_NONE;
-	let useType = VRR_ITEM_USE_TYPE_NONE;
+	let locationType = AGRP_GPS_TYPE_NONE;
+	let useType = AGRP_ITEM_USE_TYPE_NONE;
 	let blipColour = "white";
 
 	switch (toLowerCase(params)) {
 		case "police":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_POLICE;
+			locationType = AGRP_GPS_TYPE_POLICE;
 			break;
 
 		case "hospital":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_HOSPITAL;
+			locationType = AGRP_GPS_TYPE_HOSPITAL;
 			break;
 
 		case "job":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_JOB;
+			locationType = AGRP_GPS_TYPE_JOB;
 			break;
 
 		case "skin":
@@ -45,8 +45,8 @@ function gpsCommand(command, params, client) {
 		case "clothes":
 		case "player":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_SKIN;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_SKIN;
 			break;
 
 		case "gun":
@@ -56,29 +56,29 @@ function gpsCommand(command, params, client) {
 		case "wep":
 		case "weps":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_WEAPON;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_WEAPON;
 			break;
 
 		case "food":
 		case "eat":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_FOOD;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_FOOD;
 			break;
 
 		case "drink":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_DRINK;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_DRINK;
 			break;
 
 		case "alcohol":
 		case "booze":
 		case "bar":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_ALCOHOL;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_ALCOHOL;
 			break;
 
 		case "repair":
@@ -87,8 +87,8 @@ function gpsCommand(command, params, client) {
 		case "spray":
 		case "fix":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_VEHREPAIR;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_VEHREPAIR;
 			break;
 
 		case "vehiclecolour":
@@ -96,14 +96,14 @@ function gpsCommand(command, params, client) {
 		case "carcolour":
 		case "colour":
 			blipColour = "businessBlue"
-			locationType = VRR_GPS_TYPE_BUSINESS;
-			useType = VRR_ITEM_USE_TYPE_VEHCOLOUR;
+			locationType = AGRP_GPS_TYPE_BUSINESS;
+			useType = AGRP_ITEM_USE_TYPE_VEHCOLOUR;
 			break;
 
 		default: {
 			let itemTypeId = getItemTypeFromParams(params);
 			if (getItemTypeData(itemTypeId) != false) {
-				locationType = VRR_GPS_TYPE_BUSINESS;
+				locationType = AGRP_GPS_TYPE_BUSINESS;
 				blipColour = "businessBlue";
 				useType = getItemTypeData(itemTypeId).useType;
 			} else {
@@ -115,12 +115,12 @@ function gpsCommand(command, params, client) {
 		}
 	}
 
-	if (locationType == VRR_GPS_TYPE_NONE) {
+	if (locationType == AGRP_GPS_TYPE_NONE) {
 		messagePlayerError(client, getLocaleString(client, "InvalidGPSLocation"));
 		return false;
 	}
 
-	if (locationType == VRR_GPS_TYPE_BUSINESS) {
+	if (locationType == AGRP_GPS_TYPE_BUSINESS) {
 		let businessId = getClosestBusinessWithBuyableItemOfUseType(useType);
 		if (!businessId) {
 			messagePlayerError(client, getLocaleString(client, "NoBusinessWithItemType"));
@@ -137,7 +137,7 @@ function gpsCommand(command, params, client) {
 		messagePlayerSuccess(client, "Look for the blinking icon on your mini map");
 	}
 
-	if (locationType == VRR_GPS_TYPE_GAMELOC) {
+	if (locationType == AGRP_GPS_TYPE_GAMELOC) {
 		hideAllBlipsForPlayerGPS(client);
 		blinkGenericGPSBlipForPlayer(client, position, 0, getColourByType(blipColour), 10);
 		messagePlayerSuccess(client, "Look for the blinking icon on your mini map");

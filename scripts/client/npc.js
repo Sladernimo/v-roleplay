@@ -9,10 +9,10 @@
 
 function processNPCMovement(npc) {
 	//if(npc.isSyncer == true) {
-		if(getEntityData(npc, "vrr.lookAtClosestPlayer") == true) {
-			let closestPlayer = getClosestPlayer(getElementPosition(npc.id));
-			setPedLookAt(npc, getElementPosition(closestPlayer.id));
-		}
+	if (getEntityData(npc, "agrp.lookAtClosestPlayer") == true) {
+		let closestPlayer = getClosestPlayer(getElementPosition(npc.id));
+		setPedLookAt(npc, getElementPosition(closestPlayer.id));
+	}
 	//}
 }
 

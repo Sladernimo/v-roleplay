@@ -266,7 +266,7 @@ function playerToggledGUI(client) {
 // ===========================================================================
 
 function showPlayerTwoFactorAuthenticationGUI(client) {
-	sendNetworkEventToPlayer("vrr.2fa", client);
+	sendNetworkEventToPlayer("agrp.2fa", client);
 }
 
 // ===========================================================================

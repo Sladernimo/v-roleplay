@@ -260,8 +260,8 @@ function checkPlayerPedStates() {
 		if (getPlayerData(clients[i])) {
 			if (getPlayerData(clients[i]).pedState) {
 				if (isPlayerInAnyVehicle(clients[i])) {
-					if (getPlayerData(clients[i]).pedState == VRR_PEDSTATE_EXITINGVEHICLE) {
-						getPlayerData(clients[i]).pedState == VRR_PEDSTATE_READY;
+					if (getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_EXITINGVEHICLE) {
+						getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_READY;
 					}
 				}
 			}
@@ -458,7 +458,7 @@ function isClientInitialized(client) {
 // ===========================================================================
 
 function getPedForNetworkEvent(ped) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return ped;
 	} else {
 		return ped.id;

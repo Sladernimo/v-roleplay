@@ -452,7 +452,7 @@ function setBusinessNameCommand(command, params, client) {
 
 	let oldBusinessName = getBusinessData(businessId).name;
 	getBusinessData(businessId).name = newBusinessName;
-	setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.name", getBusinessData(businessId).name, true);
+	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
 	getBusinessData(businessId).needsSaved = true;
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`);
 }
@@ -1442,7 +1442,7 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).buyPrice = amount;
-	setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.price", getBusinessData(businessId).buyPrice, true);
+	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
 
 	getBusinessData(businessId).needsSaved = true;
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
@@ -2860,50 +2860,50 @@ function updateBusinessPickupLabelData(businessId) {
 	}
 
 	if (getBusinessData(businessId).exitPickup != null) {
-		setEntityData(getBusinessData(businessId).exitPickup, "vrr.owner.type", VRR_PICKUP_BUSINESS_EXIT, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "vrr.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "vrr.label.type", VRR_LABEL_EXIT, true);
+		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.type", VRR_PICKUP_BUSINESS_EXIT, false);
+		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.id", businessId, false);
+		setEntityData(getBusinessData(businessId).exitPickup, "agrp.label.type", VRR_LABEL_EXIT, true);
 	}
 
 	if (getBusinessData(businessId).entrancePickup != null) {
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.owner.type", VRR_PICKUP_BUSINESS_ENTRANCE, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.type", VRR_LABEL_BUSINESS, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.name", getBusinessData(businessId).name, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.locked", getBusinessData(businessId).locked, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_NONE, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.type", VRR_PICKUP_BUSINESS_ENTRANCE, false);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.id", businessId, false);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.type", VRR_LABEL_BUSINESS, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.locked", getBusinessData(businessId).locked, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_NONE, true);
 
 		switch (getBusinessData(businessId).labelHelpType) {
 			case VRR_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTERVEHICLE, true);
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTERVEHICLE, true);
 				break;
 			}
 
 			case VRR_PROPLABEL_INFO_ENTER: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTER, true);
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTER, true);
 				break;
 			}
 
 			case VRR_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_REPAIR, true);
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_REPAIR, true);
 				break;
 			}
 
 			default: {
 				if (getBusinessData(businessId).hasInterior) {
-					setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_ENTER, true);
+					setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTER, true);
 				} else {
 					if (doesBusinessHaveAnyItemsToBuy(businessId)) {
-						setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_BUY, true);
+						setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_BUY, true);
 					} else {
-						removeEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.help");
+						removeEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help");
 					}
 				}
 				break;
 			}
 		}
 
-		setEntityData(getBusinessData(businessId).entrancePickup, "vrr.label.price", getBusinessData(businessId).buyPrice, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
 	}
 }
 

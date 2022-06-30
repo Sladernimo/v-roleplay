@@ -41,7 +41,7 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 			if (blipModel == -1) {
 				if (businessData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been removed by the server`);
-					if (getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getBusinessData(businessId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -55,7 +55,7 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 			} else {
 				if (businessData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been changed by the server`);
-					if (getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
 						natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
 						natives.setBlipMarkerLongDistance(businessData.blipId, false);

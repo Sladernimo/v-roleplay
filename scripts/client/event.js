@@ -151,7 +151,7 @@ function onElementStreamIn(event, element) {
 
 function onLocalPlayerExitedVehicle(event, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
-	sendNetworkEventToServer("vrr.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if (inVehicleSeat) {
 		parkedVehiclePosition = false;
@@ -164,7 +164,7 @@ function onLocalPlayerExitedVehicle(event, vehicle, seat) {
 function onLocalPlayerEnteredVehicle(event, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered vehicle`);
 
-	sendNetworkEventToServer("vrr.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if (areServerElementsSupported()) {
 		//if(inVehicleSeat == 0) {
@@ -188,7 +188,7 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 			if (damagedEntity == localPlayer) {
 				//if(!weaponDamageEnabled[damagerEntity.name]) {
 				preventDefaultEventAction(event);
-				sendNetworkEventToServer("vrr.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
+				sendNetworkEventToServer("agrp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
 				//}
 			}
 		}

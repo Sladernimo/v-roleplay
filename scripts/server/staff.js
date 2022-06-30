@@ -880,7 +880,7 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToDimension = getPlayerDimension(targetClient);
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
-	getPlayerData(targetClient).returnToType = VRR_RETURNTO_TYPE_ADMINGET;
+	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_ADMINGET;
 
 	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
 	setPlayerHeading(targetClient, getPlayerHeading(client));
@@ -932,7 +932,7 @@ function returnPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = null;
 	getPlayerData(targetClient).returnToHouse = null;
 	getPlayerData(targetClient).returnToBusiness = null;
-	getPlayerData(targetClient).returnToType = VRR_RETURNTO_TYPE_NONE;
+	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_NONE;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);

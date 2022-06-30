@@ -19,7 +19,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 
 	let freezePlayer = false;
 	switch (animationData.moveType) {
-		case VRR_ANIMMOVE_FORWARD: {
+		case AGRP_ANIMMOVE_FORWARD: {
 			setElementCollisionsEnabled(ped, false);
 			if (ped.isSyncer) {
 				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
@@ -28,7 +28,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 			break;
 		}
 
-		case VRR_ANIMMOVE_BACK: {
+		case AGRP_ANIMMOVE_BACK: {
 			setElementCollisionsEnabled(pedId, false);
 			if (ped.isSyncer) {
 				setElementPosition(pedId, getPosBehindPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
@@ -37,7 +37,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 			break;
 		}
 
-		case VRR_ANIMMOVE_LEFT: {
+		case AGRP_ANIMMOVE_LEFT: {
 			setElementCollisionsEnabled(pedId, false);
 			if (ped.isSyncer) {
 				setElementPosition(pedId, getPosToLeftOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
@@ -46,7 +46,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 			break;
 		}
 
-		case VRR_ANIMMOVE_RIGHT: {
+		case AGRP_ANIMMOVE_RIGHT: {
 			setElementCollisionsEnabled(pedId, false);
 			if (ped.isSyncer) {
 				setElementPosition(pedId, getPosToRightOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
@@ -60,9 +60,9 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 		}
 	}
 
-	if (getGame() < VRR_GAME_GTA_IV) {
-		if (animationData.animType == VRR_ANIMTYPE_NORMAL || animationData.animType == VRR_ANIMTYPE_SURRENDER) {
-			if (getGame() == VRR_GAME_GTA_VC || getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() < AGRP_GAME_GTA_IV) {
+		if (animationData.animType == AGRP_ANIMTYPE_NORMAL || animationData.animType == AGRP_ANIMTYPE_SURRENDER) {
+			if (getGame() == AGRP_GAME_GTA_VC || getGame() == AGRP_GAME_GTA_SA) {
 				ped.clearAnimations();
 			} else {
 				ped.clearObjective();
@@ -74,7 +74,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 				setLocalPlayerControlState(false, false);
 				localPlayer.collisionsEnabled = false;
 			}
-		} else if (animationData.animType == VRR_ANIMTYPE_BLEND) {
+		} else if (animationData.animType == AGRP_ANIMTYPE_BLEND) {
 			ped.position = ped.position;
 			ped.blendAnimation(animationData.groupId, animationData.animId, animationData.animSpeed);
 		}
@@ -95,7 +95,7 @@ function forcePedAnimation(pedId, animSlot) {
 
 	let animationData = getAnimationData(animSlot);
 
-	if (getGame() < VRR_GAME_GTA_IV) {
+	if (getGame() < AGRP_GAME_GTA_IV) {
 		ped.position = ped.position;
 		ped.addAnimation(animationData.groupId, animationData.animId);
 
@@ -119,8 +119,8 @@ function makePedStopAnimation(pedId) {
 		return false;
 	}
 
-	if (getGame() != VRR_GAME_GTA_IV) {
-		if (getGame() == VRR_GAME_GTA_VC || getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() != AGRP_GAME_GTA_IV) {
+		if (getGame() == AGRP_GAME_GTA_VC || getGame() == AGRP_GAME_GTA_SA) {
 			ped.clearAnimations();
 		} else {
 			ped.clearObjective();
@@ -128,7 +128,7 @@ function makePedStopAnimation(pedId) {
 	}
 
 	if (ped == localPlayer) {
-		if (getGame() != VRR_GAME_GTA_IV) {
+		if (getGame() != AGRP_GAME_GTA_IV) {
 			localPlayer.collisionsEnabled = true;
 		}
 		setLocalPlayerControlState(true, false);

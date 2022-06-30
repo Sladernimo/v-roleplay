@@ -8,9 +8,9 @@
 // ===========================================================================
 
 // Return-To types (for when a player is teleported)
-const VRR_RETURNTO_TYPE_NONE = 0;                // "Return to" data is invalid
-const VRR_RETURNTO_TYPE_ADMINGET = 1;            // "Return to" data is from admin teleporting
-const VRR_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin select
+const AGRP_RETURNTO_TYPE_NONE = 0;                // "Return to" data is invalid
+const AGRP_RETURNTO_TYPE_ADMINGET = 1;            // "Return to" data is from admin teleporting
+const AGRP_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin select
 
 // ===========================================================================
 
@@ -38,9 +38,9 @@ class ClientData {
 		this.sessionId = 0;
 
 		// Security
-		this.passwordResetState = VRR_RESETPASS_STATE_NONE;
+		this.passwordResetState = AGRP_RESETPASS_STATE_NONE;
 		this.passwordResetCode = "";
-		this.twoFactorAuthenticationState = VRR_2FA_STATE_NONE;
+		this.twoFactorAuthenticationState = AGRP_2FA_STATE_NONE;
 		this.twoFactorAuthenticationCode = 0;
 
 		// Job Stuff
@@ -64,11 +64,11 @@ class ClientData {
 
 		// Items
 		this.tempLockerCache = new Array(9).fill(-1);
-		this.tempLockerType = VRR_TEMP_LOCKER_TYPE_NONE;
+		this.tempLockerType = AGRP_TEMP_LOCKER_TYPE_NONE;
 		this.hotBarItems = new Array(9).fill(-1);
 		this.activeHotBarSlot = -1;
 		this.toggleUseItem = false;
-		this.itemActionState = VRR_ITEM_ACTION_NONE;
+		this.itemActionState = AGRP_ITEM_ACTION_NONE;
 		this.itemActionItem = -1;
 		this.paintBallItemCache = [];
 
@@ -103,7 +103,7 @@ class ClientData {
 		this.returnToDimension = null;
 		this.returnToHouse = null;
 		this.returnToBusiness = null;
-		this.returnToType = VRR_RETURNTO_TYPE_NONE;
+		this.returnToType = AGRP_RETURNTO_TYPE_NONE;
 
 		// Animation
 		this.currentAnimation = -1;
@@ -118,7 +118,7 @@ class ClientData {
 		this.usingSkinSelect = false;
 		this.keyBinds = [];
 		this.incomingDamageMultiplier = 1;
-		this.weaponDamageEvent = VRR_WEAPON_DAMAGE_EVENT_NORMAL;
+		this.weaponDamageEvent = AGRP_WEAPON_DAMAGE_EVENT_NORMAL;
 		this.lastJobVehicle = null;
 		this.health = 100;
 		this.locale = 0;
@@ -127,8 +127,8 @@ class ClientData {
 		this.interiorCutscene = -1;
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
-		this.pedState = VRR_PEDSTATE_NONE;
-		this.promptType = VRR_PROMPT_NONE;
+		this.pedState = AGRP_PEDSTATE_NONE;
+		this.promptType = AGRP_PROMPT_NONE;
 		this.privateMessageReplyTo = null;
 
 		this.inPaintBall = false;

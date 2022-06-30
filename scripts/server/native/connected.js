@@ -181,7 +181,7 @@ function getVehicleHeading(vehicle) {
 
 function setVehicleHeading(vehicle, heading) {
 	if (getGame() == VRR_GAME_GTA_IV) {
-		return sendNetworkEventToPlayer("vrr.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	}
 	return vehicle.heading = heading;
 }
@@ -255,7 +255,7 @@ function removePlayerFromVehicle(client) {
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
 	if (getGame() == VRR_GAME_GTA_IV) {
-		triggerNetworkEvent("vrr.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
@@ -547,15 +547,15 @@ function repairVehicle(vehicle) {
 // ===========================================================================
 
 function setVehicleLights(vehicle, lights) {
-	setEntityData(vehicle, "vrr.lights", lights, true);
-	sendNetworkEventToPlayer("vrr.veh.lights", null, vehicle.id, lights);
+	setEntityData(vehicle, "agrp.lights", lights, true);
+	sendNetworkEventToPlayer("agrp.veh.lights", null, vehicle.id, lights);
 }
 
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
 	vehicle.engine = engine;
-	setEntityData(vehicle, "vrr.engine", engine, true);
+	setEntityData(vehicle, "agrp.engine", engine, true);
 }
 
 // ===========================================================================
@@ -688,7 +688,7 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	setEntityData(getPlayerElement(client), "vrr.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
+	setEntityData(getPlayerElement(client), "agrp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
 	forcePlayerToSyncElementProperties(null, getPlayerElement(client));
 }
 
@@ -707,7 +707,7 @@ function getPlayerElement(client) {
 // ===========================================================================
 
 function setElementPosition(element, position) {
-	sendNetworkEventToPlayer("vrr.elementPosition", null, element.id, position);
+	sendNetworkEventToPlayer("agrp.elementPosition", null, element.id, position);
 }
 
 // ===========================================================================
@@ -725,14 +725,14 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
-	setEntityData(element, "vrr.interior", interior, true);
+	setEntityData(element, "agrp.interior", interior, true);
 	forcePlayerToSyncElementProperties(null, element);
 }
 
 // ===========================================================================
 
 function setElementCollisionsEnabled(element, state) {
-	sendNetworkEventToPlayer("vrr.elementCollisions", null, element.id, state);
+	sendNetworkEventToPlayer("agrp.elementCollisions", null, element.id, state);
 }
 
 // ===========================================================================
@@ -1142,13 +1142,13 @@ function setVehicleHealth(vehicle, health) {
 
 function givePlayerWeapon(client, weaponId, ammo, active = true) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	sendNetworkEventToPlayer("vrr.giveWeapon", client, weaponId, ammo, active);
+	sendNetworkEventToPlayer("agrp.giveWeapon", client, weaponId, ammo, active);
 }
 
 // ===========================================================================
 
 function setPlayerWantedLevel(client, wantedLevel) {
-	sendNetworkEventToPlayer("vrr.wantedLevel", client, wantedLevel);
+	sendNetworkEventToPlayer("agrp.wantedLevel", client, wantedLevel);
 	return true;
 }
 
@@ -1287,7 +1287,7 @@ function serverBanIP(ip) {
 // ===========================================================================
 
 function setVehicleTrunkState(vehicle, trunkState) {
-	sendNetworkEventToPlayer("vrr.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+	sendNetworkEventToPlayer("agrp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
 
 // ===========================================================================
@@ -1388,7 +1388,7 @@ function deletePlayerPed(client) {
 	if (areServerElementsSupported()) {
 		destroyElement(client.player);
 	} else {
-		sendNetworkEventToPlayer("vrr.deleteLocalPlayerPed", client);
+		sendNetworkEventToPlayer("agrp.deleteLocalPlayerPed", client);
 	}
 
 }

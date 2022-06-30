@@ -25,8 +25,8 @@ function initClientScripts() {
 // ===========================================================================
 
 function setUpInitialGame() {
-	if(getGame() == VRR_GAME_GTA_III) {
-		logToConsole(LOG_DEBUG|LOG_WARN, "Setting up initial game stuff for GTA III ...");
+	if (getGame() == AGRP_GAME_GTA_III) {
+		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA III ...");
 
 		// Turn off unlimited sprint
 		game.SET_PLAYER_NEVER_GETS_TIRED(game.GET_PLAYER_ID(), 0);
@@ -44,8 +44,8 @@ function setUpInitialGame() {
 
 		// Provided by mouse camera script (mousecam.js)
 		SetStandardControlsEnabled(true);
-	} else if(getGame() == VRR_GAME_GTA_VC) {
-		logToConsole(LOG_DEBUG|LOG_WARN, "Setting up initial game stuff for GTA Vice City ...");
+	} else if (getGame() == AGRP_GAME_GTA_VC) {
+		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA Vice City ...");
 
 		// Turn off unlimited sprint
 		game.SET_PLAYER_NEVER_GETS_TIRED(game.GET_PLAYER_ID(), 0);
@@ -87,8 +87,8 @@ function setUpInitialGame() {
 
 		// Provided by mouse camera script (mousecam.js)
 		SetStandardControlsEnabled(true);
-	} else if(getGame() == VRR_GAME_GTA_SA) {
-		logToConsole(LOG_DEBUG|LOG_WARN, "Setting up initial game stuff for GTA San Andreas ...");
+	} else if (getGame() == AGRP_GAME_GTA_SA) {
+		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA San Andreas ...");
 		// Turn weapon skills down a bit
 		game.setGameStat(STAT_WEAPONTYPE_PISTOL_SKILL, 400);
 		game.setGameStat(STAT_WEAPONTYPE_PISTOL_SILENCED_SKILL, 400);
@@ -124,7 +124,7 @@ function setUpInitialGame() {
 
 		// Disables taxi/vigilante/etc and other start mission triggers
 		game.onMission = true;
-	} else if(getGame() == VRR_GAME_GTA_IV) {
+	} else if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.allowEmergencyServices(false);
 		natives.setCreateRandomCops(true);
 		natives.setMaxWantedLevel(0);
@@ -186,7 +186,7 @@ function setUpInitialGame() {
 
 		// Some last steps
 		//natives.loadAllObjectsNow();
-	} else if(getGame() == VRR_GAME_MAFIA_ONE) {
+	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		game.mapEnabled = false;
 		game.setTrafficEnabled(false);
 	}

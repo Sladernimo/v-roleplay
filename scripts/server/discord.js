@@ -8,9 +8,9 @@
 // ===========================================================================
 
 // Discord Webhook Types
-const VRR_DISCORD_WEBHOOK_NONE = 0;
-const VRR_DISCORD_WEBHOOK_LOG = 1;
-const VRR_DISCORD_WEBHOOK_ADMIN = 2;
+const AGRP_DISCORD_WEBHOOK_NONE = 0;
+const AGRP_DISCORD_WEBHOOK_LOG = 1;
+const AGRP_DISCORD_WEBHOOK_ADMIN = 2;
 
 // ===========================================================================
 
@@ -109,7 +109,7 @@ function messageDiscordChatChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
@@ -128,7 +128,7 @@ function messageDiscordEventChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
@@ -147,12 +147,12 @@ function messageDiscordAdminChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_ADMIN);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_ADMIN);
 }
 
 // ===========================================================================
 
-function triggerDiscordWebHook(messageString, serverId = getServerId(), type = VRR_DISCORD_WEBHOOK_LOG) {
+function triggerDiscordWebHook(messageString, serverId = getServerId(), type = AGRP_DISCORD_WEBHOOK_LOG) {
 	if (!getGlobalConfig().discord.webhook.enabled) {
 		return false;
 	}

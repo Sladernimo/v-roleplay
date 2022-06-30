@@ -14,7 +14,7 @@ function isPlayerAtBank(client) {
 
 	let businessId = getPlayerBusiness(client);
 	if (getBusinessData(client) != false) {
-		if (getBusinessData(businessId).entranceType == VRR_BIZ_ENTRANCE_TYPE_BANK) {
+		if (getBusinessData(businessId).entranceType == AGRP_BIZ_ENTRANCE_TYPE_BANK) {
 			return true;
 		}
 	}

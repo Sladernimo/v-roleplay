@@ -8,7 +8,7 @@
 // ===========================================================================
 
 function getPlayerActiveWalkieTalkieFrequency(client) {
-	let walkieTalkieSlot = getPlayerFirstItemSlotByUseType(client, VRR_ITEM_USE_TYPE_WALKIETALKIE);
+	let walkieTalkieSlot = getPlayerFirstItemSlotByUseType(client, AGRP_ITEM_USE_TYPE_WALKIETALKIE);
 
 	if (walkieTalkieSlot != -1) {
 		if (getItemData(getPlayerData(client).hotBarItems[walkieTalkieSlot])) {
@@ -31,7 +31,7 @@ function walkieTalkieTransmit(radioFrequency, messageText, transmittingPlayer) {
 	//	if(isPlayerSpawned(clients[i])) {
 	//		if(!isSamePlayer(transmittingPlayer, clients[i])) {
 	//			if(getPlayerActiveWalkieTalkieFrequency(clients[i]) == radioFrequency) {
-	//				if(getItemData(getPlayerData(clients[i]).hotBarItems[getPlayerFirstItemSlotByUseType(clients[i], VRR_ITEM_USE_TYPE_WALKIETALKIE)]).enabled) {
+	//				if(getItemData(getPlayerData(clients[i]).hotBarItems[getPlayerFirstItemSlotByUseType(clients[i], AGRP_ITEM_USE_TYPE_WALKIETALKIE)]).enabled) {
 	//					walkieTalkieIncomingToNearbyPlayers(clients[i], messageText);
 	//				}
 	//			}
@@ -42,7 +42,7 @@ function walkieTalkieTransmit(radioFrequency, messageText, transmittingPlayer) {
 	let items = getServerData().items;
 	for (let i in items) {
 		if (items[i].enabled) {
-			if (getItemTypeData(items[i].itemTypeIndex).useType == VRR_ITEM_USE_TYPE_WALKIETALKIE) {
+			if (getItemTypeData(items[i].itemTypeIndex).useType == AGRP_ITEM_USE_TYPE_WALKIETALKIE) {
 				if (items[i].value == radioFrequency) {
 					walkieTalkieIncomingToNearbyPlayers(null, messageText, getItemPosition(i));
 				}
@@ -125,7 +125,7 @@ function walkieTalkieChatCommand(command, params, client) {
 		return false;
 	}
 
-	let walkieTalkieSlot = getPlayerFirstItemSlotByUseType(client, VRR_ITEM_USE_TYPE_WALKIETALKIE);
+	let walkieTalkieSlot = getPlayerFirstItemSlotByUseType(client, AGRP_ITEM_USE_TYPE_WALKIETALKIE);
 	if (!getItemData(getPlayerData(client).hotBarItems[walkieTalkieSlot]).enabled) {
 		messagePlayerError(client, "Please turn on a walkie talkie first!");
 		return false;

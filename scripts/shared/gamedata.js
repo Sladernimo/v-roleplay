@@ -12,9 +12,9 @@ class AnimationData {
 		this.name = name;
 		this.groupId = (typeof data.groupId != "undefined") ? data.groupId : 0;
 		this.animId = (typeof data.animId != "undefined") ? data.animId : 0;
-		this.animType = (typeof data.animType != "undefined") ? data.animType : VRR_ANIMTYPE_NORMAL;
+		this.animType = (typeof data.animType != "undefined") ? data.animType : AGRP_ANIMTYPE_NORMAL;
 		this.animSpeed = (typeof data.animSpeed != "undefined") ? data.animSpeed : 0.0;
-		this.moveType = (typeof data.moveType != "undefined") ? data.moveType : VRR_ANIMMOVE_NONE;
+		this.moveType = (typeof data.moveType != "undefined") ? data.moveType : AGRP_ANIMMOVE_NONE;
 
 		// GTA IV
 		this.infiniteLoop = (typeof data.infiniteLoop != "undefined") ? data.infiniteLoop : false;
@@ -29,156 +29,156 @@ class AnimationData {
 let supportedFeatures = {
 	// Invalid, GTAIII, GTAVC, GTASA, Invalid, GTAIV, Invalid, Invalid, Invalid, M1, M2, M3, M1DE
 	time: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: true,
-		[VRR_GAME_GTA_IV_EFLC]: true,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	weather: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: true,
-		[VRR_GAME_GTA_IV_EFLC]: true,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	serverElements: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: true,
-		[VRR_GAME_MAFIA_TWO]: true,
-		[VRR_GAME_MAFIA_THREE]: true
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: true,
+		[AGRP_GAME_MAFIA_TWO]: true,
+		[AGRP_GAME_MAFIA_THREE]: true
 	},
 	snow: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	customCamera: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: true,
-		[VRR_GAME_GTA_IV_EFLC]: true,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	fadeCamera: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: true,
-		[VRR_GAME_GTA_IV_EFLC]: true,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	pickups: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	worldLabels: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	blips: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	attachedBlips: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	fightStyles: {
-		[VRR_GAME_GTA_III]: false,
-		[VRR_GAME_GTA_VC]: false,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	markers: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	vehicleColours: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	objects: {
-		[VRR_GAME_GTA_III]: true,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	},
 	interior: {
-		[VRR_GAME_GTA_III]: false,
-		[VRR_GAME_GTA_VC]: true,
-		[VRR_GAME_GTA_SA]: true,
-		[VRR_GAME_GTA_IV]: false,
-		[VRR_GAME_GTA_IV_EFLC]: false,
-		[VRR_GAME_MAFIA_ONE]: false,
-		[VRR_GAME_MAFIA_TWO]: false,
-		[VRR_GAME_MAFIA_THREE]: false
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
 	}
 };
 
@@ -186,23 +186,23 @@ let supportedFeatures = {
 
 // Connected MP mods only
 let extraContentResource = {
-	[VRR_GAME_GTA_III]: "agrp-gta3",
-	[VRR_GAME_GTA_VC]: "agrp-gtavc",
-	[VRR_GAME_GTA_SA]: "agrp-gtasa",
-	[VRR_GAME_GTA_IV]: "agrp-gtaiv",
-	[VRR_GAME_GTA_IV_EFLC]: "agrp-gtaiv",
-	[VRR_GAME_MAFIA_ONE]: "agrp-mafia1",
-	[VRR_GAME_MAFIA_TWO]: "agrp-mafia2",
-	[VRR_GAME_MAFIA_TWO]: "agrp-mafia3",
-	[VRR_GAME_MAFIA_ONE_DE]: "agrp-mafia1de",
-	[VRR_GAME_GTA_V]: "agrp-gtav",
+	[AGRP_GAME_GTA_III]: "agrp-gta3",
+	[AGRP_GAME_GTA_VC]: "agrp-gtavc",
+	[AGRP_GAME_GTA_SA]: "agrp-gtasa",
+	[AGRP_GAME_GTA_IV]: "agrp-gtaiv",
+	[AGRP_GAME_GTA_IV_EFLC]: "agrp-gtaiv",
+	[AGRP_GAME_MAFIA_ONE]: "agrp-mafia1",
+	[AGRP_GAME_MAFIA_TWO]: "agrp-mafia2",
+	[AGRP_GAME_MAFIA_TWO]: "agrp-mafia3",
+	[AGRP_GAME_MAFIA_ONE_DE]: "agrp-mafia1de",
+	[AGRP_GAME_GTA_V]: "agrp-gtav",
 };
 
 // ===========================================================================
 
 let gameData = {
 	weaponNames: {
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 			"Fist",
 			"Bat",
 			"Pistol",
@@ -216,7 +216,7 @@ let gameData = {
 			"Molotov",
 			"Grenade"
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA VC
+		[AGRP_GAME_GTA_VC]: [ // GTA VC
 			"Fist",
 			"Brass Knuckles",
 			"Screwdriver",
@@ -252,7 +252,7 @@ let gameData = {
 			"M60",
 			"Minigun"
 		],
-		[VRR_GAME_GTA_SA]: [ // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: [ // GTA San Andreas
 			"Fist",
 			"Brass Knuckles",
 			"Golf Club",
@@ -304,7 +304,7 @@ let gameData = {
 			"Jetpack",
 			"Skateboard"
 		],
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			"Fist",
 			"Bat",
 			"Pool Cue",
@@ -352,7 +352,7 @@ let gameData = {
 			"EFLC Weapon 24",
 			"Camera",
 		],
-		[VRR_GAME_GTA_IV_EFLC]: [ // GTA IV (EFLC)
+		[AGRP_GAME_GTA_IV_EFLC]: [ // GTA IV (EFLC)
 			"Fist",
 			"Bat",
 			"Pool Cue",
@@ -400,7 +400,7 @@ let gameData = {
 			"EFLC Weapon 24",
 			"Camera",
 		],
-		[VRR_GAME_MAFIA_ONE]: {	// Mafia 1
+		[AGRP_GAME_MAFIA_ONE]: {	// Mafia 1
 			2: "Knuckle Duster",
 			3: "Knife",
 			4: "Baseball Bat",
@@ -423,12 +423,12 @@ let gameData = {
 			31: "Sword",
 			32: "Dogs Head",
 		},
-		[VRR_GAME_GTA_V]: { // GTA V
+		[AGRP_GAME_GTA_V]: { // GTA V
 
 		}
 	},
 	weatherNames: {
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 			"Clear",
 			"Overcast",
 			"Thunderstorm",
@@ -440,7 +440,7 @@ let gameData = {
 			"Overcast/Cloudy",
 			"Grey/Cloudy"
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA Vice City
+		[AGRP_GAME_GTA_VC]: [ // GTA Vice City
 			"Partly Cloudy",
 			"Overcast",
 			"Thunderstorm",
@@ -452,7 +452,7 @@ let gameData = {
 			"Overcast/Cloudy",
 			"Grey/Cloudy"
 		],
-		[VRR_GAME_GTA_SA]: [ // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: [ // GTA San Andreas
 			"Blue Skies",
 			"Blue Skies",
 			"Blue Skies",
@@ -475,7 +475,7 @@ let gameData = {
 			"Sandstorm",
 			"Greenish/Foggy"
 		],
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			"Extra Sunny",
 			"Sunny",
 			"Sunny/Windy",
@@ -487,7 +487,7 @@ let gameData = {
 			"Extra Sunny",
 			"Sunny/Windy",
 		],
-		[VRR_GAME_GTA_IV_EFLC]: [ // GTA IV EFLC
+		[AGRP_GAME_GTA_IV_EFLC]: [ // GTA IV EFLC
 			"Extra Sunny",
 			"Sunny",
 			"Sunny/Windy",
@@ -499,21 +499,21 @@ let gameData = {
 			"Extra Sunny",
 			"Sunny/Windy",
 		],
-		[VRR_GAME_GTA_V]: [
+		[AGRP_GAME_GTA_V]: [
 
 		],
 	},
 	gameNames: {
-		[VRR_GAME_GTA_III]: "GTA III",
-		[VRR_GAME_GTA_VC]: "GTA Vice City",
-		[VRR_GAME_GTA_SA]: "GTA San Andreas",
-		[VRR_GAME_GTA_IV]: "GTA IV",
-		[VRR_GAME_GTA_IV_EFLC]: "GTA IV: Episodes from Liberty City",
-		[VRR_GAME_MAFIA_ONE]: "Mafia: The City of Lost Heaven",
-		[VRR_GAME_MAFIA_TWO]: "Mafia II",
-		[VRR_GAME_MAFIA_THREE]: "Mafia III",
-		[VRR_GAME_MAFIA_ONE_DE]: "Mafia Definitive Edition",
-		[VRR_GAME_GTA_V]: "GTA V",
+		[AGRP_GAME_GTA_III]: "GTA III",
+		[AGRP_GAME_GTA_VC]: "GTA Vice City",
+		[AGRP_GAME_GTA_SA]: "GTA San Andreas",
+		[AGRP_GAME_GTA_IV]: "GTA IV",
+		[AGRP_GAME_GTA_IV_EFLC]: "GTA IV: Episodes from Liberty City",
+		[AGRP_GAME_MAFIA_ONE]: "Mafia: The City of Lost Heaven",
+		[AGRP_GAME_MAFIA_TWO]: "Mafia II",
+		[AGRP_GAME_MAFIA_THREE]: "Mafia III",
+		[AGRP_GAME_MAFIA_ONE_DE]: "Mafia Definitive Edition",
+		[AGRP_GAME_GTA_V]: "GTA V",
 	},
 	vehicleWheelStateNames: [
 		"normal",
@@ -539,7 +539,7 @@ let gameData = {
 		"rear right"
 	],
 	vehicleRadioStationNames: {
-		[VRR_GAME_GTA_III]: [  // GTA III
+		[AGRP_GAME_GTA_III]: [  // GTA III
 			"Head Radio",
 			"Double Cleff FM",
 			"Jah Radio",
@@ -549,7 +549,7 @@ let gameData = {
 			"Chatterbox 109",
 			"MP3 Player"
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA Vice City
+		[AGRP_GAME_GTA_VC]: [ // GTA Vice City
 			"Wildstyle",
 			"Flash FM",
 			"K CHAT",
@@ -561,7 +561,7 @@ let gameData = {
 			"Wave 103",
 			"MP3 Player"
 		],
-		[VRR_GAME_GTA_SA]: [ // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: [ // GTA San Andreas
 			"K-ROSE",
 			"K-DST",
 			"Bounce FM",
@@ -574,7 +574,7 @@ let gameData = {
 			"WCTR",
 			"User Track Player"
 		],
-		[VRR_GAME_GTA_V]: [ // GTA San Andreas
+		[AGRP_GAME_GTA_V]: [ // GTA San Andreas
 			"K-ROSE",
 			"K-DST",
 			"Bounce FM",
@@ -589,7 +589,7 @@ let gameData = {
 		],
 	},
 	skins: {
-		[VRR_GAME_GTA_III]: [
+		[AGRP_GAME_GTA_III]: [
 			[0, "Claude", false],
 			[1, "Police Officer", false],
 			[2, "SWAT Officer", false],
@@ -713,7 +713,7 @@ let gameData = {
 			[125, "Busker 3", false],
 			[125, "Busker 4", false],
 		],
-		[VRR_GAME_GTA_VC]: [
+		[AGRP_GAME_GTA_VC]: [
 			[0, "Tommy Vercetti", false],
 			[1, "Police Officer", false],
 			[2, "SWAT Officer", false],
@@ -902,7 +902,7 @@ let gameData = {
 			[186, "Kent Paul", true],
 			[187, "Big Head Taxi Driver", false],
 		],
-		[VRR_GAME_GTA_SA]: [
+		[AGRP_GAME_GTA_SA]: [
 			[0, "Carl 'CJ' Johnson", false],
 			[1, "The Truth", true],
 			[2, "Maccer", true],
@@ -1204,7 +1204,7 @@ let gameData = {
 			[312, "Army Guy", true],
 			[313, "Barry Big Bear Thorne (Fat)", true],
 		],
-		[VRR_GAME_GTA_IV]: [
+		[AGRP_GAME_GTA_IV]: [
 			[-2020305438, "Male Multiplayer", false],
 			[-641875910, "Female Multiplayer", false],
 			[-1370810922, "MODEL_SUPERLOD", false],
@@ -1551,7 +1551,7 @@ let gameData = {
 			[-1139941790, "Tough Guy", true],
 			[809067472, "Male Tourist", true]
 		],
-		[VRR_GAME_MAFIA_ONE]: [
+		[AGRP_GAME_MAFIA_ONE]: [
 			["Tommy.i3d", "Tommy Angelo", true],
 			["TommyBOXER.i3d", "Tommy Angelo", true],
 			["TommyCOAT.i3d", "Tommy Angelo", false],
@@ -1849,7 +1849,7 @@ let gameData = {
 			["Sarah2LOW.i3d", "Sarah", true],
 			["Serv01.i3d", "Maid", true],
 		],
-		[VRR_GAME_GTA_V]: [
+		[AGRP_GAME_GTA_V]: [
 			["a_c_boar", 0xCE5FF074, false],
 			["a_c_cat_01", 0x573201B8, false],
 			["a_c_chickenhawk", 0xAAB71F62, false],
@@ -2592,7 +2592,7 @@ let gameData = {
 		]
 	},
 	vehicles: {
-		[VRR_GAME_GTA_III]: [
+		[AGRP_GAME_GTA_III]: [
 			[90, "Landstalker"],
 			[91, "Idaho"],
 			[92, "Stinger"],
@@ -2655,7 +2655,7 @@ let gameData = {
 			[149, "Toyz Van"],
 			[150, "Ghost"],
 		],
-		[VRR_GAME_GTA_VC]: [   // GTA VC
+		[AGRP_GAME_GTA_VC]: [   // GTA VC
 			[130, "Landstalker"],
 			[131, "Idaho"],
 			[132, "Stinger"],
@@ -2764,7 +2764,7 @@ let gameData = {
 			[235, "Bloodring Banger 2"],
 			[236, "VCPD Cheetah"],
 		],
-		[VRR_GAME_GTA_SA]: [   // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: [   // GTA San Andreas
 			[400, "Landstalker"],
 			[401, "Bravura"],
 			[402, "Buffalo"],
@@ -2978,7 +2978,7 @@ let gameData = {
 			[610, "Farm Plow"],
 			[611, "Utility Trailer"],
 		],
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			[1264341792, "Admiral"],
 			[1560980623, "Airtug"],
 			[1171614426, "Ambulance"],
@@ -3107,7 +3107,7 @@ let gameData = {
 			[800869680, "Subway"],
 			[-1953988645, "El Train"],
 		],
-		[VRR_GAME_MAFIA_ONE]: [   // Mafia 1
+		[AGRP_GAME_MAFIA_ONE]: [   // Mafia 1
 			["fordtTud00.i3d", "Blue Bolt Ace Tudor"],
 			["fordtTud01.i3d", "Dark Blue Bolt Ace Tudor"],
 			["fordtTud02.i3d", "Brown Bolt Ace Tudor"],
@@ -3260,7 +3260,7 @@ let gameData = {
 			["TruckBxx00.i3d", "Bolt Truck(Atlantic Import)"],
 			["truckBx00.i3d", "Bolt Truck"],
 		],
-		[VRR_GAME_GTA_V]: [
+		[AGRP_GAME_GTA_V]: [
 			["adder", 3078201489],
 			["airbus", 1283517198],
 			["airtug", 1560980623],
@@ -4004,7 +4004,7 @@ let gameData = {
 		]
 	},
 	objects: {
-		[VRR_GAME_GTA_III]: [
+		[AGRP_GAME_GTA_III]: [
 			[172, "BaseballBat"],
 			[173, "Colt45"],
 			[178, "Uzi"],
@@ -4033,7 +4033,7 @@ let gameData = {
 			[1349, "StraightRoadBarrier"]
 			[1337, "YellowBarrel"],
 		],
-		[VRR_GAME_GTA_VC]: [   // GTA VC
+		[AGRP_GAME_GTA_VC]: [   // GTA VC
 			[259, "BrassKnuckles"],
 			[260, "Screwdriver"],
 			[261, "GolfClub"],
@@ -4081,7 +4081,7 @@ let gameData = {
 			[597, "SodaBottle"],
 			[502, "GenericPackage2"]
 		],
-		[VRR_GAME_GTA_SA]: [ // GTA SA
+		[AGRP_GAME_GTA_SA]: [ // GTA SA
 			[331, "BrassKnuckles"],
 			[333, "GolfClub"],
 			[334, "Nitestick"],
@@ -4138,27 +4138,27 @@ let gameData = {
 			[1544, "BottleSoda"],
 			[2601, "CanSoda"],
 		],
-		[VRR_GAME_GTA_IV]: [
+		[AGRP_GAME_GTA_IV]: [
 			[0, "GenericPackage"],
 		],
-		[VRR_GAME_GTA_V]: [
+		[AGRP_GAME_GTA_V]: [
 			[0, "GenericPackage"],
 		],
-		[VRR_GAME_MAFIA_ONE]: [
+		[AGRP_GAME_MAFIA_ONE]: [
 			[0, "GenericPackage"],
 		],
-		[VRR_GAME_MAFIA_TWO]: [
+		[AGRP_GAME_MAFIA_TWO]: [
 			[0, "GenericPackage"],
 		],
-		[VRR_GAME_MAFIA_THREE]: [
+		[AGRP_GAME_MAFIA_THREE]: [
 			[0, "GenericPackage"],
 		],
-		[VRR_GAME_MAFIA_ONE_DE]: [
+		[AGRP_GAME_MAFIA_ONE_DE]: [
 			[0, "GenericPackage"],
 		],
 	},
 	weaponModels: {
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 			0, 				// Fist
 			172,			// Baseball Bat
 			173,			// Colt 45
@@ -4172,7 +4172,7 @@ let gameData = {
 			174,			// Molotov Cocktail
 			170				// Grenade
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA Vice City
+		[AGRP_GAME_GTA_VC]: [ // GTA Vice City
 			0,
 			259,
 			260,
@@ -4211,12 +4211,12 @@ let gameData = {
 			-1,
 			292
 		],
-		[VRR_GAME_GTA_V]: [
+		[AGRP_GAME_GTA_V]: [
 
 		]
 	},
 	locations: {
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 			// Police Stations
 			["Portland Police Station", [1143.875, -675.1875, 14.97], 0.0, [1127.95, -666.06, 14.413]],
 			["Staunton Island Police Station", [340.25, -1123.375, 25.98], 0.0, null],
@@ -4276,7 +4276,7 @@ let gameData = {
 			["Hepburn Heights Projects", [913.98, -227.83, 4.413], 0.001, null],
 		],
 
-		[VRR_GAME_GTA_VC]: [ // GTA VC
+		[AGRP_GAME_GTA_VC]: [ // GTA VC
 			// Police Stations
 			["Washington Beach Police Station", [399.77, -468.90, 11.73], 0.0, null],
 			["Vice Point Police Station", [508.96, 512.07, 12.10], 0.0, null],
@@ -4325,7 +4325,7 @@ let gameData = {
 			["Ocean Beach Pay-n-spray", [-18.51, -1256.76, 10.463], -1.556, null],
 		],
 
-		[VRR_GAME_GTA_SA]: [ // GTA SA
+		[AGRP_GAME_GTA_SA]: [ // GTA SA
 			// Police Stations
 			["Los Santos Police Department", [1545.53, -1675.64, 13.561], -1.575, null],
 			["San Fierro Police Department", [-1605.16, 720.79, 11.90], 0.0, null],
@@ -4384,7 +4384,7 @@ let gameData = {
 			["Market Station", [814.26, -1345.38, 13.532], -1.624, null],
 		],
 
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			// Police Stations
 			["Broker Police Station", [894.99, -357.39, 18.185], 2.923, null],
 			["South Bohan Police Station", [435.40, 1592.29, 17.353], 3.087, null],
@@ -4496,7 +4496,7 @@ let gameData = {
 
 			// More will be added soon!
 		],
-		[VRR_GAME_MAFIA_ONE]: [
+		[AGRP_GAME_MAFIA_ONE]: [
 			["Works Quarter Fire Station", [-1883.96, -4.89, -348.49], null],
 			["Salieri's Bar", [-1774.59, -5.62, 3.29], null],
 			["Little Italy Gas Station", [-1781.84, -4.83, -204.96], null],
@@ -4509,7 +4509,7 @@ let gameData = {
 		], // Mafia 1
 	},
 	weaponSlots: {
-		[VRR_GAME_GTA_III]: [
+		[AGRP_GAME_GTA_III]: [
 			0,
 			1,
 			2,
@@ -4523,7 +4523,7 @@ let gameData = {
 			10,
 			11
 		],
-		[VRR_GAME_GTA_VC]: [
+		[AGRP_GAME_GTA_VC]: [
 			0,
 			0,
 			1,
@@ -4562,7 +4562,7 @@ let gameData = {
 			-1,
 			9,
 		],
-		[VRR_GAME_GTA_SA]: [
+		[AGRP_GAME_GTA_SA]: [
 			0,
 			1,
 			1,
@@ -4616,7 +4616,7 @@ let gameData = {
 		]
 	},
 	fightStyles: {
-		[VRR_GAME_GTA_SA]: [	// GTA SA
+		[AGRP_GAME_GTA_SA]: [	// GTA SA
 			["Default", [4, 6]],
 			["Boxing", [5, 6]],
 			["Kung Fu", [6, 6]],
@@ -4625,7 +4625,7 @@ let gameData = {
 		],
 	},
 	walkStyles: {
-		[VRR_GAME_GTA_III]: [	// GTA III
+		[AGRP_GAME_GTA_III]: [	// GTA III
 			"Man",
 			"Ped",
 			"Player",
@@ -4656,7 +4656,7 @@ let gameData = {
 	},
 	animations: {
 		// [name, groupId, animId, animType, deltaTime, null, null, null, null, moveType],
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 
 			new AnimationData("talk", { groupId: 0, animId: 11 }),
 			new AnimationData("chat", { groupId: 0, animId: 11 }),
@@ -4671,14 +4671,14 @@ let gameData = {
 			new AnimationData("aimdown", { groupId: 0, animId: 160 }),
 			new AnimationData("aimcrouch", { groupId: 0, animId: 165 }),
 			new AnimationData("throw", { groupId: 0, animId: 166 }),
-			new AnimationData("handsup", { groupId: 0, animId: 167, animType: VRR_ANIMTYPE_SURRENDER }),
+			new AnimationData("handsup", { groupId: 0, animId: 167, animType: AGRP_ANIMTYPE_SURRENDER }),
 			new AnimationData("sit", { groupId: 0, animId: 111 }),
-			new AnimationData("sitleft", { groupId: 0, animId: 111, moveType: VRR_ANIMMOVE_LEFT }),
-			new AnimationData("sitback", { groupId: 0, animId: 111, moveType: VRR_ANIMMOVE_BACK }),
-			new AnimationData("sitright", { groupId: 0, animId: 111, moveType: VRR_ANIMMOVE_RIGHT }),
-			new AnimationData("sitforward", { groupId: 0, animId: 111, moveType: VRR_ANIMMOVE_FORWARD }),
-			new AnimationData("sitarmright", { groupId: 0, animId: 120, moveType: VRR_ANIMMOVE_BACK }),
-			new AnimationData("tazed", { groupId: 0, animId: 13, animType: VRR_ANIMTYPE_FORCED }),
+			new AnimationData("sitleft", { groupId: 0, animId: 111, moveType: AGRP_ANIMMOVE_LEFT }),
+			new AnimationData("sitback", { groupId: 0, animId: 111, moveType: AGRP_ANIMMOVE_BACK }),
+			new AnimationData("sitright", { groupId: 0, animId: 111, moveType: AGRP_ANIMMOVE_RIGHT }),
+			new AnimationData("sitforward", { groupId: 0, animId: 111, moveType: AGRP_ANIMMOVE_FORWARD }),
+			new AnimationData("sitarmright", { groupId: 0, animId: 120, moveType: AGRP_ANIMMOVE_BACK }),
+			new AnimationData("tazed", { groupId: 0, animId: 13, animType: AGRP_ANIMTYPE_FORCED }),
 			new AnimationData("walk", { groupId: 0, animId: 0 }),
 			new AnimationData("jog", { groupId: 0, animId: 1 }),
 			new AnimationData("tired", { groupId: 0, animId: 9 }),
@@ -4694,13 +4694,13 @@ let gameData = {
 			new AnimationData("roundhouse", { groupId: 0, animId: 75 }),
 			new AnimationData("highkick", { groupId: 0, animId: 71 }),
 			new AnimationData("phonetalk", { groupId: 0, animId: 172 }),
-			new AnimationData("handcuffed", { groupId: 0, animId: 8, animType: VRR_ANIMTYPE_FORCED }),
+			new AnimationData("handcuffed", { groupId: 0, animId: 8, animType: AGRP_ANIMTYPE_FORCED }),
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA VC
+		[AGRP_GAME_GTA_VC]: [ // GTA VC
 			new AnimationData("talk", { groupId: 0, animId: 11 }),
 			new AnimationData("chat", { groupId: 0, animId: 11 }),
 			new AnimationData("hailtaxi", { groupId: 0, animId: 12 }),
-			new AnimationData("handsup", { groupId: 0, animId: 161, animType: VRR_ANIMTYPE_SURRENDER }),
+			new AnimationData("handsup", { groupId: 0, animId: 161, animType: AGRP_ANIMTYPE_SURRENDER }),
 			new AnimationData("flipoff", { groupId: 0, animId: 163 }),
 			new AnimationData("phoneout", { groupId: 0, animId: 164 }),
 			new AnimationData("phonein", { groupId: 0, animId: 165 }),
@@ -4720,11 +4720,11 @@ let gameData = {
 			new AnimationData("dance6", { groupId: 28, animId: 231 }),
 			new AnimationData("dance7", { groupId: 28, animId: 232 }),
 			new AnimationData("pressbutton", { groupId: 0, animId: 62 }),
-			new AnimationData("sitright", { groupId: 0, animId: 169, moveType: VRR_ANIMMOVE_RIGHT }),
-			new AnimationData("sitleft", { groupId: 0, animId: 169, moveType: VRR_ANIMMOVE_LEFT }),
-			new AnimationData("sitforward", { groupId: 0, animId: 169, moveType: VRR_ANIMMOVE_FORWARD }),
-			new AnimationData("sitback", { groupId: 0, animId: 169, moveType: VRR_ANIMMOVE_BACK }),
-			new AnimationData("tazed", { groupId: 0, animId: 13, animType: VRR_ANIMTYPE_FORCED }),
+			new AnimationData("sitright", { groupId: 0, animId: 169, moveType: AGRP_ANIMMOVE_RIGHT }),
+			new AnimationData("sitleft", { groupId: 0, animId: 169, moveType: AGRP_ANIMMOVE_LEFT }),
+			new AnimationData("sitforward", { groupId: 0, animId: 169, moveType: AGRP_ANIMMOVE_FORWARD }),
+			new AnimationData("sitback", { groupId: 0, animId: 169, moveType: AGRP_ANIMMOVE_BACK }),
+			new AnimationData("tazed", { groupId: 0, animId: 13, animType: AGRP_ANIMTYPE_FORCED }),
 			new AnimationData("fightidle1", { groupId: 0, animId: 45 }),
 			new AnimationData("highkick1", { groupId: 0, animId: 50 }),
 			new AnimationData("kneekick", { groupId: 0, animId: 51 }),
@@ -4747,14 +4747,14 @@ let gameData = {
 			new AnimationData("pose", { groupId: 0, animId: 172 }),
 			new AnimationData("holdrifle", { groupId: 0, animId: 10 }),
 			new AnimationData("tired", { groupId: 0, animId: 9 }),
-			new AnimationData("handcuffed", { groupId: 0, animId: 9, animType: VRR_ANIMTYPE_FORCED }),
+			new AnimationData("handcuffed", { groupId: 0, animId: 9, animType: AGRP_ANIMTYPE_FORCED }),
 			new AnimationData("walk", { groupId: 0, animId: 0 }),
 			new AnimationData("jog", { groupId: 0, animId: 1 }),
 			new AnimationData("headscratch", { groupId: 0, animId: 152 }),
 			new AnimationData("lookaround", { groupId: 0, animId: 153 }),
 
 		],
-		[VRR_GAME_GTA_SA]: [ // GTA SA
+		[AGRP_GAME_GTA_SA]: [ // GTA SA
 			new AnimationData("knockback", { groupId: 0, animId: 105 }),
 			new AnimationData("idle1", { groupId: 0, animId: 135 }),
 			new AnimationData("cower", { groupId: 0, animId: 141 }),
@@ -4771,51 +4771,51 @@ let gameData = {
 			new AnimationData("gestureyes", { groupId: 0, animId: 167 }),
 			new AnimationData("wave2", { groupId: 0, animId: 168 }),
 			new AnimationData("snort", { groupId: 0, animId: 169 }),
-			new AnimationData("sitright", { groupId: 0, animId: 150, moveType: VRR_ANIMMOVE_RIGHT }),
-			new AnimationData("sitleft", { groupId: 0, animId: 150, moveType: VRR_ANIMMOVE_LEFT }),
-			new AnimationData("sitforward", { groupId: 0, animId: 150, moveType: VRR_ANIMMOVE_FORWARD }),
-			new AnimationData("sitback", { groupId: 0, animId: 150, moveType: VRR_ANIMMOVE_BACK }),
-			new AnimationData("tazed", { groupId: 0, animId: 15, moveType: VRR_ANIMTYPE_FORCED }),
+			new AnimationData("sitright", { groupId: 0, animId: 150, moveType: AGRP_ANIMMOVE_RIGHT }),
+			new AnimationData("sitleft", { groupId: 0, animId: 150, moveType: AGRP_ANIMMOVE_LEFT }),
+			new AnimationData("sitforward", { groupId: 0, animId: 150, moveType: AGRP_ANIMMOVE_FORWARD }),
+			new AnimationData("sitback", { groupId: 0, animId: 150, moveType: AGRP_ANIMMOVE_BACK }),
+			new AnimationData("tazed", { groupId: 0, animId: 15, moveType: AGRP_ANIMTYPE_FORCED }),
 
 			/*
-			["talk", "PED", "IDLE_CHAT", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["fucku", "PED", "FUCKU", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["taichi", "PARK", "Tai_Chi_Loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["slapass", "SWEET", "sweet_ass_slap", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["wave", "ON_LOOKERS", "wave_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["vomit", "EAT_Vomit_P", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["cower", "ped", "cower", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["laugh", "RAPPING", "Laugh_01", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["plant", "BOMBER", "BOM_Plant", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["smoke1", "SMOKING","M_smklean_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["smoke2", "SMOKING","F_smklean_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["smoke3", "SMOKING","M_smkstnd_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["sit1", "ped","SEAT_idle", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["sit2", "BEACH", "ParkSit_M_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["sit3", "BEACH", "ParkSit_W_loop", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["sit4", "BEACH", "SitnWait_loop_W", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["scratch", "MISC","Scratchballs_01", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			["standup", "ped", "SEAT_up", VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
-			//["faceshocked", 0, 150, VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null, VRR_ANIMMOVE_NONE],
-			//["facesurprised", 0, 150, VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null, VRR_ANIMMOVE_NONE],
-			//["faceconfused", 0, 150, VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null, VRR_ANIMMOVE_NONE],
-			//["faceangry", 0, 159, VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null, VRR_ANIMMOVE_NONE],
-			//["facetalk1", 0, 160, VRR_ANIMTYPE_NORMAL, 0.0, null, null, null, null, VRR_ANIMMOVE_NONE],
+			["talk", "PED", "IDLE_CHAT", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["fucku", "PED", "FUCKU", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["taichi", "PARK", "Tai_Chi_Loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["slapass", "SWEET", "sweet_ass_slap", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["wave", "ON_LOOKERS", "wave_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["vomit", "EAT_Vomit_P", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["cower", "ped", "cower", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["laugh", "RAPPING", "Laugh_01", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["plant", "BOMBER", "BOM_Plant", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["smoke1", "SMOKING","M_smklean_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["smoke2", "SMOKING","F_smklean_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["smoke3", "SMOKING","M_smkstnd_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["sit1", "ped","SEAT_idle", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["sit2", "BEACH", "ParkSit_M_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["sit3", "BEACH", "ParkSit_W_loop", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["sit4", "BEACH", "SitnWait_loop_W", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["scratch", "MISC","Scratchballs_01", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			["standup", "ped", "SEAT_up", AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null],
+			//["faceshocked", 0, 150, AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null, AGRP_ANIMMOVE_NONE],
+			//["facesurprised", 0, 150, AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null, AGRP_ANIMMOVE_NONE],
+			//["faceconfused", 0, 150, AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null, AGRP_ANIMMOVE_NONE],
+			//["faceangry", 0, 159, AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null, AGRP_ANIMMOVE_NONE],
+			//["facetalk1", 0, 160, AGRP_ANIMTYPE_NORMAL, 0.0, null, null, null, null, AGRP_ANIMMOVE_NONE],
 			*/
 		],
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			new AnimationData("dance1", { groupId: "DAN_LOOP_A", animId: "DANCING", animSpeed: 16.0, infiniteLoop: true, infiniteLoopNoMovement: false, dontReturnToStartCoords: true, freezeLastFrame: false }),
 		],
 	},
 	meleeWeapons: {
-		[VRR_GAME_GTA_III]: [1],
-		[VRR_GAME_GTA_VC]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-		[VRR_GAME_GTA_SA]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-		[VRR_GAME_GTA_IV]: [1, 2, 3],
-		[VRR_GAME_GTA_IV_EFLC]: [1, 2, 3],
+		[AGRP_GAME_GTA_III]: [1],
+		[AGRP_GAME_GTA_VC]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+		[AGRP_GAME_GTA_SA]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+		[AGRP_GAME_GTA_IV]: [1, 2, 3],
+		[AGRP_GAME_GTA_IV_EFLC]: [1, 2, 3],
 	},
 	blipSprites: {
-		[VRR_GAME_GTA_III]: {	// GTA III
+		[AGRP_GAME_GTA_III]: {	// GTA III
 			PoliceStation: 8,
 			FireStation: 9,
 			Hospital: 12,
@@ -4843,7 +4843,7 @@ let gameData = {
 			Home: 17,
 			Tony: 19,
 		},
-		[VRR_GAME_GTA_VC]: {	// GTA VC
+		[AGRP_GAME_GTA_VC]: {	// GTA VC
 			PoliceStation: 0,
 			FireStation: 0,
 			Hospital: 0,
@@ -4862,7 +4862,7 @@ let gameData = {
 			Tools: 18,
 			Bar: 11,
 		},
-		[VRR_GAME_GTA_SA]: {	// GTA SA
+		[AGRP_GAME_GTA_SA]: {	// GTA SA
 			PoliceStation: 30,
 			FireStation: 20,
 			Hospital: 22,
@@ -4892,7 +4892,7 @@ let gameData = {
 			Race: 53,
 			Job: 56,
 		},
-		[VRR_GAME_GTA_IV]: {	// GTA IV
+		[AGRP_GAME_GTA_IV]: {	// GTA IV
 			PoliceStation: 60,
 			FireStation: 61,
 			Hospital: 62,
@@ -4932,7 +4932,7 @@ let gameData = {
 		},
 	},
 	pickupModels: {
-		[VRR_GAME_GTA_III]: { // GTA 3
+		[AGRP_GAME_GTA_III]: { // GTA 3
 			PoliceStation: 1361,
 			FireStation: 1361,
 			Hospital: 1361,
@@ -4950,7 +4950,7 @@ let gameData = {
 			Exit: 1361,
 			Job: 1361,
 		},
-		[VRR_GAME_GTA_VC]: { // GTA Vice City
+		[AGRP_GAME_GTA_VC]: { // GTA Vice City
 			PoliceStation: 375,
 			FireStation: 406,
 			Hospital: 366,
@@ -4972,7 +4972,7 @@ let gameData = {
 			KillFrenzy: 383,
 			Pill: 367,
 		},
-		[VRR_GAME_GTA_SA]: { // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: { // GTA San Andreas
 			PoliceStation: 1247,
 			FireStation: 1318,
 			Hospital: 1240,
@@ -4996,7 +4996,7 @@ let gameData = {
 			RampageSkull: 1254,
 			TwoPlayerRampage: 1313,
 		},
-		[VRR_GAME_GTA_IV]: {   // GTA IV
+		[AGRP_GAME_GTA_IV]: {   // GTA IV
 			PoliceStation: -1,
 			FireStation: -1,
 			Hospital: -1,
@@ -5016,7 +5016,7 @@ let gameData = {
 		}
 	},
 	pickupTypes: {
-		[VRR_GAME_GTA_III]: { // GTA 3
+		[AGRP_GAME_GTA_III]: { // GTA 3
 			business: 255,
 			house: 255,
 			bank: 255,
@@ -5024,7 +5024,7 @@ let gameData = {
 			info: 255,
 			job: 255,
 		},
-		[VRR_GAME_GTA_VC]: { // GTA Vice City
+		[AGRP_GAME_GTA_VC]: { // GTA Vice City
 			business: 255,
 			house: 255,
 			bank: 255,
@@ -5032,7 +5032,7 @@ let gameData = {
 			info: 255,
 			job: 255,
 		},
-		[VRR_GAME_GTA_SA]: { // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: { // GTA San Andreas
 			business: 1,
 			house: 1,
 			bank: 1,
@@ -5040,7 +5040,7 @@ let gameData = {
 			info: 1,
 			job: 1,
 		},
-		[VRR_GAME_GTA_IV]: { // GTA IV
+		[AGRP_GAME_GTA_IV]: { // GTA IV
 			business: -1,
 			house: -1,
 			bank: -1,
@@ -5052,17 +5052,17 @@ let gameData = {
 
 	// THIS IS SCREEN HEIGHT, NOT ACTUAL DOOR POSITION IN THE WORLD
 	propertyLabelHeight: {
-		[VRR_GAME_GTA_III]: 85,
-		[VRR_GAME_GTA_VC]: 85,
-		[VRR_GAME_GTA_SA]: 85,
-		[VRR_GAME_GTA_IV]: 85,
-		[VRR_GAME_GTA_IV_EFLC]: 85,
-		VRR_GAME_GTA_MAFIA_ONE: 85,
-		VRR_GAME_GTA_MAFIA_TWO: 85,
-		VRR_GAME_GTA_MAFIA_THREE: 85,
+		[AGRP_GAME_GTA_III]: 85,
+		[AGRP_GAME_GTA_VC]: 85,
+		[AGRP_GAME_GTA_SA]: 85,
+		[AGRP_GAME_GTA_IV]: 85,
+		[AGRP_GAME_GTA_IV_EFLC]: 85,
+		AGRP_GAME_GTA_MAFIA_ONE: 85,
+		AGRP_GAME_GTA_MAFIA_TWO: 85,
+		AGRP_GAME_GTA_MAFIA_THREE: 85,
 	},
 	defaultBusinessItems: {
-		[VRR_GAME_GTA_III]: { // GTA III
+		[AGRP_GAME_GTA_III]: { // GTA III
 			ClothingStore: [
 				["Outfit", 500, 2]
 			],
@@ -5192,7 +5192,7 @@ let gameData = {
 				["Vehicle Secondary Colour Kit", 500, 2],
 			],
 		},
-		[VRR_GAME_GTA_VC]: { // GTA VC
+		[AGRP_GAME_GTA_VC]: { // GTA VC
 			ClothingStore: [
 				["Outfit", 500, 2]
 			],
@@ -5334,7 +5334,7 @@ let gameData = {
 				["Vehicle Secondary Colour Kit", 500, 2],
 			],
 		},
-		[VRR_GAME_GTA_SA]: { // GTA SA
+		[AGRP_GAME_GTA_SA]: { // GTA SA
 			ClothingStore: [
 				["Outfit", 500, 2]
 			],
@@ -5502,7 +5502,7 @@ let gameData = {
 				["Hydraulics", 500, 2],
 			],
 		},
-		[VRR_GAME_GTA_IV]: { // GTA IV
+		[AGRP_GAME_GTA_IV]: { // GTA IV
 			ClothingStore: [
 				["Outfit", 500, 2]
 			],
@@ -5640,7 +5640,7 @@ let gameData = {
 				["Vehicle Secondary Colour Kit", 500, 2],
 			],
 		},
-		[VRR_GAME_MAFIA_ONE]: { // Mafia 1
+		[AGRP_GAME_MAFIA_ONE]: { // Mafia 1
 			ClothingStore: [
 				["Outfit", 500, 2]
 			],
@@ -5777,7 +5777,7 @@ let gameData = {
 		}
 	},
 	interiors: {
-		[VRR_GAME_GTA_III]: {
+		[AGRP_GAME_GTA_III]: {
 			Apartment1: [toVector3(891.87, -308.28, 8.72), 0, false, -1],
 			JailCell: [toVector3(328.40, -1093.31, 25.98), 0, false, -1],
 			Church: [toVector3(13.87, -1122.43, 26.12), 0, false, -1],
@@ -5786,7 +5786,7 @@ let gameData = {
 			JoeyGarage: [toVector3(1189.40, -867.69, 15.18), 0, false, -1],
 			Warehouse: [toVector3(1497.46, -680.18, 12.14), 0, false, -1],
 		},
-		[VRR_GAME_GTA_VC]: { // GTA VC
+		[AGRP_GAME_GTA_VC]: { // GTA VC
 			Mall: [toVector3(379.62, 1007.00, 19.22), 4, false, -1],
 			MalibuClub: [toVector3(489.83, -76.49, 11.48), 17, false, -1],
 			PoliceStation: [toVector3(396.38, -472.96, 12.34), 12, false, -1],
@@ -5809,7 +5809,7 @@ let gameData = {
 			BusinessOfficeLobby: [toVector3(-573.64, 794.53, 22.88), 0, false, -1],
 		},
 
-		[VRR_GAME_GTA_SA]: { // GTA SA
+		[AGRP_GAME_GTA_SA]: { // GTA SA
 			LSPD: [toVector3(247.113, 62.929, 1003.64), 2, false, -1],
 			LVPD: [toVector3(288.82, 167.39, 1007.17), 3, false, -1],
 			SFPD: [toVector3(246.40, 110.84, 1003.22), 10, false, -1],
@@ -5909,7 +5909,7 @@ let gameData = {
 			Courthouse: [toVector3(1219.51, -1792.69, 2431.34), 0, true, -1],
 		},
 
-		[VRR_GAME_GTA_IV]: { // GTA IV
+		[AGRP_GAME_GTA_IV]: { // GTA IV
 			Office2: [toVector3(-1153.30, 417.37, 5.578), 0, false, -1],
 			House1: [toVector3(-426.16, 1466.52, 38.971), 0, false, -1],
 			House2: [toVector3(-969.77, 883.27, 18.817), 0, false, -1],
@@ -5939,23 +5939,23 @@ let gameData = {
 			Prison: [toVector3(-1082.69, -364.05, 7.404), 0, false, -1],
 			Ship: [toVector3(-336.53, -1494.56, 9.945), 0, false, -1],
 		},
-		[VRR_GAME_GTA_IV_EFLC]: { // GTA IV EFLC
+		[AGRP_GAME_GTA_IV_EFLC]: { // GTA IV EFLC
 
 		},
-		[VRR_GAME_MAFIA_ONE]: { // Mafia 1
+		[AGRP_GAME_MAFIA_ONE]: { // Mafia 1
 		},
-		[VRR_GAME_MAFIA_TWO]: { // Mafia 2
+		[AGRP_GAME_MAFIA_TWO]: { // Mafia 2
 		},
-		[VRR_GAME_MAFIA_THREE]: { // Mafia 3
+		[AGRP_GAME_MAFIA_THREE]: { // Mafia 3
 		},
-		[VRR_GAME_MAFIA_ONE_DE]: { // Mafia 1 Definitive Edition
+		[AGRP_GAME_MAFIA_ONE_DE]: { // Mafia 1 Definitive Edition
 		},
 	},
 	skinChangePosition: {
-		[VRR_GAME_GTA_SA]: [toVector3(258.14, -41.76, 1002.023), 1.322, 14],
+		[AGRP_GAME_GTA_SA]: [toVector3(258.14, -41.76, 1002.023), 1.322, 14],
 	},
 	policeStations: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(1143.875, -675.1875, 14.97),
 				heading: 1.5,
@@ -5975,7 +5975,7 @@ let gameData = {
 				name: "Shoreside Vale",
 			},
 		],
-		[VRR_GAME_GTA_VC]: [	// GTA VC
+		[AGRP_GAME_GTA_VC]: [	// GTA VC
 			{
 				position: toVector3(399.77, -468.90, 11.73),
 				heading: 0.0,
@@ -6001,7 +6001,7 @@ let gameData = {
 				name: "Little Havana",
 			},
 		],
-		[VRR_GAME_GTA_SA]: [	// GTA SA
+		[AGRP_GAME_GTA_SA]: [	// GTA SA
 			{
 				position: toVector3(1545.53, -1675.64, 13.561),
 				heading: -1.575,
@@ -6033,7 +6033,7 @@ let gameData = {
 				name: "Dillimore",
 			},
 		],
-		[VRR_GAME_GTA_IV]: [	// GTA IV
+		[AGRP_GAME_GTA_IV]: [	// GTA IV
 
 			{
 				position: toVector3(894.99, -357.39, 18.185),
@@ -6104,7 +6104,7 @@ let gameData = {
 		],
 	},
 	fireStations: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(1103.70, -52.45, 7.49),
 				heading: 1.5,
@@ -6124,16 +6124,16 @@ let gameData = {
 				name: "Shoreside Vale",
 			},
 		],
-		[VRR_GAME_GTA_VC]: [	// GTA VC
+		[AGRP_GAME_GTA_VC]: [	// GTA VC
 
 		],
-		[VRR_GAME_GTA_SA]: [	// GTA SA
+		[AGRP_GAME_GTA_SA]: [	// GTA SA
 
 		],
-		VRR_GAME_GTA_UG: [	// GTA UG
+		AGRP_GAME_GTA_UG: [	// GTA UG
 
 		],
-		[VRR_GAME_GTA_IV]: [	// GTA IV
+		[AGRP_GAME_GTA_IV]: [	// GTA IV
 			{
 				position: toVector3(953.13, 95.90, 35.004),
 				heading: 1.595,
@@ -6167,7 +6167,7 @@ let gameData = {
 		],
 	},
 	hospitals: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(1144.25, -596.875, 14.97),
 				heading: 1.5,
@@ -6187,7 +6187,7 @@ let gameData = {
 				name: "Shoreside Vale",
 			},
 		],
-		[VRR_GAME_GTA_VC]: [	// GTA VC
+		[AGRP_GAME_GTA_VC]: [	// GTA VC
 			{
 				position: toVector3(-883.56, -469.39, 13.11),
 				heading: -1.5,
@@ -6213,7 +6213,7 @@ let gameData = {
 				name: "Vice Point Hospital",
 			},
 		],
-		[VRR_GAME_GTA_SA]: [	// GTA SA
+		[AGRP_GAME_GTA_SA]: [	// GTA SA
 			{
 				position: toVector3(1172.96, -1323.42, 15.40),
 				heading: 1.5,
@@ -6245,7 +6245,7 @@ let gameData = {
 				name: "Fort Carson Medical Center",
 			},
 		],
-		[VRR_GAME_GTA_IV]: [	// GTA IV
+		[AGRP_GAME_GTA_IV]: [	// GTA IV
 			{
 				position: toVector3(1199.59, 196.78, 33.554),
 				heading: 1.633,
@@ -6271,7 +6271,7 @@ let gameData = {
 				name: "Acter Medical Center",
 			},
 		],
-		[VRR_GAME_MAFIA_ONE]: [
+		[AGRP_GAME_MAFIA_ONE]: [
 			// Mafia 1
 			{
 				position: toVector3(-759.00, 11.40, 747.31),
@@ -6282,7 +6282,7 @@ let gameData = {
 		],
 	},
 	payAndSprays: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(925.4, -360.3, 10.83),
 				blip: false,
@@ -6301,7 +6301,7 @@ let gameData = {
 		],
 	},
 	ammunations: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(1068.3, -400.9, 15.24),
 				blip: false,
@@ -6315,7 +6315,7 @@ let gameData = {
 		],
 	},
 	fuelStations: {
-		[VRR_GAME_GTA_III]: [	// GTA 3
+		[AGRP_GAME_GTA_III]: [	// GTA 3
 			{
 				position: toVector3(1161.9, -76.73, 7.27),
 				blip: false,
@@ -6324,28 +6324,28 @@ let gameData = {
 		],
 	},
 	taxiModels: {
-		[VRR_GAME_GTA_III]: [ // GTA III
+		[AGRP_GAME_GTA_III]: [ // GTA III
 			110,
 			128,
 			148
 		],
-		[VRR_GAME_GTA_VC]: [ // GTA VC
+		[AGRP_GAME_GTA_VC]: [ // GTA VC
 			150,
 			160,
 			216
 		],
-		[VRR_GAME_GTA_SA]: [// GTA SA
+		[AGRP_GAME_GTA_SA]: [// GTA SA
 			420,
 			438
 		],
-		[VRR_GAME_GTA_IV]: [ // GTA IV
+		[AGRP_GAME_GTA_IV]: [ // GTA IV
 			-1932515764,
 			-956048545,
 			1208856469
 		],
 	},
 	vehicleComponents: {
-		[VRR_GAME_GTA_SA]: [   // GTA SA
+		[AGRP_GAME_GTA_SA]: [   // GTA SA
 			[1000, "Pro Spoiler"],
 			[1001, "Win Spoiler"],
 			[1002, "Drag Spoiler"],
@@ -6541,7 +6541,7 @@ let gameData = {
 		]
 	},
 	fishingLocations: {
-		[VRR_GAME_GTA_SA]: [   // GTA San Andreas
+		[AGRP_GAME_GTA_SA]: [   // GTA San Andreas
 			toVector3(403.8266, -2088.7598, 7.8359),
 			toVector3(398.7553, -2088.7490, 7.8359),
 			toVector3(396.2197, -2088.6692, 7.8359),
@@ -6555,29 +6555,29 @@ let gameData = {
 		],
 	},
 	mainWorldDimension: {
-		[VRR_GAME_GTA_III]: 0, // GTA 3
-		[VRR_GAME_GTA_VC]: 0, // GTA VC
-		[VRR_GAME_GTA_SA]: 0, // GTA SA
-		[VRR_GAME_GTA_IV]: 0, // GTA IV
-		[VRR_GAME_GTA_IV_EFLC]: 0, // GTA IV EFLC
-		[VRR_GAME_MAFIA_ONE]: 0, // Mafia 1
-		[VRR_GAME_MAFIA_TWO]: 0, // Mafia 2
-		[VRR_GAME_MAFIA_THREE]: 0, // Mafia 3
-		[VRR_GAME_MAFIA_ONE_DE]: 0, // Mafia Definitive Edition
+		[AGRP_GAME_GTA_III]: 0, // GTA 3
+		[AGRP_GAME_GTA_VC]: 0, // GTA VC
+		[AGRP_GAME_GTA_SA]: 0, // GTA SA
+		[AGRP_GAME_GTA_IV]: 0, // GTA IV
+		[AGRP_GAME_GTA_IV_EFLC]: 0, // GTA IV EFLC
+		[AGRP_GAME_MAFIA_ONE]: 0, // Mafia 1
+		[AGRP_GAME_MAFIA_TWO]: 0, // Mafia 2
+		[AGRP_GAME_MAFIA_THREE]: 0, // Mafia 3
+		[AGRP_GAME_MAFIA_ONE_DE]: 0, // Mafia Definitive Edition
 	},
 	mainWorldInterior: {
-		[VRR_GAME_GTA_III]: 0, // GTA 3
-		[VRR_GAME_GTA_VC]: 0, // GTA VC
-		[VRR_GAME_GTA_SA]: 0, // GTA SA
-		[VRR_GAME_GTA_IV]: 0, // GTA IV
-		[VRR_GAME_GTA_IV_EFLC]: 0, // GTA IV EFLC
-		[VRR_GAME_MAFIA_ONE]: 0, // Mafia 1
-		[VRR_GAME_MAFIA_TWO]: 0, // Mafia 2
-		[VRR_GAME_MAFIA_THREE]: 0, // Mafia 3
-		[VRR_GAME_MAFIA_ONE_DE]: 0, // Mafia Definitive Edition
+		[AGRP_GAME_GTA_III]: 0, // GTA 3
+		[AGRP_GAME_GTA_VC]: 0, // GTA VC
+		[AGRP_GAME_GTA_SA]: 0, // GTA SA
+		[AGRP_GAME_GTA_IV]: 0, // GTA IV
+		[AGRP_GAME_GTA_IV_EFLC]: 0, // GTA IV EFLC
+		[AGRP_GAME_MAFIA_ONE]: 0, // Mafia 1
+		[AGRP_GAME_MAFIA_TWO]: 0, // Mafia 2
+		[AGRP_GAME_MAFIA_THREE]: 0, // Mafia 3
+		[AGRP_GAME_MAFIA_ONE_DE]: 0, // Mafia Definitive Edition
 	},
 	properties: {
-		[VRR_GAME_GTA_VC]: {
+		[AGRP_GAME_GTA_VC]: {
 			ApartmentBuilding1: {
 				businesses: [
 					["Manager's Office", 0, 0, toVector3(217.12, -1271.71, 12.09), toVector3(115.48, -823.76, 10.463), 6, null],

@@ -12,7 +12,7 @@ let paintBallItems = [];
 // ===========================================================================
 
 let paintBallItemNames = {
-	[VRR_GAME_GTA_III]: [
+	[AGRP_GAME_GTA_III]: [
 		"Colt 45",
 		"Uzi",
 		"Shotgun",
@@ -20,7 +20,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[VRR_GAME_GTA_VC]: [
+	[AGRP_GAME_GTA_VC]: [
 		"Colt 45",
 		"Pump Shotgun",
 		"Ingram",
@@ -29,7 +29,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[VRR_GAME_GTA_SA]: [
+	[AGRP_GAME_GTA_SA]: [
 		"Desert Eagle",
 		"Shotgun",
 		"MP5",
@@ -37,7 +37,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[VRR_GAME_GTA_IV]: [
+	[AGRP_GAME_GTA_IV]: [
 		"Glock 9mm",
 		"Micro Uzi",
 		"Stubby Shotgun",
@@ -62,7 +62,7 @@ function startPaintBall(client) {
 	}
 
 	storePlayerItemsInTempLocker(client);
-	getPlayerData(client).tempLockerType = VRR_TEMP_LOCKER_TYPE_PAINTBALL;
+	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_PAINTBALL;
 
 	getPlayerData(client).inPaintBall = true;
 	getPlayerData(client).paintBallBusiness = getPlayerBusiness(client);
@@ -85,7 +85,7 @@ function stopPaintBall(client) {
 function givePlayerPaintBallItems(client) {
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Giving ${getPlayerDisplayForConsole(client)} paintball items ...`);
 	for (let i in paintBallItems) {
-		let itemId = createItem(paintBallItems[i], value, VRR_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(paintBallItems[i], value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);

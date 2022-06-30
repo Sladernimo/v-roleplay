@@ -10,20 +10,20 @@
 // ===========================================================================
 
 function isPlayerTied(client) {
-	return (getPlayerData(client).pedState == VRR_PEDSTATE_BINDED);
+	return (getPlayerData(client).pedState == AGRP_PEDSTATE_BINDED);
 }
 
 // ===========================================================================
 
 function ropeTiePlayer(client) {
-	getPlayerData(client).pedState = VRR_PEDSTATE_BINDED;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_BINDED;
 	setPlayerControlState(client, false);
 }
 
 // ===========================================================================
 
 function ropeUnTiePlayer(client) {
-	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 	setPlayerControlState(client, true);
 }
 

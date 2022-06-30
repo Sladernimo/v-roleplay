@@ -264,7 +264,7 @@ function setHouseDescriptionCommand(command, params, client) {
 	let oldDescription = getHouseData(houseId).description;
 	getHouseData(houseId).description = newHouseDescription;
 
-	setEntityData(getHouseData(houseId).entrancePickup, "vrr.label.name", getHouseData(houseId).description, true);
+	setEntityData(getHouseData(houseId).entrancePickup, "agrp.label.name", getHouseData(houseId).description, true);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -1100,8 +1100,8 @@ function createHouseEntranceBlip(houseId) {
 			setElementStreamOutDistance(entranceBlip, getGlobalConfig().houseBlipStreamOutDistance);
 		}
 
-		setEntityData(entranceBlip, "vrr.owner.type", VRR_BLIP_HOUSE_ENTRANCE, false);
-		setEntityData(entranceBlip, "vrr.owner.id", houseId, false);
+		setEntityData(entranceBlip, "agrp.owner.type", VRR_BLIP_HOUSE_ENTRANCE, false);
+		setEntityData(entranceBlip, "agrp.owner.id", houseId, false);
 
 		houseData.entranceBlip = entranceBlip;
 	}
@@ -1206,8 +1206,8 @@ function createHouseExitBlip(houseId) {
 			setElementStreamOutDistance(exitBlip, getGlobalConfig().houseBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
-		setEntityData(exitBlip, "vrr.owner.type", VRR_BLIP_HOUSE_EXIT, false);
-		setEntityData(exitBlip, "vrr.owner.id", houseId, false);
+		setEntityData(exitBlip, "agrp.owner.type", VRR_BLIP_HOUSE_EXIT, false);
+		setEntityData(exitBlip, "agrp.owner.id", houseId, false);
 		getHouseData(houseId).exitBlip = exitBlip;
 	}
 }
@@ -1753,26 +1753,26 @@ function updateHousePickupLabelData(houseId) {
 	let houseData = getHouseData(houseId);
 
 	if (houseData.entrancePickup != null) {
-		setEntityData(houseData.entrancePickup, "vrr.owner.type", VRR_PICKUP_HOUSE_ENTRANCE, false);
-		setEntityData(houseData.entrancePickup, "vrr.owner.id", houseId, false);
-		setEntityData(houseData.entrancePickup, "vrr.label.type", VRR_LABEL_HOUSE, true);
-		setEntityData(houseData.entrancePickup, "vrr.label.name", houseData.description, true);
-		setEntityData(houseData.entrancePickup, "vrr.label.locked", houseData.locked, true);
+		setEntityData(houseData.entrancePickup, "agrp.owner.type", VRR_PICKUP_HOUSE_ENTRANCE, false);
+		setEntityData(houseData.entrancePickup, "agrp.owner.id", houseId, false);
+		setEntityData(houseData.entrancePickup, "agrp.label.type", VRR_LABEL_HOUSE, true);
+		setEntityData(houseData.entrancePickup, "agrp.label.name", houseData.description, true);
+		setEntityData(houseData.entrancePickup, "agrp.label.locked", houseData.locked, true);
 		if (houseData.buyPrice > 0) {
-			setEntityData(houseData.entrancePickup, "vrr.label.price", houseData.buyPrice, true);
-			setEntityData(houseData.entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_BUYHOUSE, true);
+			setEntityData(houseData.entrancePickup, "agrp.label.price", houseData.buyPrice, true);
+			setEntityData(houseData.entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_BUYHOUSE, true);
 		} else {
 			if (houseData.rentPrice > 0) {
-				setEntityData(houseData.entrancePickup, "vrr.label.rentprice", houseData.rentPrice, true);
-				setEntityData(houseData.entrancePickup, "vrr.label.help", VRR_PROPLABEL_INFO_RENTHOUSE, true);
+				setEntityData(houseData.entrancePickup, "agrp.label.rentprice", houseData.rentPrice, true);
+				setEntityData(houseData.entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_RENTHOUSE, true);
 			}
 		}
 	}
 
 	if (houseData.exitPickup != null) {
-		setEntityData(houseData.exitPickup, "vrr.owner.type", VRR_PICKUP_HOUSE_EXIT, false);
-		setEntityData(houseData.exitPickup, "vrr.owner.id", houseId, false);
-		setEntityData(houseData.exitPickup, "vrr.label.type", VRR_LABEL_EXIT, true);
+		setEntityData(houseData.exitPickup, "agrp.owner.type", VRR_PICKUP_HOUSE_EXIT, false);
+		setEntityData(houseData.exitPickup, "agrp.owner.id", houseId, false);
+		setEntityData(houseData.exitPickup, "agrp.label.type", VRR_LABEL_EXIT, true);
 	}
 }
 
