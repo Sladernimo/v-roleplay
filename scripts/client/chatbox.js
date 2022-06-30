@@ -55,7 +55,7 @@ function receiveChatBoxMessageFromServer(messageString, colour) {
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
 
-	let timeStamp = getCurrentUnixTimeStampSquirrel();
+	let timeStamp = findResourceByName("agrp_time").exports.getCurrentUnixTimeStampSquirrel();
 
 	addToChatBoxHistory(messageString, colour, timeStamp);
 
@@ -67,7 +67,7 @@ function receiveChatBoxMessageFromServer(messageString, colour) {
 	let outputString = messageString;
 	let timeStampString = "";
 	if (chatBoxTimeStampsEnabled == true) {
-		timeStampString = `{TIMESTAMPCOLOUR}[${getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
+		timeStampString = `{TIMESTAMPCOLOUR}[${findResourceByName("agrp_time").exports.getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.ChatBox]: Changed colours in string: ${outputString}`);
@@ -140,12 +140,12 @@ function updateChatBox() {
 			if (chatBoxTimeStampsEnabled == true) {
 				//let timeStampDate = new Date(chatBoxHistory[i][2]);
 				//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
-				let timeStampText = getTimeStampOutput(chatBoxHistory[i][2]);
+				let timeStampText = findResourceByName("agrp_time").exports.getTimeStampOutput(chatBoxHistory[i][2]);
 
 				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
 			}
 
-			replaceColoursInMessage(outputString);
+			outputString = replaceColoursInMessage(outputString);
 			message(outputString, chatBoxHistory[i][1]);
 		} else {
 			message("", COLOUR_WHITE);
