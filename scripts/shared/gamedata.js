@@ -4138,6 +4138,24 @@ let gameData = {
 			[1544, "BottleSoda"],
 			[2601, "CanSoda"],
 		],
+		[VRR_GAME_GTA_IV]: [
+			[0, "GenericPackage"],
+		],
+		[VRR_GAME_GTA_V]: [
+			[0, "GenericPackage"],
+		],
+		[VRR_GAME_MAFIA_ONE]: [
+			[0, "GenericPackage"],
+		],
+		[VRR_GAME_MAFIA_TWO]: [
+			[0, "GenericPackage"],
+		],
+		[VRR_GAME_MAFIA_THREE]: [
+			[0, "GenericPackage"],
+		],
+		[VRR_GAME_MAFIA_ONE_DE]: [
+			[0, "GenericPackage"],
+		],
 	},
 	weaponModels: {
 		[VRR_GAME_GTA_III]: [ // GTA III
