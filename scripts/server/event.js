@@ -271,7 +271,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("vrr.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 
 	getPlayerData(client).lastVehicle = vehicle;
 	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
@@ -385,7 +385,7 @@ function onPlayerExitedVehicle(client, vehicle) {
 
 	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("vrr.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 }
 
 // ===========================================================================
@@ -518,7 +518,7 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
-	setEntityData(getPlayerPed(client), "vrr.scale", getPlayerCurrentSubAccount(client).pedScale, true);
+	setEntityData(getPlayerPed(client), "agrp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 
 	//if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
 	//	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
@@ -574,7 +574,7 @@ async function onPlayerSpawn(client) {
 
 	if (areServerElementsSupported() && getGame() == VRR_GAME_GTA_SA) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting player walk and fightstyle for ${getPlayerDisplayForConsole(client)}`);
-		setEntityData(getPlayerPed(client), "vrr.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
+		setEntityData(getPlayerPed(client), "agrp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 
 		setPlayerFightStyle(client, getPlayerCurrentSubAccount(client).fightStyle);
 	}
@@ -600,20 +600,20 @@ async function onPlayerSpawn(client) {
 	}
 
 	//if(isGTAIV()) {
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
-	//    setEntityData(getPlayerPed(client), "vrr.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
+	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
 	//}
 
 	if (isGTAIV()) {

@@ -142,7 +142,7 @@ function showResetPasswordGUI() {
 
 function checkResetPassword() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password reset with server (${passwordReset.emailInput.lines[0]}) ...`);
-	sendNetworkEventToServer("vrr.checkResetPassword", passwordReset.emailInput.lines[0]);
+	sendNetworkEventToServer("agrp.checkResetPassword", passwordReset.emailInput.lines[0]);
 }
 
 // ===========================================================================

@@ -40,10 +40,10 @@ let disconnectReasons = [
 // ===========================================================================
 
 function getPlayerPosition(client) {
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncPosition;
 	} else {
-		if(getPlayerPed(client) != null) {
+		if (getPlayerPed(client) != null) {
 			return getPlayerPed(client).position;
 		}
 	}
@@ -59,10 +59,10 @@ function setPlayerPosition(client, position) {
 // ===========================================================================
 
 function getPlayerHeading(client) {
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncHeading;
 	} else {
-		if(getPlayerPed(client) != null) {
+		if (getPlayerPed(client) != null) {
 			return getPlayerPed(client).heading;
 		}
 	}
@@ -78,10 +78,10 @@ function setPlayerHeading(client, heading) {
 // ===========================================================================
 
 function getPlayerVehicle(client) {
-	if(!areServerElementsSupported())  {
+	if (!areServerElementsSupported()) {
 		return getPlayerData().syncVehicle;
 	} else {
-		if(getPlayerPed(client).vehicle) {
+		if (getPlayerPed(client).vehicle) {
 			return getPlayerPed(client).vehicle;
 		}
 	}
@@ -91,10 +91,10 @@ function getPlayerVehicle(client) {
 // ===========================================================================
 
 function getPlayerDimension(client) {
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncDimension;
 	} else {
-		if(getPlayerPed(client) != null) {
+		if (getPlayerPed(client) != null) {
 			return getPlayerPed(client).dimension;
 		}
 	}
@@ -110,10 +110,10 @@ function getPlayerInterior(client) {
 
 function setPlayerDimension(client, dimension) {
 	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		getPlayerData(client).syncDimension = dimension;
 	} else {
-		if(getPlayerPed(client) != null) {
+		if (getPlayerPed(client) != null) {
 			getPlayerPed(client).dimension = dimension;
 		}
 	}
@@ -124,7 +124,7 @@ function setPlayerDimension(client, dimension) {
 function setPlayerInterior(client, interior) {
 	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s interior to ${interior}`);
 	sendPlayerSetInterior(client, interior);
-	if(isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
+	if (isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
 		getPlayerCurrentSubAccount(client).interior = interior;
 	}
 }
@@ -132,7 +132,7 @@ function setPlayerInterior(client, interior) {
 // ===========================================================================
 
 function isPlayerInAnyVehicle(client) {
-	if(!areServerElementsSupported())  {
+	if (!areServerElementsSupported()) {
 		return (getPlayerData().syncVehicle != null);
 	} else {
 		return (getPlayerPed(client).vehicle != null);
@@ -142,15 +142,15 @@ function isPlayerInAnyVehicle(client) {
 // ===========================================================================
 
 function getPlayerVehicleSeat(client) {
-	if(!isPlayerInAnyVehicle(client)) {
+	if (!isPlayerInAnyVehicle(client)) {
 		return false;
 	}
 
-	if(!areServerElementsSupported()) {
+	if (!areServerElementsSupported()) {
 		return getPlayerData().syncVehicleSeat;
 	} else {
-		for(let i = 0 ; i <= 8 ; i++) {
-			if(getPlayerVehicle(client).getOccupant(i) == getPlayerPed(client)) {
+		for (let i = 0; i <= 8; i++) {
+			if (getPlayerVehicle(client).getOccupant(i) == getPlayerPed(client)) {
 				return i;
 			}
 		}
@@ -180,8 +180,8 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if(getGame() == VRR_GAME_GTA_IV) {
-		return sendNetworkEventToPlayer("vrr.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+	if (getGame() == VRR_GAME_GTA_IV) {
+		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	}
 	return vehicle.heading = heading;
 }
@@ -189,20 +189,20 @@ function setVehicleHeading(vehicle, heading) {
 // ===========================================================================
 
 function getElementTransient(element) {
-	if(typeof element.transient != "undefined") {
+	if (typeof element.transient != "undefined") {
 		return element.transient;
 	}
-    return false;
+	return false;
 }
 
 // ===========================================================================
 
 function setElementTransient(element, state) {
-	if(typeof element.transient != "undefined") {
+	if (typeof element.transient != "undefined") {
 		element.transient = state;
 		return true;
 	}
-    return false;
+	return false;
 }
 
 // ===========================================================================
@@ -214,8 +214,8 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if(getGame() == VRR_GAME_GTA_IV) {
-		if(getVehicleData(vehicle).ivNetworkId != -1) {
+	if (getGame() == VRR_GAME_GTA_IV) {
+		if (getVehicleData(vehicle).ivNetworkId != -1) {
 			return getVehicleData(vehicle).ivNetworkId;
 		}
 		return -1;
@@ -227,11 +227,11 @@ function getVehicleForNetworkEvent(vehicle) {
 
 function deleteGameElement(element) {
 	try {
-		if(element != null) {
+		if (element != null) {
 			destroyElement(element);
 			return true;
 		}
-	} catch(error) {
+	} catch (error) {
 		return false;
 	}
 }
@@ -254,8 +254,8 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if(getGame() == VRR_GAME_GTA_IV) {
-		triggerNetworkEvent("vrr.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+	if (getGame() == VRR_GAME_GTA_IV) {
+		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
@@ -292,7 +292,7 @@ function setPlayerArmour(client, armour) {
 // ===========================================================================
 
 function getPlayerArmour(client) {
-	if(areServerElementsSupported(client)) {
+	if (areServerElementsSupported(client)) {
 		return getPlayerPed(client).armour;
 	} else {
 		return getPlayerData(client).syncArmour;
@@ -302,11 +302,11 @@ function getPlayerArmour(client) {
 // ===========================================================================
 
 function setPlayerCash(client, amount) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
-	if(isNaN(amount)) {
+	if (isNaN(amount)) {
 		return false;
 	}
 
@@ -317,11 +317,11 @@ function setPlayerCash(client, amount) {
 // ===========================================================================
 
 function givePlayerCash(client, amount) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
-	if(isNaN(amount)) {
+	if (isNaN(amount)) {
 		return false;
 	}
 
@@ -332,11 +332,11 @@ function givePlayerCash(client, amount) {
 // ===========================================================================
 
 function takePlayerCash(client, amount) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
-	if(isNaN(amount)) {
+	if (isNaN(amount)) {
 		return false;
 	}
 
@@ -368,7 +368,7 @@ function getPlayerWeaponAmmo(client) {
 
 function setPlayerVelocity(client, velocity) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s velocity to ${velocity.x}, ${velocity.y}, ${velocity.z}`);
-	if(typeof getPlayerPed(client).velocity != "undefined") {
+	if (typeof getPlayerPed(client).velocity != "undefined") {
 		getPlayerPed(client).velocity = velocity;
 	}
 }
@@ -376,7 +376,7 @@ function setPlayerVelocity(client, velocity) {
 // ===========================================================================
 
 function getPlayerVelocity(client) {
-	if(typeof getPlayerPed(client).velocity != "undefined") {
+	if (typeof getPlayerPed(client).velocity != "undefined") {
 		return getPlayerPed(client).velocity;
 	}
 	return toVector3(0.0, 0.0, 0.0);
@@ -385,7 +385,7 @@ function getPlayerVelocity(client) {
 // ===========================================================================
 
 function getElementDimension(element) {
-	if(typeof element.dimension != "undefined") {
+	if (typeof element.dimension != "undefined") {
 		return element.dimension;
 	}
 	return 0;
@@ -394,18 +394,18 @@ function getElementDimension(element) {
 // ===========================================================================
 
 function setElementDimension(element, dimension) {
-    if(typeof element.dimension != "undefined") {
+	if (typeof element.dimension != "undefined") {
 		logToConsole(LOG_VERBOSE, `Setting element ${element} (${element.id}) dimension to ${dimension}`);
-        element.dimension = dimension;
-        return true;
-    }
-    return false;
+		element.dimension = dimension;
+		return true;
+	}
+	return false;
 }
 
 // ===========================================================================
 
 function setElementRotation(element, rotation) {
-	if(typeof element.setRotation != "undefined") {
+	if (typeof element.setRotation != "undefined") {
 		element.setRotation(rotation);
 	} else {
 		return element.rotation = rotation;
@@ -415,24 +415,24 @@ function setElementRotation(element, rotation) {
 // ===========================================================================
 
 function givePlayerHealth(client, amount) {
-	if(getPlayerHealth(client)+amount > 100) {
+	if (getPlayerHealth(client) + amount > 100) {
 		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s health to 100`);
 		setPlayerHealth(client, 100);
 	} else {
-		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s health to ${getPlayerHealth(client)+amount}`);
-		setPlayerHealth(client, getPlayerHealth(client)+amount);
+		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s health to ${getPlayerHealth(client) + amount}`);
+		setPlayerHealth(client, getPlayerHealth(client) + amount);
 	}
 }
 
 // ===========================================================================
 
 function givePlayerArmour(client, amount) {
-	if(getPlayerArmour(client)+amount > 100) {
+	if (getPlayerArmour(client) + amount > 100) {
 		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s armour to 100`);
 		setPlayerArmour(client, 100);
 	} else {
-		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s armour to ${getPlayerArmour(client)+amount}`);
-		setPlayerArmour(client, getPlayerArmour(client)+amount);
+		logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s armour to ${getPlayerArmour(client) + amount}`);
+		setPlayerArmour(client, getPlayerArmour(client) + amount);
 	}
 }
 
@@ -469,7 +469,7 @@ function getServerName() {
 // ===========================================================================
 
 function createGamePickup(modelIndex, position, type) {
-	if(!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickups")) {
 		return false;
 	}
 	return game.createPickup(modelIndex, position, type);
@@ -478,7 +478,7 @@ function createGamePickup(modelIndex, position, type) {
 // ===========================================================================
 
 function createGameBlip(position, type = 0, colour = toColour(255, 255, 255, 255)) {
-	if(!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blips")) {
 		return false;
 	}
 	return game.createBlip(type, position, 1, colour);
@@ -487,7 +487,7 @@ function createGameBlip(position, type = 0, colour = toColour(255, 255, 255, 255
 // ===========================================================================
 
 function createGameObject(modelIndex, position) {
-	if(!isGameFeatureSupported("objects")) {
+	if (!isGameFeatureSupported("objects")) {
 		return false;
 	}
 	return game.createObject(getGameConfig().objects[getGame()][modelIndex][0], position);
@@ -496,13 +496,13 @@ function createGameObject(modelIndex, position) {
 // ===========================================================================
 
 function setElementOnAllDimensions(element, state) {
-	if(!isNull(element) && element != false) {
-		if(typeof element.netFlags != "undefined") {
-			if(typeof element.netFlags.onAllDimensions != "undefined") {
+	if (!isNull(element) && element != false) {
+		if (typeof element.netFlags != "undefined") {
+			if (typeof element.netFlags.onAllDimensions != "undefined") {
 				element.netFlags.onAllDimensions = state;
 			}
 		} else {
-			if(typeof element.onAllDimensions != "undefined") {
+			if (typeof element.onAllDimensions != "undefined") {
 				element.onAllDimensions = state;
 			}
 		}
@@ -512,7 +512,7 @@ function setElementOnAllDimensions(element, state) {
 // ===========================================================================
 
 function destroyGameElement(element) {
-	if(!isNull(element) && element != false) {
+	if (!isNull(element) && element != false) {
 		destroyElement(element);
 	}
 }
@@ -532,7 +532,7 @@ function getPlayerLastVehicle(client) {
 // ===========================================================================
 
 function isVehicleObject(vehicle) {
-	if(vehicle == null || vehicle == undefined) {
+	if (vehicle == null || vehicle == undefined) {
 		return false;
 	}
 	return (vehicle.type == ELEMENT_VEHICLE);
@@ -547,15 +547,15 @@ function repairVehicle(vehicle) {
 // ===========================================================================
 
 function setVehicleLights(vehicle, lights) {
-	setEntityData(vehicle, "vrr.lights", lights, true);
-	sendNetworkEventToPlayer("vrr.veh.lights", null, vehicle.id, lights);
+	setEntityData(vehicle, "agrp.lights", lights, true);
+	sendNetworkEventToPlayer("agrp.veh.lights", null, vehicle.id, lights);
 }
 
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
 	vehicle.engine = engine;
-	setEntityData(vehicle, "vrr.engine", engine, true);
+	setEntityData(vehicle, "agrp.engine", engine, true);
 }
 
 // ===========================================================================
@@ -600,11 +600,11 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 	vehicle.colour1 = colour1;
 	vehicle.colour2 = colour2;
 
-	if(colour3 != -1) {
+	if (colour3 != -1) {
 		vehicle.colour3 = colour3;
 	}
 
-	if(colour4 != -1) {
+	if (colour4 != -1) {
 		vehicle.colour4 = colour4;
 	}
 }
@@ -612,7 +612,7 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 // ===========================================================================
 
 function createGameVehicle(modelIndex, position, heading) {
-	if(areServerElementsSupported()) {
+	if (areServerElementsSupported()) {
 		return mp.vehicles.new(getGameConfig().vehicles[getGame()][modelIndex][0], position, {
 			heading: heading,
 			numberPlate: "",
@@ -628,7 +628,7 @@ function createGameVehicle(modelIndex, position, heading) {
 // ===========================================================================
 
 function createGameCivilian(modelIndex, position, heading) {
-	if(areServerElementsSupported()) {
+	if (areServerElementsSupported()) {
 		return mp.peds.new(getGameConfig().skins[getGame()][modelIndex][1], position, heading, 0);
 	}
 
@@ -644,7 +644,7 @@ function getIsland(position) {
 // ===========================================================================
 
 function isValidVehicleModel(model) {
-	if(getVehicleModelIndexFromModel(model) != false) {
+	if (getVehicleModelIndexFromModel(model) != false) {
 		return true;
 	}
 
@@ -654,7 +654,7 @@ function isValidVehicleModel(model) {
 // ===========================================================================
 
 function setGameTime(hour, minute, minuteDuration = 1000) {
-	if(isTimeSupported()) {
+	if (isTimeSupported()) {
 		game.time.hour = hour;
 		game.time.minute = minute;
 		game.time.minuteDuration = minuteDuration;
@@ -664,7 +664,7 @@ function setGameTime(hour, minute, minuteDuration = 1000) {
 // ===========================================================================
 
 function setGameWeather(weather) {
-	if(isWeatherSupported()) {
+	if (isWeatherSupported()) {
 		mp.world.weather = weather;
 	}
 }
@@ -690,7 +690,7 @@ function getPlayerElement(client) {
 // ===========================================================================
 
 function setElementPosition(element, position) {
-	sendNetworkEventToPlayer("vrr.elementPosition", null, element.id, position);
+	sendNetworkEventToPlayer("agrp.elementPosition", null, element.id, position);
 }
 
 // ===========================================================================
@@ -714,13 +714,13 @@ function setElementInterior(element, interior) {
 // ===========================================================================
 
 function setElementCollisionsEnabled(element, state) {
-	//sendNetworkEventToPlayer("vrr.elementCollisions", null, element.id, state);
+	//sendNetworkEventToPlayer("agrp.elementCollisions", null, element.id, state);
 }
 
 // ===========================================================================
 
 function isTaxiVehicle(vehicle) {
-	if(getGameConfig().taxiModels[getGame()].indexOf(vehicle.modelIndex) != -1) {
+	if (getGameConfig().taxiModels[getGame()].indexOf(vehicle.modelIndex) != -1) {
 		return true;
 	}
 
@@ -737,7 +737,7 @@ function getVehicleName(vehicle) {
 // ===========================================================================
 
 function getElementModel(element) {
-	if(typeof element.model != "undefined") {
+	if (typeof element.model != "undefined") {
 		return element.model;
 	}
 }
@@ -757,11 +757,11 @@ function getPlayerWeapon(client) {
 // ===========================================================================
 
 function connectToDatabase() {
-	if(getDatabaseConfig().usePersistentConnection) {
-		if(persistentDatabaseConnection == null) {
+	if (getDatabaseConfig().usePersistentConnection) {
+		if (persistentDatabaseConnection == null) {
 			logToConsole(LOG_DEBUG, `[VRR.Database] Initializing database connection ...`);
 			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
-			if(persistentDatabaseConnection.error) {
+			if (persistentDatabaseConnection.error) {
 				logToConsole(LOG_ERROR, `[VRR.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 				persistentDatabaseConnection = null;
 				return false;
@@ -775,7 +775,7 @@ function connectToDatabase() {
 		}
 	} else {
 		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
-		if(databaseConnection.error) {
+		if (databaseConnection.error) {
 			logToConsole(LOG_ERROR, `[VRR.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 			return false;
 		} else {
@@ -787,11 +787,11 @@ function connectToDatabase() {
 // ===========================================================================
 
 function disconnectFromDatabase(dbConnection) {
-	if(!getDatabaseConfig().usePersistentConnection) {
+	if (!getDatabaseConfig().usePersistentConnection) {
 		try {
 			dbConnection.close();
 			logToConsole(LOG_DEBUG, `[VRR.Database] Database connection closed successfully`);
-		} catch(error) {
+		} catch (error) {
 			logToConsole(LOG_ERROR, `[VRR.Database] Database connection could not be closed! (Error: ${error})`);
 		}
 	}
@@ -802,7 +802,7 @@ function disconnectFromDatabase(dbConnection) {
 
 function queryDatabase(dbConnection, queryString, useThread = false) {
 	logToConsole(LOG_DEBUG, `[VRR.Database] Query string: ${queryString}`);
-	if(useThread == true) {
+	if (useThread == true) {
 		Promise.resolve().then(() => {
 			let queryResult = dbConnection.query(queryString);
 			return queryResult;
@@ -815,11 +815,11 @@ function queryDatabase(dbConnection, queryString, useThread = false) {
 // ===========================================================================
 
 function escapeDatabaseString(dbConnection, unsafeString = "") {
-	if(!dbConnection) {
+	if (!dbConnection) {
 		dbConnection = connectToDatabase();
 	}
 
-	if(typeof unsafeString == "string") {
+	if (typeof unsafeString == "string") {
 		return dbConnection.escapeString(unsafeString);
 	}
 	return unsafeString;
@@ -846,7 +846,7 @@ function getDatabaseError(dbConnection) {
 // ===========================================================================
 
 function freeDatabaseQuery(dbQuery) {
-	if(dbQuery != null) {
+	if (dbQuery != null) {
 		dbQuery.free();
 	}
 	return;
@@ -863,26 +863,26 @@ function fetchQueryAssoc(dbQuery) {
 function quickDatabaseQuery(queryString) {
 	let dbConnection = connectToDatabase();
 	let insertId = 0;
-	if(dbConnection) {
+	if (dbConnection) {
 		//logToConsole(LOG_DEBUG, `[VRR.Database] Query string: ${queryString}`);
 		let dbQuery = queryDatabase(dbConnection, queryString);
-		if(getDatabaseInsertId(dbConnection)) {
+		if (getDatabaseInsertId(dbConnection)) {
 			insertId = getDatabaseInsertId(dbConnection);
 			logToConsole(LOG_DEBUG, `[VRR.Database] Query returned insert id ${insertId}`);
 		}
 
-		if(dbQuery) {
+		if (dbQuery) {
 			try {
 				freeDatabaseQuery(dbQuery);
 				logToConsole(LOG_DEBUG, `[VRR.Database] Query result free'd successfully`);
-			} catch(error) {
+			} catch (error) {
 				logToConsole(LOG_ERROR, `[VRR.Database] Query result could not be free'd! (Error: ${error})`);
 			}
 		}
 
 		disconnectFromDatabase(dbConnection);
 
-		if(insertId != 0) {
+		if (insertId != 0) {
 			return insertId;
 		}
 
@@ -915,8 +915,8 @@ function getElementId(element) {
 
 function getClientFromIndex(index) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].index == index) {
+	for (let i in clients) {
+		if (clients[i].index == index) {
 			return clients[i];
 		}
 	}
@@ -955,7 +955,7 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if(getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == VRR_GAME_GTA_IV) {
 		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
@@ -976,8 +976,8 @@ function getClosestElementByType(elementType, position) {
 // ===========================================================================
 
 function getVehicleFirstEmptySeat(vehicle) {
-	for(let i = 0; i <= 4; i++) {
-		if(vehicle.getOccupant(i) == null) {
+	for (let i = 0; i <= 4; i++) {
+		if (vehicle.getOccupant(i) == null) {
 			return i;
 		}
 	}
@@ -1014,14 +1014,14 @@ function setVehicleHealth(vehicle, health) {
 
 function givePlayerWeapon(client, weaponId, ammo, active = true) {
 	//logToConsole(LOG_DEBUG, `[VRR.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	//sendNetworkEventToPlayer("vrr.giveWeapon", client, weaponId, ammo, active);
+	//sendNetworkEventToPlayer("agrp.giveWeapon", client, weaponId, ammo, active);
 	client.giveWeapon(weaponId, ammo);
 }
 
 // ===========================================================================
 
 function setPlayerWantedLevel(client, wantedLevel) {
-	//sendNetworkEventToPlayer("vrr.wantedLevel", client, wantedLevel);
+	//sendNetworkEventToPlayer("agrp.wantedLevel", client, wantedLevel);
 	return true;
 }
 
@@ -1046,9 +1046,9 @@ function getPlayerPed(client) {
 // ===========================================================================
 
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
-	if(entity != null) {
-		if(areServerElementsSupported()) {
-			if(syncToClients) {
+	if (entity != null) {
+		if (areServerElementsSupported()) {
+			if (syncToClients) {
 				return entity.setVariable(dataName, dataValue);
 			} else {
 				return entity.setOwnVariable(dataName, dataValue);
@@ -1061,8 +1061,8 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 // ===========================================================================
 
 function removeEntityData(entity, dataName) {
-	if(entity != null) {
-		if(areServerElementsSupported()) {
+	if (entity != null) {
+		if (areServerElementsSupported()) {
 			return entity.setVariable(dataName, null);
 		}
 	}
@@ -1072,8 +1072,8 @@ function removeEntityData(entity, dataName) {
 // ===========================================================================
 
 function doesEntityDataExist(entity, dataName) {
-	if(entity != null) {
-		if(areServerElementsSupported()) {
+	if (entity != null) {
+		if (areServerElementsSupported()) {
 			return (entity.getVariable(dataName) != null);
 		} else {
 			return false;
@@ -1169,7 +1169,7 @@ function serverBanIP(ip) {
 // ===========================================================================
 
 function setVehicleTrunkState(vehicle, trunkState) {
-	//sendNetworkEventToPlayer("vrr.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+	//sendNetworkEventToPlayer("agrp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
 
 // ===========================================================================
@@ -1201,7 +1201,7 @@ function addAllEventHandlers() {
 // ===========================================================================
 
 function addServerCommandHandler(command, handlerFunction) {
-	mp.events.addCommand(command, function(client, ...args) {
+	mp.events.addCommand(command, function (client, ...args) {
 		handlerFunction.call(command, args.join(" "), client);
 	});
 }
@@ -1209,7 +1209,7 @@ function addServerCommandHandler(command, handlerFunction) {
 // ===========================================================================
 
 function addServerEventHandler(eventName, handlerFunction) {
-	mp.events.add(eventName, function(event, ...args) {
+	mp.events.add(eventName, function (event, ...args) {
 		let result = handlerFunction.apply(this, args);
 	});
 }
@@ -1217,7 +1217,7 @@ function addServerEventHandler(eventName, handlerFunction) {
 // ===========================================================================
 
 function bindServerEventHandler(eventName, bindTo, handlerFunction) {
-	mp.events.add(eventName, function(event, ...args) {
+	mp.events.add(eventName, function (event, ...args) {
 		let result = handlerFunction.apply(this, args);
 	});
 }

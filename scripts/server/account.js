@@ -1391,7 +1391,7 @@ function initClient(client) {
 		return false;
 	}
 
-	setEntityData(client, "vrr.isInitialized", true, false);
+	setEntityData(client, "agrp.isInitialized", true, false);
 
 	sendPlayerGUIColours(client);
 

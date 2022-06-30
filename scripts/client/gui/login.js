@@ -20,7 +20,7 @@ let login = {
 // ===========================================================================
 
 let loginHTML =
-`<html>
+	`<html>
     <head>
         <title>Asshat Gaming Roleplay: Login</title>
         <style type="text/css" rel="stylesheet">
@@ -42,8 +42,8 @@ let loginHTML =
 // ===========================================================================
 
 function initLoginGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating login GUI ...`);
-	login.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-135, 300, 275, 'LOGIN', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating login GUI ...`);
+	login.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 135, 300, 275, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -60,7 +60,7 @@ function initLoginGUI() {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
-	login.window.titleBarIconSize = toVector2(0,0);
+	login.window.titleBarIconSize = toVector2(0, 0);
 	login.window.titleBarHeight = 0;
 	login.window.titleBarShown = false;
 
@@ -157,7 +157,7 @@ function showLoginGUI() {
 	mexui.focusedControl = login.passwordInput;
 	guiSubmitKey = checkLogin;
 
-	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), login.window.position.y+login.window.size.y+20));
+	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), login.window.position.y + login.window.size.y + 20));
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }
 
@@ -165,7 +165,7 @@ function showLoginGUI() {
 
 function checkLogin() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking login with server ...`);
-	sendNetworkEventToServer("vrr.checkLogin", login.passwordInput.lines[0]);
+	sendNetworkEventToServer("agrp.checkLogin", login.passwordInput.lines[0]);
 }
 
 // ===========================================================================
@@ -191,7 +191,7 @@ function switchToPasswordResetGUI() {
 	//closeAllWindows();
 	//logToConsole(LOG_DEBUG, `[VRR.GUI] Showing password reset dialog window`);
 	//showResetPasswordGUI();
-	sendNetworkEventToServer("vrr.checkResetPassword", "");
+	sendNetworkEventToServer("agrp.checkResetPassword", "");
 	return false;
 }
 

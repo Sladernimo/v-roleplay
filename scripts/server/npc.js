@@ -468,11 +468,11 @@ function spawnNPC(npcIndex) {
 	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
 	if (ped) {
 		getNPCData(npcIndex).ped = ped;
-		setEntityData(ped, "vrr.dataIndex", npcIndex, false);
+		setEntityData(ped, "agrp.dataIndex", npcIndex, false);
 		if (npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
 			if (animationId != false) {
-				setEntityData(ped, "vrr.anim", animationId, true);
+				setEntityData(ped, "agrp.anim", animationId, true);
 			}
 		}
 		setElementDimension(ped, npcData.dimension);
@@ -592,7 +592,7 @@ function toggleNPCLookAtClosestPlayerCommand(command, params, client) {
 
 	getNPCData(closestNPC).lookAtClosestPlayer = !getNPCData(closestNPC).lookAtClosestPlayer;
 	getNPCData(closestNPC).needsSaved = true;
-	setEntityData(getNPCData(closestNPC).ped, "vrr.lookAtClosestPlayer", getNPCData(closestNPC).lookAtClosestPlayer, true);
+	setEntityData(getNPCData(closestNPC).ped, "agrp.lookAtClosestPlayer", getNPCData(closestNPC).lookAtClosestPlayer, true);
 	forcePlayerToSyncElementProperties(null, getNPCData(closestNPC).ped);
 	//messagePlayerSuccess(client, getLocaleString(client, "NPCLookAtClosestPlayerSet", `{ALTCOLOUR}${getNPCData(closestNPC).name}{MAINCOLOUR}));
 }

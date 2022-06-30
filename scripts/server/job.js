@@ -624,11 +624,11 @@ function createAllJobPickups() {
 			for (let j in getServerData().jobs[i].locations) {
 				pickupCount++;
 				getServerData().jobs[i].locations[j].pickup = game.createPickup(getServerData().jobs[i].pickupModel, getServerData().jobs[i].locations[j].position);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "vrr.owner.type", VRR_PICKUP_JOB, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "vrr.owner.id", j, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "vrr.label.type", VRR_LABEL_JOB, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "vrr.label.name", getServerData().jobs[i].name, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "vrr.label.jobType", getServerData().jobs[i].databaseId, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.type", VRR_PICKUP_JOB, false);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.id", j, false);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.type", VRR_LABEL_JOB, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.name", getServerData().jobs[i].name, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.jobType", getServerData().jobs[i].databaseId, true);
 				setElementOnAllDimensions(getServerData().jobs[i].locations[j].pickup, false);
 				setElementDimension(getServerData().jobs[i].locations[j].pickup, getServerData().jobs[i].locations[j].dimension);
 				addToWorld(getServerData().jobs[i].locations[j].pickup);
@@ -2743,11 +2743,11 @@ function createJobLocationPickup(jobId, locationId) {
 				tempJobData.locations[locationId].pickup = pickup;
 				setElementDimension(pickup, tempJobData.locations[locationId].dimension);
 				setElementOnAllDimensions(pickup, false);
-				setEntityData(pickup, "vrr.owner.type", VRR_PICKUP_JOB, false);
-				setEntityData(pickup, "vrr.owner.id", locationId, false);
-				setEntityData(pickup, "vrr.label.type", VRR_LABEL_JOB, true);
-				setEntityData(pickup, "vrr.label.name", tempJobData.name, true);
-				setEntityData(pickup, "vrr.label.jobType", tempJobData.databaseId, true);
+				setEntityData(pickup, "agrp.owner.type", VRR_PICKUP_JOB, false);
+				setEntityData(pickup, "agrp.owner.id", locationId, false);
+				setEntityData(pickup, "agrp.label.type", VRR_LABEL_JOB, true);
+				setEntityData(pickup, "agrp.label.name", tempJobData.name, true);
+				setEntityData(pickup, "agrp.label.jobType", tempJobData.databaseId, true);
 				addToWorld(pickup);
 			}
 		} else {

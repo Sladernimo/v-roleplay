@@ -73,7 +73,7 @@ function initGUI() {
 	resetGUIStrings();
 	resetLocaleChooserOptions();
 
-	sendNetworkEventToServer("vrr.guiReady", true);
+	sendNetworkEventToServer("agrp.guiReady", true);
 };
 
 // ===========================================================================
@@ -230,7 +230,7 @@ function processGUIKeyPress(keyCode) {
 
 function processToggleGUIKeyPress(keyCode) {
 	if (keyCode == disableGUIKey) {
-		sendNetworkEventToServer("vrr.toggleGUI");
+		sendNetworkEventToServer("agrp.toggleGUI");
 	}
 }
 

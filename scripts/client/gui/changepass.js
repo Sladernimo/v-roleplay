@@ -128,7 +128,7 @@ function passwordChangeFailed(errorMessage) {
 
 function checkChangePassword() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password change with server ...`);
-	sendNetworkEventToServer("vrr.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
+	sendNetworkEventToServer("agrp.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
 }
 
 // ===========================================================================

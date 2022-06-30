@@ -44,53 +44,53 @@ function loadSkinSelectMessageFontBottom() {
 // ===========================================================================
 
 function processSkinSelectKeyPress(keyCode) {
-	if(usingSkinSelector) {
-		if(keyCode == SDLK_PAGEUP) {
-			if(skinSelectorIndex >= allowedSkins.length-1) {
+	if (usingSkinSelector) {
+		if (keyCode == SDLK_PAGEUP) {
+			if (skinSelectorIndex >= allowedSkins.length - 1) {
 				skinSelectorIndex = 1;
 			} else {
 				skinSelectorIndex = skinSelectorIndex + 1;
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if(getGame() == VRR_GAME_GTA_IV) {
+			if (getGame() == VRR_GAME_GTA_IV) {
 				let skinId = allowedSkins[skinSelectorIndex][0];
-				if(natives.isModelInCdimage(skinId)) {
+				if (natives.isModelInCdimage(skinId)) {
 					natives.requestModel(skinId);
 					natives.loadAllObjectsNow();
-					if(natives.hasModelLoaded(skinId)) {
+					if (natives.hasModelLoaded(skinId)) {
 						natives.changePlayerModel(natives.getPlayerId(), skinId);
 					}
 				}
 			} else {
 				localPlayer.skin = allowedSkins[skinSelectorIndex][0];
 			}
-		} else if(keyCode == SDLK_PAGEDOWN) {
-			if(skinSelectorIndex <= 0) {
-				skinSelectorIndex = allowedSkins.length-1;
+		} else if (keyCode == SDLK_PAGEDOWN) {
+			if (skinSelectorIndex <= 0) {
+				skinSelectorIndex = allowedSkins.length - 1;
 			} else {
 				skinSelectorIndex = skinSelectorIndex - 1;
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if(getGame() == VRR_GAME_GTA_IV) {
+			if (getGame() == VRR_GAME_GTA_IV) {
 				let skinId = allowedSkins[skinSelectorIndex][0];
-				if(natives.isModelInCdimage(skinId)) {
+				if (natives.isModelInCdimage(skinId)) {
 					natives.requestModel(skinId);
 					natives.loadAllObjectsNow();
-					if(natives.hasModelLoaded(skinId)) {
+					if (natives.hasModelLoaded(skinId)) {
 						natives.changePlayerModel(natives.getPlayerId(), skinId);
 					}
 				}
 			} else {
 				localPlayer.skin = allowedSkins[skinSelectorIndex][0];
 			}
-		} else if(keyCode == SDLK_RETURN) {
-			sendNetworkEventToServer("vrr.skinSelected", skinSelectorIndex);
+		} else if (keyCode == SDLK_RETURN) {
+			sendNetworkEventToServer("agrp.skinSelected", skinSelectorIndex);
 			toggleSkinSelect(false);
 			return true;
-		} else if(keyCode == SDLK_BACKSPACE) {
-			sendNetworkEventToServer("vrr.skinSelected", -1);
+		} else if (keyCode == SDLK_BACKSPACE) {
+			sendNetworkEventToServer("agrp.skinSelected", -1);
 			toggleSkinSelect(false);
 			return true;
 		}
@@ -101,11 +101,11 @@ function processSkinSelectKeyPress(keyCode) {
 // ===========================================================================
 
 function processSkinSelectRendering() {
-	if(usingSkinSelector) {
-		if(skinSelectMessageFontTop != null && skinSelectMessageFontBottom != null) {
-			if(skinSelectMessageTextTop != "" && skinSelectMessageTextBottom != "") {
-				skinSelectMessageFontTop.render(skinSelectMessageTextTop, [0, game.height-100], game.width, 0.5, 0.0, skinSelectMessageFontTop.size, skinSelectMessageColourTop, true, true, false, true);
-				skinSelectMessageFontBottom.render(skinSelectMessageTextBottom, [0, game.height-65], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
+	if (usingSkinSelector) {
+		if (skinSelectMessageFontTop != null && skinSelectMessageFontBottom != null) {
+			if (skinSelectMessageTextTop != "" && skinSelectMessageTextBottom != "") {
+				skinSelectMessageFontTop.render(skinSelectMessageTextTop, [0, game.height - 100], game.width, 0.5, 0.0, skinSelectMessageFontTop.size, skinSelectMessageColourTop, true, true, false, true);
+				skinSelectMessageFontBottom.render(skinSelectMessageTextBottom, [0, game.height - 65], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
 			}
 		}
 	}
@@ -114,9 +114,9 @@ function processSkinSelectRendering() {
 // ===========================================================================
 
 function toggleSkinSelect(state) {
-	if(state) {
+	if (state) {
 		skinSelectorIndex = getAllowedSkinIndexFromSkin(localPlayer.skin);
-		if(!skinSelectorIndex) {
+		if (!skinSelectorIndex) {
 			skinSelectorIndex = 0;
 		}
 
@@ -124,19 +124,19 @@ function toggleSkinSelect(state) {
 		skinSelectPosition = localPlayer.position;
 		skinSelectHeading = localPlayer.heading;
 
-		if(isCustomCameraSupported()) {
+		if (isCustomCameraSupported()) {
 			let tempPosition = localPlayer.position;
 			tempPosition.z += 0.5;
 			let frontCameraPosition = getPosInFrontOfPos(tempPosition, localPlayer.heading, 3);
 			game.setCameraLookAt(frontCameraPosition, localPlayer.position, true);
 		}
 
-		if(getGame() == VRR_GAME_GTA_IV) {
+		if (getGame() == VRR_GAME_GTA_IV) {
 			let skinId = allowedSkins[skinSelectorIndex][0];
-			if(natives.isModelInCdimage(skinId)) {
+			if (natives.isModelInCdimage(skinId)) {
 				natives.requestModel(skinId);
 				natives.loadAllObjectsNow();
-				if(natives.hasModelLoaded(skinId)) {
+				if (natives.hasModelLoaded(skinId)) {
 					natives.changePlayerModel(natives.getPlayerId(), skinId);
 				}
 			}

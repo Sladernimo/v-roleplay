@@ -346,7 +346,7 @@ function createGroundItemObject(itemId) {
 		setElementRotation(getItemData(itemId).object, getItemTypeData(getItemData(itemId).itemTypeIndex).dropRotation);
 		setElementOnAllDimensions(getItemData(itemId).object, false);
 		setElementDimension(getItemData(itemId).object, getItemData(itemId).dimension);
-		//setEntityData(getItemData(itemId).object, "vrr.scale", getItemTypeData(getItemData(itemId).itemTypeIndex).dropScale, true);
+		//setEntityData(getItemData(itemId).object, "agrp.scale", getItemTypeData(getItemData(itemId).itemTypeIndex).dropScale, true);
 		addToWorld(getItemData(itemId).object);
 	}
 }

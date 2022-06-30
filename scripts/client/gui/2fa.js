@@ -21,7 +21,7 @@ let twoFactorAuth = {
 
 function initTwoFactorAuthenticationGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating two factor auth GUI ...`);
-	twoFactorAuth.window = mexui.window(game.width/2-150, game.height/2-129, 300, 258, 'LOGIN', {
+	twoFactorAuth.window = mexui.window(game.width / 2 - 150, game.height / 2 - 129, 300, 258, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -38,7 +38,7 @@ function initTwoFactorAuthenticationGUI() {
 			borderColour: toColour(0, 0, 0, 0),
 		},
 	});
-	twoFactorAuth.window.titleBarIconSize = toVector2(0,0);
+	twoFactorAuth.window.titleBarIconSize = toVector2(0, 0);
 	twoFactorAuth.window.titleBarHeight = 0;
 
 	twoFactorAuth.qrCode = twoFactorAuth.window.image(100, 20, 100, 100, mainLogoPath, {
@@ -129,7 +129,7 @@ function twoFactorAuthSuccess() {
 
 function checkTwoFactorAuth() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking two-factor authentication with server ...`);
-	sendNetworkEventToServer("vrr.2fa", twoFactorAuth.codeInput.lines[0]);
+	sendNetworkEventToServer("agrp.2fa", twoFactorAuth.codeInput.lines[0]);
 }
 
 // ===========================================================================
