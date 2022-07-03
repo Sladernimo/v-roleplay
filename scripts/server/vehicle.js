@@ -28,6 +28,8 @@ const VRR_VEHSEAT_REARRIGHTPASSENGER = 3;
 
 /**
  * @class Representing a vehicle's data. Loaded and saved in the database
+ * @property {Array.<Number>} trunkItemCache
+ * @property {Array.<Number>} dashItemCache
  */
 class VehicleData {
 	constructor(dbAssoc = false, vehicle = false) {
