@@ -9,6 +9,8 @@
 
 /**
  * @class Representing a clan's data. Loaded and saved in the database
+ * @property {Array.<ClanRankData>} ranks
+ * @property {Array.<ClanMemberData>} members
  */
 class ClanData {
 	constructor(dbAssoc = false) {
