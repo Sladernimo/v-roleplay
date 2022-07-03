@@ -40,6 +40,9 @@ const VRR_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for g
 
 /**
  * @class Representing a businesses' data. Loaded and saved in the database
+ * @property {Array.<BusinessLocationData>} locations
+ * @property {Array.<Number>} floorItemCache
+ * @property {Array.<Number>} storageItemCache
  */
 class BusinessData {
 	constructor(dbAssoc = false) {
@@ -58,7 +61,7 @@ class BusinessData {
 		this.floorItemCache = [];
 		this.storageItemCache = [];
 		this.locations = [];
-		this.gameScripts = [];
+		//this.gameScripts = [];
 
 		this.entrancePosition = false;
 		this.entranceRotation = 0.0;
@@ -2532,6 +2535,12 @@ function setBusinessDataIndexes() {
 		//		getServerData().businesses[i].streamingRadioStationIndex = radioStationIndex;
 		//	}
 		//}
+
+		for (let j in getServerData().businesses[i].locations) {
+			if (getServerData().businesses[i].locations[j].type == VRR_BIZ_LOC_ATM) {
+				getServerData().atmLocationCache.push([i, j, getServerData().businesses[i].locations[j].position]);
+			}
+		}
 	}
 }
 
