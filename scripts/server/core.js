@@ -38,6 +38,7 @@ let playerGUI = new Array(server.maxClients).fill(false);
  * @property {Array} groundPlantCache
  * @property {Array} purchasingVehicleCache
  * @property {Array} rentingVehicleCache
+ * @property {Array} atmLocationCache
  */
 let serverData = {
 	vehicles: [],
@@ -61,6 +62,7 @@ let serverData = {
 	groundPlantCache: [],
 	purchasingVehicleCache: [],
 	rentingVehicleCache: [],
+	atmLocationCache: [],
 };
 
 // ===========================================================================
