@@ -162,7 +162,7 @@ function onEntityProcess(event, entity) {
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
-		getPlayerData(client).pedState = VRR_PEDSTATE_ENTERINGVEHICLE;
+		getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGVEHICLE;
 
 		if (!getVehicleData(vehicle)) {
 			return false;
@@ -197,7 +197,7 @@ function onPedExitingVehicle(event, ped, vehicle) {
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
-		getPlayerData(client).pedState = VRR_PEDSTATE_EXITINGVEHICLE;
+		getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGVEHICLE;
 	}
 
 	if (!getVehicleData(vehicle).spawnLocked) {
@@ -256,7 +256,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 		return false;
 	}
 
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		vehicle = getVehicleFromIVNetworkId(clientVehicle);
 	}
 	//else {
@@ -276,7 +276,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 	getPlayerData(client).lastVehicle = vehicle;
 	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-	if (getPlayerVehicleSeat(client) == VRR_VEHSEAT_DRIVER) {
+	if (getPlayerVehicleSeat(client) == AGRP_VEHSEAT_DRIVER) {
 		vehicle.engine = getVehicleData(vehicle).engine;
 
 		if (getVehicleData(vehicle).buyPrice > 0) {
@@ -294,23 +294,23 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 			let ownerType = getLocaleString(client, "NotOwned");
 			ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
 			switch (getVehicleData(vehicle).ownerType) {
-				case VRR_VEHOWNER_CLAN:
+				case AGRP_VEHOWNER_CLAN:
 					ownerName = getClanData(getClanIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 					ownerType = getLocaleString(client, "Clan");
 					break;
 
-				case VRR_VEHOWNER_JOB:
+				case AGRP_VEHOWNER_JOB:
 					ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 					ownerType = getLocaleString(client, "Job");
 					break;
 
-				case VRR_VEHOWNER_PLAYER:
+				case AGRP_VEHOWNER_PLAYER:
 					let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
 					ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
 					ownerType = getLocaleString(client, "Player");
 					break;
 
-				case VRR_VEHOWNER_BIZ:
+				case AGRP_VEHOWNER_BIZ:
 					ownerName = getBusinessData(getVehicleData(vehicle).ownerId).name;
 					ownerType = getLocaleString(client, "Business");
 					break;
@@ -340,7 +340,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 		let currentSubAccount = getPlayerCurrentSubAccount(client);
 
 		if (isPlayerWorking(client)) {
-			if (getVehicleData(vehicle).ownerType == VRR_VEHOWNER_JOB) {
+			if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
 				if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
 					getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
 					messagePlayerInfo(client, `Use /startroute to start working in this vehicle`);
@@ -367,7 +367,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 // ===========================================================================
 
 function onPlayerExitedVehicle(client, vehicle) {
-	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 
 	stopRadioStreamForPlayer(client);
 
@@ -392,7 +392,7 @@ function onPlayerExitedVehicle(client, vehicle) {
 
 function onPlayerDeath(client, position) {
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
-	getPlayerData(client).pedState = VRR_PEDSTATE_DEAD;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 	setTimeout(function () {
@@ -413,7 +413,7 @@ function onPlayerDeath(client, position) {
 						stopWorking(client);
 					}
 
-					if (getGame() == VRR_GAME_MAFIA_ONE) {
+					if (getGame() == AGRP_GAME_MAFIA_ONE) {
 						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
 					} else {
 						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
@@ -436,7 +436,7 @@ function onPlayerDeath(client, position) {
 						stopWorking(client);
 					}
 
-					if (getGame() == VRR_GAME_MAFIA_ONE) {
+					if (getGame() == AGRP_GAME_MAFIA_ONE) {
 						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
 					} else {
 						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
@@ -525,7 +525,7 @@ async function onPlayerSpawn(client) {
 	//	return false;
 	//}
 
-	if (isCustomCameraSupported() && getGame() != VRR_GAME_GTA_IV && getGame() != VRR_GAME_GTA_IV_EFLC) {
+	if (isCustomCameraSupported() && getGame() != AGRP_GAME_GTA_IV && getGame() != AGRP_GAME_GTA_IV_EFLC) {
 		restorePlayerCamera(client);
 	}
 
@@ -539,7 +539,7 @@ async function onPlayerSpawn(client) {
 	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
 
-	if (getGame() == VRR_GAME_MAFIA_ONE) {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
 		setPlayerHeading(client, getPlayerCurrentSubAccount(client).spawnHeading);
 		setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
@@ -572,7 +572,7 @@ async function onPlayerSpawn(client) {
 		updatePlayerSnowState(client);
 	}
 
-	if (areServerElementsSupported() && getGame() == VRR_GAME_GTA_SA) {
+	if (areServerElementsSupported() && getGame() == AGRP_GAME_GTA_SA) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting player walk and fightstyle for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "agrp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 
@@ -621,7 +621,7 @@ async function onPlayerSpawn(client) {
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
-	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 
 	if (areServerElementsSupported()) {
 		syncPlayerProperties(client);

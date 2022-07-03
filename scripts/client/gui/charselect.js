@@ -217,7 +217,7 @@ function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, s
 	if (characterSelect.skinImage != null) {
 		characterSelect.skinImage.remove();
 	}
-	characterSelect.skinImage = (getGame() == VRR_GAME_GTA_III) ? characterSelect.window.image(310, 32, 100, 90, `files/images/skins/gta3/${getSkinImage(skinId)}.png`) : characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
+	characterSelect.skinImage = (getGame() == AGRP_GAME_GTA_III) ? characterSelect.window.image(310, 32, 100, 90, `files/images/skins/gta3/${getSkinImage(skinId)}.png`) : characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
 
 	characterSelect.window.shown = true;
 

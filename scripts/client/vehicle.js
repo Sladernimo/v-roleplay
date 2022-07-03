@@ -32,7 +32,7 @@ class VehicleData {
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
 	logToConsole(LOG_DEBUG, `[VRR.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
 
-	if (getGame() != VRR_GAME_GTA_IV) {
+	if (getGame() != AGRP_GAME_GTA_IV) {
 		return false;
 	}
 
@@ -63,20 +63,20 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 // ===========================================================================
 
 function processVehiclePurchasing() {
-	if (vehiclePurchaseState == VRR_VEHBUYSTATE_TESTDRIVE) {
+	if (vehiclePurchaseState == AGRP_VEHBUYSTATE_TESTDRIVE) {
 		if (getLocalPlayerVehicle() == false) {
-			vehiclePurchaseState = VRR_VEHBUYSTATE_EXITVEH;
-			sendNetworkEventToServer("agrp.vehBuyState", VRR_VEHBUYSTATE_EXITVEH);
+			vehiclePurchaseState = AGRP_VEHBUYSTATE_EXITVEH;
+			sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_EXITVEH);
 			return false;
 		} else {
 			if (vehiclePurchasing == getLocalPlayerVehicle()) {
 				if (getDistance(getLocalPlayerVehicle().position, vehiclePurchasePosition) >= 25) {
-					vehiclePurchaseState = VRR_VEHBUYSTATE_FARENOUGH;
-					sendNetworkEventToServer("agrp.vehBuyState", VRR_VEHBUYSTATE_FARENOUGH);
+					vehiclePurchaseState = AGRP_VEHBUYSTATE_FARENOUGH;
+					sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_FARENOUGH);
 				}
 			} else {
-				vehiclePurchaseState = VRR_VEHBUYSTATE_WRONGVEH;
-				sendNetworkEventToServer("agrp.vehBuyState", VRR_VEHBUYSTATE_WRONGVEH);
+				vehiclePurchaseState = AGRP_VEHBUYSTATE_WRONGVEH;
+				sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_WRONGVEH);
 			}
 		}
 	}

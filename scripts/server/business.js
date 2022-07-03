@@ -8,33 +8,33 @@
 // ===========================================================================
 
 // Business Types
-const VRR_BIZ_TYPE_NONE = 0;                     // None (invalid)
-const VRR_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
-const VRR_BIZ_TYPE_BANK = 2;                     // Bank
-const VRR_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
-const VRR_BIZ_TYPE_PAINTBALL = 4;				 // Paintball arena. Player joins paintball/airsoft when they enter
+const AGRP_BIZ_TYPE_NONE = 0;                     // None (invalid)
+const AGRP_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
+const AGRP_BIZ_TYPE_BANK = 2;                     // Bank
+const AGRP_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
+const AGRP_BIZ_TYPE_PAINTBALL = 4;				 // Paintball arena. Player joins paintball/airsoft when they enter
 
 // ===========================================================================
 
 // Business Location Types
-const VRR_BIZ_LOC_NONE = 0;                       // None
-const VRR_BIZ_LOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
-const VRR_BIZ_LOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
-const VRR_BIZ_LOC_FUEL = 3;                       // Fuel pump
-const VRR_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
-const VRR_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
-const VRR_BIZ_LOC_ATM = 6;						  // ATM
-const VRR_BIZ_LOC_PAYPHONE = 7;				      // Payphone
+const AGRP_BIZ_LOC_NONE = 0;                       // None
+const AGRP_BIZ_LOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
+const AGRP_BIZ_LOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
+const AGRP_BIZ_LOC_FUEL = 3;                       // Fuel pump
+const AGRP_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
+const AGRP_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
+const AGRP_BIZ_LOC_ATM = 6;						  // ATM
+const AGRP_BIZ_LOC_PAYPHONE = 7;				      // Payphone
 
 // ===========================================================================
 
 // Business Owner Types
-const VRR_BIZ_OWNER_NONE = 0;                     // Not owned
-const VRR_BIZ_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const VRR_BIZ_OWNER_JOB = 2;                      // Owned by a job
-const VRR_BIZ_OWNER_CLAN = 3;                     // Owned by a clan
-const VRR_BIZ_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const VRR_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
+const AGRP_BIZ_OWNER_NONE = 0;                     // Not owned
+const AGRP_BIZ_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const AGRP_BIZ_OWNER_JOB = 2;                      // Owned by a job
+const AGRP_BIZ_OWNER_CLAN = 3;                     // Owned by a clan
+const AGRP_BIZ_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const AGRP_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
 
 // ===========================================================================
 
@@ -48,7 +48,7 @@ class BusinessData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.ownerType = VRR_BIZ_OWNER_NONE;
+		this.ownerType = AGRP_BIZ_OWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.locked = false;
@@ -56,7 +56,7 @@ class BusinessData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
-		this.type = VRR_BIZ_TYPE_NONE;
+		this.type = AGRP_BIZ_TYPE_NONE;
 
 		this.floorItemCache = [];
 		this.storageItemCache = [];
@@ -87,7 +87,7 @@ class BusinessData {
 		this.streamingRadioStation = 0;
 		//this.streamingRadioStationIndex = -1;
 
-		this.labelHelpType = VRR_PROPLABEL_INFO_NONE;
+		this.labelHelpType = AGRP_PROPLABEL_INFO_NONE;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_id"]);
@@ -495,7 +495,7 @@ function setBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_PLAYER;
+	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PLAYER;
 	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(newBusinessOwner).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -537,7 +537,7 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_JOB;
+	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -570,7 +570,7 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getBusinessData(business).ownerType != VRR_VEHOWNER_PLAYER) {
+	if (getBusinessData(business).ownerType != AGRP_VEHOWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
@@ -581,9 +581,9 @@ function setBusinessClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_BIZGIVETOCLAN;
+	getPlayerData(client).promptType = AGRP_PROMPT_BIZGIVETOCLAN;
 
-	//getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_CLAN;
+	//getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_CLAN;
 	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
 	//getBusinessData(businessId).needsSaved = true;
 }
@@ -614,7 +614,7 @@ function setBusinessRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType == VRR_VEHOWNER_CLAN) {
+	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
 		let clanId = getClanIdFromDatabaseId(getBusinessData(businessId).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
@@ -623,7 +623,7 @@ function setBusinessRankCommand(command, params, client) {
 		}
 		getBusinessData(businessId).rank = getClanRankData(clanId, rankId).databaseId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
-	} else if (getBusinessData(businessId).ownerType == VRR_VEHOWNER_JOB) {
+	} else if (getBusinessData(businessId).ownerType == AGRP_VEHOWNER_JOB) {
 		getBusinessData(businessId).rank = rankId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getBusinessData(businessId).ownerId)).name} {MAINCOLOUR}job!`);
 	}
@@ -720,7 +720,7 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_JOB;
+	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -750,7 +750,7 @@ function setBusinessPublicCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_PUBLIC;
+	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PUBLIC;
 	getBusinessData(businessId).ownerId = 0;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -780,7 +780,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = VRR_BIZ_OWNER_NONE;
+	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_NONE;
 	getBusinessData(businessId).ownerId = -1;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -872,7 +872,7 @@ function setBusinessPaintBallCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).entranceType = VRR_BIZ_ENTRANCE_TYPE_PAINTBALL;
+	getBusinessData(businessId).entranceType = AGRP_BIZ_ENTRANCE_TYPE_PAINTBALL;
 	getBusinessData(businessId).needsSaved = true;
 	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
 }
@@ -904,24 +904,24 @@ function getBusinessInfoCommand(command, params, client) {
 
 	let ownerName = "Unknown";
 	switch (businessData.ownerType) {
-		case VRR_BIZ_OWNER_CLAN:
+		case AGRP_BIZ_OWNER_CLAN:
 			ownerName = getClanData(businessData.ownerId).name;
 			break;
 
-		case VRR_BIZ_OWNER_JOB:
+		case AGRP_BIZ_OWNER_JOB:
 			ownerName = getJobData(businessData.ownerId).name;
 			break;
 
-		case VRR_BIZ_OWNER_PLAYER:
+		case AGRP_BIZ_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(businessData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case VRR_BIZ_OWNER_PUBLIC:
+		case AGRP_BIZ_OWNER_PUBLIC:
 			ownerName = "Public";
 			break;
 
-		case VRR_BIZ_OWNER_NONE:
+		case AGRP_BIZ_OWNER_NONE:
 			//submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
 			ownerName = "None";
 			break;
@@ -1274,7 +1274,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultBusinessItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, VRR_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
 			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultBusinessItems[getGame()][typeParam][i][2];
 		}
 	}
@@ -1303,7 +1303,7 @@ function setBusinessEntranceLabelToDealershipCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).labelHelpType == VRR_PROPLABEL_INFO_ENTERVEHICLE;
+	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
 	updateBusinessPickupLabelData(businessId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
 }
@@ -1545,7 +1545,7 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	let orderTotalCost = pricePerItem * amount;
 
-	//getPlayerData(client).promptType = VRR_PROMPT_BIZORDER;
+	//getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 	getPlayerData(client).businessOrderAmount = amount;
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
@@ -1554,7 +1554,7 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${makeLargeNumberReadable(pricePerItem)} each will cost a total of $${makeLargeNumberReadable(orderTotalCost)}`, "Business Order Cost");
-	getPlayerData(client).promptType = VRR_PROMPT_BIZORDER;
+	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
@@ -1641,7 +1641,7 @@ function buyBusinessCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = VRR_PROMPT_BIZBUY;
+	getPlayerData(client).promptType = AGRP_PROMPT_BIZBUY;
 }
 
 // ===========================================================================
@@ -2341,17 +2341,17 @@ function exitBusiness(client) {
  */
 function getBusinessOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case VRR_BIZ_OWNER_CLAN:
+		case AGRP_BIZ_OWNER_CLAN:
 			return "clan";
 
-		case VRR_BIZ_OWNER_JOB:
+		case AGRP_BIZ_OWNER_JOB:
 			return "job";
 
-		case VRR_BIZ_OWNER_PLAYER:
+		case AGRP_BIZ_OWNER_PLAYER:
 			return "player";
 
-		case VRR_BIZ_OWNER_NONE:
-		case VRR_BIZ_OWNER_PUBLIC:
+		case AGRP_BIZ_OWNER_NONE:
+		case AGRP_BIZ_OWNER_PUBLIC:
 			return "not owned";
 
 		default:
@@ -2537,7 +2537,7 @@ function setBusinessDataIndexes() {
 		//}
 
 		for (let j in getServerData().businesses[i].locations) {
-			if (getServerData().businesses[i].locations[j].type == VRR_BIZ_LOC_ATM) {
+			if (getServerData().businesses[i].locations[j].type == AGRP_BIZ_LOC_ATM) {
 				getServerData().atmLocationCache.push([i, j, getServerData().businesses[i].locations[j].position]);
 			}
 		}
@@ -2553,7 +2553,7 @@ function addToBusinessInventory(businessId, itemType, amount, buyPrice) {
 	tempItemData.buyPrice = buyPrice;
 	tempItemData.itemType = getItemTypeData(itemType).databaseId;
 	tempItemData.ownerId = getBusinessData(business).databaseId;
-	tempItemData.ownerType = VRR_ITEMOWNER_BIZ;
+	tempItemData.ownerType = AGRP_ITEMOWNER_BIZ;
 	tempItemData.ownerIndex = businessId;
 	tempItemData.itemTypeIndex = itemType;
 	saveItemToDatabase(tempItemData);
@@ -2645,7 +2645,7 @@ function buyFromBusinessCommand(command, params, client) {
 	}
 
 	takePlayerCash(client, totalCost);
-	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, VRR_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
+	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
 	cachePlayerHotBarItems(client);
 	getBusinessData(businessId).till = getBusinessData(businessId).till + totalCost;
 
@@ -2655,7 +2655,7 @@ function buyFromBusinessCommand(command, params, client) {
 	}
 
 	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
-	if (useType == VRR_ITEM_USE_TYPE_WEAPON || VRR_ITEM_USE_TYPE_TAZER || useType == VRR_ITEM_USE_TYPE_AMMO_CLIP) {
+	if (useType == AGRP_ITEM_USE_TYPE_WEAPON || AGRP_ITEM_USE_TYPE_TAZER || useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
 		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
 			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
 			return false;
@@ -2754,7 +2754,7 @@ function storeItemInBusinessStorageCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).ownerType = VRR_ITEM_OWNER_BIZSTORAGE;
+	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZSTORAGE;
 	getBusinessData(businessId).storageItemCache[firstSlot] = getBusinessData(businessId).floorItemCache[itemSlot - 1];
 	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} to the business storage in slot ${firstSlot}`);
@@ -2798,7 +2798,7 @@ function stockItemOnBusinessFloorCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).storageItemCache[itemSlot - 1]).ownerType = VRR_ITEM_OWNER_BIZFLOOR;
+	getItemData(getBusinessData(businessId).storageItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
 	getBusinessData(businessId).floorItemCache[firstSlot] = getBusinessData(businessId).storageItemCache[itemSlot - 1];
 	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} of the business storage to the business floor slot ${firstSlot}`);
@@ -2838,14 +2838,14 @@ function cacheBusinessItems(businessId) {
 
 	//let businessData = getBusinessData(businessId);
 	//logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
-	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == VRR_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
+	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
 
 	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == VRR_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
 			getBusinessData(businessId).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == VRR_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+		} else if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
 			getBusinessData(businessId).storageItemCache.push(i);
 		}
 	}
@@ -2869,41 +2869,41 @@ function updateBusinessPickupLabelData(businessId) {
 	}
 
 	if (getBusinessData(businessId).exitPickup != null) {
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.type", VRR_PICKUP_BUSINESS_EXIT, false);
+		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_EXIT, false);
 		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.label.type", VRR_LABEL_EXIT, true);
+		setEntityData(getBusinessData(businessId).exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
 	}
 
 	if (getBusinessData(businessId).entrancePickup != null) {
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.type", VRR_PICKUP_BUSINESS_ENTRANCE, false);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_ENTRANCE, false);
 		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.type", VRR_LABEL_BUSINESS, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.type", AGRP_LABEL_BUSINESS, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.locked", getBusinessData(businessId).locked, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_NONE, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_NONE, true);
 
 		switch (getBusinessData(businessId).labelHelpType) {
-			case VRR_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTERVEHICLE, true);
+			case AGRP_PROPLABEL_INFO_ENTERVEHICLE: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTERVEHICLE, true);
 				break;
 			}
 
-			case VRR_PROPLABEL_INFO_ENTER: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTER, true);
+			case AGRP_PROPLABEL_INFO_ENTER: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
 				break;
 			}
 
-			case VRR_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_REPAIR, true);
+			case AGRP_PROPLABEL_INFO_REPAIR: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_REPAIR, true);
 				break;
 			}
 
 			default: {
 				if (getBusinessData(businessId).hasInterior) {
-					setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_ENTER, true);
+					setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
 				} else {
 					if (doesBusinessHaveAnyItemsToBuy(businessId)) {
-						setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", VRR_PROPLABEL_INFO_BUY, true);
+						setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUY, true);
 					} else {
 						removeEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help");
 					}
@@ -2990,7 +2990,7 @@ function doesBusinessHaveAnyItemsToBuy(businessId) {
 
 //function clearPlayerBusinessGameScripts(client, businessId) {
 //	for(let i in getBusinessData(businessId).gameScripts) {
-//		sendPlayerGameScriptState(client, VRR_GAMESCRIPT_DENY);
+//		sendPlayerGameScriptState(client, AGRP_GAMESCRIPT_DENY);
 //	}
 //}
 
@@ -3012,11 +3012,11 @@ function canPlayerWithdrawFromBusinessTill(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3032,11 +3032,11 @@ function canPlayerSetBusinessInteriorLights(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3052,11 +3052,11 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3072,13 +3072,13 @@ function canPlayerManageBusiness(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_PLAYER) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER) {
 		if (getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == VRR_BIZ_OWNER_CLAN) {
+	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN) {
 		if (getBusinessData(businessId).ownerId == getPlayerClan(client)) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 				return true;

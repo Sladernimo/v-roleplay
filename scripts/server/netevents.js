@@ -666,7 +666,7 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager is ${getPlayerDisplayForConsole(damagerEntity)}`);
 
 	switch (getPlayerData(damagerEntity).weaponDamageEvent) {
-		case VRR_WEAPON_DAMAGE_EVENT_TAZER:
+		case AGRP_WEAPON_DAMAGE_EVENT_TAZER:
 			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} is using a tazer`);
 			if (!isPlayerTazed(client) && !isPlayerHandCuffed(client) && !isPlayerInAnyVehicle(client)) {
 				logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)} was not previously tazed, binded, or in a vehicle. Taze successful`);
@@ -675,13 +675,13 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 			}
 			break;
 
-		case VRR_WEAPON_DAMAGE_EVENT_EXTINGUISH:
+		case AGRP_WEAPON_DAMAGE_EVENT_EXTINGUISH:
 			break;
 
-		case VRR_WEAPON_DAMAGE_EVENT_MACE:
+		case AGRP_WEAPON_DAMAGE_EVENT_MACE:
 			break;
 
-		case VRR_WEAPON_DAMAGE_EVENT_NORMAL:
+		case AGRP_WEAPON_DAMAGE_EVENT_NORMAL:
 			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
 			setPlayerHealth(client, getPlayerHealth(client) - (healthLoss * getPlayerData(client).incomingDamageMultiplier));
 			break;
@@ -737,7 +737,7 @@ function forcePlayerIntoSkinSelect(client) {
 		getPlayerData(client).returnToHeading = getPlayerHeading(client);
 		getPlayerData(client).returnToInterior = getPlayerInterior(client);
 		getPlayerData(client).returnToDimension = getPlayerDimension(client);
-		getPlayerData(client).returnToType = VRR_RETURNTO_TYPE_SKINSELECT;
+		getPlayerData(client).returnToType = AGRP_RETURNTO_TYPE_SKINSELECT;
 
 		setPlayerPosition(client, getGameConfig().skinChangePosition[getGame()][0]);
 		setPlayerHeading(client, getGameConfig().skinChangePosition[getGame()][1]);
@@ -888,7 +888,7 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 		messagePlayerAlert(client, "You canceled the skin change.");
 		restorePlayerCamera(client);
 
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_SKINSELECT) {
 			setPlayerPosition(client, getPlayerData(client).returnToPosition);
 			setPlayerHeading(client, getPlayerData(client).returnToHeading);
 			setPlayerInterior(client, getPlayerData(client).returnToInterior);
@@ -909,7 +909,7 @@ function playerFinishedSkinSelection(client, allowedSkinIndex) {
 			setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 		}
 
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_SKINSELECT) {
 			setPlayerPosition(client, getPlayerData(client).returnToPosition);
 			setPlayerHeading(client, getPlayerData(client).returnToHeading);
 			setPlayerInterior(client, getPlayerData(client).returnToInterior);

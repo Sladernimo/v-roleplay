@@ -8,35 +8,35 @@
 // ===========================================================================
 
 // Account Contact Types
-const VRR_CONTACT_NONE = 0;
-const VRR_CONTACT_NEUTRAL = 1;                   // Contact is neutral. Used for general contacts with no special additional features
-const VRR_CONTACT_FRIEND = 2;                    // Contact is a friend. Shows when they're online.
-const VRR_CONTACT_BLOCKED = 3;                   // Contact is blocked. Prevents all communication to/from them except for RP
+const AGRP_CONTACT_NONE = 0;
+const AGRP_CONTACT_NEUTRAL = 1;                   // Contact is neutral. Used for general contacts with no special additional features
+const AGRP_CONTACT_FRIEND = 2;                    // Contact is a friend. Shows when they're online.
+const AGRP_CONTACT_BLOCKED = 3;                   // Contact is blocked. Prevents all communication to/from them except for RP
 
 // ===========================================================================
 
 // Account Authentication Methods
-const VRR_ACCT_AUTHMETHOD_NONE = 0;              // None
-const VRR_ACCT_AUTHMETHOD_EMAIL = 1;             // Email
-const VRR_ACCT_AUTHMETHOD_PHONENUM = 2;          // Phone number
-const VRR_ACCT_AUTHMETHOD_2FA = 3;               // Two factor authentication app (authy, google authenticator, etc)
-const VRR_ACCT_AUTHMETHOD_PEBBLE = 4;            // Pebble watch (this one's for Vortrex but anybody with a Pebble can use)
-const VRR_ACCT_AUTHMETHOD_PHONEAPP = 5;          // The Android/iOS companion app (will initially be a web based thing until I can get the apps created)
+const AGRP_ACCT_AUTHMETHOD_NONE = 0;              // None
+const AGRP_ACCT_AUTHMETHOD_EMAIL = 1;             // Email
+const AGRP_ACCT_AUTHMETHOD_PHONENUM = 2;          // Phone number
+const AGRP_ACCT_AUTHMETHOD_2FA = 3;               // Two factor authentication app (authy, google authenticator, etc)
+const AGRP_ACCT_AUTHMETHOD_PEBBLE = 4;            // Pebble watch (this one's for Vortrex but anybody with a Pebble can use)
+const AGRP_ACCT_AUTHMETHOD_PHONEAPP = 5;          // The Android/iOS companion app (will initially be a web based thing until I can get the apps created)
 
 // ===========================================================================
 
 // Two-Factor Authentication States
-const VRR_2FA_STATE_NONE = 0;                    // None
-const VRR_2FA_STATE_CODEINPUT = 1;               // Waiting on player to enter code to play
-const VRR_2FA_STATE_SETUP_CODETOAPP = 2;         // Providing player with a code to put in their auth app
-const VRR_2FA_STATE_SETUP_CODEFROMAPP = 3;       // Waiting on player to enter code from auth app to set up
+const AGRP_2FA_STATE_NONE = 0;                    // None
+const AGRP_2FA_STATE_CODEINPUT = 1;               // Waiting on player to enter code to play
+const AGRP_2FA_STATE_SETUP_CODETOAPP = 2;         // Providing player with a code to put in their auth app
+const AGRP_2FA_STATE_SETUP_CODEFROMAPP = 3;       // Waiting on player to enter code from auth app to set up
 
 // ===========================================================================
 
 // Reset Password States
-const VRR_RESETPASS_STATE_NONE = 0;             // None
-const VRR_RESETPASS_STATE_CODEINPUT = 1;        // Waiting on player to enter code sent via email
-const VRR_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter new password
+const AGRP_RESETPASS_STATE_NONE = 0;             // None
+const AGRP_RESETPASS_STATE_CODEINPUT = 1;        // Waiting on player to enter code sent via email
+const AGRP_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter new password
 
 // ===========================================================================
 
@@ -811,7 +811,7 @@ function loginSuccess(client) {
 	if (getPlayerData(client).subAccounts.length == 0) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-			getPlayerData(client).promptType = VRR_PROMPT_CREATEFIRSTCHAR;
+			getPlayerData(client).promptType = AGRP_PROMPT_CREATEFIRSTCHAR;
 			logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the no characters prompt GUI`);
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
@@ -1209,7 +1209,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerRegistrationSuccessGUI(client);
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersMessage"), getLocaleString(client, "NoCharactersWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-			getPlayerData(client).promptType = VRR_PROMPT_CREATEFIRSTCHAR;
+			getPlayerData(client).promptType = AGRP_PROMPT_CREATEFIRSTCHAR;
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage"), `{ALTCOLOUR}/newchar{MAINCOLOUR}`);
 		}
@@ -1224,7 +1224,7 @@ function checkAccountResetPasswordRequest(client, inputText) {
 	}
 
 	switch (getPlayerData(client).passwordResetState) {
-		case VRR_RESETPASS_STATE_EMAILCONFIRM: {
+		case AGRP_RESETPASS_STATE_EMAILCONFIRM: {
 			if (toLowerCase(getPlayerData(client).accountData.emailAddress) != toLowerCase(inputText)) {
 				logToConsole(LOG_INFO | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (email not correct)`);
 				showPlayerErrorGUI(client, getLocaleString(client, "GUIErrorResetPasswordFailedInvalidEmail"), getLocaleString(client, "GUIErrorTitle"), getLocaleString(client, "GUIOkButton"));
@@ -1232,7 +1232,7 @@ function checkAccountResetPasswordRequest(client, inputText) {
 			}
 
 			let passwordResetCode = toUpperCase(generateEmailVerificationCode());
-			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_CODEINPUT;
+			getPlayerData(client).passwordResetState = AGRP_RESETPASS_STATE_CODEINPUT;
 			getPlayerData(client).passwordResetCode = passwordResetCode;
 			showPlayerResetPasswordCodeInputGUI(client);
 			sendPasswordResetEmail(client, passwordResetCode);
@@ -1240,11 +1240,11 @@ function checkAccountResetPasswordRequest(client, inputText) {
 			break;
 		}
 
-		case VRR_RESETPASS_STATE_CODEINPUT: {
+		case AGRP_RESETPASS_STATE_CODEINPUT: {
 			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} submitted code for password reset (${inputText}) ...`);
 			if (inputText != "") {
 				if (getPlayerData(client).passwordResetCode == toUpperCase(inputText)) {
-					getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_SETPASS;
+					getPlayerData(client).passwordResetState = AGRP_RESETPASS_STATE_SETPASS;
 					showPlayerChangePasswordGUI(client);
 					logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} entered the correct reset password verification code. Awaiting new password input ...`);
 				} else {
@@ -1261,10 +1261,10 @@ function checkAccountResetPasswordRequest(client, inputText) {
 			break;
 		}
 
-		case VRR_RESETPASS_STATE_NONE: {
+		case AGRP_RESETPASS_STATE_NONE: {
 			logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} requested a password reset. Awaiting email input ...`);
 			showPlayerResetPasswordEmailInputGUI(client);
-			getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_EMAILCONFIRM;
+			getPlayerData(client).passwordResetState = AGRP_RESETPASS_STATE_EMAILCONFIRM;
 			break;
 		}
 	}
@@ -1276,8 +1276,8 @@ function checkAccountResetPasswordRequest(client, inputText) {
 
 function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 	if (!isPlayerLoggedIn(client)) {
-		if (getPlayerData(client).passwordResetState != VRR_RESETPASS_STATE_SETPASS) {
-			//getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
+		if (getPlayerData(client).passwordResetState != AGRP_RESETPASS_STATE_SETPASS) {
+			//getPlayerData(client).passwordResetState = AGRP_RESETPASS_STATE_NONE;
 			//disconnectPlayer(client);
 			logToConsole(LOG_DEBUG | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to change their password (not logged in or not using reset password)`);
 			return false;
@@ -1313,8 +1313,8 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 
 	saveAccountToDatabase(getPlayerData(client).accountData);
 
-	if (getPlayerData(client).passwordResetState == VRR_RESETPASS_STATE_SETPASS) {
-		getPlayerData(client).passwordResetState = VRR_RESETPASS_STATE_NONE;
+	if (getPlayerData(client).passwordResetState == AGRP_RESETPASS_STATE_SETPASS) {
+		getPlayerData(client).passwordResetState = AGRP_RESETPASS_STATE_NONE;
 	}
 
 	messagePlayerSuccess(client, getLocaleString(client, "PasswordChanged"));
@@ -1355,7 +1355,7 @@ function savePlayerToDatabase(client) {
 		//let subAccountData = getPlayerCurrentSubAccount(client);
 
 		if (getPlayerPed(client) != null) {
-			if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType != VRR_RETURNTO_TYPE_ADMINGET) {
+			if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType != AGRP_RETURNTO_TYPE_ADMINGET) {
 				getPlayerCurrentSubAccount(client).spawnPosition = getPlayerData(client).returnToPosition;
 				getPlayerCurrentSubAccount(client).spawnHeading = getPlayerData(client).returnToHeading.z;
 				getPlayerCurrentSubAccount(client).interior = getPlayerData(client).returnToInterior;

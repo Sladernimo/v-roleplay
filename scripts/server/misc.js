@@ -8,43 +8,43 @@
 // ===========================================================================
 
 // Pickup Types
-const VRR_PICKUP_NONE = 0;
-const VRR_PICKUP_JOB = 1;
-const VRR_PICKUP_BUSINESS_ENTRANCE = 2;
-const VRR_PICKUP_BUSINESS_EXIT = 3;
-const VRR_PICKUP_HOUSE_ENTRANCE = 4;
-const VRR_PICKUP_HOUSE_EXIT = 5;
-const VRR_PICKUP_EXIT = 6;
+const AGRP_PICKUP_NONE = 0;
+const AGRP_PICKUP_JOB = 1;
+const AGRP_PICKUP_BUSINESS_ENTRANCE = 2;
+const AGRP_PICKUP_BUSINESS_EXIT = 3;
+const AGRP_PICKUP_HOUSE_ENTRANCE = 4;
+const AGRP_PICKUP_HOUSE_EXIT = 5;
+const AGRP_PICKUP_EXIT = 6;
 
 // ===========================================================================
 
 // Blip Owner Types
-const VRR_BLIP_NONE = 0;
-const VRR_BLIP_JOB = 1;
-const VRR_BLIP_BUSINESS_ENTRANCE = 2;
-const VRR_BLIP_BUSINESS_EXIT = 3;
-const VRR_BLIP_HOUSE_ENTRANCE = 4;
-const VRR_BLIP_HOUSE_EXIT = 5;
-const VRR_BLIP_EXIT = 6;
+const AGRP_BLIP_NONE = 0;
+const AGRP_BLIP_JOB = 1;
+const AGRP_BLIP_BUSINESS_ENTRANCE = 2;
+const AGRP_BLIP_BUSINESS_EXIT = 3;
+const AGRP_BLIP_HOUSE_ENTRANCE = 4;
+const AGRP_BLIP_HOUSE_EXIT = 5;
+const AGRP_BLIP_EXIT = 6;
 
 // ===========================================================================
 
 // Ped States
-const VRR_PEDSTATE_NONE = 2;                     // None
-const VRR_PEDSTATE_READY = 1;                    // Ready
-const VRR_PEDSTATE_DRIVER = 2;                   // Driving a vehicle
-const VRR_PEDSTATE_PASSENGER = 3;                // In a vehicle as passenger
-const VRR_PEDSTATE_DEAD = 4;                     // Dead
-const VRR_PEDSTATE_ENTERINGPROPERTY = 5;         // Entering a property
-const VRR_PEDSTATE_EXITINGPROPERTY = 6;          // Exiting a property
-const VRR_PEDSTATE_ENTERINGVEHICLE = 7;          // Entering a vehicle
-const VRR_PEDSTATE_EXITINGVEHICLE = 8;           // Exiting a vehicle
-const VRR_PEDSTATE_BINDED = 9;                   // Binded by rope or handcuffs
-const VRR_PEDSTATE_TAZED = 10;                   // Under incapacitating effect of tazer
-const VRR_PEDSTATE_INTRUNK = 11;                 // In vehicle trunk
-const VRR_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
-const VRR_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
-const VRR_PEDSTATE_SPAWNING = 14;                // Spawning
+const AGRP_PEDSTATE_NONE = 2;                     // None
+const AGRP_PEDSTATE_READY = 1;                    // Ready
+const AGRP_PEDSTATE_DRIVER = 2;                   // Driving a vehicle
+const AGRP_PEDSTATE_PASSENGER = 3;                // In a vehicle as passenger
+const AGRP_PEDSTATE_DEAD = 4;                     // Dead
+const AGRP_PEDSTATE_ENTERINGPROPERTY = 5;         // Entering a property
+const AGRP_PEDSTATE_EXITINGPROPERTY = 6;          // Exiting a property
+const AGRP_PEDSTATE_ENTERINGVEHICLE = 7;          // Entering a vehicle
+const AGRP_PEDSTATE_EXITINGVEHICLE = 8;           // Exiting a vehicle
+const AGRP_PEDSTATE_BINDED = 9;                   // Binded by rope or handcuffs
+const AGRP_PEDSTATE_TAZED = 10;                   // Under incapacitating effect of tazer
+const AGRP_PEDSTATE_INTRUNK = 11;                 // In vehicle trunk
+const AGRP_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
+const AGRP_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
+const AGRP_PEDSTATE_SPAWNING = 14;                // Spawning
 
 // ===========================================================================
 
@@ -74,7 +74,7 @@ function toggleMouseCursorCommand(command, params, client) {
 // ===========================================================================
 
 function toggleMouseCameraCommand(command, params, client) {
-	if (getGame() != VRR_GAME_GTA_VC) {
+	if (getGame() != AGRP_GAME_GTA_VC) {
 		sendPlayerMouseCameraToggle(client);
 	}
 	return true;
@@ -172,25 +172,25 @@ function enterExitPropertyCommand(command, params, client) {
 		let ownerId = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.id");
 
 		switch (ownerType) {
-			case VRR_PICKUP_BUSINESS_ENTRANCE:
+			case AGRP_PICKUP_BUSINESS_ENTRANCE:
 				isBusiness = true;
 				isEntrance = true;
 				closestProperty = getServerData().businesses[ownerId];
 				break;
 
-			case VRR_PICKUP_BUSINESS_EXIT:
+			case AGRP_PICKUP_BUSINESS_EXIT:
 				isBusiness = true;
 				isEntrance = false;
 				closestProperty = getServerData().businesses[ownerId];
 				break;
 
-			case VRR_PICKUP_HOUSE_ENTRANCE:
+			case AGRP_PICKUP_HOUSE_ENTRANCE:
 				isBusiness = false;
 				isEntrance = true;
 				closestProperty = getServerData().houses[ownerId];
 				break;
 
-			case VRR_PICKUP_HOUSE_EXIT:
+			case AGRP_PICKUP_HOUSE_EXIT:
 				isBusiness = false;
 				isEntrance = false;
 				closestProperty = getServerData().houses[ownerId];
@@ -248,7 +248,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			clearPlayerStateToEnterExitProperty(client);
-			getPlayerData(client).pedState = VRR_PEDSTATE_ENTERINGPROPERTY;
+			getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGPROPERTY;
 			meActionToNearbyPlayers(client, getLocaleString(client, "EntersProperty", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 
 			if (isFadeCameraSupported()) {
@@ -272,7 +272,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}, 1100);
 
 			if (isBusiness) {
-				if (closestProperty.entranceType == VRR_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+				if (closestProperty.entranceType == AGRP_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
 					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
 					startPaintBall(client);
 				}
@@ -292,7 +292,7 @@ function enterExitPropertyCommand(command, params, client) {
 				meActionToNearbyPlayers(client, getLocaleString(client, "EnterExitPropertyDoorLocked", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 				return false;
 			}
-			getPlayerData(client).pedState = VRR_PEDSTATE_EXITINGPROPERTY;
+			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
 			clearPlayerStateToEnterExitProperty(client)
 			meActionToNearbyPlayers(client, getLocaleString(client, "ExitsProperty", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 
@@ -317,7 +317,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}, 1100);
 
 			if (isBusiness) {
-				if (closestProperty.entranceType == VRR_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+				if (closestProperty.entranceType == AGRP_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
 					messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
 					stopPaintBall(client);
 				}
@@ -515,7 +515,7 @@ function stuckPlayerCommand(command, params, client) {
 	messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
 
 	if (getGameConfig().skinChangePosition[getGame()].length > 0) {
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_SKINSELECT) {
 			messagePlayerAlert(client, "You canceled the skin change.");
 			restorePlayerCamera(client);
 
@@ -529,11 +529,11 @@ function stuckPlayerCommand(command, params, client) {
 			getPlayerData(client).returnToInterior = null;
 			getPlayerData(client).returnToDimension = null;
 
-			getPlayerData(client).returnToType = VRR_RETURNTO_TYPE_NONE;
+			getPlayerData(client).returnToType = AGRP_RETURNTO_TYPE_NONE;
 		}
 	}
 
-	//if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == VRR_RETURNTO_TYPE_ADMINGET) {
+	//if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_ADMINGET) {
 	//    messagePlayerError(client, `You were teleported by an admin and can't use the stuck command`);
 	//    return false;
 	//}

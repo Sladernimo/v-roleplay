@@ -8,26 +8,26 @@
 // ===========================================================================
 
 // Job Types
-const VRR_JOB_NONE = 0;
-const VRR_JOB_POLICE = 1;
-const VRR_JOB_MEDICAL = 2;
-const VRR_JOB_FIRE = 3;
-const VRR_JOB_BUS = 4;
-const VRR_JOB_TAXI = 5;
-const VRR_JOB_GARBAGE = 6;
-const VRR_JOB_WEAPON = 7;
-const VRR_JOB_DRUG = 8;
-const VRR_JOB_PIZZA = 9;
-const VRR_JOB_GENERIC = 10;
+const AGRP_JOB_NONE = 0;
+const AGRP_JOB_POLICE = 1;
+const AGRP_JOB_MEDICAL = 2;
+const AGRP_JOB_FIRE = 3;
+const AGRP_JOB_BUS = 4;
+const AGRP_JOB_TAXI = 5;
+const AGRP_JOB_GARBAGE = 6;
+const AGRP_JOB_WEAPON = 7;
+const AGRP_JOB_DRUG = 8;
+const AGRP_JOB_PIZZA = 9;
+const AGRP_JOB_GENERIC = 10;
 
 // ===========================================================================
 
 // Job Route States
-const VRR_JOBROUTESTATE_NONE = 0;                // None
-const VRR_JOBROUTESTATE_INPROGRESS = 1;          // Route is in progress. Player is in between stops but not at the last one.
-const VRR_JOBROUTESTATE_LASTSTOP = 2;            // Player is heading to the last stop on the route
-const VRR_JOBROUTESTATE_PAUSED = 3;              // Route is paused for some reason. For police, this could be player accepted callout and once finished, patrol route will resume
-const VRR_JOBROUTESTATE_ATSTOP = 4;              // For bus/trash stops that freeze player, this is the state when they're at one
+const AGRP_JOBROUTESTATE_NONE = 0;                // None
+const AGRP_JOBROUTESTATE_INPROGRESS = 1;          // Route is in progress. Player is in between stops but not at the last one.
+const AGRP_JOBROUTESTATE_LASTSTOP = 2;            // Player is heading to the last stop on the route
+const AGRP_JOBROUTESTATE_PAUSED = 3;              // Route is paused for some reason. For police, this could be player accepted callout and once finished, patrol route will resume
+const AGRP_JOBROUTESTATE_ATSTOP = 4;              // For bus/trash stops that freeze player, this is the state when they're at one
 
 // ===========================================================================
 
@@ -42,7 +42,7 @@ class JobData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
-		this.type = VRR_JOB_NONE;
+		this.type = AGRP_JOB_NONE;
 		this.name = "Unnamed";
 		this.enabled = true;
 		this.blipModel = -1
@@ -633,9 +633,9 @@ function createAllJobPickups() {
 			for (let j in getServerData().jobs[i].locations) {
 				pickupCount++;
 				getServerData().jobs[i].locations[j].pickup = game.createPickup(getServerData().jobs[i].pickupModel, getServerData().jobs[i].locations[j].position);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.type", VRR_PICKUP_JOB, false);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.type", AGRP_PICKUP_JOB, false);
 				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.id", j, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.type", VRR_LABEL_JOB, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.type", AGRP_LABEL_JOB, true);
 				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.name", getServerData().jobs[i].name, true);
 				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.jobType", getServerData().jobs[i].databaseId, true);
 				setElementOnAllDimensions(getServerData().jobs[i].locations[j].pickup, false);
@@ -662,7 +662,7 @@ function showJobInformationToPlayer(client, jobType) {
 	}
 
 	switch (jobType) {
-		case VRR_JOB_POLICE:
+		case AGRP_JOB_POLICE:
 			if (!canPlayerUsePoliceJob(client)) {
 				return false;
 			}
@@ -675,7 +675,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_MEDICAL:
+		case AGRP_JOB_MEDICAL:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Paramedics help people by healing them.");
 			messagePlayerInfo(client, "- Use /startwork at the hospital to work as a Paramedic.");
@@ -684,7 +684,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_FIRE:
+		case AGRP_JOB_FIRE:
 			if (!canClientUseFireJob(client)) {
 				return false;
 			}
@@ -696,7 +696,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_BUS:
+		case AGRP_JOB_BUS:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Bus Drivers transport people around the city on a route");
 			messagePlayerInfo(client, "- Use /startwork at the bus depot to work as a Bus Driver.");
@@ -705,7 +705,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_TAXI:
+		case AGRP_JOB_TAXI:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Taxi Drivers transport people around the city");
 			messagePlayerInfo(client, "- Use /startwork at the taxi depot to work as a Taxi Driver.");
@@ -715,7 +715,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_GARBAGE:
+		case AGRP_JOB_GARBAGE:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Garbage Collectors pick up the trash around the city.");
 			messagePlayerInfo(client, "- Use /startwork at the garbage depot to work as a Garbage Collector.");
@@ -726,10 +726,10 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case VRR_JOB_WEAPON:
+		case AGRP_JOB_WEAPON:
 			break;
 
-		case VRR_JOB_DRUG:
+		case AGRP_JOB_DRUG:
 			break;
 
 		default:
@@ -771,7 +771,7 @@ function takeJobCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).job > VRR_JOB_NONE) {
+	if (getPlayerCurrentSubAccount(client).job > AGRP_JOB_NONE) {
 		messagePlayerInfo(client, getLocaleString(client, "QuitJobToTakeAnother", "{ALTCOLOUR}/quitjob{MAINCOLOUR}"));
 		return false;
 	}
@@ -803,7 +803,7 @@ function startWorkingCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -815,7 +815,7 @@ function startWorkingCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == VRR_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
 			messagePlayerError(client, "You don't have a job!");
 			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
 			return false;
@@ -871,41 +871,41 @@ function startWorking(client) {
 	switchPlayerActiveHotBarSlot(client, -1);
 	getPlayerCurrentSubAccount(client).skin = getPlayerSkin(client);
 	storePlayerItemsInTempLocker(client);
-	getPlayerData(client).tempLockerType = VRR_TEMP_LOCKER_TYPE_JOB;
+	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_JOB;
 	messagePlayerInfo(client, "Your personal items have been stored in your locker while you work");
 
 	getPlayerCurrentSubAccount(client).isWorking = true;
 
 	let jobId = getPlayerCurrentSubAccount(client).job;
 	switch (getJobIndexFromDatabaseId(jobId)) {
-		case VRR_JOB_POLICE:
+		case AGRP_JOB_POLICE:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case VRR_JOB_MEDICAL:
+		case AGRP_JOB_MEDICAL:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case VRR_JOB_FIRE:
+		case AGRP_JOB_FIRE:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case VRR_JOB_BUS:
+		case AGRP_JOB_BUS:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Bus")));
 			break;
 
-		case VRR_JOB_TAXI:
+		case AGRP_JOB_TAXI:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Taxi")));
 			break;
 
-		case VRR_JOB_GARBAGE:
+		case AGRP_JOB_GARBAGE:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "GarbageTruck")));
 			break;
 
-		case VRR_JOB_WEAPON:
+		case AGRP_JOB_WEAPON:
 			break;
 
-		case VRR_JOB_DRUG:
+		case AGRP_JOB_DRUG:
 			break;
 
 		default:
@@ -944,10 +944,10 @@ function givePlayerJobEquipment(client, equipmentId) {
 
 	for (let i in getJobData(jobId).equipment[equipmentId].items) {
 		let value = getJobData(jobId).equipment[equipmentId].items[i].value
-		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == VRR_ITEM_USE_TYPE_WALKIETALKIE) {
+		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == AGRP_ITEM_USE_TYPE_WALKIETALKIE) {
 			value = getJobData(jobId).walkieTalkieFrequency;
 		}
-		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, VRR_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);
@@ -996,37 +996,37 @@ function stopWorking(client) {
 	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} has stopped working as a ${getJobData(jobId).name}`);
 
 	switch (getJobType(jobId)) {
-		case VRR_JOB_POLICE:
+		case AGRP_JOB_POLICE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the police station");
 			break;
 
-		case VRR_JOB_MEDICAL:
+		case AGRP_JOB_MEDICAL:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the hospital");
 			break;
 
-		case VRR_JOB_FIRE:
+		case AGRP_JOB_FIRE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the fire station");
 			break;
 
-		case VRR_JOB_BUS:
+		case AGRP_JOB_BUS:
 			messagePlayerInfo(client, "Your vehicle has been returned to the bus depot");
 			break;
 
-		case VRR_JOB_TAXI:
+		case AGRP_JOB_TAXI:
 			messagePlayerInfo(client, "Your vehicle has been returned to the taxi depot");
 			break;
 
-		case VRR_JOB_GARBAGE:
+		case AGRP_JOB_GARBAGE:
 			messagePlayerInfo(client, "Your vehicle has been returned to the city trash dump");
 			break;
 
-		case VRR_JOB_WEAPON:
+		case AGRP_JOB_WEAPON:
 			break;
 
-		case VRR_JOB_DRUG:
+		case AGRP_JOB_DRUG:
 			break;
 
-		case VRR_JOB_GENERIC:
+		case AGRP_JOB_GENERIC:
 			messagePlayerInfo(client, "Your vehicle has been respawned at your job location");
 			break;
 
@@ -1062,7 +1062,7 @@ function jobUniformCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -1074,7 +1074,7 @@ function jobUniformCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == VRR_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
 			return false;
@@ -1147,7 +1147,7 @@ function jobEquipmentCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != VRR_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -1159,7 +1159,7 @@ function jobEquipmentCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == VRR_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
 			return false;
@@ -2047,7 +2047,7 @@ function jobStopRouteCommand(command, params, client) {
 		return false;
 	}
 
-	//if(!doesPlayerHaveJobType(client, VRR_JOB_BUS) && !doesPlayerHaveJobType(client, VRR_JOB_GARBAGE)) {
+	//if(!doesPlayerHaveJobType(client, AGRP_JOB_BUS) && !doesPlayerHaveJobType(client, AGRP_JOB_GARBAGE)) {
 	//	messagePlayerError(client, "Your job doesn't use a route!");
 	//    return false;
 	//}
@@ -2752,9 +2752,9 @@ function createJobLocationPickup(jobId, locationId) {
 				tempJobData.locations[locationId].pickup = pickup;
 				setElementDimension(pickup, tempJobData.locations[locationId].dimension);
 				setElementOnAllDimensions(pickup, false);
-				setEntityData(pickup, "agrp.owner.type", VRR_PICKUP_JOB, false);
+				setEntityData(pickup, "agrp.owner.type", AGRP_PICKUP_JOB, false);
 				setEntityData(pickup, "agrp.owner.id", locationId, false);
-				setEntityData(pickup, "agrp.label.type", VRR_LABEL_JOB, true);
+				setEntityData(pickup, "agrp.label.type", AGRP_LABEL_JOB, true);
 				setEntityData(pickup, "agrp.label.name", tempJobData.name, true);
 				setEntityData(pickup, "agrp.label.jobType", tempJobData.databaseId, true);
 				addToWorld(pickup);

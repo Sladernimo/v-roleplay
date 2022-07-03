@@ -180,7 +180,7 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	}
 	return vehicle.heading = heading;
@@ -214,7 +214,7 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (getVehicleData(vehicle).ivNetworkId != -1) {
 			return getVehicleData(vehicle).ivNetworkId;
 		}
@@ -254,7 +254,7 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
@@ -635,15 +635,15 @@ function createGamePed(modelIndex, position, heading, toClient = null) {
 // ===========================================================================
 
 function getIsland(position) {
-	if (getGame() == VRR_GAME_GTA_III) {
+	if (getGame() == AGRP_GAME_GTA_III) {
 		if (position.x > 616) {
-			return VRR_ISLAND_PORTLAND;
+			return AGRP_ISLAND_PORTLAND;
 		} else if (position.x < -283) {
-			return VRR_ISLAND_SHORESIDEVALE;
+			return AGRP_ISLAND_SHORESIDEVALE;
 		}
-		return VRR_ISLAND_STAUNTON;
+		return AGRP_ISLAND_STAUNTON;
 	} else {
-		return VRR_ISLAND_NONE;
+		return AGRP_ISLAND_NONE;
 	}
 
 	//return game.getIslandFromPosition(position);
@@ -955,7 +955,7 @@ function setConstantsAsGlobalVariablesInDatabase() {
 	let entries = Object.entries(global);
 	for (let i in entries) {
 		logToConsole(LOG_DEBUG, `[VRR.Database] Checking entry ${i} (${entries[i]})`);
-		if (toString(i).slice(0, 3).indexOf("VRR_") != -1) {
+		if (toString(i).slice(0, 3).indexOf("AGRP_") != -1) {
 			logToConsole(LOG_DEBUG, `[VRR.Database] Adding ${i} (${entries[i]}) to database global variables`);
 		}
 	}
@@ -1078,7 +1078,7 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
@@ -1111,7 +1111,7 @@ function getVehicleFirstEmptySeat(vehicle) {
 // ===========================================================================
 
 function isVehicleTrain(vehicle) {
-	if (getGame() == VRR_GAME_GTA_III) {
+	if (getGame() == AGRP_GAME_GTA_III) {
 		if (vehicle.modelIndex == 124) {
 			return true;
 		}
@@ -1179,7 +1179,7 @@ function setElementStreamOutDistance(element, distance) {
 // ===========================================================================
 
 function getPlayerPed(client) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return getPlayerData(client).ped;
 	} else {
 		return client.player;

@@ -180,7 +180,7 @@ function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardS
 	logToConsole(LOG_DEBUG, `[VRR.Main] Updating render states (HUD: ${hudState}, Labels: ${labelState}, Bottom Text: ${smallGameMessageState}, Scoreboard: ${scoreboardState}, HotBar: ${hotBarState}, Item Action Delay: ${itemActionDelayState})`);
 	renderHUD = hudState;
 
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.displayCash(hudState);
 		natives.displayAmmo(hudState);
 		natives.displayHud(hudState);
@@ -326,7 +326,7 @@ function setLogLevel(level) {
 
 function setLocalPlayerInfiniteRun(state) {
 	if (localPlayer != null) {
-		if (getGame() == VRR_GAME_GTA_III || getGame() == VRR_GAME_GTA_VC) {
+		if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
 			game.SET_PLAYER_NEVER_GETS_TIRED(game.GET_PLAYER_ID(), boolToInt(state));
 		}
 	}
@@ -336,7 +336,7 @@ function setLocalPlayerInfiniteRun(state) {
 
 function setLocalPlayerSkin(skinId) {
 	logToConsole(LOG_INFO, `[VRR.Server] Setting locale player skin to ${skinId}`);
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.changePlayerModel(natives.getPlayerId(), skinId);
 	} else {
 		localPlayer.skin = skinId;
@@ -346,7 +346,7 @@ function setLocalPlayerSkin(skinId) {
 // ===========================================================================
 
 function makePedHoldObject(pedId, modelIndex) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.givePedAmbientObject(natives.getPedFromNetworkId(pedId), getGameConfig().objects[getGame()][modelIndex][1])
 	}
 }
@@ -360,7 +360,7 @@ function sendLocalPlayerNetworkIdToServer() {
 // ===========================================================================
 
 function setCutsceneInterior(cutsceneName) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (cutsceneName == "") {
 			natives.clearCutscene();
 		} else {
@@ -375,7 +375,7 @@ function setCutsceneInterior(cutsceneName) {
 // ===========================================================================
 
 function makeLocalPlayerPedSpeak(speechName) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		// if player is in vehicle, allow megaphone (if last arg is "1", it will cancel megaphone echo)
 		// Only speeches with _MEGAPHONE will have the bullhorn effect
 		// Afaik it only works on police voices anyway
@@ -384,7 +384,7 @@ function makeLocalPlayerPedSpeak(speechName) {
 		} else {
 			natives.sayAmbientSpeech(localPlayer, speechName, true, false, 1);
 		}
-	} else if (getGame() == VRR_GAME_GTA_III || getGame() == VRR_GAME_GTA_VC) {
+	} else if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
 		// Don't have a way to get the ped ref ID and can't use ped in arg
 		//game.SET_CHAR_SAY(game.GET_PLAYER_ID(), int);
 	}
@@ -393,7 +393,7 @@ function makeLocalPlayerPedSpeak(speechName) {
 // ===========================================================================
 
 function setLocalPlayerAsCopState(state) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.setPlayerAsCop(natives.getPlayerId(), state);
 		natives.setPoliceIgnorePlayer(natives.getPlayerId(), state);
 	}
@@ -402,7 +402,7 @@ function setLocalPlayerAsCopState(state) {
 // ===========================================================================
 
 function serverRequestedLocalPlayerSpawn(skinId, position) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.createPlayer(skinId, position);
 		//if(isCustomCameraSupported()) {
 		//	game.restoreCamera(true);

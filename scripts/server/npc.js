@@ -8,27 +8,27 @@
 // ===========================================================================
 
 // NPC Trigger Condition Match Types
-const VRR_NPC_COND_MATCH_NONE = 0;               // None (invalid)
-const VRR_NPC_COND_MATCH_EQ = 1;                 // Must be equal to
-const VRR_NPC_COND_MATCH_GT = 2;                 // Must be greater than
-const VRR_NPC_COND_MATCH_LT = 3;                 // Must be less than
-const VRR_NPC_COND_MATCH_GTEQ = 4;               // Must be greater than or equal to
-const VRR_NPC_COND_MATCH_LTEQ = 5;               // Must be less than or equal to
-const VRR_NPC_COND_MATCH_CONTAINS = 6;           // Must contain string (case insensitive)
-const VRR_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case sensitive)
-const VRR_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
-const VRR_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
+const AGRP_NPC_COND_MATCH_NONE = 0;               // None (invalid)
+const AGRP_NPC_COND_MATCH_EQ = 1;                 // Must be equal to
+const AGRP_NPC_COND_MATCH_GT = 2;                 // Must be greater than
+const AGRP_NPC_COND_MATCH_LT = 3;                 // Must be less than
+const AGRP_NPC_COND_MATCH_GTEQ = 4;               // Must be greater than or equal to
+const AGRP_NPC_COND_MATCH_LTEQ = 5;               // Must be less than or equal to
+const AGRP_NPC_COND_MATCH_CONTAINS = 6;           // Must contain string (case insensitive)
+const AGRP_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case sensitive)
+const AGRP_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
+const AGRP_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
 
 // ===========================================================================
 
 // NPC Owner Types
-const VRR_NPC_OWNER_NONE = 0;                     // Not owned
-const VRR_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const VRR_NPC_OWNER_JOB = 2;                      // Owned by a job
-const VRR_NPC_OWNER_CLAN = 3;                     // Owned by a clan
-const VRR_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const VRR_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
-const VRR_NPC_OWNER_BIZ = 6;                      // Owned by a business
+const AGRP_NPC_OWNER_NONE = 0;                     // Not owned
+const AGRP_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const AGRP_NPC_OWNER_JOB = 2;                      // Owned by a job
+const AGRP_NPC_OWNER_CLAN = 3;                     // Owned by a clan
+const AGRP_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const AGRP_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
+const AGRP_NPC_OWNER_BIZ = 6;                      // Owned by a business
 
 // ===========================================================================
 
@@ -55,14 +55,14 @@ class NPCData {
 		this.fightStyle = 0;
 		this.health = 100;
 		this.armour = 100;
-		this.currentAction = VRR_NPC_ACTION_NONE;
+		this.currentAction = AGRP_NPC_ACTION_NONE;
 		this.triggers = [];
 		this.typeFlags = 0;
 		this.heedThreats = false;
 		this.threats = 0;
 		this.invincible = false;
 		this.animationName = "";
-		this.ownerType = VRR_NPC_OWNER_NONE;
+		this.ownerType = AGRP_NPC_OWNER_NONE;
 		this.ownerId = 0;
 
 		this.bodyParts = {
@@ -617,28 +617,28 @@ function getNPCInfoCommand(command, params, client) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (npcData.ownerType) {
-		case VRR_NPC_OWNER_CLAN:
+		case AGRP_NPC_OWNER_CLAN:
 			ownerName = getClanData(getClanIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
-		case VRR_NPC_OWNER_JOB:
+		case AGRP_NPC_OWNER_JOB:
 			ownerName = getJobData(getJobIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "job";
 			break;
 
-		case VRR_NPC_OWNER_PLAYER:
+		case AGRP_NPC_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(npcData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			ownerType = "player";
 			break;
 
-		case VRR_NPC_OWNER_BIZ:
+		case AGRP_NPC_OWNER_BIZ:
 			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "business";
 			break;
 
-		case VRR_NPC_OWNER_PUBLIC:
+		case AGRP_NPC_OWNER_PUBLIC:
 			ownerName = "Nobody";
 			ownerType = "public";
 			break;

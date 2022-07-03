@@ -34,8 +34,8 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (getAnimationData(animationSlot)[3] == VRR_ANIMTYPE_SURRENDER) {
-		getPlayerData(client).pedState = VRR_PEDSTATE_HANDSUP;
+	if (getAnimationData(animationSlot)[3] == AGRP_ANIMTYPE_SURRENDER) {
+		getPlayerData(client).pedState = AGRP_PEDSTATE_HANDSUP;
 	}
 
 	if (isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
@@ -98,8 +98,8 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 
 	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
 	setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
-	//if(getAnimationData(animationSlot)[9] != VRR_ANIMMOVE_NONE) {
-	//	if(getGame() < VRR_GAME_GTA_SA) {
+	//if(getAnimationData(animationSlot)[9] != AGRP_ANIMMOVE_NONE) {
+	//	if(getGame() < AGRP_GAME_GTA_SA) {
 	//		setPlayerMouseCameraState(client, true);
 	//	}
 	//}

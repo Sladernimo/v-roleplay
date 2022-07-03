@@ -180,7 +180,7 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	}
 	return vehicle.heading = heading;
@@ -214,7 +214,7 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (getVehicleData(vehicle).ivNetworkId != -1) {
 			return getVehicleData(vehicle).ivNetworkId;
 		}
@@ -254,7 +254,7 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
@@ -955,7 +955,7 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
@@ -1124,7 +1124,7 @@ function despawnPlayer(client) {
 // ===========================================================================
 
 function getGame() {
-	return VRR_GAME_GTA_V;
+	return AGRP_GAME_GTA_V;
 }
 
 // ===========================================================================

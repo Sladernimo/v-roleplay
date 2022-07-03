@@ -53,7 +53,7 @@ function processSkinSelectKeyPress(keyCode) {
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if (getGame() == VRR_GAME_GTA_IV) {
+			if (getGame() == AGRP_GAME_GTA_IV) {
 				let skinId = allowedSkins[skinSelectorIndex][0];
 				if (natives.isModelInCdimage(skinId)) {
 					natives.requestModel(skinId);
@@ -73,7 +73,7 @@ function processSkinSelectKeyPress(keyCode) {
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if (getGame() == VRR_GAME_GTA_IV) {
+			if (getGame() == AGRP_GAME_GTA_IV) {
 				let skinId = allowedSkins[skinSelectorIndex][0];
 				if (natives.isModelInCdimage(skinId)) {
 					natives.requestModel(skinId);
@@ -131,7 +131,7 @@ function toggleSkinSelect(state) {
 			game.setCameraLookAt(frontCameraPosition, localPlayer.position, true);
 		}
 
-		if (getGame() == VRR_GAME_GTA_IV) {
+		if (getGame() == AGRP_GAME_GTA_IV) {
 			let skinId = allowedSkins[skinSelectorIndex][0];
 			if (natives.isModelInCdimage(skinId)) {
 				natives.requestModel(skinId);

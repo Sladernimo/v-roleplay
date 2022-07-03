@@ -8,13 +8,13 @@
 // ===========================================================================
 
 // House Owner Types
-const VRR_BANK_ACCT_OWNER_NONE = 0;					// Not owned
-const VRR_BANK_ACCT_OWNER_PLAYER = 1;				// Owner is a player (character/subaccount)
-const VRR_BANK_ACCT_OWNER_JOB = 2;					// Owned by a job
-const VRR_BANK_ACCT_OWNER_CLAN = 3;					// Owned by a clan
-const VRR_BANK_ACCT_OWNER_FACTION = 4;				// Owned by a faction
-const VRR_BANK_ACCT_OWNER_BIZ = 4;					// Owned by a faction
-const VRR_BANK_ACCT_OWNER_PUBLIC = 5;				// Is a public bank account. Technically not owned. This probably won't be used.
+const AGRP_BANK_ACCT_OWNER_NONE = 0;					// Not owned
+const AGRP_BANK_ACCT_OWNER_PLAYER = 1;				// Owner is a player (character/subaccount)
+const AGRP_BANK_ACCT_OWNER_JOB = 2;					// Owned by a job
+const AGRP_BANK_ACCT_OWNER_CLAN = 3;					// Owned by a clan
+const AGRP_BANK_ACCT_OWNER_FACTION = 4;				// Owned by a faction
+const AGRP_BANK_ACCT_OWNER_BIZ = 4;					// Owned by a faction
+const AGRP_BANK_ACCT_OWNER_PUBLIC = 5;				// Is a public bank account. Technically not owned. This probably won't be used.
 
 // ===========================================================================
 

@@ -37,7 +37,7 @@ function getPlayerPosition() {
 // ===========================================================================
 
 function setPlayerPosition(position) {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		natives.setCharCoordinates(localPlayer, position);
 	} else {
 		localPlayer.position = position;
@@ -187,7 +187,7 @@ function getVehiclesInRange(position, range) {
 // ===========================================================================
 
 function createGameBlip(blipModel, position, name = "") {
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		let blipId = natives.addBlipForCoord(position);
 		if (blipId) {
 			natives.changeBlipSprite(blipId, blipModel);
@@ -266,7 +266,7 @@ function syncVehicleProperties(vehicle) {
 		vehicle.setSuspensionHeight(suspensionHeight);
 	}
 
-	if (getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() == AGRP_GAME_GTA_SA) {
 		let allUpgrades = getGameConfig().vehicleUpgrades[getGame()];
 		for (let i in allUpgrades) {
 			vehicle.removeUpgrade(i);
@@ -282,12 +282,12 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_SA || getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_SA || getGame() == AGRP_GAME_GTA_IV) {
 		if (doesEntityDataExist(vehicle, "agrp.livery")) {
 			let livery = getEntityData(vehicle, "agrp.livery");
-			if (getGame() == VRR_GAME_GTA_SA) {
+			if (getGame() == AGRP_GAME_GTA_SA) {
 				vehicle.setPaintJob(livery);
-			} else if (getGame() == VRR_GAME_GTA_IV) {
+			} else if (getGame() == AGRP_GAME_GTA_IV) {
 				vehicle.livery = livery;
 			}
 		}
@@ -315,7 +315,7 @@ function doesEntityDataExist(entity, dataName) {
 // ===========================================================================
 
 function syncCivilianProperties(civilian) {
-	if (getGame() == VRR_GAME_GTA_III) {
+	if (getGame() == AGRP_GAME_GTA_III) {
 		if (doesEntityDataExist(civilian, "agrp.scale")) {
 			let scaleFactor = getEntityData(civilian, "agrp.scale");
 			let tempMatrix = civilian.matrix;
@@ -327,21 +327,21 @@ function syncCivilianProperties(civilian) {
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() == AGRP_GAME_GTA_SA) {
 		if (doesEntityDataExist(civilian, "agrp.fightStyle")) {
 			let fightStyle = getEntityData(civilian, "agrp.fightStyle");
 			civilian.setFightStyle(fightStyle[0], fightStyle[1]);
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_III) {
+	if (getGame() == AGRP_GAME_GTA_III) {
 		if (doesEntityDataExist(civilian, "agrp.walkStyle")) {
 			let walkStyle = getEntityData(civilian, "agrp.walkStyle");
 			civilian.walkStyle = walkStyle;
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (doesEntityDataExist(civilian, "agrp.bodyPropHair")) {
 			let bodyPropHair = getEntityData(civilian, "agrp.bodyPropHair");
 			civilian.changeBodyProp(0, bodyPropHair[0], bodyPropHair[1]);
@@ -413,7 +413,7 @@ function preventDefaultEventAction(event) {
 // ===========================================================================
 
 function syncPlayerProperties(player) {
-	if (getGame() == VRR_GAME_GTA_III) {
+	if (getGame() == AGRP_GAME_GTA_III) {
 		if (doesEntityDataExist(player, "agrp.scale")) {
 			let scaleFactor = getEntityData(player, "agrp.scale");
 			let tempMatrix = player.matrix;
@@ -425,21 +425,21 @@ function syncPlayerProperties(player) {
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() == AGRP_GAME_GTA_SA) {
 		if (doesEntityDataExist(player, "agrp.fightStyle")) {
 			let fightStyle = getEntityData(player, "agrp.fightStyle");
 			player.setFightStyle(fightStyle[0], fightStyle[1]);
 		}
 	}
 
-	//if(getGame() == VRR_GAME_GTA_SA) {
+	//if(getGame() == AGRP_GAME_GTA_SA) {
 	//    if(doesEntityDataExist(player, "agrp.walkStyle")) {
 	//        let walkStyle = getEntityData(player, "agrp.walkStyle");
 	//        player.walkStyle = walkStyle;
 	//    }
 	//}
 
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (doesEntityDataExist(player, "agrp.bodyPartHair")) {
 			let bodyPartHead = getEntityData(player, "agrp.bodyPartHair");
 			player.changeBodyPart(0, bodyPartHead[0], bodyPartHair[1]);
@@ -461,7 +461,7 @@ function syncPlayerProperties(player) {
 		}
 	}
 
-	if (getGame() == VRR_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (doesEntityDataExist(player, "agrp.bodyPropHair")) {
 			let bodyPropHair = getEntityData(player, "agrp.bodyPropHair");
 			player.changeBodyProp(0, bodyPropHair[0], bodyPropHair[1]);
@@ -522,7 +522,7 @@ function syncPlayerProperties(player) {
 // ===========================================================================
 
 function syncObjectProperties(object) {
-	if (getGame() == VRR_GAME_GTA_III || getGame() == VRR_GAME_GTA_VC) {
+	if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
 		if (doesEntityDataExist(object, "agrp.scale")) {
 			let scaleFactor = getEntityData(object, "agrp.scale");
 			let tempMatrix = object.matrix;
@@ -626,21 +626,21 @@ function getScreenHeight() {
 
 function openAllGarages() {
 	switch (getGame()) {
-		case VRR_GAME_GTA_III:
+		case AGRP_GAME_GTA_III:
 			for (let i = 0; i <= 26; i++) {
 				openGarage(i);
 				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
 			}
 			break;
 
-		case VRR_GAME_GTA_VC:
+		case AGRP_GAME_GTA_VC:
 			for (let i = 0; i <= 32; i++) {
 				openGarage(i);
 				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
 			}
 			break;
 
-		case VRR_GAME_GTA_SA:
+		case AGRP_GAME_GTA_SA:
 			for (let i = 0; i <= 44; i++) {
 				openGarage(i);
 			}
@@ -655,21 +655,21 @@ function openAllGarages() {
 
 function closeAllGarages() {
 	switch (getGame()) {
-		case VRR_GAME_GTA_III:
+		case AGRP_GAME_GTA_III:
 			for (let i = 0; i <= 26; i++) {
 				closeGarage(i);
 				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
 			}
 			break;
 
-		case VRR_GAME_GTA_VC:
+		case AGRP_GAME_GTA_VC:
 			for (let i = 0; i <= 32; i++) {
 				closeGarage(i);
 				game.NO_SPECIAL_CAMERA_FOR_THIS_GARAGE(i);
 			}
 			break;
 
-		case VRR_GAME_GTA_SA:
+		case AGRP_GAME_GTA_SA:
 			for (let i = 0; i <= 44; i++) {
 				closeGarage(i);
 			}
@@ -689,7 +689,7 @@ function setPedInvincible(ped, state) {
 // ===========================================================================
 
 function setPedLookAt(ped, position) {
-	if (getGame() == VRR_GAME_GTA_SA) {
+	if (getGame() == AGRP_GAME_GTA_SA) {
 		ped.lookAt(position, 10000);
 		return true;
 	} else {
