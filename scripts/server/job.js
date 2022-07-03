@@ -33,6 +33,10 @@ const VRR_JOBROUTESTATE_ATSTOP = 4;              // For bus/trash stops that fre
 
 /**
  * @class Representing a job's data. Loaded and saved in the database
+ * @property {Array.<JobEquipmentData>} equipment
+ * @property {Array.<JobUniformData>} uniforms
+ * @property {Array.<JobLocationData>} locations
+ * @property {Array.<JobRouteData>} routes
  */
 class JobData {
 	constructor(dbAssoc = false) {
@@ -82,6 +86,10 @@ class JobData {
 
 // ===========================================================================
 
+/**
+ * @class Representing a job route's data. Loaded and saved in the database
+ * @property {Array.<JobRouteLocationData>} locations
+ */
 class JobRouteData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
@@ -152,7 +160,8 @@ class JobRouteLocationData {
 // ===========================================================================
 
 /**
- * @class Representing a job equipment set's data. Loaded and saved in the database
+ * @class Representing a job equipment set/loadout's data. Loaded and saved in the database
+ * @property {Array.<JobEquipmentItemData>} items
  */
 class JobEquipmentData {
 	constructor(dbAssoc = false) {
