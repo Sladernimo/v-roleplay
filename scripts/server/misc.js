@@ -377,15 +377,19 @@ function getPlayerInfoCommand(command, params, client) {
 
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${getClanData(getClanIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan)).name}[${getPlayerCurrentSubAccount(targetClient).clan}] (Rank: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).name}[Level: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).level}, DBID: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).databaseId}` : `(None)`;
 	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${getJobData(getJobIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job)).name}[${getPlayerCurrentSubAccount(targetClient).job}] (Rank: ${getPlayerCurrentSubAccount(targetClient).jobRank})` : `(None)`;
+	let skinIndex = getPlayerCurrentSubAccount(targetClient).skin;
+	let skinModel = getGameConfig().skins[getGame()][skinIndex][0];
+	let skinName = getSkinNameFromModel(skinModel);
+	let registerDate = new Date(getPlayerData(targetClient).accountData.registerDate * 1000).toLocaleDateString();
 
 	let tempStats = [
 		["Account", `${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`],
 		["Character", `${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`],
 		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
-		["Registered", `${getPlayerData(targetClient).accountData.registerDate}`],
+		["Registered", `${registerDate}`],
 		["Game Version", `${targetClient.gameVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Skin", `${getSkinNameFromModel(getPlayerCurrentSubAccount(targetClient).skin)}[${getPlayerCurrentSubAccount(targetClient).skin}]`],
+		["Skin", `${skinName}[${skinModel}]`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
 		["Cash", `${getPlayerCurrentSubAccount(client).cash}`],
