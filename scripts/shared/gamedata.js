@@ -4842,6 +4842,7 @@ let gameData = {
 			Salvatore: 16,
 			Home: 17,
 			Tony: 19,
+			Job: 0,
 		},
 		[AGRP_GAME_GTA_VC]: {	// GTA VC
 			PoliceStation: 0,
@@ -4861,6 +4862,7 @@ let gameData = {
 			Club: 13,
 			Tools: 18,
 			Bar: 11,
+			Job: 0,
 		},
 		[AGRP_GAME_GTA_SA]: {	// GTA SA
 			PoliceStation: 30,
