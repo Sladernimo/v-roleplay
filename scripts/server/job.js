@@ -1623,7 +1623,7 @@ function setJobRouteAllLocationDelaysCommand(command, params, client) {
 		getJobData(jobId).routes[jobRoute].locations[i].needsSaved = true;
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${oldName}{MAINCOLOUR} location's stop delays to {ALTCOLOUR}${delay / 1000}{MAINCOLOUR} seconds for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set route {ALTCOLOUR}${getJobData(jobId).routes[jobRoute].name}{MAINCOLOUR} location's stop delays to {ALTCOLOUR}${delay / 1000}{MAINCOLOUR} seconds for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -3067,6 +3067,7 @@ function createJobUniformCommand(command, params, client) {
 		return false;
 	}
 
+	let splitParams = params.spli(" ");
 	let jobId = getJobFromParams(getParam(params, " ", 1));
 	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
 
