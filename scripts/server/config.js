@@ -322,6 +322,26 @@ function loadServerConfigFromGameAndPort(gameId, port) {
 
 // ===========================================================================
 
+function loadServerConfigFromGame(gameId) {
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} LIMIT 1;`;
+		let dbQuery = queryDatabase(dbConnection, dbQueryString);
+		if (dbQuery) {
+			if (dbQuery.numRows > 0) {
+				let dbAssoc = fetchQueryAssoc(dbQuery);
+				let tempServerConfigData = new ServerConfigData(dbAssoc);
+				freeDatabaseQuery(dbQuery);
+				return tempServerConfigData;
+			}
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+	return false;
+}
+
+// ===========================================================================
+
 function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
@@ -1096,7 +1116,12 @@ function getDatabaseConfig() {
 function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[VRR.Config] Loading server configuration");
 	try {
-		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
+		if (toInteger(server.getCVar("agrp_devserver")) == 1) {
+			serverConfig = loadServerConfigFromGame(getGame());
+		} else {
+			serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
+		}
+
 	} catch (error) {
 		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
 		thisResource.stop();
