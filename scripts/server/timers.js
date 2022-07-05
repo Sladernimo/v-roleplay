@@ -201,6 +201,10 @@ function updatePings() {
 // ===========================================================================
 
 function checkServerGameTime() {
+	if (isGameFeatureSupported("time")) {
+		return false;
+	}
+
 	//if(!getServerConfig().useRealTime) {
 	//if (getServerConfig().minute >= 59) {
 	//	getServerConfig().minute = 0;
