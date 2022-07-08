@@ -217,28 +217,6 @@ function isAtPayAndSpray(position) {
 
 // ===========================================================================
 
-function resetClientStuff(client) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
-
-	if (!getPlayerData(client)) {
-		return false;
-	}
-
-	if (isPlayerOnJobRoute(client)) {
-		stopJobRoute(client, false, false);
-	}
-
-	if (getPlayerData(client).rentingVehicle) {
-		stopRentingVehicle(client);
-	}
-
-	deleteJobItems(client);
-
-	getPlayerData(client).lastVehicle = null;
-}
-
-// ===========================================================================
-
 function getPlayerFromCharacterId(subAccountId) {
 	let clients = getClients();
 	for (let i in clients) {
@@ -296,7 +274,7 @@ function getClosestPlayer(position, exemptPlayer) {
 	let clients = getClients();
 	let closest = 0;
 	for (let i in clients) {
-		if (exemptClient != clients[i]) {
+		if (exemptPlayer != clients[i]) {
 			if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
 				closest = i;
 			}
@@ -422,15 +400,6 @@ function clearTemporaryPeds() {
 			}
 		}
 	}
-}
-
-// ===========================================================================
-
-function kickAllClients() {
-	getClients().forEach((client) => {
-		getPlayerData(client).customDisconnectReason = `Kicked - All clients are being disconnected`;
-		disconnectPlayer(client);
-	})
 }
 
 // ===========================================================================
