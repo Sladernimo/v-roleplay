@@ -7,7 +7,7 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let scriptVersion = "1.1";
+let scriptVersion = "1.2";
 let serverStartTime = 0;
 let logLevel = LOG_INFO | LOG_DEBUG | LOG_VERBOSE; // LOG_ERROR|LOG_WARN;
 
@@ -29,6 +29,7 @@ let playerGUI = new Array(server.maxClients).fill(false);
  * @property {Array.<ItemTypeData>} itemTypes
  * @property {Array.<ClanData>} clans
  * @property {Array} localeStrings
+ * @property {Array.<TriggerData>} triggers
  * @property {Array.<NPCData>} npcs
  * @property {Array.<RaceData>} races
  * @property {Array.<JobData>} jobs
@@ -52,7 +53,7 @@ let serverData = {
 	localeStrings: {},
 	cachedTranslations: [],
 	cachedTranslationFrom: [],
-	//triggers: [],
+	triggers: [],
 	npcs: [],
 	races: [],
 	jobs: [],
