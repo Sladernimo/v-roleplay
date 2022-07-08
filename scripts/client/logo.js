@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: logo.js
 // DESC: Provides logo rendering functions
@@ -8,7 +9,7 @@
 // ===========================================================================
 
 let logoImage = null;
-let logoPos = toVector2(game.width-132, game.height-132);
+let logoPos = toVector2(game.width - 132, game.height - 132);
 let logoSize = toVector2(128, 128);
 
 // ===========================================================================
@@ -24,7 +25,7 @@ function initLogoScript() {
 function loadLogoImage() {
 	let logoStream = openFile(mainLogoPath);
 	let tempLogoImage = null;
-	if(logoStream != null) {
+	if (logoStream != null) {
 		tempLogoImage = graphics.loadPNG(logoStream);
 		logoStream.close();
 	}
@@ -35,8 +36,8 @@ function loadLogoImage() {
 // ===========================================================================
 
 function processLogoRendering() {
-	if(renderLogo) {
-		if(logoImage != null) {
+	if (renderLogo) {
+		if (logoImage != null) {
 			graphics.drawRectangle(logoImage, logoPos, logoSize);
 		}
 	}

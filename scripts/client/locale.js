@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: locale.js
 // DESC: Provides locale functions and usage
@@ -8,18 +9,18 @@
 // ===========================================================================
 
 function getLocaleString(stringName, ...args) {
-	if(typeof getServerData().localeStrings[localLocaleId][stringName] == undefined) {
+	if (typeof getServerData().localeStrings[localLocaleId][stringName] == undefined) {
 		return "";
 	}
 
 	let tempString = getServerData().localeStrings[localLocaleId][stringName];
 
-	if(tempString == "" || tempString == null || tempString == undefined) {
+	if (tempString == "" || tempString == null || tempString == undefined) {
 		return "";
 	}
 
-	for(let i = 1; i <= args.length; i++) {
-		tempString = tempString.replace(`{${i}}`, args[i-1]);
+	for (let i = 1; i <= args.length; i++) {
+		tempString = tempString.replace(`{${i}}`, args[i - 1]);
 	}
 
 	return tempString;
@@ -42,7 +43,7 @@ function loadLocaleConfig() {
 
 function loadAllLocaleStrings() {
 	let localeOptions = getServerData().localeOptions;
-	for(let i in localeOptions) {
+	for (let i in localeOptions) {
 		logToConsole(LOG_INFO, `[VRR.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
 		let localeFile = loadTextFile(`locale/${localeOptions[i].stringsFile}`);
 		let localeData = JSON.parse(localeFile);

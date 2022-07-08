@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: error.js
 // DESC: Provides error box GUI
@@ -17,7 +18,7 @@ let errorDialog = {
 
 function initErrorDialogGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating error GUI ...`);
-	errorDialog.window = mexui.window(getScreenWidth()/2-200, getScreenHeight()/2-70, 400, 140, 'ERROR', {
+	errorDialog.window = mexui.window(getScreenWidth() / 2 - 200, getScreenHeight() / 2 - 70, 400, 140, 'ERROR', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,

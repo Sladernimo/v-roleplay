@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: accent.js
 // DESC: Provides accent functions and usage
@@ -27,7 +28,7 @@ function doesPlayerHaveAccent(client) {
 
 function getPlayerAccentInlineOutput(client) {
 	let outputText = "";
-	if(doesPlayerHaveAccent(client)) {
+	if (doesPlayerHaveAccent(client)) {
 		outputText = `[${getPlayerAccentText(client)}] `;
 	}
 
@@ -37,14 +38,14 @@ function getPlayerAccentInlineOutput(client) {
 // ===========================================================================
 
 function setAccentCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let accentId = getAccentFromParams(params);
 
-	if(!accentId) {
+	if (!accentId) {
 		messagePlayerError(client, getLocaleString(client, "AccentNotFound"));
 		return false;
 	}
@@ -64,7 +65,7 @@ function listAccentsCommand(command, params, client) {
 	let chunkedList = splitArrayIntoChunks(accentList, 8);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "AccentsListHeader")));
-	for(let i in chunkedList) {
+	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
 }
@@ -72,14 +73,14 @@ function listAccentsCommand(command, params, client) {
 // ===========================================================================
 
 function getAccentFromParams(params) {
-	if(isNaN(params)) {
-		for(let i in getGlobalConfig().accents) {
-			if(toLowerCase(getGlobalConfig().accents[i]).indexOf(toLowerCase(params)) != -1) {
+	if (isNaN(params)) {
+		for (let i in getGlobalConfig().accents) {
+			if (toLowerCase(getGlobalConfig().accents[i]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getGlobalConfig().accents[params] != "undefined") {
+		if (typeof getGlobalConfig().accents[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -97,14 +98,14 @@ function reloadAccentConfigurationCommand(command, params, client) {
 // ===========================================================================
 
 function addAccentCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let newAccentName = params;
 
-	if(getAccentFromParams(newAccentName) != false) {
+	if (getAccentFromParams(newAccentName) != false) {
 		messagePlayerError(client, `That accent already exists!`)
 		return false;
 	}
@@ -117,14 +118,14 @@ function addAccentCommand(command, params, client) {
 // ===========================================================================
 
 function removeAccentCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let newAccentName = params;
 
-	if(!getAccentFromParams(newAccentName)) {
+	if (!getAccentFromParams(newAccentName)) {
 		messagePlayerError(client, `That accent doesn't exist!`)
 		return false;
 	}

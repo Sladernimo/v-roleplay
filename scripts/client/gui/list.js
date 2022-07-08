@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: list.js
 // DESC: Provides simple list GUI
@@ -16,8 +17,8 @@ let listDialog = {
 // ===========================================================================
 
 function initListGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating list dialog GUI ...`);
-	listDialog.window = mexui.window(game.width/2-200, game.height/2-70, 400, 500, 'List', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating list dialog GUI ...`);
+	listDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 500, 'List', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 		},
@@ -50,21 +51,21 @@ function initListGUI() {
 
 	listDialog.listGrid = listDialog.window.grid(5, 25, 390, 450, {
 		main: {
-			backgroundColour: 	toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
+			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 		},
 		column: {
-			lineColour: 		toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
+			lineColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		},
-		header:	{
-			backgroundColour:	toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha-50),
-			textColour:			toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], windowTitleAlpha),
+		header: {
+			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha - 50),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], windowTitleAlpha),
 		},
 		cell: {
-			backgroundColour:	toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
-			textColour:			toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], windowTitleAlpha),
+			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], windowTitleAlpha),
 		},
 		row: {
-			lineColour:			toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
+			lineColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 			hover: {
 				backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 120),
 			}
