@@ -32,7 +32,6 @@ class ClientData {
 		this.index = -1;
 		this.connectTime = 0;
 		this.clientVersion = "0.0.0";
-		this.loginAttemptsRemaining = 3;
 		this.afk = false;
 		this.spawned = false;
 		this.sessionId = 0;
@@ -42,6 +41,8 @@ class ClientData {
 		this.passwordResetCode = "";
 		this.twoFactorAuthenticationState = AGRP_2FA_STATE_NONE;
 		this.twoFactorAuthenticationCode = 0;
+		this.loginTimeout = null;
+		this.loginAttemptsRemaining = 3;
 
 		// Job Stuff
 		this.jobEquipmentCache = [];
@@ -143,6 +144,39 @@ class ClientData {
 function initClientScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Client]: Initializing client script ...");
 	logToConsole(LOG_DEBUG, "[VRR.Client]: Client script initialized!");
+}
+
+// ===========================================================================
+
+function resetClientStuff(client) {
+	logToConsole(LOG_DEBUG, `[VRR.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
+
+	if (!getPlayerData(client)) {
+		return false;
+	}
+
+	if (isPlayerOnJobRoute(client)) {
+		stopJobRoute(client, false, false);
+	}
+
+	if (getPlayerData(client).rentingVehicle) {
+		stopRentingVehicle(client);
+	}
+
+	deleteJobItems(client);
+	deletePaintBallItems(client);
+	//deletePlayerTemporaryLockerItems(client);
+
+	getPlayerData(client).lastVehicle = null;
+}
+
+// ===========================================================================
+
+function kickAllClients() {
+	getClients().forEach((client) => {
+		getPlayerData(client).customDisconnectReason = `Kicked - All clients are being disconnected`;
+		disconnectPlayer(client);
+	})
 }
 
 // ===========================================================================

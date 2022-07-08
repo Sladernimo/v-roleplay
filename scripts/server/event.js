@@ -125,13 +125,18 @@ function onPlayerQuit(event, client, quitReasonId) {
 	if (isPlayerLoggedIn(client)) {
 		savePlayerToDatabase(client);
 		resetClientStuff(client);
-		getServerData().clients[getPlayerId(client)] = null;
+	}
+
+	if (getPlayerData(client).loginTimeout != null) {
+		clearTimeout(getPlayerData(client).loginTimeout);
 	}
 
 	playerResourceReady[client.index] = false;
 	playerResourceStarted[client.index] = false;
 	playerInitialized[client.index] = false;
 	playerGUIReady[client.index] = false;
+
+	getServerData().clients[getPlayerId(client)] = null;
 }
 
 // ===========================================================================

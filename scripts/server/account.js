@@ -782,6 +782,9 @@ function loginSuccess(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
 	getPlayerData(client).loggedIn = true;
 
+	clearTimeout(getPlayerData(client).loginTimeout);
+	getPlayerData(client).loginTimeout = null;
+
 	updateConnectionLogOnAuth(client, getPlayerData(client).accountData.databaseId);
 
 	if (doesPlayerHaveStaffPermission(client, "Developer") || doesPlayerHaveStaffPermission(client, "ManageServer")) {
@@ -1003,7 +1006,7 @@ function createAccount(name, password, email = "") {
 
 // ===========================================================================
 
-async function checkLogin(client, password) {
+function checkLogin(client, password) {
 	getPlayerData(client).loginAttemptsRemaining = getPlayerData(client).loginAttemptsRemaining - 1;
 	if (getPlayerData(client).loginAttemptsRemaining <= 0) {
 		getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
@@ -1044,9 +1047,9 @@ async function checkLogin(client, password) {
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-		//	await sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
-		//}
+		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+		}
 		return false;
 	}
 
@@ -1061,9 +1064,9 @@ async function checkLogin(client, password) {
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-		//	await sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
-		//}
+		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+		}
 		return false;
 	}
 
@@ -1082,7 +1085,7 @@ async function checkLogin(client, password) {
 
 	// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
 	//if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
-	//	await sendAccountLoginSuccessNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
+	//	sendAccountLoginSuccessNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 	//}
 }
 
@@ -1440,6 +1443,7 @@ function initClient(client) {
 						//}
 						//showGameMessage(client, getLocaleString(client, "LocaleOffer", `/lang ${getLocaleData(localeId)[2]}`), getColourByName("white"), 10000, "Roboto");
 					}
+					startLoginTimeoutForPlayer(client);
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 				}
 			} else {
@@ -1796,6 +1800,17 @@ function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 
 	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
 	return true;
+}
+
+// ===========================================================================
+
+function startLoginTimeoutForPlayer(client) {
+	getPlayerData(client).loginTimeout = setTimeout(function () {
+		//if (isPlayerLoggedIn(client) == false) {
+		getPlayerData(client).customDisconnectReason = "Kicked - Login timeout";
+		disconnectPlayer(client);
+		//}
+	}, getGlobalConfig().loginTimeout);
 }
 
 // ===========================================================================
