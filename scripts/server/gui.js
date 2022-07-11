@@ -12,6 +12,12 @@
 const AGRP_PROMPT_NONE = 0;
 const AGRP_PROMPT_CREATEFIRSTCHAR = 1;
 const AGRP_PROMPT_BIZORDER = 2;
+const AGRP_PROMPT_GIVEVEHTOCLAN = 3;
+const AGRP_PROMPT_GIVEBIZTOCLAN = 4;
+const AGRP_PROMPT_GIVEHOUSETOCLAN = 5;
+const AGRP_PROMPT_BUYBIZ = 6;
+const AGRP_PROMPT_BUYHOUSE = 7;
+const AGRP_PROMPT_RESETKEYBINDS = 8;
 
 // ===========================================================================
 
