@@ -1399,3 +1399,17 @@ function deletePlayerPed(client) {
 function isPlayerOnBoat(client) {
 	return false;
 }
+
+// ===========================================================================
+
+function setServerName(name) {
+	server.name = name;
+}
+
+// ===========================================================================
+
+function setServerPassword(password) {
+	server.setPassword(password);
+}
+
+// ===========================================================================
