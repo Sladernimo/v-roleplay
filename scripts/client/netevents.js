@@ -23,7 +23,8 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("m", receiveChatBoxMessageFromServer); // Not prefixed with VRR to make it as small as possible
 	addNetworkEventHandler("agrp.chatScrollLines", setChatScrollLines);
 	addNetworkEventHandler("agrp.chatAutoHideDelay", setChatAutoHideDelay);
-	addNetworkEventHandler("agrp.chatTimeStamps", setChatBoxTimeStampsState);
+	addNetworkEventHandler("agrp.chatTimeStamps", setChatTimeStampsState);
+	addNetworkEventHandler("agrp.chatProfanityFilter", setChatProfanityFilterState);
 
 	// Messaging (like textdraws and stuff)
 	addNetworkEventHandler("agrp.smallGameMessage", showSmallGameMessage);
