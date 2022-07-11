@@ -85,7 +85,8 @@
 	<file type="client" src="files/fonts/roboto-regular.ttf" />
 	<file type="client" src="files/fonts/pricedown.ttf" />
 	<file type="client" src="files/images/skins/none.png" />
-	<file type="client" src="files/images/server-logo.png" />
+	<!--<file type="client" src="files/images/server-logo.png" />-->
+	<file type="client" src="files/images/asshat-logo.png" />
 
 	<!-- GUI -->
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
@@ -108,7 +109,7 @@
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
 	<script src="scripts/client/animation.js" type="client" language="javascript" />
 	<script src="scripts/client/business.js" type="client" language="javascript" />
-	<script src="scripts/client/chatbox.js" type="client" language="javascript" />
+	<script src="scripts/client/chat.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
 	<script src="scripts/client/gps.js" type="client" language="javascript" />
