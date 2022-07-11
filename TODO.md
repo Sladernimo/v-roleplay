@@ -21,3 +21,6 @@
 ---
 == Bug Fixes
 * Check natives for if player is console (getPlayerPosition, etc)
+
+* Add command to copy account keybinds to other server(s)
+* Add command to reset all account keybinds to default
