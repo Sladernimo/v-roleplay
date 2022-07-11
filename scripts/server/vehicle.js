@@ -733,17 +733,17 @@ function rentVehicleCommand(command, params, client) {
 	}
 
 	if (getPlayerData(client).rentingVehicle) {
-		messagePlayerAlert(client, `You are no longer renting the ${getVehicleName(vehicle)}`);
+		messagePlayerAlert(client, getLocaleString(client, "StoppedRentingVehicle"));
 		stopRentingVehicle(client);
 		return false;
 	}
 
 	if (getVehicleData(vehicle).rentedBy != false) {
 		if (getVehicleData(vehicle).rentedBy != client) {
-			messagePlayerAlert(client, `Someone else is already renting this vehicle!`);
+			messagePlayerAlert(client, getLocaleString(client, "VehicleAlreadyRentedByOther"));
 			return false;
 		} else {
-			messagePlayerAlert(client, `You are already renting this vehicle!`);
+			messagePlayerAlert(client, getLocaleString(client, "VehicleAlreadyRentedBySelf"));
 			return false;
 		}
 	}
@@ -760,13 +760,13 @@ function rentVehicleCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `rents the ${getVehicleName(vehicle)} and receives a set of vehicle keys!`);
-	messagePlayerAlert(client, `You will be charged $${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)} per minute to use this vehicle. To stop renting this vehicle, use /vehrent again.`);
+	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
 
 	if (!getVehicleData(vehicle).engine) {
 		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
-			messagePlayerTip(client, `The ${getVehicleName(vehicle)}'s engine is off. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))} {MAINCOLOUR}to start it.`);
+			messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartCommandTip", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))}{MAINCOLOUR}`));
 		} else {
-			messagePlayerAlert(client, `The ${getVehicleName(vehicle)}'s engine is off. Use /engine to start it`);
+			messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartKeyPressTip", `{ALTCOLOUR}/engine{MAINCOLOUR}`));
 		}
 	}
 }
@@ -781,12 +781,12 @@ function enterVehicleAsPassengerCommand(command, params, client) {
 
 function stopRentingVehicleCommand(command, params, client) {
 	if (!getPlayerData(client).rentingVehicle) {
-		messagePlayerError(client, "You aren't renting a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "NotRentingAVehicle"));
 		return false;
 	}
 
 	let vehicle = getPlayerData(client).rentingVehicle;
-	messagePlayerAlert(client, `You are no longer renting the ${getVehicleName(vehicle)}`);
+	messagePlayerAlert(client, getLocaleString(client, "StoppedRentingVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`));
 	stopRentingVehicle(client);
 
 	getVehicleData(vehicle).needsSaved = true;
@@ -870,7 +870,7 @@ function doesClientOwnVehicle(client, vehicle) {
 
 function setVehicleJobCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -911,7 +911,7 @@ function setVehicleRankCommand(command, params, client) {
 	}
 
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -943,7 +943,7 @@ function setVehicleRankCommand(command, params, client) {
 
 function setVehicleClanCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -980,7 +980,7 @@ function setVehicleClanCommand(command, params, client) {
 
 function setVehicleToBusinessCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1009,7 +1009,7 @@ function setVehicleToBusinessCommand(command, params, client) {
 
 function setVehicleOwnerCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1038,7 +1038,7 @@ function setVehicleOwnerCommand(command, params, client) {
 
 function setVehiclePublicCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1061,7 +1061,7 @@ function setVehiclePublicCommand(command, params, client) {
 
 function setVehicleRentPriceCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1090,7 +1090,7 @@ function setVehicleRentPriceCommand(command, params, client) {
 
 function setVehicleBuyPriceCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1119,7 +1119,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 
 function removeVehicleOwnerCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1149,7 +1149,7 @@ function removeVehicleOwnerCommand(command, params, client) {
 
 function getVehicleInfoCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle!");
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
@@ -1858,3 +1858,11 @@ function getVehicleColourInfoString(colour, isRGBA) {
 }
 
 // ===========================================================================
+
+function setVehicleCruiseControlCommand(command, params, client) {
+	if (!isPlayerInAnyVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeinVehicle"));
+	}
+
+	sendPlayerToggleVehicleCruiseControl(client);
+}
