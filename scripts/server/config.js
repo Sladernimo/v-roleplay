@@ -36,6 +36,8 @@ class ServerConfigData {
 		this.characterSelectInterior = 0;
 		this.characterSelectDimension = 0;
 
+		this.name = "";
+		this.password = "";
 		this.hour = 0;
 		this.minute = 0
 		this.minuteDuration = 1000;
@@ -98,6 +100,8 @@ class ServerConfigData {
 			this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
 			this.connectCameraLookAt = toVector3(dbAssoc["svr_connectcam_lookat_x"], dbAssoc["svr_connectcam_lookat_y"], dbAssoc["svr_connectcam_lookat_z"]);
 
+			this.name = toInteger(dbAssoc["svr_name"]);
+			this.password = toInteger(dbAssoc["svr_password"]);
 			this.hour = toInteger(dbAssoc["svr_start_time_hour"]);
 			this.minute = toInteger(dbAssoc["svr_start_time_min"]);
 			this.minuteDuration = toInteger(dbAssoc["svr_time_min_duration"]);
