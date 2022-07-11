@@ -119,6 +119,10 @@ let serverBitFlagKeys = {
 		"NoRandomTips",
 		"NoActionTips",
 		"ChatBoxTimestamps",
+		"ChatProfanityFilter",
+		"ChatAutoHide",
+		"NoPlayerContent",
+		//"NoBlood",
 	],
 
 	// Not going to be used. Use trigger, condition, and response stuff in trigger.js
