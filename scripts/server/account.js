@@ -298,7 +298,7 @@ function toggleAccountGUICommand(command, params, client) {
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI`);
 			} else {
 				hideAllPlayerGUI(client);
-				messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "{ALTCOLOUR}/login{MAINCOLOUR}"));
+				messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerConfig().name, getPlayerName(client), "{ALTCOLOUR}/login{MAINCOLOUR}"));
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled)`);
 			}
 		} else {
@@ -307,7 +307,7 @@ function toggleAccountGUICommand(command, params, client) {
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
 			} else {
 				hideAllPlayerGUI(client);
-				messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "{ALTCOLOUR}/register{MAINCOLOUR}"));
+				messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerConfig().name, getPlayerName(client), "{ALTCOLOUR}/register{MAINCOLOUR}"));
 				logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
 			}
 		}
@@ -398,6 +398,40 @@ function toggleChatBoxTimeStampsCommand(command, params, client) {
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "ChatBoxTimestampsToggle", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}{MAINCOLOUR}`));
+		sendPlayerChatBoxTimeStampsState(client, true);
+	}
+	return true;
+}
+
+// ===========================================================================
+
+function toggleAccountProfanityFilterCommand(command, params, client) {
+	let flagValue = getAccountSettingsFlagValue("ProfanityFilter");
+
+	if (hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
+		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "ProfanityFilterSet", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
+		sendPlayerProfanityFilterState(client, false);
+	} else {
+		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "ProfanityFilterSet", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}{MAINCOLOUR}`));
+		sendPlayerProfanityFilterState(client, true);
+	}
+	return true;
+}
+
+// ===========================================================================
+
+function toggleAccountHideBloodCommand(command, params, client) {
+	let flagValue = getAccountSettingsFlagValue("NoBlood");
+
+	if (hasBitFlag(getPlayerData(client).accountData.settings, flagValue)) {
+		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "HideBloodSet", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
+		sendPlayerChatBoxTimeStampsState(client, false);
+	} else {
+		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
+		messagePlayerSuccess(client, getLocaleString(client, "HideBloodSet", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}{MAINCOLOUR}`));
 		sendPlayerChatBoxTimeStampsState(client, true);
 	}
 	return true;
@@ -1176,7 +1210,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerAlert(client, getLocaleString(client, "RegistrationFailedCreateError"));
 		}
 
-		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it shortly.`);
+		messagePlayerAlert(client, `${getServerConfig().name} staff have been notified of the problem and will fix it shortly.`);
 		return false;
 	}
 
@@ -1212,7 +1246,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerRegistrationSuccessGUI(client);
-			showPlayerPrompt(client, getLocaleString(client, "NoCharactersMessage"), getLocaleString(client, "NoCharactersWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 			getPlayerData(client).promptType = AGRP_PROMPT_CREATEFIRSTCHAR;
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage"), `{ALTCOLOUR}/newchar{MAINCOLOUR}`);
@@ -1395,11 +1429,10 @@ function initClient(client) {
 		return false;
 	}
 
-	setEntityData(client, "agrp.isInitialized", true, false);
-
-	sendPlayerGUIColours(client);
+	//setEntityData(client, "agrp.isInitialized", true, false);
 
 	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
+	sendPlayerGUIColours(client);
 	sendPlayerGUIInit(client);
 	updatePlayerSnowState(client);
 
@@ -1436,7 +1469,7 @@ function initClient(client) {
 						showPlayerLoginGUI(client);
 					} else {
 						logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
-						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
+						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerConfig().name, getPlayerName(client), "/login"), getColourByName("softGreen"));
 
 						//if(checkForGeoIPModule()) {
 						//	let iso = module.geoip.getCountryISO(getPlayerIP(client));
@@ -1454,7 +1487,7 @@ function initClient(client) {
 					showPlayerRegistrationGUI(client);
 				} else {
 					logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
-					messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "/register"), getColourByName("softGreen"));
+					messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerConfig().name, getPlayerName(client), "/register"), getColourByName("softGreen"));
 				}
 				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 			}
@@ -1692,9 +1725,9 @@ function generateEmailVerificationCode() {
 function sendEmailVerificationEmail(client, emailVerificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerConfig().name}`, emailBodyText);
 }
 
 // ===========================================================================
@@ -1702,9 +1735,9 @@ function sendEmailVerificationEmail(client, emailVerificationCode) {
 function sendPasswordResetEmail(client, verificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmPasswordReset;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", verificationCode);
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerConfig().name}`, emailBodyText);
 }
 
 // ===========================================================================
@@ -1714,9 +1747,9 @@ function verifyAccountEmail(accountData, verificationCode) {
 
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerConfig().name}`, emailBodyText);
 
 	getPlayerData(client).accountData.emailAddress = emailAddress;
 	getPlayerData(client).accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
@@ -1733,10 +1766,10 @@ function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGa
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
 	emailBodyText = emailBodyText.replace("{IPADDRESS}", ip);
 	emailBodyText = emailBodyText.replace("{LOCATION}", `${cityName}, ${subDivisionName}, ${countryName}`);
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login failed on ${getServerConfig().name}`, emailBodyText);
 	return true;
 }
 
@@ -1751,10 +1784,10 @@ function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getG
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
 	emailBodyText = emailBodyText.replace("{IPADDRESS}", ip);
 	emailBodyText = emailBodyText.replace("{LOCATION}", `${cityName}, ${subDivisionName}, ${countryName}`);
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login successful on ${getServerConfig().name}`, emailBodyText);
 	return true;
 }
 
@@ -1763,6 +1796,13 @@ function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getG
 function isAccountSettingFlagEnabled(accountData, flagValue) {
 	return hasBitFlag(accountData.settings, flagValue);
 }
+
+// ===========================================================================
+
+function isPlayerAccountSettingEnabled(client, flagName) {
+	return hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue(flagName));
+}
+
 
 // ===========================================================================
 
@@ -1797,9 +1837,9 @@ function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 	let emailBodyText = getEmailConfig().bodyContent.twoFactorAuthentication;
 	emailBodyText = emailBodyText.replace("{2FACODE}", twoFactorAuthCode);
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(getGame()));
-	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
+	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerConfig().name);
 
-	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login code for ${getServerConfig().name}`, emailBodyText);
 	return true;
 }
 
