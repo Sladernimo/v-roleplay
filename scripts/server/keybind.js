@@ -93,6 +93,15 @@ function removeKeyBindCommand(command, params, client) {
 
 // ===========================================================================
 
+function resetKeyBindsCommand(command, params, client) {
+	getPlayerData(client).promptType = AGRP_PROMPT_RESETKEYBINDS;
+	showPlayerPrompt(client, getLocaleString(client, "ResetAllKeyBindsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	//removePlayerKeyBind(client, keyId);
+	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
+}
+
+// ===========================================================================
+
 function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
 	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
 	if (tempKey == true) {
