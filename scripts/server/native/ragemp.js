@@ -1223,4 +1223,66 @@ function bindServerEventHandler(eventName, bindTo, handlerFunction) {
 	});
 }
 
+
+// ===========================================================================
+
+function setElementName(element, name) {
+	element.name = name;
+}
+
+// ===========================================================================
+
+function hideElementForPlayer(element, client) {
+	element.setExistsFor(client, false);
+}
+
+// ===========================================================================
+
+function showElementForPlayer(element, client) {
+	element.setExistsFor(client, true);
+}
+
+// ===========================================================================
+
+function setElementShownByDefault(element, state) {
+	element.netFlags.defaultExistance = state;
+}
+
+// ===========================================================================
+
+function createAttachedGameBlip(element, type, size, colour = toColour(255, 255, 255, 255)) {
+	if (isGameFeatureSupported("attachedBlips")) {
+		return game.createBlipAttachedTo(element, type, size, colour, true, false);
+	}
+}
+
+// ===========================================================================
+
+function deletePlayerPed(client) {
+	if (areServerElementsSupported()) {
+		destroyElement(client.player);
+	} else {
+		sendNetworkEventToPlayer("agrp.deleteLocalPlayerPed", client);
+	}
+
+}
+
+// ===========================================================================
+
+function isPlayerOnBoat(client) {
+	return false;
+}
+
+// ===========================================================================
+
+function setServerName(name) {
+	server.name = name;
+}
+
+// ===========================================================================
+
+function setServerPassword(password) {
+	server.setPassword(password);
+}
+
 // ===========================================================================
