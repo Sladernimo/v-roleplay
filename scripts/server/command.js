@@ -75,6 +75,8 @@ function loadCommands() {
 			new CommandData("chattimestamps", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
 			new CommandData("chattime", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
 			new CommandData("chattimes", toggleChatBoxTimeStampsCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off timestamps in the chatbox"),
+			new CommandData("chatfilter", toggleAccountProfanityFilterCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off profanity filter"),
+			//new CommandData("noblood", toggleAccountHideBloodCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off blood in-game"),
 		],
 		ammunation: [],
 		animation: [
