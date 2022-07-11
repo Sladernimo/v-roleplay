@@ -16,7 +16,7 @@ mexui.hoveredComponent = null;
 
 // initialization
 mexui.init = function () {
-	mexui.native.loadImage('mexui/Images/down-arrow.png', 'downArrow');
+	mexui.native.loadImage('third-party/mexui/Images/down-arrow.png', 'downArrow');
 	mexui.bindEvents();
 	mexui.startTimers();
 };
