@@ -402,7 +402,7 @@ function checkNewCharacter(client, firstName, lastName) {
 		} else {
 			messagePlayerError(client, "Your character could not be created!");
 		}
-		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it soon.`);
+		messagePlayerAlert(client, `${getServerConfig().name} staff have been notified of the problem and will fix it soon.`);
 		return false;
 	}
 
