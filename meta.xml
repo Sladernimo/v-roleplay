@@ -134,6 +134,33 @@
 	<script src="scripts/client/utilities.js" type="client" language="javascript" />
 	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
 
+	<!-- Locale Files -->
+	<file type="client" src="config/client/locale.json" />
+	<file type="client" src="locale/english.json" />
+	<file type="client" src="locale/russian.json" />
+	<file type="client" src="locale/polish.json" />
+	<file type="client" src="locale/spanish.json" />
+	<file type="client" src="locale/french.json" />
+	<file type="client" src="locale/japanese.json" />
+	<file type="client" src="locale/german.json" />
+	<file type="client" src="locale/slovak.json" />
+	<file type="client" src="locale/finnish.json" />
+	<file type="client" src="locale/chinese.json" />
+	<file type="client" src="locale/arabic.json" />
+
+	<!-- International Flag Images -->
+	<file type="client" src="files/images/flags/uk.png" />
+	<file type="client" src="files/images/flags/de.png" />
+	<file type="client" src="files/images/flags/fr.png" />
+	<file type="client" src="files/images/flags/pl.png" />
+	<file type="client" src="files/images/flags/es.png" />
+	<file type="client" src="files/images/flags/jp.png" />
+	<file type="client" src="files/images/flags/sk.png" />
+	<file type="client" src="files/images/flags/sa.png" />
+	<file type="client" src="files/images/flags/cn.png" />
+	<file type="client" src="files/images/flags/fi.png" />
+	<file type="client" src="files/images/flags/ru.png" />
+
 	<!-- MexUI -->
 	<file type="client" src="third-party/mexui/Images/down-arrow.png" />
 	<script language="javascript" type="client" src="third-party/mexui/mexui.js" />
