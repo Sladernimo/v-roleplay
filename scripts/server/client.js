@@ -133,10 +133,17 @@ class ClientData {
 		this.promptType = AGRP_PROMPT_NONE;
 		this.privateMessageReplyTo = null;
 
+		// Paintball
 		this.inPaintBall = false;
 		this.paintBallBusiness = -1;
 		this.paintBallDeaths = 0;
 		this.paintBallKills = 0;
+
+		// Job Route Editing
+		this.jobRouteEditNextLocationDelay = 0;
+		this.jobRouteEditNextLocationArriveMessage = "";
+		this.jobRouteEditNextLocationGotoMessage = "";
+		this.jobRouteEditNextLocationType = AGRP_JOB_ROUTE_LOCATION_TYPE_NONE;
 	}
 };
 
