@@ -16,6 +16,7 @@ let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);
 let playerInitialized = new Array(server.maxClients).fill(false);
 let playerGUI = new Array(server.maxClients).fill(false);
+let defaultNoAccountId = 479;
 
 // ===========================================================================
 
@@ -29,13 +30,14 @@ let playerGUI = new Array(server.maxClients).fill(false);
  * @property {Array.<ItemData>} items
  * @property {Array.<ItemTypeData>} itemTypes
  * @property {Array.<ClanData>} clans
- * @property {Array} localeStrings
  * @property {Array.<TriggerData>} triggers
  * @property {Array.<NPCData>} npcs
  * @property {Array.<RaceData>} races
  * @property {Array.<JobData>} jobs
  * @property {Array.<GateData>} gates
  * @property {Array.<RadioStationData>} radioStations
+ * @property {Array} locales
+ * @property {Array} localeStrings
  * @property {Array} groundItemCache
  * @property {Array} groundPlantCache
  * @property {Array} purchasingVehicleCache
@@ -51,7 +53,6 @@ let serverData = {
 	items: [],
 	itemTypes: [],
 	clans: [],
-	localeStrings: {},
 	cachedTranslations: [],
 	cachedTranslationFrom: [],
 	triggers: [],
@@ -60,6 +61,7 @@ let serverData = {
 	jobs: [],
 	gates: [],
 	radioStations: [],
+	localeStrings: {},
 	groundItemCache: [],
 	groundPlantCache: [],
 	purchasingVehicleCache: [],
@@ -70,9 +72,7 @@ let serverData = {
 // ===========================================================================
 
 /**
- *
- * @return {ServerData}
- *
+ * @return {ServerData} serverData
  */
 function getServerData() {
 	return serverData;
