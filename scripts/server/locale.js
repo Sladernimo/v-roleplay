@@ -8,6 +8,21 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+class LocaleData {
+	constructor() {
+		this.id = 0;
+		this.name = "";
+		this.englishName = "";
+		this.stringsFile = "";
+		this.flagImagePath = "";
+		this.contributors = "";
+		this.countries = [];
+		this.requiresUnicode = false;
+	}
+}
+
+// ===========================================================================
+
 function initLocaleScript() {
 	logToConsole(LOG_INFO, "[VRR.Locale]: Initializing locale script ...");
 	logToConsole(LOG_INFO, "[VRR.Locale]: Locale script initialized!");
