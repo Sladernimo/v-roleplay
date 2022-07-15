@@ -33,10 +33,10 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 
 	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitingVehicle", onPedExitingVehicle);
-	addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
-	addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
+	addEventHandler("onPedEnteringVehicleEx", onPedEnteringVehicle);
+	addEventHandler("onPedExitingVehicleEx", onPedExitingVehicle);
+	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 
 	//addEventHandler("OnPlayerCommand", onPlayerCommand);
 }
