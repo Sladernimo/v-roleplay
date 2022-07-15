@@ -8,6 +8,8 @@
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
+"use strict";
+
 // Label Types
 const AGRP_LABEL_JOB = 1;
 const AGRP_LABEL_BUSINESS = 2;
