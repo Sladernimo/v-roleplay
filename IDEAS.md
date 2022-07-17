@@ -380,8 +380,13 @@ So with new Steam Deck being available now, and all the other attempts to use mo
 The inventory system is already planned to use a hotbar/wheel but I don't have all the images for it yet
 ---
 ### Fishing
-GTA 3 ... use the bat swing anim for casting line, and the crouch anim for applying bait.
-Use a press and hold key to cast a line to a custom distance. Show progress bar to indicate how far the line will be cast.
-Place a single-use particle effect on the water (distance to front of player) to show where the casted line hits.
-Use particle effects (plus small game message) to display a fish being hooked. Slowly move the particle effect to the player to show it being reeled in as the player holds the reel key.
-**This will need extra stuff added to keybinds system for duration key holding**
+    * Fishing works near water or on a boat (I have a way to detect both)
+    * Use the bat swing anim for casting line, and the crouch anim for applying bait.
+    * Bait is used same as ammo item for a weapon. Hold the fishing rod, make sure bait is in inventory, and press use (default U) to apply bait.
+    * Use a "press and hold" key to cast a line to a custom distance. Show progress bar to indicate how far the line will be cast.
+    * Place a single-use particle effect on the water (distance to front of player) to show where the casted line hits.
+    * Use particle effects (water spray or splash effect) to display a fish being hooked.
+    * Slowly move the particle effect to the player to show it being reeled in as the player holds the reel key.
+    * Random selection of predefined catch items, both junk and fish.
+    * Player would be wise to bring a bucket or crate to keep the fish in, using existing /take and /put system like any other item.
+	**This will need extra stuff added to keybinds system for duration key holding**
