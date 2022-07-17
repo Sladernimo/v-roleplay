@@ -464,7 +464,7 @@ function getPlayerName(client) {
 // ===========================================================================
 
 function getServerName() {
-	return server.name;
+	return "Asshat Gaming RP";
 }
 
 // ===========================================================================
