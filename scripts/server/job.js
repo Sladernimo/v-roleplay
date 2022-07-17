@@ -420,11 +420,10 @@ let jobRouteLocationTypeNames = [
 	["streetclean", AGRP_JOB_ROUTE_LOCATION_TYPE_GROUND_GARBAGE],
 	["groundgarbage", AGRP_JOB_ROUTE_LOCATION_TYPE_GROUND_GARBAGE],
 	["garbagebin", AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN],
-	["garbagepickup", AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_PICKUP],
+	["garbagepickup", AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN],
 	["burningvehicle", AGRP_JOB_ROUTE_LOCATION_TYPE_BURNING_VEHICLE],
 	["injuredped", AGRP_JOB_ROUTE_LOCATION_TYPE_INJURED_PED],
-]
-
+];
 
 // ===========================================================================
 
