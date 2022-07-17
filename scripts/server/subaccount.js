@@ -360,8 +360,9 @@ function showCharacterSelectToClient(client) {
 		let chunkedList = splitArrayIntoChunks(charactersList, 5);
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCharactersListSelf")));
 		for (let i in chunkedList) {
-			messagePlayerNormal(client, chunkedList[i].join("{MAINCOLOUR}, "));
+			messagePlayerNormal(client, chunkedList[i].join("{MAINCOLOUR} • "));
 		}
+		messagePlayerInfo(client, getLocaleString(client, "CharacterSelectHelpText", `{ALTCOLOUR}/usechar{MAINCOLOUR}`, `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
 	}
 }
@@ -402,7 +403,7 @@ function checkNewCharacter(client, firstName, lastName) {
 		} else {
 			messagePlayerError(client, "Your character could not be created!");
 		}
-		messagePlayerAlert(client, `${getServerConfig().name} staff have been notified of the problem and will fix it soon.`);
+		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it soon.`);
 		return false;
 	}
 
