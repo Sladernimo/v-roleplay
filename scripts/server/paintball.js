@@ -76,6 +76,7 @@ function startPaintBall(client) {
 
 function stopPaintBall(client) {
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Stopping paintball for ${getPlayerDisplayForConsole(client)} ...`);
+	clearPlayerWeapons(client);
 	deletePaintBallItems(client);
 	restorePlayerTempLockerItems(client);
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Stopped paintball for ${getPlayerDisplayForConsole(client)} successfully`);
@@ -86,7 +87,7 @@ function stopPaintBall(client) {
 function givePlayerPaintBallItems(client) {
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Giving ${getPlayerDisplayForConsole(client)} paintball items ...`);
 	for (let i in paintBallItems) {
-		let itemId = createItem(paintBallItems[i], value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(paintBallItems[i], 999999, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);
@@ -117,7 +118,7 @@ function cacheAllPaintBallItemTypes() {
 	for (let i in paintBallItemNames[getGame()]) {
 		let itemTypeId = getItemTypeFromParams(paintBallItemNames[getGame()][i]);
 		if (itemTypeId != -1 && getItemTypeData(itemTypeId) != false) {
-			paintBallItems.push(getItemTypeData(itemTypeId));
+			paintBallItems.push(itemTypeId);
 		}
 	}
 
