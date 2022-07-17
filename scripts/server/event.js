@@ -123,6 +123,22 @@ function onPlayerQuit(event, client, quitReasonId) {
 	});
 	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
 
+	if (isPlayerFishing(client)) {
+		stopFishing(client);
+	}
+
+	if (isPlayerInPaintBall(client)) {
+		stopPaintBall(client);
+	}
+
+	if (isPlayerOnJobRoute(client)) {
+		stopJobRoute(client);
+	}
+
+	if (isPlayerWorking(client)) {
+		stopWorking(client);
+	}
+
 	if (isPlayerLoggedIn(client)) {
 		savePlayerToDatabase(client);
 		resetClientStuff(client);
