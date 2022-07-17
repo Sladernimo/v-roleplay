@@ -74,6 +74,42 @@ function toggleMouseCursorCommand(command, params, client) {
 
 // ===========================================================================
 
+function suicideCommand(command, params, client) {
+	if (!isPlayerSpawned(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeSpawned"));
+		return false;
+	}
+
+	if (isPlayerSurrendered(client)) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (isPlayerRestrained(client)) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (getPlayerCurrentSubAccount(client).inJail) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (isPlayerInPaintBall(client)) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (isPlayerInAnyVehicle(client)) {
+		removePlayerFromVehicle(client);
+	}
+
+	processPlayerDeath(client);
+	return true;
+}
+
+// ===========================================================================
+
 function toggleMouseCameraCommand(command, params, client) {
 	if (getGame() != AGRP_GAME_GTA_VC) {
 		sendPlayerMouseCameraToggle(client);
@@ -827,6 +863,96 @@ function deletePlayerBlip(client) {
 		deleteGameElement(getPlayerData(client).playerBlip);
 		getPlayerData(client).playerBlip = null;
 	}
+}
+
+// ===========================================================================
+
+function processPlayerDeath(client) {
+	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
+	updatePlayerSpawnedState(client, false);
+	setPlayerControlState(client, false);
+	setTimeout(function () {
+		if (isFadeCameraSupported()) {
+			fadeCamera(client, false, 1.0);
+		}
+		setTimeout(function () {
+			if (isPlayerInPaintBall(client)) {
+				respawnPlayerForPaintBall(client);
+			} else {
+				if (getPlayerCurrentSubAccount(client).inJail) {
+					let closestJail = getClosestPoliceStation(getPlayerPosition(client));
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = closestJail.interior;
+					getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
+
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
+
+					if (getGame() == AGRP_GAME_MAFIA_ONE) {
+						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
+					} else {
+						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					}
+
+					if (isFadeCameraSupported()) {
+						fadeCamera(client, true, 1.0);
+					}
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
+				} else {
+					let closestHospital = getClosestHospital(getPlayerPosition(client));
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
+					getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
+
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
+
+					if (getGame() == AGRP_GAME_MAFIA_ONE) {
+						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
+					} else {
+						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					}
+
+					if (isFadeCameraSupported()) {
+						fadeCamera(client, true, 1.0);
+					}
+
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
+				}
+			}
+		}, 2000);
+	}, 1000);
+
+	let queryData = [
+		["log_death_server", getServerId()]
+		["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
+		["log_death_when_died", getCurrentUnixTimestamp()],
+		["log_death_pos_x", position.x],
+		["log_death_pos_y", position.y],
+		["log_death_pos_z", position.x],
+	];
+	let queryString = createDatabaseInsertQuery("log_death", queryData);
+	queryDatabase(queryString);
+}
+
+// ===========================================================================
+
+function isPlayerSurrendered(client) {
+	return (getPlayerData(client).pedState == AGRP_PEDSTATE_TAZED || getPlayerData(client).pedState == AGRP_PEDSTATE_HANDSUP);
+}
+
+// ===========================================================================
+
+function isPlayerRestrained(client) {
+	return (getPlayerData(client).pedState == AGRP_PEDSTATE_BINDED);
 }
 
 // ===========================================================================
