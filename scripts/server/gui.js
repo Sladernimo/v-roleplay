@@ -237,6 +237,14 @@ function playerPromptAnswerYes(client) {
 			break;
 		}
 
+		case AGRP_PROMPT_RESETKEYBINDS: {
+			break;
+		}
+
+		case AGRP_PROMPT_COPYKEYBINDSTOSERVER: {
+			break;
+		}
+
 		default: {
 			submitBugReport(client, `[AUTOMATED REPORT] Unknown prompt type: ${getPlayerData(client).promptType}`);
 			break;
