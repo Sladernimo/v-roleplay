@@ -52,7 +52,7 @@ function initFishingScript() {
 // ===========================================================================
 
 function castFishingLineCommand(client) {
-	if (isPlayerInFishingSpot(client)) {
+	if (!isPlayerInFishingSpot(client)) {
 		messagePlayerError(client, getLocaleString(client, "CantFishHere"));
 		return false;
 	}
@@ -63,11 +63,11 @@ function castFishingLineCommand(client) {
 	}
 
 	getPlayerData(client).fishingLineCastStart = getCurrentUnixTimestamp();
-	makePedPlayAnimation(getPlayerPed(client), getAnimationFromParams("batswing"));
+	makePedPlayAnimation(getPlayerPed(client), getAnimationFromParams("fishingcast"));
 
-	let messageText = getLocaleString(client, "FishingCastCommandHelp")
+	let messageText = getLocaleString(client, "FishingCastCommandHelp");
 	if (doesPlayerHaveKeyBindForCommand(client, "fish")) {
-		messageText = getLocaleString(client, "FishingCastKeyPressHelp")
+		messageText = getLocaleString(client, "FishingCastKeyPressHelp");
 	}
 
 	showGameMessage(client, messageText);
@@ -82,18 +82,26 @@ function resetFishingLineCommand(client) {
 	}
 
 	if (doesPlayerHaveItemOfUseTypeEquipped(client, AGRP_ITEM_USE_TYPE_FISHINGROD)) {
+		messagePlayerError(client, getLocaleString(client, "NeedFishingRod"));
+		return false;
+	}
+
+	if (!isPlayerInFishingSpot(client)) {
 		messagePlayerError(client, getLocaleString(client, "CantFishHere"));
 		return false;
 	}
 
 	makePedStopAnimation(getPlayerPed(client));
 
-	let messageText = getLocaleString(client, "FishingCastCommandHelp")
+	let messageText = getLocaleString(client, "FishingCastCommandHelp");
 	if (doesPlayerHaveKeyBindForCommand(client, "fish")) {
-		messageText = getLocaleString(client, "FishingCastKeyPressHelp")
+		messageText = getLocaleString(client, "FishingCastKeyPressHelp");
 	}
 
 	showGameMessage(client, messageText);
+
+	getPlayerData(client).fishingLineState = AGRP_FISHING_LINE_STATE_NONE;
+	getPlayerData(client).fishingLineCastStart = 0;
 }
 
 // ===========================================================================
@@ -117,6 +125,18 @@ function isPlayerInFishingSpot(client) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function isPlayerFishing(client) {
+	return (getPlayerData(client).fishingLineState != AGRP_FISHING_LINE_STATE_NONE);
+}
+
+// ===========================================================================
+
+function isPlayerFishing(client) {
+	return (getPlayerData(client).fishingLineState != AGRP_FISHING_LINE_STATE_NONE);
 }
 
 // ===========================================================================
