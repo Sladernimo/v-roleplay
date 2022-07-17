@@ -381,3 +381,7 @@ The inventory system is already planned to use a hotbar/wheel but I don't have a
 ---
 ### Fishing
 GTA 3 ... use the bat swing anim for casting line, and the crouch anim for applying bait.
+Use a press and hold key to cast a line to a custom distance. Show progress bar to indicate how far the line will be cast.
+Place a single-use particle effect on the water (distance to front of player) to show where the casted line hits.
+Use particle effects (plus small game message) to display a fish being hooked. Slowly move the particle effect to the player to show it being reeled in as the player holds the reel key.
+**This will need extra stuff added to keybinds system for duration key holding**
