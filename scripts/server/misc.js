@@ -309,7 +309,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}, 1100);
 
 			if (isBusiness) {
-				if (closestProperty.entranceType == AGRP_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
 					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
 					startPaintBall(client);
 				}
@@ -354,7 +354,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}, 1100);
 
 			if (isBusiness) {
-				if (closestProperty.entranceType == AGRP_PROPERTY_ENTRANCE_TYPE_PAINTBALL) {
+				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
 					messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
 					stopPaintBall(client);
 				}
