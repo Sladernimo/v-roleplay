@@ -80,11 +80,12 @@ const AGRP_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants
 const AGRP_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
 const AGRP_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
 const AGRP_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
-const AGRP_ITEM_USE_TYPE_METH_LAB = 54;  		  // Meth lab item. Allows creating meth
-const AGRP_ITEM_USE_TYPE_PLANTER = 55;			  // Plant pot. Can be used to plant item of use type AGRP_ITEM_USE_TYPE_PLANT where terrain is not available
-const AGRP_ITEM_USE_TYPE_FISH = 56;				  // Fishing catch ... bass, catfish, etc
-const AGRP_ITEM_USE_TYPE_JUNK = 57;				  // Worthless junk. Some used as fishing catches
-const AGRP_ITEM_USE_TYPE_BAIT = 58;				  // Bait. Used for fishing
+const AGRP_ITEM_USE_TYPE_METH_LAB = 54;  		   // Meth lab item. Allows creating meth
+const AGRP_ITEM_USE_TYPE_PLANTER = 55;			   // Plant pot. Can be used to plant item of use type AGRP_ITEM_USE_TYPE_PLANT where terrain is not available
+const AGRP_ITEM_USE_TYPE_FISH = 56;				   // Fishing catch ... bass, catfish, etc
+const AGRP_ITEM_USE_TYPE_JUNK = 57;				   // Worthless junk. Some used as fishing catches
+const AGRP_ITEM_USE_TYPE_BAIT = 58;				   // Bait. Used for fishing
+const AGRP_ITEM_USE_TYPE_FISHINGROD = 59;		   // Fishing rod. Used for fishing.
 
 // ===========================================================================
 
