@@ -29,9 +29,3 @@ function unHandCuffPlayer(client) {
 }
 
 // ===========================================================================
-
-function isPlayerSurrendered(client) {
-	return true; //(getPlayerData(client).pedState == AGRP_PEDSTATE_TAZED || getPlayerData(client).pedState == AGRP_PEDSTATE_HANDSUP);
-}
-
-// ===========================================================================
