@@ -617,3 +617,10 @@ function getServerData() {
 }
 
 // ===========================================================================
+
+function setProfanityFilterState(state) {
+	profanityFilterEnabled = state;
+	updateChatBox();
+}
+
+// ===========================================================================

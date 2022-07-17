@@ -13,7 +13,8 @@ const AGRP_BIZ_TYPE_NONE = 0;                     // None (invalid)
 const AGRP_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
 const AGRP_BIZ_TYPE_BANK = 2;                     // Bank
 const AGRP_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
-const AGRP_BIZ_TYPE_PAINTBALL = 4;				 // Paintball arena. Player joins paintball/airsoft when they enter
+const AGRP_BIZ_TYPE_PAINTBALL = 4;				  // Paintball arena. Player joins paintball/airsoft when they enter
+const AGRP_BIZ_TYPE_DEALERSHIP = 5;				  // Vehicle Dealership (also for airplane, boat, etc)
 
 // ===========================================================================
 
@@ -846,7 +847,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}entrance fee to [#AAAAAAA]$${entranceFee}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to [#AAAAAAA]$${entranceFee}`);
 }
 
 // ===========================================================================
@@ -873,7 +874,7 @@ function setBusinessPaintBallCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).entranceType = AGRP_BIZ_ENTRANCE_TYPE_PAINTBALL;
+	getBusinessData(businessId).type = AGRP_BIZ_TYPE_PAINTBALL;
 	getBusinessData(businessId).needsSaved = true;
 	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
 }
@@ -1305,6 +1306,7 @@ function setBusinessEntranceLabelToDealershipCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
+	getBusinessData(businessId).type = AGRP_BIZ_TYPE_VEHDEALERSHIP;
 	updateBusinessPickupLabelData(businessId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
 }

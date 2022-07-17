@@ -527,7 +527,8 @@ function sendPlayerRemoveFromVehicle(client) {
 
 function sendChatBoxMessageToPlayer(client, messageText, colour) {
 	//messageClient(messageText, client, colour);
-	sendNetworkEventToPlayer("m", client, messageText, colour);
+	let date = new Date();
+	sendNetworkEventToPlayer("m", client, messageText, colour, date.getHours(), date.getMinutes(), date.getSeconds());
 }
 
 // ===========================================================================
@@ -1242,6 +1243,18 @@ function clearLocalPickupsForPlayer(client) {
 
 function sendPlayerChatBoxTimeStampsState(client, state) {
 	sendNetworkEventToPlayer("agrp.chatTimeStamps", client, state);
+}
+
+// ==========================================================================
+
+function sendPlayerChatEmojiState(client, state) {
+	sendNetworkEventToPlayer("agrp.chatEmoji", client, state);
+}
+
+// ==========================================================================
+
+function sendPlayerProfanityFilterState(client, state) {
+	sendNetworkEventToPlayer("agrp.profanityFilter", client, state);
 }
 
 // ==========================================================================

@@ -742,7 +742,7 @@ let serverEmoji = [
 	[":dizzy:", "💫"],
 	[":speech_balloon:", "💬"],
 	[":white_flower:", "💮"],
-	[":_100:", "💯"],
+	[":100:", "💯"],
 	[":moneybag:", "💰"],
 	[":currency_exchange:", "💱"],
 	[":heavy_dollar_sign:", "💲"],
@@ -2462,11 +2462,18 @@ function doesWordStartWithVowel(word) {
 
 // ===========================================================================
 
-function replaceEmojiIntoString(message) {
-	for (let i in emojiReplaceString) {
-		message = message.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
+/**
+ * Replaces emoji texts with actual emoji
+ *
+ * @param {String} messageString - String with emoji names
+ * @return {String} String with actual emoji images
+ *
+ */
+function replaceEmojiInMessage(messageString) {
+	for (let i in serverEmoji) {
+		messageString = messageString.replace(serverEmoji[i][0], serverEmoji[i][1]);
 	}
-	return message;
+	return messageString;
 }
 
 // ===========================================================================
@@ -2999,31 +3006,13 @@ function removeColoursInMessage(messageText) {
 // ===========================================================================
 
 /**
- * Replaces emoji texts with actual emoji
- *
- * @param {String} messageString - String with emoji names
- * @return {String} String with actual emoji images
- *
- */
-function replaceEmojiInString(messageString) {
-	for (let i in emojiReplaceString) {
-		while (messageString.indexOf(emojiReplaceString[i][0]) != -1) {
-			messageString = messageString.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
-		}
-	}
-	return messageString;
-}
-
-// ===========================================================================
-
-/**
  * Replaces profanity with masked words like: ******
  *
  * @param {String} messageString - String with profanity
  * @return {String} String with profanity masked
  *
  */
-function replaceProfanityInString(messageString) {
+function replaceProfanityInMessage(messageString) {
 	for (let i in profanityFilterWords) {
 		while (messageString.indexOf(profanityFilterWords[i]) != -1) {
 			messageString = messageString.replace(profanityFilterWords[i], fillStringWithCharacter("*", profanityFilterWords[i].length));
@@ -3160,6 +3149,16 @@ function getAnimationFromParams(params) {
  */
 function getAnimationData(animationSlot, gameId = getGame()) {
 	return getGameConfig().animations[gameId][animationSlot];
+}
+
+// ===========================================================================
+
+function fillLeadingZeros(number, length) {
+	let str = toString(number);
+	while (str.length < length) {
+		str = "0" + str;
+	}
+	return str;
 }
 
 // ===========================================================================

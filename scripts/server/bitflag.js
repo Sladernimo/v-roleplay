@@ -119,9 +119,10 @@ let serverBitFlagKeys = {
 		"NoRandomTips",
 		"NoActionTips",
 		"ChatBoxTimestamps",
-		"ChatProfanityFilter",
+		"ProfanityFilter",
 		"ChatAutoHide",
 		"NoPlayerContent",
+		"ChatEmoji",
 		//"NoBlood",
 	],
 

@@ -24,7 +24,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.chatScrollLines", setChatScrollLines);
 	addNetworkEventHandler("agrp.chatAutoHideDelay", setChatAutoHideDelay);
 	addNetworkEventHandler("agrp.chatTimeStamps", setChatTimeStampsState);
-	addNetworkEventHandler("agrp.chatProfanityFilter", setChatProfanityFilterState);
+	addNetworkEventHandler("agrp.chatEmoji", setChatEmojiState);
 
 	// Messaging (like textdraws and stuff)
 	addNetworkEventHandler("agrp.smallGameMessage", showSmallGameMessage);
@@ -154,6 +154,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.elementCollisions", setElementCollisionsEnabled);
 	addNetworkEventHandler("agrp.vehBuyState", setVehiclePurchaseState);
 	addNetworkEventHandler("agrp.holdObject", makePedHoldObject);
+	addNetworkEventHandler("agrp.profanityFilter", setProfanityFilterState);
 }
 
 // ===========================================================================

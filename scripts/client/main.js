@@ -79,6 +79,8 @@ let guiDownKey = false;
 // Pre-cache all allowed skins
 let allowedSkins = getAllowedSkins(getGame());
 
+let profanityFilterEnabled = false;
+
 let localLocaleId = 0;
 
 let serverData = {

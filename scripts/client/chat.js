@@ -11,7 +11,6 @@
 // ===========================================================================
 
 let chatTimeStampsEnabled = false;
-let chatProfanityFilterEnabled = false;
 let chatEmojiEnabled = false;
 
 let chatBoxHistory = [];
@@ -53,15 +52,19 @@ function unBindChatBoxKeys() {
 
 // ===========================================================================
 
-function receiveChatBoxMessageFromServer(messageString, colour) {
+function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, second) {
 	logToConsole(LOG_DEBUG, `[VRR.Chat]: Received chatbox message from server: ${messageString}`);
 
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
 
-	let timeStamp = findResourceByName("agrp_time").exports.getCurrentUnixTimeStampSquirrel();
+	//let timeStamp = findResourceByName("agrp_time").exports.getCurrentUnixTimeStampSquirrel();
 
-	addToChatBoxHistory(messageString, colour, timeStamp);
+	hour = fillLeadingZeros(hour, 2);
+	minute = fillLeadingZeros(minute, 2);
+	second = fillLeadingZeros(second, 2);
+
+	addToChatBoxHistory(messageString, colour, hour, minute, second);
 
 	//let unixTimeStampMS = new Date().getTime();
 	//let timeStampDate = new Date(unixTimeStampMS);
@@ -69,23 +72,26 @@ function receiveChatBoxMessageFromServer(messageString, colour) {
 	//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
 
 	let outputString = messageString;
-	//let timeStampString = "";
-	//if (chatTimeStampsEnabled == true) {
-	//	timeStampString = `{TIMESTAMPCOLOUR}[${findResourceByName("agrp_time").exports.getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
-	//}
+	if (chatTimeStampsEnabled == true) {
+		//timeStampString = `{TIMESTAMPCOLOUR}[${findResourceByName("agrp_time").exports.getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
+		let timeStampString = `{TIMESTAMPCOLOUR}[${hour}:${minute}:${second}] `;
+		outputString = `${timeStampString}${messageString}`;
+	}
 
 	logToConsole(LOG_DEBUG, `[VRR.Chat]: Changed colours in string: ${outputString}`);
-	let colouredString = replaceColoursInMessage(`${timeStampString}${outputString}`);
+	outputString = replaceColoursInMessage(`${outputString}`);
 
 	if (chatEmojiEnabled == true) {
-		colouredString = replaceEmojiInMessage(colouredString);
+		logToConsole(LOG_DEBUG, `[VRR.Chat]: Enabled emoji in string: ${outputString}`);
+		outputString = replaceEmojiInMessage(outputString);
 	}
 
-	if (chatProfanityFilterEnabled == true) {
-		colouredString = replaceProfanityInMessage(colouredString);
+	if (profanityFilterEnabled == true) {
+		logToConsole(LOG_DEBUG, `[VRR.Chat]: Removed profanity in string: ${outputString}`);
+		outputString = replaceProfanityInMessage(outputString);
 	}
 
-	message(colouredString, colour);
+	message(outputString, colour);
 	bottomMessageIndex = chatBoxHistory.length - 1;
 
 	chatLastUse = getCurrentUnixTimestamp();
@@ -106,8 +112,8 @@ function setChatTimeStampsState(state) {
 
 // ===========================================================================
 
-function setChatProfanityFilterState(state) {
-	chatProfanityFilterEnabled = state;
+function setChatEmojiState(state) {
+	chatEmojiEnabled = state;
 	updateChatBox();
 }
 
@@ -119,8 +125,8 @@ function setChatAutoHideDelay(delay) {
 
 // ===========================================================================
 
-function addToChatBoxHistory(messageString, colour, timeStamp) {
-	chatBoxHistory.push([messageString, colour, timeStamp]);
+function addToChatBoxHistory(messageString, colour, hour, minute, second) {
+	chatBoxHistory.push([messageString, colour, hour, minute, second]);
 }
 
 // ===========================================================================
@@ -159,12 +165,22 @@ function updateChatBox() {
 			if (chatTimeStampsEnabled == true) {
 				//let timeStampDate = new Date(chatBoxHistory[i][2]);
 				//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
-				let timeStampText = findResourceByName("agrp_time").exports.getTimeStampOutput(chatBoxHistory[i][2]);
+				//let timeStampText = findResourceByName("agrp_time").exports.getTimeStampOutput(chatBoxHistory[i][2]);
+				let timeStampText = `${chatBoxHistory[i][2]}:${chatBoxHistory[i][3]}:${chatBoxHistory[i][4]}`;
 
 				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
 			}
 
 			outputString = replaceColoursInMessage(outputString);
+
+			if (chatEmojiEnabled == true) {
+				outputString = replaceEmojiInMessage(outputString);
+			}
+
+			if (profanityFilterEnabled == true) {
+				outputString = replaceProfanityInMessage(outputString);
+			}
+
 			message(outputString, chatBoxHistory[i][1]);
 		} else {
 			message("", COLOUR_WHITE);
