@@ -6611,6 +6611,29 @@ let gameData = {
 				],
 			}
 		}
+	},
+	particleEffects: {
+		[AGRP_GAME_GTA_III]: {
+			RisingSteamSmall: 0,
+			RisingSmokeSmall: 4,
+			TallSprayingWater: 5,
+			LargeSprayingWater: 6,
+			MediumSprayingWater: 7,
+			WeirdBullseyeTarget: 8,
+			Fire: 9,
+			FireWithSmallSmoke: 10,
+			SmallSteamSpray: 11,
+			VentSteam: 12,
+			FlickeringFire: 13,
+			BlackSmoke: 14,
+			FirePoofThenSmoke: 15,
+			FirePoofThenSmokeTemp: 16,
+			QuickFirePoof: 17,
+			GunMuzzleFlashPistol: 18,
+			GunMuzzleFlashRifle: 19,
+			GunMuzzleFlashStays: 20,
+			SingleSparking: 21,
+		}
 	}
 };
 
