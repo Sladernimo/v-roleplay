@@ -462,3 +462,14 @@ function addPrefixNumberFill(number, amount) {
 }
 
 // ===========================================================================
+
+function updateAllPlayerWeaponDamageStates() {
+	let clients = getClients();
+	for (let i in players) {
+		if (isPlayerLoggedIn(clients[i]) && isPlayerSpawned(clients[i])) {
+			setPlayerWeaponDamageEvent(clients[i], getPlayerData(clients[i]).weaponDamageEvent);
+		}
+	}
+}
+
+// ===========================================================================
