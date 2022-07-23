@@ -834,8 +834,10 @@ function loginSuccess(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
 	getPlayerData(client).loggedIn = true;
 
-	clearTimeout(getPlayerData(client).loginTimeout);
-	getPlayerData(client).loginTimeout = null;
+	if (getPlayerData(client).loginTimeout != null) {
+		clearTimeout(getPlayerData(client).loginTimeout);
+		getPlayerData(client).loginTimeout = null;
+	}
 
 	updateConnectionLogOnAuth(client, getPlayerData(client).accountData.databaseId);
 
