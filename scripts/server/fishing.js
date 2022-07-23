@@ -9,9 +9,17 @@
 // ===========================================================================
 
 // Fishing Catch Types (Probably not going to be used, in favor of items and their use type)
-const AGRP_FISHING_CATCH_TYPE_NONE = 1;
+const AGRP_FISHING_CATCH_TYPE_NONE = 0;
 const AGRP_FISHING_CATCH_TYPE_FISH = 1;
 const AGRP_FISHING_CATCH_TYPE_JUNK = 2;
+
+// Fishing Line States
+const AGRP_FISHING_LINE_STATE_NONE = 0;
+const AGRP_FISHING_LINE_STATE_READY = 1;
+const AGRP_FISHING_LINE_STATE_CASTING = 2;
+const AGRP_FISHING_LINE_STATE_CASTED = 3;
+const AGRP_FISHING_LINE_STATE_REELING = 4;
+const AGRP_FISHING_LINE_STATE_HOOKED = 5;
 
 // ===========================================================================
 
