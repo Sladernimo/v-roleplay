@@ -144,6 +144,10 @@ class ClientData {
 		this.jobRouteEditNextLocationArriveMessage = "";
 		this.jobRouteEditNextLocationGotoMessage = "";
 		this.jobRouteEditNextLocationType = AGRP_JOB_ROUTE_LOCATION_TYPE_NONE;
+
+		this.casinoChips = 0;
+		this.casinoCardHand = [];
+		this.casinoPlayingGame = AGRP_CASINO_GAME_NONE;
 	}
 };
 
