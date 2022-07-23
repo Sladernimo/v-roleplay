@@ -22,6 +22,7 @@
 	<script src="scripts/server/ban.js" type="server" language="javascript" />
 	<script src="scripts/server/bitflag.js" type="server" language="javascript" />
 	<script src="scripts/server/business.js" type="server" language="javascript" />
+	<script src="scripts/server/casino.js" type="server" language="javascript" />
 	<script src="scripts/server/chat.js" type="server" language="javascript" />
 	<script src="scripts/server/clan.js" type="server" language="javascript" />
 	<script src="scripts/server/client.js" type="server" language="javascript" />
