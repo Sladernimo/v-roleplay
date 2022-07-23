@@ -39,6 +39,8 @@ let bettingGUI = {
 	oneMinusButton: null,
 }
 
+// ===========================================================================
+
 function initBettingGUI() {
 	bettingGUI.window = mexui.window(getScreenWidth() / 2 - 125, getScreenHeight() / 2 - 250, 250, 500, 'BETTING', {
 		main: {
@@ -136,6 +138,10 @@ function initBettingGUI() {
 	bettingGUI.window.shown = false;
 }
 
+// ===========================================================================
+
 function showBettingGUI() {
 
 }
+
+// ===========================================================================
