@@ -33,8 +33,8 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 
 	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("onPedEnteringVehicleEx", onPedEnteringVehicle);
-	addEventHandler("onPedExitingVehicleEx", onPedExitingVehicle);
+	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
+	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
 	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
 	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 
@@ -123,9 +123,9 @@ function onPlayerQuit(event, client, quitReasonId) {
 	});
 	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
 
-	if (isPlayerFishing(client)) {
-		stopFishing(client);
-	}
+	//if (isPlayerFishing(client)) {
+	//	stopFishing(client);
+	//}
 
 	if (isPlayerInPaintBall(client)) {
 		stopPaintBall(client);
@@ -412,7 +412,19 @@ function onPlayerExitedVehicle(client, vehicle) {
 
 // ===========================================================================
 
-function onPlayerDeath(client, position) {
+function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let killerClient = null;
+		if (killerPed != null && killerPed.type == ELEMENT_PLAYER) {
+			killerClient = getClientFromPlayerElement(killerPed);
+		}
+		onPlayerWasted(getClientFromPlayerElement(ped), killerClient, weapon, pedPiece);
+	}
+}
+
+// ===========================================================================
+
+function onPlayerDeath(client, killer, weapon, pedPiece) {
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
 	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
@@ -423,7 +435,25 @@ function onPlayerDeath(client, position) {
 		}
 		setTimeout(function () {
 			if (isPlayerInPaintBall(client)) {
-				respawnPlayerForPaintBall(client);
+				getPlayerData(killer).paintBallKills++;
+				getPlayerData(client).paintBallDeaths++;
+
+				if (getPlayerData(killer).paintBallDeaths >= getGlobalConfig().paintBallMaxKills) {
+					let paintBallPlayers = getAllPlayersInBusiness(getPlayerData(client).paintBallBusiness);
+					let winner = paintBallPlayers[i];
+					for (let i in paintBallPlayers) {
+						if (getPlayerData(paintBallPlayers[i]).paintBallKills > getPlayerData(winner).paintBallKills) {
+							winner = paintBallPlayers[i];
+						}
+					}
+
+					for (let i in paintBallPlayers) {
+						showSmallGameMessage(paintBallPlayers[i], `${getLocaleString(paintBallPlayers[i], "PaintBallEnded")} ${getLocaleString(paintBallPlayers[i], "Winners", `${getCharacterFullName(winner)}`)}`);
+						stopPaintBall(paintBallPlayers[i]);
+					}
+				} else {
+					respawnPlayerForPaintBall(client);
+				}
 			} else {
 				if (getPlayerCurrentSubAccount(client).inJail) {
 					let closestJail = getClosestPoliceStation(getPlayerPosition(client));
@@ -477,6 +507,7 @@ function onPlayerDeath(client, position) {
 		}, 2000);
 	}, 1000);
 
+	/*
 	let queryData = [
 		["log_death_server", getServerId()]
 		["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
@@ -487,6 +518,7 @@ function onPlayerDeath(client, position) {
 	];
 	let queryString = createDatabaseInsertQuery("log_death", queryData);
 	addToQueryQueue(queryString);
+	*/
 }
 
 // ===========================================================================
@@ -655,9 +687,6 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Syncing ${getPlayerDisplayForConsole(client)}'s cash ${getPlayerCurrentSubAccount(client).cash}`);
 	updatePlayerCash(client);
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
-	updateAllPlayerNameTags();
-
 	logToConsole(LOG_DEBUG, `[VRR.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
 	sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
 
@@ -694,7 +723,13 @@ async function onPlayerSpawn(client) {
 		}
 	}
 
-	resetPlayerBlip(client)
+	setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
+
+
+	logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
+	updateAllPlayerNameTags();
+
+	resetPlayerBlip(client);
 
 	messageDiscordEventChannel(`🧍 ${getPlayerName(client)} spawned as ${getCharacterFullName(client)}`);
 }
