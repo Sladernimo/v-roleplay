@@ -3665,11 +3665,12 @@ function showCurrentJobLocation(client) {
 
 function finishSuccessfulJobRoute(client) {
 	let jobId = getPlayerJob(client);
-	let jobRouteData = getJobRouteData(jobId, getPlayerJobRoute(client));
+	let jobRouteId = getPlayerJobRoute(client);
+	let jobRouteData = getJobRouteData(jobId, jobRouteId);
 	let payout = toInteger(applyServerInflationMultiplier(jobRouteData.pay));
 	getPlayerData(client).payDayAmount = getPlayerData(client).payDayAmount + payout;
 
-	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and earned $${getJobRouteData(jobId, jobRouteId).pay}!`);
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${jobRouteData.name} route for the ${getJobData(jobId).name} job and earned $${jobRouteData.pay}!`);
 	messagePlayerSuccess(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, jobRouteData.index));
 
 	stopReturnToJobVehicleCountdown(client);
