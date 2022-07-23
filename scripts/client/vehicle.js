@@ -130,3 +130,39 @@ function setAllVehicleDataIndexes() {
 }
 
 // ===========================================================================
+
+function toggleVehicleCruiseControl(vehicle) {
+	if (!vehicle.isSyncer) {
+		return false;
+	}
+
+
+
+	cruiseControl = !cruiseControl;
+}
+
+// ===========================================================================
+
+function getVehicleSpeed(vehicle) {
+	let matrix = vehicle.matrix;
+	let frontSpeed = true;
+	let vecMoveSpeed = vehicle.velocity;
+	let speed;
+
+	if (frontSpeed) {
+		speed = getDotProduct(vecMoveSpeed[0], vecMoveSpeed[1], vecMoveSpeed[2], matrix.getElement(1 * 4 + 0), matrix.getElement(1 * 4 + 1), matrix.getElement(1 * 4 + 2));
+	} else {
+		speed = getLength(vecMoveSpeed[0], vecMoveSpeed[1], vecMoveSpeed[2]);
+	}
+
+	if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+		speed /= 40.0;
+	}
+
+	speed = speed * 90;
+	speed = Math.abs(speed);
+
+	return speed;
+}
+
+// ===========================================================================

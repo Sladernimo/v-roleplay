@@ -1859,10 +1859,30 @@ function getVehicleColourInfoString(colour, isRGBA) {
 
 // ===========================================================================
 
-function setVehicleCruiseControlCommand(command, params, client) {
+function toggleVehicleCruiseControlCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, getLocaleString(client, "MustBeinVehicle"));
+		return false;
+	}
+
+	if (!isPlayerInVehicleDriverSeat(client)) {
+		return false;
 	}
 
 	sendPlayerToggleVehicleCruiseControl(client);
 }
+
+// ===========================================================================
+
+function isPlayerInVehicleDriverSeat(client) {
+	if (!isPlayerInAnyVehicle(client)) {
+		return false;
+	}
+
+	if (getPlayerVehicleSeat(client) != 0) {
+		return false;
+	}
+
+	return false;
+}
+
+// ===========================================================================

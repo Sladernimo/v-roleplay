@@ -685,7 +685,17 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 
 		case AGRP_WEAPON_DAMAGE_EVENT_NORMAL:
 			logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
-			setPlayerHealth(client, getPlayerHealth(client) - (healthLoss * getPlayerData(client).incomingDamageMultiplier));
+			let remainingDamage = healthLoss * getPlayerData(client).incomingDamageMultiplier;
+			if (getPlayerArmour(client) > 0) {
+				//logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s armour was ${getPlayerArmour(client)}, so it was reduced by ${healthLoss}`);
+				if (getPlayerArmour(client) - remainingDamage < 0) {
+					setPlayerArmour(client, 0);
+					remainingDamage = remainingDamage - getPlayerArmour(client);
+				} else {
+					setPlayerArmour(client, getPlayerArmour(client) - remainingDamage);
+				}
+			}
+			setPlayerHealth(client, getPlayerHealth(client) - remainingDamage);
 			break;
 
 		default:
@@ -1255,6 +1265,12 @@ function sendPlayerChatEmojiState(client, state) {
 
 function sendPlayerProfanityFilterState(client, state) {
 	sendNetworkEventToPlayer("agrp.profanityFilter", client, state);
+}
+
+// ==========================================================================
+
+function sendPlayerToggleVehicleCruiseControl(client) {
+	sendNetworkEventToPlayer("agrp.cruiseControl", client);
 }
 
 // ==========================================================================
