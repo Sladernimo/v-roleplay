@@ -265,7 +265,7 @@ function setPlayerSkin(client, skinIndex) {
 // ===========================================================================
 
 function getPlayerSkin(client) {
-	return getSkinIndexFromModel(client.player.modelIndex);
+	return getPlayerCurrentSubAccount(client).skin; //getSkinIndexFromModel(client.player.modelIndex);
 }
 
 // ===========================================================================
