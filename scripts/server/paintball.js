@@ -132,10 +132,24 @@ function respawnPlayerForPaintBall(client) {
 	despawnPlayer(client);
 
 	let businessId = getPlayerData(client).paintBallBusiness;
-	let spawnId = getRandom(0, getBusinessData(businessId).paintBallSpawns.length - 1);
+	//let spawnId = getRandom(0, getBusinessData(businessId).paintBallSpawns.length - 1);
+	//spawnPlayer(client, getBusinessData(businessId).paintBallSpawns[spawnId], 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitPosition, getBusinessData(businessId).exitDimension);
 
-	spawnPlayer(client, getBusinessData(businessId).paintBallSpawns[spawnId], 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitPosition, getBusinessData(businessId).exitDimension);
+	spawnPlayer(client, getBusinessData(businessId).exitPosition, 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitDimension);
+	if (isFadeCameraSupported()) {
+		fadeCamera(client, true, 0.5);
+	}
+	updatePlayerSpawnedState(client, true);
+	makePlayerStopAnimation(client);
+	setPlayerControlState(client, true);
+	resetPlayerBlip(client);
 	logToConsole(LOG_DEBUG, `[VRR.PaintBall]: Respawned ${getPlayerDisplayForConsole(client)} for paintball successfully`);
+}
+
+// ===========================================================================
+
+function isPlayerInPaintBall(client) {
+	return getPlayerData(client).inPaintBall;
 }
 
 // ===========================================================================
