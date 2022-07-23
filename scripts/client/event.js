@@ -187,10 +187,10 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 	if (!isNull(damagedEntity) && !isNull(damagerEntity)) {
 		if (damagedEntity.isType(ELEMENT_PLAYER)) {
 			if (damagedEntity == localPlayer) {
-				//if(!weaponDamageEnabled[damagerEntity.name]) {
-				preventDefaultEventAction(event);
+				if (!weaponDamageEnabled[damagerEntity.name]) {
+					preventDefaultEventAction(event);
+				}
 				sendNetworkEventToServer("agrp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
-				//}
 			}
 		}
 	}
