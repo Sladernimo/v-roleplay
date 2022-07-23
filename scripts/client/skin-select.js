@@ -46,7 +46,7 @@ function loadSkinSelectMessageFontBottom() {
 
 function processSkinSelectKeyPress(keyCode) {
 	if (usingSkinSelector) {
-		if (keyCode == SDLK_PAGEUP) {
+		if (keyCode == SDLK_LEFT || keyCode == SDLK_A) {
 			if (skinSelectorIndex >= allowedSkins.length - 1) {
 				skinSelectorIndex = 1;
 			} else {
@@ -66,7 +66,7 @@ function processSkinSelectKeyPress(keyCode) {
 			} else {
 				localPlayer.skin = allowedSkins[skinSelectorIndex][0];
 			}
-		} else if (keyCode == SDLK_PAGEDOWN) {
+		} else if (keyCode == SDLK_RIGHT || keyCode == SDLK_D) {
 			if (skinSelectorIndex <= 0) {
 				skinSelectorIndex = allowedSkins.length - 1;
 			} else {
