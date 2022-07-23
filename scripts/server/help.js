@@ -194,8 +194,8 @@ function showMainHelpMessage(client) {
 function showAccountHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderAccountHelp")));
 
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "AccountHelp", 0));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "AccountHelp", 1, `{ALTCOLOUR}/changepass{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "AccountHelp", 0, getServerName()));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "AccountHelp", 1, `{ALTCOLOUR}/changepass{MAINCOLOUR}`, `{ALTCOLOUR}/resetpass{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "AccountHelp", 2, `{ALTCOLOUR}/gui, /logo, /iplogin, /autolastchar, /2fa, /loginalert{MAINCOLOUR}`));
 }
 
