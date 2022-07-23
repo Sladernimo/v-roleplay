@@ -65,6 +65,7 @@ let serverBitFlagKeys = {
 		"DontSyncClientElements",
 		"IsTester"
 	],
+	/*
 	factionFlagKeys: [
 		"None",
 		"Police",
@@ -73,6 +74,7 @@ let serverBitFlagKeys = {
 		"Government",
 		"Generic",
 	],
+	*/
 	clanTypeFlagKeys: [
 		"None",
 		"Illegal",
@@ -227,6 +229,19 @@ let serverBitFlagKeys = {
 		"ShowItemsAfterPurchase",
 		"BuyCommandAfterEnterBusiness",
 	],
+	jobRankKeys: [
+		"None",
+		"PublicAccess",
+		"WhiteList",
+		"BlackList",
+		"SetRank",
+		"SetPay",
+		"ManageUniforms",
+		"ManageEquipment",
+		"ManageVehicles",
+		"ManageBusinesses",
+		"Leader",
+	],
 };
 
 // ===========================================================================
@@ -239,10 +254,12 @@ function initBitFlagScript() {
 	//serverBitFlags.subAccountSettingsFlags = createBitFlagTable(getServerData().subAccountSettingsFlagKeys);
 	serverBitFlags.clanFlags = createBitFlagTable(serverBitFlagKeys.clanFlagKeys);
 	serverBitFlags.clanTypeFlagKeys = createBitFlagTable(serverBitFlagKeys.clanTypeFlagKeys);
-	serverBitFlags.factionFlags = createBitFlagTable(serverBitFlagKeys.factionFlagKeys);
+	//serverBitFlags.factionFlags = createBitFlagTable(serverBitFlagKeys.factionFlagKeys);
 	serverBitFlags.npcTriggerTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerTypeKeys);
 	serverBitFlags.npcTriggerConditionTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerConditionTypeKeys);
 	serverBitFlags.npcTriggerResponseTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerResponseTypeKeys);
+	serverBitFlags.seenHelpTips = createBitFlagTable(serverBitFlagKeys.seenHelpTipsKeys);
+	serverBitFlags.jobRankFlags = createBitFlagTable(serverBitFlagKeys.jobRankKeys);
 	logToConsole(LOG_INFO, "[VRR.BitFlag]: Bit flag script initialized successfully!");
 	return true;
 }
@@ -291,7 +308,7 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 	}
 
 	let clanFlags = 0;
-	clanFlags = getPlayerCurrentSubAccount(client).clanFlags | getClanRankFlags(getPlayerCurrentSubAccount(client).clanRank);
+	clanFlags = getPlayerCurrentSubAccount(client).clanFlags | getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).flags;
 
 	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
 	if (clanFlags == getClanFlagValue("All")) {
@@ -299,6 +316,36 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 	}
 
 	if (hasBitFlag(clanFlags, requiredFlags)) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function doesPlayerHaveJobPermission(client, requiredFlags) {
+	if (isConsole(client)) {
+		return true;
+	}
+
+	if (requiredFlags == getClanFlagValue("None")) {
+		return true;
+	}
+
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
+		return true;
+	}
+
+	let jobFlags = 0;
+	jobFlags = getPlayerCurrentSubAccount(client).jobFlags | getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).flags;
+
+	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
+	if (jobFlags == getJobFlagValue("All")) {
+		return true;
+	}
+
+	if (hasBitFlag(jobFlags, requiredFlags)) {
 		return true;
 	}
 
