@@ -1573,7 +1573,7 @@ function playerUseItem(client, hotBarSlot) {
 			let clients = getClients();
 			for (let i in clients) {
 				if (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= 7) {
-					makeChatBoxSectionHeader(clients[i], getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)));
+					messagePlayerNormal(client, `{clanOrange}${makeChatBoxSectionHeader(getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)))}`);
 					messagePlayerNormal(client, `{clanOrange}Type:{MAINCOLOUR} ${getJobData(getPlayerJob(client)).name}`);
 					messagePlayerNormal(client, `{clanOrange}ID:{MAINCOLOUR} ${addPrefixNumberFill(getPlayerCurrentSubAccount(client).databaseId, 5)}`);
 					messagePlayerNormal(client, `{clanOrange}Rank:{MAINCOLOUR} ${getJobRankName(getPlayerJob(client), getPlayerJobRank(client))}`);
