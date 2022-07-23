@@ -10,11 +10,16 @@
 
 let blackJackGUI = {
 	window: null,
+	dealerHand: [],
+	playerHand: [],
+};
 
-}
+// ===========================================================================
 
 let playerCards = [];
 let dealerCards = [];
+
+// ===========================================================================
 
 function initBlackJackGUI() {
 	// Render a blackjack game in MexUI
@@ -40,3 +45,5 @@ function initBlackJackGUI() {
 
 	//logToConsole(LOG_DEBUG, `[VRR.GUI] Created blackjack GUI`);
 }
+
+// ===========================================================================
