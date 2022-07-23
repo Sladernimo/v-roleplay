@@ -1125,7 +1125,8 @@ function checkLogin(client, password) {
 	}
 
 	if (doesPlayerHaveTwoFactorAuthEnabled(client) && checkForSMTPModule() && getEmailConfig().enabled) {
-		getPlayerData(client).twoFactorAuthCode = toUpperCase(generateRandomString(6));
+		//getPlayerData(client).twoFactorAuthCode = toUpperCase(generateRandomString(6));
+		getPlayerData(client).twoFactorAuthCode = getRandom(100000, 999999);
 		showPlayerTwoFactorAuthenticationGUI(client);
 		sendAccountTwoFactorAuthCode(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerData(client).twoFactorAuthCode);
 		return true;
@@ -1736,7 +1737,8 @@ function setAccountEmailVerificationCode(accountData, emailVerificationCode) {
 // ===========================================================================
 
 function generateEmailVerificationCode() {
-	return generateRandomString(10);
+	//return toUpperCase(generateRandomString(6));
+	return getRandom(100000, 999999);
 }
 
 // ===========================================================================
