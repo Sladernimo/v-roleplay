@@ -48,6 +48,9 @@ const AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (u
  * @property {Array.<JobUniformData>} uniforms
  * @property {Array.<JobLocationData>} locations
  * @property {Array.<JobRouteData>} routes
+ * @property {Array.<JobWhiteListData>} whiteList
+ * @property {Array.<JobBlackListData>} blackList
+ * @property {Array.<JobRankData>} ranks
  */
 class JobData {
 	constructor(dbAssoc = false) {
@@ -73,6 +76,7 @@ class JobData {
 		this.whiteList = [];
 		this.blackList = [];
 		this.routes = [];
+		this.ranks = [];
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_id"];
@@ -95,6 +99,7 @@ class JobData {
 			this.whiteList = [];
 			this.blackList = [];
 			this.routes = [];
+			this.ranks = [];
 		}
 	}
 };
@@ -354,11 +359,44 @@ class JobLocationData {
 			this.position = toVector3(dbAssoc["job_loc_pos_x"], dbAssoc["job_loc_pos_y"], dbAssoc["job_loc_pos_z"]);
 			this.blip = false;
 			this.pickup = false;
-			this.enabled = dbAssoc["job_loc_enabled"];
+			this.enabled = intToBool(dbAssoc["job_loc_enabled"]);
 			this.interior = dbAssoc["job_loc_int"];
 			this.dimension = dbAssoc["job_loc_vw"];
 			this.whoCreated = dbAssoc["job_loc_who_added"];
 			this.whenCreated = dbAssoc["job_loc_when_added"];
+		}
+	}
+};
+
+// ===========================================================================
+
+/**
+ * @class JobRankData Representing a job rank's data. Loaded and saved in the database
+ */
+class JobRankData {
+	constructor(dbAssoc = false) {
+		this.databaseId = 0;
+		this.jobId = 0;
+		this.index = -1;
+		this.jobIndex = -1;
+		this.name = "";
+		this.level = 0;
+		this.enabled = false;
+		this.pay = 0;
+		this.whoCreated = 0;
+		this.whenCreated = 0;
+		this.flags = 0;
+
+		if (dbAssoc) {
+			this.databaseId = dbAssoc["job_rank_id"];
+			this.jobId = dbAssoc["job_rank_job"];
+			this.name = toString(dbAssoc("job_rank_name"));
+			this.level = toInteger(dbAssoc["job_rank_level"]);
+			this.enabled = intToBool(dbAssoc["job_rank_enabled"]);
+			this.pay = toInteger(dbAssoc["job_rank_pay"]);
+			this.whoCreated = toInteger(dbAssoc["job_rank_who_added"]);
+			this.whenCreated = toInteger(dbAssoc["job_rank_when_added"]);
+			this.flags = toInteger(dbAssoc["job_rank_flags"]);
 		}
 	}
 };
@@ -496,6 +534,35 @@ function loadAllJobLocationsFromDatabase() {
 	for (let i in getServerData().jobs) {
 		getServerData().jobs[i].locations = loadJobLocationsFromDatabase(getServerData().jobs[i].databaseId);
 	}
+}
+
+// ===========================================================================
+
+function loadJobRanksFromDatabase(jobDatabaseId) {
+	logToConsole(LOG_DEBUG, `[VRR.Job]: Loading ranks for job ${jobDatabaseId} from database ...`);
+
+	let tempJobRanks = [];
+	let dbConnection = connectToDatabase();
+	let dbQuery = null;
+	let dbAssoc;
+
+	if (dbConnection) {
+		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_rank WHERE job_rank_deleted = 0 AND job_rank_enabled = 1 AND job_rank_job = ${jobDatabaseId}`);
+		if (dbQuery) {
+			if (dbQuery.numRows > 0) {
+				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
+					let tempJobRankData = new JobRankData(dbAssoc);
+					tempJobRanks.push(tempJobRankData);
+					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job rank '${tempJobRankData.name}' loaded from database successfully!`);
+				}
+			}
+			freeDatabaseQuery(dbQuery);
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+
+	logToConsole(LOG_DEBUG, `[VRR.Job]: ${tempJobRanks.length} ranks for job ${jobDatabaseId} loaded from database successfully!`);
+	return tempJobRanks;
 }
 
 // ===========================================================================
@@ -2606,6 +2673,54 @@ function saveJobToDatabase(jobData) {
 
 // ===========================================================================
 
+function saveJobRankToDatabase(jobRankData) {
+	if (!jobRankData) {
+		// Invalid job route data
+		return false;
+	}
+
+	if (jobRankData.needsSaved == false) {
+		logToConsole(LOG_DEBUG, `[VRR.Job]: Job route ${jobRankData.name} (DB ID ${jobRankData.databaseId}) doesn't need saved. Skipping ...`);
+		return false;
+	}
+
+	logToConsole(LOG_DEBUG, `[VRR.Job]: Saving job route ${jobRankData.name} to database ...`);
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let safeName = escapeDatabaseString(dbConnection, jobRankData.name);
+
+		let data = [
+			["job_route_job", jobRankData.jobId],
+			["job_rank_enabled", boolToInt(jobRankData.enabled)],
+			["job_rank_name", safeName],
+			["job_rank_flags", jobRankData.flags],
+			["job_rank_pay", jobRankData.pay],
+			["job_route_who_added", jobRankData.whoCreated],
+			["job_route_when_added", jobRankData.whenCreated],
+		];
+
+		let dbQuery = null;
+		if (jobRankData.databaseId == 0) {
+			let queryString = createDatabaseInsertQuery("job_rank", data);
+			dbQuery = queryDatabase(dbConnection, queryString);
+			jobRankData.databaseId = getDatabaseInsertId(dbConnection);
+		} else {
+			let queryString = createDatabaseUpdateQuery("job_rank", data, `job_rank_id=${jobRankData.databaseId}`);
+			dbQuery = queryDatabase(dbConnection, queryString);
+		}
+		jobRankData.needsSaved = false;
+
+		freeDatabaseQuery(dbQuery);
+		disconnectFromDatabase(dbConnection);
+		return true;
+	}
+	logToConsole(LOG_DEBUG, `[VRR.Job]: Saved job rank ${jobRankData.name} to database!`);
+
+	return false;
+}
+
+// ===========================================================================
+
 function saveJobRouteToDatabase(jobRouteData) {
 	if (!jobRouteData) {
 		// Invalid job route data
@@ -2928,6 +3043,10 @@ function saveAllJobsToDatabase() {
 			for (let q in getServerData().jobs[i].routes[p].locations) {
 				saveJobRouteLocationToDatabase(getServerData().jobs[i].routes[p].locations[q]);
 			}
+		}
+
+		for (let r in getServerData().jobs[i].ranks) {
+			saveJobRankToDatabase(getServerData().jobs[i].ranks[r]);
 		}
 	}
 }
@@ -3577,57 +3696,68 @@ function getRandomJobRouteForLocation(closestJobLocation) {
 
 /**
  * @param {number} jobIndex - The data index of the job
- * @param {number} uniformId - The data index of the job route
+ * @param {number} uniformIndex - The data index of the job route
  * @return {JobUniformData} The jobroutes's data (class instance)
  */
-function getJobUniformData(jobId, uniformId) {
-	return getServerData().jobs[jobId].uniform[uniformId];
+function getJobUniformData(jobIndex, uniformIndex) {
+	return getServerData().jobs[jobIndex].uniform[uniformIndex];
 }
 
 // ===========================================================================
 
 /**
  * @param {number} jobIndex - The data index of the job
- * @param {number} equipmentId - The data index of the job equipment loadout
+ * @param {number} equipmentIndex - The data index of the job equipment loadout
  * @return {JobEquipmentData} The job equipment loadout's data (class instance)
  */
-function getJobEquipmentData(jobId, equipmentId) {
-	return getServerData().jobs[jobId].equipment[equipmentId];
+function getJobEquipmentData(jobIndex, equipmentIndex) {
+	return getServerData().jobs[jobIndex].equipment[equipmentIndex];
 }
 
 // ===========================================================================
 
 /**
  * @param {number} jobIndex - The data index of the job
- * @param {number} equipmentId - The data index of the job equipment loadout
- * @param {number} equipmentItemId - The data index of the job equipment item
+ * @param {number} equipmentIndex - The data index of the job equipment loadout
+ * @param {number} equipmentItemIndex - The data index of the job equipment item
  * @return {JobEquipmentItemData} The job equipment loadout's data (class instance)
  */
-function getJobEquipmentData(jobId, equipmentId, equipmentItemId) {
-	return getJobEquipmentData(jobId, equipmentId).items[equipmentItemId];
+function getJobEquipmentData(jobIndex, equipmentIndex, equipmentItemIndex) {
+	return getJobEquipmentData(jobIndex, equipmentIndex).items[equipmentItemIndex];
 }
 
 // ===========================================================================
 
 /**
  * @param {number} jobIndex - The data index of the job
- * @param {number} routeId - The data index of the job route
- * @return {JobRouteData} The jobroutes's data (class instance)
+ * @param {number} rankIndex - The data index of the job rank
+ * @return {JobRouteData} The job rank's data (class instance)
  */
-function getJobRouteData(jobId, routeId) {
-	return getServerData().jobs[jobId].routes[routeId];
+function getJobRankData(jobIndex, rankIndex) {
+	return getServerData().jobs[jobIndex].ranks[rankIndex];
 }
 
 // ===========================================================================
 
 /**
  * @param {number} jobIndex - The data index of the job
- * @param {number} routeId - The data index of the job route
- * @param {number} routeLocationId - The data index of the job route location
- * @return {JobRouteLocationData} The jobroutes's data (class instance)
+ * @param {number} routeIndex - The data index of the job route
+ * @return {JobRouteData} The job routes's data (class instance)
  */
-function getJobRouteLocationData(jobId, routeId, routeLocationId) {
-	return getJobRouteData(jobId, routeId).locations[routeLocationId];
+function getJobRouteData(jobIndex, routeIndex) {
+	return getServerData().jobs[jobIndex].routes[routeIndex];
+}
+
+// ===========================================================================
+
+/**
+ * @param {number} jobIndex - The data index of the job
+ * @param {number} routeIndex - The data index of the job route
+ * @param {number} routeLocationIndex - The data index of the job route location
+ * @return {JobRouteLocationData} The job route locations's data (class instance)
+ */
+function getJobRouteLocationData(jobIndex, routeIndex, routeLocationIndex) {
+	return getJobRouteData(jobIndex, routeIndex).locations[routeLocationIndex];
 }
 
 // ===========================================================================
