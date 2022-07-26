@@ -110,6 +110,7 @@ function messageDiscordChatChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
+	messageString = replaceProfanityInMessage(messageString);
 	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 
@@ -129,6 +130,7 @@ function messageDiscordEventChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
+	messageString = replaceProfanityInMessage(messageString);
 	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 

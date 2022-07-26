@@ -1098,6 +1098,8 @@ let serverEmoji = [
 	[":water_buffalo:", "🐃"],
 	[":neutral_face:", "😐"],
 	[":clock1230:", "🕧"],
+	[":think:", "🤔"],
+	[":thinking:", "🤔"],
 	[":P", "😛"],
 	[":)", "🙂"],
 	[":D", "😃"],
@@ -1105,6 +1107,7 @@ let serverEmoji = [
 	[":O", "😮"],
 	[":(", "☹️"],
 	[":|", "😐"],
+	["XD", "😆"],
 ];
 
 // ===========================================================================
@@ -3014,9 +3017,9 @@ function removeColoursInMessage(messageText) {
  */
 function replaceProfanityInMessage(messageString) {
 	for (let i in profanityFilterWords) {
-		while (messageString.indexOf(profanityFilterWords[i]) != -1) {
-			messageString = messageString.replace(profanityFilterWords[i], fillStringWithCharacter("*", profanityFilterWords[i].length));
-		}
+		let find = profanityFilterWords[i];
+		let re = new RegExp(find, 'gi');
+		messageString = messageString.replace(re, fillStringWithCharacter('*', find.length - 1));
 	}
 	return messageString;
 }

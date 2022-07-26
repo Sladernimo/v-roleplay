@@ -44,6 +44,10 @@ function loadPausedStatusFont() {
 // ===========================================================================
 
 function updatePlayerNameTag(clientName, characterName, colour, paused, ping) {
+	if (profanityFilterEnabled) {
+		characterName = replaceProfanityInMessage(characterName);
+	}
+
 	playerNames[clientName] = characterName;
 	playerColours[clientName] = colour;
 	playerPaused[clientName] = paused;
