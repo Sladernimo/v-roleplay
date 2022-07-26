@@ -52,6 +52,40 @@ let fishingCollectables = [
 
 // ===========================================================================
 
+let fishingAnimations = {
+	[AGRP_GAME_GTA_III]: {
+		"fishingLineCasting": "bathit1",
+		"fishingLineReeling": "aimdown",
+	},
+	[AGRP_GAME_GTA_VC]: {
+		"fishingLineCasting": "frontpunch",
+		"fishingLineReeling": "aimdown",
+	},
+	[AGRP_GAME_GTA_SA]: {
+		"fishingLineCasting": "none",
+		"fishingLineReeling": "none",
+	}
+};
+
+// ===========================================================================
+
+let fishingParticleEffects = {
+	[AGRP_GAME_GTA_III]: {
+		"fishingLineCast": [
+			"MediumSprayingWater",
+			0.2,
+			500
+		],
+		"fishingLineReel": [
+			"MediumSprayingWater",
+			0.2,
+			500
+		]
+	}
+};
+
+// ===========================================================================
+
 function initFishingScript() {
 	logToConsole(LOG_INFO, "[VRR.Fishing]: Initializing fishing script ...");
 	logToConsole(LOG_INFO, "[VRR.Fishing]: Fishing script initialized successfully!");
@@ -59,7 +93,7 @@ function initFishingScript() {
 
 // ===========================================================================
 
-function castFishingLineCommand(client) {
+function castFishingLineCommand(command, params, client) {
 	if (!isPlayerInFishingSpot(client)) {
 		messagePlayerError(client, getLocaleString(client, "CantFishHere"));
 		return false;
@@ -70,14 +104,23 @@ function castFishingLineCommand(client) {
 		return false;
 	}
 
-	getPlayerData(client).fishingLineCastStart = getCurrentUnixTimestamp();
-	makePedPlayAnimation(getPlayerPed(client), getAnimationFromParams("fishingcast"));
+	if (doesPlayerHaveFishingLineCast(client)) {
+		messagePlayerError(client, getLocaleString(client, "FishingLineAlreadyCast"));
+		return false;
+	}
+
+	let maxStrength = getGlobalConfig().fishingCastMaxStrength;
+	let minStrength = getGlobalConfig().fishingCastMinStrength;
+	let keyDuration = getPlayerData(client).keyBindDuration;
+
+	let strength = Math.round((maxStrength - minStrength) * (keyDuration / getGlobalConfig().fishingLineCastDuration));
+
+	castPlayerFishingLine(client, strength);
 
 	let messageText = getLocaleString(client, "FishingCastCommandHelp");
 	if (doesPlayerHaveKeyBindForCommand(client, "fish")) {
 		messageText = getLocaleString(client, "FishingCastKeyPressHelp");
 	}
-
 	showGameMessage(client, messageText);
 }
 
@@ -116,6 +159,22 @@ function resetFishingLineCommand(client) {
 
 function doesPlayerHaveFishingLineCast(client) {
 	return getPlayerData(client).fishingLineCastStart != 0;
+}
+
+// ===========================================================================
+
+function castPlayerFishingLine(client, strength) {
+	let frontPosition = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), strength * 2);
+
+	makePlayerPlayAnimation(client, getAnimationFromParams(fishingAnimations[getGame()]["fishingLineCasting"]));
+
+	setTimeout(function () {
+		let particleEffectName = fishingParticleEffects[getGame()].fishingLineCast[1];
+		showParticleEffect(frontPosition, getGameConfig().particleEffects[getGame()][particleEffectName], fishingParticleEffects[getGame()].fishingLineCast[1], fishingParticleEffects[getGame()].fishingLineCast[2]);
+
+		getPlayerData(client).fishingLineCastPosition = frontPosition;
+		getPlayerData(client).fishingLineState = AGRP_FISHING_LINE_STATE_CASTED;
+	}, strength * 10);
 }
 
 // ===========================================================================

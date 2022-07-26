@@ -227,6 +227,8 @@ let globalConfig = {
 	houseBlipStreamOutDistance: 120,
 	jobBlipStreamInDistance: -1,
 	jobBlipStreamOutDistance: -1,
+	playerStreamInDistance: -1,
+	playerStreamOutDistance: -1,
 	playerBlipStreamInDistance: -1,
 	playerBlipStreamOutDistance: -1,
 	handcuffPlayerDistance: 3,
@@ -241,6 +243,8 @@ let globalConfig = {
 	fishingSpotDistance: 10.0,
 	atmDistance: 1.5,
 	loginTimeout: 60000,
+	fishingCastMaxStrength: 100,
+	fishingCastMinStrength: 30,
 };
 
 // ===========================================================================
