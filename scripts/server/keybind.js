@@ -200,7 +200,7 @@ function getPlayerKeyBindForKey(client, key) {
 
 // ===========================================================================
 
-function playerUsedKeyBind(client, key) {
+function playerUsedKeyBind(client, key, duration = 0) {
 	if (!isPlayerLoggedIn(client)) {
 		return false;
 	}
@@ -219,7 +219,9 @@ function playerUsedKeyBind(client, key) {
 			if (splitCommandString.length > 1) {
 				tempParams = splitCommandString.slice(1).join(" ");
 			}
+			getPlayerData(client).keyBindDuration = duration;
 			getCommand(toLowerCase(tempCommand)).handlerFunction(tempCommand, tempParams, client);
+			getPlayerData(client).keyBindDuration = 0;
 			//triggerEvent("OnPlayerCommand", null, tempCommand, tempParams, client);
 		}
 	}
