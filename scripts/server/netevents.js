@@ -1274,3 +1274,9 @@ function sendPlayerToggleVehicleCruiseControl(client) {
 }
 
 // ==========================================================================
+
+function showSingleParticleEffect(position, particleEffectId, strength = 1.0, duration = 5000) {
+	sendNetworkEventToPlayer("agrp.particleEffectSingle", null, position, particleEffectId, strength, duration);
+}
+
+// ==========================================================================
