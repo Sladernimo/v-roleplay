@@ -1297,7 +1297,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function setBusinessEntranceLabelToDealershipCommand(command, params, client) {
+function setBusinessDealershipCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
 	if (!getBusinessData(businessId)) {
