@@ -480,7 +480,7 @@ function useItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex != false) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex, 0.0);
 	}
 
@@ -573,7 +573,7 @@ function pickupItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).pickupAnimationIndex, 0.0);
 	}
 
@@ -643,7 +643,7 @@ function dropItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex, 0.0);
 	}
 
@@ -709,7 +709,7 @@ function putItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex != false) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex, 0.0);
 	}
 
@@ -765,7 +765,7 @@ function takeItemCommand(command, params, client) {
 	//	return false;
 	//}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex != false) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex, 0.0);
 	}
 
@@ -2841,42 +2841,42 @@ function clearPlayerItemActionState(client) {
 	if (getPlayerData(client).itemActionItem != -1) {
 		switch (getPlayerData(client).itemActionState) {
 			case AGRP_ITEM_ACTION_DROP: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).dropAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).dropAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
 			case AGRP_ITEM_ACTION_USE: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).useAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).useAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
 			case AGRP_ITEM_ACTION_PICKUP: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).pickupAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).pickupAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
 			case AGRP_ITEM_ACTION_TAKE: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).takeAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).takeAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
 			case AGRP_ITEM_ACTION_PUT: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).putAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).putAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
 			case AGRP_ITEM_ACTION_SWITCH: {
-				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).switchAnimationIndex != -1) {
+				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).switchAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
