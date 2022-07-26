@@ -180,6 +180,66 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_ONE]: false,
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	pedScale: {
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: false,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	pedArmour: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	rendering2D: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: true,
+		[AGRP_GAME_MAFIA_TWO]: true,
+		[AGRP_GAME_MAFIA_THREE]: true
+	},
+	walkingStyle: {
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	fightingStyle: {
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	customNametag: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: true,
+		[AGRP_GAME_MAFIA_TWO]: true,
+		[AGRP_GAME_MAFIA_THREE]: true
 	}
 };
 
@@ -4753,7 +4813,6 @@ let gameData = {
 			new AnimationData("jog", { groupId: 0, animId: 1 }),
 			new AnimationData("headscratch", { groupId: 0, animId: 152 }),
 			new AnimationData("lookaround", { groupId: 0, animId: 153 }),
-
 		],
 		[AGRP_GAME_GTA_SA]: [ // GTA SA
 			new AnimationData("knockback", { groupId: 0, animId: 105 }),
