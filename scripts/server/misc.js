@@ -848,6 +848,8 @@ function createPlayerBlip(client) {
 			setElementStreamInDistance(blip, getGlobalConfig().playerBlipStreamInDistance);
 			setElementStreamOutDistance(blip, getGlobalConfig().playerBlipStreamOutDistance);
 		}
+		blip.defaultExistance = true;
+		blip.setExistsFor(client, false);
 		getPlayerData(client).playerBlip = blip;
 	}
 }
