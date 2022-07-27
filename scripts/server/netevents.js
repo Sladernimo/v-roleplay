@@ -10,7 +10,7 @@
 
 function initNetworkEventsScript() {
 	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Initializing network events script ...");
-	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Network events script initialized!");
+	logToConsole(LOG_INFO, "[VRR.NetEvents]: Network events script initialized!");
 }
 
 // ===========================================================================
@@ -1015,7 +1015,7 @@ function makePedStopAnimation(ped) {
 // ===========================================================================
 
 function forcePedAnimation(ped, animationSlot, positionOffset = 0) {
-	addEntityData(ped, "agrp.anim", animationSlot, true);
+	setEntityData(ped, "agrp.anim", animationSlot, true);
 	sendNetworkEventToPlayer("agrp.forceAnim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 
