@@ -38,6 +38,8 @@ function initLocaleChooserGUI() {
 	});
 	localeChooser.window.titleBarShown = false;
 
+	localeChooser.window.shown = false;
+
 	loadLocaleConfig();
 
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Created locale chooser GUI`);
@@ -48,6 +50,9 @@ function initLocaleChooserGUI() {
 function closeLocaleChooserGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Closing locale chooser window`);
 	localeChooser.window.shown = false;
+	for (let i in localeChooser.flagImages) {
+		localeChooser.flagImages[i].shown = false;
+	}
 	mexui.setInput(false);
 }
 
@@ -64,6 +69,10 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
 	localeChooser.window.shown = true;
+
+	for (let i in localeChooser.flagImages) {
+		localeChooser.flagImages[i].shown = true;
+	}
 }
 
 // ===========================================================================
@@ -107,6 +116,8 @@ function resetLocaleChooserOptions() {
 		}, function () {
 			localeChooserSetLocale(tempLocaleOptions[i].id);
 		});
+
+		localeChooser.flagImages[i].shown = false;
 
 		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
 
