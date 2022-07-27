@@ -1139,8 +1139,7 @@ function getStaffFlagsCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let flagName = getParam(params, " ", 2) || "None";
+	let targetClient = getParam(params, " ", 1);
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));

@@ -155,6 +155,29 @@ function messageDiscordAdminChannel(messageString) {
 
 // ===========================================================================
 
+function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) {
+	if (getServerConfig().devServer == true) {
+		return false;
+	}
+
+	if (!getGlobalConfig().discord.sendClan) {
+		return false;
+	}
+
+	if (!getServerConfig().discord.sendClan) {
+		return false;
+	}
+
+	if (!hasBitFlag(getClanData(clanIndex).discordWebhookFlags, requiredFlagValue)) {
+		return false;
+	}
+
+	messageString = removeColoursInMessage(messageString);
+	triggerClanDiscordWebHook(clanIndex, messageString);
+}
+
+// ===========================================================================
+
 function triggerDiscordWebHook(messageString, serverId = getServerId(), type = AGRP_DISCORD_WEBHOOK_LOG) {
 	if (!getGlobalConfig().discord.webhook.enabled) {
 		return false;
@@ -175,6 +198,34 @@ function triggerDiscordWebHook(messageString, serverId = getServerId(), type = A
 		function (data) {
 		}
 	);
+}
+
+// ===========================================================================
+
+function triggerClanDiscordWebHook(clanIndex, messageString) {
+	if (!getGlobalConfig().discord.webhook.enabled) {
+		return false;
+	}
+
+	/*
+	let webhookURL = getClanData(clanIndex).discordWebhookURL;
+
+	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{1}", serverId);
+	tempURL = tempURL.replace("{2}", type);
+	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+
+	httpGet(
+		tempURL,
+		"",
+		function (data) {
+
+		},
+		function (data) {
+		}
+	);
+	*/
 }
 
 // ===========================================================================
