@@ -24,7 +24,7 @@ class LocaleData {
 // ===========================================================================
 
 function initLocaleScript() {
-	logToConsole(LOG_INFO, "[VRR.Locale]: Initializing locale script ...");
+	logToConsole(LOG_DEBUG, "[VRR.Locale]: Initializing locale script ...");
 	logToConsole(LOG_INFO, "[VRR.Locale]: Locale script initialized!");
 }
 

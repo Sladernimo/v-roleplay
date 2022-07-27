@@ -36,7 +36,7 @@ class KeyBindData {
 // ===========================================================================
 
 function initKeyBindScript() {
-	logToConsole(LOG_INFO, "[VRR.KeyBind]: Initializing key bind script ...");
+	logToConsole(LOG_DEBUG, "[VRR.KeyBind]: Initializing key bind script ...");
 	logToConsole(LOG_INFO, "[VRR.KeyBind]: Key bind script initialized!");
 }
 

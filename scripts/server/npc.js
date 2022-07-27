@@ -204,7 +204,7 @@ class NPCTriggerResponseData {
 
 function initNPCScript() {
 	logToConsole(LOG_DEBUG, "[VRR.NPC]: Initializing NPC script ...");
-	logToConsole(LOG_DEBUG, "[VRR.NPC]: NPC script initialized successfully!");
+	logToConsole(LOG_INFO, "[VRR.NPC]: NPC script initialized successfully!");
 }
 
 // ===========================================================================
@@ -244,7 +244,7 @@ function createNPCCommand(command, params, client) {
 // ===========================================================================
 
 function loadNPCsFromDatabase() {
-	logToConsole(LOG_INFO, `[VRR.NPC]: Loading NPCs from database ...`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPCs from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCs = [];
 	let dbAssoc;
@@ -262,14 +262,14 @@ function loadNPCsFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
 	return tempNPCs;
 }
 
 // ===========================================================================
 
 function loadNPCTriggersFromDatabase(npcDatabaseId) {
-	logToConsole(LOG_INFO, `[VRR.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggers = [];
 	let dbAssoc;
@@ -288,14 +288,14 @@ function loadNPCTriggersFromDatabase(npcDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
 	return tempNPCTriggers;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_INFO, `[VRR.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerConditions = [];
 	let dbAssoc;
@@ -312,14 +312,14 @@ function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerConditions;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_INFO, `[VRR.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerResponses = [];
 	let dbAssoc;
@@ -336,7 +336,7 @@ function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerResponses;
 }
 
@@ -619,12 +619,12 @@ function getNPCInfoCommand(command, params, client) {
 	let ownerType = "None";
 	switch (npcData.ownerType) {
 		case AGRP_NPC_OWNER_CLAN:
-			ownerName = getClanData(getClanIdFromDatabaseId(npcData.ownerId)).name;
+			ownerName = getClanData(getClanIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
 		case AGRP_NPC_OWNER_JOB:
-			ownerName = getJobData(getJobIdFromDatabaseId(npcData.ownerId)).name;
+			ownerName = getJobData(getJobIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "job";
 			break;
 
