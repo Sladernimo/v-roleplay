@@ -40,11 +40,11 @@ function addAllEventHandlers() {
 
 	addEventHandler("OnElementStreamIn", onElementStreamIn);
 
-	addEventHandler("OnLocalPlayerEnteredVehicle", onLocalPlayerEnteredVehicle);
-	addEventHandler("OnLocalPlayerExitedVehicle", onLocalPlayerExitedVehicle);
-	addEventHandler("OnLocalPlayerEnterSphere", onLocalPlayerEnterSphere);
-	addEventHandler("OnLocalPlayerExitSphere", onLocalPlayerExitSphere);
-	addEventHandler("OnLocalPlayerSwitchWeapon", onLocalPlayerSwitchWeapon);
+	addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+	addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+	addEventHandler("OnPedEnteredSphere", onPedEnteredSphere);
+	addEventHandler("OnPedExitedSphere", onPedExitedSphere);
+	addEventHandler("OnPedChangeWeapon", onPedChangeWeapon);
 
 	addEventHandler("OnPedInflictDamage", onPedInflictDamage);
 
@@ -150,32 +150,31 @@ function onElementStreamIn(event, element) {
 
 // ===========================================================================
 
-function onLocalPlayerExitedVehicle(event, vehicle, seat) {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
-	sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
+function onPedExitedVehicle(event, ped, vehicle, seat) {
+	//logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
+	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
-	if (inVehicleSeat) {
-		parkedVehiclePosition = false;
-		parkedVehicleHeading = false;
-	}
+	//if (inVehicleSeat) {
+	//	parkedVehiclePosition = false;
+	//	parkedVehicleHeading = false;
+	//}
 }
 
 // ===========================================================================
 
-function onLocalPlayerEnteredVehicle(event, vehicle, seat) {
+function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered vehicle`);
+	//sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
-	sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
-
-	if (areServerElementsSupported()) {
-		//if(inVehicleSeat == 0) {
-		//setVehicleEngine(vehicle, false);
-		//if(!inVehicle.engine) {
-		//	parkedVehiclePosition = inVehicle.position;
-		//	parkedVehicleHeading = inVehicle.heading;
-		//}
-		//}
-	}
+	//if (areServerElementsSupported()) {
+	//if(inVehicleSeat == 0) {
+	//setVehicleEngine(vehicle, false);
+	//if(!inVehicle.engine) {
+	//	parkedVehiclePosition = inVehicle.position;
+	//	parkedVehicleHeading = inVehicle.heading;
+	//}
+	//}
+	//}
 }
 
 // ===========================================================================
@@ -198,17 +197,37 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 
 // ===========================================================================
 
-function onLocalPlayerEnterSphere(event, sphere) {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
-	if (sphere == jobRouteLocationSphere) {
-		enteredJobRouteSphere();
+function onPedEnteredSphere(event, ped, sphere) {
+	if (isNull(ped)) {
+		return false;
+	}
+
+	if (isNull(localPlayer)) {
+		return false;
+	}
+
+	if (ped == localPlayer) {
+		logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
+		if (sphere == jobRouteLocationSphere) {
+			enteredJobRouteSphere();
+		}
 	}
 }
 
 // ===========================================================================
 
-function onLocalPlayerExitSphere(event, sphere) {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited sphere`);
+function onPedExitedSphere(event, ped, sphere) {
+	if (isNull(ped)) {
+		return false;
+	}
+
+	if (isNull(localPlayer)) {
+		return false;
+	}
+
+	if (ped == localPlayer) {
+		logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
+	}
 }
 
 // ===========================================================================
@@ -225,7 +244,7 @@ function onFocus(event) {
 
 // ===========================================================================
 
-function onLocalPlayerSwitchWeapon(oldWeapon, newWeapon) {
+function onPedChangeWeapon(event, ped, oldWeapon, newWeapon) {
 
 }
 
