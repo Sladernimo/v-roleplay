@@ -388,9 +388,9 @@ class JobRankData {
 		this.flags = 0;
 
 		if (dbAssoc) {
-			this.databaseId = dbAssoc["job_rank_id"];
-			this.jobId = dbAssoc["job_rank_job"];
-			this.name = toString(dbAssoc("job_rank_name"));
+			this.databaseId = toInteger(dbAssoc["job_rank_id"]);
+			this.jobId = toInteger(dbAssoc["job_rank_job"]);
+			this.name = toString(dbAssoc["job_rank_name"]);
 			this.level = toInteger(dbAssoc["job_rank_level"]);
 			this.enabled = intToBool(dbAssoc["job_rank_enabled"]);
 			this.pay = toInteger(dbAssoc["job_rank_pay"]);
@@ -467,7 +467,7 @@ let jobRouteLocationTypeNames = [
 
 function initJobScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Job]: Initializing job script ...");
-	logToConsole(LOG_DEBUG, "[VRR.Job]: Job script initialized successfully!");
+	logToConsole(LOG_INFO, "[VRR.Job]: Job script initialized successfully!");
 	return true;
 }
 
@@ -491,6 +491,7 @@ function loadJobsFromDatabase() {
 					tempJobData.equipment = loadJobEquipmentsFromDatabase(tempJobData.databaseId);
 					tempJobData.uniforms = loadJobUniformsFromDatabase(tempJobData.databaseId);
 					tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
+					tempJobData.ranks = loadJobRanksFromDatabase(tempJobData.databaseId);
 					tempJobs.push(tempJobData);
 					logToConsole(LOG_VERBOSE, `[VRR.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
 				}
@@ -1078,6 +1079,10 @@ function givePlayerJobEquipment(client, equipmentId) {
 		return false;
 	}
 
+	if (!doesPlayerHaveAnyJob(client)) {
+		return false;
+	}
+
 	let jobId = getPlayerJob(client);
 
 	for (let i in getJobData(jobId).equipment[equipmentId].items) {
@@ -1104,6 +1109,10 @@ function stopWorking(client) {
 		return false;
 	}
 
+	if (!doesPlayerHaveAnyJob(client)) {
+		return false;
+	}
+
 	if (!isPlayerWorking(client)) {
 		return false;
 	}
@@ -1126,7 +1135,7 @@ function stopWorking(client) {
 
 	setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 	deleteJobItems(client);
-	restorePlayerJobLockerItems(client);
+	restorePlayerTempLockerItems(client);
 	respawnJobVehicle(client);
 	sendPlayerStopJobRoute(client);
 
@@ -1180,7 +1189,11 @@ function stopWorking(client) {
 // ===========================================================================
 
 function jobUniformCommand(command, params, client) {
-	if (!getPlayerJob(client)) {
+	if (!canPlayerUseJobs(client)) {
+		return false;
+	}
+
+	if (!doesPlayerHaveAnyJob(client)) {
 		messagePlayerError(client, "You don't have a job!");
 		return false;
 	}
@@ -1247,31 +1260,41 @@ function jobUniformCommand(command, params, client) {
 		return false;
 	}
 
+	let jobIndex = getPlayerJob(client);
+	let rankIndex = getPlayerJobRank(client);
+	let uniformId = toInteger(params) || 1;
+	let jobRankData = getJobRankData(jobIndex, rankIndex);
+
 	if (uniformId == 0) {
 		setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 		meActionToNearbyPlayers(client, `takes off their uniform`);
 		return false;
 	}
 
-	let uniformId = toInteger(params) || 1;
 	if (uniformId < 1 || uniformId > uniforms.length) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
 		return false;
 	}
 
-	if (getPlayerJobRank(client) < getJobUniformData(getPlayerJob(client), uniformId - 1).requiredRank) {
-		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", getPlayerJobRank(client), getJobUniformData(getPlayerJob(client), uniformId - 1).requiredRank));
+	let uniformData = getJobUniformData(jobIndex, uniformId - 1);
+
+	if (jobRankData.level < uniformData.requiredRank) {
+		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, uniformData.requiredRank));
 		return false;
 	}
 
-	setPlayerSkin(client, jobData.uniforms[uniformId - 1].skin);
-	meActionToNearbyPlayers(client, `puts on ${getProperDeterminerForName(jobData.uniforms[uniformId - 1].name)} ${jobData.uniforms[uniformId - 1].name} uniform`);
+	setPlayerSkin(client, uniformData.skin);
+	meActionToNearbyPlayers(client, `puts on ${getProperDeterminerForName(uniformData.name)} ${uniformData.name} uniform`);
 }
 
 // ===========================================================================
 
 function jobEquipmentCommand(command, params, client) {
-	if (!getPlayerJob(client)) {
+	if (!canPlayerUseJobs(client)) {
+		return false;
+	}
+
+	if (!doesPlayerHaveAnyJob(client)) {
 		messagePlayerError(client, "You don't have a job!");
 		return false;
 	}
@@ -1334,10 +1357,14 @@ function jobEquipmentCommand(command, params, client) {
 		return false;
 	}
 
+	let jobIndex = getPlayerJob(client);
+	let rankIndex = getPlayerJobRank(client);
 	let equipmentId = toInteger(params) || 1;
+	let jobRankData = getJobRankData(jobIndex, rankIndex);
 
 	if (equipmentId == 0) {
 		meActionToNearbyPlayers(client, `puts their equipment into the locker`);
+		deleteJobItems(client);
 		return true;
 	}
 
@@ -1346,15 +1373,17 @@ function jobEquipmentCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerJobRank(client) < getJobEquipmentData(getPlayerJob(client), equipmentId - 1).requiredRank) {
-		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", getPlayerJobRank(client), getJobEquipmentData(getPlayerJob(client), equipmentId - 1).requiredRank));
+	let jobEquipmentData = getJobEquipmentData(jobIndex, equipmentId - 1)
+
+	if (jobRankData.level < jobEquipmentData.requiredRank) {
+		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, jobEquipmentData.requiredRank));
 		return false;
 	}
 
 	deleteJobItems(client);
 	givePlayerJobEquipment(client, equipmentId - 1);
 	//messagePlayerSuccess(client, `You have been given the ${equipments[equipmentId-1].name} equipment`);
-	meActionToNearbyPlayers(client, `grabs the ${jobData.equipment[equipmentId - 1].name} equipment from the locker`);
+	meActionToNearbyPlayers(client, `grabs the ${jobEquipmentData.name} equipment from the locker`);
 	if (doesPlayerHaveKeyBindForCommand(client, "inv")) {
 		messagePlayerTip(client, getLocaleString(client, "JobEquipmentInventoryKeyBindTip", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
 	} else {
@@ -1366,6 +1395,10 @@ function jobEquipmentCommand(command, params, client) {
 
 function quitJobCommand(command, params, client) {
 	if (!canPlayerUseJobs(client)) {
+		return false;
+	}
+
+	if (!doesPlayerHaveAnyJob(client)) {
 		return false;
 	}
 
@@ -1426,6 +1459,9 @@ function getJobData(jobId) {
 function quitJob(client) {
 	stopWorking(client);
 	getPlayerCurrentSubAccount(client).job = 0;
+	getPlayerCurrentSubAccount(client).jobRank = 0;
+	getPlayerCurrentSubAccount(client).jobIndex = -1;
+	getPlayerCurrentSubAccount(client).jobRankIndex = -1;
 	sendPlayerJobType(client, 0);
 	updateJobBlipsForPlayer(client);
 }
@@ -1433,7 +1469,11 @@ function quitJob(client) {
 // ===========================================================================
 
 function takeJob(client, jobId) {
+	let rankId = getLowestJobRank(jobId);
 	getPlayerCurrentSubAccount(client).job = getJobData(jobId).databaseId;
+	getPlayerCurrentSubAccount(client).jobRank = getJobRankData(jobId, rankId).databaseId;
+	getPlayerCurrentSubAccount(client).jobIndex = jobId;
+	getPlayerCurrentSubAccount(client).jobRankIndex = rankId
 	sendPlayerJobType(client, getJobData(jobId).databaseId);
 	updateJobBlipsForPlayer(client);
 }
@@ -1539,28 +1579,6 @@ function toggleJobEnabledCommand(command, params, client) {
 
 	getJobData(jobId).enabled = !getJobData(jobId).enabled;
 	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}${getEnabledDisabledFromBool(getJobData(jobId).enabled)}{MAINCOLOUR} the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
-}
-
-// ===========================================================================
-
-function addJobUniformCommand(command, params, client) {
-	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	if (!areThereEnoughParams(params, 4, " ")) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let jobId = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
-	let skinIndex = getSkinIndexFromParams(getParam(params, " ", 2));
-	let rankLevel = getParam(params, " ", 2) || 0;
-
-	createJobUniform(jobId, skinIndex, rankLevel);
-	getJobData(jobId).needsSaved = true;
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} added a {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)}{MAINCOLOUR} to job {jobYellow}${getJobData(jobId).name}{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -2462,7 +2480,7 @@ function startReturnToJobVehicleCountdown(client) {
 		if (getPlayerData(client).returnToJobVehicleTick > 0) {
 			getPlayerData(client).returnToJobVehicleTick = getPlayerData(client).returnToJobVehicleTick - 1;
 			//logToConsole(LOG_WARN, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`);
-			showGameMessage(client, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`, getColourByName("softRed"), 1500);
+			showSmallGameMessage(client, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`, getColourByName("softRed"), 1500);
 		} else {
 			clearInterval(getPlayerData(client).returnToJobVehicleTimer);
 			getPlayerData(client).returnToJobVehicleTimer = null;
@@ -2690,13 +2708,14 @@ function saveJobRankToDatabase(jobRankData) {
 		let safeName = escapeDatabaseString(dbConnection, jobRankData.name);
 
 		let data = [
-			["job_route_job", jobRankData.jobId],
+			["job_rank_job", jobRankData.jobId],
 			["job_rank_enabled", boolToInt(jobRankData.enabled)],
 			["job_rank_name", safeName],
 			["job_rank_flags", jobRankData.flags],
 			["job_rank_pay", jobRankData.pay],
-			["job_route_who_added", jobRankData.whoCreated],
-			["job_route_when_added", jobRankData.whenCreated],
+			["job_rank_level", jobRankData.pay],
+			["job_rank_who_added", jobRankData.whoCreated],
+			["job_rank_when_added", jobRankData.whenCreated],
 		];
 
 		let dbQuery = null;
@@ -3169,14 +3188,19 @@ function createJobLocationBlip(jobId, locationId) {
 // ===========================================================================
 
 function getPlayerJob(client) {
-	let jobDatabaseId = getPlayerCurrentSubAccount(client).job;
-	for (let i in getServerData().jobs) {
-		if (jobDatabaseId == getServerData().jobs[i].databaseId) {
-			return i;
-		}
-	}
+	return getPlayerCurrentSubAccount(client).jobIndex;
+}
 
-	return false;
+// ===========================================================================
+
+function getPlayerJobRank(client) {
+	return getPlayerCurrentSubAccount(client).jobRankIndex;
+}
+
+// ===========================================================================
+
+function doesPlayerHaveAnyJob(client) {
+	return (getPlayerJob(client) != -1);
 }
 
 // ===========================================================================
@@ -3198,6 +3222,22 @@ function getJobIndexFromDatabaseId(databaseId) {
 		}
 	}
 	return false;
+}
+
+// ===========================================================================
+
+function getJobRankIndexFromDatabaseId(jobIndex, databaseId) {
+	if (databaseId <= 0) {
+		return -1;
+	}
+
+	for (let i in getServerData().jobs[jobIndex].ranks) {
+		if (getServerData().jobs[jobIndex].ranks[i].databaseId == databaseId) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================
@@ -3250,19 +3290,19 @@ function playerArrivedAtJobRouteLocation(client) {
 		return false;
 	}
 
-	showGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationArriveMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
+	showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationArriveMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
 	if (getJobRouteLocationData(jobId, getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).stopDelay > 0) {
 		freezePlayerJobVehicleForRouteLocation(client);
 		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, getPlayerJobRoute(client), getPlayerJobRouteLocation(client));
 		setTimeout(function () {
 			showCurrentJobLocation(client);
-			showGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationNextMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
+			showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationNextMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
 			unFreezePlayerJobVehicleForRouteLocation(client);
 		}, getJobRouteLocationData(jobId, getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).stopDelay);
 	} else {
 		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, getPlayerJobRoute(client), getPlayerJobRouteLocation(client));
 		showCurrentJobLocation(client);
-		showGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationNextMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
+		showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteData(jobId, getPlayerJobRoute(client)).locationNextMessage), jobId, getPlayerJobRoute(client)), getJobData(jobId).colour, 3500);
 	}
 }
 
@@ -3700,7 +3740,7 @@ function getRandomJobRouteForLocation(closestJobLocation) {
  * @return {JobUniformData} The jobroutes's data (class instance)
  */
 function getJobUniformData(jobIndex, uniformIndex) {
-	return getServerData().jobs[jobIndex].uniform[uniformIndex];
+	return getServerData().jobs[jobIndex].uniforms[uniformIndex];
 }
 
 // ===========================================================================
@@ -3722,7 +3762,7 @@ function getJobEquipmentData(jobIndex, equipmentIndex) {
  * @param {number} equipmentItemIndex - The data index of the job equipment item
  * @return {JobEquipmentItemData} The job equipment loadout's data (class instance)
  */
-function getJobEquipmentData(jobIndex, equipmentIndex, equipmentItemIndex) {
+function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
 	return getJobEquipmentData(jobIndex, equipmentIndex).items[equipmentItemIndex];
 }
 
@@ -3897,6 +3937,18 @@ function getJobRouteLocationTypeFromParams(params) {
 	}
 
 	return -1;
+}
+
+// ===========================================================================
+
+function getLowestJobRank(jobId) {
+	let lowestRank = 0;
+	for (let i in getServerData().jobs[jobId].ranks) {
+		if (getServerData().jobs[jobId].ranks[i].level < getServerData().jobs[jobId].ranks[lowestRank].level) {
+			lowestRank = i;
+		}
+	}
+	return lowestRank;
 }
 
 // ===========================================================================
