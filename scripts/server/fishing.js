@@ -121,7 +121,7 @@ function castFishingLineCommand(command, params, client) {
 	if (doesPlayerHaveKeyBindForCommand(client, "fish")) {
 		messageText = getLocaleString(client, "FishingCastKeyPressHelp");
 	}
-	showGameMessage(client, messageText);
+	showSmallGameMessage(client, messageText);
 }
 
 // ===========================================================================
@@ -149,7 +149,7 @@ function resetFishingLineCommand(client) {
 		messageText = getLocaleString(client, "FishingCastKeyPressHelp");
 	}
 
-	showGameMessage(client, messageText);
+	showSmallGameMessage(client, messageText);
 
 	getPlayerData(client).fishingLineState = AGRP_FISHING_LINE_STATE_NONE;
 	getPlayerData(client).fishingLineCastStart = 0;
