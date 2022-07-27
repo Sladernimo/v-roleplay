@@ -33,8 +33,8 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 
 	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	addEventHandler("onPedExitVehicle", onPedExitingVehicle);
+	//addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
+	//addEventHandler("onPedExitVehicle", onPedExitingVehicle);
 	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
 	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 
@@ -317,7 +317,7 @@ async function onPlayerEnteredVehicle(client, vehicle, seat) {
 			ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
 			switch (getVehicleData(vehicle).ownerType) {
 				case AGRP_VEHOWNER_CLAN:
-					ownerName = getClanData(getClanIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
+					ownerName = getClanData(getClanIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 					ownerType = getLocaleString(client, "Clan");
 					break;
 
@@ -769,7 +769,7 @@ function onPlayerCommand(event, client, command, params) {
 
 // ===========================================================================
 
-function onPedEnteredVehicle(ped, vehicle, seat) {
+function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -780,7 +780,7 @@ function onPedEnteredVehicle(ped, vehicle, seat) {
 
 // ===========================================================================
 
-function onPedExitedVehicle(ped, vehicle, seat) {
+function onPedExitedVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -791,7 +791,7 @@ function onPedExitedVehicle(ped, vehicle, seat) {
 
 // ===========================================================================
 
-function onPedEnteringVehicle(ped, vehicle, seat) {
+function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -802,7 +802,7 @@ function onPedEnteringVehicle(ped, vehicle, seat) {
 
 // ===========================================================================
 
-function onPedExitingVehicle(ped, vehicle, seat) {
+function onPedExitingVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
