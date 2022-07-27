@@ -78,7 +78,7 @@ class AccountData {
 			this.databaseId = dbAssoc["acct_id"];
 			this.name = dbAssoc["acct_name"];
 			this.password = dbAssoc["acct_pass"];
-			this.registerDate = dbAssoc["acct_when_made"];
+			this.registerDate = dbAssoc["acct_when_registered"];
 			this.flags = {
 				moderation: dbAssoc["acct_svr_mod_flags"],
 				admin: dbAssoc["acct_svr_staff_flags"],
@@ -1495,7 +1495,7 @@ function initClient(client) {
 						//	let iso = module.geoip.getCountryISO(getPlayerIP(client));
 						//	let localeId = getLocaleFromCountryISO(iso);
 						//}
-						//showGameMessage(client, getLocaleString(client, "LocaleOffer", `/lang ${getLocaleData(localeId)[2]}`), getColourByName("white"), 10000, "Roboto");
+						//showSmallGameMessage(client, getLocaleString(client, "LocaleOffer", `/lang ${getLocaleData(localeId)[2]}`), getColourByName("white"), 10000, "Roboto");
 					}
 					startLoginTimeoutForPlayer(client);
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
@@ -1868,10 +1868,10 @@ function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 
 function startLoginTimeoutForPlayer(client) {
 	getPlayerData(client).loginTimeout = setTimeout(function () {
-		//if (isPlayerLoggedIn(client) == false) {
-		getPlayerData(client).customDisconnectReason = "Kicked - Login timeout";
-		disconnectPlayer(client);
-		//}
+		if (isPlayerLoggedIn(client) == false) {
+			getPlayerData(client).customDisconnectReason = "Kicked - Login timeout";
+			disconnectPlayer(client);
+		}
 	}, getGlobalConfig().loginTimeout);
 }
 

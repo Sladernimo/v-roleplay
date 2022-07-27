@@ -104,6 +104,24 @@ let serverBitFlagKeys = {
 		"ManageRanks",
 		"Owner",
 	],
+	clanDiscordWebhookFlagKeys: [
+		"None",
+		"ClanName",
+		"ClanMOTD",
+		"ClanTag",
+		"ClanRankEdit",
+		"ClanRankSet",
+		"ClanVehicleEdit",
+		"ClanHouseEdit",
+		"ClanBusinessEdit",
+		"ClanNPCEdit",
+		"ClanMemberInvite",
+		"ClanMemberRemove",
+		"ClanMemberSuspend",
+		"ClanRankFlagSet",
+		"ClanTurfWar",
+		"ClanPointWar",
+	],
 	accountSettingsFlagKeys: [
 		"None",
 		"UseWhiteList",
@@ -247,13 +265,14 @@ let serverBitFlagKeys = {
 // ===========================================================================
 
 function initBitFlagScript() {
-	logToConsole(LOG_INFO, "[VRR.BitFlag]: Initializing bit flag script ...");
+	logToConsole(LOG_DEBUG, "[VRR.BitFlag]: Initializing bit flag script ...");
 	serverBitFlags.staffFlags = createBitFlagTable(serverBitFlagKeys.staffFlagKeys);
 	serverBitFlags.moderationFlags = createBitFlagTable(serverBitFlagKeys.moderationFlagKeys);
 	serverBitFlags.accountSettingsFlags = createBitFlagTable(serverBitFlagKeys.accountSettingsFlagKeys);
 	//serverBitFlags.subAccountSettingsFlags = createBitFlagTable(getServerData().subAccountSettingsFlagKeys);
 	serverBitFlags.clanFlags = createBitFlagTable(serverBitFlagKeys.clanFlagKeys);
-	serverBitFlags.clanTypeFlagKeys = createBitFlagTable(serverBitFlagKeys.clanTypeFlagKeys);
+	serverBitFlags.clanTypeFlags = createBitFlagTable(serverBitFlagKeys.clanTypeFlagKeys);
+	serverBitFlags.clanDiscordWebhookFlags = createBitFlagTable(serverBitFlagKeys.clanDiscordWebhookFlagKeys);
 	//serverBitFlags.factionFlags = createBitFlagTable(serverBitFlagKeys.factionFlagKeys);
 	serverBitFlags.npcTriggerTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerTypeKeys);
 	serverBitFlags.npcTriggerConditionTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerConditionTypeKeys);
@@ -406,6 +425,20 @@ function getModerationFlagValue(flagName) {
 	}
 
 	return serverBitFlags.moderationFlags[flagName];
+}
+
+// ===========================================================================
+
+function getClanDiscordWebhookValue(flagName) {
+	if (flagName == "All") {
+		return -1;
+	}
+
+	if (typeof serverBitFlags.clanDiscordWebhookFlags[flagName] == "undefined") {
+		return false;
+	}
+
+	return serverBitFlags.clanDiscordWebhookFlags[flagName];
 }
 
 // ===========================================================================
