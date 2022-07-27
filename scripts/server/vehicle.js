@@ -889,7 +889,7 @@ function setVehicleJobCommand(command, params, client) {
 	}
 
 	//if(!jobId) {
-	//	messagePlayerError(client, "That job is invalid!");
+	//	messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 	//	messagePlayerInfo(client, "Please specify a job ID or leave it out to get the closest job.");
 	//	return false;
 	//}
@@ -926,7 +926,7 @@ function setVehicleRankCommand(command, params, client) {
 	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
 		rankId = getClanRankFromParams(getVehicleData(vehicle).ownerId, params);
 		if (!getClanRankData(getVehicleData(vehicle).ownerId, rankId)) {
-			messagePlayerError(client, getLocaleString(client, "ClanRankInvalid"));
+			messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 			return false;
 		}
 		getVehicleData(vehicle).rank = getClanRankData(getVehicleData(vehicle).ownerId, rankId).databaseId;
@@ -956,7 +956,7 @@ function setVehicleClanCommand(command, params, client) {
 	}
 
 	if (!getClanData(clanId)) {
-		messagePlayerError(client, "That clan is invalid or doesn't exist!");
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
@@ -1022,7 +1022,7 @@ function setVehicleOwnerCommand(command, params, client) {
 	}
 
 	if (!targetClient) {
-		messagePlayerError(client, "That player is invalid or isn't connected!");
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
@@ -1132,7 +1132,7 @@ function removeVehicleOwnerCommand(command, params, client) {
 	}
 
 	if (!targetClient) {
-		messagePlayerError(client, "That player is invalid or isn't connected!");
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
@@ -1166,7 +1166,7 @@ function getVehicleInfoCommand(command, params, client) {
 	let ownerType = "None";
 	switch (vehicleData.ownerType) {
 		case AGRP_VEHOWNER_CLAN:
-			ownerName = getClanData(getClanIdFromDatabaseId(vehicleData.ownerId)).name;
+			ownerName = getClanData(getClanIndexFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
