@@ -253,6 +253,10 @@ function talkToNearbyPlayers(client, messageText) {
 			}
 		}
 	}
+
+	if (getGlobalConfig().discord.sendLocalChat) {
+		messageDiscordChatChannel(`🗣️ ${getPlayerAccentInlineOutput(talkingClient)}${getClientSubAccountName(talkingClient)} says: ${messageText}`);
+	}
 }
 
 // ===========================================================================
@@ -292,6 +296,10 @@ function whisperToNearbyPlayers(client, messageText) {
 			}
 		}
 	}
+
+	if (getGlobalConfig().discord.sendLocalChat) {
+		messageDiscordChatChannel(`🤫 ${getPlayerAccentInlineOutput(whisperingClient)}${getClientSubAccountName(whisperingClient)} whispers: ${messageText}`);
+	}
 }
 
 // ===========================================================================
@@ -304,6 +312,10 @@ function shoutToNearbyPlayers(client, messageText) {
 				messagePlayerShout(clients[i], client, messageText);
 			}
 		}
+	}
+
+	if (getGlobalConfig().discord.sendLocalChat) {
+		messageDiscordChatChannel(`🗣️ ${getPlayerAccentInlineOutput(shoutingClient)}${getClientSubAccountName(shoutingClient)} shouts: ${messageText}!`);
 	}
 }
 
@@ -318,6 +330,10 @@ function megaPhoneToNearbyPlayers(client, messageText) {
 			}
 		}
 	}
+
+	if (getGlobalConfig().discord.sendLocalChat) {
+		messageDiscordChatChannel(`📢 ${getPlayerAccentInlineOutput(shoutingClient)}${getClientSubAccountName(shoutingClient)} (megaphone): ${messageText}!`);
+	}
 }
 
 // ===========================================================================
@@ -331,7 +347,10 @@ function doActionToNearbyPlayers(client, messageText) {
 			}
 		}
 	}
-	messageDiscordChatChannel(`🙋 *${messageText} (${getCharacterFullName(client)})*`);
+
+	if (getGlobalConfig().discord.sendAction) {
+		messageDiscordChatChannel(`🙋 *${messageText} (${getCharacterFullName(client)})*`);
+	}
 }
 
 // ===========================================================================
@@ -345,7 +364,10 @@ function meActionToNearbyPlayers(client, messageText) {
 			}
 		}
 	}
-	messageDiscordChatChannel(`🙋 *${getCharacterFullName(client)} ${messageText}*`);
+
+	if (getGlobalConfig().discord.sendAction) {
+		messageDiscordChatChannel(`🙋 *${getCharacterFullName(client)} ${messageText}*`);
+	}
 }
 
 // ===========================================================================
@@ -359,6 +381,10 @@ function clanChat(client, messageText) {
 			}
 		}
 	}
+
+	//if (getGlobalConfig().discord.sendClan) {
+	//	messageDiscordClanWebhook(getPlayerClan(client), getClanDiscordWebhookFlagValue("ClanChat"), fullString);
+	//}
 }
 
 // ===========================================================================
