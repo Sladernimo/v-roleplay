@@ -32,7 +32,9 @@ class SubAccountData {
 		this.isWorking = false;
 		this.jobUniform = this.skin;
 		this.job = 0;
+		this.jobIndex = -1;
 		this.jobRank = 0;
+		this.jobRankIndex = -1;
 		this.weapons = [];
 		this.inJail = false;
 		this.interior = 0;
@@ -118,8 +120,10 @@ class SubAccountData {
 	}
 };
 
+// ===========================================================================
+
 function initSubAccountScript() {
-	logToConsole(LOG_INFO, "[VRR.SubAccount]: Initializing subaccount script ...");
+	logToConsole(LOG_DEBUG, "[VRR.SubAccount]: Initializing subaccount script ...");
 	logToConsole(LOG_INFO, "[VRR.SubAccount]: SubAccount script initialized!");
 }
 
@@ -182,17 +186,45 @@ function loadSubAccountsFromAccount(accountId) {
 
 					// Check if clan and rank are still valid
 					if (tempSubAccount.clan != 0) {
-						let clanId = getClanIdFromDatabaseId(tempSubAccount.clan);
-						if (!getClanData(clanId)) {
+						let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
+						if (!getClanData(clanIndex)) {
 							tempSubAccount.clan = 0;
 							tempSubAccount.clanRank = 0;
+							tempSubAccount.clanIndex = -1;
+							tempSubAccount.clanRankIndex = -1;
 							tempSubAccount.clanTitle = "";
 							tempSubAccount.clanFlags = 0;
 						} else {
-							let rankId = getClanRankIdFromDatabaseId(clanId, tempSubAccount.clanRank);
-							if (!getClanRankData(clanId, rankId)) {
+							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
+							if (!getClanRankData(clanIndex, clanRankIndex)) {
 								tempSubAccount.clanRank = 0;
+							} else {
+								tempSubAccount.clanRankIndex = clanRankIndex;
 							}
+
+							tempSubAccount.clanIndex = clanIndex;
+						}
+					}
+
+					// Check if job and rank are still valid
+					if (tempSubAccount.job != 0) {
+						let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
+						if (!getJobData(jobIndex)) {
+							tempSubAccount.job = 0;
+							tempSubAccount.jobRank = 0;
+							tempSubAccount.jobIndex = -1;
+							tempSubAccount.jobRankIndex = -1;
+						} else {
+							let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
+							if (!getJobRankData(jobIndex, jobRankIndex)) {
+								let jobRankIndex = getLowestJobRank(jobIndex);
+								tempSubAccount.jobRank = getJobRankData(jobIndex, jobRankIndex).databaseId;
+								tempSubAccount.jobRankIndex = jobRankIndex;
+							} else {
+								tempSubAccount.jobRankIndex = jobRankIndex;
+							}
+
+							tempSubAccount.jobIndex = jobIndex;
 						}
 					}
 
@@ -346,7 +378,7 @@ function showCharacterSelectToClient(client) {
 		getPlayerData(client).currentSubAccount = 0;
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 		let tempSubAccount = getPlayerData(client).subAccounts[0];
-		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
+		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
@@ -426,7 +458,7 @@ function checkPreviousCharacter(client) {
 		let subAccountId = getPlayerData(client).currentSubAccount;
 		let tempSubAccount = getPlayerData(client).subAccounts[subAccountId];
 
-		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
+		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
@@ -447,7 +479,7 @@ function checkNextCharacter(client) {
 		let subAccountId = getPlayerData(client).currentSubAccount;
 		let tempSubAccount = getPlayerData(client).subAccounts[subAccountId];
 
-		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIdFromDatabaseId(tempSubAccount.clan)).name : "None";
+		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
