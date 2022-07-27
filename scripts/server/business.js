@@ -617,10 +617,10 @@ function setBusinessRankCommand(command, params, client) {
 	}
 
 	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
-		let clanId = getClanIdFromDatabaseId(getBusinessData(businessId).ownerId);
+		let clanId = getClanIndexFromDatabaseId(getBusinessData(businessId).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
-			messagePlayerError(client, getLocaleString(client, "ClanRankInvalid"));
+			messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 			return false;
 		}
 		getBusinessData(businessId).rank = getClanRankData(clanId, rankId).databaseId;
@@ -667,7 +667,7 @@ function setBusinessRankCommand(command, params, client) {
 	let clanRankId = getClanRankFromParams(clanId, params);
 
 	if (!getClanRankData(clanId, clanRankId)) {
-		messagePlayerError(client, getLocaleString(client, "ClanRankInvalid"));
+		messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 		return false;
 	}
 
@@ -1306,7 +1306,7 @@ function setBusinessDealershipCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
-	getBusinessData(businessId).type = AGRP_BIZ_TYPE_VEHDEALERSHIP;
+	getBusinessData(businessId).type = AGRP_BIZ_TYPE_DEALERSHIP;
 	updateBusinessPickupLabelData(businessId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
 }
@@ -1895,7 +1895,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_entrance_vw", tempBusinessData.entranceDimension],
 			["biz_entrance_pickup", tempBusinessData.entrancePickupModel],
 			["biz_entrance_blip", tempBusinessData.entranceBlipModel],
-			["biz_entrance_cutscene", tempBusinessData.entranceCutscene],
+			//["biz_entrance_cutscene", tempBusinessData.entranceCutscene],
 			["biz_exit_pos_x", tempBusinessData.exitPosition.x],
 			["biz_exit_pos_y", tempBusinessData.exitPosition.y],
 			["biz_exit_pos_z", tempBusinessData.exitPosition.z],
@@ -1904,7 +1904,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_exit_vw", tempBusinessData.exitDimension],
 			["biz_exit_pickup", tempBusinessData.exitPickupModel],
 			["biz_exit_blip", tempBusinessData.exitBlipModel],
-			["biz_exit_cutscene", tempBusinessData.exitCutscene],
+			//["biz_exit_cutscene", tempBusinessData.exitCutscene],
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
