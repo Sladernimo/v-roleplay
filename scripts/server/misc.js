@@ -50,7 +50,7 @@ const AGRP_PEDSTATE_SPAWNING = 14;                // Spawning
 // ===========================================================================
 
 function initMiscScript() {
-	logToConsole(LOG_INFO, "[VRR.Misc]: Initializing misc script ...");
+	logToConsole(LOG_DEBUG, "[VRR.Misc]: Initializing misc script ...");
 	logToConsole(LOG_INFO, "[VRR.Misc]: Misc script initialized successfully!");
 	return true;
 }
@@ -410,31 +410,45 @@ function getPlayerInfoCommand(command, params, client) {
 		}
 	}
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo")));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo", `${getPlayerName(client)} - ${getCharacterFullName(targetClient)}`)));
 
-	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${getClanData(getClanIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan)).name}[${getPlayerCurrentSubAccount(targetClient).clan}] (Rank: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).name}[Level: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).level}, DBID: ${getClanRankData(getPlayerCurrentSubAccount(targetClient).clan, getPlayerCurrentSubAccount(targetClient).clanRank).databaseId}` : `(None)`;
-	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${getJobData(getJobIdFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job)).name}[${getPlayerCurrentSubAccount(targetClient).job}] (Rank: ${getPlayerCurrentSubAccount(targetClient).jobRank})` : `(None)`;
+	let clanIndex = getClanIndexFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan);
+	let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
+	let clanData = getClanData(clanIndex);
+	let clanRankData = getClanRankData(clanIndex, clanRankIndex);
+
+	let jobIndex = getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job);
+	let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, getPlayerCurrentSubAccount(targetClient).jobRank);
+	let jobData = getJobData(jobIndex);
+	let jobRankData = getJobRankData(jobIndex, jobRankIndex);
+
+	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${clanData.name}{mediumGrey}[${clanData.databaseId}]{ALTCOLOUR} (Rank ${clanRankData.level}: ${clanRankData.name}{mediumGrey}[${clanRankData.databaseId}]{ALTCOLOUR})` : `None`;
+	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} (Rank ${jobRankData.level}: ${jobRankData.name}{mediumGrey}[${jobRankData.databaseId}]{ALTCOLOUR})` : `None`;
 	let skinIndex = getPlayerCurrentSubAccount(targetClient).skin;
 	let skinModel = getGameConfig().skins[getGame()][skinIndex][0];
 	let skinName = getSkinNameFromModel(skinModel);
-	let registerDate = new Date(getPlayerData(targetClient).accountData.registerDate * 1000).toLocaleDateString();
+	let registerDate = new Date(getPlayerData(targetClient).accountData.registerDate * 1000);
+	let currentDate = new Date();
 
 	let tempStats = [
-		["Account", `${getPlayerData(targetClient).accountData.name}[${getPlayerData(targetClient).accountData.databaseId}]`],
-		["Character", `${getCharacterFullName(targetClient)}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`],
+		["Account", `${getPlayerData(targetClient).accountData.name}{mediumGrey}[${getPlayerData(targetClient).accountData.databaseId}]{ALTCOLOUR}`],
+		["Character", `${getCharacterFullName(targetClient)}{mediumGrey}[${getPlayerCurrentSubAccount(targetClient).databaseId}]{ALTCOLOUR}`],
 		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
-		["Registered", `${registerDate}`],
+		["Registered", `${registerDate.toLocaleDateString()} - ${registerDate.toLocaleTimeString()}`],
 		["Game Version", `${targetClient.gameVersion}`],
+		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Skin", `${skinName}[${skinModel}]`],
+		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
+		["Cash", `$${getPlayerCurrentSubAccount(client).cash}`],
+		["Skin", `${skinName}{mediumGrey}[${skinModel}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
-		["Cash", `${getPlayerCurrentSubAccount(client).cash}`],
+		["Current Date", `${currentDate.toLocaleDateString()} - ${currentDate.toLocaleTimeString()}`],
 	]
 
-	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]} {MAINCOLOUR}`);
 
-	let chunkedList = splitArrayIntoChunks(stats, 6);
+	let chunkedList = splitArrayIntoChunks(stats, 5);
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -477,8 +491,8 @@ function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noB
 	if (canPlayerUseGUI(client)) {
 		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
-		messagePlayerNormal(client, `❓ ${promptMessage}`);
-		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
+		messagePlayerNormal(client, `❓ ${promptMessage} `);
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ ALTCOLOUR } /yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{ MAINCOLOUR } `));
 	}
 }
 
@@ -521,7 +535,7 @@ function listOnlineAdminsCommand(command, params, client) {
 		if (getPlayerData(clients[i])) {
 			if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
 				if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
-					admins.push(`{ALTCOLOUR}[${getPlayerData(clients[i]).accountData.staffTitle}] {MAINCOLOUR}${getCharacterFullName(clients[i])}`);
+					admins.push(`{ ALTCOLOUR } [${getPlayerData(clients[i]).accountData.staffTitle}] { MAINCOLOUR }${getCharacterFullName(clients[i])} `);
 				}
 			}
 		}
