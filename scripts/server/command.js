@@ -709,6 +709,9 @@ function addAllCommandHandlers() {
 		}
 	}
 
+	removeCommandHandler("help");
+	addCommandHandler("help", helpCommand);
+
 	logToConsole(LOG_INFO, `[VRR.Command] ${commandCount} command handlers added!`);
 }
 
