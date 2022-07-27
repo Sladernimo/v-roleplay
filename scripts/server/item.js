@@ -234,13 +234,13 @@ class ItemTypeData {
 			this.takeDelay = toInteger(dbAssoc["item_type_delay_take"]);
 			this.giveDelay = toInteger(dbAssoc["item_type_delay_give"]);
 			this.dropDelay = toInteger(dbAssoc["item_type_delay_drop"]);
-			this.useAnimationName = toInteger(dbAssoc["item_type_anim_use"]);
-			this.switchAnimationName = toInteger(dbAssoc["item_type_anim_switch"]);
-			this.pickupAnimationName = toInteger(dbAssoc["item_type_anim_pickup"]);
-			this.putAnimationName = toInteger(dbAssoc["item_type_anim_put"]);
-			this.takeAnimationName = toInteger(dbAssoc["item_type_anim_take"]);
-			this.giveAnimationName = toInteger(dbAssoc["item_type_anim_give"]);
-			this.dropAnimationName = toInteger(dbAssoc["item_type_anim_drop"]);
+			this.useAnimationName = toString(dbAssoc["item_type_anim_use"]);
+			this.switchAnimationName = toString(dbAssoc["item_type_anim_switch"]);
+			this.pickupAnimationName = toString(dbAssoc["item_type_anim_pickup"]);
+			this.putAnimationName = toString(dbAssoc["item_type_anim_put"]);
+			this.takeAnimationName = toString(dbAssoc["item_type_anim_take"]);
+			this.giveAnimationName = toString(dbAssoc["item_type_anim_give"]);
+			this.dropAnimationName = toString(dbAssoc["item_type_anim_drop"]);
 		}
 	}
 };
@@ -249,7 +249,7 @@ class ItemTypeData {
 
 function initItemScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Item script initialized successfully!");
+	logToConsole(LOG_INFO, "[VRR.Item]: Item script initialized successfully!");
 	return true;
 }
 
@@ -480,7 +480,7 @@ function useItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex, 0.0);
 	}
 
@@ -573,7 +573,7 @@ function pickupItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).pickupAnimationIndex, 0.0);
 	}
 
@@ -643,7 +643,7 @@ function dropItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex, 0.0);
 	}
 
@@ -709,7 +709,7 @@ function putItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex, 0.0);
 	}
 
@@ -765,7 +765,7 @@ function takeItemCommand(command, params, client) {
 	//	return false;
 	//}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex != false && !isPlayerInAnyVehicle(client)) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).takeAnimationIndex, 0.0);
 	}
 
@@ -2467,6 +2467,7 @@ function saveItemTypeToDatabase(itemTypeId) {
 		let safeAnimationDrop = escapeDatabaseString(dbConnection, itemTypeData.dropAnimationName);
 		let safeAnimationPickup = escapeDatabaseString(dbConnection, itemTypeData.pickupAnimationName);
 		let safeAnimationGive = escapeDatabaseString(dbConnection, itemTypeData.giveAnimationName);
+		let safeAnimationPut = escapeDatabaseString(dbConnection, itemTypeData.putAnimationName);
 		let safeAnimationTake = escapeDatabaseString(dbConnection, itemTypeData.takeAnimationName);
 		let safeAnimationSwitch = escapeDatabaseString(dbConnection, itemTypeData.switchAnimationName);
 
@@ -2509,6 +2510,7 @@ function saveItemTypeToDatabase(itemTypeId) {
 			["item_type_anim_drop", safeAnimationDrop],
 			["item_type_anim_pickup", safeAnimationPickup],
 			["item_type_anim_give", safeAnimationGive],
+			["item_type_anim_put", safeAnimationPut],
 			["item_type_anim_take", safeAnimationTake],
 			["item_type_anim_switch", safeAnimationSwitch],
 		];
