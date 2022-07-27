@@ -2191,7 +2191,7 @@ function getArrayOfElementId(elements) {
 // ===========================================================================
 
 function getCurrentUnixTimestamp() {
-	return new Date().getTime() / 1000;
+	return Math.round(new Date().getTime() / 1000);
 }
 
 // ===========================================================================
@@ -3019,7 +3019,7 @@ function replaceProfanityInMessage(messageString) {
 	for (let i in profanityFilterWords) {
 		let find = profanityFilterWords[i];
 		let re = new RegExp(find, 'gi');
-		messageString = messageString.replace(re, fillStringWithCharacter('*', find.length - 1));
+		messageString = messageString.replace(re, fillStringWithCharacter('*', profanityFilterWords[i].length - 1));
 	}
 	return messageString;
 }
