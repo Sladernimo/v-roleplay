@@ -1278,9 +1278,11 @@ function jobUniformCommand(command, params, client) {
 
 	let uniformData = getJobUniformData(jobIndex, uniformId - 1);
 
-	if (jobRankData.level < uniformData.requiredRank) {
-		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, uniformData.requiredRank));
-		return false;
+	if (jobData.ranks.length > 0) {
+		if (jobRankData.level < uniformData.requiredRank) {
+			messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, uniformData.requiredRank));
+			return false;
+		}
 	}
 
 	setPlayerSkin(client, uniformData.skin);
@@ -1375,9 +1377,11 @@ function jobEquipmentCommand(command, params, client) {
 
 	let jobEquipmentData = getJobEquipmentData(jobIndex, equipmentId - 1)
 
-	if (jobRankData.level < jobEquipmentData.requiredRank) {
-		messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, jobEquipmentData.requiredRank));
-		return false;
+	if (jobData.ranks.length > 0) {
+		if (jobRankData.level < jobEquipmentData.requiredRank) {
+			messagePlayerError(client, getLocaleString(client, "JobRankTooLow", jobRankData.level, jobEquipmentData.requiredRank));
+			return false;
+		}
 	}
 
 	deleteJobItems(client);
@@ -3941,10 +3945,10 @@ function getJobRouteLocationTypeFromParams(params) {
 
 // ===========================================================================
 
-function getLowestJobRank(jobId) {
+function getLowestJobRank(jobIndex) {
 	let lowestRank = 0;
-	for (let i in getServerData().jobs[jobId].ranks) {
-		if (getServerData().jobs[jobId].ranks[i].level < getServerData().jobs[jobId].ranks[lowestRank].level) {
+	for (let i in getServerData().jobs[jobIndex].ranks) {
+		if (getJobRankData(jobIndex, i).level < getJobRankData(jobIndex, lowestRank).level) {
 			lowestRank = i;
 		}
 	}
