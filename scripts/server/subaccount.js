@@ -197,7 +197,9 @@ function loadSubAccountsFromAccount(accountId) {
 						} else {
 							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
 							if (!getClanRankData(clanIndex, clanRankIndex)) {
-								tempSubAccount.clanRank = 0;
+								let newClanRankIndex = getLowestClanRank(clanIndex);
+								tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId
+								tempSubAccount.clanRankIndex = newClanRankIndex;
 							} else {
 								tempSubAccount.clanRankIndex = clanRankIndex;
 							}
@@ -215,13 +217,18 @@ function loadSubAccountsFromAccount(accountId) {
 							tempSubAccount.jobIndex = -1;
 							tempSubAccount.jobRankIndex = -1;
 						} else {
-							let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
-							if (!getJobRankData(jobIndex, jobRankIndex)) {
-								let jobRankIndex = getLowestJobRank(jobIndex);
-								tempSubAccount.jobRank = getJobRankData(jobIndex, jobRankIndex).databaseId;
-								tempSubAccount.jobRankIndex = jobRankIndex;
+							if (getJobData(jobIndex).ranks.length > 0) {
+								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
+								if (!getJobRankData(jobIndex, jobRankIndex)) {
+									let newJobRankIndex = getLowestJobRank(jobIndex);
+									console.log(`[VRR.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+									tempSubAccount.jobRankIndex = newJobRankIndex;
+								} else {
+									tempSubAccount.jobRankIndex = jobRankIndex;
+								}
 							} else {
-								tempSubAccount.jobRankIndex = jobRankIndex;
+								tempSubAccount.jobRankIndex = -1;
 							}
 
 							tempSubAccount.jobIndex = jobIndex;
