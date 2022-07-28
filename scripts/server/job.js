@@ -1473,11 +1473,16 @@ function quitJob(client) {
 // ===========================================================================
 
 function takeJob(client, jobId) {
-	let rankId = getLowestJobRank(jobId);
+	let rankIndex = -1;
+	let rankId = 0;
+	if (getJobData(jobId).ranks.length > 0) {
+		rankIndex = getLowestJobRank(jobId);
+		rankId = getJobRankData(jobId, rankId).databaseId;
+	}
 	getPlayerCurrentSubAccount(client).job = getJobData(jobId).databaseId;
-	getPlayerCurrentSubAccount(client).jobRank = getJobRankData(jobId, rankId).databaseId;
+	getPlayerCurrentSubAccount(client).jobRank = rankId;
 	getPlayerCurrentSubAccount(client).jobIndex = jobId;
-	getPlayerCurrentSubAccount(client).jobRankIndex = rankId
+	getPlayerCurrentSubAccount(client).jobRankIndex = rankIndex;
 	sendPlayerJobType(client, getJobData(jobId).databaseId);
 	updateJobBlipsForPlayer(client);
 }
