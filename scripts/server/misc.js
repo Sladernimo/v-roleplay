@@ -315,10 +315,11 @@ function enterExitPropertyCommand(command, params, client) {
 				}
 			}
 
-			if (closestProperty.streamingRadioStation != -1) {
-				if (getRadioStationData(closestProperty.streamingRadioStation)) {
-					playRadioStreamForPlayer(client, getRadioStationData(closestProperty.streamingRadioStation).url);
-					getPlayerData(client).streamingRadioStation = closestProperty.streamingRadioStation;
+			let radioStationIndex = closestProperty.streamingRadioStationIndex;
+			if (radioStationIndex != -1) {
+				if (getRadioStationData(radioStationIndex)) {
+					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
+					getPlayerData(client).streamingRadioStation = radioStationIndex;
 				}
 			}
 			return true;
@@ -371,17 +372,17 @@ function enterExitPropertyCommand(command, params, client) {
 			let inBusiness = getPlayerBusiness(client);
 
 			if (inBusiness != -1) {
-				if (getBusinessData(inBusiness).streamingRadioStation != -1) {
-					if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStation)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStation).url);
-						getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStation;
+				if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
+					if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
+						playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
+						getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
 					}
 				}
 			} else if (inHouse != -1) {
-				if (getHouseData(inHouse).streamingRadioStation != -1) {
-					if (getRadioStationData(getHouseData(inHouse).streamingRadioStation)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStation).url);
-						getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStation;
+				if (getHouseData(inHouse).streamingRadioStationIndex != -1) {
+					if (getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex)) {
+						playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex).url);
+						getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStationIndex;
 					}
 				}
 			}

@@ -118,10 +118,11 @@ function playStreamingRadioCommand(command, params, client) {
 			}
 		}
 	} else {
-		if (doesEntityDataExist(client, "agrp.inHouse")) {
-			let houseId = getEntityData(client, "agrp.inHouse");
+		if (isPlayerInAnyHouse(client)) {
+			let houseId = getPlayerHouse(client);
 			if (radioStationId == 0) {
-				getHouseData(houseId).streamingRadioStation = -1;
+				getHouseData(houseId).streamingRadioStationIndex = -1;
+				getHouseData(houseId).streamingRadioStationIndex = 0;
 				getHouseData(houseId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the house radio`);
@@ -133,7 +134,8 @@ function playStreamingRadioCommand(command, params, client) {
 					}
 				}
 			} else {
-				getHouseData(houseId).streamingRadioStation = radioStationId - 1;
+				getHouseData(houseId).streamingRadioStationIndex = radioStationId - 1;
+				getHouseData(houseId).streamingRadioStation = getRadioStationData(radioStationId - 1).databaseId;
 				getHouseData(houseId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = radioStationId - 1;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
@@ -148,7 +150,8 @@ function playStreamingRadioCommand(command, params, client) {
 		} else if (isPlayerInAnyBusiness(client)) {
 			let businessId = getPlayerBusiness(client);
 			if (radioStationId == 0) {
-				getBusinessData(businessId).streamingRadioStation = -1;
+				getBusinessData(businessId).streamingRadioStation = 0;
+				getBusinessData(businessId).streamingRadioStationIndex = -1;
 				getBusinessData(businessId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = -1;
 				meActionToNearbyPlayers(client, `turns off the business radio`);
@@ -160,7 +163,8 @@ function playStreamingRadioCommand(command, params, client) {
 					}
 				}
 			} else {
-				getBusinessData(businessId).streamingRadioStation = radioStationId - 1;
+				getBusinessData(businessId).streamingRadioStationIndex = radioStationId - 1;
+				getBusinessData(businessId).streamingRadioStation = getRadioStationData(radioStationId - 1).databaseId;
 				getBusinessData(businessId).needsSaved = true;
 				getPlayerData(client).streamingRadioStation = radioStationId - 1;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
