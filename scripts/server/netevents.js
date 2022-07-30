@@ -32,11 +32,7 @@ function addAllNetworkEventHandlers() {
 
 	// Event
 	addNetworkEventHandler("agrp.pickup", onPlayerNearPickup);
-	addNetworkEventHandler("agrp.enteredSphere", onPlayerEnteredSphere);
-	addNetworkEventHandler("agrp.exitedSphere", onPlayerExitedSphere);
 	addNetworkEventHandler("agrp.playerDeath", onPlayerDeath);
-	//addNetworkEventHandler("agrp.onPlayerEnterVehicle", onPlayerEnteredVehicle);
-	//addNetworkEventHandler("agrp.onPlayerExitVehicle", onPlayerExitedVehicle);
 
 	// Job
 	addNetworkEventHandler("agrp.arrivedAtJobRouteLocation", playerArrivedAtJobRouteLocation);
@@ -109,7 +105,7 @@ function updatePlayerPing(client) {
 function playerClientReady(client) {
 	playerResourceReady[client.index] = true;
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
-	if (playerResourceStarted[client.index] == true) {
+	if (playerResourceStarted[client.index] == true && playerInitialized[client.index] == false) {
 		initClient(client);
 	}
 }
@@ -126,7 +122,7 @@ function playerGUIReady(client) {
 function playerClientStarted(client) {
 	playerResourceStarted[client.index] = true;
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
-	if (playerResourceReady[client.index] == true) {
+	if (playerResourceReady[client.index] == true && playerInitialized[client.index] == false) {
 		initClient(client);
 	}
 }
