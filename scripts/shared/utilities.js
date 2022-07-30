@@ -1696,60 +1696,65 @@ function areServerElementsSupported() {
 // ===========================================================================
 
 function isTimeSupported() {
-	return supportedFeatures.time[getGame()];
+	return isGameFeatureSupported("time");
 }
 
 // ===========================================================================
 
 function isWeatherSupported() {
-	return supportedFeatures.weather[getGame()];
+	return isGameFeatureSupported("weather");
 }
 
 // ===========================================================================
 
 function arePickupsSupported() {
-	return supportedFeatures.pickups[getGame()];
+	return isGameFeatureSupported("pickups");
 }
 
 // ===========================================================================
 
 function areBlipsSupported() {
-	return supportedFeatures.blips[getGame()];
+	return isGameFeatureSupported("blips");
 }
 
 // ===========================================================================
 
 function areMarkersSupported() {
-	return supportedFeatures.markers[getGame()];
+	return isGameFeatureSupported("markers");
 }
 
 // ===========================================================================
 
 function isFadeCameraSupported() {
-	return supportedFeatures.fadeCamera[getGame()];
+	return isGameFeatureSupported("fadeCamera");
 }
 
 // ===========================================================================
 
 function isCustomCameraSupported() {
-	return supportedFeatures.customCamera[getGame()];
+	return isGameFeatureSupported("customCamera");
 }
 
 // ===========================================================================
 
 function areFightStylesSupported() {
-	return supportedFeatures.fightStyles[getGame()];
+	return isGameFeatureSupported("fightStyles");
 }
 
 // ===========================================================================
 
 function areWorldLabelsSupported() {
-	return supportedFeatures.worldLabels[getGame()];
+	return isGameFeatureSupported("worldLabels");
 }
 
 // ===========================================================================
 
 function isGameFeatureSupported(featureName) {
+	if (typeof supportedFeatures[featureName] === "undefined") {
+		submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
+		return false;
+	}
+
 	return supportedFeatures[featureName][getGame()];
 }
 
