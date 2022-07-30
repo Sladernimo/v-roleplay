@@ -59,6 +59,9 @@ function closeLocaleChooserGUI() {
 // ===========================================================================
 
 function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
+	// Disabled for now until image loading crash can be fixed
+	return false;
+
 	if (position.x != 0.0 && position.y != 0.0) {
 		localeChooser.window.position = position;
 	} else {
