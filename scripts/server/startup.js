@@ -175,6 +175,7 @@ function createAllServerElements() {
 	createAllJobPickups();
 	createAllJobBlips();
 	createAllGroundItemObjects();
+	createAllJobRouteLocationMarkers();
 	spawnAllVehicles();
 	spawnAllNPCs();
 	addAllCommandHandlers();
