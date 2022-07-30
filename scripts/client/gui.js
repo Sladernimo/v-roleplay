@@ -69,10 +69,6 @@ function initGUI() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] All GUI created successfully!`);
 
 	loadLocaleConfig();
-	loadAllLocaleStrings();
-
-	resetGUIStrings();
-	resetLocaleChooserOptions();
 
 	sendNetworkEventToServer("agrp.guiReady", true);
 };

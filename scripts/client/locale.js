@@ -37,6 +37,9 @@ function getAvailableLocaleOptions() {
 function loadLocaleConfig() {
 	let configFile = loadTextFile("config/client/locale.json");
 	getServerData().localeOptions = JSON.parse(configFile);
+
+	resetLocaleChooserOptions();
+	loadAllLocaleStrings();
 }
 
 // ===========================================================================
@@ -50,6 +53,8 @@ function loadAllLocaleStrings() {
 
 		getServerData().localeStrings[i] = localeData;
 	}
+
+	resetGUIStrings();
 }
 
 // ===========================================================================
@@ -59,5 +64,3 @@ function setLocale(tempLocaleId) {
 	localLocaleId = tempLocaleId;
 	resetGUIStrings();
 }
-
-// ===========================================================================
