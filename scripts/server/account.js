@@ -921,11 +921,11 @@ function saveAccountToDatabase(accountData) {
 		];
 
 		let data2 = [
-			["acct_svr_settings", accountData.settings],
-			["acct_svr_staff_title", safeStaffTitle],
-			["acct_svr_staff_flags", accountData.flags.admin],
-			["acct_svr_mod_flags", accountData.flags.moderation],
-			["acct_svr_chat_scroll_lines", accountData.chatScrollLines],
+			["acct_svr_settings", toInteger(accountData.settings)],
+			["acct_svr_staff_title", toString(safeStaffTitle)],
+			["acct_svr_staff_flags", toInteger(accountData.flags.admin)],
+			["acct_svr_mod_flags", toInteger(accountData.flags.moderation)],
+			["acct_svr_chat_scroll_lines", toInteger(accountData.chatScrollLines)],
 			//["acct_svr_chat_auto_hide_delay", accountData.chatAutoHideDelay],
 		];
 
@@ -1236,6 +1236,8 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 	getPlayerData(client).accountData = accountData;
 	getPlayerData(client).loggedIn = true;
+	getPlayerData(client).accountData.settings = 0;
+	getPlayerData(client).accountData.needsSaved = true;
 
 	messagePlayerSuccess(client, getLocaleString(client, "RegistrationSuccess"));
 	if (checkForSMTPModule() && getEmailConfig().enabled) {
@@ -1449,6 +1451,8 @@ function initClient(client) {
 		return false;
 	}
 
+	playerInitialized[client.index] = true;
+
 	//setEntityData(client, "agrp.isInitialized", true, false);
 
 	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
@@ -1515,7 +1519,6 @@ function initClient(client) {
 			getServerData().clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(getServerData().clients[getPlayerId(client)].accountData.databaseId);
 			sendAccountKeyBindsToClient(client);
 		}
-
 	}, 2500);
 }
 
