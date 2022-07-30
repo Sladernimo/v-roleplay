@@ -245,6 +245,7 @@ let globalConfig = {
 	loginTimeout: 60000,
 	fishingCastMaxStrength: 100,
 	fishingCastMinStrength: 30,
+	jobRouteLocationSphereRadius: 3,
 };
 
 // ===========================================================================
