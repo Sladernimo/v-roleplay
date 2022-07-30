@@ -85,7 +85,8 @@ class VehicleData {
 		this.trunkItemCache = [];
 		this.dashItemCache = [];
 
-		this.streamingRadioStation = -1;
+		this.streamingRadioStation = 0;
+		this.streamingRadioStationIndex = -1;
 
 		// Other/Misc
 		this.insuranceAccount = 0;
@@ -295,7 +296,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_int", toInteger(tempVehicleData.interior)],
 			["veh_vw", toInteger(tempVehicleData.dimension)],
 			["veh_livery", toInteger(tempVehicleData.livery)],
-			["veh_radio_station", toInteger(getRadioStationData(tempVehicleData.radioStation).databaseId)],
+			["veh_radio_station", toInteger(tempVehicleData.radioStation)],
 		];
 
 		let dbQuery = null;
@@ -1776,6 +1777,10 @@ function resetVehiclePosition(vehicle) {
 function setAllVehicleIndexes() {
 	for (let i in getServerData().vehicles) {
 		getServerData().vehicles[i].index = i;
+
+		if (getServerData().vehicles[i].streamingRadioStation != 0) {
+			getServerData().vehicles[i].streamingRadioStationIndex = getRadioStationIndexFromDatabase(getServerData().vehicles[i].streamingRadioStation);
+		}
 	}
 }
 
