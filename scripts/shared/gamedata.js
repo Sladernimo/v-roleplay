@@ -100,6 +100,16 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
+	spheres: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: false,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
 	worldLabels: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
@@ -4998,7 +5008,7 @@ let gameData = {
 			PoliceStation: 1361,
 			FireStation: 1361,
 			Hospital: 1361,
-			ammunation: 1361,
+			Ammunation: 1361,
 			PayAndSpray: 1361,
 			VehicleDealership: 1361,
 			Restaurant: 1361,
