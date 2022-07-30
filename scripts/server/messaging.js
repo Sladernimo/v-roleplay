@@ -39,9 +39,14 @@ function announceAdminAction(localeString, ...args) {
  *
  */
 function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
-	//if(isConsole(client) || client == null) {
-	//    logToConsole(LOG_INFO, `${removeColoursInMessage(messageText)}`);
-	//}
+	if (client != null) {
+		if (client.console) {
+			logToConsole(LOG_INFO, `${messageText}`);
+			return false;
+		}
+	}
+
+	//logToConsole(LOG_INFO, `${messageText}`);
 
 	//messageText = replaceColoursInMessage(messageText);
 
@@ -58,9 +63,6 @@ function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 // ===========================================================================
 
 function messageAdmins(messageText, colour = getColourByName("softRed")) {
-	//
-	//logToConsole(LOG_WARN, `🛡️ ${plainMessage}`);
-
 	let clients = getClients();
 	for (let i in clients) {
 		if (doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
@@ -75,11 +77,6 @@ function messageAdmins(messageText, colour = getColourByName("softRed")) {
 // ===========================================================================
 
 function messagePlayerError(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `❌ ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `❌ ${messageText}`, getColourByName("white"));
 	} else {
@@ -90,11 +87,6 @@ function messagePlayerError(client, messageText) {
 // ===========================================================================
 
 function messagePlayerSyntax(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `⌨️ ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `⌨️ USAGE: {MAINCOLOUR} ${messageText}`, getColourByType("syntaxMessage"));
 	} else {
@@ -105,11 +97,6 @@ function messagePlayerSyntax(client, messageText) {
 // ===========================================================================
 
 function messagePlayerAlert(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `⚠️ ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `⚠️ ${messageText}`, getColourByName("white"));
 	} else {
@@ -120,11 +107,6 @@ function messagePlayerAlert(client, messageText) {
 // ===========================================================================
 
 function messagePlayerSuccess(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `✔️ ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `✔️ ${messageText}`, getColourByName("white"));
 	} else {
@@ -135,11 +117,6 @@ function messagePlayerSuccess(client, messageText) {
 // ===========================================================================
 
 function messagePlayerInfo(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `ℹ️ ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `ℹ️ ${messageText}`, getColourByName("white"));
 	} else {
@@ -150,11 +127,6 @@ function messagePlayerInfo(client, messageText) {
 // ===========================================================================
 
 function messagePlayerTip(client, messageText) {
-	if (isConsole(client)) {
-		logToConsole(LOG_INFO, `💡 ${messageText}`);
-		return true;
-	}
-
 	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `💡 ${messageText}`, getColourByName("white"));
 	} else {
