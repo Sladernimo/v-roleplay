@@ -430,41 +430,6 @@ function processLocalPlayerVehicleControlState() {
 
 // ===========================================================================
 
-function processLocalPlayerSphereEntryExitHandling() {
-	let position = getLocalPlayerPosition();
-
-	if (areMarkersSupported()) {
-		getElementsByType(ELEMENT_MARKER).forEach(function (sphere) {
-			if (getDistance(position, sphere.position) <= sphere.radius) {
-				if (!inSphere) {
-					inSphere = sphere;
-					triggerEvent("OnLocalPlayerEnterSphere", null, sphere);
-				}
-			} else {
-				if (inSphere) {
-					inSphere = false;
-					triggerEvent("OnLocalPlayerExitSphere", null, sphere);
-				}
-			}
-		});
-	}
-}
-
-// ===========================================================================
-
-function processJobRouteSphere() {
-	if (getGame() == AGRP_GAME_GTA_SA) {
-		let position = getLocalPlayerPosition();
-		if (jobRouteLocationSphere != null) {
-			if (getDistance(position, jobRouteLocationSphere.position) <= 2.0) {
-				enteredJobRouteSphere();
-			}
-		}
-	}
-}
-
-// ===========================================================================
-
 function forceLocalPlayerEquippedWeaponItem() {
 	if (typeof localPlayer.weapon != "undefined") {
 		if (forceWeapon != 0) {
@@ -497,24 +462,6 @@ function getLocalPlayerPosition() {
 	}
 
 	return position;
-}
-
-// ===========================================================================
-
-function processLocalPlayerVehicleEntryExitHandling() {
-	if (localPlayer.vehicle) {
-		if (!inVehicle) {
-			inVehicle = localPlayer.vehicle;
-			inVehicleSeat = getLocalPlayerVehicleSeat();
-			triggerEvent("OnLocalPlayerEnteredVehicle", inVehicle, inVehicleSeat);
-		}
-	} else {
-		if (inVehicle) {
-			triggerEvent("OnLocalPlayerExitedVehicle", inVehicle, inVehicleSeat);
-			inVehicle = false;
-			inVehicleSeat = false;
-		}
-	}
 }
 
 // ===========================================================================
