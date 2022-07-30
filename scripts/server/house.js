@@ -65,7 +65,8 @@ class HouseData {
 		this.exitPickup = null;
 		this.exitBlip = null;
 
-		this.streamingRadioStation = -1;
+		this.streamingRadioStation = 0;
+		this.streamingRadioStationIndex = -1;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["house_id"]);
@@ -902,6 +903,7 @@ function saveHouseToDatabase(houseId) {
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
 			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
+			["house_radio_station", boolToInt(tempHouseData.streamingRadioStation)],
 		];
 
 		let dbQuery = null;
@@ -1807,6 +1809,25 @@ function createHouseBlips(houseId) {
 function createHousePickups(houseId) {
 	createHouseEntrancePickup(houseId);
 	createHouseExitPickup(houseId);
+}
+
+// ===========================================================================
+
+/**
+ * Gets whether or not a client is in a business
+ *
+ * @param {Client} client - The client to check whether or not is in a business
+ * @return {Boolean} Whether or not the client is in a business
+ *
+ */
+function isPlayerInAnyHouse(client) {
+	for (let i in getServerData().houses) {
+		if (getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+			return i;
+		}
+	}
+
+	return false;
 }
 
 // ===========================================================================
