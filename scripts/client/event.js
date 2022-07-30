@@ -10,19 +10,8 @@
 
 function initEventScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Event]: Initializing event script ...");
-	addCustomEvents();
 	addAllEventHandlers();
 	logToConsole(LOG_DEBUG, "[VRR.Event]: Event script initialized!");
-}
-
-// ===========================================================================
-
-function addCustomEvents() {
-	addEvent("OnLocalPlayerEnterSphere", 1);
-	addEvent("OnLocalPlayerExitSphere", 1);
-	addEvent("OnLocalPlayerEnteredVehicle", 1);
-	addEvent("OnLocalPlayerExitedVehicle", 1);
-	addEvent("OnLocalPlayerSwitchWeapon", 2);
 }
 
 // ===========================================================================
@@ -31,30 +20,21 @@ function addAllEventHandlers() {
 	bindEventHandler("OnResourceStart", thisResource, onResourceStart);
 	bindEventHandler("OnResourceReady", thisResource, onResourceReady);
 	bindEventHandler("OnResourceStop", thisResource, onResourceStop);
-
 	addEventHandler("OnProcess", onProcess);
 	addEventHandler("OnKeyUp", onKeyUp);
 	addEventHandler("OnDrawnHUD", onDrawnHUD);
-
 	addEventHandler("OnPedWasted", onPedWasted);
-
 	addEventHandler("OnElementStreamIn", onElementStreamIn);
-
 	addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
 	addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-	addEventHandler("OnPedEnteredSphere", onPedEnteredSphere);
-	addEventHandler("OnPedExitedSphere", onPedExitedSphere);
+	addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+	addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
 	addEventHandler("OnPedChangeWeapon", onPedChangeWeapon);
-
 	addEventHandler("OnPedInflictDamage", onPedInflictDamage);
-
 	addEventHandler("OnLostFocus", onLostFocus);
 	addEventHandler("OnFocus", onFocus);
-
 	addEventHandler("OnCameraProcess", onCameraProcess);
-
 	addEventHandler("OnMouseWheel", onMouseWheel);
-
 	addEventHandler("OnEntityProcess", onEntityProcess);
 }
 
@@ -91,9 +71,6 @@ function onProcess(event, deltaTime) {
 	processSync();
 	processLocalPlayerControlState();
 	processLocalPlayerVehicleControlState();
-	processLocalPlayerSphereEntryExitHandling();
-	processLocalPlayerVehicleEntryExitHandling();
-	processJobRouteSphere();
 	forceLocalPlayerEquippedWeaponItem();
 	processWantedLevelReset();
 	processGameSpecifics();
@@ -121,7 +98,7 @@ function onDrawnHUD(event) {
 		return false;
 	}
 
-	if (localPlayer == null) {
+	if (!localPlayer) {
 		return false;
 	}
 
@@ -198,18 +175,12 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 // ===========================================================================
 
 function onPedEnteredSphere(event, ped, sphere) {
-	if (isNull(ped)) {
-		return false;
-	}
-
-	if (isNull(localPlayer)) {
-		return false;
-	}
-
-	if (ped == localPlayer) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
-		if (sphere == jobRouteLocationSphere) {
-			enteredJobRouteSphere();
+	if (!isNull(localPlayer) && !isNull(ped)) {
+		if (ped == localPlayer) {
+			logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
+			//if (sphere == jobRouteLocationSphere) {
+			//	enteredJobRouteSphere();
+			//}
 		}
 	}
 }
@@ -217,16 +188,10 @@ function onPedEnteredSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedExitedSphere(event, ped, sphere) {
-	if (isNull(ped)) {
-		return false;
-	}
-
-	if (isNull(localPlayer)) {
-		return false;
-	}
-
-	if (ped == localPlayer) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
+	if (!isNull(localPlayer) && !isNull(ped)) {
+		if (ped == localPlayer) {
+			logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited sphere`);
+		}
 	}
 }
 
@@ -263,13 +228,7 @@ function onMouseWheel(event, mouseId, deltaCoordinates, flipped) {
 // ===========================================================================
 
 function onEntityProcess(event, entity) {
-	if (!isSpawned) {
-		return false;
-	}
 
-	//if(entity.isType(ELEMENT_PED) && !entity.isType(ELEMENT_PLAYER)) {
-	//	processNPCMovement(entity);
-	//}
 }
 
 // ===========================================================================

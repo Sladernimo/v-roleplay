@@ -19,11 +19,7 @@ function initEventScript() {
 function addAllEventHandlers() {
 	addEventHandler("onResourceStart", onResourceStart);
 	addEventHandler("onResourceStop", onResourceStop);
-	addEventHandler("onServerStop", onResourceStop);
-
 	addEventHandler("onProcess", onProcess);
-	addEventHandler("onEntityProcess", onEntityProcess);
-
 	addEventHandler("onPlayerConnect", onPlayerConnect);
 	addEventHandler("onPlayerJoin", onPlayerJoin);
 	addEventHandler("onPlayerJoined", onPlayerJoined);
@@ -31,14 +27,12 @@ function addAllEventHandlers() {
 	addEventHandler("onPlayerQuit", onPlayerQuit);
 	addEventHandler("onElementStreamIn", onElementStreamIn);
 	addEventHandler("onElementStreamOut", onElementStreamOut);
-
 	addEventHandler("onPedSpawn", onPedSpawn);
-	//addEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	//addEventHandler("onPedExitVehicle", onPedExitingVehicle);
 	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
 	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
-
-	//addEventHandler("OnPlayerCommand", onPlayerCommand);
+	addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
+	addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+	addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
 }
 
 // ===========================================================================
@@ -56,9 +50,9 @@ function onPlayerConnect(event, ipAddress, port) {
 function onPlayerJoin(event, client) {
 	logToConsole(LOG_INFO, `[VRR.Event] Client ${getPlayerName(client)}[${getPlayerId(client)}] joining from ${getPlayerIP(client)}`);
 
-	if (isFadeCameraSupported()) {
-		fadeCamera(client, true, 1.0);
-	}
+	//if (isFadeCameraSupported()) {
+	//	fadeCamera(client, true, 1.0);
+	//}
 
 	//if(isCustomCameraSupported()) {
 	//	showConnectCameraToPlayer(client);
@@ -78,7 +72,7 @@ function onPlayerJoin(event, client) {
 // ===========================================================================
 
 function onPlayerJoined(event, client) {
-
+	//initClient(client);
 }
 
 // ===========================================================================
@@ -253,161 +247,42 @@ function onResourceStop(event, resource) {
 		saveServerDataToDatabase();
 		collectAllGarbage();
 	}
+
+	disconnectFromDatabase(persistentDatabaseConnection, true);
 }
 
 // ===========================================================================
 
-function onPlayerEnteredSphere(client, sphere) {
+function onPedEnteredSphere(event, ped, sphere) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
 
-}
-
-// ===========================================================================
-
-function onPlayerExitedSphere(client, sphere) {
-
-}
-
-// ===========================================================================
-
-async function onPlayerEnteredVehicle(client, vehicle, seat) {
-	if (client == null) {
-		return false;
-	}
-
-	if (getPlayerData(client) == false) {
-		return false;
-	}
-
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		vehicle = getVehicleFromIVNetworkId(clientVehicle);
-	}
-	//else {
-	//	if (getPlayerPed(client) == null) {
-	//		return false;
-	//	}
-	//	await waitUntil(() => client != null && getPlayerPed(client) != null && getPlayerVehicle(client) != null);
-	//	vehicle = getPlayerVehicle(client);
-	//}
-
-	if (!getVehicleData(vehicle)) {
-		return false;
-	}
-
-	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
-
-	getPlayerData(client).lastVehicle = vehicle;
-	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
-
-	if (getPlayerVehicleSeat(client) == AGRP_VEHSEAT_DRIVER) {
-		vehicle.engine = getVehicleData(vehicle).engine;
-
-		if (getVehicleData(vehicle).buyPrice > 0) {
-			messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
-			resetVehiclePosition(vehicle);
-		} else if (getVehicleData(vehicle).rentPrice > 0) {
-			if (getVehicleData(vehicle).rentedBy != client) {
-				messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
-				resetVehiclePosition(vehicle);
-			} else {
-				messagePlayerAlert(client, getLocaleString(client, "CurrentlyRentingThisVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}`, `{ALTCOLOUR}/stoprent{MAINCOLOUR}`));
-			}
-		} else {
-			let ownerName = "Nobody";
-			let ownerType = getLocaleString(client, "NotOwned");
-			ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
-			switch (getVehicleData(vehicle).ownerType) {
-				case AGRP_VEHOWNER_CLAN:
-					ownerName = getClanData(getClanIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
-					ownerType = getLocaleString(client, "Clan");
-					break;
-
-				case AGRP_VEHOWNER_JOB:
-					ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
-					ownerType = getLocaleString(client, "Job");
-					break;
-
-				case AGRP_VEHOWNER_PLAYER:
-					let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
-					ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
-					ownerType = getLocaleString(client, "Player");
-					break;
-
-				case AGRP_VEHOWNER_BIZ:
-					ownerName = getBusinessData(getVehicleData(vehicle).ownerId).name;
-					ownerType = getLocaleString(client, "Business");
-					break;
-
-				default:
-					break;
-			}
-			messagePlayerAlert(client, getLocaleString(client, "VehicleBelongsTo", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerName}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerType}{MAINCOLOUR}`));
-		}
-
-		if (!getVehicleData(vehicle).engine) {
-			if (getVehicleData(vehicle).buyPrice == 0 && getVehicleData(vehicle).rentPrice == 0) {
-				if (doesPlayerHaveVehicleKeys(client, vehicle)) {
-					if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
-						messagePlayerTip(client, `This ${getVehicleName(vehicle)}'s engine is off. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))} {MAINCOLOUR}to start it.`);
-					} else {
-						messagePlayerAlert(client, `This ${getVehicleName(vehicle)}'s engine is off. Use /engine to start it`);
-					}
-				} else {
-					messagePlayerAlert(client, `This ${getVehicleName(vehicle)}'s engine is off and you don't have the keys to start it`);
-
-				}
-			}
-			resetVehiclePosition(vehicle);
-		}
-
-		let currentSubAccount = getPlayerCurrentSubAccount(client);
-
-		if (isPlayerWorking(client)) {
-			if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
-				if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
-					getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
-					messagePlayerInfo(client, `Use /startroute to start working in this vehicle`);
-				}
-			}
-		}
-
-		if (isPlayerWorking(client)) {
-			if (isPlayerOnJobRoute(client)) {
-				if (vehicle == getPlayerJobRouteVehicle(client)) {
-					stopReturnToJobVehicleCountdown(client);
-				}
-			}
-		}
-	}
-
-	if (getVehicleData(vehicle).streamingRadioStation != -1) {
-		if (getPlayerData(client).streamingRadioStation != getVehicleData(vehicle).streamingRadioStation) {
-			playRadioStreamForPlayer(client, getServerData().radioStations[getVehicleData(vehicle).streamingRadioStation].url, true, getPlayerStreamingRadioVolume(client));
-		}
-	}
-}
-
-// ===========================================================================
-
-function onPlayerExitedVehicle(client, vehicle) {
-	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
-
-	stopRadioStreamForPlayer(client);
-
-	if (!getVehicleData(vehicle)) {
-		return false;
-	}
-
-	if (isPlayerWorking(client)) {
 		if (isPlayerOnJobRoute(client)) {
-			if (vehicle == getPlayerJobRouteVehicle(client)) {
-				startReturnToJobVehicleCountdown(client);
+			if (sphere == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
+				playerArrivedAtJobRouteLocation(client);
 			}
 		}
 	}
+}
 
-	getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
+// ===========================================================================
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+function onPedExitedSphere(event, ped, sphere) {
+
+}
+
+// ===========================================================================
+
+function onPedPickupPickedUp(event, ped, pickup) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+
+		if (isPlayerOnJobRoute(client)) {
+			if (pickup == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
+				playerArrivedAtJobRouteLocation(client);
+			}
+		}
+	}
 }
 
 // ===========================================================================
@@ -769,22 +644,143 @@ function onPlayerCommand(event, client, command, params) {
 
 // ===========================================================================
 
-function onPedEnteredVehicle(event, ped, vehicle, seat) {
+function onPedExitedVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			onPlayerEnteredVehicle(client, vehicle, seat);
+			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+
+			stopRadioStreamForPlayer(client);
+
+			if (!getVehicleData(vehicle)) {
+				return false;
+			}
+
+			if (isPlayerWorking(client)) {
+				if (isPlayerOnJobRoute(client)) {
+					if (vehicle == getPlayerJobRouteVehicle(client)) {
+						startReturnToJobVehicleCountdown(client);
+					}
+				}
+			}
+
+			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
+
+			logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 		}
 	}
 }
 
 // ===========================================================================
 
-function onPedExitedVehicle(event, ped, vehicle, seat) {
+function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			onPlayerExitedVehicle(client, vehicle, seat);
+			if (getPlayerData(client) == false) {
+				return false;
+			}
+
+			if (getGame() == AGRP_GAME_GTA_IV) {
+				vehicle = getVehicleFromIVNetworkId(clientVehicle);
+			}
+
+			if (!getVehicleData(vehicle)) {
+				return false;
+			}
+
+			logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+
+			getPlayerData(client).lastVehicle = vehicle;
+			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
+
+			if (getPlayerVehicleSeat(client) == AGRP_VEHSEAT_DRIVER) {
+				vehicle.engine = getVehicleData(vehicle).engine;
+
+				if (getVehicleData(vehicle).buyPrice > 0) {
+					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
+					resetVehiclePosition(vehicle);
+				} else if (getVehicleData(vehicle).rentPrice > 0) {
+					if (getVehicleData(vehicle).rentedBy != client) {
+						messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
+						resetVehiclePosition(vehicle);
+					} else {
+						messagePlayerAlert(client, getLocaleString(client, "CurrentlyRentingThisVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}`, `{ALTCOLOUR}/stoprent{MAINCOLOUR}`));
+					}
+				} else {
+					let ownerName = "Nobody";
+					let ownerType = getLocaleString(client, "NotOwned");
+					ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
+					switch (getVehicleData(vehicle).ownerType) {
+						case AGRP_VEHOWNER_CLAN:
+							ownerName = getClanData(getClanIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
+							ownerType = getLocaleString(client, "Clan");
+							break;
+
+						case AGRP_VEHOWNER_JOB:
+							ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
+							ownerType = getLocaleString(client, "Job");
+							break;
+
+						case AGRP_VEHOWNER_PLAYER:
+							let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
+							ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
+							ownerType = getLocaleString(client, "Player");
+							break;
+
+						case AGRP_VEHOWNER_BIZ:
+							ownerName = getBusinessData(getVehicleData(vehicle).ownerId).name;
+							ownerType = getLocaleString(client, "Business");
+							break;
+
+						default:
+							break;
+					}
+					messagePlayerAlert(client, getLocaleString(client, "VehicleBelongsTo", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerName}{MAINCOLOUR}`, `{ALTCOLOUR}${ownerType}{MAINCOLOUR}`));
+				}
+
+				if (!getVehicleData(vehicle).engine) {
+					if (getVehicleData(vehicle).buyPrice == 0 && getVehicleData(vehicle).rentPrice == 0) {
+						if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+							if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
+								messagePlayerTip(client, `This ${getVehicleName(vehicle)}'s engine is off. Press {ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))} {MAINCOLOUR}to start it.`);
+							} else {
+								messagePlayerAlert(client, `This ${getVehicleName(vehicle)}'s engine is off. Use /engine to start it`);
+							}
+						} else {
+							messagePlayerAlert(client, `This ${getVehicleName(vehicle)}'s engine is off and you don't have the keys to start it`);
+
+						}
+					}
+					resetVehiclePosition(vehicle);
+				}
+
+				let currentSubAccount = getPlayerCurrentSubAccount(client);
+
+				if (isPlayerWorking(client)) {
+					if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
+						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
+							getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
+							messagePlayerInfo(client, `Use /startroute to start working in this vehicle`);
+						}
+					}
+				}
+
+				if (isPlayerWorking(client)) {
+					if (isPlayerOnJobRoute(client)) {
+						if (vehicle == getPlayerJobRouteVehicle(client)) {
+							stopReturnToJobVehicleCountdown(client);
+						}
+					}
+				}
+			}
+
+			let radioStationIndex = getVehicleData(vehicle).streamingRadioStationIndex;
+			if (radioStationIndex != -1) {
+				if (getPlayerData(client).streamingRadioStation != radioStationIndex) {
+					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url, true, getPlayerStreamingRadioVolume(client));
+				}
+			}
 		}
 	}
 }
@@ -795,7 +791,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			onPlayerEnteringVehicle(client, vehicle, seat);
+
 		}
 	}
 }
