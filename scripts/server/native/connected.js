@@ -79,6 +79,10 @@ function setPlayerHeading(client, heading) {
 // ===========================================================================
 
 function getPlayerVehicle(client) {
+	if (isNull(client)) {
+		return null;
+	}
+
 	if (!areServerElementsSupported()) {
 		return getPlayerData().syncVehicle;
 	} else {
@@ -487,6 +491,18 @@ function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255
 
 // ===========================================================================
 
+function createGameSphere(position, size = 1, colour = toColour(255, 255, 255, 255)) {
+	if (!isGameFeatureSupported("spheres")) {
+		return false;
+	}
+
+	let sphere = game.createSphere(position, size);
+	//sphere.colour = colour;
+	return sphere;
+}
+
+// ===========================================================================
+
 function createGameObject(modelIndex, position) {
 	if (!isGameFeatureSupported("objects")) {
 		return false;
@@ -813,8 +829,8 @@ function connectToDatabase() {
 
 // ===========================================================================
 
-function disconnectFromDatabase(dbConnection) {
-	if (!getDatabaseConfig().usePersistentConnection) {
+function disconnectFromDatabase(dbConnection, force = false) {
+	if (!getDatabaseConfig().usePersistentConnection || force == true) {
 		try {
 			dbConnection.close();
 			logToConsole(LOG_DEBUG, `[VRR.Database] Database connection closed successfully`);
@@ -1180,6 +1196,10 @@ function setElementStreamOutDistance(element, distance) {
 // ===========================================================================
 
 function getPlayerPed(client) {
+	if (isNull(client)) {
+		return null;
+	}
+
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		return getPlayerData(client).ped;
 	} else {
@@ -1360,12 +1380,14 @@ function setElementName(element, name) {
 // ===========================================================================
 
 function hideElementForPlayer(element, client) {
+	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Hiding element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, false);
 }
 
 // ===========================================================================
 
 function showElementForPlayer(element, client) {
+	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Showing element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, true);
 }
 
