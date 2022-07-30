@@ -152,9 +152,7 @@ function addLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
-
 	return true;
 }
 
@@ -183,8 +181,7 @@ function getLogLevelCommand(command, params, client) {
 		logLevels.push("verbose");
 	}
 
-	messagePlayerAlert(`{MAINCOLOUR}Current log levels: {ALTCOLOUR}${toLowerCase(logLevels.join(", "))}`);
-
+	messagePlayerAlert(client, `{MAINCOLOUR}Current log levels: {ALTCOLOUR}${toLowerCase(logLevels.join(", "))}`);
 	return true;
 }
 
@@ -222,9 +219,7 @@ function removeLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
-
 	return true;
 }
 
@@ -501,15 +496,21 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 // ===========================================================================
 
 function submitIdea(client, ideaText) {
-	let position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-	let heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+	let position = toVector3(0.0, 0.0, 0.0);
+	let heading = 0.0;
 	let session = 0;
 	let databaseId = 0;
 
-	if (isConsole(client)) {
-		databaseId = -1;
+	if (client != null) {
+		if (isConsole(client)) {
+			databaseId = -1;
+		} else {
+			databaseId = getPlayerData(client).accountData.databaseId;
+			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+		}
 	} else {
-		databaseId = getPlayerData(client).accountData.databaseId;
+		databaseId = defaultNoAccountId;
 	}
 
 	let dbConnection = connectToDatabase();
@@ -522,15 +523,21 @@ function submitIdea(client, ideaText) {
 // ===========================================================================
 
 function submitBugReport(client, bugText) {
-	let position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-	let heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+	let position = toVector3(0.0, 0.0, 0.0);
+	let heading = 0.0;
 	let session = 0;
 	let databaseId = 0;
 
-	if (isConsole(client)) {
-		databaseId = -1;
+	if (client != null) {
+		if (isConsole(client)) {
+			databaseId = -1;
+		} else {
+			databaseId = getPlayerData(client).accountData.databaseId;
+			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+		}
 	} else {
-		databaseId = getPlayerData(client).accountData.databaseId;
+		databaseId = defaultNoAccountId;
 	}
 
 	let dbConnection = connectToDatabase();
