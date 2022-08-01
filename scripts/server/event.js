@@ -109,12 +109,6 @@ function onPlayerQuit(event, client, quitReasonId) {
 		}
 	}
 
-	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
-
-	getClients().forEach(forClient => {
-		let reasonText = getGroupedLocaleString(forClient, "DisconnectReasons", quitReasonId);
-		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), reasonText));
-	});
 	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
 
 	//if (isPlayerFishing(client)) {
@@ -147,14 +141,20 @@ function onPlayerQuit(event, client, quitReasonId) {
 	playerInitialized[client.index] = false;
 	playerGUIReady[client.index] = false;
 
+	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
+	getClients().forEach(forClient => {
+		let reasonText = getGroupedLocaleString(forClient, "DisconnectReasons", quitReasonId);
+		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), reasonText));
+	});
+
 	getServerData().clients[getPlayerId(client)] = null;
 }
 
 // ===========================================================================
 
 async function onPlayerChat(event, client, messageText) {
-	processPlayerChat(client, messageText);
 	event.preventDefault();
+	processPlayerChat(client, messageText);
 }
 
 // ===========================================================================
@@ -615,7 +615,7 @@ async function onPlayerSpawn(client) {
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
-	if (getPlayerCurrentSubAccount(client).interior != getGameConfig().mainWorldInterior || getPlayerCurrentSubAccount(client).dimension != getGameConfig().mainWorldDimension) {
+	if (getPlayerCurrentSubAccount(client).interior != getGameConfig().mainWorldInterior[getGame()] || getPlayerCurrentSubAccount(client).dimension != getGameConfig().mainWorldDimension[getGame()]) {
 		let businessId = getPlayerBusiness(client);
 		let houseId = getPlayerHouse(client);
 		if (businessId != -1) {
