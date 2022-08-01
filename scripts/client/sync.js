@@ -47,12 +47,6 @@ function processSync(event, deltaTime) {
 
 // ===========================================================================
 
-function setVehicleEngine(vehicleId, state) {
-	getElementFromId(vehicleId).engine = state;
-}
-
-// ===========================================================================
-
 function setVehicleLights(vehicleId, state) {
 	if (getGame() != AGRP_GAME_MAFIA_ONE) {
 		if (!state) {
