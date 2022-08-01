@@ -2258,7 +2258,7 @@ function deleteBusiness(businessId, whoDeleted = 0) {
 	deleteBusinessPickups(businessId);
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `UPDATE biz_main WHERE biz_deleted = 1, biz_when_deleted = UNIX_TIMESTAMP(), biz_who_deleted = ${whoDeleted} WHERE biz_id ${tempBusinessData.databaseId}`);
+		dbQuery = queryDatabase(dbConnection, `UPDATE biz_main SET biz_deleted = 1, biz_when_deleted = UNIX_TIMESTAMP(), biz_who_deleted = ${whoDeleted} WHERE biz_id ${tempBusinessData.databaseId}`);
 		if (dbQuery) {
 			freeDatabaseQuery(dbQuery);
 		}
@@ -3174,6 +3174,7 @@ function getClosestBusinessWithBuyableItemOfUseType(position, useType) {
 
 function getBusinessesWithBuyableItemOfUseType(useType) {
 	let businesses = getServerData().businesses;
+	let availableBusinesses = [];
 	for (let i in businesses) {
 		if (doesBusinessHaveBuyableItemOfUseType(i, useType)) {
 			availableBusinesses.push(i);
