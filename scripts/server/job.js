@@ -1658,7 +1658,7 @@ function setJobBlipCommand(command, params, client) {
 		if (toLowerCase(blipParam) == "none") {
 			blipId = -1;
 		} else {
-			if (isNull(getGameConfig().blipSprites[getGame()][typeParam])) {
+			if (isNull(getGameConfig().blipSprites[getGame()][blipParam])) {
 				let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
 				let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
@@ -3170,7 +3170,7 @@ function createJobLocationBlip(jobId, locationId) {
 	}
 
 	if (areServerElementsSupported()) {
-		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 1, getColourByName("yellow"));
+		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 2, getColourByName("yellow"));
 		if (blip != false) {
 			tempJobData.locations[locationId].blip = blip;
 
@@ -3186,7 +3186,7 @@ function createJobLocationBlip(jobId, locationId) {
 
 			let clients = getClients();
 			for (let i in clients) {
-				updateJobBlipsForPlayer(client);
+				updateJobBlipsForPlayer(clients[i]);
 			}
 		}
 	} else {
@@ -3938,7 +3938,7 @@ function updateJobBlipsForPlayer(client) {
 
 	for (let i in getServerData().jobs) {
 		for (let j in getServerData().jobs[i].locations) {
-			if (getPlayerJob(client) == 0 || getPlayerJob(client) == i) {
+			if (getPlayerJob(client) == -1 || getPlayerJob(client) == i) {
 				showElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
 			} else {
 				hideElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
@@ -3969,6 +3969,18 @@ function getLowestJobRank(jobIndex) {
 		}
 	}
 	return lowestRank;
+}
+
+// ===========================================================================
+
+function getHighestJobRank(jobIndex) {
+	let highestRank = 0;
+	for (let i in getServerData().jobs[jobIndex].ranks) {
+		if (getJobRankData(jobIndex, i).level > getJobRankData(jobIndex, highestRank).level) {
+			highestRank = i;
+		}
+	}
+	return highestRank;
 }
 
 // ===========================================================================
