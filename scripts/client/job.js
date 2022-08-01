@@ -11,6 +11,7 @@
 let localPlayerJobType = 0;
 let localPlayerWorking = false;
 let jobRouteLocationBlip = null;
+let jobRouteLocationSphere = null;
 
 let jobBlipBlinkAmount = 0;
 let jobBlipBlinkTimes = 10;
@@ -57,13 +58,45 @@ function setLocalPlayerWorkingState(tempWorking) {
 
 function showJobRouteLocation(position, colour) {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Showing job route location`);
+	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+		if (getGame() == AGRP_GAME_GTA_SA) {
+			// Server-side spheres don't show in GTA SA for some reason.
+			jobRouteLocationSphere = game.createPickup(1318, position, 1);
+		} else {
+			jobRouteLocationSphere = game.createSphere(position, 3);
+			jobRouteLocationSphere.colour = colour;
+		}
+
+		if (jobRouteLocationBlip != null) {
+			destroyElement(jobRouteLocationBlip);
+		}
+
+		// Blinking is bugged if player hit the spot before it stops blinking.
+		blinkJobRouteLocationBlip(10, position, colour);
+		jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+	}
+}
+
+// ===========================================================================
+
+function enteredJobRouteSphere() {
+	logToConsole(LOG_DEBUG, `[VRR.Job] Entered job route sphere`);
+
+	clearInterval(jobBlipBlinkTimer);
+	jobBlipBlinkAmount = 0;
+	jobBlipBlinkTimes = 0;
+
 	if (jobRouteLocationBlip != null) {
 		destroyElement(jobRouteLocationBlip);
+		jobRouteLocationBlip = null;
 	}
 
-	// Blinking is bugged if player hit the spot before it stops blinking.
-	blinkJobRouteLocationBlip(10, position, colour);
-	jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+	if (jobRouteLocationSphere != null) {
+		destroyElement(jobRouteLocationSphere);
+		jobRouteLocationSphere = null;
+	}
+
+	tellServerPlayerArrivedAtJobRouteLocation();
 }
 
 // ===========================================================================
@@ -95,14 +128,10 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 // ===========================================================================
 
 function hideJobRouteLocation() {
-	clearInterval(jobBlipBlinkTimer);
-	jobBlipBlinkAmount = 0;
-	jobBlipBlinkTimes = 0;
-
-	if (jobRouteLocationBlip != null) {
-		destroyElement(jobRouteLocationBlip);
-		jobRouteLocationBlip = null;
-	}
+	destroyElement(jobRouteLocationSphere);
+	destroyElement(jobRouteLocationBlip);
+	jobRouteLocationSphere = null;
+	jobRouteLocationBlip = null;
 }
 
 // ===========================================================================
