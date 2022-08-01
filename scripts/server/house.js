@@ -733,6 +733,27 @@ function removePlayerFromHouse(client) {
 // ===========================================================================
 
 /**
+ * Forces all players to exit a house
+ *
+ * @param {Number} houseId - The data index of the house to force all players inside to exit from
+ * @return {Boolean} Whether or not the players were forced to exit
+ *
+ */
+function removePlayersFromHouse(houseId) {
+	getClients().forEach(function (client) {
+		if (doesHouseHaveInterior(houseId)) {
+			if (getPlayerHouse(client) == houseId) {
+				exitHouse(client);
+			}
+		}
+	});
+
+	return true;
+}
+
+// ===========================================================================
+
+/**
  * This function creates a house
  *
  * @param {string} description - The description of the house (displayed as the name in the world label)
@@ -889,7 +910,7 @@ function saveHouseToDatabase(houseId) {
 			["house_entrance_vw", tempHouseData.entranceDimension],
 			["house_entrance_pickup", tempHouseData.entrancePickupModel],
 			["house_entrance_blip", tempHouseData.entranceBlipModel],
-			["house_entrance_cutscene", tempHouseData.entranceCutscene],
+			//["house_entrance_cutscene", tempHouseData.entranceCutscene],
 			["house_exit_pos_x", tempHouseData.exitPosition.x],
 			["house_exit_pos_y", tempHouseData.exitPosition.y],
 			["house_exit_pos_z", tempHouseData.exitPosition.z],
@@ -898,7 +919,7 @@ function saveHouseToDatabase(houseId) {
 			["house_exit_vw", tempHouseData.exitDimension],
 			["house_exit_pickup", tempHouseData.exitPickupModel],
 			["house_exit_blip", tempHouseData.exitBlipModel],
-			["house_exit_cutscene", tempHouseData.exitCutscene],
+			//["house_exit_cutscene", tempHouseData.exitCutscene],
 			["house_buy_price", tempHouseData.buyPrice],
 			["house_rent_price", tempHouseData.rentPrice],
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
@@ -1547,9 +1568,9 @@ function reloadAllHousesCommand(command, params, client) {
 function exitHouse(client) {
 	let houseId = getPlayerHouse(client);
 	if (isPlayerSpawned(client)) {
-		setPlayerInterior(client, getServerData().house[houseId].entranceInterior);
-		setPlayerDimension(client, getServerData().house[houseId].entranceDimension);
-		setPlayerPosition(client, getServerData().house[houseId].entrancePosition);
+		setPlayerInterior(client, getServerData().houses[houseId].entranceInterior);
+		setPlayerDimension(client, getServerData().houses[houseId].entranceDimension);
+		setPlayerPosition(client, getServerData().houses[houseId].entrancePosition);
 	}
 }
 
