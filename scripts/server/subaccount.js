@@ -731,3 +731,5 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 
 	showCharacterSelectToClient(client);
 }
+
+// ===========================================================================
