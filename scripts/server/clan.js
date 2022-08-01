@@ -328,7 +328,7 @@ function setClanOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	let clanId = getClanFromParams(getParam(params, " ", 1));
+	let clanIndex = getClanFromParams(getParam(params, " ", 1));
 	let targetClient = getPlayerFromParams(getParam(params, " ", 2));
 
 	if (!targetClient) {
@@ -336,18 +336,22 @@ function setClanOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getClanData(clanId)) {
+	if (!getClanData(clanIndex)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	getClanData(clanId).owner = getPlayerCurrentSubAccount(targetClient).databaseId;
-	getClanData(clanId).needsSaved = true;
+	getClanData(clanIndex).owner = getPlayerCurrentSubAccount(targetClient).databaseId;
+	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
+	getPlayerCurrentSubAccount(targetClient).clanRank = getHighestClanRank(clanIndex);
+	getPlayerCurrentSubAccount(targetClient).clanIndex = getClanIndexFromDatabaseId(clanIndex)
+	getPlayerCurrentSubAccount(targetClient).clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
+	getClanData(clanIndex).needsSaved = true;
 
-	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanId).databaseId;
+	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
 	getPlayerCurrentSubAccount(targetClient).clanFlags = getClanFlagValue("All");
 
-	//messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set clan {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	//messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set clan {clanOrange}${getClanData(clanIndex).name} {MAINCOLOUR}owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
 	messagePlayerSuccess(client, `You changed the clan owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
 }
 
@@ -889,7 +893,7 @@ function showClanRankFlagsCommand(command, params, client) {
 
 	let chunkedList = splitArrayIntoChunks(flagList, 6);
 
-	makeChatBoxSectionHeader(client, getLocaleString(client, "HeaderClanRankFlags", getClanRankData(clanId, rankId).name));
+	makeChatBoxSectionHeader(client, getLocaleString(client, "HeaderClanFlagsList", getClanRankData(clanId, rankId).name));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join("{MAINCOLOUR}, "));
 	}
@@ -1508,6 +1512,30 @@ function getClanRankFromParams(clanId, params) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getLowestClanRank(clanIndex) {
+	let lowestRank = 0;
+	for (let i in getServerData().clans[clanIndex].ranks) {
+		if (getClanRankData(clanIndex, i).level < getClanRankData(clanIndex, lowestRank).level) {
+			lowestRank = i;
+		}
+	}
+	return lowestRank;
+}
+
+// ===========================================================================
+
+function getHighestJobRank(clanIndex) {
+	let highestRank = 0;
+	for (let i in getServerData().clans[clanIndex].ranks) {
+		if (getClanRankData(clanIndex, i).level > getClanRankData(clanIndex, highestRank).level) {
+			highestRank = i;
+		}
+	}
+	return highestRank;
 }
 
 // ===========================================================================
