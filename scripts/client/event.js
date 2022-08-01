@@ -17,18 +17,14 @@ function initEventScript() {
 // ===========================================================================
 
 function addAllEventHandlers() {
-	bindEventHandler("OnResourceStart", thisResource, onResourceStart);
-	bindEventHandler("OnResourceReady", thisResource, onResourceReady);
-	bindEventHandler("OnResourceStop", thisResource, onResourceStop);
+	addEventHandler("OnResourceStart", onResourceStart);
+	addEventHandler("OnResourceReady", onResourceReady);
+	addEventHandler("OnResourceStop", onResourceStop);
 	addEventHandler("OnProcess", onProcess);
 	addEventHandler("OnKeyUp", onKeyUp);
 	addEventHandler("OnDrawnHUD", onDrawnHUD);
 	addEventHandler("OnPedWasted", onPedWasted);
 	addEventHandler("OnElementStreamIn", onElementStreamIn);
-	addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
-	addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-	addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
-	addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
 	addEventHandler("OnPedChangeWeapon", onPedChangeWeapon);
 	addEventHandler("OnPedInflictDamage", onPedInflictDamage);
 	addEventHandler("OnLostFocus", onLostFocus);
@@ -36,25 +32,53 @@ function addAllEventHandlers() {
 	addEventHandler("OnCameraProcess", onCameraProcess);
 	addEventHandler("OnMouseWheel", onMouseWheel);
 	addEventHandler("OnEntityProcess", onEntityProcess);
+
+	if (findResourceByName("v-events") != null) {
+		if (findResourceByName("v-events").isStarted) {
+			addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+			addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+			addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+			addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+		}
+	}
 }
 
 // ===========================================================================
 
 function onResourceStart(event, resource) {
-	sendResourceStartedSignalToServer();
+	if (resource == thisResource) {
+		sendResourceStartedSignalToServer();
+	}
+
+	if (resource == findResourceByName("v-events")) {
+		// Remove and re-add events, in case v-events was loaded after agrp_main
+		removeEventHandler("OnPedEnteredVehicleEx");
+		removeEventHandler("OnPedExitedVehicleEx");
+		removeEventHandler("OnPedEnteredSphereEx");
+		removeEventHandler("OnPedExitedSphereEx");
+
+		addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+		addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+		addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+		addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+	}
 	//garbageCollectorInterval = setInterval(collectAllGarbage, 1000*60);
 }
 
 // ===========================================================================
 
 function onResourceStop(event, resource) {
-	sendResourceStoppedSignalToServer();
+	if (resource == thisResource) {
+		sendResourceStoppedSignalToServer();
+	}
 }
 
 // ===========================================================================
 
 function onResourceReady(event, resource) {
-	sendResourceReadySignalToServer();
+	if (resource == thisResource) {
+		sendResourceReadySignalToServer();
+	}
 }
 
 // ===========================================================================
@@ -178,9 +202,9 @@ function onPedEnteredSphere(event, ped, sphere) {
 	if (!isNull(localPlayer) && !isNull(ped)) {
 		if (ped == localPlayer) {
 			logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered sphere`);
-			//if (sphere == jobRouteLocationSphere) {
-			//	enteredJobRouteSphere();
-			//}
+			if (sphere == jobRouteLocationSphere) {
+				enteredJobRouteSphere();
+			}
 		}
 	}
 }
