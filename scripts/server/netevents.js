@@ -263,7 +263,7 @@ function setPlayerWeaponDamageEvent(client, eventType) {
 // ===========================================================================
 
 function sendJobRouteLocationToPlayer(client, position, colour) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending job route stop data to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[VRR.Client] Sending job route location data to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("agrp.showJobRouteLocation", client, position, colour);
 }
 
