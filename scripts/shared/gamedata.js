@@ -90,7 +90,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	pickups: {
+	pickup: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -100,7 +100,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	spheres: {
+	sphere: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: false,
@@ -110,7 +110,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	worldLabels: {
+	worldLabel: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -120,7 +120,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	blips: {
+	blip: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -130,7 +130,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	attachedBlips: {
+	attachedBlip: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -140,7 +140,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	fightStyles: {
+	fightStyle: {
 		[AGRP_GAME_GTA_III]: false,
 		[AGRP_GAME_GTA_VC]: false,
 		[AGRP_GAME_GTA_SA]: true,
@@ -150,7 +150,17 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	markers: {
+	walkStyle: {
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: false,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false
+	},
+	marker: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -160,7 +170,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	vehicleColours: {
+	vehicleColour: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -171,7 +181,7 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
-	objects: {
+	object: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
@@ -221,35 +231,15 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: true,
 		[AGRP_GAME_MAFIA_THREE]: true
 	},
-	walkingStyle: {
-		[AGRP_GAME_GTA_III]: false,
-		[AGRP_GAME_GTA_VC]: false,
-		[AGRP_GAME_GTA_SA]: true,
-		[AGRP_GAME_GTA_IV]: false,
-		[AGRP_GAME_GTA_IV_EFLC]: false,
-		[AGRP_GAME_MAFIA_ONE]: false,
-		[AGRP_GAME_MAFIA_TWO]: false,
-		[AGRP_GAME_MAFIA_THREE]: false
-	},
-	fightingStyle: {
-		[AGRP_GAME_GTA_III]: false,
-		[AGRP_GAME_GTA_VC]: false,
-		[AGRP_GAME_GTA_SA]: true,
-		[AGRP_GAME_GTA_IV]: false,
-		[AGRP_GAME_GTA_IV_EFLC]: false,
-		[AGRP_GAME_MAFIA_ONE]: false,
-		[AGRP_GAME_MAFIA_TWO]: false,
-		[AGRP_GAME_MAFIA_THREE]: false
-	},
 	customNametag: {
 		[AGRP_GAME_GTA_III]: true,
 		[AGRP_GAME_GTA_VC]: true,
 		[AGRP_GAME_GTA_SA]: true,
-		[AGRP_GAME_GTA_IV]: false,
-		[AGRP_GAME_GTA_IV_EFLC]: false,
-		[AGRP_GAME_MAFIA_ONE]: true,
-		[AGRP_GAME_MAFIA_TWO]: true,
-		[AGRP_GAME_MAFIA_THREE]: true
+		[AGRP_GAME_GTA_IV]: false, // World pos to screen native crashes game
+		[AGRP_GAME_GTA_IV_EFLC]: false, // World pos to screen native crashes game
+		[AGRP_GAME_MAFIA_ONE]: false, // Needs world pos to screen implemented
+		[AGRP_GAME_MAFIA_TWO]: false, // Needs world pos to screen implemented
+		[AGRP_GAME_MAFIA_THREE]: false, // Needs world pos to screen implemented
 	}
 };
 
