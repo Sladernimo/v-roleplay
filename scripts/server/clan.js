@@ -1288,13 +1288,18 @@ function setClanRankTitle(clanId, rankId, title) {
 // ===========================================================================
 
 function saveAllClansToDatabase() {
+	logToConsole(LOG_DEBUG, `[VRR.Clan]: Saving all server clans to database ...`);
+
 	if (getServerConfig().devServer) {
+		logToConsole(LOG_DEBUG, `[VRR.Clan]: Aborting save all clans to database, dev server is enabled.`);
 		return false;
 	}
 
 	for (let i in getServerData().clans) {
 		saveClanToDatabase(i);
 	}
+
+	logToConsole(LOG_INFO, `[VRR.Clan]: Saved all server clans to database`);
 }
 
 // ===========================================================================
