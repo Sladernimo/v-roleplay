@@ -95,7 +95,7 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 			destroyElement(jobRouteLocationBlip);
 			jobRouteLocationBlip = null;
 		} else {
-			jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+			jobRouteLocationBlip = game.createBlip(position, 0, 3, colour);
 		}
 
 		if (jobBlipBlinkAmount >= jobBlipBlinkTimes) {
@@ -106,7 +106,7 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 
 			jobBlipBlinkAmount = 0;
 			jobBlipBlinkTimes = 0;
-			jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+			jobRouteLocationBlip = game.createBlip(position, 0, 3, colour);
 			clearInterval(jobBlipBlinkTimer);
 		}
 	}, jobBlipBlinkInterval);
