@@ -847,7 +847,7 @@ function createPlayerBlip(client) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("attachedBlips")) {
+	if (!isGameFeatureSupported("attachedBlip")) {
 		return false;
 	}
 
@@ -872,7 +872,7 @@ function createPlayerBlip(client) {
 // ===========================================================================
 
 function deletePlayerBlip(client) {
-	if (!isGameFeatureSupported("attachedBlips")) {
+	if (!isGameFeatureSupported("attachedBlip")) {
 		return false;
 	}
 
@@ -948,16 +948,16 @@ function processPlayerDeath(client) {
 		}, 2000);
 	}, 1000);
 
-	let queryData = [
-		["log_death_server", getServerId()]
-		["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
-		["log_death_when_died", getCurrentUnixTimestamp()],
-		["log_death_pos_x", position.x],
-		["log_death_pos_y", position.y],
-		["log_death_pos_z", position.x],
-	];
-	let queryString = createDatabaseInsertQuery("log_death", queryData);
-	queryDatabase(queryString);
+	//let queryData = [
+	//	["log_death_server", getServerId()]
+	//	["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
+	//	["log_death_when_died", getCurrentUnixTimestamp()],
+	//	["log_death_pos_x", position.x],
+	//	["log_death_pos_y", position.y],
+	//	["log_death_pos_z", position.x],
+	//];
+	//let queryString = createDatabaseInsertQuery("log_death", queryData);
+	//queryDatabase(queryString);
 }
 
 // ===========================================================================
