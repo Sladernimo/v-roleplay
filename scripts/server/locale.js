@@ -84,14 +84,12 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 // ===========================================================================
 
 function getRawLocaleString(stringName, localeId) {
-	let tempString = getLocaleStrings()[localeId][stringName];
-
-	if (typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${tempString} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		submitBugReport(client, `(AUTOMATED REPORT) Locale string is missing for "${tempString}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
+		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		submitBugReport(client, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 	}
 
-	return tempString;
+	return getLocaleStrings()[localeId][stringName];
 
 	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
 	//	return "";
@@ -106,14 +104,12 @@ function getRawLocaleString(stringName, localeId) {
 // ===========================================================================
 
 function getRawGroupedLocaleString(stringName, localeId, index) {
-	let tempString = getLocaleStrings()[localeId][stringName][index];
-
-	if (typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Grouped locale string missing for index ${index} of string ${tempString} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		submitBugReport(client, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${tempString}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
+		logToConsole(LOG_WARN, `[VRR.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		submitBugReport(client, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 	}
 
-	return tempString;
+	return getLocaleStrings()[localeId][stringName][index];
 
 	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
 	//	return "";
