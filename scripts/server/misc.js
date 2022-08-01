@@ -404,7 +404,7 @@ function getPlayerInfoCommand(command, params, client) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
 			targetClient = getPlayerFromParams(params);
 
-			if (!getPlayerData(targetClient)) {
+			if (!targetClient) {
 				messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 				return false;
 			}
@@ -418,13 +418,18 @@ function getPlayerInfoCommand(command, params, client) {
 	let clanData = getClanData(clanIndex);
 	let clanRankData = getClanRankData(clanIndex, clanRankIndex);
 
-	let jobIndex = getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(targetClient).job);
-	let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, getPlayerCurrentSubAccount(targetClient).jobRank);
+	let jobIndex = getPlayerCurrentSubAccount(targetClient).jobIndex;
+	let jobRankIndex = getPlayerCurrentSubAccount(targetClient).jobRankIndex;
 	let jobData = getJobData(jobIndex);
-	let jobRankData = getJobRankData(jobIndex, jobRankIndex);
+
+	let jobRankText = "(Rank: None)";
+	if (jobRankIndex != -1) {
+		let jobRankData = getJobRankData(jobIndex, jobRankIndex);
+		jobRankText = `(Rank ${jobRankData.level}: ${jobRankData.name}{mediumGrey}[${jobRankData.databaseId}]{ALTCOLOUR})`;
+	}
 
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${clanData.name}{mediumGrey}[${clanData.databaseId}]{ALTCOLOUR} (Rank ${clanRankData.level}: ${clanRankData.name}{mediumGrey}[${clanRankData.databaseId}]{ALTCOLOUR})` : `None`;
-	let job = (getPlayerCurrentSubAccount(targetClient).job != 0) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} (Rank ${jobRankData.level}: ${jobRankData.name}{mediumGrey}[${jobRankData.databaseId}]{ALTCOLOUR})` : `None`;
+	let job = (getPlayerCurrentSubAccount(targetClient).jobIndex != -1) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} ${jobRankText}` : `None`;
 	let skinIndex = getPlayerCurrentSubAccount(targetClient).skin;
 	let skinModel = getGameConfig().skins[getGame()][skinIndex][0];
 	let skinName = getSkinNameFromModel(skinModel);
@@ -858,11 +863,15 @@ function createPlayerBlip(client) {
 	let blip = createAttachedGameBlip(getPlayerPed(client), 0, 1, getPlayerColour(client));
 	if (blip) {
 		if (getGlobalConfig().playerBlipStreamInDistance == -1 || getGlobalConfig().playerBlipStreamOutDistance == -1) {
-			blip.netFlags.distanceStreaming = false;
+			//getPlayerPed(client).netFlags.distanceStreaming = false;
+			getPlayerPed(client).streamInDistance = 999998;
+			getPlayerPed(client).streamOutDistance = 999999;
 		} else {
-			setElementStreamInDistance(blip, getGlobalConfig().playerBlipStreamInDistance);
-			setElementStreamOutDistance(blip, getGlobalConfig().playerBlipStreamOutDistance);
+			//getPlayerPed(client).netFlags.distanceStreaming = true;
+			setElementStreamInDistance(getPlayerPed(client), getGlobalConfig().playerBlipStreamInDistance);
+			setElementStreamOutDistance(getPlayerPed(client), getGlobalConfig().playerBlipStreamOutDistance);
 		}
+		//getPlayerPed(client).netFlags.defaultExistance = true;
 		blip.netFlags.defaultExistance = true;
 		blip.setExistsFor(client, false);
 		getPlayerData(client).playerBlip = blip;
