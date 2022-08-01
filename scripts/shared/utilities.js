@@ -1708,19 +1708,19 @@ function isWeatherSupported() {
 // ===========================================================================
 
 function arePickupsSupported() {
-	return isGameFeatureSupported("pickups");
+	return isGameFeatureSupported("pickup");
 }
 
 // ===========================================================================
 
 function areBlipsSupported() {
-	return isGameFeatureSupported("blips");
+	return isGameFeatureSupported("blip");
 }
 
 // ===========================================================================
 
 function areMarkersSupported() {
-	return isGameFeatureSupported("markers");
+	return isGameFeatureSupported("marker");
 }
 
 // ===========================================================================
@@ -1738,21 +1738,24 @@ function isCustomCameraSupported() {
 // ===========================================================================
 
 function areFightStylesSupported() {
-	return isGameFeatureSupported("fightStyles");
+	return isGameFeatureSupported("fightStyle");
 }
 
 // ===========================================================================
 
 function areWorldLabelsSupported() {
-	return isGameFeatureSupported("worldLabels");
+	return isGameFeatureSupported("worldLabel");
 }
 
 // ===========================================================================
 
 function isGameFeatureSupported(featureName) {
 	if (typeof supportedFeatures[featureName] === "undefined") {
-		submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
-		return false;
+		logToConsole(LOG_WARN, `[AGRP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
+		if (isServerScript()) {
+			submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
+			return false;
+		}
 	}
 
 	return supportedFeatures[featureName][getGame()];

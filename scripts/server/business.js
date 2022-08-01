@@ -1948,7 +1948,7 @@ function createAllBusinessPickups() {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -1974,7 +1974,7 @@ function createAllBusinessBlips() {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 
@@ -2002,7 +2002,7 @@ function createBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2074,7 +2074,7 @@ function createBusinessEntranceBlip(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 
@@ -2136,7 +2136,7 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2197,7 +2197,7 @@ function createBusinessExitBlip(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 
@@ -2402,7 +2402,7 @@ function deleteBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2429,7 +2429,7 @@ function deleteBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2452,7 +2452,7 @@ function deleteBusinessEntranceBlip(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 

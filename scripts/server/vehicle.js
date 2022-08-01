@@ -206,7 +206,7 @@ function saveAllVehiclesToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_INFO, "[VRR.Vehicle]: Saving all server vehicles to database ...");
+	logToConsole(LOG_DEBUG, "[VRR.Vehicle]: Saving all server vehicles to database ...");
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
 		if (vehicles[i].needsSaved) {
@@ -1480,7 +1480,7 @@ function spawnVehicle(vehicleData) {
 
 	vehicleData.vehicle = vehicle;
 
-	if (isGameFeatureSupported("vehicleColours")) {
+	if (isGameFeatureSupported("vehicleColour")) {
 		if (vehicleData.colour1IsRGBA && vehicleData.colour2IsRGBA) {
 			vehicle.setRGBColours(vehicleData.colour1RGBA, vehicleData.colour2RGBA);
 			let colour1 = rgbaArrayFromToColour(vehicleData.colour1RGBA);
@@ -1614,7 +1614,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.databaseId = -1;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
-	if (!isGameFeatureSupported("vehicleColours")) {
+	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
 		tempVehicleData.colour2 = 0;
 		tempVehicleData.colour3 = 0;
@@ -1640,7 +1640,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.model = modelIndex;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
-	if (!isGameFeatureSupported("vehicleColours")) {
+	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
 		tempVehicleData.colour2 = 0;
 		tempVehicleData.colour3 = 0;

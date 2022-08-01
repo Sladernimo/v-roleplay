@@ -474,7 +474,7 @@ function getServerName() {
 // ===========================================================================
 
 function createGamePickup(modelIndex, position, type) {
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 	return game.createPickup(modelIndex, position, type);
@@ -483,7 +483,7 @@ function createGamePickup(modelIndex, position, type) {
 // ===========================================================================
 
 function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255, 255, 255)) {
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 	return game.createBlip(type, position, size, colour);
@@ -492,7 +492,7 @@ function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255
 // ===========================================================================
 
 function createGameSphere(position, size = 1, colour = toColour(255, 255, 255, 255)) {
-	if (!isGameFeatureSupported("spheres")) {
+	if (!isGameFeatureSupported("sphere")) {
 		return false;
 	}
 
@@ -504,7 +504,7 @@ function createGameSphere(position, size = 1, colour = toColour(255, 255, 255, 2
 // ===========================================================================
 
 function createGameObject(modelIndex, position) {
-	if (!isGameFeatureSupported("objects")) {
+	if (!isGameFeatureSupported("object")) {
 		return false;
 	}
 	return game.createObject(getGameConfig().objects[getGame()][modelIndex][0], position);
@@ -1400,7 +1400,7 @@ function setElementShownByDefault(element, state) {
 // ===========================================================================
 
 function createAttachedGameBlip(element, type, size, colour = toColour(255, 255, 255, 255)) {
-	if (isGameFeatureSupported("attachedBlips")) {
+	if (isGameFeatureSupported("attachedBlip")) {
 		return game.createBlipAttachedTo(element, type, size, colour, true, false);
 	}
 }

@@ -846,11 +846,12 @@ function getPlayerHouse(client) {
 // ===========================================================================
 
 function saveAllHousesToDatabase() {
+	logToConsole(LOG_DEBUG, `[VRR.House]: Saving all server houses to database ...`);
 	if (getServerConfig().devServer) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.House]: Aborting save all houses to database, dev server is enabled.`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.House]: Saving all server houses to database ...`);
 	for (let i in getServerData().houses) {
 		if (getServerData().houses[i].needsSaved) {
 			saveHouseToDatabase(i);
@@ -1007,7 +1008,7 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -1064,7 +1065,7 @@ function createHouseEntranceBlip(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 
@@ -1121,7 +1122,7 @@ function createHouseExitPickup(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickups")) {
+	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -1169,7 +1170,7 @@ function createHouseExitBlip(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("blips")) {
+	if (!isGameFeatureSupported("blip")) {
 		return false;
 	}
 
