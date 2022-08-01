@@ -245,10 +245,9 @@ function onResourceStop(event, resource) {
 	if (resource == thisResource) {
 		kickAllClients();
 		saveServerDataToDatabase();
+		disconnectFromDatabase(persistentDatabaseConnection, true);
 		collectAllGarbage();
 	}
-
-	disconnectFromDatabase(persistentDatabaseConnection, true);
 }
 
 // ===========================================================================
@@ -257,18 +256,21 @@ function onPedEnteredSphere(event, ped, sphere) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 
-		if (isPlayerOnJobRoute(client)) {
-			if (sphere == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
-				playerArrivedAtJobRouteLocation(client);
-			}
-		}
+		// Handled client-side since server spheres aren't showing on GTAC atm (bug)
+		//if (isPlayerOnJobRoute(client)) {
+		//	if (sphere == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
+		//		playerArrivedAtJobRouteLocation(client);
+		//	}
+		//}
 	}
 }
 
 // ===========================================================================
 
 function onPedExitedSphere(event, ped, sphere) {
-
+	//if (ped.isType(ELEMENT_PLAYER)) {
+	//	let client = getClientFromPlayerElement(ped);
+	//}
 }
 
 // ===========================================================================
@@ -277,11 +279,11 @@ function onPedPickupPickedUp(event, ped, pickup) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 
-		if (isPlayerOnJobRoute(client)) {
-			if (pickup == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
-				playerArrivedAtJobRouteLocation(client);
-			}
-		}
+		//if (isPlayerOnJobRoute(client)) {
+		//	if (pickup == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
+		//		playerArrivedAtJobRouteLocation(client);
+		//	}
+		//}
 	}
 }
 
@@ -512,12 +514,12 @@ async function onPlayerSpawn(client) {
 		updatePlayerSnowState(client);
 	}
 
-	if (areServerElementsSupported() && isGameFeatureSupported("walkingStyle")) {
+	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "agrp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
-	if (isGameFeatureSupported("fightingStyle")) {
+	if (isGameFeatureSupported("fightStyle")) {
 		logToConsole(LOG_DEBUG, `[VRR.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
 		setPlayerFightStyle(client, getPlayerCurrentSubAccount(client).fightStyle);
 	}
