@@ -1380,6 +1380,14 @@ function setElementName(element, name) {
 // ===========================================================================
 
 function hideElementForPlayer(element, client) {
+	if (isNull(element)) {
+		return false;
+	}
+
+	if (typeof element.setExistsFor == "undefined") {
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Hiding element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, false);
 }
@@ -1387,6 +1395,14 @@ function hideElementForPlayer(element, client) {
 // ===========================================================================
 
 function showElementForPlayer(element, client) {
+	if (isNull(element)) {
+		return false;
+	}
+
+	if (typeof element.setExistsFor == "undefined") {
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Showing element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, true);
 }
@@ -1394,6 +1410,14 @@ function showElementForPlayer(element, client) {
 // ===========================================================================
 
 function setElementShownByDefault(element, state) {
+	if (typeof element.netFlags == "undefined") {
+		return false;
+	}
+
+	if (typeof element.defaultExistance == "undefined") {
+		return false;
+	}
+
 	element.netFlags.defaultExistance = state;
 }
 
