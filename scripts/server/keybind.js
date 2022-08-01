@@ -43,7 +43,7 @@ function initKeyBindScript() {
 // ===========================================================================
 
 function addKeyBindCommand(command, params, client) {
-	if (areParamsEmpty(tempCommand)) {
+	if (areParamsEmpty(command)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -68,7 +68,7 @@ function addKeyBindCommand(command, params, client) {
 // ===========================================================================
 
 function removeKeyBindCommand(command, params, client) {
-	if (areParamsEmpty(tempCommand)) {
+	if (areParamsEmpty(command)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
