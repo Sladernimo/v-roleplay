@@ -175,10 +175,12 @@ function createAllServerElements() {
 	createAllJobPickups();
 	createAllJobBlips();
 	createAllGroundItemObjects();
-	createAllJobRouteLocationMarkers();
 	spawnAllVehicles();
 	spawnAllNPCs();
 	addAllCommandHandlers();
+
+	// Using client-side spheres since server-side ones don't show on GTAC atm (bug)
+	//createAllJobRouteLocationMarkers();
 }
 
 // ===========================================================================
