@@ -57,7 +57,8 @@ function setLocalPlayerWorkingState(tempWorking) {
 // ===========================================================================
 
 function showJobRouteLocation(position, colour) {
-	logToConsole(LOG_DEBUG, `[VRR.Job] Showing job route location`);
+	logToConsole(LOG_DEBUG, `[VRR.Job] Showing job route location at ${position.x}, ${position.y}, ${position.z}`);
+	hideJobRouteLocation();
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
 		if (getGame() == AGRP_GAME_GTA_SA) {
 			// Server-side spheres don't show in GTA SA for some reason.
@@ -81,21 +82,7 @@ function showJobRouteLocation(position, colour) {
 
 function enteredJobRouteSphere() {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Entered job route sphere`);
-
-	clearInterval(jobBlipBlinkTimer);
-	jobBlipBlinkAmount = 0;
-	jobBlipBlinkTimes = 0;
-
-	if (jobRouteLocationBlip != null) {
-		destroyElement(jobRouteLocationBlip);
-		jobRouteLocationBlip = null;
-	}
-
-	if (jobRouteLocationSphere != null) {
-		destroyElement(jobRouteLocationSphere);
-		jobRouteLocationSphere = null;
-	}
-
+	hideJobRouteLocation();
 	tellServerPlayerArrivedAtJobRouteLocation();
 }
 
@@ -128,10 +115,24 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 // ===========================================================================
 
 function hideJobRouteLocation() {
-	destroyElement(jobRouteLocationSphere);
-	destroyElement(jobRouteLocationBlip);
-	jobRouteLocationSphere = null;
-	jobRouteLocationBlip = null;
+	logToConsole(LOG_DEBUG, `[VRR.Job] Hiding job route location`);
+
+	if (jobRouteLocationBlip != null) {
+		destroyElement(jobRouteLocationBlip);
+		jobRouteLocationBlip = null;
+	}
+
+	if (jobRouteLocationSphere != null) {
+		destroyElement(jobRouteLocationSphere);
+		jobRouteLocationSphere = null;
+	}
+
+	if (jobBlipBlinkTimer != null) {
+		clearInterval(jobBlipBlinkTimer);
+	}
+
+	jobBlipBlinkAmount = 0;
+	jobBlipBlinkTimes = 0;
 }
 
 // ===========================================================================
