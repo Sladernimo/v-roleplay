@@ -261,6 +261,9 @@ let extraContentResource = {
 
 // ===========================================================================
 
+/**
+ * @typedef {Object} GameConfig
+ */
 let gameData = {
 	weaponNames: {
 		[AGRP_GAME_GTA_III]: [ // GTA III
