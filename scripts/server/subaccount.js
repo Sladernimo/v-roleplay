@@ -531,7 +531,7 @@ function selectCharacter(client, characterId = -1) {
 	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
-		spawnPlayer(client, getGameConfig().skins[getGame()][skin][0], spawnPosition, spawnHeading);
+		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 	}
 
 	removePlayerKeyBind(client, getKeyIdFromParams("insert"));
@@ -713,10 +713,25 @@ function createDefaultSubAccountServerData(databaseId, thisServerSkin) {
 function forcePlayerIntoSwitchCharacterScreen(client) {
 	getPlayerCurrentSubAccount(client).spawnPosition = getPlayerPosition(client);
 	getPlayerCurrentSubAccount(client).spawnHeading = getPlayerHeading(client);
-	getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
-	getPlayerCurrentSubAccount(client).dimension = getPlayerDimension(client);
 	getPlayerCurrentSubAccount(client).health = getPlayerHealth(client);
-	getPlayerCurrentSubAccount(client).armour = getPlayerArmour(client);
+
+	if (isGameFeatureSupported("dimension")) {
+		getPlayerCurrentSubAccount(client).dimension = getPlayerDimension(client);
+	} else {
+		getPlayerCurrentSubAccount(client).dimension = 0;
+	}
+
+	if (isGameFeatureSupported("interior")) {
+		getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
+	} else {
+		getPlayerCurrentSubAccount(client).interior = 0;
+	}
+
+	if (isGameFeatureSupported("armour")) {
+		getPlayerCurrentSubAccount(client).armour = getPlayerArmour(client);
+	} else {
+		getPlayerCurrentSubAccount(client).armour = 0;
+	}
 
 	logToConsole(client, `Saving ${getPlayerDisplayForConsole(client)}'s subaccount (${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}] to database`)
 	saveSubAccountToDatabase(getPlayerCurrentSubAccount(client));
