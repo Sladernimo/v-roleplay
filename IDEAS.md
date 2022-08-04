@@ -394,3 +394,6 @@ The inventory system is already planned to use a hotbar/wheel but I don't have a
 ### GPS indicator like the 3D Fallout games
 An indicator at the bottom, showing compass direction and a dot or something in the direction of the GPS location. Like an object marker.
 In-world indicator too, when player gets close and is in line of sight
+---
+### Item/Object pickup and move like the 3D Fallout games
+Fallout 3 and New Vegas have a neat feature where you can "grab" an object and fling it around while the key is pressed. Could be implemented for items in GTACRP servers
