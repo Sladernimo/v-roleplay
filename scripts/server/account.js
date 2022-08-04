@@ -75,29 +75,28 @@ class AccountData {
 		this.locale = 0;
 
 		if (dbAssoc) {
-			this.databaseId = dbAssoc["acct_id"];
-			this.name = dbAssoc["acct_name"];
-			this.password = dbAssoc["acct_pass"];
-			this.registerDate = dbAssoc["acct_when_registered"];
+			this.databaseId = toInteger(dbAssoc["acct_id"]);
+			this.name = toString(dbAssoc["acct_name"]);
+			this.password = toString(dbAssoc["acct_pass"]);
+			this.registerDate = toInteger(dbAssoc["acct_when_registered"]);
 			this.flags = {
-				moderation: dbAssoc["acct_svr_mod_flags"],
-				admin: dbAssoc["acct_svr_staff_flags"],
+				moderation: toInteger(dbAssoc["acct_svr_mod_flags"]),
+				admin: toInteger(dbAssoc["acct_svr_staff_flags"]),
 			};
-			this.staffTitle = dbAssoc["acct_svr_staff_title"];
-			this.ircAccount = dbAssoc["acct_irc"];
-			this.discordAccount = dbAssoc["acct_discord"];
-			this.settings = dbAssoc["acct_svr_settings"];
-			this.emailAddress = dbAssoc["acct_email"];
-			this.whenRegistered = dbAssoc["acct_when_registered"];
-			this.ipAddress = dbAssoc["acct_ip"];
+			this.staffTitle = toString(dbAssoc["acct_svr_staff_title"]);
+			this.ircAccount = toInteger(dbAssoc["acct_irc"]);
+			this.discordAccount = toInteger(dbAssoc["acct_discord"]);
+			this.settings = toInteger(dbAssoc["acct_svr_settings"]);
+			this.emailAddress = toString(dbAssoc["acct_email"]);
+			this.ipAddress = toString(dbAssoc["acct_ip"]);
 
 			this.notes = [];
 			this.messages = [];
 			this.contacts = [];
 			this.subAccounts = [];
 
-			this.emailVerificationCode = dbAssoc["acct_code_verifyemail"];
-			this.twoFactorAuthVerificationCode = dbAssoc["acct_code_2fa"];
+			this.emailVerificationCode = toString(dbAssoc["acct_code_verifyemail"]);
+			this.twoFactorAuthVerificationCode = toString(dbAssoc["acct_code_2fa"]);
 			this.chatScrollLines = toInteger(dbAssoc["acct_svr_chat_scroll_lines"]);
 			this.streamingRadioVolume = toInteger(dbAssoc["acct_streaming_radio_volume"]);
 			this.locale = toInteger(dbAssoc["acct_locale"]);
@@ -744,7 +743,7 @@ function loadAccountFromName(accountName, fullLoad = false) {
 function loadAccountFromId(accountId, fullLoad = false) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		let dbQueryString = `SELECT *, acct_ip AS ipstring FROM acct_main WHERE acct_id = ${accountId} LIMIT 1;`;
+		let dbQueryString = `SELECT acct_main.*, acct_svr.* FROM acct_main INNER JOIN acct_svr ON acct_svr.acct_svr_acct = acct_main.acct_id AND acct_svr.acct_svr_svr = ${getServerId()} WHERE acct_id = ${accountId} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
 			let dbAssoc = fetchQueryAssoc(dbQuery);
@@ -921,11 +920,11 @@ function saveAccountToDatabase(accountData) {
 		];
 
 		let data2 = [
-			["acct_svr_settings", toInteger(accountData.settings)],
+			["acct_svr_settings", (accountData.settings != NaN) ? toInteger(accountData.settings) : 0],
 			["acct_svr_staff_title", toString(safeStaffTitle)],
-			["acct_svr_staff_flags", toInteger(accountData.flags.admin)],
-			["acct_svr_mod_flags", toInteger(accountData.flags.moderation)],
-			["acct_svr_chat_scroll_lines", toInteger(accountData.chatScrollLines)],
+			["acct_svr_staff_flags", (accountData.flags.admin != NaN) ? toInteger(accountData.flags.admin) : 0],
+			["acct_svr_mod_flags", (accountData.flags.moderation != NaN) ? toInteger(accountData.flags.moderation) : 0],
+			["acct_svr_chat_scroll_lines", (accountData.chatScrollLines != NaN) ? toInteger(accountData.chatScrollLines) : 1],
 			//["acct_svr_chat_auto_hide_delay", accountData.chatAutoHideDelay],
 		];
 
@@ -1045,8 +1044,10 @@ function createAccount(name, password, email = "") {
 
 		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', CURRENT_TIMESTAMP())`);
 		if (getDatabaseInsertId(dbConnection) > 0) {
-			let tempAccountData = loadAccountFromId(getDatabaseInsertId(dbConnection), false);
-			createDefaultAccountServerData(tempAccountData.databaseId);
+			let insertId = getDatabaseInsertId(dbConnection);
+			createDefaultAccountServerData(insertId);
+			let tempAccountData = loadAccountFromId(insertId, false);
+
 			tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
 			tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
 			tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
