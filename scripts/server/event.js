@@ -342,11 +342,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
-					} else {
-						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
+					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
 					if (isFadeCameraSupported()) {
 						fadeCamera(client, true, 1.0);
@@ -365,11 +361,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
-					} else {
-						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
+					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
 					if (isFadeCameraSupported()) {
 						fadeCamera(client, true, 1.0);
