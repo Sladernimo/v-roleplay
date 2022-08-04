@@ -48,7 +48,7 @@ function removeLocalPlayerFromVehicle() {
 
 function restoreLocalCamera() {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Camera restored`);
-	if (isCustomCameraSupported()) {
+	if (isGameFeatureSupported("customCamera")) {
 		game.restoreCamera(true);
 	}
 };
@@ -350,6 +350,10 @@ function setPlayerWeaponDamageEnabled(clientName, state) {
 
 function setLocalPlayerCash(amount) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting local player money`);
+	if (localPlayer == null) {
+		return false;
+	}
+
 	if (typeof localPlayer.money != "undefined") {
 		localPlayer.money = toInteger(amount);
 	}
