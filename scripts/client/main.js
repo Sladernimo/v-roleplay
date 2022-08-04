@@ -31,7 +31,7 @@ let renderHotBar = true;
 let renderItemActionDelay = true;
 let renderInteriorLights = true;
 
-let logLevel = LOG_INFO;
+let logLevel = LOG_DEBUG;
 
 let weaponDamageEnabled = {};
 let weaponDamageEvent = {};
