@@ -240,6 +240,16 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_ONE]: false, // Needs world pos to screen implemented
 		[AGRP_GAME_MAFIA_TWO]: false, // Needs world pos to screen implemented
 		[AGRP_GAME_MAFIA_THREE]: false, // Needs world pos to screen implemented
+	},
+	dimension: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: true,
+		[AGRP_GAME_MAFIA_TWO]: true,
+		[AGRP_GAME_MAFIA_THREE]: true,
 	}
 };
 
