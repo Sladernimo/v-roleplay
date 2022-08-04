@@ -96,6 +96,10 @@ function getPlayerVehicle(client) {
 // ===========================================================================
 
 function getPlayerDimension(client) {
+	if (!isGameFeatureSupported("dimension")) {
+		return 0;
+	}
+
 	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncDimension;
 	} else {
@@ -108,6 +112,10 @@ function getPlayerDimension(client) {
 // ===========================================================================
 
 function getPlayerInterior(client) {
+	if (!isGameFeatureSupported("interior")) {
+		return 0;
+	}
+
 	return getPlayerCurrentSubAccount(client).interior || 0;
 }
 
