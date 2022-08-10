@@ -583,6 +583,64 @@ function setNPCNameCommand(command, params, client) {
 
 // ===========================================================================
 
+function setNPCClanCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let clanId = getClanFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (!getClanData(clanId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	getNPCData(closestNPC).ownerType = AGRP_NPC_OWNER_CLAN;
+	getNPCData(closestNPC).ownerId = getClanData(clanId).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`);
+}
+
+// ===========================================================================
+
+function addNPCTriggerCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let clanId = getClanFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (!getClanData(clanId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	//let triggerData = new TriggerData();
+
+	getNPCData(closestNPC).ownerType = AGRP_NPC_OWNER_CLAN;
+	getNPCData(closestNPC).ownerId = getClanData(clanId).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`);
+}
+
+// ===========================================================================
+
 function toggleNPCLookAtClosestPlayerCommand(command, params, client) {
 	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
 
