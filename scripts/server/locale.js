@@ -54,8 +54,9 @@ function getLocaleString(client, stringName, ...args) {
 function getLanguageLocaleString(localeId, stringName, ...args) {
 	let tempString = getRawLocaleString(stringName, localeId);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
-		submitBugReport(client, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getPlayerLocaleName(client)}"`);
+		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
+		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
+		return "";
 	}
 
 	for (let i = 1; i <= args.length; i++) {
@@ -86,7 +87,8 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 function getRawLocaleString(stringName, localeId) {
 	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
 		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		submitBugReport(client, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		submitBugReport(null, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		return "";
 	}
 
 	return getLocaleStrings()[localeId][stringName];
@@ -106,7 +108,8 @@ function getRawLocaleString(stringName, localeId) {
 function getRawGroupedLocaleString(stringName, localeId, index) {
 	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
 		logToConsole(LOG_WARN, `[VRR.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		submitBugReport(client, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		submitBugReport(null, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		return "";
 	}
 
 	return getLocaleStrings()[localeId][stringName][index];
