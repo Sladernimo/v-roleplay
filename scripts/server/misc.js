@@ -272,6 +272,10 @@ function enterExitPropertyCommand(command, params, client) {
 
 	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is ${(isBusiness) ? closestProperty.name : closestProperty.description} ${(isEntrance) ? "entrance" : "exit"}`);
 
+	let englishId = getLocaleFromParams("English");
+	let typeString = (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House");
+	let nameString = (isBusiness) ? closestProperty.name : closestProperty.description;
+
 	if (isEntrance) {
 		if (getDistance(closestProperty.entrancePosition, getPlayerPosition(client)) <= getGlobalConfig().enterPropertyDistance) {
 			if (closestProperty.locked) {
@@ -286,7 +290,8 @@ function enterExitPropertyCommand(command, params, client) {
 
 			clearPlayerStateToEnterExitProperty(client);
 			getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGPROPERTY;
-			meActionToNearbyPlayers(client, getLocaleString(client, "EntersProperty", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
+
+			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
@@ -331,8 +336,9 @@ function enterExitPropertyCommand(command, params, client) {
 				return false;
 			}
 			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
-			clearPlayerStateToEnterExitProperty(client)
-			meActionToNearbyPlayers(client, getLocaleString(client, "ExitsProperty", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
+			clearPlayerStateToEnterExitProperty(client);
+
+			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
