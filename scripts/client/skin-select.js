@@ -54,18 +54,7 @@ function processSkinSelectKeyPress(keyCode) {
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if (getGame() == AGRP_GAME_GTA_IV) {
-				let skinId = allowedSkins[skinSelectorIndex][0];
-				if (natives.isModelInCdimage(skinId)) {
-					natives.requestModel(skinId);
-					natives.loadAllObjectsNow();
-					if (natives.hasModelLoaded(skinId)) {
-						natives.changePlayerModel(natives.getPlayerId(), skinId);
-					}
-				}
-			} else {
-				localPlayer.skin = allowedSkins[skinSelectorIndex][0];
-			}
+			setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
 		} else if (keyCode == SDLK_RIGHT || keyCode == SDLK_D) {
 			if (skinSelectorIndex <= 0) {
 				skinSelectorIndex = allowedSkins.length - 1;
@@ -74,18 +63,7 @@ function processSkinSelectKeyPress(keyCode) {
 			}
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
-			if (getGame() == AGRP_GAME_GTA_IV) {
-				let skinId = allowedSkins[skinSelectorIndex][0];
-				if (natives.isModelInCdimage(skinId)) {
-					natives.requestModel(skinId);
-					natives.loadAllObjectsNow();
-					if (natives.hasModelLoaded(skinId)) {
-						natives.changePlayerModel(natives.getPlayerId(), skinId);
-					}
-				}
-			} else {
-				localPlayer.skin = allowedSkins[skinSelectorIndex][0];
-			}
+			setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
 		} else if (keyCode == SDLK_RETURN) {
 			sendNetworkEventToServer("agrp.skinSelected", skinSelectorIndex);
 			toggleSkinSelect(false);
