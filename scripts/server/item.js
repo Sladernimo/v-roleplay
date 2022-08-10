@@ -247,6 +247,39 @@ class ItemTypeData {
 
 // ===========================================================================
 
+class ItemRecipeData {
+	constructor(itemTypeName, neededTime, resultAmount, ingredients) {
+		this.resultItemTypeName = "";
+		this.resultItemTypeIndex = -1;
+		this.neededTime = 0;
+		this.resultAmount = 0;
+		this.ingredients = [];
+	}
+}
+
+// ===========================================================================
+
+class ItemRecipeIngredientData {
+	constructor() {
+		this.itemTypeName = "";
+		this.itemTypeIndex = -1;
+		this.amount = 0;
+	}
+}
+
+// ===========================================================================
+
+let itemRecipes = [
+	new ItemRecipeData("Meth", 21600000, 1, [
+		new ItemRecipeIngredientData("Sudafed", 1),
+		new ItemRecipeIngredientData("Sulfuric Acid", 1),
+		new ItemRecipeIngredientData("Salt", 1),
+		new ItemRecipeIngredientData("Lithium Batteries", 1),
+	]),
+]
+
+// ===========================================================================
+
 function initItemScript() {
 	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
 	logToConsole(LOG_INFO, "[VRR.Item]: Item script initialized successfully!");
