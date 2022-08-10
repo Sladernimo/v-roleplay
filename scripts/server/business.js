@@ -1910,8 +1910,8 @@ function saveBusinessToDatabase(businessId) {
 			["biz_label_help_type", tempBusinessData.labelHelpType],
 			["biz_radio_station", toInteger(tempBusinessData.streamingRadioStation)],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
-			["biz_buy_price", boolToInt(tempBusinessData.buyPrice)],
-			//["biz_rent_price", boolToInt(tempBusinessData.rentPrice)],
+			["biz_buy_price", tempBusinessData.buyPrice],
+			//["biz_rent_price", tempBusinessData.rentPrice],
 		];
 
 		let dbQuery = null;
@@ -2258,7 +2258,7 @@ function deleteBusiness(businessId, whoDeleted = 0) {
 	deleteBusinessPickups(businessId);
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `UPDATE biz_main SET biz_deleted = 1, biz_when_deleted = UNIX_TIMESTAMP(), biz_who_deleted = ${whoDeleted} WHERE biz_id ${tempBusinessData.databaseId}`);
+		dbQuery = queryDatabase(dbConnection, `UPDATE biz_main SET biz_deleted = 1, biz_when_deleted = UNIX_TIMESTAMP(), biz_who_deleted = ${whoDeleted} WHERE biz_id = ${tempBusinessData.databaseId}`);
 		if (dbQuery) {
 			freeDatabaseQuery(dbQuery);
 		}
