@@ -520,17 +520,17 @@ function selectCharacter(client, characterId = -1) {
 	if (getGame() <= AGRP_GAME_GTA_SA) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 	} else if (getGame() == AGRP_GAME_GTA_IV) {
-		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
-		//clearPlayerWeapons(client);
-		//setPlayerSkin(client, skin);
-		//setPlayerPosition(client, spawnPosition);
-		//setPlayerHeading(client, spawnHeading);
+		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
+		clearPlayerWeapons(client);
+		setPlayerPosition(client, spawnPosition);
+		setPlayerHeading(client, spawnHeading);
 		//setPlayerInterior(client, spawnInterior);
 		//setPlayerDimension(client, spawnDimension);
-		//restorePlayerCamera(client);
+		restorePlayerCamera(client);
+		setPlayerSkin(client, skin);
 	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
+		//logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 	}
 
@@ -727,7 +727,7 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 		getPlayerCurrentSubAccount(client).interior = 0;
 	}
 
-	if (isGameFeatureSupported("armour")) {
+	if (isGameFeatureSupported("pedArmour")) {
 		getPlayerCurrentSubAccount(client).armour = getPlayerArmour(client);
 	} else {
 		getPlayerCurrentSubAccount(client).armour = 0;
