@@ -596,14 +596,16 @@ async function onPlayerSpawn(client) {
 
 	setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
 
-	if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
-		getPlayerPed(client).netFlags.distanceStreaming = false;
-	} else {
-		setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
-		setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
-	}
+	if (areServerElementsSupported()) {
+		if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
+			getPlayerPed(client).netFlags.distanceStreaming = false;
+		} else {
+			setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
+			setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
+		}
 
-	resetPlayerBlip(client);
+		resetPlayerBlip(client);
+	}
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
