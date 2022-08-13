@@ -14,7 +14,8 @@
 ### Interactive peds with each one having a background story, characteristics, certain people or groups they like/dislike.
 	* Procedurally generated?
 ---
-* Nightclubs, bars, etc can employ "bouncer" peds that either prevent entry to certain people, or kick people out.
+### Bouncers
+	* Nightclubs, bars, etc can employ "bouncer" peds that either prevent entry to certain people, or kick people out.
 ---
 ### Background ambience.
 	* Anonymous city traffic and pedestrians
@@ -51,9 +52,9 @@
 ### Vehicle Towing
     * Use a Yankee or something to store the vehicle "inside" (just make the car disappear) until better sync options are built.
     * Universal command to tow/release a vehicle ( /tow ).
-    * Attach to nearest vehicle.
+    * Try attach to nearest vehicle.
 ---
-### Item System
+### Item System (FINISHED)
     * Several item types, including armour, skins, weapons, drugs, materials, and more.
     * Items can be dropped and picked up.
     * Items can be stored in a vehicle trunk or dash compartment.
@@ -68,21 +69,21 @@
 	* If all are full, have a waiting list.
 	* Allow people to go in and lay on a bed to heal (or use a check-in system)
 ---
-### Several NPC's
+### Several NPC's (NEEDS SPAWNED)
 	* Paramedics/Doctors at hospitals,
 	* LC/VC/LS/SF/LV police dept desk clerk and dispatcher.
 	* Jail guard
 	* Interactive. Go up and talk to them for responses etc
 ---
-### Use permissions/flag system for everything.
+### Use permissions/flag system for everything (FINISHED)
 	* Admin abilities
 	* Moderation (muted/frozen/etc)
-	* LEO abilities
+	* LEO abilities (skipped for now)
 	* Clan abilities
     * Account Settings
 	* etc
 ---
-### Interiors
+### Interiors (FINISHED)
     * For games with interiors, properties inside of properties (possibly make it a sub-property, but using a "type" to define it. May not be necessary) AKA a business inside a business (illegal back room gambling, anyone?)
 ---
 ### Stealable skins.
@@ -174,8 +175,6 @@
     * Concealable smaller weapon.
 	* Officers usually have a utility belt. Allow it to hold equipment as well.
 ---
-###
----
 ### Vehicle Trunks
 	* Can hold tied up players/peds
 	* Can hold items
@@ -230,10 +229,10 @@
 	* Tweakers
 	* Bouncers
 ---
-### Accents
+### Accents (FINISHED)
 	* Shown before message ... "[Japanese] John Smith says: hello"
 	* Pre-set accent choices
-	* Custom accent
+	* Custom accent (skipped for now)
 ---
 ### Speakerphone
 	* While on a phone call, using /speakerphone or something can allow others near the person on the phone to hear and be heard over the call.
@@ -333,7 +332,8 @@
 ---
 ### Pointing
 	* Key to point sort of like FiveM has.
-	* Use a 3D primitive on the spot thats pointed to, if no anim available.
+	* Use a 3D primitive on the spot thats pointed to.
+	* Use pointing (finger?) animation if available
 ---
 ### Multi-command one-liners
 Obviously this would still be using slashes for commands still. The way this works is simple: Every command returns a value `{RETURN}`, and provides indexed numerical references to it's args that can be *piped* to another command `{1}`, `{2}`, etc. For example, the /tempveh command adds a vehicle and provides both a reference to the vehicle itself (`{RETURN}`) and a reference to it's only argument (`{1}`). Some commands already implement a final, optional command to override the default chosen entity to act on (for example, `/bizname Some Business 3` will set business ID 3's name instead of the closest business to the player. Only works for staff with the manageBusinesses permission or if the player using it owns or is in the clan that owns business ID 3 and has the ability to set it's name. So this: `/tempveh infernus | /vehrgb 0 0 0 0 {RETURN} | /vehrgb 1 {2} {3} {4} {RETURN}` Would spawn a temporary infernus and immediately set both colours as completely black RGB values.
@@ -350,20 +350,20 @@ Obviously this would still be using slashes for commands still. The way this wor
 		* Ice cream cone
 		* Cotton Candy
 		* Snow cone
-
 	* Misc
 		* Gas Can
 ---
-### Quick Reply
+### Quick Reply (FINISHED)
 	* When somebody sends a private message, use /reply to quickly reply without having to find their ID to use the private message command
 ---
-### Item management commands
+### Item management commands (ALMOST FINISHED)
     * Item Types
         * Create
         * Set base price
         * Set model
         * Set drop position offset
         * Set drop rotation offset
+		* Set forward
 ---
 ### Tutorial
     * Pick up item (grab bottle of beer off ground)
@@ -379,3 +379,21 @@ Obviously this would still be using slashes for commands still. The way this wor
 So with new Steam Deck being available now, and all the other attempts to use mobile devices that either emulate or stream the older GTA PC games, I figure we'd need a way for players to interact with each other using them. Roleplay is usually a very chat-oriented gamemode, but I can probably make things easier with simple controls. Also customizable messages, animations, and actions for each menu/wheel slot
 The inventory system is already planned to use a hotbar/wheel but I don't have all the images for it yet
 ---
+### Fishing
+    * Fishing works near water or on a boat (I have a way to detect both)
+    * Use the bat swing anim for casting line, and the crouch anim for applying bait.
+    * Bait is used same as ammo item for a weapon. Hold the fishing rod, make sure bait is in inventory, and press use (default U) to apply bait.
+    * Use a "press and hold" key to cast a line to a custom distance. Show progress bar to indicate how far the line will be cast.
+    * Place a single-use particle effect on the water (distance to front of player) to show where the casted line hits.
+    * Use particle effects (water spray or splash effect) to display a fish being hooked.
+    * Slowly move the particle effect to the player to show it being reeled in as the player holds the reel key.
+    * Random selection of predefined catch items, both junk and fish.
+    * Player would be wise to bring a bucket or crate to keep the fish in, using existing /take and /put system like any other item.
+	**This will need extra stuff added to keybinds system for duration key holding**
+---
+### GPS indicator like the 3D Fallout games
+An indicator at the bottom, showing compass direction and a dot or something in the direction of the GPS location. Like an object marker.
+In-world indicator too, when player gets close and is in line of sight
+---
+### Item/Object pickup and move like the 3D Fallout games
+Fallout 3 and New Vegas have a neat feature where you can "grab" an object and fling it around while the key is pressed. Could be implemented for items in GTACRP servers

@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: content.js
 // DESC: Provides connection to extra content resources
@@ -9,10 +10,10 @@
 
 function getCustomImage(imageName) {
 	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
-	if(contentResource != null) {
-		if(contentResource.isStarted) {
+	if (contentResource != null) {
+		if (contentResource.isStarted) {
 			let image = contentResource.exports.getCustomImage(imageName);
-			if(image != null) {
+			if (image != null) {
 				return image;
 			}
 		}
@@ -24,10 +25,10 @@ function getCustomImage(imageName) {
 
 function getCustomFont(fontName) {
 	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
-	if(contentResource != null) {
-		if(contentResource.isStarted) {
+	if (contentResource != null) {
+		if (contentResource.isStarted) {
 			let font = contentResource.exports.getCustomFont(fontName);
-			if(font != null) {
+			if (font != null) {
 				return font;
 			}
 		}
@@ -39,10 +40,10 @@ function getCustomFont(fontName) {
 
 function getCustomAudio(audioName) {
 	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
-	if(contentResource != null) {
-		if(contentResource.isStarted) {
+	if (contentResource != null) {
+		if (contentResource.isStarted) {
 			let audioFile = contentResource.exports.getCustomAudio(audioName);
-			if(audioFile != null) {
+			if (audioFile != null) {
 				return audioFile;
 			}
 		}
@@ -54,8 +55,8 @@ function getCustomAudio(audioName) {
 
 function playCustomAudio(audioName, volume = 0.5, loop = false) {
 	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
-	if(contentResource != null) {
-		if(contentResource.isStarted) {
+	if (contentResource != null) {
+		if (contentResource.isStarted) {
 			contentResource.exports.playCustomAudio(audioName, volume, loop);
 		}
 	}

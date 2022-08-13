@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: register.js
 // DESC: Provides account registration GUI
@@ -20,8 +21,8 @@ let register = {
 // ===========================================================================
 
 function initRegisterGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating register GUI ...`);
-	register.window = mexui.window(getScreenWidth()/2-150, getScreenHeight()/2-150, 300, 300, 'Register', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating register GUI ...`);
+	register.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 150, 300, 300, 'Register', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -37,7 +38,7 @@ function initRegisterGUI() {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		}
 	});
-	register.window.titleBarIconSize = toVector2(0,0);
+	register.window.titleBarIconSize = toVector2(0, 0);
 	register.window.titleBarHeight = 0;
 	register.window.titleBarShown = false;
 
@@ -148,7 +149,7 @@ function registrationFailed(errorMessage) {
 
 function checkRegistration() {
 	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking registration with server ...`);
-	sendNetworkEventToServer("vrr.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
+	sendNetworkEventToServer("agrp.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
 }
 
 // ===========================================================================
@@ -162,7 +163,7 @@ function showRegistrationGUI() {
 	mexui.focusedControl = register.passwordInput;
 	guiSubmitKey = checkRegistration;
 
-	showLocaleChooserGUI(new Vec2(getScreenWidth()/2-(localeChooser.window.size.x/2), register.window.position.y+register.window.size.y+20));
+	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), register.window.position.y + register.window.size.y + 20));
 
 	//showSmallGameMessage(`If you don't have a mouse cursor, press ${toUpperCase(getKeyNameFromId(disableGUIKey))} to disable GUI`, COLOUR_WHITE, 7500);
 }

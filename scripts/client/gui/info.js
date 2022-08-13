@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: info.js
 // DESC: Provides info dialog box GUI
@@ -16,8 +17,8 @@ let infoDialog = {
 // ===========================================================================
 
 function initInfoDialogGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Creating info dialog GUI ...`);
-	infoDialog.window = mexui.window(getScreenWidth()/2-200, getScreenHeight()/2-70, 400, 140, 'Information', {
+	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating info dialog GUI ...`);
+	infoDialog.window = mexui.window(getScreenWidth() / 2 - 200, getScreenHeight() / 2 - 70, 400, 140, 'Information', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 		},

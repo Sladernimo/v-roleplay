@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: tazer.js
 // DESC: Provides features and usage for the tazer item type
@@ -10,21 +11,21 @@
 // ===========================================================================
 
 function isPlayerTazed(client) {
-	return (getPlayerData(client).pedState == VRR_PEDSTATE_TAZED);
+	return (getPlayerData(client).pedState == AGRP_PEDSTATE_TAZED);
 }
 
 // ===========================================================================
 
 function tazePlayer(client) {
-	getPlayerData(client).pedState = VRR_PEDSTATE_TAZED;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_TAZED;
 	setPlayerControlState(client, false);
 
 	let animationId = getAnimationFromParams("tazed");
-	if(animationId != false) {
+	if (animationId != false) {
 		forcePlayerPlayAnimation(client, animationId);
 	}
 
-	setTimeout(function() {
+	setTimeout(function () {
 		unTazePlayer(client);
 		doActionToNearbyPlayers(client, `The tazer effect wears off`);
 	}, getGlobalConfig().tazerEffectDuration);
@@ -33,7 +34,7 @@ function tazePlayer(client) {
 // ===========================================================================
 
 function unTazePlayer(client) {
-	getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 
 	setPlayerControlState(client, true);
 	setPlayerPosition(client, getPlayerData(client).currentAnimationPositionReturnTo);

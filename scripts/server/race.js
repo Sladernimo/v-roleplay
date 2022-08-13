@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: race.js
 // DESC: Provides racing usage and functions
@@ -19,7 +20,7 @@ function initRaceScript() {
  * @return {RaceData} The race's data (class instance)
  */
 function getRaceData(raceId) {
-	if(typeof getServerData().races[raceId] != "undefined") {
+	if (typeof getServerData().races[raceId] != "undefined") {
 		return getServerData().races[raceId];
 	}
 	return false;
@@ -28,7 +29,7 @@ function getRaceData(raceId) {
 // ===========================================================================
 
 function setAllRaceDataIndexes() {
-	for(let i in getServerData().races) {
+	for (let i in getServerData().races) {
 		getServerData().races[i].index = i;
 	}
 }
@@ -43,11 +44,11 @@ function loadRacesFromDatabase() {
 // ===========================================================================
 
 function saveRacesToDatabase() {
-	if(getServerConfig().devServer) {
+	if (getServerConfig().devServer) {
 		return false;
 	}
 
-	for(let i in getServerData().races) {
+	for (let i in getServerData().races) {
 		saveRaceToDatabase(getServerData().races[i]);
 	}
 }
@@ -61,14 +62,14 @@ function saveRaceToDatabase(raceData) {
 // ===========================================================================
 
 function createRaceCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let raceId = getRaceFromParams(params);
 
-	if(raceId == false) {
+	if (raceId == false) {
 		messagePlayerError(client, "A race with that name already exists!");
 		return false;
 	}
@@ -80,7 +81,7 @@ function createRaceCommand(command, params, client) {
 // ===========================================================================
 
 function createRaceCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -95,13 +96,13 @@ function createRaceCommand(command, params, client) {
 // ===========================================================================
 
 function createRaceLocationCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let raceId = getPlayerRace(client);
-	if(raceId == false) {
+	if (raceId == false) {
 		messagePlayerError(client, "You are not in a race!");
 		return false;
 	}
@@ -115,13 +116,13 @@ function createRaceLocationCommand(command, params, client) {
 // ===========================================================================
 
 function createRaceLocationCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let raceId = getPlayerRace(client);
-	if(raceId == false) {
+	if (raceId == false) {
 		messagePlayerError(client, "You are not in a race!");
 		return false;
 	}
@@ -135,7 +136,7 @@ function createRaceLocationCommand(command, params, client) {
 // ===========================================================================
 
 function stopRacingCommand(command, params, client) {
-	if(!isPlayerInARace(client)) {
+	if (!isPlayerInARace(client)) {
 		messagePlayerError(client, "You aren't in a race!");
 		return false;
 	}

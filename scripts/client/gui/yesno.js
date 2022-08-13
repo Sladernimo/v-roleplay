@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: yesno.js
 // DESC: Provides yes/no prompt dialog GUI
@@ -9,17 +10,17 @@
 
 
 let yesNoDialog = {
-	window: null,
-	messageLabel: null,
-	yesButton: null,
-	noButton: null,
+    window: null,
+    messageLabel: null,
+    yesButton: null,
+    noButton: null,
 };
 
 // ===========================================================================
 
 function initYesNoDialogGUI() {
     logToConsole(LOG_DEBUG, `[VRR.GUI] Created prompt GUI ...`);
-    yesNoDialog.window = mexui.window(game.width/2-200, game.height/2-70, 400, 140, 'Question', {
+    yesNoDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 140, 'Question', {
         main: {
             backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
             transitionTime: 500,
@@ -79,37 +80,37 @@ function initYesNoDialogGUI() {
 // ===========================================================================
 
 function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonText) {
-	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
-	mexui.setInput(true);
+    closeAllWindows();
+    logToConsole(LOG_DEBUG, `[VRR.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
+    mexui.setInput(true);
 
-	yesNoDialog.messageLabel.text = "";
-	yesNoDialog.yesButton.text = "";
-	yesNoDialog.noButton.text = "";
-	yesNoDialog.window.title = "";
+    yesNoDialog.messageLabel.text = "";
+    yesNoDialog.yesButton.text = "";
+    yesNoDialog.noButton.text = "";
+    yesNoDialog.window.title = "";
 
-	yesNoDialog.messageLabel.text = promptMessage;
-	yesNoDialog.yesButton.text = yesButtonText;
-	yesNoDialog.noButton.text = noButtonText;
-	yesNoDialog.window.title = promptTitle;
+    yesNoDialog.messageLabel.text = promptMessage;
+    yesNoDialog.yesButton.text = yesButtonText;
+    yesNoDialog.noButton.text = noButtonText;
+    yesNoDialog.window.title = promptTitle;
 
-	yesNoDialog.window.shown = true;
+    yesNoDialog.window.shown = true;
 }
 
 // ===========================================================================
 
 function yesNoDialogAnswerNo() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer NO to server prompt`);
-	sendNetworkEventToServer("vrr.promptAnswerNo");
-	closeAllWindows();
+    logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer NO to server prompt`);
+    sendNetworkEventToServer("agrp.promptAnswerNo");
+    closeAllWindows();
 }
 
 // ===========================================================================
 
 function yesNoDialogAnswerYes() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer YES to server prompt`);
-	sendNetworkEventToServer("vrr.promptAnswerYes");
-	closeAllWindows();
+    logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer YES to server prompt`);
+    sendNetworkEventToServer("agrp.promptAnswerYes");
+    closeAllWindows();
 }
 
 // ===========================================================================

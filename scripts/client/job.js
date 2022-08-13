@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: job.js
 // DESC: Provides job functions and usage
@@ -56,9 +57,10 @@ function setLocalPlayerWorkingState(tempWorking) {
 // ===========================================================================
 
 function showJobRouteLocation(position, colour) {
-	logToConsole(LOG_DEBUG, `[VRR.Job] Showing job route location`);
-	if(getMultiplayerMod() == VRR_MPMOD_GTAC) {
-		if(getGame() == VRR_GAME_GTA_SA) {
+	logToConsole(LOG_DEBUG, `[VRR.Job] Showing job route location at ${position.x}, ${position.y}, ${position.z}`);
+	hideJobRouteLocation();
+	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+		if (getGame() == AGRP_GAME_GTA_SA) {
 			// Server-side spheres don't show in GTA SA for some reason.
 			jobRouteLocationSphere = game.createPickup(1318, position, 1);
 		} else {
@@ -66,7 +68,7 @@ function showJobRouteLocation(position, colour) {
 			jobRouteLocationSphere.colour = colour;
 		}
 
-		if(jobRouteLocationBlip != null) {
+		if (jobRouteLocationBlip != null) {
 			destroyElement(jobRouteLocationBlip);
 		}
 
@@ -80,21 +82,7 @@ function showJobRouteLocation(position, colour) {
 
 function enteredJobRouteSphere() {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Entered job route sphere`);
-
-	clearInterval(jobBlipBlinkTimer);
-	jobBlipBlinkAmount = 0;
-	jobBlipBlinkTimes = 0;
-
-	if(jobRouteLocationBlip != null) {
-		destroyElement(jobRouteLocationBlip);
-		jobRouteLocationBlip = null;
-	}
-
-	if(jobRouteLocationSphere != null) {
-		destroyElement(jobRouteLocationSphere);
-		jobRouteLocationSphere = null;
-	}
-
+	hideJobRouteLocation();
 	tellServerPlayerArrivedAtJobRouteLocation();
 }
 
@@ -102,23 +90,23 @@ function enteredJobRouteSphere() {
 
 function blinkJobRouteLocationBlip(times, position, colour) {
 	jobBlipBlinkTimes = times;
-	jobBlipBlinkTimer = setInterval(function() {
-		if(jobRouteLocationBlip != null) {
+	jobBlipBlinkTimer = setInterval(function () {
+		if (jobRouteLocationBlip != null) {
 			destroyElement(jobRouteLocationBlip);
 			jobRouteLocationBlip = null;
 		} else {
-			jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+			jobRouteLocationBlip = game.createBlip(position, 0, 3, colour);
 		}
 
-		if(jobBlipBlinkAmount >= jobBlipBlinkTimes) {
-			if(jobRouteLocationBlip != null) {
+		if (jobBlipBlinkAmount >= jobBlipBlinkTimes) {
+			if (jobRouteLocationBlip != null) {
 				destroyElement(jobRouteLocationBlip);
 				jobRouteLocationBlip = null;
 			}
 
 			jobBlipBlinkAmount = 0;
 			jobBlipBlinkTimes = 0;
-			jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+			jobRouteLocationBlip = game.createBlip(position, 0, 3, colour);
 			clearInterval(jobBlipBlinkTimer);
 		}
 	}, jobBlipBlinkInterval);
@@ -127,10 +115,24 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 // ===========================================================================
 
 function hideJobRouteLocation() {
-	destroyElement(jobRouteLocationSphere);
-	destroyElement(jobRouteLocationBlip);
-	jobRouteLocationSphere = null;
-	jobRouteLocationBlip = null;
+	logToConsole(LOG_DEBUG, `[VRR.Job] Hiding job route location`);
+
+	if (jobRouteLocationBlip != null) {
+		destroyElement(jobRouteLocationBlip);
+		jobRouteLocationBlip = null;
+	}
+
+	if (jobRouteLocationSphere != null) {
+		destroyElement(jobRouteLocationSphere);
+		jobRouteLocationSphere = null;
+	}
+
+	if (jobBlipBlinkTimer != null) {
+		clearInterval(jobBlipBlinkTimer);
+	}
+
+	jobBlipBlinkAmount = 0;
+	jobBlipBlinkTimes = 0;
 }
 
 // ===========================================================================
@@ -138,8 +140,8 @@ function hideJobRouteLocation() {
 function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, pickupModel) {
 	logToConsole(LOG_DEBUG, `[VRR.Job] Received job ${jobId} (${name}) from server`);
 
-	if(getGame() == VRR_GAME_GTA_IV) {
-		if(getJobData(jobId) != false) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
+		if (getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
 			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
@@ -148,10 +150,10 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 			jobData.pickupModel = pickupModel;
 
 			logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId} already exists. Checking blip ...`);
-			if(blipModel == -1) {
-				if(jobData.blipId != -1) {
+			if (blipModel == -1) {
+				if (jobData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId}'s blip has been removed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -161,18 +163,18 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 					logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId}'s blip is unchanged`);
 				}
 			} else {
-				if(jobData.blipId != -1) {
+				if (jobData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId}'s blip has been changed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.setBlipCoordinates(jobData.blipId, jobData.position);
 						natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
 						natives.setBlipMarkerLongDistance(jobData.blipId, false);
 						natives.setBlipAsShortRange(jobData.blipId, true);
-						natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 24)}${(jobData.name.length > 24) ? " ...": ""}`);
+						natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 24)}${(jobData.name.length > 24) ? " ..." : ""}`);
 					}
 				} else {
 					let blipId = createGameBlip(jobData.blipModel, jobData.position, jobData.name);
-					if(blipId != -1) {
+					if (blipId != -1) {
 						jobData.blipId = blipId;
 					}
 					logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -181,9 +183,9 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 		} else {
 			logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId} doesn't exist. Adding ...`);
 			let tempJobData = new JobData(jobId, jobLocationId, name, position, blipModel, pickupModel);
-			if(blipModel != -1) {
+			if (blipModel != -1) {
 				let blipId = createGameBlip(blipModel, tempJobData.position, tempJobData.name);
-				if(blipId != -1) {
+				if (blipId != -1) {
 					tempJobData.blipId = blipId;
 				}
 				logToConsole(LOG_DEBUG, `[VRR.Job] Job ${jobId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -202,9 +204,9 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
  * @param {number} job - The ID of the job (initially provided by server)
  * @return {JobData} The job's data (class instance)
  */
- function getJobData(jobId) {
-	for(let i in getServerData().jobs) {
-		if(getServerData().jobs[i].jobId == jobId) {
+function getJobData(jobId) {
+	for (let i in getServerData().jobs) {
+		if (getServerData().jobs[i].jobId == jobId) {
 			return getServerData().jobs[i];
 		}
 	}
@@ -215,7 +217,7 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 // ===========================================================================
 
 function setAllJobDataIndexes() {
-	for(let i in getServerData().jobs) {
+	for (let i in getServerData().jobs) {
 		jobs[i].index = i;
 	}
 }

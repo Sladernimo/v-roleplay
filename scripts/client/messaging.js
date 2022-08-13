@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: messaging.js
 // DESC: Provides messaging/textdraw functions and usage
@@ -33,7 +34,7 @@ function initMessagingScript() {
 function loadSmallGameMessageFonts() {
 	let tempSmallGameMessageFonts = {};
 	let fontStream = openFile("files/fonts/pricedown.ttf");
-	if(fontStream != null) {
+	if (fontStream != null) {
 		tempSmallGameMessageFonts["Pricedown"] = lucasFont.createFont(fontStream, 20.0);
 		fontStream.close();
 	}
@@ -49,7 +50,7 @@ function loadSmallGameMessageFonts() {
 function loadBigGameMessageFont() {
 	let tempBigGameMessageFonts = {};
 	let fontStream = openFile("files/fonts/pricedown.ttf");
-	if(fontStream != null) {
+	if (fontStream != null) {
 		tempBigGameMessageFonts["Pricedown"] = lucasFont.createFont(fontStream, 28.0);
 		fontStream.close();
 	}
@@ -63,10 +64,12 @@ function loadBigGameMessageFont() {
 // ===========================================================================
 
 function processSmallGameMessageRendering() {
-	if(renderSmallGameMessage) {
-		if(smallGameMessageText != "") {
-			if(smallGameMessageFonts[smallGameMessageFontName] != null) {
-				smallGameMessageFonts[smallGameMessageFontName].render(smallGameMessageText, [0, game.height-90], game.width, 0.5, 0.0, smallGameMessageFonts[smallGameMessageFontName].size, smallGameMessageColour, true, true, false, true);
+	logToConsole(LOG_VERBOSE, "[VRR.Messaging]: Processing small game message rendering ...");
+	if (renderSmallGameMessage) {
+		if (smallGameMessageText != "") {
+			logToConsole(LOG_VERBOSE, `[VRR.Messaging]: Rendering small game message: ${smallGameMessageText}`);
+			if (smallGameMessageFonts[smallGameMessageFontName] != null) {
+				smallGameMessageFonts[smallGameMessageFontName].render(smallGameMessageText, [0, game.height - 90], game.width, 0.5, 0.0, smallGameMessageFonts[smallGameMessageFontName].size, smallGameMessageColour, true, true, false, true);
 			}
 		}
 	}
@@ -76,7 +79,7 @@ function processSmallGameMessageRendering() {
 
 function showSmallGameMessage(text, colour, duration, fontName) {
 	logToConsole(LOG_DEBUG, `[VRR.Messaging] Showing small game message '${text}' using font ${fontName} for ${duration}ms`);
-	if(smallGameMessageText != "") {
+	if (smallGameMessageText != "") {
 		clearTimeout(smallGameMessageTimer);
 	}
 
@@ -84,7 +87,7 @@ function showSmallGameMessage(text, colour, duration, fontName) {
 	smallGameMessageColour = colour;
 	smallGameMessageText = text;
 
-	smallGameMessageTimer = setTimeout(function() {
+	smallGameMessageTimer = setTimeout(function () {
 		smallGameMessageText = "";
 		smallGameMessageColour = COLOUR_WHITE;
 		smallGameMessageTimer = null;

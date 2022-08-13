@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: anticheat.js
 // DESC: Provides anticheat functions and usage
@@ -15,10 +16,10 @@ function initAntiCheatScript() {
 // ===========================================================================
 
 function clearPlayerStateToEnterExitProperty(client) {
-	if(getPlayerData(client).pedState != VRR_PEDSTATE_READY) {
-		if(getPlayerData(client).pedState == VRR_PEDSTATE_ENTERINGVEHICLE) {
+	if (getPlayerData(client).pedState != AGRP_PEDSTATE_READY) {
+		if (getPlayerData(client).pedState == AGRP_PEDSTATE_ENTERINGVEHICLE) {
 			sendPlayerClearPedState(client);
-			getPlayerData(client).pedState = VRR_PEDSTATE_READY;
+			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 		} else {
 			return false;
 		}
@@ -28,7 +29,7 @@ function clearPlayerStateToEnterExitProperty(client) {
 // ===========================================================================
 
 function isPlayerExemptFromAntiCheat(client) {
-	if(hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("ExemptFromAntiCheat"))) {
+	if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("ExemptFromAntiCheat"))) {
 		return true;
 	}
 
@@ -38,7 +39,7 @@ function isPlayerExemptFromAntiCheat(client) {
 // ===========================================================================
 
 function canPlayerUsePoliceJob(client) {
-	if(getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.policeBanned) {
+	if (getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.policeBanned) {
 		return false;
 	}
 
@@ -48,7 +49,7 @@ function canPlayerUsePoliceJob(client) {
 // ===========================================================================
 
 function canClientUseFireJob(client) {
-	if(getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.fireBanned) {
+	if (getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.fireBanned) {
 		return false;
 	}
 
@@ -58,7 +59,7 @@ function canClientUseFireJob(client) {
 // ===========================================================================
 
 function canClientUseAmmunations(client) {
-	if(getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.AmmuBanned) {
+	if (getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.AmmuBanned) {
 		return false;
 	}
 
@@ -68,7 +69,7 @@ function canClientUseAmmunations(client) {
 // ===========================================================================
 
 function canClientUseGuns(client) {
-	if(getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.GunBanned) {
+	if (getPlayerData(client).accountData.flags.moderation & getServerBitFlags().moderationFlags.GunBanned) {
 		return false;
 	}
 

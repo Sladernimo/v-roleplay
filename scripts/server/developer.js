@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: developer.js
 // DESC: Provides developer operation, commands, functions and usage
@@ -120,12 +121,12 @@ function pvd(params) {
 // ===========================================================================
 
 function addLogLevelCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	switch(toLowerCase(params)) {
+	switch (toLowerCase(params)) {
 		case "debug":
 			logLevel = logLevel | LOG_DEBUG;
 			break;
@@ -151,9 +152,7 @@ function addLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
-
 	return true;
 }
 
@@ -162,40 +161,39 @@ function addLogLevelCommand(command, params, client) {
 function getLogLevelCommand(command, params, client) {
 	let logLevels = [];
 
-	if(hasBitFlag(logLevel, LOG_DEBUG)) {
+	if (hasBitFlag(logLevel, LOG_DEBUG)) {
 		logLevels.push("debug");
 	}
 
-	if(hasBitFlag(logLevel, LOG_WARN)) {
+	if (hasBitFlag(logLevel, LOG_WARN)) {
 		logLevels.push("warn");
 	}
 
-	if(hasBitFlag(logLevel, LOG_ERROR)) {
+	if (hasBitFlag(logLevel, LOG_ERROR)) {
 		logLevels.push("error");
 	}
 
-	if(hasBitFlag(logLevel, LOG_INFO)) {
+	if (hasBitFlag(logLevel, LOG_INFO)) {
 		logLevels.push("info");
 	}
 
-	if(hasBitFlag(logLevel, LOG_VERBOSE)) {
+	if (hasBitFlag(logLevel, LOG_VERBOSE)) {
 		logLevels.push("verbose");
 	}
 
-	messagePlayerAlert(`{MAINCOLOUR}Current log levels: {ALTCOLOUR}${toLowerCase(logLevels.join(", "))}`);
-
+	messagePlayerAlert(client, `{MAINCOLOUR}Current log levels: {ALTCOLOUR}${toLowerCase(logLevels.join(", "))}`);
 	return true;
 }
 
 // ===========================================================================
 
 function removeLogLevelCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	switch(toLowerCase(params)) {
+	switch (toLowerCase(params)) {
 		case "debug":
 			logLevel = logLevel & ~LOG_DEBUG;
 			break;
@@ -221,28 +219,26 @@ function removeLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-
 	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
-
 	return true;
 }
 
 // ===========================================================================
 
 function simulateCommandForPlayerCommand(command, params, client) {
-	if(getCommand(command).requireLogin) {
-		if(!isPlayerLoggedIn(client)) {
+	if (getCommand(command).requireLogin) {
+		if (!isPlayerLoggedIn(client)) {
 			messagePlayerError(client, "You must be logged in to use this command!");
 			return false;
 		}
 	}
 
-	if(!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(command))) {
+	if (!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(command))) {
 		messagePlayerError(client, "You do not have permission to use this command!");
 		return false;
 	}
 
-	if(areParamsEmpty(params) || !areThereEnoughParams(params, 2)) {
+	if (areParamsEmpty(params) || !areThereEnoughParams(params, 2)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -252,12 +248,12 @@ function simulateCommandForPlayerCommand(command, params, client) {
 	tempCommand.replace("/", "");
 	let tempParams = splitParams.slice(2).join(" ");
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, "Invalid player name or ID");
 		return false;
 	}
 
-	if(!getCommand(tempCommand)) {
+	if (!getCommand(tempCommand)) {
 		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
 		return false;
 	}
@@ -270,19 +266,19 @@ function simulateCommandForPlayerCommand(command, params, client) {
 // ===========================================================================
 
 function simulateCommandForAllPlayersCommand(command, params, client) {
-	if(getCommand(command).requireLogin) {
-		if(!isPlayerLoggedIn(client)) {
+	if (getCommand(command).requireLogin) {
+		if (!isPlayerLoggedIn(client)) {
 			messagePlayerError(client, "You must be logged in to use this command!");
 			return false;
 		}
 	}
 
-	if(!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(command))) {
+	if (!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(command))) {
 		messagePlayerError(client, "You do not have permission to use this command!");
 		return false;
 	}
 
-	if(areParamsEmpty(params) || !areThereEnoughParams(params, 2)) {
+	if (areParamsEmpty(params) || !areThereEnoughParams(params, 2)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -291,14 +287,14 @@ function simulateCommandForAllPlayersCommand(command, params, client) {
 	tempCommand.replace("/", "");
 	let tempParams = splitParams.slice(1).join(" ");
 
-	if(!getCommand(tempCommand)) {
+	if (!getCommand(tempCommand)) {
 		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
 		return false;
 	}
 
 	let clients = getClients();
-	for(let i in clients) {
-		if(!clients[i].console) {
+	for (let i in clients) {
+		if (!clients[i].console) {
 			getCommand(toLowerCase(tempCommand)).handlerFunction(tempCommand, tempParams, clients[i]);
 		}
 	}
@@ -309,7 +305,7 @@ function simulateCommandForAllPlayersCommand(command, params, client) {
 // ===========================================================================
 
 function executeServerCodeCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -317,7 +313,7 @@ function executeServerCodeCommand(command, params, client) {
 	let returnValue = "Nothing";
 	try {
 		returnValue = eval("(" + params + ")");
-	} catch(error) {
+	} catch (error) {
 		messagePlayerError(client, "The code could not be executed!");
 		return false;
 	}
@@ -332,7 +328,7 @@ function executeServerCodeCommand(command, params, client) {
 // ===========================================================================
 
 function executeClientCodeCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -341,12 +337,12 @@ function executeClientCodeCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let targetCode = splitParams.slice(1).join(" ");
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	if(targetCode == "") {
+	if (targetCode == "") {
 		messagePlayerError(client, "You didn't enter any code!");
 		return false;
 	}
@@ -361,19 +357,19 @@ function executeClientCodeCommand(command, params, client) {
 // ===========================================================================
 
 function setPlayerTesterStatusCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let targetClient = getPlayerFromParams(params);
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	if(!hasBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("IsTester"))) {
+	if (!hasBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("IsTester"))) {
 		getPlayerData(targetClient).accountData.flags.moderation = addBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("IsTester"));
 	} else {
 		getPlayerData(targetClient).accountData.flags.moderation = removeBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("IsTester"));
@@ -388,14 +384,14 @@ function setPlayerTesterStatusCommand(command, params, client) {
 // ===========================================================================
 
 function testPromptGUICommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let targetClient = getPlayerFromParams(params);
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -407,14 +403,14 @@ function testPromptGUICommand(command, params, client) {
 // ===========================================================================
 
 function testInfoGUICommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let targetClient = getPlayerFromParams(params);
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -426,14 +422,14 @@ function testInfoGUICommand(command, params, client) {
 // ===========================================================================
 
 function testErrorGUICommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let targetClient = getPlayerFromParams(params);
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -456,8 +452,8 @@ function saveServerDataCommand(command, params, client) {
 function testEmailCommand(command, params, client) {
 	try {
 		messagePlayerAlert(client, `Sending test email to ${params}`);
-		sendEmail(params, "Player",  "Test email", "Just testing the SMTP module for the server!");
-	} catch(error) {
+		sendEmail(params, "Player", "Test email", "Just testing the SMTP module for the server!");
+	} catch (error) {
 		messagePlayerError(client, "The email could not be sent! Error: ${error}");
 		return false;
 	}
@@ -477,7 +473,7 @@ function restartGameModeCommand(command, params, client) {
 
 function clientRunCodeFail(client, returnTo, error) {
 	let returnClient = getClientFromIndex(returnTo);
-	if(!returnClient) {
+	if (!returnClient) {
 		return false;
 	}
 
@@ -488,7 +484,7 @@ function clientRunCodeFail(client, returnTo, error) {
 
 function clientRunCodeSuccess(client, returnTo, returnVal) {
 	let returnClient = getClientFromIndex(returnTo);
-	if(!returnClient) {
+	if (!returnClient) {
 		return false;
 	}
 
@@ -500,19 +496,25 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 // ===========================================================================
 
 function submitIdea(client, ideaText) {
-	let position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-	let heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+	let position = toVector3(0.0, 0.0, 0.0);
+	let heading = 0.0;
 	let session = 0;
 	let databaseId = 0;
 
-	if(isConsole(client)) {
-		databaseId = -1;
+	if (client != null) {
+		if (isConsole(client)) {
+			databaseId = -1;
+		} else {
+			databaseId = getPlayerData(client).accountData.databaseId;
+			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+		}
 	} else {
-		databaseId = getPlayerData(client).accountData.databaseId;
+		databaseId = defaultNoAccountId;
 	}
 
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let safeIdeaMessage = escapeDatabaseString(dbConnection, ideaText);
 		queryDatabase(dbConnection, `INSERT INTO idea_main (idea_server, idea_script_ver, idea_who_added, idea_when_added, idea_message, idea_pos_x, idea_pos_y, idea_pos_z, idea_rot_z, idea_svr_start, idea_session) VALUES (${getServerId()}, '${scriptVersion}', ${databaseId}, NOW(), '${safeIdeaMessage}',${position.x}, ${position.y}, ${position.z}, ${heading}, ${serverStartTime}, ${session})`);
 	}
@@ -521,19 +523,25 @@ function submitIdea(client, ideaText) {
 // ===========================================================================
 
 function submitBugReport(client, bugText) {
-	let position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-	let heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+	let position = toVector3(0.0, 0.0, 0.0);
+	let heading = 0.0;
 	let session = 0;
 	let databaseId = 0;
 
-	if(isConsole(client)) {
-		databaseId = -1;
+	if (client != null) {
+		if (isConsole(client)) {
+			databaseId = -1;
+		} else {
+			databaseId = getPlayerData(client).accountData.databaseId;
+			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+		}
 	} else {
-		databaseId = getPlayerData(client).accountData.databaseId;
+		databaseId = defaultNoAccountId;
 	}
 
 	let dbConnection = connectToDatabase();
-	if(dbConnection) {
+	if (dbConnection) {
 		let safeBugMessage = escapeDatabaseString(dbConnection, bugText);
 		queryDatabase(dbConnection, `INSERT INTO bug_main (bug_server, bug_script_ver, bug_who_added, bug_when_added, bug_message, bug_pos_x, bug_pos_y, bug_pos_z, bug_rot_z, bug_svr_start, bug_session) VALUES (${getServerId()}, '${scriptVersion}', ${databaseId}, NOW(), '${safeBugMessage}', ${position.x}, ${position.y}, ${position.z}, ${heading}, ${serverStartTime}, ${session})`);
 	}
@@ -551,14 +559,14 @@ function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
 	let dbAssoc = false;
-	if(dbConnection) {
+	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT * FROM sacct_main`);
-		if(dbQuery) {
-			while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+		if (dbQuery) {
+			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 				createDefaultSubAccountServerData(dbAssoc["sacct_id"]);
 
 				let dbQuery2 = queryDatabase(dbConnection, `UPDATE sacct_svr SET sacct_svr_skin = ${dbAssoc["sacct_skin"]}, sacct_svr_job = ${dbAssoc["sacct_job"]} WHERE sacct_svr_sacct=${dbAssoc["sacct_id"]} AND sacct_svr_server=${dbAssoc["sacct_server"]}`);
-				if(dbQuery2) {
+				if (dbQuery2) {
 					freeDatabaseQuery(dbQuery2);
 				}
 			}
@@ -573,10 +581,10 @@ function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
 	let dbAssoc = false;
-	if(dbConnection) {
+	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT acct_id FROM acct_main`);
-		if(dbQuery) {
-			while(dbAssoc = fetchQueryAssoc(dbQuery)) {
+		if (dbQuery) {
+			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 				createDefaultKeybindsForAccount(dbAssoc["acct_id"]);
 			}
 			freeDatabaseQuery(dbQuery);
@@ -595,9 +603,9 @@ function togglePauseSavingToDatabaseCommand(command, params, client) {
 function createAccountDataForNewServer(serverId) {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
-	if(dbConnection) {
+	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT * FROM acct_main`);
-		if(dbQuery) {
+		if (dbQuery) {
 			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serverId})`;
 			quickDatabaseQuery(dbQueryString);
 		}
@@ -607,7 +615,7 @@ function createAccountDataForNewServer(serverId) {
 // ===========================================================================
 
 function streamAudioURLToAllPlayersCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -621,7 +629,7 @@ function streamAudioURLToAllPlayersCommand(command, params, client) {
 // ===========================================================================
 
 function streamAudioNameToAllPlayersCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -685,28 +693,28 @@ function showLocalePickerTestCommand(command, params, client) {
 // ===========================================================================
 
 function executeDatabaseQueryCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	if(!targetClient) {
+	if (!targetClient) {
 		messagePlayerError(client, "That player was not found!");
 		return false;
 	}
 
-	if(targetCode == "") {
+	if (targetCode == "") {
 		messagePlayerError(client, "You didn't enter any code!");
 		return false;
 	}
 
-	let success = quickDatabaseQuery(params);
+	let results = quickDatabaseQueryWithResults(params);
 
-	if(!success) {
+	if (results == false || results == null || results == undefined) {
 		messagePlayerAlert(client, `Database query failed to execute: {ALTCOLOUR}${query}`);
-	} else if(typeof success != "boolean") {
-		messagePlayeSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
-		messagePlayerInfo(client, `Returns: ${success}`);
+	} else if (typeof results == "boolean") {
+		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
+		messagePlayerInfo(client, `Returns: ${getTrueFalseFromBool(results)}`);
 	} else {
 		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
 	}

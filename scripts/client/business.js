@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: business.js
 // DESC: Provides business functions and usage
@@ -27,8 +28,8 @@ class BusinessData {
 function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems) {
 	logToConsole(LOG_DEBUG, `[VRR.Business] Received business ${businessId} (${name}) from server`);
 
-	if(!areServerElementsSupported()) {
-		if(getBusinessData(businessId) != false) {
+	if (!areServerElementsSupported()) {
+		if (getBusinessData(businessId) != false) {
 			let businessData = getBusinessData(businessId);
 			businessData.name = name;
 			businessData.entrancePosition = entrancePosition;
@@ -38,10 +39,10 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 			businessData.hasItems = hasItems;
 
 			logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId} already exists. Checking blip ...`);
-			if(blipModel == -1) {
-				if(businessData.blipId != -1) {
+			if (blipModel == -1) {
+				if (businessData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been removed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getBusinessData(businessId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -53,18 +54,18 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip is unchanged`);
 				}
 			} else {
-				if(businessData.blipId != -1) {
+				if (businessData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been changed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
 						natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
 						natives.setBlipMarkerLongDistance(businessData.blipId, false);
 						natives.setBlipAsShortRange(tempBusinessData.blipId, true);
-						natives.changeBlipNameFromAscii(businessData.blipId, `${businessData.name.substr(0, 24)}${(businessData.name.length > 24) ? " ...": ""}`);
+						natives.changeBlipNameFromAscii(businessData.blipId, `${businessData.name.substr(0, 24)}${(businessData.name.length > 24) ? " ..." : ""}`);
 					}
 				} else {
 					let blipId = createGameBlip(tempBusinessData.blipModel, tempBusinessData.entrancePosition, tempBusinessData.name);
-					if(blipId != -1) {
+					if (blipId != -1) {
 						tempBusinessData.blipId = blipId;
 					}
 					logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -73,9 +74,9 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 		} else {
 			logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId} doesn't exist. Adding ...`);
 			let tempBusinessData = new BusinessData(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems);
-			if(blipModel != -1) {
+			if (blipModel != -1) {
 				let blipId = createGameBlip(tempBusinessData.blipModel, tempBusinessData.entrancePosition, tempBusinessData.name);
-				if(blipId != -1) {
+				if (blipId != -1) {
 					tempBusinessData.blipId = blipId;
 				}
 				logToConsole(LOG_DEBUG, `[VRR.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -100,8 +101,8 @@ function getBusinessData(businessId) {
 
 	let businesses = getServerData().businesses;
 
-	for(let i in businesses) {
-		if(businesses[i].businessId == businessId) {
+	for (let i in businesses) {
+		if (businesses[i].businessId == businessId) {
 			return businesses[i];
 		}
 	}
@@ -112,7 +113,7 @@ function getBusinessData(businessId) {
 // ===========================================================================
 
 function setAllBusinessDataIndexes() {
-	for(let i in getServerData().businesses) {
+	for (let i in getServerData().businesses) {
 		getServerData().businesses[i].index = i;
 	}
 }

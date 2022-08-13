@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: messaging.js
 // DESC: Provides messaging functions and usage
@@ -16,7 +17,7 @@ function initMessagingScript() {
 
 function announceAdminAction(localeString, ...args) {
 	let clients = getClients();
-	for(let i in clients) {
+	for (let i in clients) {
 		let argsArray = [clients[i], localeString];
 		argsArray = argsArray.concat(args);
 		let messageText = getLocaleString.apply(null, argsArray);
@@ -38,9 +39,14 @@ function announceAdminAction(localeString, ...args) {
  *
  */
 function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
-	//if(isConsole(client) || client == null) {
-	//    logToConsole(LOG_INFO, `${removeColoursInMessage(messageText)}`);
-	//}
+	if (client != null) {
+		if (client.console) {
+			logToConsole(LOG_INFO, `${messageText}`);
+			return false;
+		}
+	}
+
+	//logToConsole(LOG_INFO, `${messageText}`);
 
 	//messageText = replaceColoursInMessage(messageText);
 
@@ -57,12 +63,9 @@ function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 // ===========================================================================
 
 function messageAdmins(messageText, colour = getColourByName("softRed")) {
-	//
-	//logToConsole(LOG_WARN, `🛡️ ${plainMessage}`);
-
 	let clients = getClients();
-	for(let i in clients) {
-		if(doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
+	for (let i in clients) {
+		if (doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
 			messagePlayerNormal(clients[i], `🛡️ ${messageText}`, colour);
 		}
 	}
@@ -74,12 +77,7 @@ function messageAdmins(messageText, colour = getColourByName("softRed")) {
 // ===========================================================================
 
 function messagePlayerError(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `❌ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `❌ ${messageText}`, getColourByName("white"));
 	} else {
 		messageDiscordUser(client, `❌ ${messageText}`);
@@ -89,12 +87,7 @@ function messagePlayerError(client, messageText) {
 // ===========================================================================
 
 function messagePlayerSyntax(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `⌨️ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `⌨️ USAGE: {MAINCOLOUR} ${messageText}`, getColourByType("syntaxMessage"));
 	} else {
 		messageDiscordUser(client, `⌨️ ${messageText}`);
@@ -104,12 +97,7 @@ function messagePlayerSyntax(client, messageText) {
 // ===========================================================================
 
 function messagePlayerAlert(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `⚠️ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `⚠️ ${messageText}`, getColourByName("white"));
 	} else {
 		messageDiscordUser(client, `⚠️ ${messageText}`);
@@ -119,12 +107,7 @@ function messagePlayerAlert(client, messageText) {
 // ===========================================================================
 
 function messagePlayerSuccess(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `✔️ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `✔️ ${messageText}`, getColourByName("white"));
 	} else {
 		messageDiscordUser(client, `✔️ ${messageText}`);
@@ -134,12 +117,7 @@ function messagePlayerSuccess(client, messageText) {
 // ===========================================================================
 
 function messagePlayerInfo(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `ℹ️ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `ℹ️ ${messageText}`, getColourByName("white"));
 	} else {
 		messageDiscordUser(client, `:information_source: ${messageText}`);
@@ -149,15 +127,10 @@ function messagePlayerInfo(client, messageText) {
 // ===========================================================================
 
 function messagePlayerTip(client, messageText) {
-	if(isConsole(client)) {
-		logToConsole(LOG_INFO, `ℹ️ ${messageText}`);
-		return true;
-	}
-
-	if(!isClientFromDiscord(client)) {
-		messagePlayerNormal(client, `ℹ️ ${messageText}`, getColourByName("white"));
+	if (!isClientFromDiscord(client)) {
+		messagePlayerNormal(client, `💡 ${messageText}`, getColourByName("white"));
 	} else {
-		messageDiscordUser(client, `:information_source: ${messageText}`);
+		messageDiscordUser(client, `:bulb: ${messageText}`);
 	}
 }
 
@@ -188,7 +161,7 @@ function messagePlayerShout(client, shoutingClient, messageText) {
 // ===========================================================================
 
 function messagePlayerDoAction(client, doingActionClient, messageText) {
-	if(!isClientFromDiscord(client)) {
+	if (!isClientFromDiscord(client)) {
 		messagePlayerNormal(client, `${messageText} * (${getClientSubAccountName(doingActionClient)})`, getColourByType("doActionMessage"));
 	}
 }
@@ -202,7 +175,7 @@ function messagePlayerMeAction(client, doingActionClient, messageText) {
 // ===========================================================================
 
 function messagePlayerClanChat(client, clanChattingClient, messageText) {
-	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRankName(clanChattingClient) != false) ? getPlayerClanRankName(clanChattingClient) : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
+	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRank(client) != -1) ? getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).name : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
 }
 
 // ===========================================================================
@@ -214,7 +187,7 @@ function messagePlayerAdminChat(client, adminChattingClient, messageText) {
 // ===========================================================================
 
 function messagePlayerNewbieTip(client, message) {
-	if(!hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("NoActionTips"))) {
+	if (!hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("NoActionTips"))) {
 		messagePlayerNormal(client, `💡 ${message}`);
 	}
 }
@@ -222,8 +195,8 @@ function messagePlayerNewbieTip(client, message) {
 // ===========================================================================
 
 function messagePlayerTimedRandomTip(client, message) {
-	if(isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
-		if(!hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("NoRandomTips"))) {
+	if (isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
+		if (!hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("NoRandomTips"))) {
 			messagePlayerNormal(client, `💡 ${message}`);
 		}
 	}
@@ -233,7 +206,7 @@ function messagePlayerTimedRandomTip(client, message) {
 
 function makeChatBoxSectionHeader(name) {
 	let resultString = `{clanOrange}== {jobYellow}${name} `;
-	let endFiller = fillStringWithCharacter("=", getGlobalConfig().chatSectionHeaderLength-resultString.length);
+	let endFiller = fillStringWithCharacter("=", getGlobalConfig().chatSectionHeaderLength - resultString.length);
 	return `${resultString} {clanOrange}${endFiller}`;
 }
 
@@ -241,7 +214,7 @@ function makeChatBoxSectionHeader(name) {
 
 function clearChatBox(client) {
 	//game.messages.clear();
-	for(let i = 0; i <= 20; i++) {
+	for (let i = 0; i <= 20; i++) {
 		messageClient(" ", client, COLOUR_WHITE);
 	}
 }
@@ -255,11 +228,17 @@ function messagePlayerHelpContent(client, messageString) {
 // ===========================================================================
 
 function messagePlayersInRace(raceId, message) {
-	for(let i in clients) {
-		if(getPlayerRace(clients[i]) == raceId) {
+	for (let i in clients) {
+		if (getPlayerRace(clients[i]) == raceId) {
 			messagePlayerNormal(clients[i], message);
 		}
 	}
+}
+
+// ===========================================================================
+
+function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
+	messagePlayerNormal(toClient, `{yellow}[DM] ${getCharacterFullName(fromClient)}{MAINCOLOUR}says: {ALTCOLOUR}${messageText}`);
 }
 
 // ===========================================================================

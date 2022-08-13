@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: animation.js
 // DESC: Provides animation functions and usage
@@ -15,7 +16,7 @@ function initAnimationScript() {
 // ===========================================================================
 
 function playPlayerAnimationCommand(command, params, client) {
-	if(areParamsEmpty(params)) {
+	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -23,22 +24,22 @@ function playPlayerAnimationCommand(command, params, client) {
 	let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
 	let animationPositionOffset = 1;
 
-	if(!animationSlot) {
+	if (!animationSlot) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
 		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
 		return false;
 	}
 
-	if(toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
+	if (toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
 	}
 
-	if(getAnimationData(animationSlot)[3] == VRR_ANIMTYPE_SURRENDER) {
-		getPlayerData(client).pedState = VRR_PEDSTATE_HANDSUP;
+	if (getAnimationData(animationSlot)[3] == AGRP_ANIMTYPE_SURRENDER) {
+		getPlayerData(client).pedState = AGRP_PEDSTATE_HANDSUP;
 	}
 
-	if(isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
+	if (isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
 		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
@@ -50,7 +51,7 @@ function playPlayerAnimationCommand(command, params, client) {
 // ===========================================================================
 
 function stopPlayerAnimationCommand(command, params, client) {
-	if(isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
+	if (isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
 		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
@@ -70,25 +71,15 @@ function stopPlayerAnimationCommand(command, params, client) {
 // ===========================================================================
 
 function showAnimationListCommand(command, params, client) {
-	let animList = getGameConfig().animations[getGame()].map(function(x) { return x.name; });
+	let animList = getGameConfig().animations[getGame()].map(function (x) { return x.name; });
 
 	let chunkedList = splitArrayIntoChunks(animList, 10);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderAnimationsList")));
 
-	for(let i in chunkedList) {
+	for (let i in chunkedList) {
 		messagePlayerNormal(client, chunkedList[i].join(", "));
 	}
-}
-
-// ===========================================================================
-
-/**
- * @param {number} animationSlot - The slot index of the animation
- * @return {Array} The animation's data (array)
- */
-function getAnimationData(animationSlot, gameId = getGame()) {
-	return getGameConfig().animations[gameId][animationSlot];
 }
 
 // ===========================================================================
@@ -107,9 +98,9 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 	getPlayerData(client).animationForced = false;
 
 	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
-	setEntityData(getPlayerPed(client), "vrr.anim", animationSlot, true);
-	//if(getAnimationData(animationSlot)[9] != VRR_ANIMMOVE_NONE) {
-	//	if(getGame() < VRR_GAME_GTA_SA) {
+	setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
+	//if(getAnimationData(animationSlot)[9] != AGRP_ANIMMOVE_NONE) {
+	//	if(getGame() < AGRP_GAME_GTA_SA) {
 	//		setPlayerMouseCameraState(client, true);
 	//	}
 	//}
@@ -125,7 +116,7 @@ function forcePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 	getPlayerData(client).animationForced = true;
 
 	setPlayerControlState(client, false);
-   	forcePedAnimation(getPlayerPed(client), animationSlot, offsetPosition);
+	forcePedAnimation(getPlayerPed(client), animationSlot, offsetPosition);
 }
 
 // ===========================================================================
@@ -139,25 +130,6 @@ function makePlayerStopAnimation(client) {
 	getPlayerData(client).currentAnimationPositionReturnTo = false;
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
-}
-
-// ===========================================================================
-
-function getAnimationFromParams(params) {
-	let animations = getGameConfig().animations[getGame()];
-	if(isNaN(params)) {
-		for(let i in animations) {
-			if(toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
-				return i;
-			}
-		}
-	} else {
-		if(typeof getGameConfig().animations[getGame()][params] != "undefined") {
-			return toInteger(params);
-		}
-	}
-
-	return false;
 }
 
 // ===========================================================================

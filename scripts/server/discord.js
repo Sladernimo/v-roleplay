@@ -1,10 +1,18 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: discord.js
 // DESC: Provides discord bridging and connection functions and usage
 // TYPE: Server (JavaScript)
+// ===========================================================================
+
+// Discord Webhook Types
+const AGRP_DISCORD_WEBHOOK_NONE = 0;
+const AGRP_DISCORD_WEBHOOK_LOG = 1;
+const AGRP_DISCORD_WEBHOOK_ADMIN = 2;
+
 // ===========================================================================
 
 function initDiscordScript() {
@@ -53,7 +61,7 @@ function messageDiscordUser(discordUser, messageText) {
 // ===========================================================================
 
 function sendDiscordSocketData(socketData) {
-	if(!getDiscordSocket()) {
+	if (!getDiscordSocket()) {
 		return false;
 	}
 
@@ -63,11 +71,11 @@ function sendDiscordSocketData(socketData) {
 // ===========================================================================
 
 function isClientFromDiscord(client) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
-	if(client instanceof Client) {
+	if (client instanceof Client) {
 		return false;
 	} else {
 		return true;
@@ -89,58 +97,135 @@ function getDiscordUserData(discordUserId) {
 // ===========================================================================
 
 function messageDiscordChatChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendChat) {
+	if (!getGlobalConfig().discord.sendChat) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendChat) {
+	if (!getServerConfig().discord.sendChat) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	messageString = replaceProfanityInMessage(messageString);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
 function messageDiscordEventChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendEvents) {
+	if (!getGlobalConfig().discord.sendEvents) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendEvents) {
+	if (!getServerConfig().discord.sendEvents) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_LOG);
+	messageString = replaceProfanityInMessage(messageString);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
 
 function messageDiscordAdminChannel(messageString) {
-	if(getServerConfig().devServer == true) {
+	if (getServerConfig().devServer == true) {
 		return false;
 	}
 
-	if(!getGlobalConfig().discord.sendAdmin) {
+	if (!getGlobalConfig().discord.sendAdmin) {
 		return false;
 	}
 
-	if(!getServerConfig().discord.sendAdmin) {
+	if (!getServerConfig().discord.sendAdmin) {
 		return false;
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerWebHook(messageString, getServerId(), VRR_DISCORD_WEBHOOK_ADMIN);
+	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_ADMIN);
+}
+
+// ===========================================================================
+
+function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) {
+	if (getServerConfig().devServer == true) {
+		return false;
+	}
+
+	if (!getGlobalConfig().discord.sendClan) {
+		return false;
+	}
+
+	if (!getServerConfig().discord.sendClan) {
+		return false;
+	}
+
+	if (!hasBitFlag(getClanData(clanIndex).discordWebhookFlags, requiredFlagValue)) {
+		return false;
+	}
+
+	messageString = removeColoursInMessage(messageString);
+	triggerClanDiscordWebHook(clanIndex, messageString);
+}
+
+// ===========================================================================
+
+function triggerDiscordWebHook(messageString, serverId = getServerId(), type = AGRP_DISCORD_WEBHOOK_LOG) {
+	if (!getGlobalConfig().discord.webhook.enabled) {
+		return false;
+	}
+
+	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{1}", serverId);
+	tempURL = tempURL.replace("{2}", type);
+	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+
+	httpGet(
+		tempURL,
+		"",
+		function (data) {
+
+		},
+		function (data) {
+		}
+	);
+}
+
+// ===========================================================================
+
+function triggerClanDiscordWebHook(clanIndex, messageString) {
+	if (!getGlobalConfig().discord.webhook.enabled) {
+		return false;
+	}
+
+	/*
+	let webhookURL = getClanData(clanIndex).discordWebhookURL;
+
+	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{1}", serverId);
+	tempURL = tempURL.replace("{2}", type);
+	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+
+	httpGet(
+		tempURL,
+		"",
+		function (data) {
+
+		},
+		function (data) {
+		}
+	);
+	*/
 }
 
 // ===========================================================================

@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: house.js
 // DESC: Provides house functions and usage
@@ -25,8 +26,8 @@ class HouseData {
 function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
 	logToConsole(LOG_DEBUG, `[VRR.House] Received house ${houseId} (${name}) from server`);
 
-	if(!areServerElementsSupported()) {
-		if(getHouseData(houseId) != false) {
+	if (!areServerElementsSupported()) {
+		if (getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
 			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
@@ -35,10 +36,10 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 			houseData.hasInterior = hasInterior;
 
 			logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId} already exists. Checking blip ...`);
-			if(blipModel == -1) {
-				if(houseData.blipId != -1) {
+			if (blipModel == -1) {
+				if (houseData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId}'s blip has been removed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -48,18 +49,18 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 					logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId}'s blip is unchanged`);
 				}
 			} else {
-				if(houseData.blipId != -1) {
+				if (houseData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId}'s blip has been changed by the server`);
-					if(getGame() == VRR_GAME_GTA_IV) {
+					if (getGame() == AGRP_GAME_GTA_IV) {
 						natives.setBlipCoordinates(houseData.blipId, houseData.entrancePosition);
 						natives.changeBlipSprite(houseData.blipId, houseData.blipModel);
 						natives.setBlipMarkerLongDistance(houseData.blipId, false);
 						natives.setBlipAsShortRange(houseData.blipId, true);
-						natives.changeBlipNameFromAscii(houseData.blipId, `${houseData.name.substr(0, 24)}${(houseData.name.length > 24) ? " ...": ""}`);
+						natives.changeBlipNameFromAscii(houseData.blipId, `${houseData.name.substr(0, 24)}${(houseData.name.length > 24) ? " ..." : ""}`);
 					}
 				} else {
 					let blipId = createGameBlip(houseData.blipModel, houseData.entrancePosition, houseData.name);
-					if(blipId != -1) {
+					if (blipId != -1) {
 						houseData.blipId = blipId;
 					}
 					logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -68,9 +69,9 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 		} else {
 			logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId} doesn't exist. Adding ...`);
 			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
-			if(blipModel != -1) {
+			if (blipModel != -1) {
 				let blipId = createGameBlip(tempHouseData.blipModel, tempHouseData.entrancePosition, "House");
-				if(blipId != -1) {
+				if (blipId != -1) {
 					tempHouseData.blipId = blipId;
 				}
 				logToConsole(LOG_DEBUG, `[VRR.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
@@ -89,10 +90,10 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
  * @param {number} houseId - The ID of the house (initially provided by server)
  * @return {HouseData} The house's data (class instance)
  */
- function getHouseData(houseId) {
+function getHouseData(houseId) {
 	let houses = getServerData().houses;
-	for(let i in houses) {
-		if(houses[i].houseId == houseId) {
+	for (let i in houses) {
+		if (houses[i].houseId == houseId) {
 			return houses[i];
 		}
 	}
@@ -103,7 +104,7 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 // ===========================================================================
 
 function setAllHouseDataIndexes() {
-	for(let i in getServerData().houses) {
+	for (let i in getServerData().houses) {
 		getServerData().houses[i].index = i;
 	}
 }

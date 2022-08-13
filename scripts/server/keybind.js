@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: keybind.js
 // DESC: Provides keybind handlers and functions
@@ -8,74 +9,113 @@
 
 // ===========================================================================
 
+class KeyBindData {
+	constructor(dbAssoc = false, key = 0, commandString = "", keyState = AGRP_KEYSTATE_UP) {
+		this.databaseId = 0;
+		this.key = key;
+		this.account = 0;
+		this.commandString = commandString;
+		this.whenAdded = 0;
+		this.enabled = true;
+		this.keyState = false;
+		this.index = -1;
+		this.needsSaved = false;
+
+		if (dbAssoc) {
+			this.databaseId = dbAssoc["acct_hotkey_id"];
+			this.key = toInteger(dbAssoc["acct_hotkey_key"]);
+			this.account = toInteger(dbAssoc["acct_hotkey_acct"]);
+			this.commandString = dbAssoc["acct_hotkey_cmdstr"];
+			this.whenAdded = dbAssoc["acct_hotkey_when_added"];
+			this.enabled = intToBool(dbAssoc["acct_hotkey_enabled"]);
+			this.keyState = intToBool(dbAssoc["acct_hotkey_down"]);
+		}
+	}
+};
+
+// ===========================================================================
+
 function initKeyBindScript() {
-	logToConsole(LOG_INFO, "[VRR.KeyBind]: Initializing key bind script ...");
+	logToConsole(LOG_DEBUG, "[VRR.KeyBind]: Initializing key bind script ...");
 	logToConsole(LOG_INFO, "[VRR.KeyBind]: Key bind script initialized!");
 }
 
 // ===========================================================================
 
 function addKeyBindCommand(command, params, client) {
+	if (areParamsEmpty(command)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
 	let splitParams = params.split(" ");
 
 	let keyId = getKeyIdFromParams(getParam(params, " ", 1));
 	let tempCommand = getParam(params, " ", 2);
 	let tempParams = (splitParams.length > 2) ? splitParams.slice(2).join(" ") : "";
 
-	if(!keyId) {
-		messagePlayerError(client, "The key ID or name you input is invalid!");
-		messagePlayerTip(client, "Use simple key names, letters, or numbers. Don't add spaces.");
-		messagePlayerInfo(client, `Examples: {ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl`);
-		return false;
-	}
-
-	if(!keyId) {
-		messagePlayerError(client, "That key name/id is invalid!");
-		return false;
-	}
-
-	if(areParamsEmpty(tempCommand)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
+	if (!keyId) {
+		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
+		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
+		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExampleList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
 		return false;
 	}
 
 	addPlayerKeyBind(client, keyId, tempCommand, tempParams);
-	messagePlayerSuccess(client, `You binded the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key to command: {ALTCOLOUR}/${tempCommand} ${tempParams}`);
+	messagePlayerSuccess(client, getLocaleString(client, "KeyBindRemoved", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`, `{ALTCOLOUR}/${tempCommand} ${tempParams}`));
 }
 
 // ===========================================================================
 
 function removeKeyBindCommand(command, params, client) {
-	let keyId = getKeyIdFromParams(getParam(params, " ", 1));
-
-	if(!keyId) {
-		messagePlayerError(client, "The key ID or name you input is invalid!");
-		messagePlayerTip(client, "Use simple key names, letters, or numbers. Don't add spaces.");
-		messagePlayerInfo(client, `Examples: {ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl`);
+	if (areParamsEmpty(command)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	if(!keyId) {
-		messagePlayerError(client, "That key name/id is invalid!");
+	let keyId = getKeyIdFromParams(getParam(params, " ", 1));
+
+	if (!keyId) {
+		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
+		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
+		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExampleList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
 		return false;
 	}
 
 	removePlayerKeyBind(client, keyId);
-	messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
+	messagePlayerSuccess(client, getLocaleString(client, "KeyBindRemoved", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function resetKeyBindsCommand(command, params, client) {
+	getPlayerData(client).promptType = AGRP_PROMPT_RESETKEYBINDS;
+	showPlayerPrompt(client, getLocaleString(client, "ResetAllKeyBindsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	//removePlayerKeyBind(client, keyId);
+	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
+}
+
+// ===========================================================================
+
+function copyKeyBindsToServerCommand(command, params, client) {
+	getPlayerData(client).promptType = AGRP_PROMPT_COPYKEYBINDSTOSERVER;
+	showPlayerPrompt(client, getLocaleString(client, "CopyAllKeyBindsToServerConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	//removePlayerKeyBind(client, keyId);
+	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
 }
 
 // ===========================================================================
 
 function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
 	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
-	if(tempKey == true) {
+	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
 
 	getPlayerData(client).keyBinds.push(keyBindData);
-	sendAddAccountKeyBindToClient(client, keys, (keys.length > 1) ? VRR_KEYSTATE_COMBO : VRR_KEYSTATE_UP);
+	sendAddAccountKeyBindToClient(client, keys, (keys.length > 1) ? AGRP_KEYSTATE_COMBO : AGRP_KEYSTATE_UP);
 
-	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
 		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
@@ -99,7 +139,7 @@ function removePlayerKeyBind(client, keyId) {
 	getPlayerData(client).keyBinds = getPlayerData(client).keyBinds.filter(keyBind => keyBind.key != keyId);
 	sendRemoveAccountKeyBindToClient(client, keyId);
 
-	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
 		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
@@ -111,8 +151,8 @@ function removePlayerKeyBind(client, keyId) {
 // ===========================================================================
 
 function doesPlayerHaveKeyBindForCommand(client, command) {
-	for(let i in getPlayerData(client).keyBinds) {
-		if(toLowerCase(getPlayerData(client).keyBinds[i].commandString.split(" ")[0]) == toLowerCase(command)) {
+	for (let i in getPlayerData(client).keyBinds) {
+		if (toLowerCase(getPlayerData(client).keyBinds[i].commandString.split(" ")[0]) == toLowerCase(command)) {
 			return true;
 		}
 	}
@@ -122,8 +162,8 @@ function doesPlayerHaveKeyBindForCommand(client, command) {
 // ===========================================================================
 
 function getPlayerKeyBindForCommand(client, command) {
-	for(let i in getPlayerData(client).keyBinds) {
-		if(toLowerCase(getPlayerData(client).keyBinds[i].commandString.split(" ")[0]) == toLowerCase(command)) {
+	for (let i in getPlayerData(client).keyBinds) {
+		if (toLowerCase(getPlayerData(client).keyBinds[i].commandString.split(" ")[0]) == toLowerCase(command)) {
 			return getPlayerData(client).keyBinds[i];
 		}
 	}
@@ -133,8 +173,8 @@ function getPlayerKeyBindForCommand(client, command) {
 // ===========================================================================
 
 function doesPlayerHaveKeyBindForKey(client, key) {
-	for(let i in getPlayerData(client).keyBinds) {
-		if(getPlayerData(client).keyBinds[i].key == key) {
+	for (let i in getPlayerData(client).keyBinds) {
+		if (getPlayerData(client).keyBinds[i].key == key) {
 			return true;
 		}
 	}
@@ -150,8 +190,8 @@ function doesPlayerHaveKeyBindsDisabled(client) {
 // ===========================================================================
 
 function getPlayerKeyBindForKey(client, key) {
-	for(let i in getPlayerData(client).keyBinds) {
-		if(getPlayerData(client).keyBinds[i].key == key) {
+	for (let i in getPlayerData(client).keyBinds) {
+		if (getPlayerData(client).keyBinds[i].key == key) {
 			return getPlayerData(client).keyBinds[i];
 		}
 	}
@@ -160,26 +200,28 @@ function getPlayerKeyBindForKey(client, key) {
 
 // ===========================================================================
 
-function playerUsedKeyBind(client, key) {
-	if(!isPlayerLoggedIn(client)) {
+function playerUsedKeyBind(client, key, duration = 0) {
+	if (!isPlayerLoggedIn(client)) {
 		return false;
 	}
 
-	if(!isPlayerSpawned(client)) {
+	if (!isPlayerSpawned(client)) {
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[VRR.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
-	if(!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
 		let keyBindData = getPlayerKeyBindForKey(client, key);
-		if(keyBindData.enabled) {
+		if (keyBindData.enabled) {
 			let splitCommandString = keyBindData.commandString.split(" ");
 			let tempCommand = splitCommandString[0];
 			let tempParams = "";
-			if(splitCommandString.length > 1) {
+			if (splitCommandString.length > 1) {
 				tempParams = splitCommandString.slice(1).join(" ");
 			}
+			getPlayerData(client).keyBindDuration = duration;
 			getCommand(toLowerCase(tempCommand)).handlerFunction(tempCommand, tempParams, client);
+			getPlayerData(client).keyBindDuration = 0;
 			//triggerEvent("OnPlayerCommand", null, tempCommand, tempParams, client);
 		}
 	}
@@ -189,7 +231,7 @@ function playerUsedKeyBind(client, key) {
 
 function sendAccountKeyBindsToClient(client) {
 	sendClearKeyBindsToClient(client);
-	for(let i in getPlayerData(client).keyBinds) {
+	for (let i in getPlayerData(client).keyBinds) {
 		sendAddAccountKeyBindToClient(client, getPlayerData(client).keyBinds[i].key, getPlayerData(client).keyBinds[i].keyState);
 	}
 }
@@ -197,13 +239,13 @@ function sendAccountKeyBindsToClient(client) {
 // ===========================================================================
 
 function showKeyBindListCommand(command, params, client) {
-	let keybindList = getPlayerData(client).keyBinds.map(function(x) { return `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
+	let keybindList = getPlayerData(client).keyBinds.map(function (x) { return `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
 
 	let chunkedList = splitArrayIntoChunks(keybindList, 6);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderKeyBindsList")));
 
-	for(let i in chunkedList) {
+	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
 }

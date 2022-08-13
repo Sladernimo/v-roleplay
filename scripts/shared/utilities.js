@@ -1,11 +1,16 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides shared utilities
 // TYPE: Shared (JavaScript)
 // ===========================================================================
+
+let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"];
+//let emojiNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"];
+//let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
 
 let bindableKeys = {
 	8: "backspace",
@@ -737,7 +742,7 @@ let serverEmoji = [
 	[":dizzy:", "💫"],
 	[":speech_balloon:", "💬"],
 	[":white_flower:", "💮"],
-	[":_100:", "💯"],
+	[":100:", "💯"],
 	[":moneybag:", "💰"],
 	[":currency_exchange:", "💱"],
 	[":heavy_dollar_sign:", "💲"],
@@ -1093,13 +1098,273 @@ let serverEmoji = [
 	[":water_buffalo:", "🐃"],
 	[":neutral_face:", "😐"],
 	[":clock1230:", "🕧"],
-	[":P", "😛" ],
-	[":)", "🙂" ],
-	[":D", "😃" ],
-	[":o", "😮" ],
-	[":O", "😮" ],
-	[":(", "☹️" ],
-	[":|", "😐" ],
+	[":think:", "🤔"],
+	[":thinking:", "🤔"],
+	[":P", "😛"],
+	[":)", "🙂"],
+	[":D", "😃"],
+	[":o", "😮"],
+	[":O", "😮"],
+	[":(", "☹️"],
+	[":|", "😐"],
+	["XD", "😆"],
+];
+
+// ===========================================================================
+
+let profanityFilterWords = [
+	"2g1c",
+	"acrotomophilia",
+	"anal",
+	"anilingus",
+	"anus",
+	"apeshit",
+	"arsehole",
+	"ass",
+	"asshole",
+	"assmunch",
+	"autoerotic",
+	"babeland",
+	"bangbros",
+	"bareback",
+	"barenaked",
+	"bastard",
+	"bastardo",
+	"bastinado",
+	"bbw",
+	"bdsm",
+	"beaner",
+	"beaners",
+	"bestiality",
+	"bimbos",
+	"birdlock",
+	"bitch",
+	"bitches",
+	"blowjob",
+	"blumpkin",
+	"bollocks",
+	"bondage",
+	"boner",
+	"boob",
+	"boobs",
+	"bukkake",
+	"bulldyke",
+	"bullshit",
+	"bunghole",
+	"busty",
+	"butt",
+	"buttcheeks",
+	"butthole",
+	"camgirl",
+	"camslut",
+	"camwhore",
+	"carpetmuncher",
+	"circlejerk",
+	"clit",
+	"clitoris",
+	"clusterfuck",
+	"cock",
+	"cocks",
+	"coprolagnia",
+	"coprophilia",
+	"cornhole",
+	"coon",
+	"coons",
+	"creampie",
+	"cum",
+	"cumming",
+	"cunnilingus",
+	"cunt",
+	"darkie",
+	"daterape",
+	"deepthroat",
+	"dendrophilia",
+	"dick",
+	"dildo",
+	"dingleberry",
+	"dingleberries",
+	"doggiestyle",
+	"doggystyle",
+	"dolcett",
+	"domination",
+	"dominatrix",
+	"dommes",
+	"dvda",
+	"ecchi",
+	"ejaculation",
+	"erotic",
+	"erotism",
+	"escort",
+	"eunuch",
+	"faggot",
+	"fecal",
+	"felch",
+	"fellatio",
+	"feltch",
+	"femdom",
+	"figging",
+	"fingerbang",
+	"fingering",
+	"fisting",
+	"footjob",
+	"frotting",
+	"fuck",
+	"fuckin",
+	"fucking",
+	"fucktards",
+	"fudgepacker",
+	"futanari",
+	"genitals",
+	"goatcx",
+	"goatse",
+	"gokkun",
+	"goodpoop",
+	"goregasm",
+	"grope",
+	"g-spot",
+	"guro",
+	"handjob",
+	"hardcore",
+	"hentai",
+	"homoerotic",
+	"honkey",
+	"hooker",
+	"humping",
+	"incest",
+	"intercourse",
+	"jailbait",
+	"jigaboo",
+	"jiggaboo",
+	"jiggerboo",
+	"jizz",
+	"juggs",
+	"kike",
+	"kinbaku",
+	"kinkster",
+	"kinky",
+	"knobbing",
+	"lolita",
+	"lovemaking",
+	"masturbate",
+	"milf",
+	"motherfucker",
+	"muffdiving",
+	"nambla",
+	"nawashi",
+	"negro",
+	"neonazi",
+	"nigga",
+	"nigger",
+	"nimphomania",
+	"nipple",
+	"nipples",
+	"nude",
+	"nudity",
+	"nympho",
+	"nymphomania",
+	"octopussy",
+	"omorashi",
+	"orgasm",
+	"orgy",
+	"paedophile",
+	"paki",
+	"panties",
+	"panty",
+	"pedobear",
+	"pedophile",
+	"pegging",
+	"penis",
+	"pissing",
+	"pisspig",
+	"playboy",
+	"ponyplay",
+	"poof",
+	"poon",
+	"poontang",
+	"punany",
+	"poopchute",
+	"porn",
+	"porno",
+	"pornography",
+	"pthc",
+	"pubes",
+	"pussy",
+	"queaf",
+	"queef",
+	"quim",
+	"raghead",
+	"rape",
+	"raping",
+	"rapist",
+	"rectum",
+	"rimjob",
+	"rimming",
+	"sadism",
+	"santorum",
+	"scat",
+	"schlong",
+	"scissoring",
+	"semen",
+	"sex",
+	"sexo",
+	"sexy",
+	"shemale",
+	"shibari",
+	"shit",
+	"shitblimp",
+	"shitty",
+	"shota",
+	"shrimping",
+	"skeet",
+	"slanteye",
+	"slut",
+	"s&m",
+	"smut",
+	"snatch",
+	"snowballing",
+	"sodomize",
+	"sodomy",
+	"spic",
+	"splooge",
+	"spooge",
+	"spunk",
+	"strapon",
+	"strappado",
+	"suck",
+	"sucks",
+	"swastika",
+	"swinger",
+	"threesome",
+	"throating",
+	"tit",
+	"tits",
+	"titties",
+	"titty",
+	"topless",
+	"tosser",
+	"towelhead",
+	"tranny",
+	"tribadism",
+	"tubgirl",
+	"tushy",
+	"twat",
+	"twink",
+	"twinkie",
+	"undressing",
+	"upskirt",
+	"urophilia",
+	"vagina",
+	"vibrator",
+	"vorarephilia",
+	"voyeur",
+	"vulva",
+	"wank",
+	"wetback",
+	"xx",
+	"xxx",
+	"yaoi",
+	"yiffy",
+	"zoophilia"
 ];
 
 // ===========================================================================
@@ -1119,6 +1384,9 @@ let placesOfOrigin = [
 
 // ===========================================================================
 
+/**
+ * @return {GameConfig} The game data
+ */
 function getGameConfig() {
 	return gameData;
 }
@@ -1139,8 +1407,8 @@ function getKeyIdFromParams(params) {
 	//    return sdlName;
 	//}
 
-	for(let i in bindableKeys) {
-		if(toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
+	for (let i in bindableKeys) {
+		if (toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
 			return i;
 		}
 	}
@@ -1325,11 +1593,11 @@ function toLowerCase(val) {
 // ===========================================================================
 
 function isNull(val) {
-	if(val == null) {
+	if (val == null) {
 		return true;
 	}
 
-	if(typeof val === "undefined") {
+	if (typeof val === "undefined") {
 		return true;
 	}
 
@@ -1339,8 +1607,8 @@ function isNull(val) {
 // ===========================================================================
 
 function getEntityData(entity, dataName) {
-	if(entity != null) {
-		if(entity.getData != null) {
+	if (entity != null) {
+		if (entity.getData != null) {
 			return entity.getData(dataName);
 		}
 	}
@@ -1350,7 +1618,7 @@ function getEntityData(entity, dataName) {
 // ===========================================================================
 
 function getDistance(vec1, vec2) {
-	if(isNull(vec1) || isNull(vec2)) {
+	if (isNull(vec1) || isNull(vec2)) {
 		return false;
 	}
 	return vec1.distance(vec2);
@@ -1361,11 +1629,11 @@ function getDistance(vec1, vec2) {
 function logToConsole(tempLogLevel, text) {
 	text = removeColoursInMessage(text);
 
-	if(hasBitFlag(logLevel|LOG_WARN|LOG_ERROR, tempLogLevel)) {
-		if(tempLogLevel & LOG_ERROR) {
+	if (hasBitFlag(logLevel | LOG_WARN | LOG_ERROR, tempLogLevel)) {
+		if (tempLogLevel & LOG_ERROR) {
 			consoleError(text);
 			return true;
-		} else if(tempLogLevel & LOG_WARN) {
+		} else if (tempLogLevel & LOG_WARN) {
 			consoleWarn(text);
 			return true;
 		} else {
@@ -1380,7 +1648,7 @@ function logToConsole(tempLogLevel, text) {
 
 function Enum(constantsList) {
 	let tempTable = {};
-	for(let i in constantsList) {
+	for (let i in constantsList) {
 		tempTable[constantsList[i]] = i;
 	}
 	return tempTable;
@@ -1401,13 +1669,13 @@ function isServerScript() {
 // ===========================================================================
 
 function getPercentage(num, per) {
-	return (num/100)*per;
+	return (num / 100) * per;
 }
 
 // ===========================================================================
 
 function getMultiplayerMod() {
-	return (getGame() >= 10) ? VRR_MPMOD_MAFIAC : VRR_MPMOD_GTAC;
+	return (getGame() >= 10) ? AGRP_MPMOD_MAFIAC : AGRP_MPMOD_GTAC;
 }
 
 // ===========================================================================
@@ -1419,7 +1687,7 @@ function isSnowSupported(gameId) {
 // ===========================================================================
 
 function isGTAIV() {
-	return (getGame() == VRR_GAME_GTA_IV);
+	return (getGame() == AGRP_GAME_GTA_IV);
 }
 
 // ===========================================================================
@@ -1431,60 +1699,68 @@ function areServerElementsSupported() {
 // ===========================================================================
 
 function isTimeSupported() {
-	return supportedFeatures.time[getGame()];
+	return isGameFeatureSupported("time");
 }
 
 // ===========================================================================
 
 function isWeatherSupported() {
-	return supportedFeatures.weather[getGame()];
+	return isGameFeatureSupported("weather");
 }
 
 // ===========================================================================
 
 function arePickupsSupported() {
-	return supportedFeatures.pickups[getGame()];
+	return isGameFeatureSupported("pickup");
 }
 
 // ===========================================================================
 
 function areBlipsSupported() {
-	return supportedFeatures.blips[getGame()];
+	return isGameFeatureSupported("blip");
 }
 
 // ===========================================================================
 
 function areMarkersSupported() {
-	return supportedFeatures.markers[getGame()];
+	return isGameFeatureSupported("marker");
 }
 
 // ===========================================================================
 
 function isFadeCameraSupported() {
-	return supportedFeatures.fadeCamera[getGame()];
+	return isGameFeatureSupported("fadeCamera");
 }
 
 // ===========================================================================
 
 function isCustomCameraSupported() {
-	return supportedFeatures.customCamera[getGame()];
+	return isGameFeatureSupported("customCamera");
 }
 
 // ===========================================================================
 
 function areFightStylesSupported() {
-	return supportedFeatures.fightStyles[getGame()];
+	return isGameFeatureSupported("fightStyle");
 }
 
 // ===========================================================================
 
 function areWorldLabelsSupported() {
-	return supportedFeatures.worldLabels[getGame()];
+	return isGameFeatureSupported("worldLabel");
 }
 
 // ===========================================================================
 
 function isGameFeatureSupported(featureName) {
+	if (typeof supportedFeatures[featureName] === "undefined") {
+		logToConsole(LOG_WARN, `[AGRP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
+		if (isServerScript()) {
+			submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
+			return false;
+		}
+	}
+
 	return supportedFeatures[featureName][getGame()];
 }
 
@@ -1498,8 +1774,8 @@ function getAllowedSkins(gameId = getGame()) {
 
 function getAllowedSkinIndexFromSkin(skin) {
 	let allowedSkins = getAllowedSkins();
-	for(let i in allowedSkins) {
-		if(allowedSkins[i][0] == skin) {
+	for (let i in allowedSkins) {
+		if (allowedSkins[i][0] == skin) {
 			return i;
 		}
 	}
@@ -1511,8 +1787,8 @@ function getAllowedSkinIndexFromSkin(skin) {
 
 function getSkinIndexFromModel(model, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
-	for(let i in skins) {
-		if(toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in skins) {
+		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
@@ -1524,8 +1800,8 @@ function getSkinIndexFromModel(model, gameId = getGame()) {
 
 function getSkinIndexFromName(name, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
-	for(let i in skins) {
-		if(toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
+	for (let i in skins) {
+		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
 		}
 	}
@@ -1537,8 +1813,8 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 
 function getObjectModelIndexFromModel(model, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
-	for(let i in objects) {
-		if(toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in objects) {
+		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
@@ -1558,11 +1834,11 @@ function getVehicleModelIndexFromParams(params, gameId = getGame()) {
 	let fromName = getVehicleModelIndexFromName(params, gameId);
 	let fromModel = getVehicleModelIndexFromModel(params, gameId);
 
-	if(fromModel && !fromName) {
+	if (fromModel && !fromName) {
 		return fromModel;
 	}
 
-	if(!fromModel && fromName) {
+	if (!fromModel && fromName) {
 		return fromName;
 	}
 
@@ -1573,8 +1849,8 @@ function getVehicleModelIndexFromParams(params, gameId = getGame()) {
 
 function getVehicleModelIndexFromName(name, gameId = getGame()) {
 	let vehicles = getGameConfig().vehicles[gameId];
-	for(let i in vehicles) {
-		if(toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
+	for (let i in vehicles) {
+		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
 		}
 	}
@@ -1586,13 +1862,13 @@ function getVehicleModelIndexFromName(name, gameId = getGame()) {
 
 function getVehicleModelIndexFromModel(model, gameId = getGame()) {
 	let vehicles = getGameConfig().vehicles[gameId];
-	for(let i in vehicles) {
-		if(isNaN(model)) {
-			if(toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in vehicles) {
+		if (isNaN(model)) {
+			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
 				return i;
 			}
 		} else {
-			if(vehicles[i][0] == toInteger(model)) {
+			if (vehicles[i][0] == toInteger(model)) {
 				return i;
 			}
 		}
@@ -1605,8 +1881,8 @@ function getVehicleModelIndexFromModel(model, gameId = getGame()) {
 
 function getVehicleModelFromName(name, gameId = getGame()) {
 	let vehicles = getGameConfig().vehicles[gameId];
-	for(let i in vehicles) {
-		if(toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
+	for (let i in vehicles) {
+		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return vehicles[i][0];
 		}
 	}
@@ -1618,13 +1894,13 @@ function getVehicleModelFromName(name, gameId = getGame()) {
 
 function getVehicleNameFromModel(model, gameId = getGame()) {
 	let vehicles = getGameConfig().vehicles[gameId];
-	for(let i in vehicles) {
-		if(isNaN(model)) {
-			if(toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in vehicles) {
+		if (isNaN(model)) {
+			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
 				return vehicles[i][1];
 			}
 		} else {
-			if(vehicles[i][0] == toInteger(model)) {
+			if (vehicles[i][0] == toInteger(model)) {
 				return vehicles[i][1];
 			}
 		}
@@ -1639,11 +1915,11 @@ function getSkinModelIndexFromParams(params, gameId = getGame()) {
 	let fromName = getSkinIndexFromName(params, gameId);
 	let fromModel = getSkinIndexFromModel(params, gameId);
 
-	if(fromModel && !fromName) {
+	if (fromModel && !fromName) {
 		return fromModel;
 	}
 
-	if(!fromModel && fromName) {
+	if (!fromModel && fromName) {
 		return fromName;
 	}
 
@@ -1654,8 +1930,8 @@ function getSkinModelIndexFromParams(params, gameId = getGame()) {
 
 function getSkinNameFromModel(model, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
-	for(let i in skins) {
-		if(toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in skins) {
+		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return skins[i][1];
 		}
 	}
@@ -1666,7 +1942,7 @@ function getSkinNameFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinNameFromIndex(index, gameId = getGame()) {
-	if(typeof getGameConfig().skins[gameId][index] != "undefined") {
+	if (typeof getGameConfig().skins[gameId][index] != "undefined") {
 		return getGameConfig().skins[gameId][index][1];
 	}
 
@@ -1677,8 +1953,8 @@ function getSkinNameFromIndex(index, gameId = getGame()) {
 
 function getSkinModelFromName(name, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
-	for(let i in skins) {
-		if(toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
+	for (let i in skins) {
+		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return skins[i][0];
 		}
 	}
@@ -1690,11 +1966,11 @@ function getObjectModelIndexFromParams(params, gameId = getGame()) {
 	let fromName = getObjectModelIndexFromName(params, gameId);
 	let fromModel = getObjectModelIndexFromModel(params, gameId);
 
-	if(fromModel && !fromName) {
+	if (fromModel && !fromName) {
 		return fromModel;
 	}
 
-	if(!fromModel && fromName) {
+	if (!fromModel && fromName) {
 		return fromName;
 	}
 
@@ -1705,8 +1981,8 @@ function getObjectModelIndexFromParams(params, gameId = getGame()) {
 
 function getObjectNameFromModel(model, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
-	for(let i in objects) {
-		if(toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
+	for (let i in objects) {
+		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return objects[i][1];
 		}
 	}
@@ -1718,8 +1994,8 @@ function getObjectNameFromModel(model, gameId = getGame()) {
 
 function getObjectModelFromName(name, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
-	for(let i in objects) {
-		if(toLowerCase(objects[i][1]).indexOf(toLowerCase(name)) != -1) {
+	for (let i in objects) {
+		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return objects[i][0];
 		}
 	}
@@ -1728,8 +2004,8 @@ function getObjectModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((angle-1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((angle-1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos((angle - 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((angle - 1.57) + (Math.PI / 2))) * distance));
 
 	let rightPos = toVector3(x, y, pos.z);
 
@@ -1739,8 +2015,8 @@ function getPosToRightOfPos(pos, angle, distance) {
 // ===========================================================================
 
 function getPosToLeftOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((angle+1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((angle+1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
 
 	let leftPos = toVector3(x, y, pos.z);
 
@@ -1754,18 +2030,18 @@ function getPosInFrontOfPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if(getGame() != VRR_GAME_MAFIA_ONE) {
-		x = (pos.x+((Math.cos(angle+(Math.PI/2)))*distance));
-		y = (pos.y+((Math.sin(angle+(Math.PI/2)))*distance));
+	if (getGame() != AGRP_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	} else {
-		while(angle < 0.0)
+		while (angle < 0.0)
 			angle += 360.0;
 
-		while(angle > 360.0)
+		while (angle > 360.0)
 			angle -= 360.0;
 
-		x = (pos.x+((Math.cos(angle-(Math.PI/2)))*distance));
-		z = (pos.z+((Math.sin(angle+(Math.PI/2)))*distance));
+		x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		z = (pos.z + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	}
 
 	return toVector3(x, y, z);
@@ -1778,14 +2054,14 @@ function getPosBehindPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if(getGame() < VRR_GAME_MAFIA_ONE) {
-		y = (pos.y+((Math.sin(angle-(Math.PI/2)))*distance));
+	if (getGame() < AGRP_GAME_MAFIA_ONE) {
+		y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
 	} else {
 		angle = radToDeg(angle);
-		z = (pos.z+((Math.sin(angle-(Math.PI/2)))*distance));
+		z = (pos.z + ((Math.sin(angle - (Math.PI / 2))) * distance));
 	}
 
-	x = (pos.x+((Math.cos(angle-(Math.PI/2)))*distance));
+	x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
 
 	return toVector3(x, y, z);
 }
@@ -1793,19 +2069,19 @@ function getPosBehindPos(pos, angle, distance) {
 // ===========================================================================
 
 function getPosAbovePos(pos, distance) {
-	return toVector3(pos.x, pos.y, pos.z+distance);
+	return toVector3(pos.x, pos.y, pos.z + distance);
 }
 
 // ===========================================================================
 
 function getPosBelowPos(pos, distance) {
-	return toVector3(pos.x, pos.y, pos.z-distance);
+	return toVector3(pos.x, pos.y, pos.z - distance);
 }
 
 // ===========================================================================
 
 function applyOffsetToPos(position, position2) {
-	return toVector3(position.x+position2.x, position.y+position2.y, position.z+position2.z);
+	return toVector3(position.x + position2.x, position.y + position2.y, position.z + position2.z);
 }
 
 // ===========================================================================
@@ -1840,10 +2116,9 @@ function boolToInt(boolVal) {
 
 function fixAngle(angle) {
 	angle = radToDeg(angle);
-	if(angle < 0)
-	{
+	if (angle < 0) {
 		angle = Math.abs(angle);
-		angle = ((180-angle+1)+180);
+		angle = ((180 - angle + 1) + 180);
 	}
 	return degToRad(angle);
 }
@@ -1887,8 +2162,8 @@ function radToDeg(rad) {
 // ===========================================================================
 
 function getHeadingFromPosToPos(pos1, pos2) {
-	let x = pos2.x-pos1.x;
-	let y = pos2.y-pos1.y;
+	let x = pos2.x - pos1.x;
+	let y = pos2.y - pos1.y;
 	let rad = Math.atan2(y, x);
 	let deg = radToDeg(rad);
 	deg -= 90;
@@ -1900,12 +2175,12 @@ function getHeadingFromPosToPos(pos1, pos2) {
 
 function getAngleInCircleFromCenter(center, total, current) {
 	let gap = 360 / total;
-	let deg = Math.floor(gap*current);
+	let deg = Math.floor(gap * current);
 
-	if(deg <= 0) {
+	if (deg <= 0) {
 		deg = 1;
 	} else {
-		if(deg >= 360) {
+		if (deg >= 360) {
 			deg = 359;
 		}
 	}
@@ -1917,7 +2192,7 @@ function getAngleInCircleFromCenter(center, total, current) {
 
 function getArrayOfElementId(elements) {
 	let tempArray = [];
-	for(let i in elements) {
+	for (let i in elements) {
 		tempArray.push(elements[i].id);
 	}
 
@@ -1927,7 +2202,7 @@ function getArrayOfElementId(elements) {
 // ===========================================================================
 
 function getCurrentUnixTimestamp() {
-	return new Date().getTime()/1000;
+	return Math.round(new Date().getTime() / 1000);
 }
 
 // ===========================================================================
@@ -1953,10 +2228,10 @@ function msToTime(duration) {
 // ===========================================================================
 
 function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") {
-	var result           = '';
+	var result = '';
 	var charactersLength = characters.length;
-	for ( var i = 0; i < length; i++ ) {
-	   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 	return result;
 }
@@ -1964,7 +2239,7 @@ function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZab
 // ===========================================================================
 
 function doesWordStartWithVowel(word) {
-	switch(word.substr(0,1).toLowerCase()) {
+	switch (word.substr(0, 1).toLowerCase()) {
 		case "a":
 		case "e":
 		case "i":
@@ -1982,7 +2257,7 @@ function doesWordStartWithVowel(word) {
 // ===========================================================================
 
 function getProperDeterminerForName(word) {
-	switch(word.substr(0,1).toLowerCase()) {
+	switch (word.substr(0, 1).toLowerCase()) {
 		case "a":
 		case "e":
 		case "i":
@@ -2005,7 +2280,7 @@ function getPluralForm(name) {
 function removeHexColoursFromString(str) {
 	let matchRegex = /#([a-f0-9]{3}|[a-f0-9]{4}(?:[a-f0-9]{2}){0,2})\b/gi;
 	let matchedHexes = str.match(matchRegex);
-	for(let i in matchHex) {
+	for (let i in matchHex) {
 		str.replace(matchedHexes, `{${i}}`);
 	}
 
@@ -2030,15 +2305,15 @@ async function waitUntil(condition) {
 // ===========================================================================
 
 function getGameLocationFromParams(params) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		let locations = getGameConfig().locations[getGame()];
-		for(let i in locations) {
-			if(toLowerCase(locations[i][0]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in locations) {
+			if (toLowerCase(locations[i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if(typeof getGameConfig().locations[getGame()][params] != "undefined") {
+		if (typeof getGameConfig().locations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -2077,16 +2352,22 @@ function getOpenedClosedFromBool(boolVal) {
 
 // ===========================================================================
 
+function getTrueFalseFromBool(boolVal) {
+	return (boolVal) ? "True" : "False";
+}
+
+// ===========================================================================
+
 function breakText(text, maxLength) {
 	let lines = [];
 	let j = Math.floor(text.length / maxLength);
 
-	for(let i = 0; i < j; i++) {
-		lines.push(text.substr(i*maxLength,maxLength));
+	for (let i = 0; i < j; i++) {
+		lines.push(text.substr(i * maxLength, maxLength));
 	}
 
-	let line = text.substr(j*maxLength, text.length % maxLength);
-	if(line.length > 0) {
+	let line = text.substr(j * maxLength, text.length % maxLength);
+	if (line.length > 0) {
 		lines.push(line);
 	}
 
@@ -2096,7 +2377,7 @@ function breakText(text, maxLength) {
 // ===========================================================================
 
 function getSpeedFromVelocity(vel) {
-	return Math.sqrt(vel.x*vel.x + vel.y*vel.y + vel.z*vel.z);
+	return Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
 }
 
 // ===========================================================================
@@ -2120,34 +2401,34 @@ function getCardinalDirection(pos1, pos2) {
 	let nw = 7;
 	let na = 8;
 
-	if(b < 0 && a < 0){
-		if(x < (y/2)){
+	if (b < 0 && a < 0) {
+		if (x < (y / 2)) {
 			return no;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return ea;
 		} else {
 			return ne;
 		}
-	} else if(b < 0 && a >= 0){
-		if(x < (y/2)){
+	} else if (b < 0 && a >= 0) {
+		if (x < (y / 2)) {
 			return no;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return we;
 		} else {
 			return nw;
 		}
-	} else if(b >= 0 && a >= 0){
-		if(x < (y/2)){
+	} else if (b >= 0 && a >= 0) {
+		if (x < (y / 2)) {
 			return so;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return we;
 		} else {
 			return sw;
 		}
-	} else if(b >= 0 && a < 0){
-		if(x < (y/2)){
+	} else if (b >= 0 && a < 0) {
+		if (x < (y / 2)) {
 			return so;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return ea;
 		} else {
 			return se;
@@ -2163,7 +2444,7 @@ function getCardinalDirection(pos1, pos2) {
 function getTimeDifferenceDisplay(timeStamp2, timeStamp1) {
 	timeStamp1 = timeStamp1 * 1000;
 	timeStamp2 = timeStamp2 * 1000;
-	if(isNaN(timeStamp1) || isNaN(timeStamp2)) {
+	if (isNaN(timeStamp1) || isNaN(timeStamp2)) {
 		return "Unknown";
 	}
 
@@ -2178,7 +2459,7 @@ function getTimeDifferenceDisplay(timeStamp2, timeStamp1) {
 // ===========================================================================
 
 function doesWordStartWithVowel(word) {
-	switch(toLowerCase(word.substr(0,1))) {
+	switch (toLowerCase(word.substr(0, 1))) {
 		case "a":
 		case "e":
 		case "i":
@@ -2195,11 +2476,18 @@ function doesWordStartWithVowel(word) {
 
 // ===========================================================================
 
-function replaceEmojiIntoString(message) {
-	for(let i in emojiReplaceString) {
-		message = message.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
+/**
+ * Replaces emoji texts with actual emoji
+ *
+ * @param {String} messageString - String with emoji names
+ * @return {String} String with actual emoji images
+ *
+ */
+function replaceEmojiInMessage(messageString) {
+	for (let i in serverEmoji) {
+		messageString = messageString.replace(serverEmoji[i][0], serverEmoji[i][1]);
 	}
-	return message;
+	return messageString;
 }
 
 // ===========================================================================
@@ -2209,22 +2497,22 @@ function makeReadableTime(hour, minute) {
 	let minuteStr = toString(minute);
 	let meridianStr = "AM";
 
-	if(hour < 10) {
+	if (hour < 10) {
 		hourStr = "0" + toString(hour);
 		meridianStr = "AM";
 	}
 
-	if(hour > 11) {
-		let actualHour = hour-12;
-		if(actualHour < 10) {
-			hourStr = "0" + toString(hour-12);
+	if (hour > 11) {
+		let actualHour = hour - 12;
+		if (actualHour < 10) {
+			hourStr = "0" + toString(hour - 12);
 		} else {
-			hourStr = toString(hour-12);
+			hourStr = toString(hour - 12);
 		}
 		meridianStr = "PM";
 	}
 
-	if(minute < 10) {
+	if (minute < 10) {
 		minuteStr = "0" + toString(minute);
 	}
 
@@ -2234,14 +2522,14 @@ function makeReadableTime(hour, minute) {
 // ===========================================================================
 
 function getCardinalDirectionName(cardinalDirectionId) {
-	let cardinalDirections = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest", "Unknown" ];
+	let cardinalDirections = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest", "Unknown"];
 	return cardinalDirections[cardinalDirectionId];
 }
 
 // ===========================================================================
 
 function getWeekDayName(weekdayId) {
-	let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+	let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 	return weekdayNames[weekdayId];
 }
 
@@ -2260,9 +2548,9 @@ function getLockedUnlockedEmojiFromBool(boolVal) {
 
 // ===========================================================================
 
-String.prototype.format = function() {
+String.prototype.format = function () {
 	let a = this;
-	for(let i in arguments) {
+	for (let i in arguments) {
 		a = a.replace("{" + String(i) + "}", arguments[i]);
 	}
 	return a;
@@ -2277,8 +2565,8 @@ function ArrayBufferToString(buffer) {
 // ===========================================================================
 
 function getElementTypeName(typeId) {
-	if(getGame() == VRR_GAME_MAFIA_ONE) {
-		switch(typeId) {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		switch (typeId) {
 			case ELEMENT_VEHICLE:
 				return "Vehicle";
 
@@ -2292,7 +2580,7 @@ function getElementTypeName(typeId) {
 				return "Unknown"
 		}
 	} else {
-		switch(typeId) {
+		switch (typeId) {
 			case ELEMENT_VEHICLE:
 				return "Vehicle";
 
@@ -2330,7 +2618,7 @@ function getElementTypeName(typeId) {
 
 function fillStringWithCharacter(character, amount) {
 	let tempString = "";
-	for(let i = 0; i <= amount; i++) {
+	for (let i = 0; i <= amount; i++) {
 		tempString = tempString + toString(character);
 	}
 	return tempString;
@@ -2351,7 +2639,7 @@ function getCurrentTimeStampWithTimeZone(timeZone) {
 	let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
 	let offset = utcDate.getTime() - tzDate.getTime();
 
-	date.setTime( date.getTime() + offset );
+	date.setTime(date.getTime() + offset);
 
 	return date;
 };
@@ -2366,7 +2654,7 @@ function getSyncerFromId(syncerId) {
 // ===========================================================================
 
 function isConsole(client) {
-	if(client == null) {
+	if (client == null) {
 		return false;
 	}
 
@@ -2395,8 +2683,8 @@ function isSamePlayer(client1, client2) {
  */
 function getConsoleClient() {
 	let clients = getClients();
-	for(let i in clients) {
-		if(isConsole(clients[i])) {
+	for (let i in clients) {
+		if (isConsole(clients[i])) {
 			return clients[i];
 		}
 	}
@@ -2477,11 +2765,11 @@ function getHexColourByType(typeName) {
 // ===========================================================================
 
 function getPlayerColour(client) {
-	if(getPlayerData(client) != false) {
-		if(!isPlayerLoggedIn(client)) {
+	if (getPlayerData(client) != false) {
+		if (!isPlayerLoggedIn(client)) {
 			return getColourByName("darkGrey");
 		} else {
-			if(isPlayerWorking(client)) {
+			if (isPlayerWorking(client)) {
 				return getJobData(getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(client).job)).colour;
 			}
 		}
@@ -2514,9 +2802,9 @@ function getBoolRedGreenInlineColour(boolValue) {
  */
 function hexToRgb(h) {
 	return [
-		'0x'+h[1]+h[2]|0,
-		'0x'+h[3]+h[4]|0,
-		'0x'+h[5]+h[6]|0
+		'0x' + h[1] + h[2] | 0,
+		'0x' + h[3] + h[4] | 0,
+		'0x' + h[5] + h[6] | 0
 	];
 }
 
@@ -2532,7 +2820,7 @@ function hexToRgb(h) {
  *
  */
 function rgbToHex(r, g, b) {
-	return "#"+((1<<24)+(r<<16)+(g<<8)+ b).toString(16).slice(1);
+	return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
 // ===========================================================================
@@ -2546,8 +2834,8 @@ function rgbToHex(r, g, b) {
  */
 function getClientChatColour(client) {
 	let tempJob = getPlayerCurrentSubAccount(client).job;
-	if(tempJob != -1) {
-		if(getPlayerData(client).isWorking) {
+	if (tempJob != -1) {
+		if (getPlayerData(client).isWorking) {
 			return getJobData(tempJob).jobColour;
 		}
 	}
@@ -2645,7 +2933,7 @@ function hexFromToColour(colour) {
  *
  */
 function replaceColoursInMessage(messageText) {
-	if(messageText == null) {
+	if (messageText == null) {
 		return "";
 	}
 
@@ -2661,13 +2949,17 @@ function replaceColoursInMessage(messageText) {
 	tempRegex = new RegExp(tempFind, 'g');
 	messageText = messageText.replace(tempRegex, "[#FFFFFF]");
 
-	for(let i in getServerColours().hex.byName) {
+	tempFind = `{TIMESTAMPCOLOUR}`;
+	tempRegex = new RegExp(tempFind, 'g');
+	messageText = messageText.replace(tempRegex, "[#C8C8C8]");
+
+	for (let i in getServerColours().hex.byName) {
 		let find = `{${i}}`;
 		let re = new RegExp(find, 'g');
 		messageText = messageText.replace(re, `[#${getServerColours().hex.byName[i]}]`);
 	}
 
-	for(let i in getServerColours().hex.byType) {
+	for (let i in getServerColours().hex.byType) {
 		let find = `{${i}}`;
 		let re = new RegExp(find, 'g');
 		messageText = messageText.replace(re, `[#${getServerColours().hex.byType[i]}]`);
@@ -2686,15 +2978,15 @@ function replaceColoursInMessage(messageText) {
  *
  */
 function removeColoursInMessage(messageText) {
-	if(messageText == null) {
+	if (messageText == null) {
 		return "";
 	}
 
-	if(typeof messageText != "string") {
+	if (typeof messageText != "string") {
 		return "";
 	}
 
-	if(messageText == "") {
+	if (messageText == "") {
 		return "";
 	}
 
@@ -2710,13 +3002,13 @@ function removeColoursInMessage(messageText) {
 	tempRegex = new RegExp(tempFind, 'g');
 	messageText = messageText.replace(tempRegex, "");
 
-	for(let i in getServerColours().hex.byName) {
+	for (let i in getServerColours().hex.byName) {
 		let find = `{${i}}`;
 		let re = new RegExp(find, 'g');
 		messageText = messageText.replace(re, "");
 	}
 
-	for(let i in getServerColours().hex.byType) {
+	for (let i in getServerColours().hex.byType) {
 		let find = `{${i}}`;
 		let re = new RegExp(find, 'g');
 		messageText = messageText.replace(re, "");
@@ -2728,17 +3020,17 @@ function removeColoursInMessage(messageText) {
 // ===========================================================================
 
 /**
- * Replaces emoji texts with actual emoji
+ * Replaces profanity with masked words like: ******
  *
- * @param {String} colouredString - String with emoji names
- * @return {String} String with actual emoji images
+ * @param {String} messageString - String with profanity
+ * @return {String} String with profanity masked
  *
  */
-function replaceEmojiInString(messageString) {
-	for(let i in emojiReplaceString) {
-		while(messageString.indexOf(emojiReplaceString[i][0]) != -1) {
-			messageString = messageString.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
-		}
+function replaceProfanityInMessage(messageString) {
+	for (let i in profanityFilterWords) {
+		let find = profanityFilterWords[i];
+		let re = new RegExp(find, 'gi');
+		messageString = messageString.replace(re, fillStringWithCharacter('*', profanityFilterWords[i].length - 1));
 	}
 	return messageString;
 }
@@ -2781,8 +3073,8 @@ function getPlayerLocationName(client) {
 
 function getGameAreaFromPos(position) {
 	let areas = getGameConfig().areas[getGame()];
-	for(let i in areas) {
-		if(isPointInPoly(areas[i].borders, position)) {
+	for (let i in areas) {
+		if (isPointInPoly(areas[i].borders, position)) {
 			return i;
 		}
 	}
@@ -2791,10 +3083,10 @@ function getGameAreaFromPos(position) {
 // ===========================================================================
 
 function isPosInPoly(poly, position) {
-	for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+	for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
 		((poly[i].y <= position.y && position.y < poly[j].y) || (poly[j].y <= position.y && position.y < poly[i].y))
-		&& (position.x < (poly[j].x - poly[i].x) * (position[1] - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
-		&& (c = !c);
+			&& (position.x < (poly[j].x - poly[i].x) * (position[1] - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
+			&& (c = !c);
 	return c;
 }
 
@@ -2805,7 +3097,7 @@ function createBitFlagTable(keyNames) {
 	let bitTable = {};
 	let incVal = 1;
 
-	for(let i in keyNames) {
+	for (let i in keyNames) {
 		let key = keyNames[i];
 		bitTable[key] = bitVal;
 		bitVal = 1 << incVal;
@@ -2817,15 +3109,15 @@ function createBitFlagTable(keyNames) {
 // ===========================================================================
 
 function hasBitFlag(allFlags, checkForFlag) {
-	if(allFlags == 0) {
+	if (allFlags == 0) {
 		return false;
 	}
 
-	if(allFlags == -1) {
+	if (allFlags == -1) {
 		return true;
 	}
 
-	if((allFlags & checkForFlag) == checkForFlag) {
+	if ((allFlags & checkForFlag) == checkForFlag) {
 		return true;
 	}
 
@@ -2842,6 +3134,45 @@ function addBitFlag(allFlags, flagValue) {
 
 function removeBitFlag(allFlags, flagValue) {
 	return allFlags ^ flagValue;
+}
+
+// ===========================================================================
+
+function getAnimationFromParams(params) {
+	let animations = getGameConfig().animations[getGame()];
+	if (isNaN(params)) {
+		for (let i in animations) {
+			if (toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
+				return i;
+			}
+		}
+	} else {
+		if (typeof getGameConfig().animations[getGame()][params] != "undefined") {
+			return toInteger(params);
+		}
+	}
+
+	return -1;
+}
+
+// ===========================================================================
+
+/**
+ * @param {number} animationSlot - The slot index of the animation
+ * @return {AnimationData} The animation's data (array)
+ */
+function getAnimationData(animationSlot, gameId = getGame()) {
+	return getGameConfig().animations[gameId][animationSlot];
+}
+
+// ===========================================================================
+
+function fillLeadingZeros(number, length) {
+	let str = toString(number);
+	while (str.length < length) {
+		str = "0" + str;
+	}
+	return str;
 }
 
 // ===========================================================================

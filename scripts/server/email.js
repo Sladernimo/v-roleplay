@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: email.js
 // DESC: Provides email handling, functions and usage
@@ -14,23 +15,26 @@ function initEmailScript() {
 
 // ===========================================================================
 
-function sendEmail(toEmail, toName, subject, body) {
-	if(!checkForSMTPModule()) {
+async function sendEmail(toEmail, toName, subject, body) {
+	if (!checkForSMTPModule()) {
 		return false;
 	}
 
-	module.smtp.send(
-		getEmailConfig().smtp.host,
-		getEmailConfig().smtp.port,
-		intToBool(getEmailConfig().smtp.useTLS),
-		getEmailConfig().smtp.username,
-		getEmailConfig().smtp.password,
-		toEmail,
-		toName,
-		subject,
-		body,
-		getEmailConfig().smtp.from,
-		getEmailConfig().smtp.fromName);
+	Promise.resolve().then(() => {
+		module.smtp.send(
+			getEmailConfig().smtp.host,
+			getEmailConfig().smtp.port,
+			intToBool(getEmailConfig().smtp.useTLS),
+			getEmailConfig().smtp.username,
+			getEmailConfig().smtp.password,
+			toEmail,
+			toName,
+			subject,
+			body,
+			getEmailConfig().smtp.from,
+			getEmailConfig().smtp.fromName
+		);
+	});
 }
 
 // ===========================================================================

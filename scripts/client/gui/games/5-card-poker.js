@@ -1,8 +1,9 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
-// FILE: paramedic.js
-// DESC: Provides paramedic NPC interaction and functionality
-// TYPE: Server (JavaScript)
+// FILE: 5cardpoker.js
+// DESC: Provides 5-card poker games GUI
+// TYPE: Client (JavaScript)
 // ===========================================================================

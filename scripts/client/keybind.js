@@ -1,6 +1,7 @@
 // ===========================================================================
-// Vortrex's Roleplay Resource
-// https://github.com/VortrexFTW/gtac_roleplay
+// Asshat Gaming Roleplay
+// https://github.com/VortrexFTW/agrp_main
+// (c) 2022 Asshat Gaming
 // ===========================================================================
 // FILE: keybind.js
 // DESC: Provides keybind features
@@ -25,13 +26,13 @@ function initKeyBindScript() {
 function bindAccountKey(key, keyState) {
 	logToConsole(LOG_DEBUG, `[VRR.KeyBind]: Binded key ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 	keyBinds.push(toInteger(key));
-	bindKey(toInteger(key), keyState, function(event) {
-		if(isAnyGUIActive()) {
+	bindKey(toInteger(key), keyState, function (event) {
+		if (isAnyGUIActive()) {
 			return false;
 		}
 
-		if(hasKeyBindDelayElapsed()) {
-			if(canLocalPlayerUseKeyBinds()) {
+		if (hasKeyBindDelayElapsed()) {
+			if (canLocalPlayerUseKeyBinds()) {
 				logToConsole(LOG_DEBUG, `[VRR.KeyBind]: Using keybind for key ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 				lastKeyBindUse = sdl.ticks;
 				tellServerPlayerUsedKeyBind(key);
@@ -56,7 +57,7 @@ function unBindAccountKey(key) {
 // ===========================================================================
 
 function hasKeyBindDelayElapsed() {
-	if(sdl.ticks-lastKeyBindUse >= keyBindDelayTime) {
+	if (sdl.ticks - lastKeyBindUse >= keyBindDelayTime) {
 		return true;
 	}
 
@@ -66,15 +67,15 @@ function hasKeyBindDelayElapsed() {
 // ===========================================================================
 
 function canLocalPlayerUseKeyBinds() {
-	if(isAnyGUIActive()) {
+	if (isAnyGUIActive()) {
 		return false;
 	}
 
-	if(!isSpawned) {
+	if (!isSpawned) {
 		return false;
 	}
 
-	if(itemActionDelayEnabled) {
+	if (itemActionDelayEnabled) {
 		return false;
 	}
 
@@ -84,7 +85,7 @@ function canLocalPlayerUseKeyBinds() {
 // ===========================================================================
 
 function clearKeyBinds() {
-	for(let i in keyBinds) {
+	for (let i in keyBinds) {
 		unbindKey(keyBinds[i]);
 	}
 	keyBinds = [];
