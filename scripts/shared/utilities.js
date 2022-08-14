@@ -1422,6 +1422,12 @@ function getKeyNameFromId(params) {
 
 // ===========================================================================
 
+function getKeyComboName(keys) {
+	return keys.map(x => getKeyNameFromId(x.key)).join(" + ");
+}
+
+// ===========================================================================
+
 function and(var1, var2) {
 	return (var1 && var2);
 }
