@@ -2281,11 +2281,13 @@ function deleteBusiness(businessId, whoDeleted = 0) {
  * @return {Boolean} Whether or not the players were forced to exit
  *
  */
-function removePlayersFromBusiness(businessId) {
+function removePlayersFromBusiness(businessIndex) {
 	getClients().forEach(function (client) {
-		if (doesBusinessHaveInterior(businessId)) {
-			if (getPlayerBusiness(client) == businessId) {
-				exitBusiness(client);
+		if (doesBusinessHaveInterior(businessIndex)) {
+			if (getPlayerBusiness(client) == businessIndex) {
+				if (getPlayerInterior(client) == getBusinessData(businessIndex).exitInterior && getPlayerDimension(client) == getBusinessData(businessIndex).exitDimension) {
+					exitBusiness(client);
+				}
 			}
 		}
 	});
