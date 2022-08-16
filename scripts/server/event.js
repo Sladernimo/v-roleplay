@@ -690,7 +690,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 			getPlayerData(client).lastVehicle = vehicle;
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-			if (getPlayerVehicleSeat(client) == AGRP_VEHSEAT_DRIVER) {
+			if (seat == AGRP_VEHSEAT_DRIVER) {
 				vehicle.engine = getVehicleData(vehicle).engine;
 
 				if (getVehicleData(vehicle).buyPrice > 0) {
@@ -787,7 +787,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-
+			onPlayerEnteringVehicle(client, vehicle, seat);
 		}
 	}
 }
@@ -801,6 +801,18 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 			onPlayerExitingVehicle(client, vehicle, seat);
 		}
 	}
+}
+
+// ===========================================================================
+
+function onPlayerEnteringVehicle(client, vehicle, seat) {
+
+}
+
+// ===========================================================================
+
+function onPlayerExitingVehicle(client, vehicle, seat) {
+
 }
 
 // ===========================================================================

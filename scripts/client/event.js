@@ -155,24 +155,38 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	//logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
-	if (inVehicleSeat) {
-		parkedVehiclePosition = false;
-		parkedVehicleHeading = false;
+	if (localPlayer != null) {
+		if (ped == localPlayer) {
+			if (areServerElementsSupported()) {
+				if (inVehicleSeat == 0) {
+					//setVehicleEngine(vehicle.id, false);
+					if (!inVehicle.engine) {
+						parkedVehiclePosition = false;
+						parkedVehicleHeading = false;
+					}
+				}
+			}
+		}
 	}
 }
 
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Local player entered vehicle`);
+	logToConsole(LOG_DEBUG, `[VRR.Event] Ped entered vehicle`);
 	//sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
-	if (areServerElementsSupported()) {
-		if (inVehicleSeat == 0) {
-			setVehicleEngine(vehicle.id, false);
-			if (!inVehicle.engine) {
-				parkedVehiclePosition = inVehicle.position;
-				parkedVehicleHeading = inVehicle.heading;
+
+	if (localPlayer != null) {
+		if (ped == localPlayer) {
+			if (areServerElementsSupported()) {
+				if (inVehicleSeat == 0) {
+					//setVehicleEngine(vehicle.id, false);
+					if (!inVehicle.engine) {
+						parkedVehiclePosition = inVehicle.position;
+						parkedVehicleHeading = inVehicle.heading;
+					}
+				}
 			}
 		}
 	}
