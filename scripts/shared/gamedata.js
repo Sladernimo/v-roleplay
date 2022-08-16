@@ -4377,6 +4377,9 @@ let gameData = {
 			["Downtown Building Roof", [-448.37, 1249.13, 77.40], 0.0, null],
 			["Downtown Ammunation Back Lot", [-741.58, 1254.04, 12.18], 0.0, null],
 			["Phil's Place", [-1098.68, 343.21, 11.26], 0.0, null],
+			["Escobar International Airport Runway", [-1681.13, -1029.21, 14.87], 0.0, null],
+			["Escobar International Airport Terminal", [-1435.68, -820.55, 14.87], 0.0, null],
+			["Military Base", [-1720.70, -266.16, 14.87], 0.0, null],
 
 			// Bar, Restaurants and Food
 			["Little Havana Donut Shop", [-856.28, -649.32, 11.047], 1.700, null],
