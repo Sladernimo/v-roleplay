@@ -200,6 +200,12 @@ function enterExitPropertyCommand(command, params, client) {
 	let isEntrance = false;
 	let isBusiness = false;
 
+	// Make sure they aren't already trying to enter/exit a property
+	if (getPlayerData(client).pedState == AGRP_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == AGRP_PEDSTATE_EXITINGPROPERTY) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
 	if (areServerElementsSupported()) {
 		if (!getPlayerData(client).currentPickup) {
 			return false;
