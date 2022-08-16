@@ -692,8 +692,13 @@ function deleteHouseCommand(command, params, client) {
  * @return {bool} Whether or not the house was successfully deleted
  *
  */
-function deleteHouse(houseId, whoDeleted = 0) {
-	let tempHouseData = getServerData().houses[houseId];
+function deleteHouse(houseIndex, whoDeleted = 0) {
+	if (!getHouseData(houseIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
+		return false;
+	}
+
+	let tempHouseData = getServerData().houses[houseIndex];
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
@@ -706,15 +711,15 @@ function deleteHouse(houseId, whoDeleted = 0) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	deleteHouseEntrancePickup(houseId);
-	deleteHouseExitPickup(houseId);
+	deleteHouseEntrancePickup(houseIndex);
+	deleteHouseExitPickup(houseIndex);
 
-	deleteHouseEntranceBlip(houseId);
-	deleteHouseExitBlip(houseId);
+	deleteHouseEntranceBlip(houseIndex);
+	deleteHouseExitBlip(houseIndex);
 
-	removePlayersFromHouse(houseId);
+	removePlayersFromHouse(houseIndex);
 
-	getServerData().houses.splice(houseId, 1);
+	getServerData().houses.splice(houseIndex, 1);
 }
 
 // ===========================================================================
@@ -739,11 +744,13 @@ function removePlayerFromHouse(client) {
  * @return {Boolean} Whether or not the players were forced to exit
  *
  */
-function removePlayersFromHouse(houseId) {
+function removePlayersFromHouse(houseIndex) {
 	getClients().forEach(function (client) {
-		if (doesHouseHaveInterior(houseId)) {
-			if (getPlayerHouse(client) == houseId) {
-				exitHouse(client);
+		if (doesHouseHaveInterior(houseIndex)) {
+			if (getPlayerHouse(client) == houseIndex) {
+				if (getPlayerInterior(client) == getHouseData(houseIndex).exitInterior && getPlayerDimension(client) == getHouseData(houseIndex).exitDimension) {
+					exitHouse(client);
+				}
 			}
 		}
 	});
