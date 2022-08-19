@@ -4348,6 +4348,7 @@ let gameData = {
 			["Punk Noodle Diner", [1040.10, -653.10, 14.973], 1.551, [1042.29, -656.87, 14.413]],
 			["Greasy Joe's Diner", [864.45, -999.86, 4.646], -0.020, null],
 			["Hepburn Heights Projects", [913.98, -227.83, 4.413], 0.001, null],
+			["Francis International Airport Terminal", [-765.94, -548.07, 11.33], 0.0, null],
 		],
 
 		[AGRP_GAME_GTA_VC]: [ // GTA VC
@@ -4574,16 +4575,16 @@ let gameData = {
 			// More will be added soon!
 		],
 		[AGRP_GAME_MAFIA_ONE]: [
-			["Works Quarter Fire Station", [-1883.96, -4.89, -348.49], null],
-			["Salieri's Bar", [-1774.59, -5.62, 3.29], null],
-			["Little Italy Gas Station", [-1781.84, -4.83, -204.96], null],
-			["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], null],
-			["Road to Lost Heaven Racing Circuit", [-3049.63, -1.85, -436.09], null],
-			["Chinatown", [-1709.77, 14.36, 583.77], null],
-			["Downtown Bank", [-175.78, 19.06, -399.13], null],
-			["Downtown-Hoboken Gas Station", [-108.68, 8.46, -134.26], null],
-			["New Ark Hospital", [-759.00, 11.40, 747.31], null],
-		], // Mafia 1
+			["Works Quarter Fire Station", [-1883.96, -4.89, -348.49], 0.0, null],
+			["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
+			["Little Italy Gas Station", [-1781.84, -4.83, -204.96], 0.0, null],
+			["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], 0.0, null],
+			["Road to Lost Heaven Racing Circuit", [-3049.63, -1.85, -436.09], 0.0, null],
+			["Chinatown", [-1709.77, 14.36, 583.77], 0.0, 0.0, null],
+			["Downtown Bank", [-175.78, 19.06, -399.13], 0.0, 0.0, null],
+			["Downtown-Hoboken Gas Station", [-108.68, 8.46, -134.26], 0.0, null],
+			["New Ark Hospital", [-759.00, 11.40, 747.31], 0.0, null],
+		],
 	},
 	weaponSlots: {
 		[AGRP_GAME_GTA_III]: [
