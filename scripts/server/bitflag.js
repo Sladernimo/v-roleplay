@@ -16,7 +16,7 @@ let serverBitFlags = {
 	accountSettingsFlags: {},
 	subAccountSettingsFlags: {},
 	accountFlags: {},
-	seenHelpTipsFlags: {},
+	seenActionTipsFlags: {},
 	npcTriggerTypeFlags: {},
 	npcTriggerConditionTypesFlags: {},
 	npcTriggerResponseTypeFlags: {},
@@ -240,12 +240,17 @@ let serverBitFlagKeys = {
 		"EnterProperty",
 		"SearchArea",
 	],
-	seenHelpTipsKeys: [
+	seenActionTipsKeys: [
 		"None",
 		"VehicleEngineOffWhenEntering",
 		"VehicleLockedAfterEntryAttempt",
 		"ShowItemsAfterPurchase",
 		"BuyCommandAfterEnterBusiness",
+		"UseItemKeyAfterEquipping",
+		"UseItemKeyAfterEquippingWalkieTalkie",
+		"RadioCommandAfterEnablingWalkieTalkie",
+		"ReplyToDirectMessage",
+		"UseItemKeyAmmoAfterEquippingWeapon",
 	],
 	jobRankKeys: [
 		"None",
@@ -277,7 +282,7 @@ function initBitFlagScript() {
 	serverBitFlags.npcTriggerTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerTypeKeys);
 	serverBitFlags.npcTriggerConditionTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerConditionTypeKeys);
 	serverBitFlags.npcTriggerResponseTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerResponseTypeKeys);
-	serverBitFlags.seenHelpTips = createBitFlagTable(serverBitFlagKeys.seenHelpTipsKeys);
+	serverBitFlags.seenActionTips = createBitFlagTable(serverBitFlagKeys.seenActionTipsKeys);
 	serverBitFlags.jobRankFlags = createBitFlagTable(serverBitFlagKeys.jobRankKeys);
 	logToConsole(LOG_INFO, "[VRR.BitFlag]: Bit flag script initialized successfully!");
 	return true;
@@ -439,6 +444,20 @@ function getClanDiscordWebhookValue(flagName) {
 	}
 
 	return serverBitFlags.clanDiscordWebhookFlags[flagName];
+}
+
+// ===========================================================================
+
+function getSeenActionTipsValue(flagName) {
+	if (flagName == "All") {
+		return -1;
+	}
+
+	if (typeof serverBitFlags.seenActionTips[flagName] == "undefined") {
+		return false;
+	}
+
+	return serverBitFlags.seenActionTips[flagName];
 }
 
 // ===========================================================================

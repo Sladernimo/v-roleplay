@@ -399,3 +399,23 @@ function helpGetSkinCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function hasPlayerSeenActionTip(client, seenActionTipFlagName) {
+	let seenActionTipFlagValue = getSeenActionTipsValue(seenActionTipFlagName);
+
+	if (hasBitFlag(getPlayerData(client).accountData.seenActionTips, seenActionTipFlagValue)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// ===========================================================================
+
+function playerHasSeenActionTip(client, seenActionTipFlagName) {
+	let seenActionTipFlagValue = getSeenActionTipsValue(seenActionTipFlagName);
+
+	getPlayerData(client).accountData.seenActionTips = addBitFlag(getPlayerData(client).accountData.seenActionTips, seenActionTipFlagValue);
+}
+
+// ===========================================================================

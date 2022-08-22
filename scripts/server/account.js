@@ -58,6 +58,7 @@ class AccountData {
 		this.ircAccount = "";
 		this.discordAccount = 0;
 		this.settings = 0;
+		this.seenActionTips = 0;
 		this.emailAddress = "";
 		this.ipAddress = 0;
 
@@ -87,6 +88,7 @@ class AccountData {
 			this.ircAccount = toInteger(dbAssoc["acct_irc"]);
 			this.discordAccount = toInteger(dbAssoc["acct_discord"]);
 			this.settings = toInteger(dbAssoc["acct_svr_settings"]);
+			this.seenActionTips = toInteger(dbAssoc["acct_svr_seen_action_tips"]);
 			this.emailAddress = toString(dbAssoc["acct_email"]);
 			this.ipAddress = toString(dbAssoc["acct_ip"]);
 
@@ -921,6 +923,7 @@ function saveAccountToDatabase(accountData) {
 
 		let data2 = [
 			["acct_svr_settings", (accountData.settings != NaN) ? toInteger(accountData.settings) : 0],
+			["acct_svr_seen_action_tips", (accountData.seenActionTips != NaN) ? toInteger(accountData.seenActionTips) : 0],
 			["acct_svr_staff_title", toString(safeStaffTitle)],
 			["acct_svr_staff_flags", (accountData.flags.admin != NaN) ? toInteger(accountData.flags.admin) : 0],
 			["acct_svr_mod_flags", (accountData.flags.moderation != NaN) ? toInteger(accountData.flags.moderation) : 0],
