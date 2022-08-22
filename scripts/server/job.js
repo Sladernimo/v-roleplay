@@ -1394,11 +1394,15 @@ function jobEquipmentCommand(command, params, client) {
 	givePlayerJobEquipment(client, equipmentId - 1);
 	//messagePlayerSuccess(client, `You have been given the ${equipments[equipmentId-1].name} equipment`);
 	meActionToNearbyPlayers(client, `grabs the ${jobEquipmentData.name} equipment from the locker`);
-	if (doesPlayerHaveKeyBindForCommand(client, "inv")) {
-		messagePlayerTip(client, getLocaleString(client, "JobEquipmentInventoryKeyBindTip", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
-	} else {
-		messagePlayerTip(client, getLocaleString(client, "JobEquipmentInventoryCommandTip", "/inv"));
+	if (!hasPlayerSeenActionTip(client, "JobEquipmentInventory")) {
+		if (doesPlayerHaveKeyBindForCommand(client, "inv")) {
+			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "JobEquipmentInventory", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
+		} else {
+			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "JobEquipmentInventory", "/inv"));
+		}
+		markPlayerActionTipSeen(client, "JobEquipmentInventory");
 	}
+
 }
 
 // ===========================================================================

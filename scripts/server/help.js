@@ -405,14 +405,14 @@ function hasPlayerSeenActionTip(client, seenActionTipFlagName) {
 
 	if (hasBitFlag(getPlayerData(client).accountData.seenActionTips, seenActionTipFlagValue)) {
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 // ===========================================================================
 
-function playerHasSeenActionTip(client, seenActionTipFlagName) {
+function markPlayerActionTipSeen(client, seenActionTipFlagName) {
 	let seenActionTipFlagValue = getSeenActionTipsValue(seenActionTipFlagName);
 
 	getPlayerData(client).accountData.seenActionTips = addBitFlag(getPlayerData(client).accountData.seenActionTips, seenActionTipFlagValue);

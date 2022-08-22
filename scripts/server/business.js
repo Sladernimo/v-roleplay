@@ -2670,12 +2670,16 @@ function buyFromBusinessCommand(command, params, client) {
 	//messagePlayerSuccess(client, `You bought ${amount} {ALTCOLOUR}${itemName} {MAINCOLOUR}for ${totalCost} ${priceEach}`);
 	meActionToNearbyPlayers(client, `buys a ${itemName}`);
 
-	if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
-		let keyData = getPlayerKeyBindForCommand("inv");
-		messagePlayerNewbieTip(client, getLocaleString(client, "ViewInventoryKeyPressTip", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
-	} else {
-		messagePlayerNewbieTip(client, getLocaleString(client, "ViewInventoryCommandTip", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+	if (!hasPlayerSeenActionTip(client, "ViewInventory")) {
+		if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
+			let keyData = getPlayerKeyBindForCommand("inv");
+			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
+		} else {
+			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+		}
 	}
+
+	markPlayerActionTipSeen(client, "ViewInventory");
 }
 
 // ===========================================================================

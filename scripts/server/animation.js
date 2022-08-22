@@ -44,7 +44,9 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerTip(client, getLocaleString(client, "AnimationStopCommandTip", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+	if (hasPlayerSeenActionTip(client, "AnimationStop")) {
+		messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "AnimationStopTip", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+	}
 	makePlayerPlayAnimation(client, animationSlot, animationPositionOffset);
 }
 
@@ -66,6 +68,8 @@ function stopPlayerAnimationCommand(command, params, client) {
 	getPlayerData(client).animationForced = false;
 
 	//setPlayerMouseCameraState(client, false);
+
+	markPlayerActionTipSeen(client, "AnimationStop");
 }
 
 // ===========================================================================

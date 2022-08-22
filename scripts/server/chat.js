@@ -217,7 +217,10 @@ function privateMessageCommand(command, params, client) {
 
 	getPlayerData(targetClient).privateMessageReplyTo = client;
 	messagePlayerPrivateMessage(targetClient, client, messageText);
-	messagePlayerTip(client, getLocaleString(client, "PrivateMessageReplyCommandTip", "{ALTCOLOUR}/reply{MAINCOLOUR}"))
+
+	if (hasPlayerSeenActionTip(targetClient, "ReplyToDirectMessage")) {
+		messagePlayerTip(targetClient, getIndexedLocaleString(targetClient, "ActionTips", "ReplyToDirectMessage", "{ALTCOLOUR}/reply{MAINCOLOUR}"));
+	}
 }
 
 // ===========================================================================
@@ -240,6 +243,8 @@ function replyToLastPrivateMessageCommand(command, params, client) {
 
 	getPlayerData(targetClient).privateMessageReplyTo = client;
 	messagePlayerPrivateMessage(targetClient, client, messageText);
+
+	markPlayerActionTipSeen(client, "ReplyToDirectMessage");
 }
 
 // ===========================================================================
