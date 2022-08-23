@@ -659,7 +659,7 @@ function vehicleAdminLiveryCommand(command, params, client) {
 	}
 
 	if (getPlayerCurrentSubAccount(client).cash < getGlobalConfig().repairVehicleCost) {
-		messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need $${makeLargeNumberReadable(getGlobalConfig().resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
+		messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need ${getCurrencyString(getGlobalConfig().resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
 		return false;
 	}
 
@@ -1084,7 +1084,7 @@ function setVehicleRentPriceCommand(command, params, client) {
 	getVehicleData(vehicle).rentPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
@@ -1113,7 +1113,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 	getVehicleData(vehicle).buyPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================

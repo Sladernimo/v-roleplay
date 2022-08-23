@@ -162,7 +162,7 @@ function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, ski
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	characterSelect.nameText.text = `${firstName} ${lastName}`;
-	characterSelect.cashText.text = `Money: $${cash}`;
+	characterSelect.cashText.text = `Money: ${getCurrencyString(cash)}`;
 	characterSelect.clanText.text = `Clan: ${clan}`;
 	characterSelect.lastPlayedText.text = `Last Played: ${lastPlayed}`;
 	characterSelect.skinImage = characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
@@ -211,7 +211,7 @@ function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, s
 	setChatWindowEnabled(false);
 	characterSelect.window.shown = false;
 	characterSelect.nameText.text = `${firstName} ${lastName}`;
-	characterSelect.cashText.text = `Money: $${cash}`;
+	characterSelect.cashText.text = `Money: ${getCurrencyString(cash)}`;
 	characterSelect.clanText.text = `Clan: ${clan}`;
 	characterSelect.lastPlayedText.text = `Last Played: ${lastPlayed}`;
 

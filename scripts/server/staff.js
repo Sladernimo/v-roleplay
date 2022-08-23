@@ -1181,9 +1181,9 @@ function givePlayerMoneyCommand(command, params, client) {
 
 	givePlayerCash(targetClient, toInteger(amount));
 	updatePlayerCash(targetClient);
-	//messagePlayerSuccess(client, `You gave {ALTCOLOUR}$${amount} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}$${amount}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
-	messagePlayerAlert(targetClient, `An admin gave you {ALTCOLOUR}$${amount}`);
+	//messagePlayerSuccess(client, `You gave {ALTCOLOUR}${getCurrencyString(amount)} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
+	messagePlayerAlert(targetClient, `An admin gave you {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================

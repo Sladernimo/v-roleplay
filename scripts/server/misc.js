@@ -144,7 +144,7 @@ function setNewCharacterMoneyCommand(command, params, client) {
 	getServerConfig().newCharacter.cash = amount;
 	getServerConfig().needsSaved = true;
 
-	messagePlayerNormal(client, `The new character money has been set to $${amount}`);
+	messagePlayerNormal(client, `The new character money has been set to ${getCurrencyString(amount)}`);
 	return true;
 }
 
@@ -457,7 +457,7 @@ function getPlayerInfoCommand(command, params, client) {
 		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Cash", `$${getPlayerCurrentSubAccount(client).cash}`],
+		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(client).cash)}`],
 		["Skin", `${skinName}{mediumGrey}[${skinModel}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],

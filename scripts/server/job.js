@@ -2143,7 +2143,7 @@ function setJobRoutePayCommand(command, params, client) {
 
 	getJobData(jobId).routes[jobRoute].pay = toInteger(amount);
 	getJobData(jobId).routes[jobRoute].needsSaved = true;
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} set the pay for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job to {ALTCOLOUR}$${makeLargeNumberReadable(amount)} {MAINCOLOUR} `);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} set the pay for route {ALTCOLOUR}${getJobRouteData(jobId, jobRoute).name}{MAINCOLOUR} of the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job to {ALTCOLOUR}${getCurrencyString(amount)} {MAINCOLOUR} `);
 }
 
 // ===========================================================================
@@ -3860,7 +3860,7 @@ function finishSuccessfulJobRoute(client) {
 	let payout = toInteger(applyServerInflationMultiplier(jobRouteData.pay));
 	getPlayerData(client).payDayAmount = getPlayerData(client).payDayAmount + payout;
 
-	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${jobRouteData.name} route for the ${getJobData(jobId).name} job and earned $${jobRouteData.pay}!`);
+	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${jobRouteData.name} route for the ${getJobData(jobId).name} job and earned ${getCurrencyString(jobRouteData.pay)}!`);
 	messagePlayerSuccess(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, jobRouteData.index));
 
 	stopReturnToJobVehicleCountdown(client);
@@ -3920,7 +3920,7 @@ function replaceJobRouteStringsInMessage(messageText, jobId, jobRouteId) {
 
 	tempFind = `{JOBROUTEPAY}`;
 	tempRegex = new RegExp(tempFind, 'g');
-	messageText = messageText.replace(tempRegex, `$${tempJobRouteData.pay}`);
+	messageText = messageText.replace(tempRegex, `${getCurrencyString(tempJobRouteData.pay)}`);
 
 	tempFind = `{JOBNAME}`;
 	tempRegex = new RegExp(tempFind, 'g');

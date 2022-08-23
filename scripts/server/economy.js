@@ -47,15 +47,15 @@ function playerPayDay(client) {
 	let netIncome = Math.round(grossIncome - incomeTaxAmount);
 
 	messagePlayerAlert(client, "== Payday! =============================");
-	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}$${grossIncome}`);
-	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}$${incomeTaxAmount}`);
-	messagePlayerInfo(client, `You receive: {ALTCOLOUR}$${netIncome}`);
+	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}${getCurrencyString(grossIncome)}`);
+	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}`);
+	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
 	if (netIncome < incomeTaxAmount) {
 		let totalCash = getPlayerCash(client);
 		let canPayNow = totalCash + netIncome;
 		if (incomeTaxAmount <= canPayNow) {
 			takePlayerCash(client, canPayNow);
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${canPayNow}{MAINCOLOUR}`)}`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${getCurrencyString(canPayNow)}{MAINCOLOUR}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
 		} else {
@@ -141,14 +141,14 @@ function setPayDayBonusMultiplier(command, params, client) {
 function taxInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
 	let tax = calculateIncomeTax(wealth);
-	messagePlayerInfo(client, `Your tax on payday is: $${tax}. Use {ALTCOLOUR}/help tax {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, `Your tax on payday is: ${getCurrencyString(tax)}. Use {ALTCOLOUR}/help tax {MAINCOLOUR}for more information.`);
 }
 
 // ===========================================================================
 
 function wealthInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
-	messagePlayerInfo(client, `Your wealth is: {ALTCOLOUR}$${wealth}{MAINCOLOUR}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, `Your wealth is: {ALTCOLOUR}${getCurrencyString(wealth)}{MAINCOLOUR}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
 }
 
 // ===========================================================================
@@ -211,6 +211,14 @@ function isDoubleBonusActive() {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getCurrencyString(amount) {
+	let tempString = getEconomyConfig().currencyString
+	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
+	return tempString;
 }
 
 // ===========================================================================

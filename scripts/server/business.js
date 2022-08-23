@@ -847,7 +847,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to [#AAAAAAA]$${entranceFee}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
 }
 
 // ===========================================================================
@@ -940,14 +940,14 @@ function getBusinessInfoCommand(command, params, client) {
 		[`ID`, `${businessData.index}/${businessData.databaseId}`],
 		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
-		[`BuyPrice`, `$${businessData.buyPrice}`],
+		[`BuyPrice`, `${getCurrencyString(businessData.buyPrice)}`],
 		//[`RentPrice`, `${businessData.rentPrice}`],
 		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
 		[`HasBuyableItems`, `${getYesNoFromBool(doesBusinessHaveAnyItemsToBuy(businessId))}`],
-		[`EntranceFee`, `$${businessData.entranceFee}`],
+		[`EntranceFee`, `${getCurrencyString(businessData.entranceFee)}`],
 		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
-		[`Balance`, `$${businessData.till}`],
+		[`Balance`, `${getCurrencyString(businessData.till)}`],
 		[`RadioStation`, `${businessData.streamingRadioStation}`],
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
@@ -1409,7 +1409,7 @@ function withdrawFromBusinessCommand(command, params, client) {
 	updatePlayerCash(client);
 	getBusinessData(businessId).needsSaved = true;
 
-	messagePlayerSuccess(client, `You withdrew $${amount} from business {businessBlue}${getBusinessData(businessId).name} till`);
+	messagePlayerSuccess(client, `You withdrew ${getCurrencyString(amount)} from business {businessBlue}${getBusinessData(businessId).name} till`);
 }
 
 // ===========================================================================
@@ -1451,7 +1451,7 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
 
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
@@ -1486,7 +1486,7 @@ function depositIntoBusinessCommand(command, params, client) {
 	//}
 
 	if (getPlayerCurrentSubAccount(client).cash < amount) {
-		messagePlayerError(client, `You don't have that much money! You only have $${getPlayerCurrentSubAccount(client).cash}`);
+		messagePlayerError(client, `You don't have that much money! You only have ${getCurrencyString(getPlayerCurrentSubAccount(client).cash)}`);
 		return false;
 	}
 
@@ -1495,7 +1495,7 @@ function depositIntoBusinessCommand(command, params, client) {
 	updatePlayerCash(client);
 
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `You deposited $${amount} into business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}till`);
+	messagePlayerSuccess(client, `You deposited ${getCurrencyString(amount)} into business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till`);
 }
 
 // ===========================================================================
@@ -1556,7 +1556,7 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderCost = orderTotalCost;
 
 	getBusinessData(businessId).needsSaved = true;
-	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${makeLargeNumberReadable(pricePerItem)} each will cost a total of $${makeLargeNumberReadable(orderTotalCost)}`, "Business Order Cost");
+	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(pricePerItem)} each will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
 	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 }
 
@@ -1574,13 +1574,13 @@ function orderItemForBusinessCommand(command, params, client) {
 function orderItemForBusiness(businessId, itemType, amount) {
 	if (getBusinessData(businessId).till < orderTotalCost) {
 		let neededAmount = orderTotalCost - getBusinessData(businessId).till;
-		//messagePlayerError(client, `The business doesn't have enough money (needs {ALTCOLOUR}$${neededAmount} {MAINCOLOUR}more)! Use {ALTCOLOUR}/bizdeposit {MAINCOLOUR}to add money to the business.`);
+		//messagePlayerError(client, `The business doesn't have enough money (needs {ALTCOLOUR}${getCurrencyString(neededAmount)} {MAINCOLOUR}more)! Use {ALTCOLOUR}/bizdeposit {MAINCOLOUR}to add money to the business.`);
 		return false;
 	}
 
 	getBusinessData(businessId).till -= orderTotalCost;
 	addToBusinessInventory(businessId, itemType, amount);
-	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${getItemTypeData(itemType).orderPrice} each for business {businessBlue}${getBusinessData(businessId).name}`);
+	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(getItemTypeData(itemType).orderPrice)} each for business {businessBlue}${getBusinessData(businessId).name}`);
 }
 
 // ===========================================================================
@@ -1611,7 +1611,7 @@ function viewBusinessTillAmountCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, `Business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till has {ALTCOLOUR}$${getBusinessData(businessId).till}`);
+	messagePlayerSuccess(client, `Business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till has {ALTCOLOUR}${getCurrencyString(getBusinessData(businessId).till)}`);
 }
 
 // ===========================================================================
@@ -2722,7 +2722,7 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
 
-	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from $${makeLargeNumberReadable(oldPrice)} to $${makeLargeNumberReadable(newprice)}`);
+	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newprice)}`);
 }
 
 // ===========================================================================

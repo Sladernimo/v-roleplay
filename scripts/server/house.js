@@ -1384,7 +1384,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	getHouseData(houseId).buyPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
@@ -1422,7 +1422,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	getHouseData(houseId).rentPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================

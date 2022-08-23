@@ -70,6 +70,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.veh.engine", setVehicleEngine);
 	addNetworkEventHandler("agrp.veh.repair", repairVehicle);
 	addNetworkEventHandler("agrp.cruiseControl", toggleVehicleCruiseControl);
+	addNetworkEventHandler("agrp.passenger", enterVehicleAsPassenger);
 
 	// Radio
 	addNetworkEventHandler("agrp.radioStream", playStreamingRadio);
@@ -109,6 +110,11 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.showLocaleChooser", showLocaleChooserGUI);
 	addNetworkEventHandler("agrp.guiColour", setGUIColours);
 
+	// 2D Rendering
+	addNetworkEventHandler("agrp.set2DRendering", set2DRendering);
+	addNetworkEventHandler("agrp.logo", setServerLogoRenderState);
+	addNetworkEventHandler("agrp.showItemActionDelay", showItemActionDelay);
+
 	// Business
 	addNetworkEventHandler("agrp.business", receiveBusinessFromServer);
 
@@ -122,13 +128,20 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.locale", setLocale);
 	addNetworkEventHandler("agrp.localeChooser", toggleLocaleChooserGUI);
 
+	// Animation
+	addNetworkEventHandler("agrp.anim", makePedPlayAnimation);
+	addNetworkEventHandler("agrp.stopAnim", makePedStopAnimation);
+	addNetworkEventHandler("agrp.forceAnim", forcePedAnimation);
+
+	// Nametags
+	addNetworkEventHandler("agrp.nametag", updatePlayerNameTag);
+	addNetworkEventHandler("agrp.nametagDistance", setNameTagDistance);
+
 	// Misc
 	addNetworkEventHandler("agrp.mouseCursor", toggleMouseCursor);
 	addNetworkEventHandler("agrp.mouseCamera", toggleMouseCamera);
 	addNetworkEventHandler("agrp.clearPeds", clearLocalPlayerOwnedPeds);
 	addNetworkEventHandler("agrp.clearPickups", clearLocalPlayerOwnedPickups);
-	addNetworkEventHandler("agrp.passenger", enterVehicleAsPassenger);
-	addNetworkEventHandler("agrp.logo", setServerLogoRenderState);
 	addNetworkEventHandler("agrp.ambience", setCityAmbienceState);
 	addNetworkEventHandler("agrp.runCode", runClientCode);
 	addNetworkEventHandler("agrp.minuteDuration", setMinuteDuration);
@@ -136,17 +149,10 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.enterPropertyKey", setEnterPropertyKey);
 	addNetworkEventHandler("agrp.skinSelect", toggleSkinSelect);
 	addNetworkEventHandler("agrp.hotbar", updatePlayerHotBar);
-	addNetworkEventHandler("agrp.showItemActionDelay", showItemActionDelay);
-	addNetworkEventHandler("agrp.set2DRendering", set2DRendering);
 	addNetworkEventHandler("agrp.mouseCameraForce", setMouseCameraState);
 	addNetworkEventHandler("agrp.logLevel", setLogLevel);
 	addNetworkEventHandler("agrp.hideAllGUI", hideAllGUI);
-	addNetworkEventHandler("agrp.nametag", updatePlayerNameTag);
-	addNetworkEventHandler("agrp.nametagDistance", setNameTagDistance);
 	addNetworkEventHandler("agrp.ping", updatePlayerPing);
-	addNetworkEventHandler("agrp.anim", makePedPlayAnimation);
-	addNetworkEventHandler("agrp.stopAnim", makePedStopAnimation);
-	addNetworkEventHandler("agrp.forceAnim", forcePedAnimation);
 	addNetworkEventHandler("agrp.clientInfo", serverRequestedClientInfo);
 	addNetworkEventHandler("agrp.interiorLights", updateInteriorLightsState);
 	addNetworkEventHandler("agrp.cutsceneInterior", setCutsceneInterior);
@@ -156,6 +162,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.vehBuyState", setVehiclePurchaseState);
 	addNetworkEventHandler("agrp.holdObject", makePedHoldObject);
 	addNetworkEventHandler("agrp.profanityFilter", setProfanityFilterState);
+	addNetworkEventHandler("agrp.currencyString", receiveCurrencyStringFromServer);
 }
 
 // ===========================================================================

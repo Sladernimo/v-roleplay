@@ -1276,3 +1276,9 @@ function showSingleParticleEffect(position, particleEffectId, strength = 1.0, du
 }
 
 // ==========================================================================
+
+function sendPlayerCurrencyString(client) {
+	sendNetworkEventToPlayer("agrp.currencyString", client, getEconomyConfig().currencyString);
+}
+
+// ==========================================================================

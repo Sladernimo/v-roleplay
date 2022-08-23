@@ -887,7 +887,7 @@ function setItemTypeOrderPriceCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).orderPrice = orderPrice;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}$${orderPrice}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}${getCurrencyString(orderPrice)}`);
 }
 
 // ===========================================================================
@@ -2940,7 +2940,7 @@ function showBusinessFloorInventoryToPlayer(client, businessId) {
 		if (getBusinessData(businessId).floorItemCache == -1) {
 			itemDisplay.push(`{MAINCOLOUR}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
-			itemDisplay.push(`{MAINCOLOUR}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[i]).itemTypeIndex).name} - ${(getPlayerCurrentSubAccount(client).cash > getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice) ? "{softGreen}" : "{softRed}"}$${getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice}`);
+			itemDisplay.push(`{MAINCOLOUR}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[i]).itemTypeIndex).name} - ${(getPlayerCurrentSubAccount(client).cash > getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice) ? "{softGreen}" : "{softRed}"}${getCurrencyString(getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice)}`);
 		}
 	}
 

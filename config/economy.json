@@ -4,6 +4,7 @@
     "applyUpkeep": true,
     "grossIncomeMultiplier": 1.0,
     "incomeTaxRate": 0.7,
+    "currencyString": "${AMOUNT}",
     "upKeepCosts": {
         "upKeepPerVehicle": 250,
         "upKeepPerHouse": 350,

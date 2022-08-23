@@ -694,14 +694,14 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				vehicle.engine = getVehicleData(vehicle).engine;
 
 				if (getVehicleData(vehicle).buyPrice > 0) {
-					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
+					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
 					resetVehiclePosition(vehicle);
 				} else if (getVehicleData(vehicle).rentPrice > 0) {
 					if (getVehicleData(vehicle).rentedBy != client) {
-						messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
+						messagePlayerAlert(client, getLocaleString(client, "VehicleForRent", getVehicleName(vehicle), `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
 						resetVehiclePosition(vehicle);
 					} else {
-						messagePlayerAlert(client, getLocaleString(client, "CurrentlyRentingThisVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}$${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}`, `{ALTCOLOUR}/stoprent{MAINCOLOUR}`));
+						messagePlayerAlert(client, getLocaleString(client, "CurrentlyRentingThisVehicle", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).rentPrice)}`, `{ALTCOLOUR}/stoprent{MAINCOLOUR}`));
 					}
 				} else {
 					let ownerName = "Nobody";
