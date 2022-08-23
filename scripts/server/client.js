@@ -193,3 +193,92 @@ function kickAllClients() {
 }
 
 // ===========================================================================
+
+function initClient(client) {
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+
+	if (isConsole(client)) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[VRR.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
+		return false;
+	}
+
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+
+	if (playerInitialized[client.index] == true) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[VRR.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
+		return false;
+	}
+
+	playerInitialized[client.index] = true;
+
+	//setEntityData(client, "agrp.isInitialized", true, false);
+
+	logToConsole(LOG_DEBUG, `[VRR.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
+	sendPlayerCurrencyString(client);
+	sendPlayerGUIColours(client);
+	sendPlayerGUIInit(client);
+	updatePlayerSnowState(client);
+
+	//logToConsole(LOG_DEBUG, `[VRR.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
+	//showConnectCameraToPlayer(client);
+
+	messageClient(`Please wait ...`, client, getColourByName("softGreen"));
+
+	logToConsole(LOG_DEBUG, `[VRR.Account] Waiting for 2.5 seconds to prevent race attack ...`);
+	setTimeout(function () {
+		if (client != null) {
+			clearChatBox(client);
+			logToConsole(LOG_DEBUG, `[VRR.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
+			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
+
+			logToConsole(LOG_DEBUG, `[VRR.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
+			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
+
+			getServerData().clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
+
+			getServerData().clients[getPlayerId(client)].sessionId = saveConnectionToDatabase(client);
+			getServerData().clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
+			requestClientInfo(client);
+
+			if (tempAccountData != false) {
+				sendPlayerLocaleId(client, getPlayerData(client).accountData.locale);
+				if (isAccountAutoIPLoginEnabled(tempAccountData) && getPlayerData(client).accountData.ipAddress == getPlayerIP(client)) {
+					messagePlayerAlert(client, getLocaleString(client, "AutoLoggedInIP"));
+					loginSuccess(client);
+					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
+				} else {
+					if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
+						logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI.`);
+						showPlayerLoginGUI(client);
+					} else {
+						logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
+						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
+
+						//if(checkForGeoIPModule()) {
+						//	let iso = module.geoip.getCountryISO(getPlayerIP(client));
+						//	let localeId = getLocaleFromCountryISO(iso);
+						//}
+						//showSmallGameMessage(client, getLocaleString(client, "LocaleOffer", `/lang ${getLocaleData(localeId)[2]}`), getColourByName("white"), 10000, "Roboto");
+					}
+					startLoginTimeoutForPlayer(client);
+					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
+				}
+			} else {
+				sendPlayerLocaleId(client, 0);
+				if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
+					logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
+					showPlayerRegistrationGUI(client);
+				} else {
+					logToConsole(LOG_DEBUG, `[VRR.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
+					messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "/register"), getColourByName("softGreen"));
+				}
+				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
+			}
+
+			getServerData().clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(getServerData().clients[getPlayerId(client)].accountData.databaseId);
+			sendAccountKeyBindsToClient(client);
+		}
+	}, 2500);
+}
+
+// ===========================================================================
