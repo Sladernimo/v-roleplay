@@ -528,21 +528,23 @@ function selectCharacter(client, characterId = -1) {
 		//setPlayerDimension(client, spawnDimension);
 		restorePlayerCamera(client);
 		setPlayerSkin(client, skin);
+		setTimeout(function () {
+			onPlayerSpawn(client);
+			//stopRadioStreamForPlayer(client);
+		}, 500);
 	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		//logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
+		setTimeout(function () {
+			onPlayerSpawn(client);
+			//stopRadioStreamForPlayer(client);
+		}, 250);
 	}
 
 	removePlayerKeyBind(client, getKeyIdFromParams("insert"));
 
 	logToConsole(LOG_DEBUG, `[VRR.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
-
-	setTimeout(function () {
-		onPlayerSpawn(client);
-	}, 500);
-
-	stopRadioStreamForPlayer(client);
 
 	getPlayerCurrentSubAccount(client).lastLogin = getCurrentUnixTimestamp();
 }
