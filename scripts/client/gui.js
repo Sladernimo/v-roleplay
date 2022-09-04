@@ -61,7 +61,7 @@ function initGUI() {
 	initListGUI();
 	initResetPasswordGUI();
 	initChangePasswordGUI();
-	initLocaleChooserGUI();
+	//initLocaleChooserGUI();
 
 	closeAllWindows();
 	guiReady = true;
