@@ -38,7 +38,7 @@ function loadLocaleConfig() {
 	let configFile = loadTextFile("config/client/locale.json");
 	getServerData().localeOptions = JSON.parse(configFile);
 
-	resetLocaleChooserOptions();
+	//resetLocaleChooserOptions();
 	loadAllLocaleStrings();
 }
 
