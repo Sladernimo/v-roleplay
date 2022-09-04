@@ -120,7 +120,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	}
 
 	if (isPlayerOnJobRoute(client)) {
-		stopJobRoute(client);
+		stopJobRoute(client, false, false);
 	}
 
 	if (isPlayerWorking(client)) {
@@ -136,16 +136,16 @@ function onPlayerQuit(event, client, quitReasonId) {
 		clearTimeout(getPlayerData(client).loginTimeout);
 	}
 
-	playerResourceReady[client.index] = false;
-	playerResourceStarted[client.index] = false;
-	playerInitialized[client.index] = false;
-	playerGUIReady[client.index] = false;
-
 	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
 	getClients().forEach(forClient => {
 		let reasonText = getGroupedLocaleString(forClient, "DisconnectReasons", quitReasonId);
 		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), reasonText));
 	});
+
+	playerResourceReady[client.index] = false;
+	playerResourceStarted[client.index] = false;
+	playerInitialized[client.index] = false;
+	playerGUIReady[client.index] = false;
 
 	getServerData().clients[getPlayerId(client)] = null;
 }
@@ -394,8 +394,10 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 
 function onPedSpawn(ped) {
 	if (ped.type == ELEMENT_PLAYER) {
-		//setTimeout(onPlayerSpawn, 250, ped);
-		onPlayerSpawn();
+		if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+			//setTimeout(onPlayerSpawn, 250, ped);
+			onPlayerSpawn();
+		}
 	}
 }
 
