@@ -216,7 +216,7 @@ function isDoubleBonusActive() {
 // ===========================================================================
 
 function getCurrencyString(amount) {
-	let tempString = getEconomyConfig().currencyString
+	let tempString = getGlobalConfig().economy.currencyString;
 	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
 	return tempString;
 }
