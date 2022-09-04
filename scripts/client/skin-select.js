@@ -11,7 +11,7 @@
 let skinSelectMessageFontTop = null;
 let skinSelectMessageFontBottom = null;
 let skinSelectMessageTextTop = "Skin Name";
-let skinSelectMessageTextBottom = "Choose a skin using PAGEUP and PAGEDOWN keys. Use ENTER to finish or BACKSPACE to cancel.";
+let skinSelectMessageTextBottom = "Choose a skin using LEFT and RIGHT arrow keys. Use ENTER to finish or BACKSPACE to cancel.";
 let skinSelectMessageColourTop = COLOUR_YELLOW;
 let skinSelectMessageColourBottom = COLOUR_WHITE;
 
@@ -46,7 +46,7 @@ function loadSkinSelectMessageFontBottom() {
 
 function processSkinSelectKeyPress(keyCode) {
 	if (usingSkinSelector) {
-		if (keyCode == SDLK_LEFT || keyCode == SDLK_A) {
+		if (keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
 			if (skinSelectorIndex >= allowedSkins.length - 1) {
 				skinSelectorIndex = 1;
 			} else {
@@ -55,7 +55,7 @@ function processSkinSelectKeyPress(keyCode) {
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
 			setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
-		} else if (keyCode == SDLK_RIGHT || keyCode == SDLK_D) {
+		} else if (keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
 			if (skinSelectorIndex <= 0) {
 				skinSelectorIndex = allowedSkins.length - 1;
 			} else {
@@ -64,16 +64,19 @@ function processSkinSelectKeyPress(keyCode) {
 			logToConsole(LOG_DEBUG, `Switching to skin ${allowedSkins[skinSelectorIndex][1]} (Index: ${skinSelectorIndex}, Skin: ${allowedSkins[skinSelectorIndex][0]})`);
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
 			setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
-		} else if (keyCode == SDLK_RETURN) {
+		} else if (keyCode == getKeyIdFromParams("enter")) {
 			sendNetworkEventToServer("agrp.skinSelected", skinSelectorIndex);
 			toggleSkinSelect(false);
 			return true;
-		} else if (keyCode == SDLK_BACKSPACE) {
+		} else if (keyCode == getKeyIdFromParams("backspace")) {
 			sendNetworkEventToServer("agrp.skinSelected", -1);
 			toggleSkinSelect(false);
 			return true;
 		}
-		localPlayer.heading = skinSelectHeading;
+
+		if (getGame() <= AGRP_GAME_GTA_SA) {
+			localPlayer.heading = skinSelectHeading;
+		}
 	}
 }
 
@@ -104,10 +107,18 @@ function toggleSkinSelect(state) {
 		skinSelectHeading = localPlayer.heading;
 
 		if (isCustomCameraSupported()) {
-			let tempPosition = localPlayer.position;
-			tempPosition.z += 0.5;
-			let frontCameraPosition = getPosInFrontOfPos(tempPosition, localPlayer.heading, 3);
-			game.setCameraLookAt(frontCameraPosition, localPlayer.position, true);
+			let cameraPosition = localPlayer.position;
+			let playerPosition = localPlayer.position;
+			if (getGame() == AGRP_GAME_MAFIA_ONE) {
+				cameraPosition.y += 1.5;
+				playerPosition.y += 1.5;
+				distance = 3;
+			} else {
+				cameraPosition.z += 0.5;
+				distance = 3;
+			}
+			let frontCameraPosition = getPosInFrontOfPos(cameraPosition, localPlayer.heading, distance);
+			game.setCameraLookAt(frontCameraPosition, playerPosition, true);
 		}
 
 		if (getGame() == AGRP_GAME_GTA_IV) {
