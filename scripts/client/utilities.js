@@ -18,9 +18,10 @@ function setLocalPlayerFrozenState(state) {
 function setLocalPlayerControlState(controlState, cursorState = false) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
 	controlsEnabled = controlState;
+	game.setPlayerControl(controlState);
 	if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
 		game.SET_PLAYER_CONTROL(game.GET_PLAYER_ID(), boolToInt(controlState));
-	} else if (getGame() != AGRP_GAME_GTA_IV) {
+	} else if (getGame() <= AGRP_GAME_GTA_IV) {
 		setElementCollisionsEnabled(localPlayer, controlState);
 		setPedInvincible(localPlayer, true);
 	}
@@ -55,20 +56,20 @@ function restoreLocalCamera() {
 
 // ===========================================================================
 
-function clearLocalPlayerOwnedPeds() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing all self-owned peds ...`);
-	clearSelfOwnedPeds();
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] All self-owned peds cleared`);
-};
-
-// ===========================================================================
-
 function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
 	logToConsole(LOG_DEBUG, `[VRR.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
 	if (isCustomCameraSupported()) {
 		game.setCameraLookAt(cameraPosition, cameraLookAt, true);
 	}
 }
+
+// ===========================================================================
+
+function clearLocalPlayerOwnedPeds() {
+	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing all self-owned peds ...`);
+	clearSelfOwnedPeds();
+	logToConsole(LOG_DEBUG, `[VRR.Utilities] All self-owned peds cleared`);
+};
 
 // ===========================================================================
 
