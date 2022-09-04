@@ -111,6 +111,7 @@
 	<script src="scripts/client/animation.js" type="client" language="javascript" />
 	<script src="scripts/client/business.js" type="client" language="javascript" />
 	<script src="scripts/client/chat.js" type="client" language="javascript" />
+	<script src="scripts/client/economy.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
 	<script src="scripts/client/gps.js" type="client" language="javascript" />
@@ -128,11 +129,11 @@
 	<script src="scripts/client/npc.js" type="client" language="javascript" />
 	<script src="scripts/client/radio.js" type="client" language="javascript" />
 	<script src="scripts/client/scoreboard.js" type="client" language="javascript" />
-	<script src="scripts/client/netevents.js" type="client" language="javascript" />
 	<script src="scripts/client/skin-select.js" type="client" language="javascript" />
 	<script src="scripts/client/sync.js" type="client" language="javascript" />
 	<script src="scripts/client/utilities.js" type="client" language="javascript" />
 	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
+	<script src="scripts/client/netevents.js" type="client" language="javascript" />
 
 	<!-- Locale Files -->
 	<file type="client" src="config/client/locale.json" />
