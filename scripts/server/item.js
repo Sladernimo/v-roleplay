@@ -1335,6 +1335,8 @@ function playerUseItem(client, hotBarSlot) {
 									itemData.value = itemData.value + ammoItemData.value;
 									deleteItem(hotBarItems[i]);
 									meActionToNearbyPlayers(client, `loads some ammo into their ${itemTypeData.name}`);
+
+									markPlayerActionTipSeen(client, "AmmoClipItemUsage");
 									return true;
 								}
 							}
@@ -1461,8 +1463,10 @@ function playerUseItem(client, hotBarSlot) {
 				if (itemData.value <= 0) {
 					destroyItem(itemIndex);
 				}
+
+				markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			} else {
-				messagePlayerError(client, getLocaleString(client, "VehicleRepairFailedTooFar"));
+				messagePlayerError(client, getLocaleString(client, "VehicleFailedTooFar"));
 			}
 			break;
 		}
@@ -1472,6 +1476,9 @@ function playerUseItem(client, hotBarSlot) {
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
 				addVehicleUpgrade(vehicle, itemTypeData.useId);
+				markPlayerActionTipSeen(client, "VehiclePartItemUsage");
+			} else {
+				messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 			}
 			break;
 		}
@@ -1490,13 +1497,17 @@ function playerUseItem(client, hotBarSlot) {
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				if (itemData.useId == 1) {
 					meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
-					vehicle.colour1 = itemData.value;
+					setVehicleColours(vehicle, getVehicleData(vehicle).colour1, itemData.value);
+					markPlayerActionTipSeen(client, "VehicleColourItemUsage");
 				} else {
 					if (itemTypeData.useId == 1) {
 						meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the secondary colour of the vehicle.`);
-						vehicle.colour2 = itemData.value;
+						setVehicleColours(vehicle, getVehicleData(vehicle).colour1, itemData.value);
+						markPlayerActionTipSeen(client, "VehicleColourItemUsage");
 					}
 				}
+			} else {
+				messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 			}
 			break;
 		}
@@ -1519,16 +1530,22 @@ function playerUseItem(client, hotBarSlot) {
 					//}
 				}
 			} else {
-				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= getGlobalConfig().vehicleRepairDistance) {
-					if (itemData.useId == 1) {
-						meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
-						vehicle.colour1 = itemTypeData.value;
-					} else {
-						if (itemData.useId == 1) {
-							meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the secondary colour of the vehicle.`);
-							vehicle.colour2 = itemData.value;
+				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= getGlobalConfig().fuelPumpUseDistance) {
+
+					if (itemData.amount < 100) {
+						let amountToFull = 100 - itemData.amount;
+						let totalCost = getFuelPumpData(fuelPump).pricePerUnit * amountToFull;
+						if (getPlayerCurrentSubAccount(client).cash >= totalCost) {
+							meActionToNearbyPlayers(client, `refills their fuel can`);
+							getItemData(itemIndex).amount = 100;
+							takePlayerCash(client, totalCost);
+						} else {
+							messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getCurrencyString(totalCost - getPlayerCurrentSubAccount(client).cash)}{MAINCOLOUR}`));
 						}
+					} else {
+						messagePlayerError(client, "Your fuel can is already full!");
 					}
+
 				}
 			}
 			break;
@@ -1903,6 +1920,32 @@ function playerSwitchItem(client, newHotBarSlot) {
 		meActionToNearbyPlayers(client, `pulls out ${getProperDeterminerForName(getItemName(newHotBarItem))} ${getItemName(newHotBarItem)}`);
 	} else {
 		return false;
+	}
+
+	switch (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType) {
+		case AGRP_ITEM_USE_TYPE_AMMO_CLIP:
+			if (!hasPlayerSeenActionTip(client, "AmmoClipItemUsage")) {
+				messagePlayerTip(client, getIndexedLocaleString(client, "AmmoClipItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+			}
+			break;
+
+		case AGRP_ITEM_USE_TYPE_VEHREPAIR:
+			if (!hasPlayerSeenActionTip(client, "VehicleRepairKitItemUsage")) {
+				messagePlayerTip(client, getIndexedLocaleString(client, "VehicleRepairKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+			}
+			break;
+
+		case AGRP_ITEM_USE_TYPE_VEHCOLOUR:
+			if (!hasPlayerSeenActionTip(client, "VehicleColourKitItemUsage")) {
+				messagePlayerTip(client, getIndexedLocaleString(client, "VehicleColourKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+			}
+			break;
+
+		case AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART:
+			if (!hasPlayerSeenActionTip(client, "VehiclePartItemUsage")) {
+				messagePlayerTip(client, getIndexedLocaleString(client, "VehiclePartItemUsage", getKeyOrCommandForPlayerMessage(client, "use"), getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).name));
+			}
+			break;
 	}
 
 	getPlayerData(client).activeHotBarSlot = newHotBarSlot;
