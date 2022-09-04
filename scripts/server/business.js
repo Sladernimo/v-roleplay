@@ -312,7 +312,15 @@ function loadBusinessGameScriptsFromDatabase(businessId) {
  *
  */
 function createBusinessCommand(command, params, client) {
-	createBusiness(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].Business, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
+	createBusiness(
+		params,
+		getPlayerPosition(client),
+		toVector3(0.0, 0.0, 0.0),
+		(isGameFeatureSupported("pickups")) ? getGameConfig().pickupModels[getGame()].Business : -1,
+		-1,
+		getPlayerInterior(client),
+		getPlayerDimension(client),
+		getPlayerData(client).interiorCutscene);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
 }
