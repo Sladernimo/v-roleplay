@@ -8,10 +8,9 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-function initServerScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Server]: Initializing server script ...");
-	addAllNetworkHandlers();
-	logToConsole(LOG_DEBUG, "[VRR.Server]: Server script initialized!");
+function initNetworkEventsScript() {
+	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Initializing server script ...");
+	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Server script initialized!");
 }
 
 // ===========================================================================
@@ -440,6 +439,12 @@ function clearLocalPlayerOwnedPickups() {
 	for (let i in pickups) {
 		deleteLocalGameElement(pickups[i]);
 	}
+}
+
+// ===========================================================================
+
+function receiveCurrencyStringFromServer(newCurrencyString) {
+	currencyString = newCurrencyString;
 }
 
 // ===========================================================================
