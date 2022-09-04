@@ -23,6 +23,10 @@ function initLogoScript() {
 // ===========================================================================
 
 function loadLogoImage() {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	let logoStream = openFile(mainLogoPath);
 	let tempLogoImage = null;
 	if (logoStream != null) {
@@ -36,6 +40,10 @@ function loadLogoImage() {
 // ===========================================================================
 
 function processLogoRendering() {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	if (renderLogo) {
 		if (logoImage != null) {
 			graphics.drawRectangle(logoImage, logoPos, logoSize);
