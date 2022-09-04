@@ -1275,7 +1275,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 			getPlayerData(client).promptType = AGRP_PROMPT_CREATEFIRSTCHAR;
 		} else {
-			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage"), `{ALTCOLOUR}/newchar{MAINCOLOUR}`);
+			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
 		}
 	}
 };
