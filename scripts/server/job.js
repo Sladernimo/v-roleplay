@@ -1556,7 +1556,7 @@ function createJobLocationCommand(command, params, client) {
 		return false;
 	}
 
-	createJobLocation(jobId, getPlayerPosition(client), getPlayerInterior(client), getPlayerDimension(client));
+	createJobLocation(jobId, getPlayerPosition(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a location for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 	return true;
 }
@@ -2445,6 +2445,10 @@ function startJobRoute(client, forceRoute = -1) {
 // ===========================================================================
 
 function stopJobRoute(client, successful = false, alertPlayer = true) {
+	if (!isPlayerOnJobRoute(client)) {
+		return false;
+	}
+
 	let jobId = getPlayerJob(client);
 	let routeId = getPlayerJobRoute(client);
 
@@ -2457,11 +2461,13 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 		return false;
 	}
 
+	if (alertPlayer) {
+		messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and didn't earn anything.`);
+	}
+
 	//if (alertPlayer) {
 	//	messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, routeId).failedMessage, jobId, routeId));
 	//}
-
-	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and didn't earn anything.`);
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
@@ -2638,7 +2644,7 @@ function setAllJobDataIndexes() {
 
 // ===========================================================================
 
-function createJobLocation(jobId, position, interior, dimension) {
+function createJobLocation(jobId, position, interior, dimension, whoCreated) {
 	let jobLocationData = new JobLocationData(false);
 	jobLocationData.position = position;
 	jobLocationData.jobId = getJobData(jobId).databaseId;
@@ -2647,6 +2653,8 @@ function createJobLocation(jobId, position, interior, dimension) {
 	jobLocationData.enabled = true;
 	jobLocationData.jobIndex = jobId;
 	jobLocationData.needsSaved = true;
+	jobLocationData.whoCreated = whoCreated;
+	jobLocationData.whenCreated = getCurrentUnixTimestamp();
 
 	getServerData().jobs[jobId].locations.push(jobLocationData);
 	let newSlot = getServerData().jobs[jobId].locations.length - 1;
@@ -3760,6 +3768,14 @@ function getRandomJobRouteForLocation(closestJobLocation) {
  * @return {JobUniformData} The jobroutes's data (class instance)
  */
 function getJobUniformData(jobIndex, uniformIndex) {
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].uniforms[uniformIndex] == "undefined") {
+		return false;
+	}
+
 	return getServerData().jobs[jobIndex].uniforms[uniformIndex];
 }
 
@@ -3771,6 +3787,14 @@ function getJobUniformData(jobIndex, uniformIndex) {
  * @return {JobEquipmentData} The job equipment loadout's data (class instance)
  */
 function getJobEquipmentData(jobIndex, equipmentIndex) {
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
+		return false;
+	}
+
 	return getServerData().jobs[jobIndex].equipment[equipmentIndex];
 }
 
@@ -3783,7 +3807,15 @@ function getJobEquipmentData(jobIndex, equipmentIndex) {
  * @return {JobEquipmentItemData} The job equipment loadout's data (class instance)
  */
 function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
-	return getJobEquipmentData(jobIndex, equipmentIndex).items[equipmentItemIndex];
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
+		return false;
+	}
+
+	return getServerData().jobs[jobIndex].equipment[equipmentIndex].items[equipmentItemIndex];
 }
 
 // ===========================================================================
@@ -3794,6 +3826,10 @@ function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
  * @return {JobRouteData} The job rank's data (class instance)
  */
 function getJobRankData(jobIndex, rankIndex) {
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
 	return getServerData().jobs[jobIndex].ranks[rankIndex];
 }
 
@@ -3805,6 +3841,14 @@ function getJobRankData(jobIndex, rankIndex) {
  * @return {JobRouteData} The job routes's data (class instance)
  */
 function getJobRouteData(jobIndex, routeIndex) {
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].routes[routeIndex] == "undefined") {
+		return false;
+	}
+
 	return getServerData().jobs[jobIndex].routes[routeIndex];
 }
 
@@ -3817,7 +3861,19 @@ function getJobRouteData(jobIndex, routeIndex) {
  * @return {JobRouteLocationData} The job route locations's data (class instance)
  */
 function getJobRouteLocationData(jobIndex, routeIndex, routeLocationIndex) {
-	return getJobRouteData(jobIndex, routeIndex).locations[routeLocationIndex];
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].routes[routeIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex] == "undefined") {
+		return false;
+	}
+
+	return getServerData().jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex];
 }
 
 // ===========================================================================
