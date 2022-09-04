@@ -75,7 +75,7 @@ let supportedFeatures = {
 		[AGRP_GAME_GTA_SA]: true,
 		[AGRP_GAME_GTA_IV]: true,
 		[AGRP_GAME_GTA_IV_EFLC]: true,
-		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_ONE]: true,
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
 	},
@@ -85,7 +85,7 @@ let supportedFeatures = {
 		[AGRP_GAME_GTA_SA]: true,
 		[AGRP_GAME_GTA_IV]: true,
 		[AGRP_GAME_GTA_IV_EFLC]: true,
-		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_ONE]: true,
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_TWO]: false,
 		[AGRP_GAME_MAFIA_THREE]: false
@@ -4575,15 +4575,27 @@ let gameData = {
 			// More will be added soon!
 		],
 		[AGRP_GAME_MAFIA_ONE]: [
+			// Police Stations
+			["Central Island Police Headquarters", [-1257.78, -6.48, -753.12], 0.0, null],
+
+			// Fire Stations
 			["Works Quarter Fire Station", [-1883.96, -4.89, -348.49], 0.0, null],
-			["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
+
+			// Hospitals
+			["New Ark Hospital", [-759.00, 11.40, 747.31], 0.0, null],
+
+			// Gas Stations
 			["Little Italy Gas Station", [-1781.84, -4.83, -204.96], 0.0, null],
+			["Downtown-Hoboken Gas Station", [-108.68, 8.46, -134.26], 0.0, null],
+
+			// Bars and Clubs
+			["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
+
+			// Misc
 			["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], 0.0, null],
 			["Road to Lost Heaven Racing Circuit", [-3049.63, -1.85, -436.09], 0.0, null],
-			["Chinatown", [-1709.77, 14.36, 583.77], 0.0, 0.0, null],
-			["Downtown Bank", [-175.78, 19.06, -399.13], 0.0, 0.0, null],
-			["Downtown-Hoboken Gas Station", [-108.68, 8.46, -134.26], 0.0, null],
-			["New Ark Hospital", [-759.00, 11.40, 747.31], 0.0, null],
+			["Chinatown Square", [-1709.77, 14.36, 583.77], 0.0, null],
+			["Downtown Bank", [-175.78, 19.06, -399.13], 0.0, null],
 		],
 	},
 	weaponSlots: {
@@ -6713,6 +6725,7 @@ let gameData = {
 	},
 	mapAreas: {
 		[AGRP_GAME_GTA_III]: [
+			/*
 			[ROADBR1, 1, [[617.442, -958.347, 6.26083], [1065.44, -908.347, 206.261]], 1],
 			[PORT_W, 0, [[751.68, -1178.22, -13.8723], [1065.68, -958.725, 136.128]], 1],
 			[FISHFAC, 2, [[944.208, -1149.81, -9.72576], [1016.14, -1076.01, 40.2742]], 1],
@@ -6754,6 +6767,7 @@ let gameData = {
 			[SUB_ZO2, 0, [[-265.444, 161.113, -41.7094], [-121.287, 367.043, 358.291]], 1],
 			[SUB_ZO3, 0, [[-265.434, 79.0922, -45.8201], [-226.334, 161.064, 354.18]], 1],
 			[WEE_DAM, 2, [[-1238.59, 306.841, -0.48605], [-910.445, 504.646, 39.514]], 3],
+			*/
 		]
 	}
 };
