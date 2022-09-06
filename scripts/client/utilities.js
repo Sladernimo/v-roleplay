@@ -349,23 +349,6 @@ function setPlayerWeaponDamageEnabled(clientName, state) {
 
 // ===========================================================================
 
-function setLocalPlayerCash(amount) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting local player money`);
-	if (localPlayer == null) {
-		return false;
-	}
-
-	if (typeof localPlayer.money != "undefined") {
-		localPlayer.money = toInteger(amount);
-	}
-
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		natives.setMultiplayerHudCash(amount);
-	}
-}
-
-// ===========================================================================
-
 function destroyAutoCreatedPickups() {
 	if (typeof ELEMENT_PICKUP != "undefined") {
 		getElementsByType(ELEMENT_PICKUP).forEach(function (pickup) {
@@ -575,4 +558,24 @@ function setProfanityFilterState(state) {
 	updateChatBox();
 }
 
+
+
 // ===========================================================================
+
+function processVehicleCruiseControl() {
+	if (localPlayer.vehicle == null) {
+		return false;
+	}
+
+	if (!localPlayer.vehicle.isSyncer) {
+		return false;
+	}
+
+	if (getLocalPlayerVehicleSeat() != 0) {
+		return false;
+	}
+
+	if (cruiseControl) {
+		setVehicleSpeed(cruiseControlSpeed);
+	}
+}
