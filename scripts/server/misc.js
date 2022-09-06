@@ -304,35 +304,41 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			setTimeout(function () {
-				setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
-				setPlayerDimension(client, closestProperty.exitDimension);
-				setPlayerInterior(client, closestProperty.exitInterior);
-				setPlayerPosition(client, closestProperty.exitPosition);
-				setPlayerHeading(client, closestProperty.exitRotation);
-				setTimeout(function () {
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
+				if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+					if (isMainWorldScene(closestProperty.exitScene)) {
+						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+					} else {
+						setPlayerScene(client, closestProperty.exitScene);
 					}
-					updateInteriorLightsForPlayer(client, closestProperty.interiorLights);
-				}, 1000);
-				//setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
-				//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
+				} else {
+					setPlayerDimension(client, closestProperty.exitDimension);
+					setPlayerInterior(client, closestProperty.exitInterior);
+					setPlayerPosition(client, closestProperty.exitPosition);
+					setPlayerHeading(client, closestProperty.exitRotation);
+					setTimeout(function () {
+						if (isFadeCameraSupported()) {
+							fadeCamera(client, true, 1.0);
+						}
+						updateInteriorLightsForPlayer(client, closestProperty.interiorLights);
+					}, 1000);
+					//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
+
+					if (isBusiness) {
+						if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
+							messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
+							startPaintBall(client);
+						}
+					}
+
+					let radioStationIndex = closestProperty.streamingRadioStationIndex;
+					if (radioStationIndex != -1) {
+						if (getRadioStationData(radioStationIndex)) {
+							playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
+							getPlayerData(client).streamingRadioStation = radioStationIndex;
+						}
+					}
+				}
 			}, 1100);
-
-			if (isBusiness) {
-				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
-					startPaintBall(client);
-				}
-			}
-
-			let radioStationIndex = closestProperty.streamingRadioStationIndex;
-			if (radioStationIndex != -1) {
-				if (getRadioStationData(radioStationIndex)) {
-					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
-					getPlayerData(client).streamingRadioStation = radioStationIndex;
-				}
-			}
 			return true;
 		}
 	} else {
@@ -352,53 +358,59 @@ function enterExitPropertyCommand(command, params, client) {
 
 			disableCityAmbienceForPlayer(client, true);
 			setTimeout(function () {
-				setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
-				setPlayerPosition(client, closestProperty.entrancePosition);
-				setPlayerHeading(client, closestProperty.entranceRotation);
-				setPlayerDimension(client, closestProperty.entranceDimension);
-				setPlayerInterior(client, closestProperty.entranceInterior);
-				setTimeout(function () {
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
+				if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
+					if (isMainWorldScene(closestProperty.entranceScene)) {
+						setPlayerScene(client, "agrp.mainWorldScene");
+					} else {
+						setPlayerScene(client, closestProperty.entranceScene);
+					}
+				} else {
+					setPlayerPosition(client, closestProperty.entrancePosition);
+					setPlayerHeading(client, closestProperty.entranceRotation);
+					setPlayerDimension(client, closestProperty.entranceDimension);
+					setPlayerInterior(client, closestProperty.entranceInterior);
+					setTimeout(function () {
+						if (isFadeCameraSupported()) {
+							fadeCamera(client, true, 1.0);
+						}
+
+						updateInteriorLightsForPlayer(client, true);
+					}, 1000);
+
+					if (isBusiness) {
+						if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
+							messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
+							stopPaintBall(client);
+						}
 					}
 
-					updateInteriorLightsForPlayer(client, true);
-				}, 1000);
+					clearLocalPickupsForPlayer(client);
+
+					//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
+					stopRadioStreamForPlayer(client);
+					getPlayerData(client).streamingRadioStation = -1;
+
+					// Check if exiting property was into another house/business and set radio station accordingly
+					let inHouse = getPlayerHouse(client);
+					let inBusiness = getPlayerBusiness(client);
+
+					if (inBusiness != -1) {
+						if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
+							if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
+								playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
+								getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
+							}
+						}
+					} else if (inHouse != -1) {
+						if (getHouseData(inHouse).streamingRadioStationIndex != -1) {
+							if (getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex)) {
+								playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex).url);
+								getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStationIndex;
+							}
+						}
+					}
+				}
 			}, 1100);
-
-			if (isBusiness) {
-				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-					messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
-					stopPaintBall(client);
-				}
-			}
-
-			clearLocalPickupsForPlayer(client);
-
-			//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
-			stopRadioStreamForPlayer(client);
-			getPlayerData(client).streamingRadioStation = -1;
-
-			// Check if exiting property was into another house/business and set radio station accordingly
-			let inHouse = getPlayerHouse(client);
-			let inBusiness = getPlayerBusiness(client);
-
-			if (inBusiness != -1) {
-				if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
-					if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
-						getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
-					}
-				}
-			} else if (inHouse != -1) {
-				if (getHouseData(inHouse).streamingRadioStationIndex != -1) {
-					if (getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex).url);
-						getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStationIndex;
-					}
-				}
-			}
-
 			//logToConsole(LOG_DEBUG, `[VRR.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 			return true;
 		}

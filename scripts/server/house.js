@@ -55,6 +55,7 @@ class HouseData {
 		this.entranceBlipModel = -1;
 		this.entrancePickup = null;
 		this.entranceBlip = null;
+		this.entranceScene = "";
 
 		this.exitPosition = false;
 		this.exitRotation = 0.0;
@@ -64,6 +65,7 @@ class HouseData {
 		this.exitBlipModel = -1;
 		this.exitPickup = null;
 		this.exitBlip = null;
+		this.exitScene = "";
 
 		this.streamingRadioStation = 0;
 		this.streamingRadioStationIndex = -1;
@@ -86,6 +88,7 @@ class HouseData {
 			this.entranceDimension = toInteger(dbAssoc["house_entrance_vw"]);
 			this.entrancePickupModel = toInteger(dbAssoc["house_entrance_pickup"]);
 			this.entranceBlipModel = toInteger(dbAssoc["house_entrance_blip"]);
+			this.entranceScene = toString(dbAssoc["house_entrance_scene"]);
 
 			this.exitPosition = toVector3(toFloat(dbAssoc["house_exit_pos_x"]), toFloat(dbAssoc["house_exit_pos_y"]), toFloat(dbAssoc["house_exit_pos_z"]));
 			this.exitRotation = toFloat(dbAssoc["house_exit_rot_z"]);
@@ -93,6 +96,7 @@ class HouseData {
 			this.exitDimension = toInteger(dbAssoc["house_exit_vw"]);
 			this.exitPickupModel = toInteger(dbAssoc["house_exit_pickup"]);
 			this.exitBlipModel = toInteger(dbAssoc["house_exit_blip"]);
+			this.exitScene = toString(dbAssoc["house_exit_scene"]);
 		}
 	}
 };
@@ -211,7 +215,7 @@ function createHouseCommand(command, params, client) {
 		return false;
 	}
 
-	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
+	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorScene);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`);
 }
 
@@ -768,7 +772,7 @@ function removePlayersFromHouse(houseIndex) {
  * @return {bool} Whether or not the player was successfully removed from the house
  *
  */
-function createHouse(description, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceCutscene = -1) {
+function createHouse(description, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
 	let tempHouseData = new HouseData(false);
 	tempHouseData.description = description;
 
@@ -778,7 +782,7 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 	tempHouseData.entranceBlipModel = entranceBlipModel;
 	tempHouseData.entranceInterior = entranceInterior;
 	tempHouseData.entranceDimension = entranceDimension;
-	tempHouseData.entranceCutscene = entranceCutscene;
+	tempHouseData.entranceScene = entranceScene;
 
 	tempHouseData.exitPosition = exitPosition;
 	tempHouseData.exitRotation = 0.0;
@@ -786,7 +790,7 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 	tempHouseData.exitBlipModel = -1;
 	tempHouseData.exitInterior = 0;
 	tempHouseData.exitDimension = 0;
-	tempHouseData.exitCutscene = -1;
+	tempHouseData.exitScene = -1;
 
 	tempHouseData.needsSaved = true;
 
@@ -917,7 +921,7 @@ function saveHouseToDatabase(houseId) {
 			["house_entrance_vw", tempHouseData.entranceDimension],
 			["house_entrance_pickup", tempHouseData.entrancePickupModel],
 			["house_entrance_blip", tempHouseData.entranceBlipModel],
-			//["house_entrance_cutscene", tempHouseData.entranceCutscene],
+			["house_entrance_scene", tempHouseData.entranceScene],
 			["house_exit_pos_x", tempHouseData.exitPosition.x],
 			["house_exit_pos_y", tempHouseData.exitPosition.y],
 			["house_exit_pos_z", tempHouseData.exitPosition.z],
@@ -926,7 +930,7 @@ function saveHouseToDatabase(houseId) {
 			["house_exit_vw", tempHouseData.exitDimension],
 			["house_exit_pickup", tempHouseData.exitPickupModel],
 			["house_exit_blip", tempHouseData.exitBlipModel],
-			//["house_exit_cutscene", tempHouseData.exitCutscene],
+			["house_exit_scene", tempHouseData.exitScene],
 			["house_buy_price", tempHouseData.buyPrice],
 			["house_rent_price", tempHouseData.rentPrice],
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],

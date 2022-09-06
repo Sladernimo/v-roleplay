@@ -126,7 +126,7 @@ class ClientData {
 		this.locale = 0;
 		this.enteringVehicle = null;
 		this.customDisconnectReason = "";
-		this.interiorCutscene = -1;
+		this.scene = "";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
 		this.pedState = AGRP_PEDSTATE_NONE;

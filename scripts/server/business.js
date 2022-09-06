@@ -73,6 +73,7 @@ class BusinessData {
 		this.entranceBlipModel = -1;
 		this.entrancePickup = null;
 		this.entranceBlip = null;
+		this.entranceScene = "";
 
 		this.exitPosition = false;
 		this.exitRotation = 0.0;
@@ -82,6 +83,7 @@ class BusinessData {
 		this.exitBlipModel = -1;
 		this.exitPickup = null;
 		this.exitBlip = null;
+		this.exitScene = "";
 
 		this.entranceFee = 0;
 		this.till = 0;
@@ -108,6 +110,7 @@ class BusinessData {
 			this.entranceDimension = toInteger(dbAssoc["biz_entrance_vw"]);
 			this.entrancePickupModel = toInteger(dbAssoc["biz_entrance_pickup"]);
 			this.entranceBlipModel = toInteger(dbAssoc["biz_entrance_blip"]);
+			this.entranceScene = toString(dbAssoc["biz_entrance_scene"]);
 
 			this.exitPosition = toVector3(dbAssoc["biz_exit_pos_x"], dbAssoc["biz_exit_pos_y"], dbAssoc["biz_exit_pos_z"]);
 			this.exitRotation = toInteger(dbAssoc["biz_exit_rot_z"]);
@@ -115,6 +118,7 @@ class BusinessData {
 			this.exitDimension = toInteger(dbAssoc["biz_exit_vw"]);
 			this.exitPickupModel = toInteger(dbAssoc["biz_exit_pickup"]);
 			this.exitBlipModel = toInteger(dbAssoc["biz_exit_blip"]);
+			this.exitScene = toString(dbAssoc["biz_exit_scene"]);
 
 			this.entranceFee = toInteger(dbAssoc["biz_entrance_fee"]);
 			this.till = toInteger(dbAssoc["biz_till"]);
@@ -320,7 +324,7 @@ function createBusinessCommand(command, params, client) {
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
-		getPlayerData(client).interiorCutscene);
+		getPlayerData(client).interiorScene);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
 }
@@ -362,7 +366,7 @@ function createBusinessLocationCommand(command, params, client) {
 
 // ===========================================================================
 
-function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceCutscene = -1) {
+function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
 	let tempBusinessData = new BusinessData(false);
 	tempBusinessData.name = name;
 
@@ -372,7 +376,7 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.entranceBlipModel = entranceBlipModel;
 	tempBusinessData.entranceInterior = entranceInterior;
 	tempBusinessData.entranceDimension = entranceDimension;
-	tempBusinessData.entranceCutscene = entranceCutscene;
+	tempBusinessData.entranceScene = entranceScene;
 
 	tempBusinessData.exitPosition = exitPosition;
 	tempBusinessData.exitRotation = 0.0;
@@ -380,7 +384,7 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.exitBlipModel = -1;
 	tempBusinessData.exitInterior = 0;
 	tempBusinessData.exitDimension = 0;
-	tempBusinessData.exitCutscene = -1;
+	tempBusinessData.exitScene = -1;
 
 	tempBusinessData.needsSaved = true;
 	let businessId = getServerData().businesses.push(tempBusinessData);
@@ -1099,7 +1103,8 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			getBusinessData(businessId).exitDimension = 0;
 			getBusinessData(businessId).exitInterior = -1;
 			getBusinessData(businessId).hasInterior = false;
-			getBusinessData(businessId).interiorCutscene = "";
+			getBusinessData(businessId).entranceScene = "";
+			getBusinessData(businessId).exitScene = "";
 			getBusinessData(businessId).exitPickupModel = -1;
 			getBusinessData(businessId).customInterior = false;
 			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`);
@@ -1124,7 +1129,14 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
 		getBusinessData(businessId).hasInterior = true;
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
+
+		if (isGameFeatureSupported("interiorScene")) {
+			if (isMainWorldScene(getPlayerData(client).scene)) {
+				getBusinessData(businessId).exitScene = getGameConfig().mainWorldScene[getGame()];
+			} else {
+				getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
+			}
+		}
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1183,7 +1195,7 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
 		getBusinessData(businessId).hasInterior = true;
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
+		getBusinessData(businessId).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1903,7 +1915,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_entrance_vw", tempBusinessData.entranceDimension],
 			["biz_entrance_pickup", tempBusinessData.entrancePickupModel],
 			["biz_entrance_blip", tempBusinessData.entranceBlipModel],
-			//["biz_entrance_cutscene", tempBusinessData.entranceCutscene],
+			["biz_entrance_scene", tempBusinessData.entranceScene],
 			["biz_exit_pos_x", tempBusinessData.exitPosition.x],
 			["biz_exit_pos_y", tempBusinessData.exitPosition.y],
 			["biz_exit_pos_z", tempBusinessData.exitPosition.z],
@@ -1912,7 +1924,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_exit_vw", tempBusinessData.exitDimension],
 			["biz_exit_pickup", tempBusinessData.exitPickupModel],
 			["biz_exit_blip", tempBusinessData.exitBlipModel],
-			//["biz_exit_cutscene", tempBusinessData.exitCutscene],
+			["biz_exit_scene", tempBusinessData.exitScene],
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],

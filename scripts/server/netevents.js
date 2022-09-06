@@ -1176,9 +1176,9 @@ function requestPlayerPedNetworkId(client) {
 
 // ==========================================================================
 
-function setPlayerInCutsceneInterior(client, cutsceneName) {
-	getPlayerData(client).interiorCutscene = cutsceneName;
-	sendNetworkEventToPlayer("agrp.cutsceneInterior", client, cutsceneName);
+function setPlayerScene(client, sceneName) {
+	getPlayerData(client).scene = sceneName;
+	sendNetworkEventToPlayer("agrp.scene", client, sceneName);
 }
 
 // ==========================================================================
