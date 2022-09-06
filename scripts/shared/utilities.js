@@ -3183,3 +3183,9 @@ function fillLeadingZeros(number, length) {
 }
 
 // ===========================================================================
+
+function isMainWorldScene(sceneName) {
+	return (sceneName == "agrp.mainWorldScene");
+}
+
+// ===========================================================================
