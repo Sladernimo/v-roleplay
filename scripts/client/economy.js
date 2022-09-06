@@ -19,3 +19,27 @@ function getCurrencyString(amount) {
 }
 
 // ===========================================================================
+
+function updateLocalPlayerMoney() {
+	if (localPlayer == null) {
+		return false;
+	}
+
+	if (typeof localPlayer.money != "undefined") {
+		localPlayer.money = toInteger(amount);
+	}
+
+	if (getGame() == AGRP_GAME_GTA_IV) {
+		natives.setMultiplayerHudCash(amount);
+	}
+}
+
+// ===========================================================================
+
+function setLocalPlayerMoney(amount) {
+	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting local player money`);
+	localPlayerCash = amount;
+	updateLocalPlayerMoney();
+}
+
+// ===========================================================================

@@ -48,7 +48,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.heading", setLocalPlayerHeading);
 	addNetworkEventHandler("agrp.interior", setLocalPlayerInterior);
 	addNetworkEventHandler("agrp.spawned", onServerSpawnedLocalPlayer);
-	addNetworkEventHandler("agrp.money", setLocalPlayerCash);
+	addNetworkEventHandler("agrp.money", setLocalPlayerMoney);
 	addNetworkEventHandler("agrp.armour", setLocalPlayerArmour);
 	addNetworkEventHandler("agrp.localPlayerSkin", setLocalPlayerSkin);
 	addNetworkEventHandler("agrp.pedSpeak", makeLocalPlayerPedSpeak);
