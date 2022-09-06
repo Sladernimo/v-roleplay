@@ -62,7 +62,9 @@ function onResourceStart(event, resource) {
 		addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
 		addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
 	}
-	//garbageCollectorInterval = setInterval(collectAllGarbage, 1000*60);
+
+	garbageCollectorInterval = setInterval(collectAllGarbage, 1000 * 60);
+	localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 }
 
 // ===========================================================================
@@ -101,9 +103,9 @@ function onProcess(event, deltaTime) {
 	processNearbyPickups();
 	processVehiclePurchasing();
 	processVehicleBurning();
+	processVehicleCruiseControl();
 	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
 	//processVehicleFires();
-
 }
 
 // ===========================================================================
@@ -166,6 +168,20 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 					}
 				}
 			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function onPedExitingVehicle(event, ped, vehicle, seat) {
+	//logToConsole(LOG_DEBUG, `[VRR.Event] Local player exited vehicle`);
+	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
+
+	if (localPlayer != null) {
+		if (ped == localPlayer) {
+			cruiseControl = false;
+			cruiseControlSpeed = 0.0;
 		}
 	}
 }
