@@ -131,14 +131,13 @@ function setAllVehicleDataIndexes() {
 
 // ===========================================================================
 
-function toggleVehicleCruiseControl(vehicle) {
-	if (!vehicle.isSyncer) {
+function toggleLocalVehicleCruiseControl() {
+	if (!localPlayer.vehicle.isSyncer) {
 		return false;
 	}
 
-
-
 	cruiseControl = !cruiseControl;
+	cruiseControlSpeed = getVehicleSpeed(vehicle);
 }
 
 // ===========================================================================
