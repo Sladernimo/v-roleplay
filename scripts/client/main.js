@@ -92,6 +92,9 @@ let serverData = {
 	jobs: [],
 };
 
-let localPlayerCash = 0;
+let localPlayerMoney = 0;
+let localPlayerMoneyInterval = null;
+
+let currencyString = "${AMOUNT}";
 
 // ===========================================================================
