@@ -1040,10 +1040,6 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	if (!getHouseData(houseId)) {
 		return false;
 	}
@@ -1058,14 +1054,20 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].House;
-
-	if (getServerData().houses[houseId].entrancePickupModel != 0) {
-		pickupModelId = getHouseData(houseId).entrancePickupModel;
-	}
-
 	if (areServerElementsSupported()) {
-		let entrancePickup = createGamePickup(pickupModelId, getHouseData(houseId).entrancePosition, getGameConfig().pickupTypes[getGame()].house);
+		let entrancePickup = null;
+		if (isGameFeatureSupported("pickup")) {
+			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
+
+			if (getServerData().houses[houseId].entrancePickupModel != 0) {
+				pickupModelId = getHouseData(houseId).entrancePickupModel;
+			}
+
+			entrancePickup = createGamePickup(pickupModelId, houseData.entrancePosition, getGameConfig().pickupTypes[getGame()].house);
+		} else if (isGameFeatureSupported("dummyElement")) {
+			entrancePickup = createGameDummyElement(houseData.exitPosition);
+		}
+
 		if (entrancePickup != null) {
 			setElementOnAllDimensions(entrancePickup, false);
 			setElementDimension(entrancePickup, getHouseData(houseId).entranceDimension);
@@ -1154,10 +1156,6 @@ function createHouseExitPickup(houseId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	if (!getHouseData(houseId)) {
 		return false;
 	}
@@ -1172,13 +1170,19 @@ function createHouseExitPickup(houseId) {
 		return false;
 	}
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+	let exitPickup = null;
+	if (isGameFeatureSupported("pickup")) {
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
 
-	if (getServerData().houses[houseId].exitPickupModel != 0) {
-		pickupModelId = houseData.exitPickupModel;
+		if (getServerData().houses[houseId].exitPickupModel != 0) {
+			pickupModelId = houseData.exitPickupModel;
+		}
+
+		exitPickup = createGamePickup(pickupModelId, houseData.exitPosition, getGameConfig().pickupTypes[getGame()].house);
+	} else if (isGameFeatureSupported("dummyElement")) {
+		//exitPickup = createGameDummyElement(houseData.exitPosition);
 	}
 
-	let exitPickup = createGamePickup(pickupModelId, houseData.exitPosition, getGameConfig().pickupTypes[getGame()].house);
 	if (exitPickup != null) {
 		setElementDimension(exitPickup, houseData.exitDimension);
 		setElementOnAllDimensions(exitPickup, false);

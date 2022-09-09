@@ -1024,6 +1024,11 @@ function getBusinessStorageItemsCommand(command, params, client) {
 		return false;
 	}
 
+	if (!canPlayerManageBusiness(client, businessId)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+		return false;
+	}
+
 	showBusinessStorageInventoryToPlayer(client, businessId);
 }
 
@@ -1968,10 +1973,6 @@ function createAllBusinessPickups() {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	for (let i in getServerData().businesses) {
 		createBusinessEntrancePickup(i);
 		createBusinessExitPickup(i);
@@ -2022,10 +2023,6 @@ function createBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	let businessData = getBusinessData(businessId);
 
 	//if(businessData.hasInterior) {
@@ -2036,16 +2033,22 @@ function createBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
-
-	if (businessData.entrancePickupModel != 0) {
-		pickupModelId = businessData.entrancePickupModel;
-	}
-
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name} (model ${pickupModelId})`);
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name}`);
 
 	if (areServerElementsSupported()) {
-		let entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+		let entrancePickup = null;
+		if (isGameFeatureSupported("pickup")) {
+			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+
+			if (businessData.entrancePickupModel != 0) {
+				pickupModelId = businessData.entrancePickupModel;
+			}
+
+			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+		} else if (isGameFeatureSupported("dummyElement")) {
+			entrancePickup = createGameDummyElement(businessData.entrancePosition);
+		}
+
 		if (entrancePickup != null) {
 			if (businessData.entranceDimension != -1) {
 				setElementDimension(entrancePickup, businessData.entranceDimension);
@@ -2156,10 +2159,6 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	let businessData = getBusinessData(businessId);
 
 	//if(!businessData.hasInterior) {
@@ -2170,15 +2169,21 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name}`);
 
-	if (businessData.exitPickupModel != 0) {
-		pickupModelId = businessData.exitPickupModel;
+	let exitPickup = null;
+	if (isGameFeatureSupported("pickup")) {
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+
+		if (businessData.exitPickupModel != 0) {
+			pickupModelId = businessData.exitPickupModel;
+		}
+
+		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
+	} else if (isGameFeatureSupported("dummyElement")) {
+		//exitPickup = createGameDummyElement(businessData.exitPosition);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name} (model ${pickupModelId})`);
-
-	let exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
 	if (exitPickup != null) {
 		if (businessData.exitDimension != -1) {
 			setElementDimension(exitPickup, businessData.exitDimension);
@@ -2197,6 +2202,7 @@ function createBusinessExitPickup(businessId) {
 		getBusinessData(businessId).exitPickup = exitPickup;
 		updateBusinessPickupLabelData(businessId);
 	}
+
 }
 
 // ===========================================================================
@@ -2424,10 +2430,6 @@ function deleteBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	if (getBusinessData(businessId).entrancePickup != null) {
 		//removeFromWorld(getBusinessData(businessId).entrancePickup);
 		deleteGameElement(getBusinessData(businessId).entrancePickup);
@@ -2448,10 +2450,6 @@ function deleteBusinessEntrancePickup(businessId) {
  */
 function deleteBusinessExitPickup(businessId) {
 	if (!areServerElementsSupported()) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
