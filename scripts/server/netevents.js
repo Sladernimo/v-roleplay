@@ -131,7 +131,7 @@ function playerClientStarted(client) {
 
 function playerClientStopped(client) {
 	logToConsole(LOG_DEBUG, `[VRR.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
-	getPlayerData(targetClient).customDisconnectReason = `Kicked - Client script verification failed. Possible hacks.`;
+	getPlayerData(client).customDisconnectReason = `Kicked - Client script verification failed.`;
 	disconnectPlayer(client);
 }
 
@@ -1279,6 +1279,12 @@ function showSingleParticleEffect(position, particleEffectId, strength = 1.0, du
 
 function sendPlayerCurrencyString(client) {
 	sendNetworkEventToPlayer("agrp.currencyString", client, getGlobalConfig().economy.currencyString);
+}
+
+// ==========================================================================
+
+function sendMapChangeWarningToPlayer(client, changingToNight) {
+	sendNetworkEventToPlayer("agrp.mapChangingSoon", client, changingToNight);
 }
 
 // ==========================================================================
