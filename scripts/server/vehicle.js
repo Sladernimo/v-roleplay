@@ -296,7 +296,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_int", toInteger(tempVehicleData.interior)],
 			["veh_vw", toInteger(tempVehicleData.dimension)],
 			["veh_livery", toInteger(tempVehicleData.livery)],
-			["veh_radio_station", toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId)],
+			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
 		];
 
 		let dbQuery = null;
