@@ -68,7 +68,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.veh.lights", setVehicleLights);
 	addNetworkEventHandler("agrp.veh.engine", setVehicleEngine);
 	addNetworkEventHandler("agrp.veh.repair", repairVehicle);
-	addNetworkEventHandler("agrp.cruiseControl", toggleVehicleCruiseControl);
+	addNetworkEventHandler("agrp.cruiseControl", toggleLocalVehicleCruiseControl);
 	addNetworkEventHandler("agrp.passenger", enterVehicleAsPassenger);
 
 	// Radio
