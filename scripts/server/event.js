@@ -226,7 +226,7 @@ function onPedExitingVehicle(event, ped, vehicle) {
 // ===========================================================================
 
 function onResourceStart(event, resource) {
-	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} started!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Resource ${resource.name} started!`);
 
 	//if(resource != thisResource) {
 	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
@@ -236,7 +236,7 @@ function onResourceStart(event, resource) {
 // ===========================================================================
 
 function onResourceStop(event, resource) {
-	logToConsole(LOG_WARN, `[VRR.Event] Resource ${resource.name} stopped!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Resource ${resource.name} stopped!`);
 
 	//if(resource != thisResource) {
 	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} stopped!`);
@@ -253,6 +253,7 @@ function onResourceStop(event, resource) {
 // ===========================================================================
 
 function onPedEnteredSphere(event, ped, sphere) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} entered sphere ${sphere.id}!`);
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 
@@ -268,6 +269,7 @@ function onPedEnteredSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedExitedSphere(event, ped, sphere) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} exited sphere ${sphere.id}!`);
 	//if (ped.isType(ELEMENT_PLAYER)) {
 	//	let client = getClientFromPlayerElement(ped);
 	//}
@@ -276,6 +278,8 @@ function onPedExitedSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedPickupPickedUp(event, ped, pickup) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} picked up pickup ${pickup.id}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 
@@ -290,6 +294,8 @@ function onPedPickupPickedUp(event, ped, pickup) {
 // ===========================================================================
 
 function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} wasted by ped ${killerPed.id}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let killerClient = null;
 		if (killerPed != null && killerPed.type == ELEMENT_PLAYER) {
@@ -302,6 +308,8 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 // ===========================================================================
 
 function onPlayerDeath(client, killer, weapon, pedPiece) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
+
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
 	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
@@ -393,6 +401,8 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 // ===========================================================================
 
 function onPedSpawn(ped) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} spawned!`);
+
 	if (ped.type == ELEMENT_PLAYER) {
 		if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
 			//setTimeout(onPlayerSpawn, 250, ped);
@@ -404,6 +414,7 @@ function onPedSpawn(ped) {
 // ===========================================================================
 
 async function onPlayerSpawn(client) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
 	//logToConsole(LOG_DEBUG, `[VRR.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
 	//if(getPlayerPed(client) == null) {
 	//    logToConsole(LOG_DEBUG, `[VRR.Event] ${getPlayerDisplayForConsole(client)}'s player element not set yet. Rechecking ...`);
@@ -635,6 +646,8 @@ async function onPlayerSpawn(client) {
 // ===========================================================================
 
 function onPlayerCommand(event, client, command, params) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Player used command ${command}!`);
+
 	if (!doesCommandExist(command)) {
 		processPlayerCommand(command, params, client);
 	}
@@ -643,6 +656,8 @@ function onPlayerCommand(event, client, command, params) {
 // ===========================================================================
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -672,6 +687,8 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -786,6 +803,8 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -797,6 +816,8 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_DEBUG, `[VRR.Event] Ped ${ped.id} is exiting vehicle ${vehicle.id} in seat ${seat}!`);
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
