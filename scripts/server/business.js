@@ -1933,7 +1933,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
-			["biz_radio_station", toInteger(tempBusinessData.streamingRadioStation)],
+			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 			["biz_buy_price", tempBusinessData.buyPrice],
 			//["biz_rent_price", tempBusinessData.rentPrice],
