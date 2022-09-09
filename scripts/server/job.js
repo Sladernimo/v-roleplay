@@ -3495,7 +3495,7 @@ function createJobUniformCommand(command, params, client) {
 		return false;
 	}
 
-	let splitParams = params.spli(" ");
+	let splitParams = params.split(" ");
 	let jobId = getJobFromParams(getParam(params, " ", 1));
 	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
 
