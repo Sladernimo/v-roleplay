@@ -328,3 +328,17 @@ function getRadioStationIdFromDatabaseId(databaseId) {
 }
 
 // ===========================================================================
+
+function getRadioStationData(radioStationIndex) {
+	if (radioStationIndex == -1) {
+		return false;
+	}
+
+	if (typeof getServerData().radioStations[radioStationIndex] == "undefined") {
+		return false;
+	}
+
+	return getServerData().radioStations[radioStationIndex];
+}
+
+// ===========================================================================
