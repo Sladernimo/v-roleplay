@@ -261,6 +261,16 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: true,
 		[AGRP_GAME_MAFIA_THREE]: true,
 	},
+	dummyElement: {
+		[AGRP_GAME_GTA_III]: false,
+		[AGRP_GAME_GTA_VC]: false,
+		[AGRP_GAME_GTA_SA]: false,
+		[AGRP_GAME_GTA_IV]: false,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: true,
+		[AGRP_GAME_MAFIA_TWO]: true,
+		[AGRP_GAME_MAFIA_THREE]: true,
+	},
 };
 
 // ===========================================================================
@@ -4600,12 +4610,18 @@ let gameData = {
 
 			// Bars and Clubs
 			["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
+			["Palermo Club", [63.31, 3.97, 281.85], 0.0, null],
+			["Pompeii Bar", [346.81, -2.55, 228.43], 0.0, null],
 
 			// Misc
 			["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], 0.0, null],
 			["Road to Lost Heaven Racing Circuit", [-3049.63, -1.85, -436.09], 0.0, null],
 			["Chinatown Square", [-1709.77, 14.36, 583.77], 0.0, null],
 			["Downtown Bank", [-175.78, 19.06, -399.13], 0.0, null],
+			["Twister", [60.29, 4.73, 109.25], 0.0, null],
+			["Rich Mansion Front Gate", [782.06, 110.10, -202.60], 0.0, null],
+			["Oakwood Tennis Courts", [456.69, 27.70, -685.82], 0.0, null],
+			["Lighthouse", [949.25, 19.97, -821.45], 0.0, null],
 		],
 	},
 	weaponSlots: {
