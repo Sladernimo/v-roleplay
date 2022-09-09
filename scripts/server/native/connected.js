@@ -490,6 +490,15 @@ function createGamePickup(modelIndex, position, type) {
 
 // ===========================================================================
 
+function createGameDummyElement(position) {
+	if (!isGameFeatureSupported("dummyElement")) {
+		return false;
+	}
+	return game.createDummy(position);
+}
+
+// ===========================================================================
+
 function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255, 255, 255)) {
 	if (!isGameFeatureSupported("blip")) {
 		return false;
