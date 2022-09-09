@@ -126,8 +126,8 @@ class ServerConfigData {
 			this.discordBotToken = intToBool(dbAssoc["svr_discord_bot_token"]);
 			this.introMusicURL = dbAssoc["svr_intro_music"];
 
-			//this.useRealTime = intToBool(toInteger(dbAssoc["svr_real_time_enabled"]));
-			//this.realTimeZone = dbAssoc["svr_real_time_timezone"];
+			this.useRealTime = intToBool(toInteger(dbAssoc["svr_real_time_enabled"]));
+			this.realTimeZone = dbAssoc["svr_real_time_timezone"];
 
 			this.discord = {
 				sendEvents: intToBool(dbAssoc["svr_discord_send_events"]),
@@ -377,10 +377,12 @@ function applyConfigToServer(tempServerConfig) {
 	logToConsole(LOG_INFO, "[VRR.Config]: Applying server config ...");
 	logToConsole(LOG_DEBUG, "[VRR.Config]: Server config applied successfully!");
 
-	if (isTimeSupported()) {
-		logToConsole(LOG_DEBUG, `[VRR.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
-		setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
-	}
+	updateServerGameTime();
+
+	//if (isTimeSupported()) {
+	//	logToConsole(LOG_DEBUG, `[VRR.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
+	//	setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
+	//}
 
 	if (isWeatherSupported()) {
 		logToConsole(LOG_DEBUG, `[VRR.Config]: Setting weather to ${tempServerConfig.weather}`);

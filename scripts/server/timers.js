@@ -125,6 +125,34 @@ function tenMinuteTimerFunction() {
 	//showRandomTipToAllPlayers();
 	//saveServerDataToDatabase();
 	//checkInactiveVehicleRespawns();
+
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		if (server.mapName == "FREERIDE") {
+			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+				sendMapChangeWarningToPlayer(null, true);
+			}
+
+			if (!isNightTime(getServerConfig().hour)) {
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
+				removeAllPlayersFromProperties();
+				saveServerDataToDatabase();
+				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				updateTimeRule();
+			}
+		} else {
+			if (isServerGoingToChangeMapsSoon()) {
+				sendMapChangeWarningToPlayer(null, true);
+			}
+
+			if (!isNightTime(getServerConfig().hour)) {
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
+				removeAllPlayersFromProperties();
+				saveServerDataToDatabase();
+				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				updateTimeRule();
+			}
+		}
+	}
 }
 
 // ===========================================================================
@@ -202,26 +230,43 @@ function updatePings() {
 // ===========================================================================
 
 function checkServerGameTime() {
-	if (isGameFeatureSupported("time")) {
-		return false;
+	//logToConsole(LOG_DEBUG | LOG_WARN, "[AGRP.Timers] Checking server game time");
+
+	//if (isGameFeatureSupported("time")) {
+	//	return false;
+	//}
+
+	if (!getServerConfig().useRealTime) {
+		if (getServerConfig().minute >= 59) {
+			getServerConfig().minute = 0;
+			if (getServerConfig().hour >= 23) {
+				getServerConfig().hour = 0;
+			} else {
+				getServerConfig().hour = getServerConfig().hour + 1;
+			}
+		} else {
+			getServerConfig().minute = getServerConfig().minute + 1;
+		}
+	} else {
+		let dateTime = getCurrentTimeStampWithTimeZone(getServerConfig().realTimeZone);
+		getServerConfig().hour = dateTime.getHours();
+		getServerConfig().minute = dateTime.getMinutes();
 	}
 
-	//if(!getServerConfig().useRealTime) {
-	//if (getServerConfig().minute >= 59) {
-	//	getServerConfig().minute = 0;
-	//	if (getServerConfig().hour >= 23) {
-	//		getServerConfig().hour = 0;
-	//	} else {
-	//		getServerConfig().hour = getServerConfig().hour + 1;
-	//	}
-	//} else {
-	//	getServerConfig().minute = getServerConfig().minute + 1;
-	//}
-	//} else {
-	//	let dateTime = getCurrentTimeStampWithTimeZone(getServerConfig().realTimeZone);
-	//	getServerConfig().hour = dateTime.getHours();
-	//	getServerConfig().minute = dateTime.getMinutes();
-	//}
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		if (isNightTime(getServerConfig().hour) && getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
+			getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
+			game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+		} else if (!isNightTime(getServerConfig().hour) && getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
+			getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
+			game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+		}
+	}
+
+	if (isGameFeatureSupported("time")) {
+		game.time.hour = getServerConfig().hour;
+		game.time.minute = getServerConfig().minute;
+	}
 
 	updateTimeRule();
 }

@@ -3189,3 +3189,29 @@ function isMainWorldScene(sceneName) {
 }
 
 // ===========================================================================
+
+function isNightTime(hour) {
+	if (hour >= 7 && hour <= 19) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+// ===========================================================================
+
+function isServerGoingToChangeMapsSoon(hour, minute) {
+	if (server.mapName == "FREERIDENOC") {
+		if (hour == 6 && minute >= 30) {
+			return true
+		}
+	} else if (server.mapName == "FREERIDE") {
+		if (hour == 18 && minute >= 30) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================

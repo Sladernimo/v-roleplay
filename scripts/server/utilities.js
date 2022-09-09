@@ -409,6 +409,14 @@ function updateTimeRule() {
 	if (isTimeSupported()) {
 		server.setRule("Time", makeReadableTime(game.time.hour, game.time.minute));
 	}
+
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		if (isNightTime(getServerConfig().hour)) {
+			server.setRule("Time", "Night");
+		} else {
+			server.setRule("Time", "Day");
+		}
+	}
 }
 
 // ===========================================================================
@@ -470,6 +478,13 @@ function updateAllPlayerWeaponDamageStates() {
 			setPlayerWeaponDamageEvent(clients[i], getPlayerData(clients[i]).weaponDamageEvent);
 		}
 	}
+}
+
+// ===========================================================================
+
+function removeAllPlayersFromProperties() {
+
+	return false;
 }
 
 // ===========================================================================

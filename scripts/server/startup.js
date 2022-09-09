@@ -52,8 +52,12 @@ function initServerScripts() {
 
 	addAllNetworkEventHandlers();
 
+	checkServerGameTime();
+
 	initAllClients();
 	initTimers();
+
+
 
 	serverStartTime = getCurrentUnixTimestamp();
 }
