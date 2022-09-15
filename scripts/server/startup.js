@@ -57,8 +57,6 @@ function initServerScripts() {
 	initAllClients();
 	initTimers();
 
-
-
 	serverStartTime = getCurrentUnixTimestamp();
 }
 
