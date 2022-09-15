@@ -253,6 +253,7 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
+	/*
 	if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		if (isNightTime(getServerConfig().hour) && getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
 			getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
@@ -262,6 +263,7 @@ function checkServerGameTime() {
 			game.changeMap(getGameConfig().mainWorldScene[getGame()]);
 		}
 	}
+	*/
 
 	if (isGameFeatureSupported("time")) {
 		game.time.hour = getServerConfig().hour;
