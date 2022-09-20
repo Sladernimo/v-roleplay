@@ -40,8 +40,6 @@ function initLocaleChooserGUI() {
 
 	localeChooser.window.shown = false;
 
-	loadLocaleConfig();
-
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created locale chooser GUI`);
 }
 
