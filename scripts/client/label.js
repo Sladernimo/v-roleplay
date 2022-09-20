@@ -14,7 +14,12 @@ let jobLabels = [];
 
 let propertyLabelNameFont = null;
 let propertyLabelLockedFont = null;
-let propertyLabelHeight = 1.0;
+let propertyLabelHeight = (getGame() == AGRP_GAME_MAFIA_ONE) ? 2.0 : 1.0;
+let propertyPickupRenderDistance = 75.0;
+let propertyLabelRenderDistance = 5.0;
+let propertyLabelLockedOffset = 16;
+let propertyLabelNameOffset = 20;
+let propertyLabelPriceOffset = 16;
 
 let jobNameLabelFont = null;
 let jobHelpLabelFont = null;
@@ -23,21 +28,15 @@ let unlockedColour = toColour(50, 205, 50, 255);
 let lockedColour = toColour(205, 92, 92, 255);
 let jobHelpColour = toColour(234, 198, 126, 255);
 
-let renderLabelDistance = 7.5;
-
-let propertyLabelLockedOffset = 16;
-let propertyLabelNameOffset = 18;
-let propertyLabelPriceOffset = 16;
-
 // ===========================================================================
 
 function initLabelScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Label]: Initializing label script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Label]: Initializing label script ...");
 	propertyLabelNameFont = initLabelPropertyNameFont();
 	propertyLabelLockedFont = initLabelPropertyLockedFont();
 	jobNameLabelFont = initLabelJobNameFont();
 	jobHelpLabelFont = initLabelJobHelpFont();
-	logToConsole(LOG_DEBUG, "[VRR.Label]: Label script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Label]: Label script initialized!");
 }
 
 // ===========================================================================
@@ -81,32 +80,33 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
 
-	let tempPosition = position;
-	tempPosition.z = tempPosition.z + propertyLabelHeight;
+	position = getPosAbovePos(position, propertyLabelHeight);
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
 	if (getGame() == AGRP_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(tempPosition, natives.getGameViewportId());
+		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
 	} else {
-		screenPosition = getScreenFromWorldPosition(tempPosition);
+		screenPosition = getScreenFromWorldPosition(position);
 	}
+
+	logToConsole(LOG_VERBOSE, `[AGRP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
 
 	if (screenPosition.x < 0 || screenPosition.x > game.width) {
 		return false;
 	}
 
 	let text = "";
-	if (price > "0") {
-		text = getLocaleString("PropertyForSaleLabel", price);
+	if (toInteger(price) > 0) {
+		text = getLocaleString("PropertyForSaleLabel", getCurrencyString(price));
 		let size = propertyLabelLockedFont.measure(text, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
 		propertyLabelLockedFont.render(text, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(200, 200, 200, 255), false, true, false, true);
 
@@ -114,8 +114,8 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	}
 
 	text = "";
-	if (rentPrice != "0") {
-		text = getLocaleString("PropertyForRentLabel", rentPrice);
+	if (toInteger(rentPrice) > 0) {
+		text = getLocaleString("PropertyForRentLabel", getCurrencyString(rentPrice));
 		let size = propertyLabelLockedFont.measure(text, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
 		propertyLabelLockedFont.render(text, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(200, 200, 200, 255), false, true, false, true);
 
@@ -174,7 +174,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 				break;
 			}
 		}
-		if (getDistance(localPlayer.position, position) <= renderLabelDistance - 2) {
+		if (getDistance(localPlayer.position, position) <= propertyLabelRenderDistance - 2) {
 			let size = propertyLabelLockedFont.measure(infoText, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
 			propertyLabelLockedFont.render(infoText, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(234, 198, 126, 255), false, true, false, true);
 			screenPosition.y -= propertyLabelLockedOffset;
@@ -212,12 +212,12 @@ function renderPropertyExitLabel(position) {
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
@@ -257,12 +257,12 @@ function renderJobLabel(name, position, jobType) {
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[VRR.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
@@ -309,26 +309,41 @@ function renderJobLabel(name, position, jobType) {
 
 function processLabelRendering() {
 	if (renderLabels) {
-		if (!areServerElementsSupported()) {
+		if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
 			if (localPlayer != null) {
 				getServerData().businesses.forEach((business) => {
-					if (getDistance(localPlayer.position, business.entrancePosition) <= 75.0) {
-						natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
-						//renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, makeLargeNumberReadable(business.price), makeLargeNumberReadable(business.rentPrice), business.labelInfoType);
+					if (getDistance(localPlayer.position, business.entrancePosition) <= propertyPickupRenderDistance) {
+						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
+						}
+
+						if (getDistance(localPlayer.position, business.entrancePosition) <= propertyLabelRenderDistance) {
+							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, getCurrencyString(business.buyPrice), getCurrencyString(business.rentPrice), business.labelInfoType);
+						}
 					}
 				});
 
 				getServerData().houses.forEach((house) => {
-					if (getDistance(localPlayer.position, house.entrancePosition) <= 75.0) {
-						natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
-						//renderPropertyEntranceLabel("House", house.entrancePosition, house.locked, true, makeLargeNumberReadable(house.price), makeLargeNumberReadable(house.rentPrice), 0);
+					if (getDistance(localPlayer.position, house.entrancePosition) <= propertyPickupRenderDistance) {
+						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
+						}
+
+						if (getDistance(localPlayer.position, house.entrancePosition) <= propertyLabelRenderDistance) {
+							renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, getCurrencyString(house.buyPrice), getCurrencyString(house.rentPrice), house.labelInfoType);
+						}
 					}
 				});
 
 				getServerData().jobs.forEach((job) => {
-					if (getDistance(localPlayer.position, job.position) <= 75.0) {
-						natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
-						//renderJobLabel(job.name, job.position, job.jobType);
+					if (getDistance(localPlayer.position, job.position) <= propertyPickupRenderDistance) {
+						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
+						}
+					}
+
+					if (getDistance(localPlayer.position, job.position) <= 5.0) {
+						renderJobLabel(job.name, job.position, job.jobType);
 					}
 				});
 			}
@@ -339,17 +354,17 @@ function processLabelRendering() {
 				let pickups = getElementsByType(ELEMENT_PICKUP);
 				for (let i in pickups) {
 					if (pickups[i].getData("agrp.label.type") != null) {
-						if (getDistance(localPlayer.position, pickups[i].position) <= renderLabelDistance) {
+						if (getDistance(localPlayer.position, pickups[i].position) <= propertyLabelRenderDistance) {
 							if (!pickups[i].isOnScreen) {
 								let price = "0";
 								let rentPrice = "0";
 								let labelInfoType = AGRP_PROPLABEL_INFO_NONE;
 								if (pickups[i].getData("agrp.label.price") != null) {
-									price = makeLargeNumberReadable(pickups[i].getData("agrp.label.price"));
+									price = getCurrencyString(pickups[i].getData("agrp.label.price"));
 								}
 
 								if (pickups[i].getData("agrp.label.rentprice") != null) {
-									rentPrice = makeLargeNumberReadable(pickups[i].getData("agrp.label.rentprice"));
+									rentPrice = getCurrencyString(pickups[i].getData("agrp.label.rentprice"));
 								}
 
 								if (pickups[i].getData("agrp.label.help") != null) {
