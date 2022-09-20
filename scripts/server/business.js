@@ -59,6 +59,7 @@ class BusinessData {
 		this.needsSaved = false;
 		this.interiorLights = true;
 		this.type = AGRP_BIZ_TYPE_NONE;
+		this.propertyType = AGRP_PROPERTY_TYPE_BUSINESS;
 
 		this.floorItemCache = [];
 		this.storageItemCache = [];
@@ -186,8 +187,8 @@ class BusinessGameScriptData {
 // ===========================================================================
 
 function initBusinessScript() {
-	logToConsole(LOG_INFO, "[VRR.Business]: Initializing business script ...");
-	logToConsole(LOG_INFO, "[VRR.Business]: Business script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Initializing business script ...");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Business script initialized successfully!");
 	return true;
 }
 
@@ -212,7 +213,7 @@ function loadBusinessFromId(businessId) {
 // ===========================================================================
 
 function loadBusinessesFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Business]: Loading businesses from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Loading businesses from database ...");
 
 	let tempBusinesses = [];
 	let dbConnection = connectToDatabase();
@@ -228,7 +229,7 @@ function loadBusinessesFromDatabase() {
 					tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
 					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
 					tempBusinesses.push(tempBusinessData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -236,14 +237,14 @@ function loadBusinessesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Business]: ${tempBusinesses.length} businesses loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Business]: ${tempBusinesses.length} businesses loaded from database successfully!`);
 	return tempBusinesses;
 }
 
 // ===========================================================================
 
 function loadBusinessLocationsFromDatabase(businessId) {
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: Loading business locations for business ${businessId} from database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business locations for business ${businessId} from database ...`);
 
 	let tempBusinessLocations = [];
 	let dbConnection = connectToDatabase();
@@ -259,7 +260,7 @@ function loadBusinessLocationsFromDatabase(businessId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempBusinessLocationData = new BusinessLocationData(dbAssoc);
 					tempBusinessLocations.push(tempBusinessLocationData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -267,7 +268,7 @@ function loadBusinessLocationsFromDatabase(businessId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: ${tempBusinessLocations.length} location for business ${businessId} loaded from database successfully!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: ${tempBusinessLocations.length} location for business ${businessId} loaded from database successfully!`);
 	return tempBusinessLocations;
 }
 
@@ -275,7 +276,7 @@ function loadBusinessLocationsFromDatabase(businessId) {
 
 /*
 function loadBusinessGameScriptsFromDatabase(businessId) {
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: Loading business game scripts for business ${businessId} from database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business game scripts for business ${businessId} from database ...`);
 
 	let tempBusinessGameScripts = [];
 	let dbConnection = connectToDatabase();
@@ -291,7 +292,7 @@ function loadBusinessGameScriptsFromDatabase(businessId) {
 				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc);
 					tempBusinessGameScripts.push(tempBusinessGameScriptData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -299,7 +300,7 @@ function loadBusinessGameScriptsFromDatabase(businessId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: ${tempBusinessGameScripts.length} game scripts for business ${businessId} loaded from database successfully!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: ${tempBusinessGameScripts.length} game scripts for business ${businessId} loaded from database successfully!`);
 	return tempBusinessGameScripts;
 }
 */
@@ -1559,7 +1560,7 @@ function orderItemForBusinessCommand(command, params, client) {
 	let value = toInteger(splitParams.slice(-1)) || getItemTypeData(itemType).capacity;
 	let businessId = getPlayerBusiness(client);
 
-	logToConsole(LOG_DEBUG, `[VRR.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
 
 	if (!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -1899,7 +1900,7 @@ function saveBusinessToDatabase(businessId) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Business]: Saving business '${tempBusinessData.name}' to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business]: Saving business '${tempBusinessData.name}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeBusinessName = escapeDatabaseString(dbConnection, tempBusinessData.name);
@@ -1955,7 +1956,7 @@ function saveBusinessToDatabase(businessId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Business]: Saved business '${tempBusinessData.name}' to database!`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business]: Saved business '${tempBusinessData.name}' to database!`);
 
 	return false;
 }
@@ -2033,9 +2034,9 @@ function createBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name}`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for business ${businessData.name}`);
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
@@ -2073,7 +2074,7 @@ function createBusinessEntrancePickup(businessId) {
 		if (businessData.entrancePickupModel != 0) {
 			pickupModelId = businessData.entrancePickupModel;
 		}
-		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, doesBusinessHaveAnyItemsToBuy(businessId));
+		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, businessData.buyPrice, businessData.rentPrice, doesBusinessHaveAnyItemsToBuy(businessId));
 	}
 
 	return false;
@@ -2117,7 +2118,7 @@ function createBusinessEntranceBlip(businessId) {
 		blipModelId = businessData.entranceBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
 	if (areServerElementsSupported()) {
 		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
@@ -2169,7 +2170,7 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name}`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit pickup for business ${businessData.name}`);
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
@@ -2243,7 +2244,7 @@ function createBusinessExitBlip(businessId) {
 		blipModelId = businessData.exitBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
 
 	let exitBlip = createGameBlip(businessData.exitPosition, blipModelId, 1, getColourByName("businessBlue"));
 	if (exitBlip != null) {
@@ -2849,11 +2850,11 @@ function getBusinessFloorFirstFreeItemSlot(businessId) {
 
 // Caches all items for all businesses
 function cacheAllBusinessItems() {
-	logToConsole(LOG_DEBUG, "[VRR.Business] Caching all business items ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Business] Caching all business items ...");
 	for (let i in getServerData().businesses) {
 		cacheBusinessItems(i);
 	}
-	logToConsole(LOG_DEBUG, "[VRR.Business] Cached all business items successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Business] Cached all business items successfully!");
 }
 
 // ===========================================================================
@@ -2864,11 +2865,11 @@ function cacheBusinessItems(businessId) {
 	clearArray(getBusinessData(businessId).storageItemCache);
 
 	//let businessData = getBusinessData(businessId);
-	//logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
+	//logToConsole(LOG_VERBOSE, `[AGRP.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
 	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
 	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
 	for (let i in getServerData().items) {
 		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
 			getBusinessData(businessId).floorItemCache.push(i);
@@ -2877,7 +2878,7 @@ function cacheBusinessItems(businessId) {
 		}
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
 }
 
 // ===========================================================================

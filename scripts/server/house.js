@@ -42,6 +42,7 @@ class HouseData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
+		this.propertyType = AGRP_PROPERTY_TYPE_HOUSE;
 
 		this.itemCache = [];
 		this.locations = [];
@@ -167,15 +168,15 @@ class HouseGameScriptData {
 // ===========================================================================
 
 function initHouseScript() {
-	logToConsole(LOG_INFO, "[VRR.House]: Initializing house script ...");
-	logToConsole(LOG_INFO, "[VRR.House]: House script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.House]: Initializing house script ...");
+	logToConsole(LOG_INFO, "[AGRP.House]: House script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadHousesFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.House]: Loading houses from database ...");
+	logToConsole(LOG_INFO, "[AGRP.House]: Loading houses from database ...");
 	let tempHouses = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc;
@@ -187,14 +188,14 @@ function loadHousesFromDatabase() {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempHouseData = new HouseData(dbAssoc);
 					tempHouses.push(tempHouseData);
-					logToConsole(LOG_VERBOSE, `[VRR.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	logToConsole(LOG_INFO, `[VRR.House]: ${tempHouses.length} houses loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.House]: ${tempHouses.length} houses loaded from database successfully!`);
 	return tempHouses;
 }
 
@@ -878,9 +879,9 @@ function getPlayerHouse(client) {
 // ===========================================================================
 
 function saveAllHousesToDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.House]: Saving all server houses to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.House]: Saving all server houses to database ...`);
 	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.House]: Aborting save all houses to database, dev server is enabled.`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.House]: Aborting save all houses to database, dev server is enabled.`);
 		return false;
 	}
 
@@ -889,7 +890,7 @@ function saveAllHousesToDatabase() {
 			saveHouseToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, `[VRR.House]: Saved all server houses to database`);
+	logToConsole(LOG_INFO, `[AGRP.House]: Saved all server houses to database`);
 }
 
 // ===========================================================================
@@ -901,7 +902,7 @@ function saveHouseToDatabase(houseId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house '${tempHouseData.description}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house '${tempHouseData.description}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeHouseDescription = escapeDatabaseString(dbConnection, tempHouseData.description);
@@ -955,7 +956,7 @@ function saveHouseToDatabase(houseId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saved house '${tempHouseData.description}' to database!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved house '${tempHouseData.description}' to database!`);
 
 	return false;
 }
@@ -969,7 +970,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -1010,7 +1011,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.House]: Saved location ${locationId} for house ${houseId} to database`);
+	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved location ${locationId} for house ${houseId} to database`);
 
 	return false;
 }
@@ -1054,7 +1055,7 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
@@ -1084,7 +1085,7 @@ function createHouseEntrancePickup(houseId) {
 		if (houseData.entrancePickupModel != 0) {
 			pickupModelId = houseData.entrancePickupModel;
 		}
-		sendHouseToPlayer(null, houseId, houseId.description, houseId.entrancePosition, blipModelId, pickupModelId, houseId.hasInterior);
+		sendHouseToPlayer(null, houseId, houseId.description, houseId.entrancePosition, blipModelId, pickupModelId, houseData.buyPrice, houseData.rentPrice, houseId.hasInterior);
 	}
 }
 
