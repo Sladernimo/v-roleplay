@@ -333,7 +333,7 @@ function enterExitPropertyCommand(command, params, client) {
 
 			clearPlayerStateToEnterExitProperty(client);
 			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
-			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? AGRP_PROPERTY_TYPE_BIZ : AGRP_PROPERTY_TYPE_HOUSE, closestProperty.index];
+			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? AGRP_PROPERTY_TYPE_BUSINESS : AGRP_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
 
