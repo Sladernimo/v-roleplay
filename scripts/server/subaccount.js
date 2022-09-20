@@ -519,6 +519,7 @@ function selectCharacter(client, characterId = -1) {
 
 	if (getGame() <= AGRP_GAME_GTA_SA) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
+		onPlayerSpawn(client);
 	} else if (getGame() == AGRP_GAME_GTA_IV) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		clearPlayerWeapons(client);
@@ -536,10 +537,7 @@ function selectCharacter(client, characterId = -1) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		//logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		setTimeout(function () {
-			onPlayerSpawn(client);
-			//stopRadioStreamForPlayer(client);
-		}, 250);
+		onPlayerSpawn(client);
 	}
 
 	removePlayerKeyBind(client, getKeyIdFromParams("insert"));
