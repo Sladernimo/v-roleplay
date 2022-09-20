@@ -594,7 +594,7 @@ function updateLocalPlayerMoney() {
 	}
 
 	if (typeof localPlayer.money != "undefined") {
-		localPlayer.money = toInteger(amount);
+		localPlayer.money = toInteger(localPlayerMoney);
 	}
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
