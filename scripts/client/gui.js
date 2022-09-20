@@ -61,14 +61,12 @@ function initGUI() {
 	initListGUI();
 	initResetPasswordGUI();
 	initChangePasswordGUI();
-	//initLocaleChooserGUI();
+	initLocaleChooserGUI();
 
 	closeAllWindows();
 	guiReady = true;
 
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] All GUI created successfully!`);
-
-	loadLocaleConfig();
 
 	sendNetworkEventToServer("agrp.guiReady", true);
 };
