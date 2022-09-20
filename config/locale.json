@@ -145,17 +145,6 @@
 			"requiresUnicode": false,
 			"contributor": "YuOn",
 			"enabled": false
-		},
-		{
-			"id": 13,
-			"englishName": "Persian",
-			"stringsFile": "persian.json",
-			"isoCode": "fa",
-			"flagImageFile": "ir.png",
-			"countries": ["ir"],
-			"requiresUnicode": true,
-			"contributor": "bigmohammad",
-			"enabled": false
 		}
     ]
 }
