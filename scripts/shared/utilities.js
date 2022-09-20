@@ -2076,12 +2076,18 @@ function getPosBehindPos(pos, angle, distance) {
 // ===========================================================================
 
 function getPosAbovePos(pos, distance) {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		return toVector3(pos.x, pos.y + distance, pos.z);
+	}
 	return toVector3(pos.x, pos.y, pos.z + distance);
 }
 
 // ===========================================================================
 
 function getPosBelowPos(pos, distance) {
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		return toVector3(pos.x, pos.y - distance, pos.z);
+	}
 	return toVector3(pos.x, pos.y, pos.z - distance);
 }
 
