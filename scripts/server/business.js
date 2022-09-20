@@ -321,7 +321,7 @@ function createBusinessCommand(command, params, client) {
 		params,
 		getPlayerPosition(client),
 		toVector3(0.0, 0.0, 0.0),
-		(isGameFeatureSupported("pickups")) ? getGameConfig().pickupModels[getGame()].Business : -1,
+		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Business : -1,
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
