@@ -70,13 +70,13 @@ function initAllClients() {
 // ===========================================================================
 
 function updateServerRules() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Updating all server rules ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Updating all server rules ...`);
 
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Time support: ${isTimeSupported()}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Time support: ${isTimeSupported()}`);
 	if (isTimeSupported()) {
 		if (getServerConfig() != false) {
 			let value = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
-			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Time" as ${value}`);
+			logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Time" as ${value}`);
 			server.setRule("Time", value);
 		}
 	}
@@ -85,7 +85,7 @@ function updateServerRules() {
 		if (getServerConfig() != false) {
 			if (typeof getGameConfig().weatherNames[getGame()] != "undefined") {
 				let value = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
-				logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Weather" as ${value}`);
+				logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Weather" as ${value}`);
 				server.setRule("Weather", value);
 			}
 		}
@@ -94,11 +94,11 @@ function updateServerRules() {
 	if (isSnowSupported()) {
 		if (getServerConfig() != false) {
 			let value = getYesNoFromBool(getServerConfig().fallingSnow);
-			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Snowing" as ${value}`);
+			logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Snowing" as ${value}`);
 			server.setRule("Snowing", value);
 		}
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: All server rules updated successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: All server rules updated successfully!`);
 }
 
 // ===========================================================================
@@ -485,6 +485,109 @@ function updateAllPlayerWeaponDamageStates() {
 function removeAllPlayersFromProperties() {
 
 	return false;
+}
+
+// ===========================================================================
+
+function handlePlayerEnteringExitingProperty(client) {
+	if (getPlayerData(client).enteringExitingProperty == null) {
+		return false;
+	}
+
+	let pedState = getPlayerData(client).pedState;
+	if (pedState != AGRP_PEDSTATE_ENTERINGPROPERTY && pedState != AGRP_PEDSTATE_EXITINGPROPERTY) {
+		return false;
+	}
+
+	let propertyData = null;
+	if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_BUSINESS) {
+		propertyData = getBusinessData(getPlayerData(client).enteringExitingProperty[1]);
+	} else if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_HOUSE) {
+		propertyData = getHouseData(getPlayerData(client).enteringExitingProperty[1]);
+	}
+
+	if (propertyData == null || propertyData == false) {
+		return false;
+	}
+
+	if (pedState == AGRP_PEDSTATE_ENTERINGPROPERTY) {
+		setPlayerDimension(client, propertyData.exitDimension);
+		setPlayerInterior(client, propertyData.exitInterior);
+		setPlayerPosition(client, propertyData.exitPosition);
+		setPlayerHeading(client, propertyData.exitRotation);
+		setTimeout(function () {
+			if (isFadeCameraSupported()) {
+				fadeCamera(client, true, 1.0);
+			}
+			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
+		}, 1000);
+
+		if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_BUSINESS) {
+			if (propertyData.type == AGRP_BIZ_TYPE_PAINTBALL) {
+				startPaintBall(client);
+			}
+		}
+
+		let radioStationIndex = propertyData.streamingRadioStationIndex;
+		if (radioStationIndex != -1) {
+			if (getRadioStationData(radioStationIndex)) {
+				playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
+				getPlayerData(client).streamingRadioStation = radioStationIndex;
+			}
+		}
+
+		getPlayerData(client).inProperty = [getPlayerData(client).enteringExitingProperty[0], getPlayerData(client).enteringExitingProperty[1]];
+		getPlayerData(client).enteringExitingProperty = null;
+		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+	} else if (pedState == AGRP_PEDSTATE_EXITINGPROPERTY) {
+		setPlayerDimension(client, propertyData.entranceDimension);
+		setPlayerInterior(client, propertyData.entranceDimension);
+		setPlayerPosition(client, propertyData.entranceDimension);
+		setPlayerHeading(client, propertyData.entranceDimension);
+
+		// Check if exiting property was into another house/business
+		let inProperty = false;
+		let inPropertyType = AGRP_PROPERTY_TYPE_NONE;
+
+		let inBusiness = getPlayerBusiness(client);
+		if (inBusiness != -1) {
+			inProperty = getBusinessData(inBusiness);
+			inPropertyType = AGRP_PROPERTY_TYPE_BUSINESS;
+		} else {
+			let inHouse = getPlayerHouse(client);
+			if (inHouse != -1) {
+				inProperty = getHouseData(inHouse);
+				inPropertyType = AGRP_PROPERTY_TYPE_HOUSE;
+			}
+		}
+
+		setTimeout(function () {
+			if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+				if (isFadeCameraSupported()) {
+					fadeCamera(client, true, 1.0);
+				}
+			}
+			updateInteriorLightsForPlayer(client, (inProperty != false) ? inProperty.interiorLights : true);
+		}, 1000);
+
+		stopPaintBall(client);
+
+		if (inProperty != false) {
+			if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
+				if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
+					playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
+					getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
+				}
+			}
+		} else {
+			stopRadioStreamForPlayer(client);
+			getPlayerData(client).streamingRadioStation = -1;
+		}
+
+		getPlayerData(client).inProperty = [inPropertyType, inProperty.index];
+		getPlayerData(client).enteringExitingProperty = null;
+		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+	}
 }
 
 // ===========================================================================

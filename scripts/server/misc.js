@@ -31,7 +31,7 @@ const AGRP_BLIP_EXIT = 6;
 // ===========================================================================
 
 // Ped States
-const AGRP_PEDSTATE_NONE = 2;                     // None
+const AGRP_PEDSTATE_NONE = 0;                     // None
 const AGRP_PEDSTATE_READY = 1;                    // Ready
 const AGRP_PEDSTATE_DRIVER = 2;                   // Driving a vehicle
 const AGRP_PEDSTATE_PASSENGER = 3;                // In a vehicle as passenger
@@ -47,11 +47,16 @@ const AGRP_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
 const AGRP_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
 const AGRP_PEDSTATE_SPAWNING = 14;                // Spawning
 
+// Property Types
+const AGRP_PROPERTY_TYPE_NONE = 0;				  // None
+const AGRP_PROPERTY_TYPE_BUSINESS = 1;			  // Business
+const AGRP_PROPERTY_TYPE_HOUSE = 2;				  // House
+
 // ===========================================================================
 
 function initMiscScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Misc]: Initializing misc script ...");
-	logToConsole(LOG_INFO, "[VRR.Misc]: Misc script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Misc]: Initializing misc script ...");
+	logToConsole(LOG_INFO, "[AGRP.Misc]: Misc script initialized successfully!");
 	return true;
 }
 
@@ -273,6 +278,7 @@ function enterExitPropertyCommand(command, params, client) {
 	}
 
 	if (closestProperty == null) {
+		logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is null`);
 		return false;
 	}
 
@@ -296,48 +302,25 @@ function enterExitPropertyCommand(command, params, client) {
 
 			clearPlayerStateToEnterExitProperty(client);
 			getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGPROPERTY;
+			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? AGRP_PROPERTY_TYPE_BUSINESS : AGRP_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
+
+			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+				if (isMainWorldScene(closestProperty.exitScene)) {
+					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+				} else {
+					setPlayerScene(client, closestProperty.exitScene);
+				}
+				return false;
+			}
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
 			}
 
 			setTimeout(function () {
-				if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
-					if (isMainWorldScene(closestProperty.exitScene)) {
-						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-					} else {
-						setPlayerScene(client, closestProperty.exitScene);
-					}
-				} else {
-					setPlayerDimension(client, closestProperty.exitDimension);
-					setPlayerInterior(client, closestProperty.exitInterior);
-					setPlayerPosition(client, closestProperty.exitPosition);
-					setPlayerHeading(client, closestProperty.exitRotation);
-					setTimeout(function () {
-						if (isFadeCameraSupported()) {
-							fadeCamera(client, true, 1.0);
-						}
-						updateInteriorLightsForPlayer(client, closestProperty.interiorLights);
-					}, 1000);
-					//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
-
-					if (isBusiness) {
-						if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-							messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
-							startPaintBall(client);
-						}
-					}
-
-					let radioStationIndex = closestProperty.streamingRadioStationIndex;
-					if (radioStationIndex != -1) {
-						if (getRadioStationData(radioStationIndex)) {
-							playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
-							getPlayerData(client).streamingRadioStation = radioStationIndex;
-						}
-					}
-				}
+				handlePlayerEnteringExitingProperty(client);
 			}, 1100);
 			return true;
 		}
@@ -347,75 +330,33 @@ function enterExitPropertyCommand(command, params, client) {
 				meActionToNearbyPlayers(client, getLocaleString(client, "EnterExitPropertyDoorLocked", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 				return false;
 			}
-			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
+
 			clearPlayerStateToEnterExitProperty(client);
+			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
+			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? AGRP_PROPERTY_TYPE_BIZ : AGRP_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
+
+			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+				if (isMainWorldScene(closestProperty.exitScene)) {
+					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+				} else {
+					setPlayerScene(client, closestProperty.exitScene);
+				}
+
+				return false;
+			}
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
 			}
 
-			disableCityAmbienceForPlayer(client, true);
 			setTimeout(function () {
-				if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
-					if (isMainWorldScene(closestProperty.entranceScene)) {
-						setPlayerScene(client, "agrp.mainWorldScene");
-					} else {
-						setPlayerScene(client, closestProperty.entranceScene);
-					}
-				} else {
-					setPlayerPosition(client, closestProperty.entrancePosition);
-					setPlayerHeading(client, closestProperty.entranceRotation);
-					setPlayerDimension(client, closestProperty.entranceDimension);
-					setPlayerInterior(client, closestProperty.entranceInterior);
-					setTimeout(function () {
-						if (isFadeCameraSupported()) {
-							fadeCamera(client, true, 1.0);
-						}
-
-						updateInteriorLightsForPlayer(client, true);
-					}, 1000);
-
-					if (isBusiness) {
-						if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-							messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
-							stopPaintBall(client);
-						}
-					}
-
-					clearLocalPickupsForPlayer(client);
-
-					//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
-					stopRadioStreamForPlayer(client);
-					getPlayerData(client).streamingRadioStation = -1;
-
-					// Check if exiting property was into another house/business and set radio station accordingly
-					let inHouse = getPlayerHouse(client);
-					let inBusiness = getPlayerBusiness(client);
-
-					if (inBusiness != -1) {
-						if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
-							if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
-								playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
-								getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
-							}
-						}
-					} else if (inHouse != -1) {
-						if (getHouseData(inHouse).streamingRadioStationIndex != -1) {
-							if (getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex)) {
-								playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex).url);
-								getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStationIndex;
-							}
-						}
-					}
-				}
+				handlePlayerEnteringExitingProperty(client);
 			}, 1100);
-			//logToConsole(LOG_DEBUG, `[VRR.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
-			return true;
 		}
 	}
-
+	//logToConsole(LOG_DEBUG, `[AGRP.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 	return true;
 }
 
