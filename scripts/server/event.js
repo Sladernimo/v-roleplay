@@ -427,6 +427,8 @@ async function onPlayerSpawn(client) {
 		await waitUntil(() => client != null && getPlayerPed(client) != null);
 	}
 
+	stopRadioStreamForPlayer(client);
+
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
 	if (!getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
@@ -623,7 +625,7 @@ async function onPlayerSpawn(client) {
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
-	if (getPlayerCurrentSubAccount(client).interior != getGameConfig().mainWorldInterior[getGame()] || getPlayerCurrentSubAccount(client).dimension != getGameConfig().mainWorldDimension[getGame()]) {
+	if (getPlayerDimension(client) != getGameConfig().mainWorldDimension[getGame()]) {
 		let businessId = getPlayerBusiness(client);
 		let houseId = getPlayerHouse(client);
 		if (businessId != -1) {
@@ -637,8 +639,6 @@ async function onPlayerSpawn(client) {
 		} else {
 			stopRadioStreamForPlayer(client);
 		}
-	} else {
-		stopRadioStreamForPlayer(client);
 	}
 
 	messageDiscordEventChannel(`🧍 ${getPlayerName(client)} spawned as ${getCharacterFullName(client)}`);
