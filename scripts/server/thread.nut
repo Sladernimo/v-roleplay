@@ -9,16 +9,16 @@
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	emailThread <- newthread("sendEmail");
+	emailThread <- newthread(sendEmail);
 
-	exportFunction("sendEmailSquirrel", function(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName) {
+	exportFunction("sendEmail", function(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName) {
 		emailThread.call(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName);
 	});
 });
 
 // ===========================================================================
 
-function sendEmailSquirrel(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName) {
+function sendEmail(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName) {
 	module.smtp.send(smtpHost, smtpPort, useTLS, smtpUser, smtpPassword, toEmail, toName, subject, body, fromEmail, fromName);
 }
 
