@@ -16,8 +16,8 @@ const AGRP_DISCORD_WEBHOOK_ADMIN = 2;
 // ===========================================================================
 
 function initDiscordScript() {
-	logToConsole(LOG_INFO, "[VRR.Discord]: Initializing discord script ...");
-	logToConsole(LOG_INFO, "[VRR.Discord]: Discord script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Discord]: Initializing discord script ...");
+	logToConsole(LOG_INFO, "[AGRP.Discord]: Discord script initialized successfully!");
 }
 
 // ===========================================================================

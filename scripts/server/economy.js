@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initEconomyScript() {
-	logToConsole(LOG_INFO, "[VRR.Economy]: Initializing economy script ...");
-	logToConsole(LOG_INFO, "[VRR.Economy]: Economy script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Economy]: Initializing economy script ...");
+	logToConsole(LOG_INFO, "[AGRP.Economy]: Economy script initialized successfully!");
 }
 
 // ===========================================================================

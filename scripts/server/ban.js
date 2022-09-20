@@ -39,8 +39,8 @@ class BanData {
 // ===========================================================================
 
 function initBanScript() {
-	logToConsole(LOG_INFO, "[VRR.Ban]: Initializing ban script ...");
-	logToConsole(LOG_INFO, "[VRR.Ban]: Ban script initialized!");
+	logToConsole(LOG_INFO, "[AGRP.Ban]: Initializing ban script ...");
+	logToConsole(LOG_INFO, "[AGRP.Ban]: Ban script initialized!");
 }
 
 // ===========================================================================
@@ -66,7 +66,7 @@ function accountBanCommand(command, params, client) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN, `[VRR.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name}) account was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
+	logToConsole(LOG_WARN, `[AGRP.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name}) account was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
 
 	announceAdminAction(`PlayerAccountBanned`, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR}`);
 	banAccount(getPlayerData(targetClient).accountData.databaseId, getPlayerData(client).accountData.databaseId, reason);
@@ -98,7 +98,7 @@ function subAccountBanCommand(command, params, client, fromDiscord) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN, `[VRR.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name})'s subaccount was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
+	logToConsole(LOG_WARN, `[AGRP.Ban]: ${getPlayerDisplayForConsole(targetClient)} (${getPlayerData(targetClient).accountData.name})'s subaccount was banned by ${getPlayerDisplayForConsole(client)}. Reason: ${reason}`);
 
 	announceAdminAction(`PlayerCharacterBanned`, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR}`);
 	banSubAccount(getPlayerData(targetClient).currentSubAccountData.databaseId, getPlayerData(client).accountData.databaseId, reason);

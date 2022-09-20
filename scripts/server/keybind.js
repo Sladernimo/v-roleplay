@@ -36,8 +36,8 @@ class KeyBindData {
 // ===========================================================================
 
 function initKeyBindScript() {
-	logToConsole(LOG_DEBUG, "[VRR.KeyBind]: Initializing key bind script ...");
-	logToConsole(LOG_INFO, "[VRR.KeyBind]: Key bind script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.KeyBind]: Initializing key bind script ...");
+	logToConsole(LOG_INFO, "[AGRP.KeyBind]: Key bind script initialized!");
 }
 
 // ===========================================================================
@@ -117,7 +117,7 @@ function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -141,7 +141,7 @@ function removePlayerKeyBind(client, keyId) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -209,7 +209,7 @@ function playerUsedKeyBind(client, key, duration = 0) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
+	logToConsole(LOG_DEBUG, `[AGRP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
 		let keyBindData = getPlayerKeyBindForKey(client, key);
 		if (keyBindData.enabled) {

@@ -21,7 +21,7 @@ let twoFactorAuth = {
 // ===========================================================================
 
 function initTwoFactorAuthenticationGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating two factor auth GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating two factor auth GUI ...`);
 	twoFactorAuth.window = mexui.window(game.width / 2 - 150, game.height / 2 - 129, 300, 258, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -95,14 +95,14 @@ function initTwoFactorAuthenticationGUI() {
 		},
 	}, checkTwoFactorAuth);
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created two factor auth GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created two factor auth GUI`);
 }
 
 // ===========================================================================
 
 function showTwoFactorAuthGUI() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing two-factor authentication window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing two-factor authentication window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	twoFactorAuth.window.shown = true;
@@ -113,7 +113,7 @@ function showTwoFactorAuthGUI() {
 // ===========================================================================
 
 function twoFactorAuthFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports two-factor authentication failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports two-factor authentication failed. Reason: ${errorMessage}`);
 	twoFactorAuth.messageLabel.text = errorMessage;
 	twoFactorAuth.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	twoFactorAuth.codeInput.text = "";
@@ -122,14 +122,14 @@ function twoFactorAuthFailed(errorMessage) {
 // ===========================================================================
 
 function twoFactorAuthSuccess() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports two-factor authentication was successful`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports two-factor authentication was successful`);
 	closeAllWindows();
 }
 
 // ===========================================================================
 
 function checkTwoFactorAuth() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking two-factor authentication with server ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking two-factor authentication with server ...`);
 	sendNetworkEventToServer("agrp.2fa", twoFactorAuth.codeInput.lines[0]);
 }
 

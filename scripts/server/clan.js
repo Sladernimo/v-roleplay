@@ -110,15 +110,15 @@ class ClanMemberData {
 // ===========================================================================
 
 function initClanScript() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Initializing clans script ...");
-	logToConsole(LOG_INFO, "[VRR.Clan]: Clan script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Initializing clans script ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Clan script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadClansFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
@@ -133,7 +133,7 @@ function loadClansFromDatabase() {
 					//tempClanData.members = loadClanMembersFromDatabase(tempClanData.databaseId);
 					tempClanData.ranks = loadClanRanksFromDatabase(tempClanData.databaseId);
 					tempClans.push(tempClanData);
-					logToConsole(LOG_DEBUG, `[VRR.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
+					logToConsole(LOG_DEBUG, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -141,14 +141,14 @@ function loadClansFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: ${tempClans.length} clans loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
 	return tempClans;
 }
 
 // ===========================================================================
 
 function loadClanMembersFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
@@ -161,7 +161,7 @@ function loadClanMembersFromDatabase() {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempClanData = new ClanData(dbAssoc);
 					tempClans.push(tempClanData);
-					logToConsole(LOG_VERBOSE, `[VRR.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -169,14 +169,14 @@ function loadClanMembersFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: ${tempClans.length} clans loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
 	return tempClans;
 }
 
 // ===========================================================================
 
 function loadClanRanksFromDatabase(clanDatabaseId) {
-	logToConsole(LOG_INFO, `[VRR.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
 
 	let dbConnection = connectToDatabase();
 	let dbAssoc;
@@ -189,7 +189,7 @@ function loadClanRanksFromDatabase(clanDatabaseId) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempClanRankData = new ClanRankData(dbAssoc);
 					tempClanRanks.push(tempClanRankData);
-					logToConsole(LOG_VERBOSE, `[VRR.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -197,7 +197,7 @@ function loadClanRanksFromDatabase(clanDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
 	return tempClanRanks;
 }
 
@@ -1292,10 +1292,10 @@ function setClanRankTitle(clanId, rankId, title) {
 // ===========================================================================
 
 function saveAllClansToDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.Clan]: Saving all server clans to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Clan]: Saving all server clans to database ...`);
 
 	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG, `[VRR.Clan]: Aborting save all clans to database, dev server is enabled.`);
+		logToConsole(LOG_DEBUG, `[AGRP.Clan]: Aborting save all clans to database, dev server is enabled.`);
 		return false;
 	}
 
@@ -1303,7 +1303,7 @@ function saveAllClansToDatabase() {
 		saveClanToDatabase(i);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: Saved all server clans to database`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Saved all server clans to database`);
 }
 
 // ===========================================================================

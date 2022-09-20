@@ -17,7 +17,7 @@ function saveServerDataToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, "[VRR.Utilities]: Saving all server data to database ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Utilities]: Saving all server data to database ...");
 
 	try {
 		saveAllPlayersToDatabase();
@@ -85,7 +85,7 @@ function saveServerDataToDatabase() {
 		logToConsole(LOG_ERROR, `Could not save server config to database: ${error}`);
 	}
 
-	logToConsole(LOG_DEBUG, "[VRR.Utilities]: Saved all server data to database!");
+	logToConsole(LOG_DEBUG, "[AGRP.Utilities]: Saved all server data to database!");
 }
 
 // ===========================================================================
@@ -104,18 +104,18 @@ function initTimers() {
 // ===========================================================================
 
 function oneMinuteTimerFunction() {
-	logToConsole(LOG_DEBUG, `[VRR.Event] Checking server game time`);
+	logToConsole(LOG_DEBUG, `[AGRP.Event] Checking server game time`);
 	checkServerGameTime();
 
 	if (getClients().length > 0) {
-		logToConsole(LOG_DEBUG, `[VRR.Event] Checking rentable vehicles`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Checking rentable vehicles`);
 		checkVehicleRenting();
 
-		logToConsole(LOG_DEBUG, `[VRR.Event] Updating all player name tags`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Updating all player name tags`);
 		updateAllPlayerNameTags();
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Event] Collecting all garbage`);
+	logToConsole(LOG_DEBUG, `[AGRP.Event] Collecting all garbage`);
 	collectAllGarbage();
 }
 

@@ -9,14 +9,14 @@
 // ===========================================================================
 
 function setLocalPlayerFrozenState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting frozen state to ${state}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting frozen state to ${state}`);
 	gui.showCursor(state, !state);
 }
 
 // ===========================================================================
 
 function setLocalPlayerControlState(controlState, cursorState = false) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
 	controlsEnabled = controlState;
 	game.setPlayerControl(controlState);
 	if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
@@ -31,7 +31,7 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 
 function fadeLocalCamera(state, time) {
 	if (isFadeCameraSupported()) {
-		logToConsole(LOG_DEBUG, `[VRR.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time} seconds`);
+		logToConsole(LOG_DEBUG, `[AGRP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time} seconds`);
 
 		if (isFadeCameraSupported()) {
 			game.fadeCamera(state, time);
@@ -48,7 +48,7 @@ function removeLocalPlayerFromVehicle() {
 // ===========================================================================
 
 function restoreLocalCamera() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Camera restored`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Camera restored`);
 	if (isGameFeatureSupported("customCamera")) {
 		game.restoreCamera(true);
 	}
@@ -57,7 +57,7 @@ function restoreLocalCamera() {
 // ===========================================================================
 
 function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
 	if (isCustomCameraSupported()) {
 		game.setCameraLookAt(cameraPosition, cameraLookAt, true);
 	}
@@ -66,15 +66,15 @@ function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
 // ===========================================================================
 
 function clearLocalPlayerOwnedPeds() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing all self-owned peds ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing all self-owned peds ...`);
 	clearSelfOwnedPeds();
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] All self-owned peds cleared`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] All self-owned peds cleared`);
 };
 
 // ===========================================================================
 
 function setCityAmbienceState(state, clearElements = false) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Ambient civilians and traffic ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Ambient civilians and traffic ${(state) ? "enabled" : "disabled"}`);
 	game.setTrafficEnabled(state);
 
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
@@ -134,7 +134,7 @@ function enterVehicleAsPassenger() {
 // ===========================================================================
 
 function giveLocalPlayerWeapon(weaponId, ammo, active) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
 	forceWeapon = weaponId;
 	if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		localPlayer.giveWeapon(weaponId, 0, ammo);
@@ -155,7 +155,7 @@ function giveLocalPlayerWeapon(weaponId, ammo, active) {
 // ===========================================================================
 
 function clearLocalPlayerWeapons(clearData) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing weapons`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing weapons`);
 	localPlayer.clearWeapons();
 	if (clearData == true) {
 		forceWeapon = 0;
@@ -173,7 +173,7 @@ function getClosestVehicle(pos) {
 // ===========================================================================
 
 function setLocalPlayerPosition(position) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
 	if (typeof localPlayer.velocity != "undefined") {
 		localPlayer.velocity = toVector3(0.0, 0.0, 0.0);
 	}
@@ -186,7 +186,7 @@ function setLocalPlayerPosition(position) {
 // ===========================================================================
 
 function setLocalPlayerHeading(heading) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting heading to ${heading}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting heading to ${heading}`);
 	if (typeof localPlayer.heading != "undefined") {
 		localPlayer.heading = heading;
 	}
@@ -195,7 +195,7 @@ function setLocalPlayerHeading(heading) {
 // ===========================================================================
 
 function setLocalPlayerInterior(interior) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting interior to ${interior}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting interior to ${interior}`);
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
 		if (!isGTAIV()) {
 			localPlayer.interior = interior;
@@ -224,7 +224,7 @@ function setLocalPlayerInterior(interior) {
 // ===========================================================================
 
 function setSnowState(falling, ground) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
 	snowing = falling;
 	if (ground) {
 		forceSnowing(false);
@@ -241,7 +241,7 @@ function setLocalPlayerHealth(health) {
 // ===========================================================================
 
 function playPedSpeech(pedName, speechId) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Making ${pedName}'s ped talk (${speechId})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Making ${pedName}'s ped talk (${speechId})`);
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
 		game.SET_CHAR_SAY(int, int);
 	}
@@ -250,7 +250,7 @@ function playPedSpeech(pedName, speechId) {
 // ===========================================================================
 
 function clearLocalPedState() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing local ped state`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing local ped state`);
 	localPlayer.clearObjective();
 }
 
@@ -264,7 +264,7 @@ function getWeaponSlot(weaponId) {
 
 function setLocalPlayerDrunkEffect(amount, duration) {
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
-		logToConsole(LOG_DEBUG, `[VRR.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
+		logToConsole(LOG_DEBUG, `[AGRP.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
 		drunkEffectAmount = 0;
 		drunkEffectDurationTimer = setInterval(function () {
 			drunkEffectAmount = drunkEffectAmount;
@@ -314,7 +314,7 @@ function clearSelfOwnedVehicles() {
 // ===========================================================================
 
 function setMouseCameraState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(state) ? "Enabled" : "Disabled"} mouse camera`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(state) ? "Enabled" : "Disabled"} mouse camera`);
 	mouseCameraEnabled = state;
 	SetStandardControlsEnabled(!mouseCameraEnabled);
 }
@@ -322,28 +322,28 @@ function setMouseCameraState(state) {
 // ===========================================================================
 
 function toggleMouseCursor() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
 	gui.showCursor(!gui.cursorEnabled, gui.cursorEnabled);
 }
 
 // ===========================================================================
 
 function toggleMouseCursor() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
 	setMouseCameraState(!mouseCameraEnabled);
 }
 
 // ===========================================================================
 
 function setPlayerWeaponDamageEvent(clientName, eventType) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Set ${clientName} damage event type to ${eventType}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Set ${clientName} damage event type to ${eventType}`);
 	weaponDamageEvent[clientName] = eventType;
 }
 
 // ===========================================================================
 
 function setPlayerWeaponDamageEnabled(clientName, state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(state) ? "Enabled" : "Disabled"} damage from ${clientName}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(state) ? "Enabled" : "Disabled"} damage from ${clientName}`);
 	weaponDamageEnabled[clientName] = state;
 }
 
@@ -464,7 +464,7 @@ function getVehicleForNetworkEvent(vehicle) {
 // ===========================================================================
 
 function setMinuteDuration(minuteDuration) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting minute duration to ${minuteDuration}ms`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting minute duration to ${minuteDuration}ms`);
 
 	if (isTimeSupported()) {
 		game.time.minuteDuration = minuteDuration;
@@ -605,7 +605,7 @@ function updateLocalPlayerMoney() {
 // ===========================================================================
 
 function setLocalPlayerMoney(amount) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting local player money`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting local player money`);
 	localPlayerMoney = amount;
 	updateLocalPlayerMoney();
 }

@@ -11,14 +11,14 @@
 let itemActionDelayDuration = 0;
 let itemActionDelayStart = 0;
 let itemActionDelayEnabled = false;
-let itemActionDelayPosition = toVector2(game.width / 2 - 100, game.height - 10);
-let itemActionDelaySize = toVector2(200, 5);
+let itemActionDelayPosition = toVector2(0, game.height - 10);
+let itemActionDelaySize = toVector2(game.width, 10);
 
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Item script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Item]: Initializing item script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Item]: Item script initialized!");
 }
 
 // ===========================================================================
@@ -48,7 +48,7 @@ function processItemActionRendering() {
 // ===========================================================================
 
 function updatePlayerHotBar(activeSlot, itemsArray) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Updating hotbar`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Updating hotbar`);
 }
 
 // ===========================================================================

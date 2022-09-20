@@ -43,7 +43,7 @@ let loginHTML =
 // ===========================================================================
 
 function initLoginGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating login GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating login GUI ...`);
 	login.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 135, 300, 275, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -144,14 +144,14 @@ function initLoginGUI() {
 		},
 	});
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created login GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created login GUI`);
 }
 
 // ===========================================================================
 
 function showLoginGUI() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing login window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing login window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	login.window.shown = true;
@@ -165,14 +165,14 @@ function showLoginGUI() {
 // ===========================================================================
 
 function checkLogin() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking login with server ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking login with server ...`);
 	sendNetworkEventToServer("agrp.checkLogin", login.passwordInput.lines[0]);
 }
 
 // ===========================================================================
 
 function loginFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports login failed`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports login failed`);
 	login.messageLabel.text = errorMessage;
 	login.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	login.passwordInput.text = "";
@@ -181,7 +181,7 @@ function loginFailed(errorMessage) {
 // ===========================================================================
 
 function loginSuccess() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports login was successful`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports login was successful`);
 	guiSubmitKey = false;
 	closeAllWindows();
 }
@@ -190,7 +190,7 @@ function loginSuccess() {
 
 function switchToPasswordResetGUI() {
 	//closeAllWindows();
-	//logToConsole(LOG_DEBUG, `[VRR.GUI] Showing password reset dialog window`);
+	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing password reset dialog window`);
 	//showResetPasswordGUI();
 	sendNetworkEventToServer("agrp.checkResetPassword", "");
 	return false;

@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initRaceScript() {
-	logToConsole(LOG_INFO, "[VRR.Race]: Initializing race script ...");
-	logToConsole(LOG_INFO, "[VRR.Race]: Race script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Race]: Initializing race script ...");
+	logToConsole(LOG_INFO, "[AGRP.Race]: Race script initialized successfully!");
 }
 
 // ===========================================================================

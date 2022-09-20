@@ -21,7 +21,7 @@ let passwordReset = {
 // ===========================================================================
 
 function initResetPasswordGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password reset GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating password reset GUI ...`);
 	passwordReset.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 135, 300, 275, 'RESET PASSWORD', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -121,14 +121,14 @@ function initResetPasswordGUI() {
 		},
 	});
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created password reset GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created password reset GUI`);
 }
 
 // ===========================================================================
 
 function showResetPasswordGUI() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing password reset window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing password reset window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	passwordReset.window.shown = true;
@@ -142,14 +142,14 @@ function showResetPasswordGUI() {
 // ===========================================================================
 
 function checkResetPassword() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password reset with server (${passwordReset.emailInput.lines[0]}) ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking password reset with server (${passwordReset.emailInput.lines[0]}) ...`);
 	sendNetworkEventToServer("agrp.checkResetPassword", passwordReset.emailInput.lines[0]);
 }
 
 // ===========================================================================
 
 function resetPasswordFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports password reset failed`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports password reset failed`);
 	passwordReset.messageLabel.text = errorMessage;
 	passwordReset.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	passwordReset.emailInput.text = "";
@@ -158,7 +158,7 @@ function resetPasswordFailed(errorMessage) {
 // ===========================================================================
 
 function resetPasswordCodeInputGUI() {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Server reports password reset email confirmation was successful. Asking for code ...`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Server reports password reset email confirmation was successful. Asking for code ...`);
 	closeAllWindows();
 
 	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordCodeInputLabel");
@@ -173,7 +173,7 @@ function resetPasswordCodeInputGUI() {
 // ===========================================================================
 
 function resetPasswordEmailInputGUI() {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Server reports password reset request was approved. Asking for email ...`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Server reports password reset request was approved. Asking for email ...`);
 	closeAllWindows();
 
 	passwordReset.messageLabel.text = getLocaleString("GUIResetPasswordConfirmEmailLabel");

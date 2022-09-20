@@ -17,7 +17,7 @@ let gpsBlipBlinkTimer = null;
 // ===========================================================================
 
 function showGPSLocation(position, colour) {
-	logToConsole(LOG_DEBUG, `[VRR.GPS] Showing gps location`);
+	logToConsole(LOG_DEBUG, `[AGRP.GPS] Showing gps location`);
 	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
 		if (getGame() == AGRP_GAME_GTA_SA) {
 			// Server-side spheres don't show in GTA SA for some reason.

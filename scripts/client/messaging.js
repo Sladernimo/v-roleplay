@@ -23,10 +23,10 @@ let smallGameMessageTimer = null;
 // ===========================================================================
 
 function initMessagingScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Messaging]: Initializing messaging script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Messaging]: Initializing messaging script ...");
 	smallGameMessageFonts = loadSmallGameMessageFonts();
 	bigGameMessageFonts = loadSmallGameMessageFonts();
-	logToConsole(LOG_DEBUG, "[VRR.Messaging]: Messaging script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Messaging]: Messaging script initialized!");
 }
 
 // ===========================================================================
@@ -64,10 +64,10 @@ function loadBigGameMessageFont() {
 // ===========================================================================
 
 function processSmallGameMessageRendering() {
-	logToConsole(LOG_VERBOSE, "[VRR.Messaging]: Processing small game message rendering ...");
+	logToConsole(LOG_VERBOSE, "[AGRP.Messaging]: Processing small game message rendering ...");
 	if (renderSmallGameMessage) {
 		if (smallGameMessageText != "") {
-			logToConsole(LOG_VERBOSE, `[VRR.Messaging]: Rendering small game message: ${smallGameMessageText}`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Messaging]: Rendering small game message: ${smallGameMessageText}`);
 			if (smallGameMessageFonts[smallGameMessageFontName] != null) {
 				smallGameMessageFonts[smallGameMessageFontName].render(smallGameMessageText, [0, game.height - 90], game.width, 0.5, 0.0, smallGameMessageFonts[smallGameMessageFontName].size, smallGameMessageColour, true, true, false, true);
 			}
@@ -78,7 +78,7 @@ function processSmallGameMessageRendering() {
 // ===========================================================================
 
 function showSmallGameMessage(text, colour, duration, fontName) {
-	logToConsole(LOG_DEBUG, `[VRR.Messaging] Showing small game message '${text}' using font ${fontName} for ${duration}ms`);
+	logToConsole(LOG_DEBUG, `[AGRP.Messaging] Showing small game message '${text}' using font ${fontName} for ${duration}ms`);
 	if (smallGameMessageText != "") {
 		clearTimeout(smallGameMessageTimer);
 	}

@@ -92,33 +92,33 @@ function checkForSMTPModule() {
 // ===========================================================================
 
 function checkForAllRequiredModules() {
-	logToConsole(LOG_DEBUG, "[VRR.Startup]: Checking for required modules ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Startup]: Checking for required modules ...");
 
 	if (!checkForHashingModule()) {
-		logToConsole(LOG_WARN, "[VRR.Startup]: Hashing module is not loaded!");
-		logToConsole(LOG_WARN, "[VRR.Startup]: This resource will now shutdown.");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: Hashing module is not loaded!");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: This resource will now shutdown.");
 		thisResource.stop();
 	}
 
 	if (!checkForMySQLModule()) {
-		logToConsole(LOG_WARN, "[VRR.Startup]: MySQL module is not loaded!");
-		logToConsole(LOG_WARN, "[VRR.Startup]: This resource will now shutdown.");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: MySQL module is not loaded!");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: This resource will now shutdown.");
 		thisResource.stop();
 	}
 
 	if (!checkForSMTPModule()) {
-		logToConsole(LOG_WARN, "[VRR.Startup]: SMTP Email module is not loaded!");
-		logToConsole(LOG_WARN, "[VRR.Startup]: Email features will NOT be available!");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: SMTP Email module is not loaded!");
+		logToConsole(LOG_WARN, "[AGRP.Startup]: Email features will NOT be available!");
 	}
 
-	logToConsole(LOG_DEBUG, "[VRR.Startup]: All required modules loaded!");
+	logToConsole(LOG_DEBUG, "[AGRP.Startup]: All required modules loaded!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadServerDataFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Config]: Loading server data ...");
+	logToConsole(LOG_INFO, "[AGRP.Config]: Loading server data ...");
 
 	// Always load these regardless of "test server" status
 	getServerData().localeStrings = loadAllLocaleStrings();

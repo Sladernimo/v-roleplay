@@ -203,8 +203,8 @@ class NPCTriggerResponseData {
 // ===========================================================================
 
 function initNPCScript() {
-	logToConsole(LOG_DEBUG, "[VRR.NPC]: Initializing NPC script ...");
-	logToConsole(LOG_INFO, "[VRR.NPC]: NPC script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.NPC]: Initializing NPC script ...");
+	logToConsole(LOG_INFO, "[AGRP.NPC]: NPC script initialized successfully!");
 }
 
 // ===========================================================================
@@ -244,7 +244,7 @@ function createNPCCommand(command, params, client) {
 // ===========================================================================
 
 function loadNPCsFromDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPCs from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPCs from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCs = [];
 	let dbAssoc;
@@ -262,14 +262,14 @@ function loadNPCsFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
 	return tempNPCs;
 }
 
 // ===========================================================================
 
 function loadNPCTriggersFromDatabase(npcDatabaseId) {
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggers = [];
 	let dbAssoc;
@@ -288,14 +288,14 @@ function loadNPCTriggersFromDatabase(npcDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
 	return tempNPCTriggers;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerConditions = [];
 	let dbAssoc;
@@ -312,14 +312,14 @@ function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerConditions;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerResponses = [];
 	let dbAssoc;
@@ -336,7 +336,7 @@ function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerResponses;
 }
 
@@ -356,28 +356,28 @@ function saveAllNPCsToDatabase() {
 
 function saveNPCToDatabase(npcDataId) {
 	if (getServerConfig().devServer) {
-		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}
 
 	if (getNPCData(npcDataId) == false) {
-		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} data is invalid. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} data is invalid. Aborting save ...`);
 		return false;
 	}
 
 	let tempNPCData = getNPCData(npcDataId);
 
 	if (tempNPCData.databaseId == -1) {
-		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} is a temp NPC. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} is a temp NPC. Aborting save ...`);
 		return false;
 	}
 
 	if (!tempNPCData.needsSaved) {
-		logToConsole(LOG_VERBOSE, `[VRR.NPC]: NPC ${npcDataId} hasn't changed data. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} hasn't changed data. Aborting save ...`);
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.NPC]: Saving NPC ${tempNPCData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.NPC]: Saving NPC ${tempNPCData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		if (tempNPCData.ped != false) {
@@ -434,7 +434,7 @@ function saveNPCToDatabase(npcDataId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.NPC]: Saved NPC ${npcDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.NPC]: Saved NPC ${npcDataId} to database!`);
 
 	return false;
 }

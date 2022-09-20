@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initEmailScript() {
-	logToConsole(LOG_INFO, "[VRR.Email]: Initializing email script ...");
-	logToConsole(LOG_INFO, "[VRR.Email]: Email script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Email]: Initializing email script ...");
+	logToConsole(LOG_INFO, "[AGRP.Email]: Email script initialized successfully!");
 }
 
 // ===========================================================================

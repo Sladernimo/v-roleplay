@@ -18,10 +18,10 @@ let scoreboardKey = SDLK_TAB;
 // ===========================================================================
 
 function initScoreBoardScript() {
-	logToConsole(LOG_DEBUG, "[VRR.ScoreBoard]: Initializing scoreboard script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.ScoreBoard]: Initializing scoreboard script ...");
 	scoreBoardTitleFont = initScoreBoardTitleFont();
 	scoreBoardListFont = initScoreBoardListFont();
-	logToConsole(LOG_DEBUG, "[VRR.ScoreBoard]: Scoreboard script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.ScoreBoard]: Scoreboard script initialized!");
 }
 
 // ===========================================================================

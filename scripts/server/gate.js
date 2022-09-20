@@ -46,8 +46,8 @@ class GateData {
 // ===========================================================================
 
 function initGateScript() {
-	logToConsole(LOG_INFO, `[VRR.Gate]: Initializing gate script ...`);
-	logToConsole(LOG_INFO, `[VRR.Gate]: Gate script initialized successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Gate]: Initializing gate script ...`);
+	logToConsole(LOG_INFO, `[AGRP.Gate]: Gate script initialized successfully!`);
 }
 
 // ===========================================================================
@@ -194,7 +194,7 @@ function saveGateToDatabase(gateId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeGateName = escapeDatabaseString(tempGateData.name);
@@ -228,7 +228,7 @@ function saveGateToDatabase(gateId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.Gate]: Saved gate ${gateDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saved gate ${gateDataId} to database!`);
 
 	return true;
 }
@@ -236,7 +236,7 @@ function saveGateToDatabase(gateId) {
 // ===========================================================================
 
 function loadGatesFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Gate]: Loading gates from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Gate]: Loading gates from database ...");
 
 	let tempGates = [];
 	let dbConnection = connectToDatabase();
@@ -249,7 +249,7 @@ function loadGatesFromDatabase() {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempGateData = new GateData(dbAssoc);
 					tempGates.push(tempGateData);
-					logToConsole(LOG_DEBUG, `[VRR.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
+					logToConsole(LOG_DEBUG, `[AGRP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -257,7 +257,7 @@ function loadGatesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Gate]: ${tempGates.length} gates loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Gate]: ${tempGates.length} gates loaded from database successfully!`);
 	return tempGates;
 }
 

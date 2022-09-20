@@ -21,7 +21,7 @@ let register = {
 // ===========================================================================
 
 function initRegisterGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating register GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating register GUI ...`);
 	register.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 150, 300, 300, 'Register', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -131,13 +131,13 @@ function initRegisterGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 		},
 	}, checkRegistration);
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created register GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created register GUI`);
 }
 
 // ===========================================================================
 
 function registrationFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports registration failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports registration failed. Reason: ${errorMessage}`);
 	register.messageLabel.text = errorMessage;
 	register.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	register.passwordInput.text = "";
@@ -148,14 +148,14 @@ function registrationFailed(errorMessage) {
 // ===========================================================================
 
 function checkRegistration() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking registration with server ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking registration with server ...`);
 	sendNetworkEventToServer("agrp.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
 }
 
 // ===========================================================================
 
 function showRegistrationGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing registration window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing registration window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
@@ -171,7 +171,7 @@ function showRegistrationGUI() {
 // ===========================================================================
 
 function registrationSuccess() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports registration was successful`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports registration was successful`);
 	guiSubmitKey = false;
 	closeAllWindows();
 }

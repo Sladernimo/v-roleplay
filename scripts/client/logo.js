@@ -15,9 +15,9 @@ let logoSize = toVector2(128, 128);
 // ===========================================================================
 
 function initLogoScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Logo]: Initializing logo script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Initializing logo script ...");
 	//logoImage = loadLogoImage();
-	logToConsole(LOG_DEBUG, "[VRR.Logo]: Logo script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Logo script initialized!");
 }
 
 // ===========================================================================
@@ -54,7 +54,7 @@ function processLogoRendering() {
 // ===========================================================================
 
 function setServerLogoRenderState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
 	renderLogo = state;
 }
 

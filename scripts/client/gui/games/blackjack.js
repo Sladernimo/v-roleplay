@@ -23,7 +23,7 @@ let dealerCards = [];
 
 function initBlackJackGUI() {
 	// Render a blackjack game in MexUI
-	//logToConsole(LOG_DEBUG, `[VRR.GUI] Creating blackjack GUI ...`);
+	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating blackjack GUI ...`);
 	blackJackGUI.window = mexui.window(game.width / 2 - 200, game.height - 150, 400, 400, 'Blackjack', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], 0),
@@ -43,7 +43,7 @@ function initBlackJackGUI() {
 
 	blackJackGUI.window.shown = false;
 
-	//logToConsole(LOG_DEBUG, `[VRR.GUI] Created blackjack GUI`);
+	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Created blackjack GUI`);
 }
 
 // ===========================================================================

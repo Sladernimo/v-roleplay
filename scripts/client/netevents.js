@@ -9,14 +9,14 @@
 // ===========================================================================
 
 function initNetworkEventsScript() {
-	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Initializing server script ...");
-	logToConsole(LOG_DEBUG, "[VRR.NetEvents]: Server script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.NetEvents]: Initializing server script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.NetEvents]: Server script initialized!");
 }
 
 // ===========================================================================
 
 function addAllNetworkHandlers() {
-	logToConsole(LOG_DEBUG, "[VRR.Server]: Adding network handlers ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Server]: Adding network handlers ...");
 
 	// Chat Box
 	addNetworkEventHandler("m", receiveChatBoxMessageFromServer); // Not prefixed with VRR to make it as small as possible
@@ -187,7 +187,7 @@ function sendResourceStoppedSignalToServer() {
 // ===========================================================================
 
 function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardState, hotBarState, itemActionDelayState) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Updating render states (HUD: ${hudState}, Labels: ${labelState}, Bottom Text: ${smallGameMessageState}, Scoreboard: ${scoreboardState}, HotBar: ${hotBarState}, Item Action Delay: ${itemActionDelayState})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Updating render states (HUD: ${hudState}, Labels: ${labelState}, Bottom Text: ${smallGameMessageState}, Scoreboard: ${scoreboardState}, HotBar: ${hotBarState}, Item Action Delay: ${itemActionDelayState})`);
 	renderHUD = hudState;
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
@@ -212,7 +212,7 @@ function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardS
 // ===========================================================================
 
 function onServerSpawnedLocalPlayer(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Setting spawned state to ${state}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Setting spawned state to ${state}`);
 	isSpawned = state;
 	setUpInitialGame();
 	if (state) {
@@ -345,7 +345,7 @@ function setLocalPlayerInfiniteRun(state) {
 // ===========================================================================
 
 function setLocalPlayerSkin(skinId) {
-	logToConsole(LOG_INFO, `[VRR.Server] Setting locale player skin to ${skinId}`);
+	logToConsole(LOG_INFO, `[AGRP.Server] Setting locale player skin to ${skinId}`);
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (natives.isModelInCdimage(skinId)) {
 			natives.requestModel(skinId);
@@ -370,7 +370,9 @@ function makePedHoldObject(pedId, modelIndex) {
 // ===========================================================================
 
 function sendLocalPlayerNetworkIdToServer() {
-	sendNetworkEventToServer("agrp.playerPedId", natives.getNetworkIdFromPed(localPlayer));
+	if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+		sendNetworkEventToServer("agrp.playerPedId", natives.getNetworkIdFromPed(localPlayer));
+	}
 }
 
 // ===========================================================================

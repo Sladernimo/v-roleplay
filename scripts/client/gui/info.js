@@ -17,7 +17,7 @@ let infoDialog = {
 // ===========================================================================
 
 function initInfoDialogGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating info dialog GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating info dialog GUI ...`);
 	infoDialog.window = mexui.window(getScreenWidth() / 2 - 200, getScreenHeight() / 2 - 70, 400, 140, 'Information', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -58,13 +58,13 @@ function initInfoDialogGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 255),
 		},
 	}, closeInfoDialog);
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created info dialog GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created info dialog GUI`);
 }
 
 // ===========================================================================
 
 function closeInfoDialog() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Closing info dialog`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing info dialog`);
 	infoDialog.window.shown = false;
 	mexui.setInput(false);
 }
@@ -73,7 +73,7 @@ function closeInfoDialog() {
 
 function showInfoGUI(infoMessage, infoTitle, buttonText) {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing info dialog window. Info: ${infoTitle} - ${infoMessage}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing info dialog window. Info: ${infoTitle} - ${infoMessage}`);
 	mexui.setInput(true);
 	infoDialog.messageLabel.text = infoMessage;
 	infoDialog.okayButton.text = buttonText;

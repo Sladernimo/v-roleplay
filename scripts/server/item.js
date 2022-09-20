@@ -281,15 +281,15 @@ let itemRecipes = [
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
-	logToConsole(LOG_INFO, "[VRR.Item]: Item script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Item]: Initializing item script ...");
+	logToConsole(LOG_INFO, "[AGRP.Item]: Item script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadItemsFromDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.Item]: Loading items from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
@@ -300,21 +300,21 @@ function loadItemsFromDatabase() {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempItemData = new ItemData(dbFetchAssoc);
 					tempItems.push(tempItemData);
-					logToConsole(LOG_VERBOSE, `[VRR.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Item]: Loaded ${tempItems.length} items from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loaded ${tempItems.length} items from database ...`);
 	return tempItems;
 }
 
 // ===========================================================================
 
 function loadItemTypesFromDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.Item]: Loading item types from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
 	let dbFetchAssoc;
@@ -325,7 +325,7 @@ function loadItemTypesFromDatabase() {
 				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempItemTypeData = new ItemTypeData(dbFetchAssoc);
 					tempItemTypes.push(tempItemTypeData);
-					logToConsole(LOG_VERBOSE, `[VRR.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -333,7 +333,7 @@ function loadItemTypesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Item]: Loaded ${tempItemTypes.length} item types from database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loaded ${tempItemTypes.length} item types from database ...`);
 	return tempItemTypes;
 }
 
@@ -1297,7 +1297,7 @@ function playerUseItem(client, hotBarSlot) {
 	let itemIndex = getPlayerData(client).hotBarItems[hotBarSlot];
 
 	if (itemIndex == -1) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.Item] ${getPlayerDisplayForConsole(client)} tried to use an empty hotbar slot ${hotBarSlot}`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} tried to use an empty hotbar slot ${hotBarSlot}`);
 		return false;
 	}
 
@@ -1311,7 +1311,7 @@ function playerUseItem(client, hotBarSlot) {
 	let itemTypeData = getItemTypeData(itemData.itemTypeIndex);
 	let hotBarItems = getPlayerData(client).hotBarItems;
 
-	logToConsole(LOG_DEBUG, `[VRR.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
 
 	switch (toInteger(itemTypeData.useType)) {
 		case AGRP_ITEM_USE_TYPE_SKIN: {
@@ -1846,7 +1846,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 	}
 
 	let currentHotBarSlot = getPlayerData(client).activeHotBarSlot;
-	logToConsole(LOG_DEBUG, `[VRR.Item] ${getPlayerDisplayForConsole(client)} switched from hotbar slot ${currentHotBarSlot} to ${newHotBarSlot}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} switched from hotbar slot ${currentHotBarSlot} to ${newHotBarSlot}`);
 
 	let currentHotBarItem = -1;
 	let newHotBarItem = -1;
@@ -2477,7 +2477,7 @@ function saveItemToDatabase(itemId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Item]: Saving item '${itemData.index}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Saving item '${itemData.index}' to database ...`);
 
 	let position = getItemPosition(itemId);
 
@@ -2534,7 +2534,7 @@ function saveItemTypeToDatabase(itemTypeId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Item]: Saving item type '${itemTypeData.name}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Saving item type '${itemTypeData.name}' to database ...`);
 
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
@@ -2666,7 +2666,7 @@ function getItemTypeIndexFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function playerItemActionDelayComplete(client) {
-	logToConsole(LOG_VERBOSE, `[VRR.Item]: Player ${getPlayerDisplayForConsole(client)} item action delay complete (State: ${getPlayerData(client).itemActionState})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Player ${getPlayerDisplayForConsole(client)} item action delay complete (State: ${getPlayerData(client).itemActionState})`);
 	switch (getPlayerData(client).itemActionState) {
 		case AGRP_ITEM_ACTION_USE:
 			playerUseItem(client, getPlayerData(client).itemActionItem);

@@ -22,8 +22,8 @@ const AGRP_PROMPT_RESETKEYBINDS = 8;
 // ===========================================================================
 
 function initGUIScript() {
-	logToConsole(LOG_INFO, "[VRR.GUI]: Initializing GUI script ...");
-	logToConsole(LOG_INFO, "[VRR.GUI]: GUI script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.GUI]: Initializing GUI script ...");
+	logToConsole(LOG_INFO, "[AGRP.GUI]: GUI script initialized successfully!");
 }
 
 // ===========================================================================
@@ -33,7 +33,7 @@ function playerPromptAnswerNo(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
 		case AGRP_PROMPT_CREATEFIRSTCHAR:
@@ -70,7 +70,7 @@ function playerPromptAnswerYes(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
 		case AGRP_PROMPT_CREATEFIRSTCHAR: {
@@ -81,14 +81,14 @@ function playerPromptAnswerYes(client) {
 		case AGRP_PROMPT_BIZORDER: {
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
-					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
+					logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
 					showPlayerErrorGUI(client, "This business doesn't have enough money! Deposit some using /bizdeposit", "Business Order Canceled");
 					getPlayerData(client).businessOrderAmount = 0;
 					getPlayerData(client).businessOrderBusiness = false;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
 				} else {
-					logToConsole(LOG_DEBUG, `[VRR.GUI] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
+					logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
 					showPlayerInfoGUI(client, `You ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} (${getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue)}) for ${getPlayerData(client).businessOrderCost}!`, "Business Order Successful");
 					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);

@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initChatScript() {
-	logToConsole(LOG_INFO, "[VRR.Chat]: Initializing chat script ...");
-	logToConsole(LOG_INFO, "[VRR.Chat]: Chat script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Initializing chat script ...");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Chat script initialized successfully!");
 	return true;
 }
 

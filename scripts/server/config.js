@@ -251,64 +251,64 @@ let globalConfig = {
 // ===========================================================================
 
 function initConfigScript() {
-	logToConsole(LOG_INFO, "[VRR.Config]: Initializing config script ...");
-	logToConsole(LOG_INFO, "[VRR.Config]: Config script initialized!");
+	logToConsole(LOG_INFO, "[AGRP.Config]: Initializing config script ...");
+	logToConsole(LOG_INFO, "[AGRP.Config]: Config script initialized!");
 }
 
 // ===========================================================================
 
 function loadGlobalConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading global configuration ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading global configuration ...");
 	try {
 		getGlobalConfig().database = loadDatabaseConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load global configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load global configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().economy = loadEconomyConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load economy configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load economy configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().locale = loadLocaleConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load locale configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load locale configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().accents = loadAccentConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load accent configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load accent configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().discord = loadDiscordConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load discord configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load discord configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().keyBind = loadKeyBindConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load keybind configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load keybind configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().email = loadEmailConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Failed to load email configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load email configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loaded global configuration successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loaded global configuration successfully!");
 }
 
 // ===========================================================================
@@ -374,18 +374,18 @@ function loadServerConfigFromId(tempServerId) {
 // ===========================================================================
 
 function applyConfigToServer(tempServerConfig) {
-	logToConsole(LOG_INFO, "[VRR.Config]: Applying server config ...");
-	logToConsole(LOG_DEBUG, "[VRR.Config]: Server config applied successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Config]: Applying server config ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Config]: Server config applied successfully!");
 
 	updateServerGameTime();
 
 	//if (isTimeSupported()) {
-	//	logToConsole(LOG_DEBUG, `[VRR.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
+	//	logToConsole(LOG_DEBUG, `[AGRP.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
 	//	setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
 	//}
 
 	if (isWeatherSupported()) {
-		logToConsole(LOG_DEBUG, `[VRR.Config]: Setting weather to ${tempServerConfig.weather}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Config]: Setting weather to ${tempServerConfig.weather}`);
 		game.forceWeather(tempServerConfig.weather);
 	}
 
@@ -395,7 +395,7 @@ function applyConfigToServer(tempServerConfig) {
 // ===========================================================================
 
 function saveServerConfigToDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.Config]: Saving server ${getServerConfig().databaseId} configuration to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Config]: Saving server ${getServerConfig().databaseId} configuration to database ...`);
 	if (getServerConfig().needsSaved) {
 		let dbConnection = connectToDatabase();
 		if (dbConnection) {
@@ -459,7 +459,7 @@ function saveServerConfigToDatabase() {
 
 		}
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Config]: Server ${getServerConfig().databaseId} configuration saved to database!`);
+	logToConsole(LOG_DEBUG, `[AGRP.Config]: Server ${getServerConfig().databaseId} configuration saved to database!`);
 }
 
 // ===========================================================================
@@ -933,7 +933,7 @@ function reloadEmailConfigurationCommand(command, params, client) {
  */
 function reloadDatabaseConfigurationCommand(command, params, client) {
 	if (getDatabaseConfig().usePersistentConnection && isDatabaseConnected(persistentDatabaseConnection)) {
-		logToConsole(LOG_WARN, `[VRR.Database] Closing persistent database connection`);
+		logToConsole(LOG_WARN, `[AGRP.Database] Closing persistent database connection`);
 		persistentDatabaseConnection.close();
 		persistentDatabaseConnection = null;
 	}
@@ -981,7 +981,7 @@ function getServerIntroMusicURL() {
 // ===========================================================================
 
 function loadLocaleConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading locale configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading locale configuration");
 	let localeConfig = JSON.parse(loadTextFile(`config/locale.json`));
 	if (localeConfig != null) {
 		return localeConfig;
@@ -991,7 +991,7 @@ function loadLocaleConfig() {
 // ===========================================================================
 
 function loadEconomyConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading economy configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading economy configuration");
 	let economyConfig = JSON.parse(loadTextFile(`config/economy.json`));
 	if (economyConfig != null) {
 		return economyConfig;
@@ -1001,7 +1001,7 @@ function loadEconomyConfig() {
 // ===========================================================================
 
 function loadAccentConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading accents configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading accents configuration");
 	let accentConfig = JSON.parse(loadTextFile(`config/accents.json`));
 	if (accentConfig != null) {
 		return accentConfig;
@@ -1011,7 +1011,7 @@ function loadAccentConfig() {
 // ===========================================================================
 
 function loadDiscordConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading discord configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading discord configuration");
 	let discordConfig = JSON.parse(loadTextFile(`config/discord.json`));
 	if (discordConfig != null) {
 		return discordConfig;
@@ -1022,7 +1022,7 @@ function loadDiscordConfig() {
 // ===========================================================================
 
 function loadDatabaseConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading database configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading database configuration");
 	let databaseConfig = JSON.parse(loadTextFile("config/database.json"));
 	if (databaseConfig != null) {
 		return databaseConfig;
@@ -1033,7 +1033,7 @@ function loadDatabaseConfig() {
 // ===========================================================================
 
 function loadKeyBindConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading keybind configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading keybind configuration");
 	let keyBindConfig = JSON.parse(loadTextFile("config/keybind.json"));
 	if (keyBindConfig != null) {
 		return keyBindConfig;
@@ -1044,7 +1044,7 @@ function loadKeyBindConfig() {
 // ===========================================================================
 
 function loadEmailConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading email configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading email configuration");
 	let emailConfig = JSON.parse(loadTextFile("config/email.json"));
 	if (emailConfig != null) {
 		return emailConfig;
@@ -1127,7 +1127,7 @@ function getDatabaseConfig() {
 // ===========================================================================
 
 function loadServerConfig() {
-	logToConsole(LOG_DEBUG, "[VRR.Config] Loading server configuration");
+	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading server configuration");
 	try {
 		if (toInteger(server.getCVar("agrp_devserver")) == 1) {
 			serverConfig = loadServerConfigFromGame(getGame());
@@ -1136,7 +1136,7 @@ function loadServerConfig() {
 		}
 
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[VRR.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
+		logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
 		thisResource.stop();
 	}
 

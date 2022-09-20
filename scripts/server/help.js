@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initHelpScript() {
-	logToConsole(LOG_INFO, `[VRR.Help]: Initializing help script ...`);
-	logToConsole(LOG_INFO, `[VRR.Help]: Help script initialized successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Help]: Initializing help script ...`);
+	logToConsole(LOG_INFO, `[AGRP.Help]: Help script initialized successfully!`);
 }
 
 // ===========================================================================
