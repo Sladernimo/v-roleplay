@@ -41,14 +41,14 @@ let creatingCharacter = false;
 // ===========================================================================
 
 function initGUIScript() {
-	logToConsole(LOG_DEBUG, "[VRR.GUI]: Initializing GUI script ...");
-	logToConsole(LOG_DEBUG, "[VRR.GUI]: GUI script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.GUI]: Initializing GUI script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.GUI]: GUI script initialized!");
 }
 
 // ===========================================================================
 
 function initGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Initializing GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Initializing GUI ...`);
 
 	initLoginGUI();
 	initRegisterGUI();
@@ -66,7 +66,7 @@ function initGUI() {
 	closeAllWindows();
 	guiReady = true;
 
-	logToConsole(LOG_DEBUG, `[VRR.GUI] All GUI created successfully!`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] All GUI created successfully!`);
 
 	loadLocaleConfig();
 
@@ -76,7 +76,7 @@ function initGUI() {
 // ===========================================================================
 
 function closeAllWindows() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Closing all GUI windows`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing all GUI windows`);
 	infoDialog.window.shown = false;
 	yesNoDialog.window.shown = false;
 	errorDialog.window.shown = false;
@@ -163,7 +163,7 @@ function isAnyGUIActive() {
 // ===========================================================================
 
 function setGUIColours(red1, green1, blue1, red2, green2, blue2, red3, green3, blue3) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Received new GUI colours from server: ${red1}, ${green1}, ${blue1} / ${red2}, ${green2}, ${blue2} / ${red3}, ${green3}, ${blue3}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Received new GUI colours from server: ${red1}, ${green1}, ${blue1} / ${red2}, ${green2}, ${blue2} / ${red3}, ${green3}, ${blue3}`);
 	primaryColour = [red1, green1, blue1];
 	secondaryColour = [red2, green2, blue2];
 	primaryTextColour = [red3, green3, blue3];
@@ -183,41 +183,45 @@ function hideAllGUI() {
 // ===========================================================================
 
 function processGUIKeyPress(keyCode) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Processing key press: ${keyCode}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Processing key press: ${keyCode}`);
+
+	if (!guiReady) {
+		return false;
+	}
 
 	if (!isAnyGUIActive()) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] GUI is not active. Cancelling keypress processing.`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] GUI is not active. Cancelling keypress processing.`);
 		return false;
 	}
 
 	if (keyCode == SDLK_RETURN || keyCode == SDLK_RETURN2) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is submit (${guiSubmitKey})`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] Key press is submit (${guiSubmitKey})`);
 		if (guiSubmitKey != false) {
-			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling submit key function`);
+			logToConsole(LOG_DEBUG, `[AGRP.GUI] Calling submit key function`);
 			guiSubmitKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is left (${guiLeftKey})`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] Key press is left (${guiLeftKey})`);
 		if (guiLeftKey != false) {
-			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling left key function`);
+			logToConsole(LOG_DEBUG, `[AGRP.GUI] Calling left key function`);
 			guiLeftKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is right (${guiRightKey})`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] Key press is right (${guiRightKey})`);
 		if (guiRightKey != false) {
-			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling right key function`);
+			logToConsole(LOG_DEBUG, `[AGRP.GUI] Calling right key function`);
 			guiRightKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("down") || keyCode == getKeyIdFromParams("s")) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is down (${guiDownKey})`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] Key press is down (${guiDownKey})`);
 		if (guiDownKey != false) {
-			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling down key function`);
+			logToConsole(LOG_DEBUG, `[AGRP.GUI] Calling down key function`);
 			guiDownKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("up") || keyCode == getKeyIdFromParams("w")) {
-		logToConsole(LOG_DEBUG, `[VRR.GUI] Key press is up (${guiUpKey})`);
+		logToConsole(LOG_DEBUG, `[AGRP.GUI] Key press is up (${guiUpKey})`);
 		if (guiUpKey != false) {
-			logToConsole(LOG_DEBUG, `[VRR.GUI] Calling up key function`);
+			logToConsole(LOG_DEBUG, `[AGRP.GUI] Calling up key function`);
 			guiUpKey.call();
 		}
 	}
@@ -234,6 +238,10 @@ function processToggleGUIKeyPress(keyCode) {
 // ===========================================================================
 
 function resetGUIStrings() {
+	if (!guiReady) {
+		return false;
+	}
+
 	// Login GUI
 	login.messageLabel.text = getLocaleString("GUILoginWindowLabelEnterPassword");
 	login.passwordInput.placeholder = getLocaleString("GUILoginWindowPasswordPlaceholder");
