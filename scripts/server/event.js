@@ -99,35 +99,42 @@ function onElementStreamOut(event, element, client) {
 // ===========================================================================
 
 function onPlayerQuit(event, client, quitReasonId) {
-	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (${disconnectReasons[quitReasonId]}[${quitReasonId}])`);
+	let disconnectName = disconnectReasons[quitReasonId];
+
+	let reasonTextEnglish = getLanguageGroupedLocaleString(englishLocale, "DisconnectReasons", disconnectName);
+
 	updateConnectionLogOnQuit(client, quitReasonId);
 
-	let reasonText = disconnectReasons[quitReasonId];
 	if (getPlayerData(client) != false) {
 		if (getPlayerData(client).customDisconnectReason != "") {
-			reasonText = getPlayerData(client).customDisconnectReason;
+			disconnectName = getPlayerData(client).customDisconnectReason;
 		}
 	}
 
-	//messagePlayerNormal(null, `👋 ${getPlayerName(client)} has left the server (${reasonText})`, getColourByName("softYellow"));
+	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
+	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${getLanguageGroupedLocaleString(englishLocale, "DisconnectReasons", reasonTextEnglish)})`);
 
-	//if (isPlayerFishing(client)) {
-	//	stopFishing(client);
-	//}
-
-	if (isPlayerInPaintBall(client)) {
-		stopPaintBall(client);
-	}
-
-	if (isPlayerOnJobRoute(client)) {
-		stopJobRoute(client, false, false);
-	}
-
-	if (isPlayerWorking(client)) {
-		stopWorking(client);
-	}
+	getClients().forEach(forClient => {
+		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), getGroupedLocaleString(forClient, "DisconnectReasons", disconnectName)));
+	});
 
 	if (isPlayerLoggedIn(client)) {
+		if (isPlayerInPaintBall(client)) {
+			stopPaintBall(client);
+		}
+
+		if (isPlayerOnJobRoute(client)) {
+			stopJobRoute(client, false, false);
+		}
+
+		if (isPlayerWorking(client)) {
+			stopWorking(client);
+		}
+
+		//if (isPlayerFishing(client)) {
+		//	stopFishing(client);
+		//}
+
 		savePlayerToDatabase(client);
 		resetClientStuff(client);
 	}
@@ -136,11 +143,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 		clearTimeout(getPlayerData(client).loginTimeout);
 	}
 
-	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${reasonText})`);
-	getClients().forEach(forClient => {
-		let reasonText = getGroupedLocaleString(forClient, "DisconnectReasons", quitReasonId);
-		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), reasonText));
-	});
+
 
 	playerResourceReady[client.index] = false;
 	playerResourceStarted[client.index] = false;
@@ -432,7 +435,7 @@ async function onPlayerSpawn(client) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
 	if (!getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
-		getPlayerData(targetClient).customDisconnectReason = `Kicked - Spawn bug. Data invalid.`;
+		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
@@ -440,7 +443,7 @@ async function onPlayerSpawn(client) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
 	if (!isPlayerLoggedIn(client)) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
-		getPlayerData(targetClient).customDisconnectReason = `Kicked - Tried to force spawn without logging in.`;
+		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
@@ -448,7 +451,7 @@ async function onPlayerSpawn(client) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
 	if (getPlayerData(client).currentSubAccount == -1) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
-		getPlayerData(targetClient).customDisconnectReason = `Kicked - Tried to force spawn without selecting a character.`;
+		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
