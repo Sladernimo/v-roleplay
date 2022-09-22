@@ -125,34 +125,6 @@ function tenMinuteTimerFunction() {
 	//showRandomTipToAllPlayers();
 	//saveServerDataToDatabase();
 	//checkInactiveVehicleRespawns();
-
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
-		if (server.mapName == "FREERIDE") {
-			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
-				sendMapChangeWarningToPlayer(null, true);
-			}
-
-			if (!isNightTime(getServerConfig().hour)) {
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
-				removeAllPlayersFromProperties();
-				saveServerDataToDatabase();
-				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				updateTimeRule();
-			}
-		} else {
-			if (isServerGoingToChangeMapsSoon()) {
-				sendMapChangeWarningToPlayer(null, true);
-			}
-
-			if (!isNightTime(getServerConfig().hour)) {
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
-				removeAllPlayersFromProperties();
-				saveServerDataToDatabase();
-				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				updateTimeRule();
-			}
-		}
-	}
 }
 
 // ===========================================================================
@@ -253,17 +225,41 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
-	/*
 	if (getGame() == AGRP_GAME_MAFIA_ONE) {
-		if (isNightTime(getServerConfig().hour) && getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
-			getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
-			game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-		} else if (!isNightTime(getServerConfig().hour) && getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
-			getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
-			game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+		if (server.mapName == "FREERIDE") {
+			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+				sendMapChangeWarningToPlayer(null, true);
+			}
+
+			if (isNightTime(getServerConfig().hour)) {
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
+				removeAllPlayersFromProperties();
+				removeAllPlayersFromVehicles();
+				saveServerDataToDatabase();
+				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Timers] Changing server map to night`);
+				messageDiscordEventChannel("🌙 Changing server map to night");
+				updateTimeRule();
+			} else {
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
+				removeAllPlayersFromProperties();
+				removeAllPlayersFromVehicles();
+				saveServerDataToDatabase();
+				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Timers] Changing server map to day`);
+				messageDiscordEventChannel("🌞 Changing server map to day");
+				updateTimeRule();
+			}
+		} else {
+			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+				sendMapChangeWarningToPlayer(null, true);
+			}
+
+			if (!isNightTime(getServerConfig().hour)) {
+
+			}
 		}
 	}
-	*/
 
 	if (isGameFeatureSupported("time")) {
 		game.time.hour = getServerConfig().hour;
