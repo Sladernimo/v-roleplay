@@ -704,7 +704,7 @@ function addAllCommandHandlers() {
 	let commands = getCommands();
 	for (let i in commands) {
 		for (let j in commands[i]) {
-			logToConsole(LOG_DEBUG, `[AGRP.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
 			addCommandHandler(commands[i][j].command, processPlayerCommand);
 			commandCount++;
 		}
