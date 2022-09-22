@@ -109,7 +109,7 @@ function initLoginGUI() {
 	login.loginButton = login.window.button(20, 205, 260, 30, 'LOGIN', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
-			textColour: toColour(0, 0, 0, 255),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
 			textSize: 12.0,
 			textFont: mainFont,
 			textAlign: 0.5,
@@ -122,7 +122,7 @@ function initLoginGUI() {
 	login.forgotPasswordButton = login.window.button(180, 240, 100, 15, 'RESET PASS', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
-			textColour: toColour(0, 0, 0, 255),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
 			textSize: 8.0,
 			textFont: mainFont,
 			textAlign: 0.5,
