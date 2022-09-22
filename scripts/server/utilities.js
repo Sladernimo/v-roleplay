@@ -483,7 +483,28 @@ function updateAllPlayerWeaponDamageStates() {
 // ===========================================================================
 
 function removeAllPlayersFromProperties() {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerInAnyBusiness(clients[i])) {
+			removePlayerFromBusiness(clients[i]);
+		}
 
+		if (isPlayerInAnyHouse(clients[i])) {
+			removePlayerFromHouse(clients[i]);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
+
+function removeAllPlayersFromVehicles() {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerInAnyVehicle(clients[i])) {
+			removePlayerFromVehicle(clients[i]);
+		}
+	}
 	return false;
 }
 
