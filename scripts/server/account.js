@@ -497,7 +497,7 @@ function changeAccountPasswordCommand(command, params, client) {
 	}
 
 	getPlayerData(client).accountData.password = hashAccountPassword(getPlayerData(client).accountData.name, params);
-	messagePlayerSuccess(client, `Your password has been changed!`);
+	messagePlayerSuccess(client, getLocaleString(client, "PasswordChanged"));
 }
 
 // ===========================================================================
@@ -593,7 +593,7 @@ function verifyAccountEmailCommand(command, params, client) {
 	let verificationCode = getParam(params, " ", 1);
 
 	if (isAccountEmailVerified(getPlayerData(client).accountData)) {
-		messagePlayerError(client, `You already verified your email!`);
+		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadyVerified"));
 		return false;
 	}
 
@@ -646,7 +646,7 @@ function resetAccountPasswordCommand(command, params, client) {
 // ===========================================================================
 
 function setAccountDiscordCommand(command, params, client) {
-	messagePlayerError(client, `This command is not yet finished and will be available soon!`);
+	messagePlayerError(client, getLocaleString(client, "CommandDisabled"));
 	return false;
 
 	if (areParamsEmpty(params)) {
@@ -850,7 +850,7 @@ function loginSuccess(client) {
 	if (doesServerHaveTesterOnlyEnabled()) {
 		if (!hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("IsTester"))) {
 			setTimeout(function () {
-				getPlayerData(client).customDisconnectReason = "Kicked - Not a tester";
+				getPlayerData(client).customDisconnectReason = "NotATester";
 				disconnectPlayer(client);
 			}, 3500);
 
@@ -1067,7 +1067,7 @@ function createAccount(name, password, email = "") {
 function checkLogin(client, password) {
 	getPlayerData(client).loginAttemptsRemaining = getPlayerData(client).loginAttemptsRemaining - 1;
 	if (getPlayerData(client).loginAttemptsRemaining <= 0) {
-		getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
+		getPlayerData(client).customDisconnectReason = "FailedToLogin";
 		disconnectPlayer(client);
 	}
 
@@ -1076,7 +1076,7 @@ function checkLogin(client, password) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerLoginSuccessGUI(client);
 		} else {
-			messagePlayerError(client, "You are already logged in!");
+			messagePlayerError(client, getLocaleString(client, "AlreadyLoggedIn"));
 		}
 
 		return false;
@@ -1097,10 +1097,10 @@ function checkLogin(client, password) {
 	if (areParamsEmpty(password)) {
 		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (empty password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			showPlayerLoginFailedGUI(client, `Invalid password! ${getPlayerData(client).loginAttemptsRemaining} tries remaining.`);
+			showPlayerLoginFailedGUI(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
 			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		} else {
-			messagePlayerError(client, `You must enter a password! ${getPlayerData(client).loginAttemptsRemaining} tries remaining.`);
+			messagePlayerError(client, getLocaleString(client, "LoginFailedNoPassword", getPlayerData(client).loginAttemptsRemaining));
 			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
@@ -1114,10 +1114,10 @@ function checkLogin(client, password) {
 	if (!isAccountPasswordCorrect(getPlayerData(client).accountData, hashAccountPassword(getPlayerName(client), password))) {
 		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (wrong password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			showPlayerLoginFailedGUI(client, `Invalid password! ${getPlayerData(client).loginAttemptsRemaining} tries remaining.`);
+			showPlayerLoginFailedGUI(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
 			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		} else {
-			messagePlayerError(client, `Invalid password! ${getPlayerData(client).loginAttemptsRemaining} tries remaining.`);
+			messagePlayerError(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
 			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
@@ -1178,7 +1178,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedNoPassword"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password is blank)`);
 		} else {
-			messagePlayerError(client, "The password cannot be blank!");
+			messagePlayerError(client, getLocaleString(client, "RegistrationFailedNoPassword"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password is blank)`);
 		}
 		return false;
@@ -1214,7 +1214,20 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedNoPasswordWeak"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password doesn't meet requirements)`);
 		} else {
-			messagePlayerError(client, "Password doesn't meet requirements!");
+			messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
+			let passwordRequirements = []
+			if (getGlobalConfig().passwordRequiredCapitals > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals))
+			}
+
+			if (getGlobalConfig().passwordRequiredNumbers > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers))
+			}
+
+			if (getGlobalConfig().passwordRequiredSymbols > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols))
+			}
+			messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirements.join(", ")));
 		}
 		return false;
 	}
@@ -1234,7 +1247,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerAlert(client, getLocaleString(client, "RegistrationFailedCreateError"));
 		}
 
-		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it shortly.`);
+		messagePlayerAlert(client, getLocaleString(client, "DevelopersNotified"));
 		return false;
 	}
 
@@ -1254,7 +1267,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 	if (doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
 		setTimeout(function () {
-			getPlayerData(client).customDisconnectReason = "Kicked - Not a tester";
+			getPlayerData(client).customDisconnectReason = "NotATester";
 			disconnectPlayer(client);
 		}, 5000);
 
@@ -1316,7 +1329,7 @@ function checkAccountResetPasswordRequest(client, inputText) {
 					logToConsole(LOG_INFO | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, ${getPlayerData(client).passwordResetAttemptsRemaining} attempts remaining)`);
 					if (getPlayerData(client).passwordResetAttemptsRemaining <= 0) {
 						logToConsole(LOG_INFO | LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to reset their password (verification code not correct, no more attempts remaining, kicking ...)`);
-						getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
+						getPlayerData(client).customDisconnectReason = "FailedToLogin";
 						disconnectPlayer(client);
 						return false;
 					}
@@ -1355,9 +1368,9 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 
 	if (!doesPasswordMeetRequirements(newPassword)) {
 		let passwordRequirementsString = `${needsCapitals}, ${needsNumbers}, ${needsSymbols}`;
-		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", "1");
-		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", "1");
-		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", "1");
+		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals);
+		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers);
+		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols);
 
 		messagePlayerError(client, getLocaleString(client, "AccountPasswordNeedsImproved"));
 		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirementsString));
@@ -1662,34 +1675,34 @@ function generateEmailVerificationCode() {
 
 // ===========================================================================
 
-function sendEmailVerificationEmail(client, emailVerificationCode) {
+async function sendEmailVerificationEmail(client, emailVerificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-function sendPasswordResetEmail(client, verificationCode) {
+async function sendPasswordResetEmail(client, verificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmPasswordReset;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", verificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
+	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-function verifyAccountEmail(accountData, verificationCode) {
+async function verifyAccountEmail(accountData, verificationCode) {
 	let emailVerificationCode = generateRandomString(10);
 
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 
 	getPlayerData(client).accountData.emailAddress = emailAddress;
 	getPlayerData(client).accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
@@ -1697,7 +1710,7 @@ function verifyAccountEmail(accountData, verificationCode) {
 
 // ===========================================================================
 
-function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
+async function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
 	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
 	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
 	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
@@ -1709,13 +1722,13 @@ function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGa
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
+	await sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
 // ===========================================================================
 
-function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
+async function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
 	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
 	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
 	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
@@ -1727,7 +1740,7 @@ function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getG
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
+	await sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
@@ -1760,7 +1773,7 @@ function checkPlayerTwoFactorAuthentication(client, authCode) {
 		}
 	}
 
-	getPlayerData(client).customDisconnectReason = "Kicked - Failed to login";
+	getPlayerData(client).customDisconnectReason = "FailedToLogin";
 	disconnectPlayer(client);
 	return false;
 }
@@ -1773,13 +1786,13 @@ function isPlayerATester(client) {
 
 // ===========================================================================
 
-function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
+async function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 	let emailBodyText = getEmailConfig().bodyContent.twoFactorAuthentication;
 	emailBodyText = emailBodyText.replace("{2FACODE}", twoFactorAuthCode);
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(getGame()));
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
+	await sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
 	return true;
 }
 
@@ -1788,7 +1801,7 @@ function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 function startLoginTimeoutForPlayer(client) {
 	getPlayerData(client).loginTimeout = setTimeout(function () {
 		if (isPlayerLoggedIn(client) == false) {
-			getPlayerData(client).customDisconnectReason = "Kicked - Login timeout";
+			getPlayerData(client).customDisconnectReason = "FailedToLogin";
 			disconnectPlayer(client);
 		}
 	}, getGlobalConfig().loginTimeout);
