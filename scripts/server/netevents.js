@@ -132,14 +132,20 @@ function playerClientStarted(client) {
 
 function playerClientStopped(client) {
 	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
-	getPlayerData(client).customDisconnectReason = `Kicked - Client script verification failed.`;
+	getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
 	disconnectPlayer(client);
 }
 
 // ===========================================================================
 
-function showSmallGameMessage(client, text, colour, duration, fontName = "Pricedown") {
+function showSmallGameMessage(client, text, colour, duration, fontName = "Roboto") {
 	logToConsole(LOG_DEBUG, `[AGRP.Client] Showing game message to ${getPlayerDisplayForConsole(client)} (${text}) for ${duration} milliseconds`);
+
+	if (getGame() <= AGRP_GAME_GTA_IV_EFLC) {
+		fontName = "Pricedown";
+	} else {
+		fontName = "AuroraBdCnBT";
+	}
 	sendNetworkEventToPlayer("agrp.smallGameMessage", client, text, colour, duration, fontName);
 }
 
@@ -1291,8 +1297,13 @@ function sendMapChangeWarningToPlayer(client, changingToNight) {
 // ==========================================================================
 
 function playerMapLoaded(client, mapName) {
-
 	//updateAllInteriorVehiclesForPlayer(client, propertyData.exitInterior, propertyData.exitDimension);
+}
+
+// ==========================================================================
+
+function setMapChangeWarningForPlayer(client, isChanging) {
+	sendNetworkEventToPlayer("agrp.mapChangeWarning", client, isChanging);
 }
 
 // ==========================================================================
