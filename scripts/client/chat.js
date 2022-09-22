@@ -33,7 +33,7 @@ function initChatBoxScript() {
 	scrollUpKey = getKeyIdFromParams("pageup");
 	scrollDownKey = getKeyIdFromParams("pagedown");
 	bindChatBoxKeys();
-	logToConsole(LOG_DEBUG, "[AGRP.Chat]: Chat script initialized!");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Chat script initialized!");
 }
 
 // ===========================================================================
