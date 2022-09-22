@@ -8,6 +8,13 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+function initAnimationScript() {
+	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Initializing animation script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Animation script initialized!");
+}
+
+// ===========================================================================
+
 function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	let ped = getElementFromId(pedId);
 

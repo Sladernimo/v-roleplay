@@ -27,6 +27,13 @@ class BusinessData {
 
 // ===========================================================================
 
+function initBusinessScript() {
+	logToConsole(LOG_DEBUG, "[AGRP.Business]: Initializing business script ...");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Business script initialized!");
+}
+
+// ===========================================================================
+
 function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, hasItems) {
 	logToConsole(LOG_DEBUG, `[AGRP.Business] Received business ${businessId} (${name}) from server`);
 
