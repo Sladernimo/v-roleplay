@@ -904,7 +904,7 @@ function jobListCommand(command, params, client) {
 
 function takeJobCommand(command, params, client) {
 	if (!canPlayerUseJobs(client)) {
-		messagePlayerError(client, "You are not allowed to use any jobs!");
+		messagePlayerError(client, getLocaleString(client, "NotAllowedToUseJobs"));
 		return false;
 	}
 
@@ -912,7 +912,7 @@ function takeJobCommand(command, params, client) {
 	let jobData = getJobData(closestJobLocation.jobIndex);
 
 	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().takeJobDistance) {
-		messagePlayerError(client, "There are no job points close enough!");
+		messagePlayerError(client, getLocaleString(client, "NoJobLocationCloseEnough"));
 		return false;
 	}
 
@@ -922,12 +922,12 @@ function takeJobCommand(command, params, client) {
 	}
 
 	if (!canPlayerUseJob(client, closestJobLocation.jobIndex)) {
-		messagePlayerError(client, "You can't use this job!");
+		messagePlayerError(client, getLocaleString(client, "CantUseThisJob"));
 		return false;
 	}
 
 	takeJob(client, closestJobLocation.jobIndex);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You now have the {jobYellow}${jobData.name} {MAINCOLOUR}job`);
+	messagePlayerSuccess(client, getLocaleString(client, "JobChanged", `{jobYellow}${jobData.name}{MAINCOLOUR}`));
 	return true;
 }
 
@@ -944,7 +944,7 @@ function startWorkingCommand(command, params, client) {
 	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
 		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
-			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
+			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
 
@@ -961,13 +961,13 @@ function startWorkingCommand(command, params, client) {
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
 		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
-			messagePlayerError(client, "You don't have a job!");
+			messagePlayerError(client, getLocaleString(client, "DontHaveAJob"));
 			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
 			return false;
 		}
 
 		if (getPlayerCurrentSubAccount(client).job != closestJobLocation.jobId) {
-			messagePlayerError(client, "This is not your job!");
+			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 			messagePlayerInfo(client, getLocaleString(client, "QuitJobToTakeAnother", "{ALTCOLOUR}/quitjob{MAINCOLOUR}"));
 			return false;
 		}
@@ -980,11 +980,16 @@ function startWorkingCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, `💼 You are now working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
+	messagePlayerSuccess(client, getLocaleString(client, "StartedWorking", jobData.name));
 	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} started working for the {jobYellow}${jobData.name}{MAINCOLOUR} job`);
 
 	startWorking(client);
-	//messagePlayerNewbieTip(client, `Enter a job vehicle to get started!`);
+
+	if (doesJobLocationHaveAnyRoutes(closestJobLocation)) {
+		if (hasPlayerSeenActionTip(client, "EnterJobVehicleForRoute")) {
+			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "EnterJobVehicleForRoute"));
+		}
+	}
 	return true;
 }
 
@@ -996,13 +1001,13 @@ function stopWorkingCommand(command, params, client) {
 	}
 
 	if (!isPlayerWorking(client)) {
-		messagePlayerError(client, "You are not working!");
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", "{ALTCOLOUR}/startwork{MAINCOLOUR}"));
 		return false;
 	}
 
 	deleteJobItems(client);
 	stopWorking(client);
-	messagePlayerSuccess(client, "You have stopped working!");
+	messagePlayerSuccess(client, getLocaleString(client, "StoppedWorking"));
 	return true;
 }
 
@@ -1017,7 +1022,7 @@ function startWorking(client) {
 	getPlayerCurrentSubAccount(client).skin = getPlayerSkin(client);
 	storePlayerItemsInTempLocker(client);
 	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_JOB;
-	messagePlayerInfo(client, "Your personal items have been stored in your locker while you work");
+	messagePlayerInfo(client, getLocaleString(client, "ItemsStoredForJob"));
 
 	getPlayerCurrentSubAccount(client).isWorking = true;
 
@@ -1067,7 +1072,7 @@ function startWorking(client) {
 function getJobInfoCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
-	messagePlayerInfo(client, `{jobYellow}[Job Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).name}, {MAINCOLOUR}Enabled: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).enabled))}, {MAINCOLOUR}Whitelisted: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).whiteListEnabled))}, {MAINCOLOUR}Blacklisted: {ALTCOLOUR}${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).blackListEnabled))}, {MAINCOLOUR}ID: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}`);
+	messagePlayerInfo(client, `{jobYellow}[Job Info] {MAINCOLOUR}Name:{ALTCOLOUR} ${getJobData(closestJobLocation.jobIndex).name}, {MAINCOLOUR}Enabled:{ALTCOLOUR} ${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).enabled))}, {MAINCOLOUR}Whitelisted:{ALTCOLOUR} ${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).whiteListEnabled))}, {MAINCOLOUR}Blacklisted:{ALTCOLOUR} ${getYesNoFromBool(intToBool(getJobData(closestJobLocation.jobIndex).blackListEnabled))}, {MAINCOLOUR}ID:{ALTCOLOUR} ${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}`);
 }
 
 // ===========================================================================
@@ -1075,7 +1080,7 @@ function getJobInfoCommand(command, params, client) {
 function getJobLocationInfoCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
-	messagePlayerInfo(client, `{jobYellow}[Job Location Info] {MAINCOLOUR}Job: {ALTCOLOUR}${getJobData(closestJobLocation.jobIndex).name} (${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}), {MAINCOLOUR}Enabled: {ALTCOLOUR}${getYesNoFromBool(closestJobLocation.enabled)}, {MAINCOLOUR}Database ID: {ALTCOLOUR}${closestJobLocation.databaseId}`);
+	messagePlayerInfo(client, `{jobYellow}[Job Location Info] {MAINCOLOUR}Job:{ALTCOLOUR} ${getJobData(closestJobLocation.jobIndex).name} (${getJobData(closestJobLocation.jobIndex).databaseId}/${closestJobLocation.jobIndex}), {MAINCOLOUR}Enabled:{ALTCOLOUR} ${getYesNoFromBool(closestJobLocation.enabled)}, {MAINCOLOUR}Database ID:{ALTCOLOUR} ${closestJobLocation.databaseId}`);
 }
 
 // ===========================================================================
@@ -1148,6 +1153,7 @@ function stopWorking(client) {
 	let jobId = getPlayerJob(client);
 	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} has stopped working as a ${getJobData(jobId).name}`);
 
+	/*
 	switch (getJobType(jobId)) {
 		case AGRP_JOB_POLICE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the police station");
@@ -1186,6 +1192,7 @@ function stopWorking(client) {
 		default:
 			break;
 	}
+	*/
 
 	updatePlayerNameTag(client);
 	sendPlayerWorkingState(client, false);
@@ -1200,12 +1207,12 @@ function jobUniformCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveAnyJob(client)) {
-		messagePlayerError(client, "You don't have a job!");
+		messagePlayerError(client, getLocaleString(client, "DontHaveAJob"));
 		return false;
 	}
 
 	if (!isPlayerWorking(client)) {
-		messagePlayerError(client, "You are not working! Use /startwork at your job location or a job vehicle.");
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", `{ALTCOLOUR}/startwork{MAINCOLOUR}`));
 		return false;
 	}
 
@@ -1215,7 +1222,7 @@ function jobUniformCommand(command, params, client) {
 	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
 		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
-			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
+			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
 
@@ -1303,12 +1310,12 @@ function jobEquipmentCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveAnyJob(client)) {
-		messagePlayerError(client, "You don't have a job!");
+		messagePlayerError(client, getLocaleString(client, "DontHaveAJob"));
 		return false;
 	}
 
 	if (!isPlayerWorking(client)) {
-		messagePlayerError(client, "You are not working! Use /startwork at your job location.");
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", `{ALTCOLOUR}/startwork{MAINCOLOUR}`));
 		return false;
 	}
 
@@ -1318,7 +1325,7 @@ function jobEquipmentCommand(command, params, client) {
 	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
 		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
-			messagePlayerError(client, "You need to be near your job site or vehicle that belongs to your job!");
+			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
 
@@ -1336,12 +1343,15 @@ function jobEquipmentCommand(command, params, client) {
 	} else {
 		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
-			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
+
+			if (hasPlayerSeenActionTip(client, "JobLocations")) {
+				messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobPoints", "{ALTCOLOUR}/gps{MAINCOLOUR}"));
+			}
 			return false;
 		}
 
 		if (getPlayerCurrentSubAccount(client).job != closestJobLocation.jobId) {
-			messagePlayerError(client, "This is not your job!");
+			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 			messagePlayerInfo(client, getLocaleString(client, "QuitJobToTakeAnother", "{ALTCOLOUR}/quitjob{MAINCOLOUR}"));
 			return false;
 		}
@@ -1377,7 +1387,7 @@ function jobEquipmentCommand(command, params, client) {
 	}
 
 	if (equipmentId < 1 || equipmentId > equipments.length) {
-		messagePlayerError(client, "That equipment ID is invalid!");
+		messagePlayerError(client, getLocaleString(client, "InvalidJobEquipment"));
 		return false;
 	}
 
@@ -1552,7 +1562,7 @@ function createJobLocationCommand(command, params, client) {
 	let jobId = getJobFromParams(params);
 
 	if (!getJobData(jobId)) {
-		messagePlayerError(client, "That job was not found!");
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
@@ -1747,7 +1757,7 @@ function toggleJobRouteEnabledCommand(command, params, client) {
 			if (isPlayerOnJobRoute(clients[i])) {
 				if (getPlayerJob(clients[i]) == jobId && getPlayerJobRoute(clients[i]) == jobRoute) {
 					stopJobRoute(clients[i], true, false);
-					messagePlayerAlert(clients[i], "The job route you were on has been disabled by an admin");
+					messagePlayerAlert(clients[i], getLocaleString(clients[i], "CurrentJobRouteDeleted"));
 				}
 			}
 		}
@@ -2308,27 +2318,32 @@ function forceAllPlayersToStopWorking() {
 
 function jobStartRouteCommand(command, params, client) {
 	if (!canPlayerUseJobs(client)) {
-		messagePlayerError(client, "You are not allowed to use jobs.");
+		messagePlayerError(client, getLocaleString(client, "NotAllowedToUseJobs"));
 		return false;
 	}
 
 	if (!isPlayerWorking(client)) {
-		messagePlayerError(client, "You aren't working yet! Use /startwork first.");
+		messagePlayerError(client, getLocaleString(client, "NeedToBeWorking", "{ALTCOLOUR}/startwork{MAINCOLOUR}"));
 		return false;
 	}
 
 	if (getJobData(getPlayerJob(client)).routes.length == 0) {
-		messagePlayerError(client, "Your job doesn't have any routes for this location!");
+		messagePlayerError(client, getLocaleString(client, "NoRoutesForJobLocation"));
+		return false;
+	}
+
+	if (!isPlayerInAnyVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
 	if (!isPlayerInJobVehicle(client)) {
-		messagePlayerError(client, "You need to be in a vehicle that belongs to your job!");
+		messagePlayerError(client, getLocaleString(client, "NeedToBeInJobVehicle"));
 		return false;
 	}
 
 	if (isPlayerOnJobRoute(client)) {
-		messagePlayerError(client, "You're already on a job route! Finish the route or use /stoproute");
+		messagePlayerError(client, getLocaleString(client, "AlreadyOnJobRoute", "{ALTCOLOUR}/stoproute{MAINCOLOUR}"));
 		return false;
 	}
 
@@ -3428,7 +3443,7 @@ function createJobRouteCommand(command, params, client) {
 	}
 
 	if (isPlayerOnJobRoute(client)) {
-		messagePlayerError(client, getLocaleString(client, "AlreadyOnJobRoute", "{ALTCOLOUR}/startroute{MAINCOLOUR}"));
+		messagePlayerError(client, getLocaleString(client, "AlreadyOnJobRoute", "{ALTCOLOUR}/stoproute{MAINCOLOUR}"));
 		return false;
 	}
 
@@ -4082,6 +4097,12 @@ function createAllJobRouteLocationMarkers() {
 			}
 		}
 	}
+}
+
+// ===========================================================================
+
+function doesJobLocationHaveAnyRoutes(jobLocationData) {
+	return (getRandomJobRouteForLocation(jobLocationData) != -1);
 }
 
 // ===========================================================================
