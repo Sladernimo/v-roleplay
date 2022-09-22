@@ -46,7 +46,7 @@ function kickClientCommand(command, params, client) {
 
 	//getPlayerData(targetClient).customDisconnectReason = reason;
 	announceAdminAction(`PlayerKicked`, getPlayerName(targetClient));
-	getPlayerData(targetClient).customDisconnectReason = `Kicked - ${reason}`;
+	getPlayerData(targetClient).customDisconnectReason = "Kicked";
 	disconnectPlayer(targetClient);
 }
 
@@ -1810,6 +1810,85 @@ function getPlayerCurrentBusinessCommand(command, params, client) {
 
 	let businessData = getBusinessData(houseId);
 	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in business '${businessData.name}' (ID ${businessId}/${businessData.databaseId})`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function addAccountStaffNoteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let noteMessage = params.split(" ").slice(1).join(" ");
+
+	if (!getPlayerData(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+	//let dbConnection = connectToDatabase();
+	//let safeNoteMessage = escapeDatabaseString(dbConnection, noteMessage);
+	//queryDatabase(dbConnection, `INSERT INTO acct_note (acct_note_acct, acct_note_server, acct_note_message, acct_note_who_added, acct_note_when_added) VALUES (${getPlayerData(targetClient).accountData.databaseId}, ${getServerId()}, ${safeNoteMessage}, ${}, UNIX_TIMESTAMP())`);
+
+	let tempNoteData = new AccountStaffNoteData();
+	tempNoteData.whoAdded = getPlayerData(client).accountData.databaseId;
+	tempNoteData.whenAdded = getCurrentUnixTimestamp();
+	tempNoteData.note = noteMessage;
+	tempNoteData.account = getPlayerData(targetClient).databaseId;
+	tempNoteData.serverId = getServerId();
+	tempNoteData.deleted = false;
+	tempNoteData.needsSaved = true;
+	getPlayerData(targetClient).accountData.staffNotes.push(tempNoteData);
+
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} added a staff note for {ALTCOLOUR}${targetClient.name}{MAINCOLOUR}: ${noteMessage}`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function showAccountStaffNotesCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let noteMessage = params.split(" ").slice(1).join(" ");
+
+	if (!getPlayerData(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{ALTCOLOUR}${toInteger(i) + 1}. (Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: ${x.note}` });
+
+	//let chunkedList = splitArrayIntoChunks(staffNoteList, 1);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderAccountStaffNotesList")));
+
+	for (let i in staffNoteList) {
+		messagePlayerInfo(client, staffNoteList[i]);
+	}
 	return true;
 }
 
