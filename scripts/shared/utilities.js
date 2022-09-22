@@ -1385,9 +1385,6 @@ let placesOfOrigin = [
 
 // ===========================================================================
 
-/**
- * @return {GameConfig} The game data
- */
 function getGameConfig() {
 	return gameData;
 }
