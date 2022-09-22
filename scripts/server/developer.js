@@ -449,10 +449,10 @@ function saveServerDataCommand(command, params, client) {
 
 // ===========================================================================
 
-function testEmailCommand(command, params, client) {
+async function testEmailCommand(command, params, client) {
 	try {
 		messagePlayerAlert(client, `Sending test email to ${params}`);
-		sendEmail(params, "Player", "Test email", "Just testing the SMTP module for the server!");
+		await sendEmail(params, "Player", "Test email", "Just testing the SMTP module for the server!");
 	} catch (error) {
 		messagePlayerError(client, "The email could not be sent! Error: ${error}");
 		return false;
