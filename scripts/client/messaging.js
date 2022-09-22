@@ -39,6 +39,12 @@ function loadSmallGameMessageFonts() {
 		fontStream.close();
 	}
 
+	fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
+	if (fontStream != null) {
+		tempSmallGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 20.0);
+		fontStream.close();
+	}
+
 	tempSmallGameMessageFonts["Roboto"] = lucasFont.createDefaultFont(20.0, "Roboto");
 	tempSmallGameMessageFonts["RobotoLight"] = lucasFont.createDefaultFont(20.0, "Roboto", "Light");
 
@@ -52,6 +58,12 @@ function loadBigGameMessageFont() {
 	let fontStream = openFile("files/fonts/pricedown.ttf");
 	if (fontStream != null) {
 		tempBigGameMessageFonts["Pricedown"] = lucasFont.createFont(fontStream, 28.0);
+		fontStream.close();
+	}
+
+	fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
+	if (fontStream != null) {
+		tempBigGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 20.0);
 		fontStream.close();
 	}
 
