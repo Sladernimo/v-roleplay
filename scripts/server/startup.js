@@ -48,12 +48,10 @@ function initServerScripts() {
 	// Load all the server data
 	loadServerDataFromDatabase();
 	setAllServerDataIndexes();
-	createAllServerElements();
-
-	addAllNetworkEventHandlers();
 
 	checkServerGameTime();
-
+	createAllServerElements();
+	addAllNetworkEventHandlers();
 	initAllClients();
 	initTimers();
 
@@ -82,9 +80,9 @@ function checkForMySQLModule() {
 // ===========================================================================
 
 function checkForSMTPModule() {
-	if (typeof module.smtp == "undefined") {
-		return false;
-	}
+	//if (typeof module.smtp == "undefined") {
+	//	return false;
+	//}
 
 	return true;
 }
@@ -106,10 +104,10 @@ function checkForAllRequiredModules() {
 		thisResource.stop();
 	}
 
-	if (!checkForSMTPModule()) {
-		logToConsole(LOG_WARN, "[AGRP.Startup]: SMTP Email module is not loaded!");
-		logToConsole(LOG_WARN, "[AGRP.Startup]: Email features will NOT be available!");
-	}
+	//if (!checkForSMTPModule()) {
+	//	logToConsole(LOG_WARN, "[AGRP.Startup]: SMTP Email module is not loaded!");
+	//	logToConsole(LOG_WARN, "[AGRP.Startup]: Email features will NOT be available!");
+	//}
 
 	logToConsole(LOG_DEBUG, "[AGRP.Startup]: All required modules loaded!");
 	return true;
