@@ -24,18 +24,18 @@ let builtInCommands = [
 // ===========================================================================
 
 let disconnectReasons = [
-	"Lost Connection",
+	"LostConnection",
 	"Disconnected",
-	"Unsupported Client",
-	"Wrong Game",
-	"Incorrect Password",
-	"Unsupported Executable",
+	"UnsupportedClient",
+	"WrongGame",
+	"IncorrectPassword",
+	"UnsupportedExecutable",
 	"Disconnected",
 	"Banned",
 	"Failed",
-	"Invalid Name",
+	"InvalidName",
 	"Crashed",
-	"Modified Game"
+	"ModifiedGame"
 ];
 
 // ===========================================================================
