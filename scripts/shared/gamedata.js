@@ -271,6 +271,16 @@ let supportedFeatures = {
 		[AGRP_GAME_MAFIA_TWO]: true,
 		[AGRP_GAME_MAFIA_THREE]: true,
 	},
+	mouseCursor: {
+		[AGRP_GAME_GTA_III]: true,
+		[AGRP_GAME_GTA_VC]: true,
+		[AGRP_GAME_GTA_SA]: true,
+		[AGRP_GAME_GTA_IV]: true,
+		[AGRP_GAME_GTA_IV_EFLC]: true,
+		[AGRP_GAME_MAFIA_ONE]: false,
+		[AGRP_GAME_MAFIA_TWO]: false,
+		[AGRP_GAME_MAFIA_THREE]: false,
+	}
 };
 
 // ===========================================================================
