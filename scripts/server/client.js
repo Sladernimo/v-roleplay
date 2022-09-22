@@ -187,7 +187,7 @@ function resetClientStuff(client) {
 
 function kickAllClients() {
 	getClients().forEach((client) => {
-		getPlayerData(client).customDisconnectReason = `Kicked - All clients are being disconnected`;
+		getPlayerData(client).customDisconnectReason = "ServerRestarting";
 		disconnectPlayer(client);
 	})
 }
