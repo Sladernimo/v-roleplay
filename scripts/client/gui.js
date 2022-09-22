@@ -284,3 +284,15 @@ function resetGUIStrings() {
 	newCharacter.lastNameInput.placeholder = getLocaleString("GUINewCharacterLastNamePlaceholder");
 	newCharacter.createCharacterButton.text = toUpperCase(getLocaleString("GUINewCharacterSubmitButton"));
 }
+
+// ===========================================================================
+
+function dimAllGUIElementsInWindow(guiObject) {
+	for (let i in guiObject) {
+		if (i != "window") {
+			guiObject[i].shown = false;
+		}
+	}
+}
+
+// ===========================================================================
