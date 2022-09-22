@@ -67,7 +67,9 @@ function onResourceStart(event, resource) {
 	localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 
 	if (resource == thisResource) {
-		sendResourceStartedSignalToServer();
+		setTimeout(function () {
+			sendResourceStartedSignalToServer();
+		}, 500);
 	}
 }
 
@@ -84,9 +86,9 @@ function onResourceStop(event, resource) {
 function onResourceReady(event, resource) {
 	loadLocaleConfig();
 
-	if (resource == thisResource) {
+	setTimeout(function () {
 		sendResourceReadySignalToServer();
-	}
+	}, 500);
 }
 
 // ===========================================================================
@@ -126,6 +128,8 @@ function onKeyUp(event, keyCode, scanCode, keyModifiers) {
 // ===========================================================================
 
 function onDrawnHUD(event) {
+	processMouseCursorRendering();
+
 	if (!renderHUD) {
 		return false;
 	}
