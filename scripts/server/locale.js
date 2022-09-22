@@ -23,6 +23,10 @@ class LocaleData {
 
 // ===========================================================================
 
+let englishLocale = 0;
+
+// ===========================================================================
+
 function initLocaleScript() {
 	logToConsole(LOG_DEBUG, "[AGRP.Locale]: Initializing locale script ...");
 	logToConsole(LOG_INFO, "[AGRP.Locale]: Locale script initialized!");
@@ -56,6 +60,23 @@ function getLanguageLocaleString(localeId, stringName, ...args) {
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
+		return "";
+	}
+
+	for (let i = 1; i <= args.length; i++) {
+		tempString = tempString.replace(`{${i}}`, args[i - 1]);
+	}
+
+	return tempString;
+}
+
+// ===========================================================================
+
+function getLanguageGroupedLocaleString(localeId, stringName, index, ...args) {
+	let tempString = getRawGroupedLocaleString(stringName, index, localeId);
+	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
+		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
+		submitBugReport(null, `(AUTOMATED REPORT) Locale string index ${index} of "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
 		return "";
 	}
 
