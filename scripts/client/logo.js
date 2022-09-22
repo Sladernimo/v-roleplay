@@ -23,9 +23,9 @@ function initLogoScript() {
 // ===========================================================================
 
 function loadLogoImage() {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
-		return false;
-	}
+	//if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	//	return false;
+	//}
 
 	let logoStream = openFile(mainLogoPath);
 	let tempLogoImage = null;
