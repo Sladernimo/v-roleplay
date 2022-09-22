@@ -39,7 +39,7 @@ function playerPromptAnswerNo(client) {
 		case AGRP_PROMPT_CREATEFIRSTCHAR:
 			logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} chose not to create a first character. Kicking them from the server ...`);
 			showPlayerErrorGUI(client, "You don't have a character to play. Goodbye!", "No Characters");
-			getPlayerData(targetClient).customDisconnectReason = `Kicked - Didn't create a character`;
+			getPlayerData(targetClient).customDisconnectReason = "FailedToCreateCharacter";
 			setTimeout(function () { disconnectPlayer(client); }, 5000);
 			break;
 
