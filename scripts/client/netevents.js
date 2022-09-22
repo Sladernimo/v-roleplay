@@ -108,6 +108,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.changePassword", showChangePasswordGUI);
 	addNetworkEventHandler("agrp.showLocaleChooser", showLocaleChooserGUI);
 	addNetworkEventHandler("agrp.guiColour", setGUIColours);
+	addNetworkEventHandler("agrp.mapChangeWarning", setMapChangeWarningState);
 
 	// 2D Rendering
 	addNetworkEventHandler("agrp.set2DRendering", set2DRendering);
@@ -447,6 +448,12 @@ function clearLocalPlayerOwnedPickups() {
 
 function receiveCurrencyStringFromServer(newCurrencyString) {
 	currencyString = newCurrencyString;
+}
+
+// ===========================================================================
+
+function setMapChangeWarningState(state) {
+	mapChangeWarning = state;
 }
 
 // ===========================================================================

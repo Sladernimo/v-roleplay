@@ -61,6 +61,7 @@ let interiorLightsEnabled = true;
 let interiorLightsColour = toColour(0, 0, 0, 150);
 
 let mouseCameraEnabled = false;
+let mouseCursorEnabled = false;
 
 let currentPickup = false;
 
@@ -97,6 +98,6 @@ let localPlayerMoneyInterval = null;
 
 let currencyString = "${AMOUNT}";
 
-
+let mapChangeWarning = false;
 
 // ===========================================================================
