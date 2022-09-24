@@ -47,12 +47,12 @@ async function sendEmail(toEmail, toName, subject, body) {
 			break;
 
 		case AGRP_EMAIL_METHOD_GET_REQUEST:
-			let tempURL = getEmailConfig().http.baseUrl;
-			tempURL = tempURL.replace("{0}", encodeURI(password));
-			tempURL = tempURL.replace("{1}", encodeURI(toEmail));
-			tempURL = tempURL.replace("{2}", encodeURI(toName));
-			tempURL = tempURL.replace("{3}", encodeURI(subject));
-			tempURL = tempURL.replace("{4}", encodeURI(body));
+			let tempURL = getEmailConfig().http.baseURL;
+			tempURL = tempURL.replace("{0}", encodeURIComponent(getEmailConfig().http.password));
+			tempURL = tempURL.replace("{1}", encodeURIComponent(toEmail));
+			tempURL = tempURL.replace("{2}", encodeURIComponent(toName));
+			tempURL = tempURL.replace("{3}", encodeURIComponent(subject));
+			tempURL = tempURL.replace("{4}", encodeURIComponent(body));
 
 			httpGet(
 				tempURL,
