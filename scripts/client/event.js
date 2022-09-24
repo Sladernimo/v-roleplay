@@ -167,6 +167,9 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
+	cruiseControlEnabled = false;
+	cruiseControlSpeed = 0.0;
+
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
@@ -190,7 +193,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
-			cruiseControl = false;
+			cruiseControlEnabled = false;
 			cruiseControlSpeed = 0.0;
 		}
 	}
@@ -202,12 +205,15 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped entered vehicle`);
 	//sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
+	cruiseControlEnabled = false;
+	cruiseControlSpeed = 0.0;
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
 				if (inVehicleSeat == 0) {
-					//setVehicleEngine(vehicle.id, false);
+					setVehicleEngine(vehicle.id, false);
+					//setLocalPlayerControlState(false, false);
 					if (!inVehicle.engine) {
 						parkedVehiclePosition = inVehicle.position;
 						parkedVehicleHeading = inVehicle.heading;

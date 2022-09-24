@@ -136,7 +136,7 @@ function toggleLocalVehicleCruiseControl() {
 		return false;
 	}
 
-	cruiseControl = !cruiseControl;
+	cruiseControlEnabled = !cruiseControlEnabled;
 	cruiseControlSpeed = getVehicleSpeed(vehicle);
 }
 
