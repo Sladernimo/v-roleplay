@@ -213,6 +213,7 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 // ===========================================================================
 
 function setVehicleEngine(vehicleId, state) {
+	getElementFromId(vehicleId).netFlags.sendSync = state;
 	getElementFromId(vehicleId).engine = state;
 }
 
