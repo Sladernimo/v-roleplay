@@ -23,23 +23,6 @@ let builtInCommands = [
 
 // ===========================================================================
 
-let disconnectReasons = [
-	"Lost Connection",
-	"Disconnected",
-	"Unsupported Client",
-	"Wrong Game",
-	"Incorrect Password",
-	"Unsupported Executable",
-	"Disconnected",
-	"Banned",
-	"Failed",
-	"Invalid Name",
-	"Crashed",
-	"Modified Game"
-];
-
-// ===========================================================================
-
 function getPlayerPosition(client) {
 	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncPosition;
