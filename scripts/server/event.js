@@ -102,8 +102,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	let disconnectName = disconnectReasons[quitReasonId];
 
 	let reasonTextEnglish = getLanguageGroupedLocaleString(englishLocale, "DisconnectReasons", disconnectName);
-
-	updateConnectionLogOnQuit(client, quitReasonId);
+	let clientName = getPlayerName(client);
 
 	if (getPlayerData(client) != false) {
 		if (getPlayerData(client).customDisconnectReason != "") {
@@ -111,39 +110,17 @@ function onPlayerQuit(event, client, quitReasonId) {
 		}
 	}
 
-	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
-	messageDiscordEventChannel(`👋 ${getPlayerName(client)} has left the server (${getLanguageGroupedLocaleString(englishLocale, "DisconnectReasons", reasonTextEnglish)})`);
+	updateConnectionLogOnQuit(client, disconnectName);
 
-	getClients().forEach(forClient => {
-		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", getPlayerName(client), getGroupedLocaleString(forClient, "DisconnectReasons", disconnectName)));
-	});
+	resetClientStuff(client);
 
 	if (isPlayerLoggedIn(client)) {
-		if (isPlayerInPaintBall(client)) {
-			stopPaintBall(client);
-		}
-
-		if (isPlayerOnJobRoute(client)) {
-			stopJobRoute(client, false, false);
-		}
-
-		if (isPlayerWorking(client)) {
-			stopWorking(client);
-		}
-
-		//if (isPlayerFishing(client)) {
-		//	stopFishing(client);
-		//}
-
 		savePlayerToDatabase(client);
-		resetClientStuff(client);
 	}
 
 	if (getPlayerData(client).loginTimeout != null) {
 		clearTimeout(getPlayerData(client).loginTimeout);
 	}
-
-
 
 	playerResourceReady[client.index] = false;
 	playerResourceStarted[client.index] = false;
@@ -151,6 +128,13 @@ function onPlayerQuit(event, client, quitReasonId) {
 	playerGUIReady[client.index] = false;
 
 	getServerData().clients[getPlayerId(client)] = null;
+
+	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
+	messageDiscordEventChannel(`👋 ${clientName} has left the server (${reasonTextEnglish})`);
+
+	getClients().filter(c => c != client).forEach(forClient => {
+		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", clientName, getGroupedLocaleString(forClient, "DisconnectReasons", disconnectName)));
+	});
 }
 
 // ===========================================================================
@@ -665,6 +649,10 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
+			//if (seat == AGRP_VEHSEAT_DRIVER) {
+			//	vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+			//}
+
 			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 
 			stopRadioStreamForPlayer(client);
@@ -715,8 +703,10 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 
 			if (seat == AGRP_VEHSEAT_DRIVER) {
 				vehicle.engine = getVehicleData(vehicle).engine;
+				setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
+				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 
-				if (getVehicleData(vehicle).buyPrice > 0) {
+				if (getVehicleData(vehicle).buyPrice > 0 && !doesPlayerHaveVehicleKeys(client, vehicle)) {
 					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
 					resetVehiclePosition(vehicle);
 				} else if (getVehicleData(vehicle).rentPrice > 0) {
@@ -780,7 +770,9 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 					if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
 						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
 							getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
-							messagePlayerInfo(client, `Use /startroute to start working in this vehicle`);
+							if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
+								messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobRouteStart", `{ALTCOLOUR}/startroute{MAINCOLOUR}`));
+							}
 						}
 					}
 				}
@@ -812,6 +804,9 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
+			if (seat == AGRP_VEHSEAT_DRIVER) {
+				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+			}
 			onPlayerEnteringVehicle(client, vehicle, seat);
 		}
 	}
@@ -825,6 +820,9 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
+			if (seat == AGRP_VEHSEAT_DRIVER) {
+				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+			}
 			onPlayerExitingVehicle(client, vehicle, seat);
 		}
 	}
