@@ -427,10 +427,12 @@ function getNearbyVehiclesCommand(command, params, client) {
 		return false;
 	}
 
-	let vehiclesList = nearbyVehicles.map(function (x) { return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {darkGrey}(${getDistance(getPlayerPosition(client), getVehiclePosition(x))} ${getLocaleString(client, "Meters")} ${getGroupedLocaleString(client, "CardinalDirections")[getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x))]}})`; });
+	let vehiclesList = nearbyVehicles.map(function (x) {
+		return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), getVehiclePosition(x)), 2)} ${getLocaleString(client, "Meters")} ${getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x))))}`;
+	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehiclesInRangeList", `${distance} ${getLocaleString(client, "Meters")}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehiclesInRangeList", `${distance} ${getLocaleString(client, "Meters")} `)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -461,7 +463,7 @@ function vehicleTrunkCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 	setVehicleTrunkState(vehicle, getVehicleData(vehicle).trunk);
 
-	meActionToNearbyPlayers(client, `${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s trunk.`);
+	meActionToNearbyPlayers(client, `${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)} 's trunk.`);
 }
 
 // ===========================================================================
@@ -761,7 +763,7 @@ function rentVehicleCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `rents the ${getVehicleName(vehicle)} and receives a set of vehicle keys!`);
-	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
+	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehstoprent{MAINCOLOUR}`));
 
 	if (!getVehicleData(vehicle).engine) {
 		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
@@ -1622,7 +1624,11 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	}
 
 	let slot = getServerData().vehicles.push(tempVehicleData);
-	setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
+	setAllVehicleIndexes();
+
+	if (areServerElementsSupported()) {
+		setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
+	}
 
 	return vehicle;
 }
@@ -1648,6 +1654,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	}
 
 	let slot = getServerData().vehicles.push(tempVehicleData);
+	setAllVehicleIndexes();
 
 	if (areServerElementsSupported()) {
 		setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
