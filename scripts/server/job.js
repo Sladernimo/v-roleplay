@@ -2357,6 +2357,8 @@ function jobStartRouteCommand(command, params, client) {
 		}
 	}
 
+	markPlayerActionTipSeen(client, "JobRouteStart");
+
 	startJobRoute(client, forceRoute);
 	return true;
 }
