@@ -172,15 +172,27 @@ function resetClientStuff(client) {
 		stopJobRoute(client, false, false);
 	}
 
+	if (isPlayerWorking(client)) {
+		stopWorking(client);
+	}
+
 	if (getPlayerData(client).rentingVehicle) {
 		stopRentingVehicle(client);
 	}
+
+	if (isPlayerInPaintBall(client)) {
+		stopPaintBall(client);
+	}
+
+	//if (isPlayerFishing(client)) {
+	//	stopFishing(client);
+	//}
 
 	deleteJobItems(client);
 	deletePaintBallItems(client);
 	//deletePlayerTemporaryLockerItems(client);
 
-	getPlayerData(client).lastVehicle = null;
+	//getPlayerData(client).lastVehicle = null;
 }
 
 // ===========================================================================
