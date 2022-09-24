@@ -395,21 +395,24 @@ function processWantedLevelReset() {
 
 function processLocalPlayerVehicleControlState() {
 	if (areServerElementsSupported()) {
-		if (inVehicle && localPlayer.vehicle != null) {
+		if (localPlayer.vehicle != null) {
 			if (doesEntityDataExist(localPlayer.vehicle, "agrp.engine")) {
 				if (getEntityData(localPlayer.vehicle, "agrp.engine") == false) {
 					localPlayer.vehicle.engine = false;
+					localPlayer.vehicle.netFlags.sendSync = false;
 					if (!localPlayer.vehicle.engine) {
 						if (typeof localPlayer.vehicle.velocity != "undefined") {
 							localPlayer.vehicle.velocity = toVector3(0.0, 0.0, 0.0);
 							localPlayer.vehicle.turnVelocity = toVector3(0.0, 0.0, 0.0);
 						}
 
-						//if(parkedVehiclePosition) {
-						//	localPlayer.vehicle.position = parkedVehiclePosition;
-						//	localPlayer.vehicle.heading = parkedVehicleHeading;
-						//}
+						if (parkedVehiclePosition) {
+							localPlayer.vehicle.position = parkedVehiclePosition;
+							localPlayer.vehicle.heading = parkedVehicleHeading;
+						}
 					}
+				} else {
+					localPlayer.vehicle.netFlags.sendSync = true;
 				}
 			}
 		}
@@ -573,7 +576,7 @@ function processVehicleCruiseControl() {
 		return false;
 	}
 
-	if (cruiseControl) {
+	if (cruiseControlEnabled) {
 		setVehicleSpeed(cruiseControlSpeed);
 	}
 }
