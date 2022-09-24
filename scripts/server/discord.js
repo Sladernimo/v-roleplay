@@ -184,7 +184,7 @@ function triggerDiscordWebHook(messageString, serverId = getServerId(), type = A
 	}
 
 	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
-	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
 	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
@@ -211,7 +211,7 @@ function triggerClanDiscordWebHook(clanIndex, messageString) {
 	let webhookURL = getClanData(clanIndex).discordWebhookURL;
 
 	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
-	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
 	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
