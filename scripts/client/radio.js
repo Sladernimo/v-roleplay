@@ -45,3 +45,7 @@ function playAudioFile(audioName, loop, volume) {
 }
 
 // ===========================================================================
+
+function getStreamingRadioVolumeForPosition(position1, position2) {
+	return false;
+}
