@@ -40,7 +40,6 @@ function processSync(event, deltaTime) {
 	}
 
 	if (streamingRadioElement) {
-		streamingRadio.position = getElementPosition(streamingRadioElement.id);
 		//streamingRadio.volume = getStreamingRadioVolumeForPosition(streamingRadio.position);
 	}
 }
@@ -48,24 +47,14 @@ function processSync(event, deltaTime) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
-	if (getGame() != AGRP_GAME_MAFIA_ONE) {
-		if (!state) {
-			getElementFromId(vehicleId).lightStatus = 2;
-		} else {
-			getElementFromId(vehicleId).lightStatus = 1;
-		}
-	} else if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (!state) {
 			natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 0));
 		} else {
 			natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 1));
 		}
 	} else {
-		if (!state) {
-			getElementFromId(vehicleId).lights = false;
-		} else {
-			getElementFromId(vehicleId).lights = true;
-		}
+		getElementFromId(vehicleId).lights = state;
 	}
 }
 
