@@ -39,7 +39,7 @@ function getLocaleString(client, stringName, ...args) {
 		return "";
 	}
 
-	let tempString = getRawLocaleString(stringName, getPlayerData(client).locale);
+	let tempString = getRawLocaleString(getPlayerData(client).locale, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
 		submitBugReport(client, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getPlayerLocaleName(client)}"`);
@@ -56,7 +56,7 @@ function getLocaleString(client, stringName, ...args) {
 // ===========================================================================
 
 function getLanguageLocaleString(localeId, stringName, ...args) {
-	let tempString = getRawLocaleString(stringName, localeId);
+	let tempString = getRawLocaleString(localeId, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
@@ -73,7 +73,7 @@ function getLanguageLocaleString(localeId, stringName, ...args) {
 // ===========================================================================
 
 function getLanguageGroupedLocaleString(localeId, stringName, index, ...args) {
-	let tempString = getRawGroupedLocaleString(stringName, index, localeId);
+	let tempString = getRawGroupedLocaleString(localeId, stringName, index);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string index ${index} of "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
@@ -94,7 +94,7 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 		return "";
 	}
 
-	let tempString = getRawGroupedLocaleString(stringName, getPlayerData(client).locale, index);
+	let tempString = getRawGroupedLocaleString(getPlayerData(client).locale, stringName, index);
 
 	for (let i = 1; i <= args.length; i++) {
 		tempString = tempString.replace(`{${i}}`, args[i - 1]);
@@ -105,7 +105,7 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 
 // ===========================================================================
 
-function getRawLocaleString(stringName, localeId) {
+function getRawLocaleString(localeId, stringName) {
 	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
@@ -126,7 +126,7 @@ function getRawLocaleString(stringName, localeId) {
 
 // ===========================================================================
 
-function getRawGroupedLocaleString(stringName, localeId, index) {
+function getRawGroupedLocaleString(localeId, stringName, index) {
 	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
 		logToConsole(LOG_WARN, `[AGRP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
@@ -279,7 +279,7 @@ async function translateMessage(messageText, translateFrom = getGlobalConfig().l
 			}
 		}
 
-		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURI(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
+		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
 		httpGet(
 			thisTranslationURL,
 			"",
