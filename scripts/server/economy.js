@@ -141,14 +141,14 @@ function setPayDayBonusMultiplier(command, params, client) {
 function taxInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
 	let tax = calculateIncomeTax(wealth);
-	messagePlayerInfo(client, `Your tax on payday is: ${getCurrencyString(tax)}. Use {ALTCOLOUR}/help tax {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, getLocaleString(client, "YourTax", `{ALTCOLOUR}${getCurrencyString(tax)}{MAINCOLOUR}`, `{ALTCOLOUR}/help tax{MAINCOLOUR}`));
 }
 
 // ===========================================================================
 
 function wealthInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
-	messagePlayerInfo(client, `Your wealth is: {ALTCOLOUR}${getCurrencyString(wealth)}{MAINCOLOUR}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, getLocaleString(client, "YourWealth", `{ALTCOLOUR}${getCurrencyString(wealth)}{MAINCOLOUR}`, `{ALTCOLOUR}/help wealth{MAINCOLOUR}`));
 }
 
 // ===========================================================================
