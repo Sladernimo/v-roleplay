@@ -260,6 +260,8 @@ let serverBitFlagKeys = {
 		"AmmoClipItemUsage",
 		"GenericItemUsage",
 		"EnterJobVehicleForRoute",
+		"JobLocations",
+		"JobRouteStart",
 	],
 	jobRankKeys: [
 		"None",
