@@ -63,13 +63,10 @@ function onResourceStart(event, resource) {
 		addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
 	}
 
-	garbageCollectorInterval = setInterval(collectAllGarbage, 1000 * 60);
-	localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
-
 	if (resource == thisResource) {
-		setTimeout(function () {
-			sendResourceStartedSignalToServer();
-		}, 500);
+		garbageCollectorInterval = setInterval(collectAllGarbage, 1000 * 60);
+		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
+		sendResourceStartedSignalToServer();
 	}
 }
 
@@ -84,11 +81,10 @@ function onResourceStop(event, resource) {
 // ===========================================================================
 
 function onResourceReady(event, resource) {
-	loadLocaleConfig();
-
-	setTimeout(function () {
+	if (resource == thisResource) {
+		loadLocaleConfig();
 		sendResourceReadySignalToServer();
-	}, 500);
+	}
 }
 
 // ===========================================================================
