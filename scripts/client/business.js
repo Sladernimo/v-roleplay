@@ -22,6 +22,7 @@ class BusinessData {
 		this.hasItems = hasItems;
 		this.blipId = -1;
 		this.labelInfoType = 0;
+		this.locked = false;
 	}
 }
 
@@ -34,7 +35,7 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, hasItems) {
+function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
 	logToConsole(LOG_DEBUG, `[AGRP.Business] Received business ${businessId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
@@ -48,6 +49,7 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 			businessData.buyPrice = buyPrice;
 			businessData.rentPrice = rentPrice;
 			businessData.hasItems = hasItems;
+			businessData.locked = locked;
 
 			if (hasInterior && !hasItems) {
 				businessData.labelInfoType = AGRP_PROPLABEL_INFO_ENTER;

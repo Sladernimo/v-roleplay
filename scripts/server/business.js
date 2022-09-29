@@ -1132,7 +1132,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
 		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
 		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getBusinessData(businessId).exitPickupModel = (isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Exit : -1;
 		getBusinessData(businessId).hasInterior = true;
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
 
@@ -2016,10 +2016,6 @@ function createAllBusinessBlips() {
  *
  */
 function createBusinessEntrancePickup(businessId) {
-	if (!areServerElementsSupported()) {
-		return false;
-	}
-
 	if (!getServerConfig().createBusinessPickups) {
 		return false;
 	}
@@ -2030,10 +2026,6 @@ function createBusinessEntrancePickup(businessId) {
 	//	return false;
 	//}
 
-	if (businessData.entrancePickupModel == -1) {
-		return false;
-	}
-
 	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for business ${businessData.name}`);
 
 	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
@@ -2041,13 +2033,15 @@ function createBusinessEntrancePickup(businessId) {
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
 
+			if (businessData.entrancePickupModel == -1) {
+				return false;
+			}
+
 			if (businessData.entrancePickupModel != 0) {
 				pickupModelId = businessData.entrancePickupModel;
 			}
 
 			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
-		} else if (isGameFeatureSupported("dummyElement")) {
-			entrancePickup = createGameDummyElement(businessData.entrancePosition);
 		}
 
 		if (entrancePickup != null) {
@@ -2068,14 +2062,9 @@ function createBusinessEntrancePickup(businessId) {
 			getBusinessData(businessId).entrancePickup = entrancePickup;
 			updateBusinessPickupLabelData(businessId);
 		}
-	} else {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
-
-		if (businessData.entrancePickupModel != 0) {
-			pickupModelId = businessData.entrancePickupModel;
-		}
-		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, businessData.buyPrice, businessData.rentPrice, doesBusinessHaveAnyItemsToBuy(businessId));
 	}
+
+	updateBusinessPickupLabelData(businessId);
 
 	return false;
 }
@@ -2090,10 +2079,6 @@ function createBusinessEntrancePickup(businessId) {
  *
  */
 function createBusinessEntranceBlip(businessId) {
-	if (!areServerElementsSupported()) {
-		return false;
-	}
-
 	if (!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -2120,7 +2105,7 @@ function createBusinessEntranceBlip(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
 		if (entranceBlip != null) {
 			if (businessData.entranceDimension != -1) {
@@ -2181,8 +2166,6 @@ function createBusinessExitPickup(businessId) {
 		}
 
 		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
-	} else if (isGameFeatureSupported("dummyElement")) {
-		//exitPickup = createGameDummyElement(businessData.exitPosition);
 	}
 
 	if (exitPickup != null) {
@@ -2692,9 +2675,9 @@ function buyFromBusinessCommand(command, params, client) {
 	if (!hasPlayerSeenActionTip(client, "ViewInventory")) {
 		if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
 			let keyData = getPlayerKeyBindForCommand("inv");
-			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
 		} else {
-			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
 		}
 	}
 
@@ -2892,7 +2875,8 @@ function getBusinessIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+		sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
 		return false;
 	}
 
@@ -3223,6 +3207,36 @@ function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
 		}
 	}
 	return false;
+}
+
+// ===========================================================================
+
+function getBusinessEntranceBlipModelForNetworkEvent(businessIndex) {
+	let blipModelId = -1;
+	if (isGameFeatureSupported("blip")) {
+		blipModelId = getGameConfig().blipSprites[getGame()].Business;
+
+		if (getBusinessData(businessIndex).entranceBlipModel != 0) {
+			blipModelId = getBusinessData(businessIndex).entranceBlipModel;
+		}
+	}
+
+	return blipModelId;
+}
+
+// ===========================================================================
+
+function getBusinessEntrancePickupModelForNetworkEvent(businessIndex) {
+	let pickupModelId = -1;
+	if (isGameFeatureSupported("pickup")) {
+		pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+
+		if (getBusinessData(businessIndex).entrancePickupModel != 0) {
+			pickupModelId = getBusinessData(businessIndex).entrancePickupModel;
+		}
+	}
+
+	return pickupModelId;
 }
 
 // ===========================================================================
