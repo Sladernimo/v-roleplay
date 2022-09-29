@@ -194,8 +194,8 @@ let globalConfig = {
 	subAccountNameAllowedCharacters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 	emailValidationRegex: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
 	itemActionDelayExtraTimeout: 1000,
-	geoIPCountryDatabaseFilePath: "geoip-country.mmdb",
-	geoIPCityDatabaseFilePath: "geoip-city.mmdb",
+	geoIPCountryDatabaseFilePath: "modules/geoip/geoip-country.mmdb",
+	geoIPCityDatabaseFilePath: "modules/geoip/geoip-city.mmdb",
 	randomTipInterval: 600000,
 	weaponEquippableTypes: [
 		AGRP_ITEM_USE_TYPE_WEAPON,
@@ -1128,19 +1128,24 @@ function getDatabaseConfig() {
 
 function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading server configuration");
-	try {
-		if (toInteger(server.getCVar("agrp_devserver")) == 1) {
-			serverConfig = loadServerConfigFromGame(getGame());
-		} else {
-			serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
-		}
 
-	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort}`);
-		thisResource.stop();
+	if (toInteger(server.getCVar("agrp_devserver")) == 1) {
+		serverConfig = loadServerConfigFromGame(getGame());
+
+		if (serverConfig == false) {
+			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()}`);
+			server.shutdown();
+		}
+	} else {
+		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
+
+		if (serverConfig == false) {
+			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
+			server.shutdown();
+		}
 	}
 
-	logToConsole(LOG_DEBUG | LOG_WARN, `Server ID: ${serverConfig.databaseId}`);
+	//logToConsole(LOG_DEBUG | LOG_WARN, `Server ID: ${serverConfig.databaseId}`);
 }
 
 // ===========================================================================
