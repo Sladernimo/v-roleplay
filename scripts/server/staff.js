@@ -419,7 +419,7 @@ function warpIntoVehicleCommand(command, params, client) {
 	} else {
 		let vehicleIndex = getParam(params, " ", 1);
 		if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
-			messagePlayerError(client, getLocaleString(client, "InvaliVehicle"));
+			messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 			return false;
 		}
 
