@@ -1079,13 +1079,6 @@ function createHouseEntrancePickup(houseId) {
 			getHouseData(houseId).entrancePickup = entrancePickup;
 			updateHousePickupLabelData(houseId);
 		}
-	} else {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].House;
-
-		if (houseData.entrancePickupModel != 0) {
-			pickupModelId = houseData.entrancePickupModel;
-		}
-		sendHouseToPlayer(null, houseId, houseId.description, houseId.entrancePosition, blipModelId, pickupModelId, houseData.buyPrice, houseData.rentPrice, houseId.hasInterior);
 	}
 }
 
@@ -1787,7 +1780,8 @@ function getHouseFromParams(params) {
 // ===========================================================================
 
 function updateHousePickupLabelData(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+		sendHouseToPlayer(null, houseId, getHouseData(houseId).description, getHouseData(houseId).entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), getHouseData(houseId).buyPrice, getHouseData(houseId).rentPrice, getHouseData(houseId).hasInterior, getHouseData(houseId).locked);
 		return false;
 	}
 
@@ -1866,6 +1860,36 @@ function isPlayerInAnyHouse(client) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getHouseEntranceBlipModelForNetworkEvent(houseIndex) {
+	let blipModelId = -1;
+	if (isGameFeatureSupported("blip")) {
+		blipModelId = getGameConfig().blipSprites[getGame()].House;
+
+		if (getHouseData(houseIndex).entranceBlipModel != 0) {
+			blipModelId = getHouseData(houseIndex).entranceBlipModel;
+		}
+	}
+
+	return blipModelId;
+}
+
+// ===========================================================================
+
+function getHouseEntrancePickupModelForNetworkEvent(houseIndex) {
+	let pickupModelId = -1;
+	if (isGameFeatureSupported("pickup")) {
+		pickupModelId = getGameConfig().pickupModels[getGame()].House;
+
+		if (getHouseData(houseIndex).entrancePickupModel != 0) {
+			pickupModelId = getHouseData(houseIndex).entrancePickupModel;
+		}
+	}
+
+	return pickupModelId;
 }
 
 // ===========================================================================
