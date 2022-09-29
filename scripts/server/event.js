@@ -33,6 +33,10 @@ function addAllEventHandlers() {
 	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 	addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
 	addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+
+	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		addEventHandler("onPedFall", onPedFall);
+	}
 }
 
 // ===========================================================================
@@ -581,9 +585,12 @@ async function onPlayerSpawn(client) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
-		//sendAllJobsToPlayer(client);
-		//sendAllVehiclesToPlayer(client);
+		sendAllJobsToPlayer(client);
 		requestPlayerPedNetworkId(client);
+	}
+
+	if (!areServerElementsSupported()) {
+		sendAllVehiclesToPlayer(client);
 	}
 
 	logToConsole(LOG_DEBUG, `[AGRP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
@@ -598,6 +605,19 @@ async function onPlayerSpawn(client) {
 	updateAllPlayerNameTags();
 
 	setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
+
+	if (doesPlayerHaveGUIEnabled(client) && getServerConfig().useGUI == true) {
+		if (checkForGeoIPModule()) {
+			let iso = getPlayerCountryISOCode(client);
+			let localeId = getLocaleFromCountryISO(iso);
+
+			if (localeId != 0) {
+				if (getLocaleData(localeId).enabled) {
+					messagePlayerTip(client, getLanguageLocaleString(localeId, "LocaleOffer", `/lang ${getLocaleData(localeId).isoCode}`), getColourByName("white"), 10000, "Roboto");
+				}
+			}
+		}
+	}
 
 	if (areServerElementsSupported()) {
 		if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
@@ -838,6 +858,17 @@ function onPlayerEnteringVehicle(client, vehicle, seat) {
 
 function onPlayerExitingVehicle(client, vehicle, seat) {
 
+}
+
+// ===========================================================================
+
+function onPedFall(ped) {
+	if (ped.isType(ELEMENT_PLAYER)) {
+		let client = getClientFromPlayerElement(ped);
+		if (client != null) {
+			processPlayerDeath(client);
+		}
+	}
 }
 
 // ===========================================================================
