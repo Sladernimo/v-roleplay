@@ -29,14 +29,15 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 
 // ===========================================================================
 
-function fadeLocalCamera(state, time) {
-	if (isFadeCameraSupported()) {
-		logToConsole(LOG_DEBUG, `[AGRP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time} seconds`);
+function fadeLocalCamera(state, duration, colour) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time}ms`);
 
-		if (isFadeCameraSupported()) {
-			game.fadeCamera(state, time);
-		}
-	}
+	cameraFadeDuration = duration;
+	cameraFadeStart = sdl.ticks;
+	cameraFadeEnabled = true;
+	cameraFadeIn = state;
+	cameraFadeColour = colour;
+	cameraFadeAlpha = (state) ? 255 : 0;
 }
 
 // ===========================================================================
