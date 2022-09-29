@@ -132,6 +132,8 @@ class ClientData {
 		this.pedState = AGRP_PEDSTATE_NONE;
 		this.promptType = AGRP_PROMPT_NONE;
 		this.privateMessageReplyTo = null;
+		this.enteringExitingProperty = null;
+		this.inProperty = null;
 
 		// Paintball
 		this.inPaintBall = false;
@@ -266,11 +268,16 @@ function initClient(client) {
 						logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
 						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
 
-						//if(checkForGeoIPModule()) {
-						//	let iso = module.geoip.getCountryISO(getPlayerIP(client));
-						//	let localeId = getLocaleFromCountryISO(iso);
-						//}
-						//showSmallGameMessage(client, getLocaleString(client, "LocaleOffer", `/lang ${getLocaleData(localeId)[2]}`), getColourByName("white"), 10000, "Roboto");
+						if (checkForGeoIPModule()) {
+							let iso = module.geoip.getCountryISO(getPlayerIP(client));
+							let localeId = getLocaleFromCountryISO(iso);
+
+							if (localeId != 0) {
+								if (getLocaleData(localeId).enabled) {
+									messagePlayerTip(client, getLanguageLocaleString(localeId, "LocaleOffer", `/lang ${getLocaleData(localeId).isoCode}`), getColourByName("white"), 10000, "Roboto");
+								}
+							}
+						}
 					}
 					startLoginTimeoutForPlayer(client);
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
