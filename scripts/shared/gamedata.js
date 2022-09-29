@@ -6069,7 +6069,7 @@ let gameData = {
 		[AGRP_GAME_GTA_IV_EFLC]: { // GTA IV EFLC
 		},
 		[AGRP_GAME_MAFIA_ONE]: { // Mafia 1
-			SalieriBar: [toVector3(-336.53, -1494.56, 9.945), 0, false, ""],
+			SalieriBar: [toVector3(-336.53, -1494.56, 9.945), 0, false, "MISE02-SALIERY"],
 		},
 		[AGRP_GAME_MAFIA_TWO]: { // Mafia 2
 		},
@@ -6401,7 +6401,7 @@ let gameData = {
 		[AGRP_GAME_MAFIA_ONE]: [
 			// Mafia 1
 			{
-				position: toVector3(-759.00, 11.40, 747.31),
+				position: toVector3(-763.32, 13.25, 761.18),
 				heading: 0.0,
 				blip: false,
 				name: "New Ark Hospital",
