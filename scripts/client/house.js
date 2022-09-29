@@ -20,12 +20,13 @@ class HouseData {
 		this.rentPrice = 0;
 		this.buyPrice = 0;
 		this.blipId = -1;
+		this.locked = false;
 	}
 }
 
 // ===========================================================================
 
-function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior) {
+function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
 	logToConsole(LOG_DEBUG, `[AGRP.House] Received house ${houseId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
@@ -38,6 +39,7 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 			houseData.hasInterior = hasInterior;
 			houseData.buyPrice = buyPrice;
 			houseData.rentPrice = rentPrice;
+			houseData.locked = locked;
 
 			if (houseData.buyPrice > 0) {
 				houseData.labelInfoType = AGRP_PROPLABEL_INFO_BUYHOUSE;
