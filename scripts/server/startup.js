@@ -69,6 +69,15 @@ function checkForHashingModule() {
 
 // ===========================================================================
 
+function checkForGeoIPModule() {
+	if (typeof module.geoip == "undefined") {
+		return false;
+	}
+	return true;
+}
+
+// ===========================================================================
+
 function checkForMySQLModule() {
 	if (typeof module.mysql == "undefined") {
 		return false;
@@ -94,14 +103,14 @@ function checkForAllRequiredModules() {
 
 	if (!checkForHashingModule()) {
 		logToConsole(LOG_WARN, "[AGRP.Startup]: Hashing module is not loaded!");
-		logToConsole(LOG_WARN, "[AGRP.Startup]: This resource will now shutdown.");
-		thisResource.stop();
+		logToConsole(LOG_ERROR, "[AGRP.Startup]: This server will now shutdown.");
+		shutdownServer();
 	}
 
 	if (!checkForMySQLModule()) {
 		logToConsole(LOG_WARN, "[AGRP.Startup]: MySQL module is not loaded!");
-		logToConsole(LOG_WARN, "[AGRP.Startup]: This resource will now shutdown.");
-		thisResource.stop();
+		logToConsole(LOG_ERROR, "[AGRP.Startup]: This server will now shutdown.");
+		shutdownServer();
 	}
 
 	//if (!checkForSMTPModule()) {
