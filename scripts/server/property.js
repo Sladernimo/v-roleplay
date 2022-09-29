@@ -2130,9 +2130,9 @@ function buyFromBusinessCommand(command, params, client) {
 	if (!hasPlayerSeenActionTip(client, "ViewInventory")) {
 		if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
 			let keyData = getPlayerKeyBindForCommand("inv");
-			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
 		} else {
-			messagePlayerActionTip(client, getIndexedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
 		}
 	}
 

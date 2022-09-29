@@ -1925,25 +1925,25 @@ function playerSwitchItem(client, newHotBarSlot) {
 	switch (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType) {
 		case AGRP_ITEM_USE_TYPE_AMMO_CLIP:
 			if (!hasPlayerSeenActionTip(client, "AmmoClipItemUsage")) {
-				messagePlayerTip(client, getIndexedLocaleString(client, "AmmoClipItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+				messagePlayerTip(client, getGroupedLocaleString(client, "AmmoClipItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
 		case AGRP_ITEM_USE_TYPE_VEHREPAIR:
 			if (!hasPlayerSeenActionTip(client, "VehicleRepairKitItemUsage")) {
-				messagePlayerTip(client, getIndexedLocaleString(client, "VehicleRepairKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+				messagePlayerTip(client, getGroupedLocaleString(client, "VehicleRepairKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
 		case AGRP_ITEM_USE_TYPE_VEHCOLOUR:
 			if (!hasPlayerSeenActionTip(client, "VehicleColourKitItemUsage")) {
-				messagePlayerTip(client, getIndexedLocaleString(client, "VehicleColourKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
+				messagePlayerTip(client, getGroupedLocaleString(client, "VehicleColourKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
 		case AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART:
 			if (!hasPlayerSeenActionTip(client, "VehiclePartItemUsage")) {
-				messagePlayerTip(client, getIndexedLocaleString(client, "VehiclePartItemUsage", getKeyOrCommandForPlayerMessage(client, "use"), getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).name));
+				messagePlayerTip(client, getGroupedLocaleString(client, "VehiclePartItemUsage", getKeyOrCommandForPlayerMessage(client, "use"), getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).name));
 			}
 			break;
 	}

@@ -987,7 +987,7 @@ function startWorkingCommand(command, params, client) {
 
 	if (doesJobLocationHaveAnyRoutes(closestJobLocation)) {
 		if (hasPlayerSeenActionTip(client, "EnterJobVehicleForRoute")) {
-			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "EnterJobVehicleForRoute"));
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "EnterJobVehicleForRoute"));
 		}
 	}
 	return true;
@@ -1406,9 +1406,9 @@ function jobEquipmentCommand(command, params, client) {
 	meActionToNearbyPlayers(client, `grabs the ${jobEquipmentData.name} equipment from the locker`);
 	if (!hasPlayerSeenActionTip(client, "JobEquipmentInventory")) {
 		if (doesPlayerHaveKeyBindForCommand(client, "inv")) {
-			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "JobEquipmentInventory", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
 		} else {
-			messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "JobEquipmentInventory", "/inv"));
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", "/inv"));
 		}
 		markPlayerActionTipSeen(client, "JobEquipmentInventory");
 	}
@@ -3141,20 +3141,19 @@ function createJobLocationPickup(jobId, locationId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	let tempJobData = getJobData(jobId);
 
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
+
 	if (tempJobData.pickupModel != -1) {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Job;
+		let pickupModelId = -1;
+		if (isGameFeatureSupported("pickup")) {
+			pickupModelId = getGameConfig().pickupModels[getGame()].Job;
 
-		if (tempJobData.pickupModel != 0) {
-			pickupModelId = tempJobData.pickupModel;
+			if (tempJobData.pickupModel != 0) {
+				pickupModelId = tempJobData.pickupModel;
+			}
 		}
-
-		logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
 
 		if (areServerElementsSupported()) {
 			let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
@@ -3170,7 +3169,16 @@ function createJobLocationPickup(jobId, locationId) {
 				addToWorld(pickup);
 			}
 		} else {
-			// sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, pickupModel);
+			let blipModelId = -1;
+			if (isGameFeatureSupported("blip")) {
+				blipModelId = getGameConfig().blipSprites[getGame()].Job;
+
+				if (getJobData(jobId).blipModel != 0) {
+					blipModelId = getJobData(jobId).blipModel;
+				}
+			}
+
+			sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId, pickupModelId);
 		}
 	}
 }
@@ -3218,8 +3226,6 @@ function createJobLocationBlip(jobId, locationId) {
 				updateJobBlipsForPlayer(clients[i]);
 			}
 		}
-	} else {
-		sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId);
 	}
 }
 

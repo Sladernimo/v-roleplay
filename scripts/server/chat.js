@@ -219,7 +219,7 @@ function privateMessageCommand(command, params, client) {
 	messagePlayerPrivateMessage(targetClient, client, messageText);
 
 	if (hasPlayerSeenActionTip(targetClient, "ReplyToDirectMessage")) {
-		messagePlayerTip(targetClient, getIndexedLocaleString(targetClient, "ActionTips", "ReplyToDirectMessage", "{ALTCOLOUR}/reply{MAINCOLOUR}"));
+		messagePlayerTip(targetClient, getGroupedLocaleString(targetClient, "ActionTips", "ReplyToDirectMessage", "{ALTCOLOUR}/reply{MAINCOLOUR}"));
 	}
 }
 
