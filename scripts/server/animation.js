@@ -45,7 +45,7 @@ function playPlayerAnimationCommand(command, params, client) {
 	}
 
 	if (hasPlayerSeenActionTip(client, "AnimationStop")) {
-		messagePlayerTip(client, getIndexedLocaleString(client, "ActionTips", "AnimationStopTip", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+		messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
 	}
 	makePlayerPlayAnimation(client, animationSlot, animationPositionOffset);
 }
