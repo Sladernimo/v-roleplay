@@ -211,7 +211,7 @@ function enterExitPropertyCommand(command, params, client) {
 		return false;
 	}
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		if (!getPlayerData(client).currentPickup) {
 			return false;
 		}
@@ -307,7 +307,8 @@ function enterExitPropertyCommand(command, params, client) {
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
 
 			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
-				if (isMainWorldScene(closestProperty.exitScene)) {
+				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
+				if (isMainWorldScene(closestProperty.exitScene) || closestProperty.exitScene == "AGRP.MAINWORLD") {
 					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
 				} else {
 					setPlayerScene(client, closestProperty.exitScene);
@@ -320,7 +321,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			setTimeout(function () {
-				handlePlayerEnteringExitingProperty(client);
+				processPlayerEnteringExitingProperty(client);
 			}, 1100);
 			return true;
 		}
@@ -337,11 +338,12 @@ function enterExitPropertyCommand(command, params, client) {
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
 
-			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
-				if (isMainWorldScene(closestProperty.exitScene)) {
+			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
+				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
+				if (isMainWorldScene(closestProperty.entranceScene) || closestProperty.entranceScene == "AGRP.MAINWORLD") {
 					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
 				} else {
-					setPlayerScene(client, closestProperty.exitScene);
+					setPlayerScene(client, closestProperty.entranceScene);
 				}
 
 				return false;
@@ -352,7 +354,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			setTimeout(function () {
-				handlePlayerEnteringExitingProperty(client);
+				processPlayerEnteringExitingProperty(client);
 			}, 1100);
 		}
 	}
@@ -863,9 +865,7 @@ function processPlayerDeath(client) {
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 	setTimeout(function () {
-		if (isFadeCameraSupported()) {
-			fadeCamera(client, false, 1.0);
-		}
+		fadePlayerCamera(client, false, 1000);
 		setTimeout(function () {
 			if (isPlayerInPaintBall(client)) {
 				respawnPlayerForPaintBall(client);
@@ -880,15 +880,9 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
-					} else {
-						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
+					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
+					fadePlayerCamera(client, true, 1000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
@@ -903,16 +897,8 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
-					} else {
-						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
-
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
-
+					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					fadePlayerCamera(client, true, 1000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
@@ -947,3 +933,19 @@ function isPlayerRestrained(client) {
 }
 
 // ===========================================================================
+
+function getPlayerInPropertyData(client) {
+	let businessId = getPlayerBusiness(client);
+	if (businessId != -1) {
+		getPlayerData(client).inProperty = [AGRP_PROPERTY_TYPE_BUSINESS, businessId];
+		return false;
+	}
+
+	let houseId = getPlayerHouse(client);
+	if (houseId != -1) {
+		getPlayerData(client).inProperty = [AGRP_PROPERTY_TYPE_HOUSE, houseId];
+		return false;
+	}
+
+	getPlayerData(client).inProperty = null;
+}
