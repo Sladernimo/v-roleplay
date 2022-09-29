@@ -155,7 +155,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.ping", updatePlayerPing);
 	addNetworkEventHandler("agrp.clientInfo", serverRequestedClientInfo);
 	addNetworkEventHandler("agrp.interiorLights", updateInteriorLightsState);
-	addNetworkEventHandler("agrp.cutsceneInterior", setCutsceneInterior);
+	addNetworkEventHandler("agrp.scene", changeScene);
 	addNetworkEventHandler("agrp.syncElement", forceSyncElementProperties);
 	addNetworkEventHandler("agrp.elementPosition", setElementPosition);
 	addNetworkEventHandler("agrp.elementCollisions", setElementCollisionsEnabled);
@@ -378,7 +378,7 @@ function sendLocalPlayerNetworkIdToServer() {
 
 // ===========================================================================
 
-function setCutsceneInterior(cutsceneName) {
+function changeScene(sceneName) {
 	if (getGame() == AGRP_GAME_GTA_IV) {
 		if (cutsceneName == "") {
 			natives.clearCutscene();
@@ -388,6 +388,8 @@ function setCutsceneInterior(cutsceneName) {
 			}
 			natives.initCutscene(cutsceneName);
 		}
+	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		game.changeMap(sceneName);
 	}
 }
 
@@ -454,6 +456,12 @@ function receiveCurrencyStringFromServer(newCurrencyString) {
 
 function setMapChangeWarningState(state) {
 	mapChangeWarning = state;
+}
+
+// ===========================================================================
+
+function updatePlayerPing(playerName, ping) {
+	playerPing[playerName] = ping;
 }
 
 // ===========================================================================
