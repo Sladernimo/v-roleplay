@@ -296,3 +296,15 @@ async function translateMessage(messageText, translateFrom = getGlobalConfig().l
 }
 
 // ===========================================================================
+
+function getLocaleFromCountryISO(isoCode) {
+	for (let i in getLocales()) {
+		for (let j in getLocales()[i].countries) {
+			if (toLowerCase(getLocales()[i].countries[j]) == toLowerCase(isoCode)) {
+				return getLocales()[i].id;
+			}
+		}
+	}
+}
+
+// ===========================================================================
