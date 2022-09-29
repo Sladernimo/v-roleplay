@@ -131,9 +131,9 @@ function playerClientStarted(client) {
 // ===========================================================================
 
 function playerClientStopped(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?). Kicking them from the server ...`);
-	getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
-	disconnectPlayer(client);
+	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
+	//getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
+	//disconnectPlayer(client);
 }
 
 // ===========================================================================
@@ -1103,19 +1103,19 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, hasItems) {
-	sendNetworkEventToPlayer("agrp.business", client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, hasItems);
+function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
+	sendNetworkEventToPlayer("agrp.business", client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems);
 }
 
 // ==========================================================================
 
-function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior) {
-	sendNetworkEventToPlayer("agrp.house", client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior);
+function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
+	sendNetworkEventToPlayer("agrp.house", client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked);
 }
 
 // ==========================================================================
 
-function sendJobToPlayer(client, jobId, jobLocationId, name, position) {
+function sendJobToPlayer(client, jobId, jobLocationId, name, position, blipModel, pickupModel) {
 	sendNetworkEventToPlayer("agrp.job", client, jobId, jobLocationId, name, position);
 }
 
@@ -1149,7 +1149,7 @@ function sendAllJobsToPlayer(client) {
 	let jobs = getServerData().jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].blipModel);
+			sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].pickupModel, jobs[i].blipModel);
 		}
 	}
 }
@@ -1298,12 +1298,23 @@ function sendMapChangeWarningToPlayer(client, changingToNight) {
 
 function playerMapLoaded(client, mapName) {
 	//updateAllInteriorVehiclesForPlayer(client, propertyData.exitInterior, propertyData.exitDimension);
+	getPlayerData(client).scene = mapName;
+
+	setTimeout(function () {
+		processPlayerEnteringExitingProperty(client);
+	}, 500);
 }
 
 // ==========================================================================
 
 function setMapChangeWarningForPlayer(client, isChanging) {
 	sendNetworkEventToPlayer("agrp.mapChangeWarning", client, isChanging);
+}
+
+// ==========================================================================
+
+function fadePlayerCamera(client, fadeIn, time, colour = toColour(0, 0, 0, 255)) {
+	sendNetworkEventToPlayer("agrp.fadeCamera", client, fadeIn, time, colour);
 }
 
 // ==========================================================================
