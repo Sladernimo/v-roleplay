@@ -10,12 +10,16 @@
 
 let clanManager = {
 	window: null,
-	generalTab: null,
-	ranksTab: null,
-	membersTab: null,
-	vehiclesTab: null,
-	businessesTab: null,
-	housesTab: null,
+	generalTabButton: null,
+	ranksTabButton: null,
+	membersTabButton: null,
+	vehiclesTabButton: null,
+	businessesTabButton: null,
+	housesTabButton: null,
 };
 
 // ===========================================================================
+
+function initClanManagerGUI() {
+
+}
