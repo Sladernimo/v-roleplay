@@ -65,6 +65,7 @@ class NPCData {
 		this.animationName = "";
 		this.ownerType = AGRP_NPC_OWNER_NONE;
 		this.ownerId = 0;
+		this.enabled = false;
 
 		this.bodyParts = {
 			hair: [0, 0],
@@ -98,7 +99,6 @@ class NPCData {
 			this.rotation = toVector3(toFloat(dbAssoc["npc_rot_x"]), toFloat(dbAssoc["npc_rot_y"]), toFloat(dbAssoc["npc_rot_z"]));
 			this.scale = toVector3(toFloat(dbAssoc["npc_scale_x"]), toFloat(dbAssoc["npc_scale_y"]), toFloat(dbAssoc["npc_scale_z"]));
 			this.heading = toFloat(dbAssoc["npc_rot_z"]);
-			this.lastLogin = toInteger(dbAssoc["npc_when_lastlogin"]);
 			this.rank = toInteger(dbAssoc["npc_rank"]);
 			this.title = toInteger(dbAssoc["npc_title"]);
 			this.job = toInteger(dbAssoc["npc_job"]);
@@ -112,7 +112,9 @@ class NPCData {
 			this.heedThreats = intToBool(dbAssoc["npc_headthreats"]);
 			this.threats = toInteger(dbAssoc["npc_threats"]);
 			this.invincible = intToBool(dbAssoc["npc_invincible"]);
-			this.animationName = intToBool(dbAssoc["npc_animation"]);
+			this.animationName = toString(dbAssoc["npc_animation"]);
+			this.enabled = intToBool(dbAssoc["npc_enabled"]);
+			this.lookAtPlayer = intToBool(dbAssoc["npc_lookatplr"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["npc_hd_part_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_part_hair_texture"]) || 0],
@@ -394,6 +396,7 @@ function saveNPCToDatabase(npcDataId) {
 
 		let safeAnimationName = escapeDatabaseString(dbConnection, tempNPCData.animationName);
 		let safeName = escapeDatabaseString(dbConnection, tempNPCData.name);
+		let safeTitle = escapeDatabaseString(dbConnection, tempNPCData.title);
 
 		let data = [
 			["npc_server", getServerId()],
@@ -416,6 +419,15 @@ function saveNPCToDatabase(npcDataId) {
 			["npc_threats", toInteger(tempNPCData.threats)],
 			["npc_stay", boolToInt(tempNPCData.stay)],
 			["npc_type_flags", toInteger(tempNPCData.typeFlags)],
+			["npc_int", toInteger(tempNPCData.interior)],
+			["npc_vw", toInteger(tempNPCData.dimension)],
+			["npc_fight_style", toInteger(tempNPCData.walkStyle)],
+			["npc_walk_style", toInteger(tempNPCData.fightStyle)],
+			["npc_rank", toInteger(tempNPCData.rank)],
+			["npc_title", toString(safeTitle)],
+			["npc_enabled", boolToInt(tempNPCData.enabled)],
+			["npc_lookatplr", boolToInt(tempNPCData.lookAtPlayer)],
+			//["npc_recreate", toInteger(tempNPCData.recreateOnDeath)],
 		];
 
 		let dbQuery = null;
@@ -729,8 +741,10 @@ function getClosestNPC(position, interior, dimension) {
 
 	let closest = 0;
 	for (let i in npcs) {
-		if (getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position) && npcs[closest].interior == interior && npcs[closest].dimension == dimension) {
-			closest = i;
+		if (npcs[i].interior == interior && npcs[i].dimension == dimension) {
+			if (getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position)) {
+				closest = i;
+			}
 		}
 	}
 
