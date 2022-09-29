@@ -317,9 +317,9 @@ function getPlayerFromParams(params) {
 
 // ===========================================================================
 
-function updateConnectionLogOnQuit(client, quitReasonId) {
+function updateConnectionLogOnQuit(client) {
 	if (getPlayerData(client) != false) {
-		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW(), conn_how_disconnect=${quitReasonId} WHERE conn_id = ${getPlayerData(client).sessionId}`);
+		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW() WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
 
@@ -510,13 +510,16 @@ function removeAllPlayersFromVehicles() {
 
 // ===========================================================================
 
-function handlePlayerEnteringExitingProperty(client) {
+function processPlayerEnteringExitingProperty(client) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Processing property enter/exit for player ${getPlayerDisplayForConsole(client)} ...`);
 	if (getPlayerData(client).enteringExitingProperty == null) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Assigned property data is null.`);
 		return false;
 	}
 
 	let pedState = getPlayerData(client).pedState;
 	if (pedState != AGRP_PEDSTATE_ENTERINGPROPERTY && pedState != AGRP_PEDSTATE_EXITINGPROPERTY) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
 		return false;
 	}
 
@@ -528,14 +531,24 @@ function handlePlayerEnteringExitingProperty(client) {
 	}
 
 	if (propertyData == null || propertyData == false) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Property is invalid.`);
 		return false;
 	}
 
 	if (pedState == AGRP_PEDSTATE_ENTERINGPROPERTY) {
+		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
+		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
+			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
+			spawnPlayer(client, propertyData.exitPosition, propertyData.exitRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+			onPlayerSpawn(client);
+		} else {
+			setPlayerPosition(client, propertyData.exitPosition);
+			setPlayerHeading(client, propertyData.exitRotation);
+		}
+
 		setPlayerDimension(client, propertyData.exitDimension);
 		setPlayerInterior(client, propertyData.exitInterior);
-		setPlayerPosition(client, propertyData.exitPosition);
-		setPlayerHeading(client, propertyData.exitRotation);
+
 		setTimeout(function () {
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, true, 1.0);
@@ -561,10 +574,18 @@ function handlePlayerEnteringExitingProperty(client) {
 		getPlayerData(client).enteringExitingProperty = null;
 		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 	} else if (pedState == AGRP_PEDSTATE_EXITINGPROPERTY) {
+		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
+		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
+			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
+			spawnPlayer(client, propertyData.entrancePosition, propertyData.entranceRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+			onPlayerSpawn(client);
+		} else {
+			setPlayerPosition(client, propertyData.entrancePosition);
+			setPlayerHeading(client, propertyData.entranceRotation);
+		}
+
 		setPlayerDimension(client, propertyData.entranceDimension);
-		setPlayerInterior(client, propertyData.entranceDimension);
-		setPlayerPosition(client, propertyData.entranceDimension);
-		setPlayerHeading(client, propertyData.entranceDimension);
+		setPlayerInterior(client, propertyData.entranceInterior);
 
 		// Check if exiting property was into another house/business
 		let inProperty = false;
@@ -609,6 +630,12 @@ function handlePlayerEnteringExitingProperty(client) {
 		getPlayerData(client).enteringExitingProperty = null;
 		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 	}
+}
+
+// ===========================================================================
+
+function getPlayerCountryISOCode(client) {
+	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
 }
 
 // ===========================================================================
