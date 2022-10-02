@@ -724,7 +724,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 			if (seat == AGRP_VEHSEAT_DRIVER) {
 				vehicle.engine = getVehicleData(vehicle).engine;
 				setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
-				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 
 				if (getVehicleData(vehicle).buyPrice > 0 && !doesPlayerHaveVehicleKeys(client, vehicle)) {
 					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
@@ -825,7 +825,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
 			if (seat == AGRP_VEHSEAT_DRIVER) {
-				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 			}
 			onPlayerEnteringVehicle(client, vehicle, seat);
 		}
@@ -841,7 +841,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
 			if (seat == AGRP_VEHSEAT_DRIVER) {
-				vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
+				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 			}
 			onPlayerExitingVehicle(client, vehicle, seat);
 		}
