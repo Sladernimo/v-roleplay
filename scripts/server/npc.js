@@ -45,6 +45,7 @@ class NPCData {
 		this.scale = toVector3(1.0, 1.0, 1.0);
 		this.heading = 0.0;
 		this.clan = 0;
+		this.rank = 0;
 		this.isWorking = false;
 		this.jobUniform = this.skin;
 		this.lastJobVehicle = null;
@@ -104,8 +105,8 @@ class NPCData {
 			this.job = toInteger(dbAssoc["npc_job"]);
 			this.interior = toInteger(dbAssoc["npc_int"]);
 			this.dimension = toInteger(dbAssoc["npc_vw"]);
-			this.walkStyle = toInteger(dbAssoc["npc_walkstyle"]);
-			this.fightStyle = toInteger(dbAssoc["npc_fightstyle"]);
+			this.walkStyle = toInteger(dbAssoc["npc_walk_style"]);
+			this.fightStyle = toInteger(dbAssoc["npc_fight_style"]);
 			this.health = toInteger(dbAssoc["npc_health"]);
 			this.armour = toInteger(dbAssoc["npc_armour"]);
 			this.typeFlags = toInteger(dbAssoc["npc_type_flags"]);
@@ -421,8 +422,8 @@ function saveNPCToDatabase(npcDataId) {
 			["npc_type_flags", toInteger(tempNPCData.typeFlags)],
 			["npc_int", toInteger(tempNPCData.interior)],
 			["npc_vw", toInteger(tempNPCData.dimension)],
-			["npc_fight_style", toInteger(tempNPCData.walkStyle)],
-			["npc_walk_style", toInteger(tempNPCData.fightStyle)],
+			["npc_fight_style", toInteger(tempNPCData.fightStyle)],
+			["npc_walk_style", toInteger(tempNPCData.walkStyle)],
 			["npc_rank", toInteger(tempNPCData.rank)],
 			["npc_title", toString(safeTitle)],
 			["npc_enabled", boolToInt(tempNPCData.enabled)],
@@ -524,7 +525,7 @@ function deleteNPC(npcId) {
 
 	if (getNPCData(npcId)) {
 		if (getNPCData(npcId).ped != false) {
-			deleteEntity(getNPCData(npcId).ped);
+			deleteGameElement(getNPCData(npcId).ped);
 		}
 		getServerData().npcs.splice(npcId, 1);
 	}
@@ -676,7 +677,7 @@ function getNPCInfoCommand(command, params, client) {
 		return false;
 	}
 
-	let closestNPC = getClosestNPC(getPlayerPosition(client));
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
 
 	if (!getNPCData(closestNPC)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
@@ -736,7 +737,7 @@ function getNPCInfoCommand(command, params, client) {
 
 // ===========================================================================
 
-function getClosestNPC(position, interior, dimension) {
+function getClosestNPC(position, dimension, interior) {
 	let npcs = getServerData().npcs;
 
 	let closest = 0;
