@@ -19,8 +19,8 @@ let isSpawned = false;
 
 let garbageCollectorInterval = null;
 
-let parkedVehiclePosition = false;
-let parkedVehicleHeading = false;
+//let parkedVehiclePosition = false;
+//let parkedVehicleHeading = false;
 
 let renderHUD = true;
 let renderLabels = true;
