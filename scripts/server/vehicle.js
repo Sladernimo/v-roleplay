@@ -1514,6 +1514,8 @@ function spawnVehicle(vehicleData) {
 	setEntityData(vehicle, "agrp.interior", vehicleData.interior, true);
 	setEntityData(vehicle, "agrp.engine", vehicleData.engine, true);
 
+	setEntityData(vehicle, "agrp.server", true, true);
+
 	forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
 
