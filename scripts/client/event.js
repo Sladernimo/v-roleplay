@@ -208,11 +208,12 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
 				if (inVehicleSeat == 0) {
-					setVehicleEngine(vehicle.id, false);
-					//setLocalPlayerControlState(false, false);
-					if (!inVehicle.engine) {
-						parkedVehiclePosition = inVehicle.position;
-						parkedVehicleHeading = inVehicle.heading;
+					//parkedVehiclePosition = inVehicle.position;
+					//parkedVehicleHeading = inVehicle.heading;
+					if (doesEntityDataExist(vehicle, "agrp.server") == true) {
+						setVehicleEngine(vehicle.id, false);
+						setVehicleEngine(vehicle.id, getEntityData(vehicle, "agrp.engine"));
+						//setLocalPlayerControlState(false, false);
 					}
 				}
 			}
