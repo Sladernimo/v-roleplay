@@ -51,12 +51,19 @@ function getGameAreas(gameId) {
  * @return {ClientData} The player/client's data (class instancee)
  */
 function getPlayerData(client) {
-	if (client != null) {
-		if (isClientInitialized(client)) {
-			return getServerData().clients[getPlayerId(client)];
-		}
+	if (client == null) {
+		return false;
 	}
-	return false;
+
+	if (!isClientInitialized(client)) {
+		return false;
+	}
+
+	if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+		return false;
+	}
+
+	return getServerData().clients[getPlayerId(client)];
 }
 
 // ===========================================================================
@@ -426,11 +433,11 @@ function isClientInitialized(client) {
 	//	return false;
 	//}
 
-	//if (playerInitialized[getPlayerId(client)] == false) {
-	//	return false;
-	//}
+	if (playerInitialized[getPlayerId(client)] == true) {
+		return true;
+	}
 
-	return (typeof getServerData().clients[getPlayerId(client)] != "undefined");
+	return false;
 }
 
 // ===========================================================================
