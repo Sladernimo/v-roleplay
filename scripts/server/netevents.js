@@ -80,7 +80,7 @@ function addAllNetworkEventHandlers() {
 // ===========================================================================
 
 function updatePlayerNameTag(client) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Client] Sending ${getPlayerDisplayForConsole(client)}'s updated nametag to all players`);
+	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending ${getPlayerDisplayForConsole(client)}'s updated nametag to all players`);
 	sendNetworkEventToPlayer("agrp.nametag", null, getPlayerName(client), getPlayerNameForNameTag(client), getPlayerColour(client), getPlayerData(client).afk, getPlayerPing(client));
 }
 
@@ -131,7 +131,7 @@ function playerClientStarted(client) {
 // ===========================================================================
 
 function playerClientStopped(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
 	//getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
 	//disconnectPlayer(client);
 }
