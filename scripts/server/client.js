@@ -216,8 +216,6 @@ function initClient(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
-
 	if (playerInitialized[client.index] == true) {
 		logToConsole(LOG_DEBUG | LOG_ERROR, `[AGRP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
 		return false;
