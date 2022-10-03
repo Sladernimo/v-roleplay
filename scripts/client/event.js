@@ -64,6 +64,7 @@ function onResourceStart(event, resource) {
 	}
 
 	if (resource == thisResource) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStart called - Sending signal to server`);
 		garbageCollectorInterval = setInterval(collectAllGarbage, 1000 * 60);
 		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 		sendResourceStartedSignalToServer();
@@ -74,6 +75,7 @@ function onResourceStart(event, resource) {
 
 function onResourceStop(event, resource) {
 	if (resource == thisResource) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStop called - Sending signal to server`);
 		sendResourceStoppedSignalToServer();
 	}
 }
@@ -82,6 +84,7 @@ function onResourceStop(event, resource) {
 
 function onResourceReady(event, resource) {
 	if (resource == thisResource) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceReady called - Sending signal to server`);
 		loadLocaleConfig();
 		sendResourceReadySignalToServer();
 	}
@@ -90,6 +93,7 @@ function onResourceReady(event, resource) {
 // ===========================================================================
 
 function onProcess(event, deltaTime) {
+	logToConsole(LOG_VERBOSE, `[AGRP.Event] onProcess`);
 	if (localPlayer == null) {
 		return false;
 	}
@@ -124,6 +128,7 @@ function onKeyUp(event, keyCode, scanCode, keyModifiers) {
 // ===========================================================================
 
 function onDrawnHUD(event) {
+	logToConsole(LOG_VERBOSE, `[AGRP.Event] HUD drawn`);
 	processMouseCursorRendering();
 
 	if (!renderHUD) {
