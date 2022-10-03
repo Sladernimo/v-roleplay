@@ -42,7 +42,7 @@ function addAllEventHandlers() {
 // ===========================================================================
 
 function onPlayerConnect(event, ipAddress, port) {
-	logToConsole(LOG_INFO, `[AGRP.Event] Client connecting (IP: ${ipAddress})`);
+	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerConnect - Client connecting (IP: ${ipAddress})`);
 	//if(isIpAddressBanned(ipAddress)) {
 	//    messagePlayerError(client, "You are banned from this server!");
 	//    return false;
@@ -52,15 +52,14 @@ function onPlayerConnect(event, ipAddress, port) {
 // ===========================================================================
 
 function onPlayerJoin(event, client) {
-	logToConsole(LOG_INFO, `[AGRP.Event] Client ${getPlayerName(client)}[${getPlayerId(client)}] joining from ${getPlayerIP(client)}`);
+	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerJoin - Client ${getPlayerDisplayForConsole(client)} joining from ${getPlayerIP(client)}`);
 
-	//if (isFadeCameraSupported()) {
-	//	fadeCamera(client, true, 1.0);
-	//}
+	playerResourceReady[getPlayerId(client)] = false;
+	playerResourceStarted[getPlayerId(client)] = false;
+	playerInitialized[getPlayerId(client)] = false;
+	playerGUIReady[getPlayerId(client)] = false;
 
-	//if(isCustomCameraSupported()) {
-	//	showConnectCameraToPlayer(client);
-	//}
+	getServerData().clients[getPlayerId(client)] = null;
 
 	let messageText = `👋 ${getPlayerName(client)} is connecting to the server ...`;
 	messageDiscordEventChannel(messageText);
@@ -69,13 +68,12 @@ function onPlayerJoin(event, client) {
 	for (let i in clients) {
 		messagePlayerNormal(clients[i], getLocaleString(clients[i], "PlayerConnecting", getPlayerName(client)));
 	}
-
-	//messageDiscordEventChannel(`👋 ${getPlayerDisplayForConsole(client)} has joined the server.`);
 }
 
 // ===========================================================================
 
 function onPlayerJoined(event, client) {
+	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerJoined - Client ${getPlayerDisplayForConsole(client)} joined from ${getPlayerIP(client)}`);
 	//initClient(client);
 }
 
