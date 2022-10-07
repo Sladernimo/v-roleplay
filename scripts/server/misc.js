@@ -465,7 +465,7 @@ function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noB
 		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
 		messagePlayerNormal(client, `❓ ${promptMessage} `);
-		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ ALTCOLOUR } /yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{ MAINCOLOUR } `));
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
 	}
 }
 
@@ -508,7 +508,7 @@ function listOnlineAdminsCommand(command, params, client) {
 		if (getPlayerData(clients[i])) {
 			if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
 				if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
-					admins.push(`{ ALTCOLOUR } [${getPlayerData(clients[i]).accountData.staffTitle}] { MAINCOLOUR }${getCharacterFullName(clients[i])} `);
+					admins.push(`{ALTCOLOUR}[${getPlayerData(clients[i]).accountData.staffTitle}]{MAINCOLOUR} ${getCharacterFullName(clients[i])}`);
 				}
 			}
 		}
