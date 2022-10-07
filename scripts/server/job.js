@@ -2367,7 +2367,7 @@ function jobStartRouteCommand(command, params, client) {
 
 function jobStopRouteCommand(command, params, client) {
 	if (!canPlayerUseJobs(client)) {
-		messagePlayerError(client, "You are not allowed to use jobs.");
+		messagePlayerError(client, getLocaleString(client, "NotAllowedToUseJobs"));
 		return false;
 	}
 
