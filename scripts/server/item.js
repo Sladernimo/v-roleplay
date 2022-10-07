@@ -1313,6 +1313,8 @@ function playerUseItem(client, hotBarSlot) {
 
 	logToConsole(LOG_DEBUG, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
 
+	markPlayerActionTipSeen(client, "UseItemKeyAfterEquipping");
+
 	switch (toInteger(itemTypeData.useType)) {
 		case AGRP_ITEM_USE_TYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
@@ -1554,6 +1556,12 @@ function playerUseItem(client, hotBarSlot) {
 		case AGRP_ITEM_USE_TYPE_WALKIETALKIE: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(itemData.enabled))} their walkie-talkie`);
+
+			if (itemData.enabled) {
+				if (!hasPlayerSeenActionTip(client, "RadioCommandAfterEnablingWalkieTalkie")) {
+					messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "RadioCommandAfterEnablingWalkieTalkie", `{ALTCOLOUR}/r{MAINCOLOUR}`));
+				}
+			}
 			break;
 		}
 
@@ -1944,6 +1952,18 @@ function playerSwitchItem(client, newHotBarSlot) {
 		case AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART:
 			if (!hasPlayerSeenActionTip(client, "VehiclePartItemUsage")) {
 				messagePlayerTip(client, getGroupedLocaleString(client, "VehiclePartItemUsage", getKeyOrCommandForPlayerMessage(client, "use"), getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).name));
+			}
+			break;
+
+		case AGRP_ITEM_USE_TYPE_WALKIETALKIE:
+			if (!hasPlayerSeenActionTip(client, "UseItemKeyAfterEquippingWalkieTalkie")) {
+				messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "UseItemKeyAfterEquippingWalkieTalkie", (doesPlayerHaveKeyBindForCommand(client, "use")) ? `{ALTCOLOUR}U{MAINCOLOUR}` : `{ALTCOLOUR}/use{MAINCOLOUR}`));
+			}
+			break;
+
+		default:
+			if (!hasPlayerSeenActionTip(client, "UseItemKeyAfterEquipping")) {
+				messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "UseItemKeyAfterEquipping", (doesPlayerHaveKeyBindForCommand(client, "use")) ? `{ALTCOLOUR}U{MAINCOLOUR}` : `{ALTCOLOUR}/use{MAINCOLOUR}`));
 			}
 			break;
 	}
