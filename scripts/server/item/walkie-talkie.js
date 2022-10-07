@@ -131,7 +131,10 @@ function walkieTalkieChatCommand(command, params, client) {
 		messagePlayerError(client, "Please turn on a walkie talkie first!");
 		return false;
 	}
+
 	walkieTalkieTransmit(getPlayerActiveWalkieTalkieFrequency(client), params, client);
+
+	markPlayerActionTipSeen(client, "RadioCommandAfterEnablingWalkieTalkie");
 }
 
 // ===========================================================================
