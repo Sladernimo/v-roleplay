@@ -38,7 +38,7 @@ function playerPromptAnswerNo(client) {
 	switch (getPlayerData(client).promptType) {
 		case AGRP_PROMPT_CREATEFIRSTCHAR:
 			logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} chose not to create a first character. Kicking them from the server ...`);
-			showPlayerErrorGUI(client, "You don't have a character to play. Goodbye!", "No Characters");
+			showPlayerErrorGUI(client, getLocaleString(client, "DidNotCreateCharacter"), getLocaleString(client, getLocaleString(client, "GUIWarningTitle")));
 			getPlayerData(targetClient).customDisconnectReason = "FailedToCreateCharacter";
 			setTimeout(function () { disconnectPlayer(client); }, 5000);
 			break;
@@ -46,17 +46,19 @@ function playerPromptAnswerNo(client) {
 		case AGRP_PROMPT_BIZORDER:
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (canPlayerUseGUI(client)) {
-					showPlayerErrorGUI(client, "You canceled the order.", "Business Order Canceled");
+					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "Alert"));
 				} else {
 					logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} canceled the order of ${getPlayerData(client).businessOrderAmount} ${getPlayerData(client).businessOrderItem} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness)}`);
-					messagePlayerError(client, "You canceled the order!");
+					messagePlayerError(client, getLocaleString(client, "BusinessOrderCanceled"));
 				}
 			} else {
-				showPlayerErrorGUI(client, "You aren't ordering anything for a business!", "Business Order Canceled");
+				showPlayerErrorGUI(client, getLocaleString(client, "NotOrderingAnyBusinessItems"), getLocaleString(client, getLocaleString(client, "GUIWarningTitle")));
 			}
 			break;
 
 		default:
+			messagePlayerError(client, getLocaleString(client, "NoPromptReject"));
+			submitBugReport(client, `[AUTOMATED REPORT] Tried to reject invalid prompt type: ${getPlayerData(client).promptType}`);
 			break;
 	}
 
@@ -82,14 +84,15 @@ function playerPromptAnswerYes(client) {
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
 					logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
-					showPlayerErrorGUI(client, "This business doesn't have enough money! Deposit some using /bizdeposit", "Business Order Canceled");
+					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderNotEnoughMoney"), getLocaleString(client, "BusinessOrderCanceled"));
 					getPlayerData(client).businessOrderAmount = 0;
 					getPlayerData(client).businessOrderBusiness = false;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
 				} else {
 					logToConsole(LOG_DEBUG, `[AGRP.GUI] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
-					showPlayerInfoGUI(client, `You ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} (${getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue)}) for ${getPlayerData(client).businessOrderCost}!`, "Business Order Successful");
+
+					showPlayerInfoGUI(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
 					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);
 					getBusinessData(getPlayerData(client).businessOrderBusiness).till -= getPlayerData(client).businessOrderCost;
@@ -233,20 +236,23 @@ function playerPromptAnswerYes(client) {
 			updateBusinessPickupLabelData(businessId);
 
 			messageDiscordEventChannel(`🏢 ${getCharacterFullName(client)} is now the owner of *${getBusinessData(businessId).name}*!`);
-			messagePlayerSuccess(client, `🏢 You are now the owner of {businessBlue}${getBusinessData(businessId).name}`);
+			messagePlayerSuccess(client, getLocaleString(client, "BusinessPurchased", `{businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}`));
 			break;
 		}
 
 		case AGRP_PROMPT_RESETKEYBINDS: {
+			messagePlayerSuccess(client, getLocaleString(client, "KeyBindsReset"));
 			break;
 		}
 
 		case AGRP_PROMPT_COPYKEYBINDSTOSERVER: {
+			//messagePlayerSuccess(client, getLocaleString(client, "KeyBindsCopiedToServer", serverName));
 			break;
 		}
 
 		default: {
-			submitBugReport(client, `[AUTOMATED REPORT] Unknown prompt type: ${getPlayerData(client).promptType}`);
+			messagePlayerError(client, getLocaleString(client, "NoPromptAccept"));
+			submitBugReport(client, `[AUTOMATED REPORT] Tried to accept invalid prompt type: ${getPlayerData(client).promptType}`);
 			break;
 		}
 	}
