@@ -132,7 +132,7 @@ function playerClientStarted(client) {
 
 function playerClientStopped(client) {
 	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
-	//getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
+	getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
 	//disconnectPlayer(client);
 }
 
