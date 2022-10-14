@@ -1576,10 +1576,8 @@ function createJobLocationCommand(command, params, client) {
 function deleteJobLocationCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
+	deleteJobLocation(closestJobLocation.jobIndex, closestJobLocation.index);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted location {ALTCOLOUR}${closestJobLocation.index} (DB ID ${closestJobLocation.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
-
-
-	deleteJobLocation(closestJobLocation);
 }
 
 // ===========================================================================
@@ -2328,7 +2326,7 @@ function jobStartRouteCommand(command, params, client) {
 	}
 
 	if (getJobData(getPlayerJob(client)).routes.length == 0) {
-		messagePlayerError(client, getLocaleString(client, "NoRoutesForJobLocation"));
+		messagePlayerError(client, getLocaleString(client, "NoRoutesForLocation"));
 		return false;
 	}
 
@@ -2430,7 +2428,7 @@ function startJobRoute(client, forceRoute = -1) {
 	}
 
 	if (jobRoute == -1) {
-		messagePlayerError(client, `There are no routes for this location.`);
+		messagePlayerError(client, getLocaleString(client, "NoRoutesForLocation"));
 		return false;
 	}
 
@@ -2573,14 +2571,14 @@ function canPlayerUseJob(client, jobId) {
 
 // ===========================================================================
 
-function deleteJobLocation(jobLocationData) {
+function deleteJobLocation(jobIndex, jobLocationIndex) {
 	if (jobLocationData.databaseId > 0) {
-		quickDatabaseQuery(`DELETE FROM job_loc WHERE job_loc_id = ${jobLocationData.databaseId}`);
+		quickDatabaseQuery(`DELETE FROM job_loc WHERE job_loc_id = ${getJobLocationData(jobIndex, jobLocationIndex).databaseId}`);
 	}
 
-	deleteJobLocationBlip(tempJob, tempLocation);
-	deleteJobLocationPickup(tempJob, tempLocation);
-	getJobData(getJobIdFromDatabaseId(tempJob)).locations.splice(tempLocation, 1);
+	deleteJobLocationBlip(jobIndex, jobLocationIndex);
+	deleteJobLocationPickup(jobIndex, jobLocationIndex);
+	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
 }
 
@@ -2677,6 +2675,7 @@ function createJobLocation(jobId, position, interior, dimension, whoCreated) {
 	let newSlot = getServerData().jobs[jobId].locations.length - 1;
 	getServerData().jobs[jobId].locations[newSlot].index = newSlot;
 	createJobLocationPickup(jobId, newSlot);
+	createJobLocationBlip(jobId, newSlot);
 	saveJobLocationToDatabase(jobLocationData);
 }
 
@@ -3897,6 +3896,25 @@ function getJobRouteLocationData(jobIndex, routeIndex, routeLocationIndex) {
 	}
 
 	return getServerData().jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex];
+}
+
+// ===========================================================================
+
+/**
+ * @param {number} jobIndex - The data index of the job
+ * @param {number} locationIndex - The data index of the job location
+ * @return {JobLocationData} The job route locations's data (class instance)
+ */
+function getJobLocationData(jobIndex, locationIndex) {
+	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+		return false;
+	}
+
+	if (typeof getServerData().jobs[jobIndex].locations[locationIndex] == "undefined") {
+		return false;
+	}
+
+	return getServerData().jobs[jobIndex].locations[locationIndex];
 }
 
 // ===========================================================================
