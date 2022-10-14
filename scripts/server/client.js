@@ -17,13 +17,12 @@ const AGRP_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from sk
 
 /**
  * @class Representing extra data for a client
+ * @property {AccountData} accountData
+ * @property {Array.<SubAccountData>} subAccounts
  */
 class ClientData {
 	constructor(client, accountData, subAccounts) {
-		/** @member {AccountData} accountData */
 		this.accountData = accountData;
-
-		/** @member {Array.<SubAccountData>} subAccounts */
 		this.subAccounts = subAccounts; // Characters
 
 		// General Info
