@@ -407,16 +407,16 @@ function getPlayerInfoCommand(command, params, client) {
 		["Account", `${getPlayerData(targetClient).accountData.name}{mediumGrey}[${getPlayerData(targetClient).accountData.databaseId}]{ALTCOLOUR}`],
 		["Character", `${getCharacterFullName(targetClient)}{mediumGrey}[${getPlayerCurrentSubAccount(targetClient).databaseId}]{ALTCOLOUR}`],
 		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
-		["Registered", `${registerDate.toLocaleDateString()} - ${registerDate.toLocaleTimeString()}`],
+		["Registered", `${registerDate.toLocaleDateString()}`],
 		["Game Version", `${targetClient.gameVersion}`],
 		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
 		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(client).cash)}`],
-		["Skin", `${skinName}{mediumGrey}[${skinModel}]{ALTCOLOUR}`],
+		["Skin", `${skinName}{mediumGrey}[Model: ${skinModel}/Index: ${skinIndex}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
-		["Current Date", `${currentDate.toLocaleDateString()} - ${currentDate.toLocaleTimeString()}`],
+		["Current Date", `${currentDate.toLocaleDateString()}`],
 	]
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]} {MAINCOLOUR}`);
@@ -949,3 +949,5 @@ function getPlayerInPropertyData(client) {
 
 	getPlayerData(client).inProperty = null;
 }
+
+// ===========================================================================
