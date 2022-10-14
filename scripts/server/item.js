@@ -1445,7 +1445,7 @@ function playerUseItem(client, hotBarSlot) {
 				meActionToNearbyPlayers(client, `takes their key and removes the handcuffs from ${getCharacterFullName(closestPlayer)}`);
 			} else {
 				if (!isPlayerSurrendered(closestPlayer)) {
-					messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedHandcuffed", getCharacterFullName(closestPlayer)));
+					messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedHandcuff", getCharacterFullName(closestPlayer)));
 					return false;
 				}
 
