@@ -132,7 +132,8 @@ function onPlayerQuit(event, client, quitReasonId) {
 	getServerData().clients[getPlayerId(client)] = null;
 
 	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
-	messageDiscordEventChannel(`👋 ${clientName} has left the server (${reasonTextEnglish})`);
+	//messageDiscordEventChannel(`👋 ${clientName} has left the server (${reasonTextEnglish})`);
+	messageDiscordEventChannel(getLanguageLocaleString(englishLocale, "PlayerLeftServer", clientName, reasonTextEnglish));
 
 	getClients().filter(c => c != client).forEach(forClient => {
 		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", clientName, getGroupedLocaleString(forClient, "DisconnectReasons", disconnectName)));
@@ -539,6 +540,12 @@ async function onPlayerSpawn(client) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	}
+
+	sendPlayerChatBoxTimeStampsState(client, isPlayerAccountSettingEnabled(client, "ChatBoxTimestamps"));
+	sendPlayerChatEmojiState(client, isPlayerAccountSettingEnabled(client, "ChatEmoji"));
+	sendPlayerProfanityFilterState(client, isPlayerAccountSettingEnabled(client, "ProfanityFilter"));
+	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
+	//sendPlayerGlobalKeyBindsState(client, !isPlayerAccountSettingEnabled(client, "NoKeyBinds"));
 
 	//if(isGTAIV()) {
 	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
