@@ -19,7 +19,7 @@ const AGRP_PROP_TYPE_HOUSE = 6;						// House
 
 // ===========================================================================
 
-// Business Location Types
+// Property Location Types
 const AGRP_PROP_LOC_NONE = 0;						// None
 const AGRP_PROP_LOC_GATE = 1;						// Moveable gate that belongs to the property
 const AGRP_PROP_LOC_GARAGE = 2;						// Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
@@ -31,7 +31,7 @@ const AGRP_PROP_LOC_PAYPHONE = 7;					// Payphone
 
 // ===========================================================================
 
-// Business Owner Types
+// Property Owner Types
 const AGRP_PROP_OWNER_NONE = 0;                     // Not owned
 const AGRP_PROP_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
 const AGRP_PROP_OWNER_JOB = 2;                      // Owned by a job
@@ -162,7 +162,7 @@ function initPropertyScript() {
 function loadPropertyFromId(propertyIndex) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		let dbQueryString = `SELECT * FROM prop_main WHERE prop_id = ${businessId} LIMIT 1;`;
+		let dbQueryString = `SELECT * FROM prop_main WHERE prop_id = ${propertyIndex} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
 			let dbAssoc = fetchQueryAssoc(dbQuery);
@@ -191,7 +191,7 @@ function loadPropertiesFromDatabase() {
 			if (dbQuery.numRows > 0) {
 				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
 					let tempPropertyData = new PropertyData(dbAssoc);
-					tempPropertyData.locations = loadBusinessLocationsFromDatabase(tempPropertyData.databaseId);
+					tempPropertyData.locations = loadPropertyLocationsFromDatabase(tempPropertyData.databaseId);
 					tempProperties.push(tempPropertyData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
 				}
@@ -243,198 +243,198 @@ function createPropertyCommand(command, params, client) {
 		params,
 		getPlayerPosition(client),
 		toVector3(0.0, 0.0, 0.0),
-		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Business : -1,
+		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Property : -1,
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
-		getPlayerData(client).interiorScene);
+		getPlayerData(client).interiorScene
+	);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: ${getInlinePropertyColour(propertyIndex)}${params}`);
 }
 
 // ===========================================================================
 
-function createBusinessLocationCommand(command, params, client) {
+function createPropertyLocationCommand(command, params, client) {
 	if (!isPlayerSpawned(client)) {
 		messagePlayerError(client, "You must be spawned to use this command!");
 		return false;
 	}
 
 	let locationType = toString(getParam(params, " ", 1));
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	let tempBusinessLocationData = createBusinessLocation(locationType, businessId);
-	getServerData().businesses[businessId].push(tempBusinessLocationData);
+	let tempPropertyLocationData = createPropertyLocation(locationType, propertyIndex);
+	getServerData().properties[propertyIndex].push(tempPropertyLocationData);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {businessBlue}${params}{MAINCOLOUR} for business {businessBlue}${tempBusinessData.name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location ${getInlinePropertyColour(propertyIndex)}${params}{MAINCOLOUR} for business ${getInlinePropertyColour(propertyIndex)}${tempPropertyData.name}`);
 }
 
 // ===========================================================================
 
-/*
-function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
-	let tempBusinessData = new BusinessData(false);
-	tempBusinessData.name = name;
+function createProperty(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
+	let tempPropertyData = new PropertyData(false);
+	tempPropertyData.name = name;
 
-	tempBusinessData.entrancePosition = entrancePosition;
-	tempBusinessData.entranceRotation = 0.0;
-	tempBusinessData.entrancePickupModel = entrancePickupModel;
-	tempBusinessData.entranceBlipModel = entranceBlipModel;
-	tempBusinessData.entranceInterior = entranceInterior;
-	tempBusinessData.entranceDimension = entranceDimension;
-	tempBusinessData.entranceScene = entranceScene;
+	tempPropertyData.entrancePosition = entrancePosition;
+	tempPropertyData.entranceRotation = 0.0;
+	tempPropertyData.entrancePickupModel = entrancePickupModel;
+	tempPropertyData.entranceBlipModel = entranceBlipModel;
+	tempPropertyData.entranceInterior = entranceInterior;
+	tempPropertyData.entranceDimension = entranceDimension;
+	tempPropertyData.entranceScene = entranceScene;
 
-	tempBusinessData.exitPosition = exitPosition;
-	tempBusinessData.exitRotation = 0.0;
-	tempBusinessData.exitPickupModel = 0;
-	tempBusinessData.exitBlipModel = -1;
-	tempBusinessData.exitInterior = 0;
-	tempBusinessData.exitDimension = 0;
-	tempBusinessData.exitScene = -1;
+	tempPropertyData.exitPosition = exitPosition;
+	tempPropertyData.exitRotation = 0.0;
+	tempPropertyData.exitPickupModel = 0;
+	tempPropertyData.exitBlipModel = -1;
+	tempPropertyData.exitInterior = 0;
+	tempPropertyData.exitDimension = 0;
+	tempPropertyData.exitScene = -1;
 
-	tempBusinessData.needsSaved = true;
-	let businessId = getServerData().businesses.push(tempBusinessData);
-	setBusinessDataIndexes();
-	saveAllBusinessesToDatabase();
+	tempPropertyData.needsSaved = true;
+	let propertyIndex = getServerData().properties.push(tempPropertyData);
+	setPropertyDataIndexes();
+	saveAllPropertyesToDatabase();
 
-	createBusinessPickups(businessId - 1);
-	createBusinessBlips(businessId - 1);
+	createPropertyPickups(propertyIndex - 1);
+	createPropertyBlips(propertyIndex - 1);
 
-	return tempBusinessData;
+	return tempPropertyData;
 }
 
 // ===========================================================================
 
-function deleteBusinessCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function deletePropertyCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`);
+	deleteProperty(propertyIndex, getPlayerData(client).accountData.databaseId);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}`);
 }
 
 // ===========================================================================
 
-function deleteBusinessLocationCommand(command, params, client) {
-	//let businessId = toInteger(getParam(params, " ", 2));
-	//deleteBusinessLocation(businessId);
-	//messagePlayerSuccess(client, `Business '${tempBusinessData.name} deleted!`);
+function deletePropertyLocationCommand(command, params, client) {
+	//let propertyIndex = toInteger(getParam(params, " ", 2));
+	//deletePropertyLocation(propertyIndex);
+	//messagePlayerSuccess(client, `Property '${tempPropertyData.name} deleted!`);
 }
 
 // ===========================================================================
 
-function setBusinessNameCommand(command, params, client) {
-	let newBusinessName = toString(params);
+function setPropertyNameCommand(command, params, client) {
+	let newPropertyName = toString(params);
 
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	let oldBusinessName = getBusinessData(businessId).name;
-	getBusinessData(businessId).name = newBusinessName;
-	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
-	getBusinessData(businessId).needsSaved = true;
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`);
+	let oldPropertyName = getPropertyData(propertyIndex).name;
+	getPropertyData(propertyIndex).name = newPropertyName;
+	setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.name", getPropertyData(propertyIndex).name, true);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed property ${getInlinePropertyColour(propertyIndex)}${oldPropertyName}{MAINCOLOUR} to ${getInlinePropertyColour(propertyIndex)}${newPropertyName}`);
 }
 
 // ===========================================================================
 
-function setBusinessOwnerCommand(command, params, client) {
+function setPropertyOwnerCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	let newBusinessOwner = getPlayerFromParams(params);
-	let businessId = getPlayerBusiness(client);
+	let newPropertyOwner = getPlayerFromParams(params);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!newBusinessOwner) {
+	if (!newPropertyOwner) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PLAYER;
-	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(newBusinessOwner).databaseId;
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_PLAYER;
+	getPropertyData(propertyIndex).ownerId = getPlayerCurrentSubAccount(newPropertyOwner).databaseId;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(newBusinessOwner)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You gave property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(newPropertyOwner)}`);
 }
 
 // ===========================================================================
 
-function setBusinessJobCommand(command, params, client) {
+function setPropertyJobCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let jobId = getJobFromParams(params);
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!getJobData(jobId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
-	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_JOB;
+	getPropertyData(propertyIndex).ownerId = getJobData(jobId).databaseId;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}to the {jobYellow}${getJobData(jobId).name}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}to the {jobYellow}${getJobData(jobId).name}`);
 }
 
 // ===========================================================================
 
-function setBusinessClanCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyClanCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -445,70 +445,70 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getBusinessData(business).ownerType != AGRP_VEHOWNER_PLAYER) {
-		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
+	if (getPropertyData(business).ownerType != AGRP_VEHOWNER_PLAYER) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnProperty"));
 		return false;
 	}
 
-	if (getBusinessData(business).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
-		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
+	if (getPropertyData(business).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnProperty"));
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	showPlayerPrompt(client, getLocaleString(client, "SetPropertyClanConfirmMessage"), getLocaleString(client, "SetPropertyClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = AGRP_PROMPT_BIZGIVETOCLAN;
 
-	//getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_CLAN;
-	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
-	//getBusinessData(businessId).needsSaved = true;
+	//getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_CLAN;
+	//getPropertyData(propertyIndex).ownerId = getClanData(clanId).databaseId;
+	//getPropertyData(propertyIndex).needsSaved = true;
 }
 
 // ===========================================================================
 
-function setBusinessRankCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyRankCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	let rankId = params;
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
 	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
-		let clanId = getClanIndexFromDatabaseId(getBusinessData(businessId).ownerId);
+		let clanId = getClanIndexFromDatabaseId(getPropertyData(propertyIndex).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
 			messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 			return false;
 		}
-		getBusinessData(businessId).rank = getClanRankData(clanId, rankId).databaseId;
-		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
-	} else if (getBusinessData(businessId).ownerType == AGRP_VEHOWNER_JOB) {
-		getBusinessData(businessId).rank = rankId;
-		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getBusinessData(businessId).ownerId)).name} {MAINCOLOUR}job!`);
+		getPropertyData(propertyIndex).rank = getClanRankData(clanId, rankId).databaseId;
+		messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
+	} else if (getPropertyData(propertyIndex).ownerType == AGRP_VEHOWNER_JOB) {
+		getPropertyData(propertyIndex).rank = rankId;
+		messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getPropertyData(propertyIndex).ownerId)).name} {MAINCOLOUR}job!`);
 	}
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 }
 
 // ===========================================================================
 
-function setBusinessRankCommand(command, params, client) {
+function setPropertyRankCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -526,8 +526,8 @@ function setBusinessRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
@@ -536,19 +536,19 @@ function setBusinessRankCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).clanRank = getClanRankData(clanId, clanRankId).level;
+	getPropertyData(propertyIndex).clanRank = getClanRankData(clanId, clanRankId).level;
 
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}'s clan rank to {clanOrange}${getClanRankData(clanId, clanRankId).name} {MAINCOLOUR}(level ${getClanRankData(clanId, clanRankId).level}) and above!`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR}'s clan rank to {clanOrange}${getClanRankData(clanId, clanRankId).name} {MAINCOLOUR}(level ${getClanRankData(clanId, clanRankId).level}) and above!`);
 }
 
 // ===========================================================================
 
-function setBusinessJobCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyJobCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
 	let closestJobLocation = getClosestJobLocation(getVehiclePosition(vehicle));
@@ -558,8 +558,8 @@ function setBusinessJobCommand(command, params, client) {
 		jobId = getJobIdFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -568,146 +568,146 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
-	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
+	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_JOB;
+	getPropertyData(propertyIndex).ownerId = getJobData(jobId).databaseId;
 
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
 }
 
 // ===========================================================================
 
-function setBusinessPublicCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyPublicCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PUBLIC;
-	getBusinessData(businessId).ownerId = 0;
+	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_PUBLIC;
+	getPropertyData(propertyIndex).ownerId = 0;
 
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}owner set to {ALTCOLOUR}public`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}owner set to {ALTCOLOUR}public`);
 }
 
 // ===========================================================================
 
-function removeBusinessOwnerCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function removePropertyOwnerCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_NONE;
-	getBusinessData(businessId).ownerId = -1;
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_NONE;
+	getPropertyData(propertyIndex).ownerId = -1;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You removed business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} owner`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You removed property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}'s{MAINCOLOUR} owner`);
 }
 
 // ===========================================================================
 
-function toggleBusinessInteriorLightsCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function togglePropertyInteriorLightsCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, "You can't change the interior lights for this business!");
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, "You can't change the interior lights for this property!");
 		return false;
 	}
 
-	getBusinessData(businessId).interiorLights = !getBusinessData(businessId).interiorLights;
-	updateBusinessInteriorLightsForOccupants(businessId);
+	getPropertyData(propertyIndex).interiorLights = !getPropertyData(propertyIndex).interiorLights;
+	updatePropertyInteriorLightsForOccupants(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
-	meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(getBusinessData(businessId).interiorLights))} the business lights`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(getPropertyData(propertyIndex).interiorLights))} the property lights`);
 }
 
 // ===========================================================================
 
-function setBusinessEntranceFeeCommand(command, params, client) {
+function setPropertyEntranceFeeCommand(command, params, client) {
 	let entranceFee = toInteger(getParam(params, " ", 1)) || 0;
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).entranceFee = entranceFee;
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
+	getPropertyData(propertyIndex).entranceFee = entranceFee;
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
 }
 
 // ===========================================================================
 
-function setBusinessPaintBallCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyPaintBallCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).type = AGRP_BIZ_TYPE_PAINTBALL;
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
+	getPropertyData(propertyIndex).type = AGRP_BIZ_TYPE_PAINTBALL;
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, getLocaleString(client, "PropertyIsNowPaintBall"));
 }
 
 // ===========================================================================
 
-function getBusinessInfoCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function getPropertyInfoCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	let businessData = getBusinessData(businessId);
+	let propertyData = getPropertyData(propertyIndex);
 
 	let ownerName = "Unknown";
-	switch (businessData.ownerType) {
+	switch (propertyData.ownerType) {
 		case AGRP_BIZ_OWNER_CLAN:
-			ownerName = getClanData(businessData.ownerId).name;
+			ownerName = getClanData(propertyData.ownerId).name;
 			break;
 
 		case AGRP_BIZ_OWNER_JOB:
-			ownerName = getJobData(businessData.ownerId).name;
+			ownerName = getJobData(propertyData.ownerId).name;
 			break;
 
 		case AGRP_BIZ_OWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(businessData.ownerId);
+			let subAccountData = loadSubAccountFromId(propertyData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
@@ -716,92 +716,92 @@ function getBusinessInfoCommand(command, params, client) {
 			break;
 
 		case AGRP_BIZ_OWNER_NONE:
-			//submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
+			//submitBugReport(client, `[AUTOMATED REPORT] getPropertyInfoCommand() - Invalid ownerType for business ${propertyIndex}/${getPropertyData(propertyIndex).databaseId}`);
 			ownerName = "None";
 			break;
 
 		default:
-			submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType ${businessData.ownerType} for business ${businessId}/${getBusinessData(businessId).databaseId}`);
+			submitBugReport(client, `[AUTOMATED REPORT] getPropertyInfoCommand() - Invalid ownerType ${propertyData.ownerType} for property ${propertyIndex}/${getPropertyData(propertyIndex).databaseId}`);
 			ownerName = "None";
 			break;
 	}
 
 
 	let tempStats = [
-		[`Name`, `${businessData.name}`],
-		[`ID`, `${businessData.index}/${businessData.databaseId}`],
-		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
-		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
-		[`BuyPrice`, `${getCurrencyString(businessData.buyPrice)}`],
-		//[`RentPrice`, `${businessData.rentPrice}`],
-		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
-		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
-		[`HasBuyableItems`, `${getYesNoFromBool(doesBusinessHaveAnyItemsToBuy(businessId))}`],
-		[`EntranceFee`, `${getCurrencyString(businessData.entranceFee)}`],
-		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
-		[`Balance`, `${getCurrencyString(businessData.till)}`],
-		[`RadioStation`, `${businessData.streamingRadioStation}`],
-		[`LabelHelpType`, `${businessData.labelHelpType}`],
+		[`Name`, `${propertyData.name}`],
+		[`ID`, `${propertyData.index}/${propertyData.databaseId}`],
+		[`Owner`, `${ownerName} (${getPropertyOwnerTypeText(propertyData.ownerType)})`],
+		[`Locked`, `${getLockedUnlockedFromBool(propertyData.locked)}`],
+		[`BuyPrice`, `${getCurrencyString(propertyData.buyPrice)}`],
+		//[`RentPrice`, `${propertyData.rentPrice}`],
+		[`HasInterior`, `${getYesNoFromBool(propertyData.hasInterior)}`],
+		[`CustomInterior`, `${getYesNoFromBool(propertyData.customInterior)}`],
+		[`HasBuyableItems`, `${getYesNoFromBool(doesPropertyHaveAnyItemsToBuy(propertyIndex))}`],
+		[`EntranceFee`, `${getCurrencyString(propertyData.entranceFee)}`],
+		[`InteriorLights`, `${getOnOffFromBool(propertyData.interiorLights)}`],
+		[`Balance`, `${getCurrencyString(propertyData.till)}`],
+		[`RadioStation`, `${propertyData.streamingRadioStation}`],
+		[`LabelHelpType`, `${propertyData.labelHelpType}`],
 	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessInfo", businessData.name)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPropertyInfo", propertyData.name)));
 	let chunkedList = splitArrayIntoChunks(stats, 6);
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
 
-	//messagePlayerInfo(client, `🏢 {businessBlue}[Business Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getBusinessData(businessId).name}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getBusinessOwnerTypeText(getBusinessData(businessId).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getBusinessData(businessId).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${businessId}/${getBusinessData(businessId).databaseId}`);
+	//messagePlayerInfo(client, `🏢 ${getInlinePropertyColour(propertyIndex)}[Property Info] {MAINCOLOUR}Name: {ALTCOLOUR}${getPropertyData(propertyIndex).name}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName} (${getPropertyOwnerTypeText(getPropertyData(propertyIndex).ownerType)}), {MAINCOLOUR}Locked: {ALTCOLOUR}${getYesNoFromBool(intToBool(getPropertyData(propertyIndex).locked))}, {MAINCOLOUR}ID: {ALTCOLOUR}${propertyIndex}/${getPropertyData(propertyIndex).databaseId}`);
 }
 
 // ===========================================================================
 
-function getBusinessFloorItemsCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function getPropertyFloorItemsCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	showBusinessFloorInventoryToPlayer(client, businessId);
+	showPropertyFloorInventoryToPlayer(client, propertyIndex);
 }
 
 // ===========================================================================
 
-function getBusinessStorageItemsCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function getPropertyStorageItemsCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	showBusinessStorageInventoryToPlayer(client, businessId);
+	showPropertyStorageInventoryToPlayer(client, propertyIndex);
 }
 
 // ===========================================================================
 
-function setBusinessPickupCommand(command, params, client) {
+function setPropertyPickupCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -818,26 +818,26 @@ function setBusinessPickupCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).entrancePickupModel = getGameConfig().pickupModels[getGame()][typeParam];
+		getPropertyData(propertyIndex).entrancePickupModel = getGameConfig().pickupModels[getGame()][typeParam];
 	} else {
-		getBusinessData(businessId).entrancePickupModel = toInteger(typeParam);
+		getPropertyData(propertyIndex).entrancePickupModel = toInteger(typeParam);
 	}
 
-	resetBusinessPickups(businessId);
+	resetPropertyPickups(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} pickup display to {ALTCOLOUR}${typeParam}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} pickup display to {ALTCOLOUR}${typeParam}!`);
 }
 
 // ===========================================================================
 
-function setBusinessInteriorTypeCommand(command, params, client) {
+function setPropertyInteriorTypeCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -848,15 +848,15 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 
 	if (isNaN(typeParam)) {
 		if (toLowerCase(typeParam) == "None") {
-			getBusinessData(businessId).exitPosition = toVector3(0.0, 0.0, 0.0);
-			getBusinessData(businessId).exitDimension = 0;
-			getBusinessData(businessId).exitInterior = -1;
-			getBusinessData(businessId).hasInterior = false;
-			getBusinessData(businessId).entranceScene = "";
-			getBusinessData(businessId).exitScene = "";
-			getBusinessData(businessId).exitPickupModel = -1;
-			getBusinessData(businessId).customInterior = false;
-			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`);
+			getPropertyData(propertyIndex).exitPosition = toVector3(0.0, 0.0, 0.0);
+			getPropertyData(propertyIndex).exitDimension = 0;
+			getPropertyData(propertyIndex).exitInterior = -1;
+			getPropertyData(propertyIndex).hasInterior = false;
+			getPropertyData(propertyIndex).entranceScene = "";
+			getPropertyData(propertyIndex).exitScene = "";
+			getPropertyData(propertyIndex).exitPickupModel = -1;
+			getPropertyData(propertyIndex).customInterior = false;
+			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} interior`);
 			return false;
 		}
 
@@ -872,42 +872,42 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
-		getBusinessData(businessId).hasInterior = true;
-		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getPropertyData(propertyIndex).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
+		getPropertyData(propertyIndex).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
+		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + getGlobalConfig().propertyDimensionStart;
+		getPropertyData(propertyIndex).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getPropertyData(propertyIndex).hasInterior = true;
+		getPropertyData(propertyIndex).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
 
 		if (isGameFeatureSupported("interiorScene")) {
 			if (isMainWorldScene(getPlayerData(client).scene)) {
-				getBusinessData(businessId).exitScene = getGameConfig().mainWorldScene[getGame()];
+				getPropertyData(propertyIndex).exitScene = getGameConfig().mainWorldScene[getGame()];
 			} else {
-				getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
+				getPropertyData(propertyIndex).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
 			}
 		}
 	}
 
-	//deleteBusinessExitPickup(businessId);
-	//deleteBusinessExitBlip(businessId);
-	//createBusinessExitBlip(businessId);
-	//createBusinessExitPickup(businessId);
+	//deletePropertyExitPickup(propertyIndex);
+	//deletePropertyExitBlip(propertyIndex);
+	//createPropertyExitBlip(propertyIndex);
+	//createPropertyExitPickup(propertyIndex);
 
-	resetBusinessPickups(businessId);
+	resetPropertyPickups(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
 }
 
 // ===========================================================================
 
-function addBusinessPropertyTemplateEntities(command, params, client) {
+function addPropertyPropertyTemplateEntities(command, params, client) {
 	let propertyTemplateParam = getParam(params, " ", 1) || "business";
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
@@ -929,41 +929,41 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
-		getBusinessData(businessId).hasInterior = true;
-		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
+		getPropertyData(propertyIndex).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
+		getPropertyData(propertyIndex).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
+		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + getGlobalConfig().businessDimensionStart;
+		getPropertyData(propertyIndex).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getPropertyData(propertyIndex).hasInterior = true;
+		getPropertyData(propertyIndex).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getPropertyData(propertyIndex).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
 	}
 
-	//deleteBusinessExitPickup(businessId);
-	//deleteBusinessExitBlip(businessId);
-	//createBusinessExitBlip(businessId);
-	//createBusinessExitPickup(businessId);
+	//deletePropertyExitPickup(propertyIndex);
+	//deletePropertyExitBlip(propertyIndex);
+	//createPropertyExitBlip(propertyIndex);
+	//createPropertyExitPickup(propertyIndex);
 
-	resetBusinessPickups(businessId);
+	resetPropertyPickups(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
 }
 
 // ===========================================================================
 
-function setBusinessBlipCommand(command, params, client) {
+function setPropertyBlipCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	if (isNaN(typeParam)) {
 		if (isNull(getGameConfig().blipSprites[getGame()][typeParam])) {
-			messagePlayerError(client, "Invalid business type! Use a business type name or a blip image ID");
+			messagePlayerError(client, "Invalid property type! Use a property type name or a blip image ID");
 
 			let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
 			let chunkedList = splitArrayIntoChunks(blipTypes, 10);
@@ -975,167 +975,167 @@ function setBusinessBlipCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).entranceBlipModel = getGameConfig().blipSprites[getGame()][typeParam];
+		getPropertyData(propertyIndex).entranceBlipModel = getGameConfig().blipSprites[getGame()][typeParam];
 	} else {
-		getBusinessData(businessId).entranceBlipModel = toInteger(typeParam);
+		getPropertyData(propertyIndex).entranceBlipModel = toInteger(typeParam);
 	}
 
-	resetBusinessBlips(businessId);
-	getBusinessData(businessId).needsSaved = true;
+	resetPropertyBlips(propertyIndex);
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} blip display to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} blip display to {ALTCOLOUR}${typeParam}`);
 }
 
 // ===========================================================================
 
-function giveDefaultItemsToBusinessCommand(command, params, client) {
+function giveDefaultItemsToPropertyCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	if (!isNaN(typeParam)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (isNull(getGameConfig().defaultBusinessItems[getGame()][typeParam])) {
-		messagePlayerError(client, "Invalid business items type! Use a business items type name");
-		let businessItemTypes = Object.keys(getGameConfig().defaultBusinessItems[getGame()]);
+	if (isNull(getGameConfig().defaultPropertyItems[getGame()][typeParam])) {
+		messagePlayerError(client, "Invalid property items type! Use a property items type name");
+		let businessItemTypes = Object.keys(getGameConfig().defaultPropertyItems[getGame()]);
 		let chunkedList = splitArrayIntoChunks(businessItemTypes, 10);
 
-		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDefaultBusinessItemTypes")));
+		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDefaultPropertyItemTypes")));
 		for (let i in chunkedList) {
 			messagePlayerInfo(client, chunkedList[i].join(", "));
 		}
 		return false;
 	}
 
-	for (let i in getGameConfig().defaultBusinessItems[getGame()][typeParam]) {
-		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultBusinessItems[getGame()][typeParam][i][0]);
+	for (let i in getGameConfig().defaultPropertyItems[getGame()][typeParam]) {
+		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultPropertyItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
-			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultBusinessItems[getGame()][typeParam][i][2];
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, AGRP_ITEM_OWNER_BIZFLOOR, getPropertyData(propertyIndex).databaseId, getGameConfig().defaultPropertyItems[getGame()][typeParam][i][1]);
+			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultPropertyItems[getGame()][typeParam][i][2];
 		}
 	}
 
-	cacheBusinessItems(businessId);
-	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${toLowerCase(typeParam)}`);
+	cachePropertyItems(propertyIndex);
+	updatePropertyPickupLabelData(propertyIndex);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} the default items for ${toLowerCase(typeParam)}`);
 }
 
 // ===========================================================================
 
-function setBusinessDealershipCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function setPropertyDealershipCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
-	getBusinessData(businessId).type = AGRP_BIZ_TYPE_DEALERSHIP;
-	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
+	getPropertyData(propertyIndex).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
+	getPropertyData(propertyIndex).type = AGRP_BIZ_TYPE_DEALERSHIP;
+	updatePropertyPickupLabelData(propertyIndex);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the property type of ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} to dealership`);
 }
 
 // ===========================================================================
 
-function deleteBusinessFloorItemsCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function deletePropertyFloorItemsCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	let tempCache = getBusinessData(businessId).floorItemCache;
+	let tempCache = getPropertyData(propertyIndex).floorItemCache;
 	for (let i in tempCache) {
 		deleteItem(tempCache[i]);
 	}
 
-	cacheBusinessItems(businessId);
+	cachePropertyItems(propertyIndex);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}`);
 }
 
 // ===========================================================================
 
-function deleteBusinessStorageItemsCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function deletePropertyStorageItemsCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	let tempCache = getBusinessData(businessId).storageItemCache;
+	let tempCache = getPropertyData(propertyIndex).storageItemCache;
 	for (let i in tempCache) {
 		deleteItem(tempCache[i]);
 	}
 
-	cacheBusinessItems(businessId);
+	cachePropertyItems(propertyIndex);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all stored items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all stored items for property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}`);
 }
 
 // ===========================================================================
 
-function withdrawFromBusinessCommand(command, params, client) {
+function withdrawFromPropertyCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	if (getBusinessData(businessId).till < amount) {
-		messagePlayerError(client, `Business {businessBlue}${tempBusinessData.name} doesn't have that much money! Use /bizbalance.`);
+	if (getPropertyData(propertyIndex).till < amount) {
+		messagePlayerError(client, `Property ${getInlinePropertyColour(propertyIndex)}${tempPropertyData.name} doesn't have that much money! Use /bizbalance.`);
 		return false;
 	}
 
-	getBusinessData(businessId).till -= amount;
+	getPropertyData(propertyIndex).till -= amount;
 	givePlayerCash(client, amount);
 	updatePlayerCash(client);
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messagePlayerSuccess(client, `You withdrew ${getCurrencyString(amount)} from business {businessBlue}${getBusinessData(businessId).name} till`);
+	messagePlayerSuccess(client, `You withdrew ${getCurrencyString(amount)} from property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} till`);
 }
 
 // ===========================================================================
 
-function setBusinessBuyPriceCommand(command, params, client) {
+function setPropertyBuyPriceCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
@@ -1144,32 +1144,32 @@ function setBusinessBuyPriceCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).buyPrice = amount;
-	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
+	getPropertyData(propertyIndex).buyPrice = amount;
+	setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.price", getPropertyData(propertyIndex).buyPrice, true);
 
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
 
-function depositIntoBusinessCommand(command, params, client) {
+function depositIntoPropertyCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	// Let anybody deposit money
-	//if(!canPlayerManageBusiness(client, businessId)) {
-	//	messagePlayerError(client, "You can't deposit cash into this business!");
+	//if(!canPlayerManageProperty(client, propertyIndex)) {
+	//	messagePlayerError(client, "You can't deposit cash into this property!");
 	//	return false;
 	//}
 
@@ -1178,17 +1178,17 @@ function depositIntoBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).till += amount;
+	getPropertyData(propertyIndex).till += amount;
 	takePlayerCash(client, amount);
 	updatePlayerCash(client);
 
-	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `You deposited ${getCurrencyString(amount)} into business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till`);
+	getPropertyData(propertyIndex).needsSaved = true;
+	messagePlayerSuccess(client, `You deposited ${getCurrencyString(amount)} into property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} till`);
 }
 
 // ===========================================================================
 
-function orderItemForBusinessCommand(command, params, client) {
+function orderItemForPropertyCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1211,17 +1211,17 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	let amount = toInteger(splitParams.slice(-2, -1)) || 1;
 	let value = toInteger(splitParams.slice(-1)) || getItemTypeData(itemType).capacity;
-	let businessId = getPlayerBusiness(client);
+	let propertyIndex = getPlayerProperty(client);
 
 	logToConsole(LOG_DEBUG, `[AGRP.Property] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
@@ -1229,157 +1229,157 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	//getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 	getPlayerData(client).businessOrderAmount = amount;
-	getPlayerData(client).businessOrderBusiness = businessId;
+	getPlayerData(client).businessOrderProperty = propertyIndex;
 	getPlayerData(client).businessOrderItem = itemType;
 	getPlayerData(client).businessOrderValue = value;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
 
-	getBusinessData(businessId).needsSaved = true;
-	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(pricePerItem)} each will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
+	getPropertyData(propertyIndex).needsSaved = true;
+	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(pricePerItem)} each will cost a total of ${getCurrencyString(orderTotalCost)}`, "Property Order Cost");
 	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
 
-function orderItemForBusiness(businessId, itemType, amount) {
-	if (getBusinessData(businessId).till < orderTotalCost) {
-		let neededAmount = orderTotalCost - getBusinessData(businessId).till;
+function orderItemForProperty(propertyIndex, itemType, amount) {
+	if (getPropertyData(propertyIndex).till < orderTotalCost) {
+		let neededAmount = orderTotalCost - getPropertyData(propertyIndex).till;
 		//messagePlayerError(client, `The business doesn't have enough money (needs {ALTCOLOUR}${getCurrencyString(neededAmount)} {MAINCOLOUR}more)! Use {ALTCOLOUR}/bizdeposit {MAINCOLOUR}to add money to the business.`);
 		return false;
 	}
 
-	getBusinessData(businessId).till -= orderTotalCost;
-	addToBusinessInventory(businessId, itemType, amount);
-	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(getItemTypeData(itemType).orderPrice)} each for business {businessBlue}${getBusinessData(businessId).name}`);
+	getPropertyData(propertyIndex).till -= orderTotalCost;
+	addToPropertyInventory(propertyIndex, itemType, amount);
+	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(getItemTypeData(itemType).orderPrice)} each for business ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}`);
 }
 
 // ===========================================================================
 
-function viewBusinessTillAmountCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function viewPropertyTillAmountCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (!canPlayerManageBusiness(client, businessId)) {
-		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+	if (!canPlayerManageProperty(client, propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyProperty"));
 		return false;
 	}
 
-	messagePlayerSuccess(client, `Business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till has {ALTCOLOUR}${getCurrencyString(getBusinessData(businessId).till)}`);
+	messagePlayerSuccess(client, `Property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} till has {ALTCOLOUR}${getCurrencyString(getPropertyData(propertyIndex).till)}`);
 }
 
 // ===========================================================================
 
-function buyBusinessCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function buyPropertyCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (getBusinessData(businessId).buyPrice <= 0) {
-		messagePlayerError(client, getLocaleString(client, "BusinessNotForSale"));
+	if (getPropertyData(propertyIndex).buyPrice <= 0) {
+		messagePlayerError(client, getLocaleString(client, "PropertyNotForSale"));
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
-		messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
+	if (getPlayerCurrentSubAccount(client).cash < getPropertyData(propertyIndex).buyPrice) {
+		messagePlayerError(client, getLocaleString(client, "PropertyPurchaseNotEnoughMoney"));
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	showPlayerPrompt(client, getLocaleString(client, "BuyPropertyConfirmMessage"), getLocaleString(client, "BuyPropertyConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = AGRP_PROMPT_BIZBUY;
 }
 
 // ===========================================================================
 
-function moveBusinessEntranceCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function movePropertyEntranceCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).entrancePosition = getPlayerPosition(client);
-	getBusinessData(businessId).entranceDimension = getPlayerDimension(client);
-	getBusinessData(businessId).entranceInterior = getPlayerInterior(client);
+	getPropertyData(propertyIndex).entrancePosition = getPlayerPosition(client);
+	getPropertyData(propertyIndex).entranceDimension = getPlayerDimension(client);
+	getPropertyData(propertyIndex).entranceInterior = getPlayerInterior(client);
 
-	//deleteBusinessEntranceBlip(businessId);
-	//deleteBusinessEntrancePickup(businessId);
-	//createBusinessEntranceBlip(businessId);
-	//createBusinessEntrancePickup(businessId);
+	//deletePropertyEntranceBlip(propertyIndex);
+	//deletePropertyEntrancePickup(propertyIndex);
+	//createPropertyEntranceBlip(propertyIndex);
+	//createPropertyEntrancePickup(propertyIndex);
 
-	resetBusinessPickups(businessId);
-	resetBusinessBlips(businessId);
+	resetPropertyPickups(propertyIndex);
+	resetPropertyBlips(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} entrance to their position`);
 }
 
 // ===========================================================================
 
-function moveBusinessExitCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function movePropertyExitCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (!areParamsEmpty(params)) {
-		businessId = getBusinessFromParams(params);
+		propertyIndex = getPropertyFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	getBusinessData(businessId).exitPosition = getPlayerPosition(client);
-	getBusinessData(businessId).exitDimension = getPlayerDimension(client);
-	getBusinessData(businessId).exitInterior = getPlayerInterior(client);
+	getPropertyData(propertyIndex).exitPosition = getPlayerPosition(client);
+	getPropertyData(propertyIndex).exitDimension = getPlayerDimension(client);
+	getPropertyData(propertyIndex).exitInterior = getPlayerInterior(client);
 
-	deleteBusinessExitBlip(businessId);
-	deleteBusinessExitPickup(businessId);
+	deletePropertyExitBlip(propertyIndex);
+	deletePropertyExitPickup(propertyIndex);
 
-	createBusinessExitBlip(businessId);
-	createBusinessExitPickup(businessId);
+	createPropertyExitBlip(propertyIndex);
+	createPropertyExitPickup(propertyIndex);
 
-	getBusinessData(businessId).needsSaved = true;
+	getPropertyData(propertyIndex).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}exit to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR}exit to their position`);
 }
 
 // ===========================================================================
 
-function getBusinessDataFromDatabaseId(databaseId) {
+function getPropertyDataFromDatabaseId(databaseId) {
 	if (databaseId <= 0) {
 		return false;
 	}
 
-	let matchingBusinesses = getServerData().businesses.filter(b => b.databaseId == databaseId)
-	if (matchingBusinesses.length == 1) {
-		return matchingBusinesses[0];
+	let matchingPropertyes = getServerData().properties.filter(b => b.databaseId == databaseId)
+	if (matchingPropertyes.length == 1) {
+		return matchingPropertyes[0];
 	}
 	return false;
 }
 
 // ===========================================================================
 
-function getClosestBusinessEntrance(position, dimension) {
+function getClosestPropertyEntrance(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().businesses) {
-		if (getServerData().businesses[i].entranceDimension == dimension) {
-			if (getDistance(position, getServerData().businesses[i].entrancePosition) <= getDistance(position, getServerData().businesses[closest].entrancePosition)) {
+	for (let i in getServerData().properties) {
+		if (getServerData().properties[i].entranceDimension == dimension) {
+			if (getDistance(position, getServerData().properties[i].entrancePosition) <= getDistance(position, getServerData().properties[closest].entrancePosition)) {
 				closest = i;
 			}
 		}
@@ -1389,11 +1389,11 @@ function getClosestBusinessEntrance(position, dimension) {
 
 // ===========================================================================
 
-function getClosestBusinessExit(position, dimension) {
+function getClosestPropertyExit(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().businesses) {
-		if (getServerData().businesses[i].hasInterior && getServerData().businesses[i].exitDimension == dimension) {
-			if (getDistance(position, getServerData().businesses[i].exitPosition) <= getDistance(position, getServerData().businesses[closest].exitPosition)) {
+	for (let i in getServerData().properties) {
+		if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == dimension) {
+			if (getDistance(position, getServerData().properties[i].exitPosition) <= getDistance(position, getServerData().properties[closest].exitPosition)) {
 				closest = i;
 			}
 		}
@@ -1403,9 +1403,9 @@ function getClosestBusinessExit(position, dimension) {
 
 // ===========================================================================
 
-function isPlayerInAnyBusiness(client) {
-	for (let i in getServerData().businesses) {
-		if (getServerData().businesses[i].hasInterior && getServerData().businesses[i].exitDimension == getPlayerDimension(client)) {
+function isPlayerInAnyProperty(client) {
+	for (let i in getServerData().properties) {
+		if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == getPlayerDimension(client)) {
 			return i;
 		}
 	}
@@ -1415,24 +1415,24 @@ function isPlayerInAnyBusiness(client) {
 
 // ===========================================================================
 
-function getPlayerBusiness(client) {
-	if (getServerData().businesses.length == 0) {
+function getPlayerProperty(client) {
+	if (getServerData().properties.length == 0) {
 		return -1;
 	}
 
 	if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
-		let closestEntrance = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
-			return getBusinessData(closestEntrance).index;
+		let closestEntrance = getClosestPropertyEntrance(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+			return getPropertyData(closestEntrance).index;
 		}
 	} else {
-		let closestEntrance = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
-			return getBusinessData(closestEntrance).index;
+		let closestEntrance = getClosestPropertyEntrance(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+			return getPropertyData(closestEntrance).index;
 		}
 
-		for (let i in getServerData().businesses) {
-			if (getServerData().businesses[i].hasInterior && getServerData().businesses[i].exitDimension == getPlayerDimension(client)) {
+		for (let i in getServerData().properties) {
+			if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == getPlayerDimension(client)) {
 				return i;
 			}
 		}
@@ -1442,14 +1442,14 @@ function getPlayerBusiness(client) {
 
 // ===========================================================================
 
-function saveAllBusinessesToDatabase() {
+function saveAllPropertyesToDatabase() {
 	if (getServerConfig().devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().businesses) {
-		if (getServerData().businesses[i].needsSaved) {
-			saveBusinessToDatabase(i);
+	for (let i in getServerData().properties) {
+		if (getServerData().properties[i].needsSaved) {
+			savePropertyToDatabase(i);
 		}
 	}
 
@@ -1458,85 +1458,85 @@ function saveAllBusinessesToDatabase() {
 
 // ===========================================================================
 
-function saveBusinessToDatabase(businessId) {
-	let tempBusinessData = getServerData().businesses[businessId];
+function savePropertyToDatabase(propertyIndex) {
+	let tempPropertyData = getServerData().properties[propertyIndex];
 
-	if (!tempBusinessData.needsSaved) {
+	if (!tempPropertyData.needsSaved) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saving business '${tempBusinessData.name}' to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saving business '${tempPropertyData.name}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		let safeBusinessName = escapeDatabaseString(dbConnection, tempBusinessData.name);
+		let safePropertyName = escapeDatabaseString(dbConnection, tempPropertyData.name);
 
 		let data = [
-			["biz_server", getServerId()],
-			["biz_name", safeBusinessName],
-			["biz_owner_type", tempBusinessData.ownerType],
-			["biz_owner_id", tempBusinessData.ownerId],
-			["biz_locked", boolToInt(tempBusinessData.locked)],
-			["biz_entrance_fee", tempBusinessData.entranceFee],
-			["biz_till", tempBusinessData.till],
-			["biz_entrance_pos_x", tempBusinessData.entrancePosition.x],
-			["biz_entrance_pos_y", tempBusinessData.entrancePosition.y],
-			["biz_entrance_pos_z", tempBusinessData.entrancePosition.z],
-			["biz_entrance_rot_z", tempBusinessData.entranceRotation],
-			["biz_entrance_int", tempBusinessData.entranceInterior],
-			["biz_entrance_vw", tempBusinessData.entranceDimension],
-			["biz_entrance_pickup", tempBusinessData.entrancePickupModel],
-			["biz_entrance_blip", tempBusinessData.entranceBlipModel],
-			["biz_entrance_scene", tempBusinessData.entranceScene],
-			["biz_exit_pos_x", tempBusinessData.exitPosition.x],
-			["biz_exit_pos_y", tempBusinessData.exitPosition.y],
-			["biz_exit_pos_z", tempBusinessData.exitPosition.z],
-			["biz_exit_rot_z", tempBusinessData.exitRotation],
-			["biz_exit_int", tempBusinessData.exitInterior],
-			["biz_exit_vw", tempBusinessData.exitDimension],
-			["biz_exit_pickup", tempBusinessData.exitPickupModel],
-			["biz_exit_blip", tempBusinessData.exitBlipModel],
-			["biz_exit_scene", tempBusinessData.exitScene],
-			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
-			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
-			["biz_label_help_type", tempBusinessData.labelHelpType],
-			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
-			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
-			["biz_buy_price", tempBusinessData.buyPrice],
-			//["biz_rent_price", tempBusinessData.rentPrice],
+			["prop_server", getServerId()],
+			["prop_name", safePropertyName],
+			["prop_owner_type", tempPropertyData.ownerType],
+			["prop_owner_id", tempPropertyData.ownerId],
+			["prop_locked", boolToInt(tempPropertyData.locked)],
+			["prop_entrance_fee", tempPropertyData.entranceFee],
+			["prop_till", tempPropertyData.till],
+			["prop_entrance_pos_x", tempPropertyData.entrancePosition.x],
+			["prop_entrance_pos_y", tempPropertyData.entrancePosition.y],
+			["prop_entrance_pos_z", tempPropertyData.entrancePosition.z],
+			["prop_entrance_rot_z", tempPropertyData.entranceRotation],
+			["prop_entrance_int", tempPropertyData.entranceInterior],
+			["prop_entrance_vw", tempPropertyData.entranceDimension],
+			["prop_entrance_pickup", tempPropertyData.entrancePickupModel],
+			["prop_entrance_blip", tempPropertyData.entranceBlipModel],
+			["prop_entrance_scene", tempPropertyData.entranceScene],
+			["prop_exit_pos_x", tempPropertyData.exitPosition.x],
+			["prop_exit_pos_y", tempPropertyData.exitPosition.y],
+			["prop_exit_pos_z", tempPropertyData.exitPosition.z],
+			["prop_exit_rot_z", tempPropertyData.exitRotation],
+			["prop_exit_int", tempPropertyData.exitInterior],
+			["prop_exit_vw", tempPropertyData.exitDimension],
+			["prop_exit_pickup", tempPropertyData.exitPickupModel],
+			["prop_exit_blip", tempPropertyData.exitBlipModel],
+			["prop_exit_scene", tempPropertyData.exitScene],
+			["prop_has_interior", boolToInt(tempPropertyData.hasInterior)],
+			["prop_interior_lights", boolToInt(tempPropertyData.interiorLights)],
+			["prop_label_help_type", tempPropertyData.labelHelpType],
+			["prop_radio_station", (getRadioStationData(tempPropertyData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempPropertyData.streamingRadioStationIndex).databaseId) : -1],
+			["prop_custom_interior", boolToInt(tempPropertyData.customInterior)],
+			["prop_buy_price", tempPropertyData.buyPrice],
+			//["prop_rent_price", tempPropertyData.rentPrice],
 		];
 
 		let dbQuery = null;
-		if (tempBusinessData.databaseId == 0) {
-			let queryString = createDatabaseInsertQuery("biz_main", data);
+		if (tempPropertyData.databaseId == 0) {
+			let queryString = createDatabaseInsertQuery("prop_main", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().businesses[businessId].databaseId = getDatabaseInsertId(dbConnection);
+			getServerData().properties[propertyIndex].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
-			let queryString = createDatabaseUpdateQuery("biz_main", data, `biz_id=${tempBusinessData.databaseId}`);
+			let queryString = createDatabaseUpdateQuery("prop_main", data, `prop_id=${tempPropertyData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
 		}
 
-		getBusinessData(businessId).needsSaved = false;
+		getPropertyData(propertyIndex).needsSaved = false;
 
 		freeDatabaseQuery(dbQuery);
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saved business '${tempBusinessData.name}' to database!`);
+	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saved property '${tempPropertyData.name}' to database!`);
 
 	return false;
 }
 
 // ===========================================================================
 
-function createAllBusinessPickups() {
-	if (!getServerConfig().createBusinessPickups) {
+function createAllPropertyPickups() {
+	if (!getServerConfig().createPropertyPickups) {
 		return false;
 	}
 
-	for (let i in getServerData().businesses) {
-		createBusinessEntrancePickup(i);
-		createBusinessExitPickup(i);
-		updateBusinessPickupLabelData(i);
+	for (let i in getServerData().properties) {
+		createPropertyEntrancePickup(i);
+		createPropertyExitPickup(i);
+		updatePropertyPickupLabelData(i);
 	}
 
 	return true;
@@ -1544,8 +1544,8 @@ function createAllBusinessPickups() {
 
 // ===========================================================================
 
-function createAllBusinessBlips() {
-	if (!getServerConfig().createBusinessBlips) {
+function createAllPropertyBlips() {
+	if (!getServerConfig().createPropertyBlips) {
 		return false;
 	}
 
@@ -1553,74 +1553,74 @@ function createAllBusinessBlips() {
 		return false;
 	}
 
-	for (let i in getServerData().businesses) {
-		createBusinessEntranceBlip(i);
-		createBusinessExitBlip(i);
+	for (let i in getServerData().properties) {
+		createPropertyEntranceBlip(i);
+		createPropertyExitBlip(i);
 	}
 }
 
 // ===========================================================================
 
-function createBusinessEntrancePickup(businessId) {
+function createPropertyEntrancePickup(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessPickups) {
+	if (!getServerConfig().createPropertyPickups) {
 		return false;
 	}
 
-	let businessData = getBusinessData(businessId);
+	let propertyData = getPropertyData(propertyIndex);
 
-	//if(businessData.hasInterior) {
+	//if(propertyData.hasInterior) {
 	//	return false;
 	//}
 
-	if (businessData.entrancePickupModel == -1) {
+	if (propertyData.entrancePickupModel == -1) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for business ${businessData.name}`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for property ${propertyData.name}`);
 
 	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
-			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+			let pickupModelId = getGameConfig().pickupModels[getGame()].Property;
 
-			if (businessData.entrancePickupModel != 0) {
-				pickupModelId = businessData.entrancePickupModel;
+			if (propertyData.entrancePickupModel != 0) {
+				pickupModelId = propertyData.entrancePickupModel;
 			}
 
-			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+			entrancePickup = createGamePickup(pickupModelId, propertyData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
 		} else if (isGameFeatureSupported("dummyElement")) {
-			entrancePickup = createGameDummyElement(businessData.entrancePosition);
+			entrancePickup = createGameDummyElement(propertyData.entrancePosition);
 		}
 
 		if (entrancePickup != null) {
-			if (businessData.entranceDimension != -1) {
-				setElementDimension(entrancePickup, businessData.entranceDimension);
+			if (propertyData.entranceDimension != -1) {
+				setElementDimension(entrancePickup, propertyData.entranceDimension);
 				setElementOnAllDimensions(entrancePickup, false);
 			} else {
 				setElementOnAllDimensions(entrancePickup, true);
 			}
 
-			if (getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1) {
+			if (getGlobalConfig().propertyPickupStreamInDistance == -1 || getGlobalConfig().propertyPickupStreamOutDistance == -1) {
 				entrancePickup.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
-				setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
+				setElementStreamInDistance(entrancePickup, getGlobalConfig().propertyPickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, getGlobalConfig().propertyPickupStreamOutDistance);
 			}
 			setElementTransient(entrancePickup, false);
-			getBusinessData(businessId).entrancePickup = entrancePickup;
-			updateBusinessPickupLabelData(businessId);
+			getPropertyData(propertyIndex).entrancePickup = entrancePickup;
+			updatePropertyPickupLabelData(propertyIndex);
 		}
 	} else {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Property;
 
-		if (businessData.entrancePickupModel != 0) {
-			pickupModelId = businessData.entrancePickupModel;
+		if (propertyData.entrancePickupModel != 0) {
+			pickupModelId = propertyData.entrancePickupModel;
 		}
-		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, businessData.buyPrice, businessData.rentPrice, doesBusinessHaveAnyItemsToBuy(businessId));
+		sendPropertyToPlayer(null, propertyIndex, propertyData.name, propertyData.entrancePosition, blipModelId, pickupModelId, propertyData.hasInterior, propertyData.buyPrice, propertyData.rentPrice, doesPropertyHaveAnyItemsToBuy(propertyIndex));
 	}
 
 	return false;
@@ -1628,12 +1628,12 @@ function createBusinessEntrancePickup(businessId) {
 
 // ===========================================================================
 
-function createBusinessEntranceBlip(businessId) {
+function createPropertyEntranceBlip(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessBlips) {
+	if (!getServerConfig().createPropertyBlips) {
 		return false;
 	}
 
@@ -1641,111 +1641,111 @@ function createBusinessEntranceBlip(businessId) {
 		return false;
 	}
 
-	let businessData = getBusinessData(businessId);
+	let propertyData = getPropertyData(propertyIndex);
 
-	//if(businessData.hasInterior) {
+	//if(propertyData.hasInterior) {
 	//	return false;
 	//}
 
-	if (businessData.entranceBlipModel == -1) {
+	if (propertyData.entranceBlipModel == -1) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+	let blipModelId = getGameConfig().blipSprites[getGame()].Property;
 
-	if (businessData.entranceBlipModel != 0) {
-		blipModelId = businessData.entranceBlipModel;
+	if (propertyData.entranceBlipModel != 0) {
+		blipModelId = propertyData.entranceBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${propertyData.name} (model ${blipModelId})`);
 
 	if (areServerElementsSupported()) {
-		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
+		let entranceBlip = createGameBlip(propertyData.entrancePosition, blipModelId, 1, getColourByType("propertyColour"));
 		if (entranceBlip != null) {
-			if (businessData.entranceDimension != -1) {
-				setElementDimension(entranceBlip, businessData.entranceDimension);
+			if (propertyData.entranceDimension != -1) {
+				setElementDimension(entranceBlip, propertyData.entranceDimension);
 				setElementOnAllDimensions(entranceBlip, false);
 			} else {
 				setElementOnAllDimensions(entranceBlip, true);
 			}
 
-			if (getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1) {
+			if (getGlobalConfig().propertyBlipStreamInDistance == -1 || getGlobalConfig().propertyBlipStreamOutDistance == -1) {
 				entranceBlip.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
-				setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
+				setElementStreamInDistance(entranceBlip, getGlobalConfig().propertyBlipStreamInDistance);
+				setElementStreamOutDistance(entranceBlip, getGlobalConfig().propertyBlipStreamOutDistance);
 			}
 			setElementTransient(entranceBlip, false);
-			businessData.entranceBlip = entranceBlip;
+			propertyData.entranceBlip = entranceBlip;
 		}
 	}
 }
 
 // ===========================================================================
 
-function createBusinessExitPickup(businessId) {
+function createPropertyExitPickup(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessPickups) {
+	if (!getServerConfig().createPropertyPickups) {
 		return false;
 	}
 
-	let businessData = getBusinessData(businessId);
+	let propertyData = getPropertyData(propertyIndex);
 
-	//if(!businessData.hasInterior) {
+	//if(!propertyData.hasInterior) {
 	//	return false;
 	//}
 
-	if (businessData.exitPickupModel == -1) {
+	if (propertyData.exitPickupModel == -1) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit pickup for business ${businessData.name}`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit pickup for business ${propertyData.name}`);
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
 		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
 
-		if (businessData.exitPickupModel != 0) {
-			pickupModelId = businessData.exitPickupModel;
+		if (propertyData.exitPickupModel != 0) {
+			pickupModelId = propertyData.exitPickupModel;
 		}
 
-		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
+		exitPickup = createGamePickup(pickupModelId, propertyData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
 	} else if (isGameFeatureSupported("dummyElement")) {
-		//exitPickup = createGameDummyElement(businessData.exitPosition);
+		//exitPickup = createGameDummyElement(propertyData.exitPosition);
 	}
 
 	if (exitPickup != null) {
-		if (businessData.exitDimension != -1) {
-			setElementDimension(exitPickup, businessData.exitDimension);
+		if (propertyData.exitDimension != -1) {
+			setElementDimension(exitPickup, propertyData.exitDimension);
 			setElementOnAllDimensions(exitPickup, false);
 		} else {
 			setElementOnAllDimensions(exitPickup, true);
 		}
 
-		if (getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1) {
+		if (getGlobalConfig().propertyPickupStreamInDistance == -1 || getGlobalConfig().propertyPickupStreamOutDistance == -1) {
 			exitPickup.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitPickup, getGlobalConfig().businessPickupStreamInDistance);
-			setElementStreamOutDistance(exitPickup, getGlobalConfig().businessPickupStreamOutDistance);
+			setElementStreamInDistance(exitPickup, getGlobalConfig().propertyPickupStreamInDistance);
+			setElementStreamOutDistance(exitPickup, getGlobalConfig().propertyPickupStreamOutDistance);
 		}
 		setElementTransient(exitPickup, false);
-		getBusinessData(businessId).exitPickup = exitPickup;
-		updateBusinessPickupLabelData(businessId);
+		getPropertyData(propertyIndex).exitPickup = exitPickup;
+		updatePropertyPickupLabelData(propertyIndex);
 	}
 
 }
 
 // ===========================================================================
 
-function createBusinessExitBlip(businessId) {
+function createPropertyExitBlip(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessBlips) {
+	if (!getServerConfig().createPropertyBlips) {
 		return false;
 	}
 
@@ -1753,78 +1753,78 @@ function createBusinessExitBlip(businessId) {
 		return false;
 	}
 
-	let businessData = getBusinessData(businessId);
+	let propertyData = getPropertyData(propertyIndex);
 
-	//if(!businessData.hasInterior) {
+	//if(!propertyData.hasInterior) {
 	//	return false;
 	//}
 
-	if (businessData.exitBlipModel == -1) {
+	if (propertyData.exitBlipModel == -1) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+	let blipModelId = getGameConfig().blipSprites[getGame()].Property;
 
-	if (businessData.exitBlipModel != 0) {
-		blipModelId = businessData.exitBlipModel;
+	if (propertyData.exitBlipModel != 0) {
+		blipModelId = propertyData.exitBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit blip for property ${propertyData.name} (model ${blipModelId})`);
 
-	let exitBlip = createGameBlip(businessData.exitPosition, blipModelId, 1, getColourByName("businessBlue"));
+	let exitBlip = createGameBlip(propertyData.exitPosition, blipModelId, 1, getColourByName("propertyColour"));
 	if (exitBlip != null) {
-		if (businessData.exitDimension != -1) {
-			setElementDimension(exitBlip, businessData.exitDimension);
+		if (propertyData.exitDimension != -1) {
+			setElementDimension(exitBlip, propertyData.exitDimension);
 			setElementOnAllDimensions(exitBlip, false);
 		} else {
 			setElementOnAllDimensions(exitBlip, true);
 		}
 
-		if (getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1) {
+		if (getGlobalConfig().propertyBlipStreamInDistance == -1 || getGlobalConfig().propertyBlipStreamOutDistance == -1) {
 			exitBlip.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitBlip, getGlobalConfig().businessBlipStreamInDistance);
-			setElementStreamOutDistance(exitBlip, getGlobalConfig().businessBlipStreamOutDistance);
+			setElementStreamInDistance(exitBlip, getGlobalConfig().propertyBlipStreamInDistance);
+			setElementStreamOutDistance(exitBlip, getGlobalConfig().propertyBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
-		businessData.exitBlip = exitBlip;
+		propertyData.exitBlip = exitBlip;
 	}
 }
 
 // ===========================================================================
 
-function deleteBusiness(businessId, whoDeleted = 0) {
-	let tempBusinessData = getBusinessData(businessId);
+function deleteProperty(propertyIndex, whoDeleted = 0) {
+	let tempPropertyData = getPropertyData(propertyIndex);
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
 
-	deleteBusinessBlips(businessId);
-	deleteBusinessPickups(businessId);
+	deleteProperdeletePropertyPickupstyBlips(propertyIndex);
+	(propertyIndex);
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `UPDATE biz_main SET biz_deleted = 1, biz_when_deleted = UNIX_TIMESTAMP(), biz_who_deleted = ${whoDeleted} WHERE biz_id = ${tempBusinessData.databaseId}`);
+		dbQuery = queryDatabase(dbConnection, `UPDATE prop_main SET prop_deleted = 1, prop_when_deleted = UNIX_TIMESTAMP(), prop_who_deleted = ${whoDeleted} WHERE prop_id = ${tempPropertyData.databaseId}`);
 		if (dbQuery) {
 			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	removePlayersFromBusiness(businessId);
+	removePlayersFromProperty(propertyIndex);
 
-	getServerData().businesses.splice(businessId, 1);
+	getServerData().properties.splice(propertyIndex, 1);
 
 	return true;
 }
 
 // ===========================================================================
 
-function removePlayersFromBusiness(businessIndex) {
+function removePlayersFromProperty(propertyIndex) {
 	getClients().forEach(function (client) {
-		if (doesBusinessHaveInterior(businessIndex)) {
-			if (getPlayerBusiness(client) == businessIndex) {
-				if (getPlayerInterior(client) == getBusinessData(businessIndex).exitInterior && getPlayerDimension(client) == getBusinessData(businessIndex).exitDimension) {
-					exitBusiness(client);
+		if (doesPropertyHaveInterior(propertyIndex)) {
+			if (getPlayerProperty(client) == propertyIndex) {
+				if (getPlayerInterior(client) == getPropertyData(propertyIndex).exitInterior && getPlayerDimension(client) == getPropertyData(propertyIndex).exitDimension) {
+					exitProperty(client);
 				}
 			}
 		}
@@ -1835,24 +1835,24 @@ function removePlayersFromBusiness(businessIndex) {
 
 // ===========================================================================
 
-function removePlayerFromBusiness(client) {
-	exitBusiness(client);
+function removePlayerFromProperty(client) {
+	exitProperty(client);
 	return false;
 }
 
 // ===========================================================================
 
-function exitBusiness(client) {
-	let businessId = getPlayerBusiness(client);
+function exitProperty(client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (businessId == false) {
+	if (propertyIndex == false) {
 		return false;
 	}
 
 	if (isPlayerSpawned(client)) {
-		setPlayerInterior(client, getServerData().businesses[businessId].entranceInterior);
-		setPlayerDimension(client, getServerData().businesses[businessId].entranceDimension);
-		setPlayerPosition(client, getServerData().businesses[businessId].entrancePosition);
+		setPlayerInterior(client, getServerData().properties[propertyIndex].entranceInterior);
+		setPlayerDimension(client, getServerData().properties[propertyIndex].entranceDimension);
+		setPlayerPosition(client, getServerData().properties[propertyIndex].entrancePosition);
 		return true;
 	}
 
@@ -1861,7 +1861,7 @@ function exitBusiness(client) {
 
 // ===========================================================================
 
-function getBusinessOwnerTypeText(ownerType) {
+function getPropertyOwnerTypeText(ownerType) {
 	switch (ownerType) {
 		case AGRP_BIZ_OWNER_CLAN:
 			return "clan";
@@ -1883,34 +1883,33 @@ function getBusinessOwnerTypeText(ownerType) {
 
 // ===========================================================================
 
-function getBusinessData(businessId) {
-	if (businessId == -1) {
+function getPropertyData(propertyIndex) {
+	if (propertyIndex == -1) {
 		return false;
 	}
 
-	if (typeof getServerData().businesses[businessId] != null) {
-		return getServerData().businesses[businessId];
+	if (typeof getServerData().properties[propertyIndex] != null) {
+		return getServerData().properties[propertyIndex];
 	}
 	return false;
 }
 
 // ===========================================================================
 
-function doesBusinessHaveInterior(businessId) {
-	return getBusinessData(businessId).hasInterior;
+function doesPropertyHaveInterior(propertyIndex) {
+	return getPropertyData(propertyIndex).hasInterior;
 }
 
 // ===========================================================================
 
-function deleteBusinessEntrancePickup(businessId) {
+function deletePropertyEntrancePickup(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (getBusinessData(businessId).entrancePickup != null) {
-		//removeFromWorld(getBusinessData(businessId).entrancePickup);
-		deleteGameElement(getBusinessData(businessId).entrancePickup);
-		getBusinessData(businessId).entrancePickup = null;
+	if (getPropertyData(propertyIndex).entrancePickup != null) {
+		deleteGameElement(getPropertyData(propertyIndex).entrancePickup);
+		getPropertyData(propertyIndex).entrancePickup = null;
 
 		return true;
 	}
@@ -1920,39 +1919,21 @@ function deleteBusinessEntrancePickup(businessId) {
 
 // ===========================================================================
 
-function deleteBusinessExitPickup(businessId) {
+function deletePropertyExitPickup(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (getBusinessData(businessId).exitPickup != null) {
-		//removeFromWorld(getBusinessData(businessId).exitPickup);
-		deleteGameElement(getBusinessData(businessId).exitPickup);
-		getBusinessData(businessId).exitPickup = null;
+	if (getPropertyData(propertyIndex).exitPickup != null) {
+		//removeFromWorld(getPropertyData(propertyIndex).exitPickup);
+		deleteGameElement(getPropertyData(propertyIndex).exitPickup);
+		getPropertyData(propertyIndex).exitPickup = null;
 	}
 }
 
 // ===========================================================================
 
-function deleteBusinessEntranceBlip(businessId) {
-	if (!areServerElementsSupported()) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("blip")) {
-		return false;
-	}
-
-	if (getBusinessData(businessId).entranceBlip != null) {
-		//removeFromWorld(getBusinessData(businessId).entranceBlip);
-		deleteGameElement(getBusinessData(businessId).entranceBlip);
-		getBusinessData(businessId).entranceBlip = null;
-	}
-}
-
-// ===========================================================================
-
-function deleteBusinessExitBlip(businessId) {
+function deletePropertyEntranceBlip(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1961,55 +1942,73 @@ function deleteBusinessExitBlip(businessId) {
 		return false;
 	}
 
-	if (getBusinessData(businessId).exitBlip != null) {
-		//removeFromWorld(getBusinessData(businessId).exitBlip);
-		deleteGameElement(getBusinessData(businessId).exitBlip);
-		getBusinessData(businessId).exitBlip = null;
+	if (getPropertyData(propertyIndex).entranceBlip != null) {
+		//removeFromWorld(getPropertyData(propertyIndex).entranceBlip);
+		deleteGameElement(getPropertyData(propertyIndex).entranceBlip);
+		getPropertyData(propertyIndex).entranceBlip = null;
 	}
 }
 
 // ===========================================================================
 
-function reloadAllBusinessesCommand(command, params, client) {
+function deletePropertyExitBlip(propertyIndex) {
+	if (!areServerElementsSupported()) {
+		return false;
+	}
+
+	if (!isGameFeatureSupported("blip")) {
+		return false;
+	}
+
+	if (getPropertyData(propertyIndex).exitBlip != null) {
+		//removeFromWorld(getPropertyData(propertyIndex).exitBlip);
+		deleteGameElement(getPropertyData(propertyIndex).exitBlip);
+		getPropertyData(propertyIndex).exitBlip = null;
+	}
+}
+
+// ===========================================================================
+
+function reloadAllPropertyesCommand(command, params, client) {
 	let clients = getClients();
 	for (let i in clients) {
-		removePlayerFromBusiness(clients[i]);
+		removePlayerFromProperty(clients[i]);
 	}
 
-	for (let i in getServerData().businesses) {
-		deleteBusinessExitBlip(i);
-		deleteBusinessEntranceBlip(i);
-		deleteBusinessExitPickup(i);
-		deleteBusinessEntrancePickup(i);
+	for (let i in getServerData().properties) {
+		deletePropertyExitBlip(i);
+		deletePropertyEntranceBlip(i);
+		deletePropertyExitPickup(i);
+		deletePropertyEntrancePickup(i);
 	}
 
 	//forceAllPlayersToStopWorking();
-	clearArray(getServerData().businesses);
-	getServerData().businesses = loadBusinessesFromDatabase();
-	createAllBusinessPickups();
-	createAllBusinessBlips();
-	setBusinessDataIndexes();
-	cacheAllBusinessItems();
+	clearArray(getServerData().properties);
+	getServerData().properties = loadPropertyesFromDatabase();
+	createAllPropertyPickups();
+	createAllPropertyBlips();
+	setPropertyDataIndexes();
+	cacheAllPropertyItems();
 
-	announceAdminAction(`AllBusinessesReloaded`);
+	announceAdminAction(`AllPropertyesReloaded`);
 }
 
 // ===========================================================================
 
-function setBusinessDataIndexes() {
-	for (let i in getServerData().businesses) {
-		getServerData().businesses[i].index = i;
+function setPropertyDataIndexes() {
+	for (let i in getServerData().properties) {
+		getServerData().properties[i].index = i;
 
-		//if (getServerData().businesses[i].streamingRadioStation > 0) {
-		//	let radioStationIndex = getRadioStationFromDatabaseId(getServerData().businesses[i].streamingRadioStation);
+		//if (getServerData().properties[i].streamingRadioStation > 0) {
+		//	let radioStationIndex = getRadioStationFromDatabaseId(getServerData().properties[i].streamingRadioStation);
 		//	if (radioStationIndex != -1) {
-		//		getServerData().businesses[i].streamingRadioStationIndex = radioStationIndex;
+		//		getServerData().properties[i].streamingRadioStationIndex = radioStationIndex;
 		//	}
 		//}
 
-		for (let j in getServerData().businesses[i].locations) {
-			if (getServerData().businesses[i].locations[j].type == AGRP_BIZ_LOC_ATM) {
-				getServerData().atmLocationCache.push([i, j, getServerData().businesses[i].locations[j].position]);
+		for (let j in getServerData().properties[i].locations) {
+			if (getServerData().properties[i].locations[j].type == AGRP_BIZ_LOC_ATM) {
+				getServerData().atmLocationCache.push([i, j, getServerData().properties[i].locations[j].position]);
 			}
 		}
 	}
@@ -2017,15 +2016,15 @@ function setBusinessDataIndexes() {
 
 // ===========================================================================
 
-// Adds an item to a business inventory by item type, amount and buy price
-function addToBusinessInventory(businessId, itemType, amount, buyPrice) {
+// Adds an item to a property inventory by item type, amount and buy price
+function addToPropertyInventory(propertyIndex, itemType, amount, buyPrice) {
 	let tempItemData = new ItemData(false);
 	tempItemData.amount = amount;
 	tempItemData.buyPrice = buyPrice;
 	tempItemData.itemType = getItemTypeData(itemType).databaseId;
-	tempItemData.ownerId = getBusinessData(business).databaseId;
+	tempItemData.ownerId = getPropertyData(propertyIndex).databaseId;
 	tempItemData.ownerType = AGRP_ITEMOWNER_BIZ;
-	tempItemData.ownerIndex = businessId;
+	tempItemData.ownerIndex = propertyIndex;
 	tempItemData.itemTypeIndex = itemType;
 	saveItemToDatabase(tempItemData);
 	getServerData().items.push(tempItemData);
@@ -2036,31 +2035,31 @@ function addToBusinessInventory(businessId, itemType, amount, buyPrice) {
 
 // ===========================================================================
 
-function buyFromBusinessCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function buyFromPropertyCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
 	if (areParamsEmpty(params)) {
-		showBusinessFloorInventoryToPlayer(client, businessId);
+		showPropertyFloorInventoryToPlayer(client, propertyIndex);
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
-	if (getBusinessData(businessId).locked) {
-		messagePlayerError(client, `This business is closed!`);
+	if (getPropertyData(propertyIndex).locked) {
+		messagePlayerError(client, `This property is closed!`);
 		return false;
 	}
 
-	if (getBusinessData(businessId).hasInterior) {
-		if (!getPlayerBusiness(client)) {
+	if (getPropertyData(propertyIndex).hasInterior) {
+		if (!getPlayerProperty(client)) {
 			if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
-				messagePlayerTip(client, getLocaleString(client, "NeedToEnterPropertyKeyPress", "business", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "enter")).key)}{MAINCOLOUR}`));
+				messagePlayerTip(client, getLocaleString(client, "NeedToEnterPropertyKeyPress", getLocaleString(client, getPropertyTypeName(propertyIndex)), `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "enter")).key)}{MAINCOLOUR}`));
 			} else {
-				messagePlayerNormal(client, getLocaleString(client, "NeedToEnterBusinessCommand", "business", "{ALTCOLOUR}/enter{MAINCOLOUR}"));
+				messagePlayerNormal(client, getLocaleString(client, "NeedToEnterPropertyCommand", getLocaleString(client, getPropertyTypeName(propertyIndex)), "{ALTCOLOUR}/enter{MAINCOLOUR}"));
 			}
 			return false;
 		}
@@ -2068,12 +2067,12 @@ function buyFromBusinessCommand(command, params, client) {
 
 	let itemSlot = toInteger(getParam(params, " ", 1)) || 1;
 
-	if (typeof getBusinessData(businessId).floorItemCache[itemSlot - 1] == "undefined") {
+	if (typeof getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == "undefined") {
 		messagePlayerError(client, `Item slot ${itemSlot} doesn't exist!`);
 		return false;
 	}
 
-	if (getBusinessData(businessId).floorItemCache[itemSlot - 1] == -1) {
+	if (getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == -1) {
 		messagePlayerError(client, `Item slot ${itemSlot} slot is empty!`);
 		return false;
 	}
@@ -2087,8 +2086,8 @@ function buyFromBusinessCommand(command, params, client) {
 		}
 	}
 
-	if (getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount < amount) {
-		messagePlayerError(client, `There are only ${getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount} ${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name} in slot ${itemSlot - 1}`);
+	if (getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).amount < amount) {
+		messagePlayerError(client, `There are only ${getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).amount} ${getItemTypeData(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex).name} in slot ${itemSlot - 1}`);
 		return false;
 	}
 
@@ -2098,25 +2097,25 @@ function buyFromBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	let totalCost = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice * amount;
-	let itemName = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name;
+	let totalCost = getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).buyPrice * amount;
+	let itemName = getItemTypeData(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex).name;
 
 	if (getPlayerCurrentSubAccount(client).cash < totalCost) {
-		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getBusinessData(businessId).floorItemCache[itemSlot - 1].buyPrice * amount - getPlayerCurrentSubAccount(client).cash}{MAINCOLOUR}`));
+		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getPropertyData(propertyIndex).floorItemCache[itemSlot - 1].buyPrice * amount - getPlayerCurrentSubAccount(client).cash}{MAINCOLOUR}`));
 		return false;
 	}
 
 	takePlayerCash(client, totalCost);
-	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
+	createItem(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
 	cachePlayerHotBarItems(client);
-	getBusinessData(businessId).till = getBusinessData(businessId).till + totalCost;
+	getPropertyData(propertyIndex).till = getPropertyData(propertyIndex).till + totalCost;
 
-	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount - amount;
-	if (getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount == 0) {
-		destroyItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
+	getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).amount = getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).amount - amount;
+	if (getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).amount == 0) {
+		destroyItem(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]);
 	}
 
-	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
+	let useType = getItemTypeData(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
 	if (useType == AGRP_ITEM_USE_TYPE_WEAPON || AGRP_ITEM_USE_TYPE_TAZER || useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
 		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
 			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
@@ -2141,322 +2140,322 @@ function buyFromBusinessCommand(command, params, client) {
 
 // ===========================================================================
 
-function setBusinessItemSellPriceCommand(command, params, client) {
-	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
+function setPropertyItemSellPriceCommand(command, params, client) {
+	let propertyIndex = getPropertyFromParams(getParam(params, " ", 3)) || getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	let itemSlot = toInteger(getParam(params, " ", 1)) || 0;
 
-	if (typeof getBusinessData(businessId).floorItemCache[itemSlot - 1] == "undefined") {
+	if (typeof getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == "undefined") {
 		messagePlayerError(client, `Item slot ${itemSlot - 1} doesn't exist!`);
 		return false;
 	}
 
-	if (getBusinessData(businessId).floorItemCache[itemSlot - 1] == -1) {
+	if (getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == -1) {
 		messagePlayerError(client, `Item slot ${itemSlot - 1} slot is empty!`);
 		return false;
 	}
 
-	let oldPrice = getBusinessData(businessId).floorItemCache[itemSlot - 1].buyPrice;
+	let oldPrice = getPropertyData(propertyIndex).floorItemCache[itemSlot - 1].buyPrice;
 	let newPrice = toInteger(getParam(params, " ", 2)) || oldPrice;
 	if (newPrice < 0) {
 		messagePlayerError(client, "The price can't be negative!");
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
+	getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
 
-	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newprice)}`);
+	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newprice)}`);
 }
 
 // ===========================================================================
 
-function storeItemInBusinessStorageCommand(command, params, client) {
-	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
+function storeItemInPropertyStorageCommand(command, params, client) {
+	let propertyIndex = getPropertyFromParams(getParam(params, " ", 3)) || getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	let itemSlot = toInteger(getParam(params, " ", 1)) || 0;
 
-	if (typeof getBusinessData(businessId).floorItemCache[itemSlot - 1] == "undefined") {
+	if (typeof getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == "undefined") {
 		messagePlayerError(client, `Item slot ${itemSlot} doesn't exist!`);
 		return false;
 	}
 
-	if (getBusinessData(businessId).floorItemCache[itemSlot - 1] == -1) {
+	if (getPropertyData(propertyIndex).floorItemCache[itemSlot - 1] == -1) {
 		messagePlayerError(client, `Item slot ${itemSlot} slot is empty!`);
 		return false;
 	}
 
-	let firstSlot = getBusinessStorageFirstFreeItemSlot(businessId);
+	let firstSlot = getPropertyStorageFirstFreeItemSlot(propertyIndex);
 
 	if (firstSlot == -1) {
 		messagePlayerError(client, `There isn't any room in this business storage`);
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZSTORAGE;
-	getBusinessData(businessId).storageItemCache[firstSlot] = getBusinessData(businessId).floorItemCache[itemSlot - 1];
-	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
-	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} to the business storage in slot ${firstSlot}`);
+	getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZSTORAGE;
+	getPropertyData(propertyIndex).storageItemCache[firstSlot] = getPropertyData(propertyIndex).floorItemCache[itemSlot - 1];
+	getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] = -1;
+	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getPropertyData(propertyIndex).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} to the business storage in slot ${firstSlot}`);
 }
 
 // ===========================================================================
 
-function stockItemOnBusinessFloorCommand(command, params, client) {
-	let businessId = getPlayerBusiness(client);
+function stockItemOnPropertyFloorCommand(command, params, client) {
+	let propertyIndex = getPlayerProperty(client);
 
-	if (!getBusinessData(businessId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+	if (!getPropertyData(propertyIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
 		return false;
 	}
 
 	let itemSlot = toInteger(getParam(params, " ", 1)) || 0;
 
-	if (typeof getBusinessData(businessId).storageItemCache[itemSlot - 1] == "undefined") {
+	if (typeof getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] == "undefined") {
 		messagePlayerError(client, `Item slot ${itemSlot} doesn't exist!`);
 		return false;
 	}
 
-	if (getBusinessData(businessId).storageItemCache[itemSlot - 1] == -1) {
+	if (getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] == -1) {
 		messagePlayerError(client, `Item slot ${itemSlot} slot is empty!`);
 		return false;
 	}
 
-	let firstSlot = getBusinessFloorFirstFreeItemSlot(businessId);
+	let firstSlot = getPropertyFloorFirstFreeItemSlot(propertyIndex);
 
 	if (firstSlot == -1) {
 		messagePlayerError(client, `There isn't any room in this business storage`);
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).storageItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
-	getBusinessData(businessId).floorItemCache[firstSlot] = getBusinessData(businessId).storageItemCache[itemSlot - 1];
-	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
-	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} of the business storage to the business floor slot ${firstSlot}`);
+	getItemData(getPropertyData(propertyIndex).storageItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
+	getPropertyData(propertyIndex).floorItemCache[firstSlot] = getPropertyData(propertyIndex).storageItemCache[itemSlot - 1];
+	getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] = -1;
+	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getPropertyData(propertyIndex).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} of the business storage to the business floor slot ${firstSlot}`);
 }
 
 // ===========================================================================
 
 // Gets the first free slot in a business's storage items
-function getBusinessStorageFirstFreeItemSlot(businessId) {
-	return getBusinessData(businessId).storageItemCache.findIndex(item => item == -1);
+function getPropertyStorageFirstFreeItemSlot(propertyIndex) {
+	return getPropertyData(propertyIndex).storageItemCache.findIndex(item => item == -1);
 }
 
 // ===========================================================================
 
 // Gets the first free slot in a business's floor items
-function getBusinessFloorFirstFreeItemSlot(businessId) {
-	return getBusinessData(businessId).floorItemCache.findIndex(item => item == -1);
+function getPropertyFloorFirstFreeItemSlot(propertyIndex) {
+	return getPropertyData(propertyIndex).floorItemCache.findIndex(item => item == -1);
 }
 
 // ===========================================================================
 
 // Caches all items for all businesses
-function cacheAllBusinessItems() {
+function cacheAllPropertyItems() {
 	logToConsole(LOG_DEBUG, "[AGRP.Property] Caching all business items ...");
-	for (let i in getServerData().businesses) {
-		cacheBusinessItems(i);
+	for (let i in getServerData().properties) {
+		cachePropertyItems(i);
 	}
 	logToConsole(LOG_DEBUG, "[AGRP.Property] Cached all business items successfully!");
 }
 
 // ===========================================================================
 
-// Caches all items for a business by businessId
-function cacheBusinessItems(businessId) {
-	clearArray(getBusinessData(businessId).floorItemCache);
-	clearArray(getBusinessData(businessId).storageItemCache);
+// Caches all items for a business by propertyIndex
+function cachePropertyItems(propertyIndex) {
+	clearArray(getPropertyData(propertyIndex).floorItemCache);
+	clearArray(getPropertyData(propertyIndex).storageItemCache);
 
-	//let businessData = getBusinessData(businessId);
-	//logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
-	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+	//let propertyData = getPropertyData(propertyIndex);
+	//logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${propertyData.name}) ...`);
+	//getPropertyData(propertyIndex).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
+	//getPropertyData(propertyIndex).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).storageItemCache.push(i);
+		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+			getPropertyData(propertyIndex).floorItemCache.push(i);
+		} else if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+			getPropertyData(propertyIndex).storageItemCache.push(i);
 		}
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Property] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Property] Successfully cached ${getPropertyData(propertyIndex).floorItemCache.length} floor items and ${getPropertyData(propertyIndex).storageItemCache} storage items for business ${propertyIndex} (${getPropertyData(propertyIndex).name})!`);
 }
 
 // ===========================================================================
 
 // Gets a business's data index from a business's databaseId
-function getBusinessIdFromDatabaseId(databaseId) {
-	return getServerData().businesses.findIndex(business => business.databaseId == databaseId);
+function getPropertyIdFromDatabaseId(databaseId) {
+	return getServerData().properties.findIndex(business => business.databaseId == databaseId);
 }
 
 // ===========================================================================
 
-// Updates all pickup data for a business by businessId
-function updateBusinessPickupLabelData(businessId) {
+// Updates all pickup data for a business by propertyIndex
+function updatePropertyPickupLabelData(propertyIndex) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
 
-	if (getBusinessData(businessId).exitPickup != null) {
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_EXIT, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
+	if (getPropertyData(propertyIndex).exitPickup != null) {
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_EXIT, false);
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.owner.id", propertyIndex, false);
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
 	}
 
-	if (getBusinessData(businessId).entrancePickup != null) {
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_ENTRANCE, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.type", AGRP_LABEL_BUSINESS, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.locked", getBusinessData(businessId).locked, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_NONE, true);
+	if (getPropertyData(propertyIndex).entrancePickup != null) {
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_ENTRANCE, false);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.owner.id", propertyIndex, false);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.type", AGRP_LABEL_BUSINESS, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.name", getPropertyData(propertyIndex).name, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.locked", getPropertyData(propertyIndex).locked, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_NONE, true);
 
-		switch (getBusinessData(businessId).labelHelpType) {
+		switch (getPropertyData(propertyIndex).labelHelpType) {
 			case AGRP_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTERVEHICLE, true);
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTERVEHICLE, true);
 				break;
 			}
 
 			case AGRP_PROPLABEL_INFO_ENTER: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
 				break;
 			}
 
 			case AGRP_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_REPAIR, true);
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_REPAIR, true);
 				break;
 			}
 
 			default: {
-				if (getBusinessData(businessId).hasInterior) {
-					setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+				if (getPropertyData(propertyIndex).hasInterior) {
+					setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
 				} else {
-					if (doesBusinessHaveAnyItemsToBuy(businessId)) {
-						setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUY, true);
+					if (doesPropertyHaveAnyItemsToBuy(propertyIndex)) {
+						setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUY, true);
 					} else {
-						removeEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help");
+						removeEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help");
 					}
 				}
 				break;
 			}
 		}
 
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.price", getPropertyData(propertyIndex).buyPrice, true);
 	}
 }
 
 // ===========================================================================
 
-function resetBusinessPickups(businessId) {
-	deleteBusinessPickups(businessId);
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+function resetPropertyPickups(propertyIndex) {
+	deletePropertyPickups(propertyIndex);
+	createPropertyEntrancePickup(propertyIndex);
+	createPropertyExitPickup(propertyIndex);
 }
 
 // ===========================================================================
 
-function resetBusinessBlips(businessId) {
-	deleteBusinessBlips(businessId);
-	createBusinessEntranceBlip(businessId);
-	createBusinessExitBlip(businessId);
+function resetPropertyBlips(propertyIndex) {
+	deletePropertyBlips(propertyIndex);
+	createPropertyEntranceBlip(propertyIndex);
+	createPropertyExitBlip(propertyIndex);
 }
 
 // ===========================================================================
 
-function resetAllBusinessPickups(businessId) {
-	deleteBusinessPickups(businessId);
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+function resetAllPropertyPickups(propertyIndex) {
+	deletePropertyPickups(propertyIndex);
+	createPropertyEntrancePickup(propertyIndex);
+	createPropertyExitPickup(propertyIndex);
 }
 
 // ===========================================================================
 
-function resetAllBusinessBlips() {
-	for (let i in getServerData().businesses) {
-		deleteBusinessBlips(i);
-		createBusinessBlips(i);
+function resetAllPropertyBlips() {
+	for (let i in getServerData().properties) {
+		deletePropertyBlips(i);
+		createPropertyBlips(i);
 	}
 }
 
 // ===========================================================================
 
-function createBusinessBlips(businessId) {
-	createBusinessEntranceBlip(businessId);
-	createBusinessExitBlip(businessId);
+function createPropertyBlips(propertyIndex) {
+	createPropertyEntranceBlip(propertyIndex);
+	createPropertyExitBlip(propertyIndex);
 }
 
 // ===========================================================================
 
-function resetAllBusinessPickups() {
-	for (let i in getServerData().businesses) {
-		deleteBusinessPickups(i);
-		createBusinessPickups(i);
+function resetAllPropertyPickups() {
+	for (let i in getServerData().properties) {
+		deletePropertyPickups(i);
+		createPropertyPickups(i);
 	}
 }
 
 // ===========================================================================
 
-function createBusinessPickups(businessId) {
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+function createPropertyPickups(propertyIndex) {
+	createPropertyEntrancePickup(propertyIndex);
+	createPropertyExitPickup(propertyIndex);
 }
 
 // ===========================================================================
 
-function doesBusinessHaveAnyItemsToBuy(businessId) {
-	return (getBusinessData(businessId).floorItemCache.length > 0);
+function doesPropertyHaveAnyItemsToBuy(propertyIndex) {
+	return (getPropertyData(propertyIndex).floorItemCache.length > 0);
 }
 
 // ===========================================================================
 
-//function sendPlayerBusinessGameScripts(client, businessId) {
-//	for(let i in getBusinessData(businessId).gameScripts) {
-//		sendPlayerGameScriptState(client, getBusinessData(businessId).gameScripts[i].state);
+//function sendPlayerPropertyGameScripts(client, propertyIndex) {
+//	for(let i in getPropertyData(propertyIndex).gameScripts) {
+//		sendPlayerGameScriptState(client, getPropertyData(propertyIndex).gameScripts[i].state);
 //	}
 //}
 
 // ===========================================================================
 
-//function clearPlayerBusinessGameScripts(client, businessId) {
-//	for(let i in getBusinessData(businessId).gameScripts) {
+//function clearPlayerPropertyGameScripts(client, propertyIndex) {
+//	for(let i in getPropertyData(propertyIndex).gameScripts) {
 //		sendPlayerGameScriptState(client, AGRP_GAMESCRIPT_DENY);
 //	}
 //}
 
 // ===========================================================================
 
-function updateBusinessInteriorLightsForOccupants(businessId) {
+function updatePropertyInteriorLightsForOccupants(propertyIndex) {
 	let clients = getClients()
 	for (let i in clients) {
-		if (getPlayerBusiness(clients[i]) == businessId) {
-			updateInteriorLightsForPlayer(clients[i], getBusinessData(businessId).interiorLights);
+		if (getPlayerProperty(clients[i]) == propertyIndex) {
+			updateInteriorLightsForPlayer(clients[i], getPropertyData(propertyIndex).interiorLights);
 		}
 	}
 }
 
 // ===========================================================================
 
-function canPlayerWithdrawFromBusinessTill(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+function canPlayerWithdrawFromPropertyTill(client, propertyIndex) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManagePropertyes"))) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
-		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
 	}
@@ -2466,17 +2465,17 @@ function canPlayerWithdrawFromBusinessTill(client, businessId) {
 
 // ===========================================================================
 
-function canPlayerSetBusinessInteriorLights(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+function canPlayerSetPropertyInteriorLights(client, propertyIndex) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManagePropertyes"))) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
-		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
 	}
@@ -2486,17 +2485,17 @@ function canPlayerSetBusinessInteriorLights(client, businessId) {
 
 // ===========================================================================
 
-function canPlayerLockUnlockBusiness(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+function canPlayerLockUnlockProperty(client, propertyIndex) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManagePropertyes"))) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
-		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
 	}
@@ -2506,24 +2505,24 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 
 // ===========================================================================
 
-function canPlayerManageBusiness(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+function canPlayerManageProperty(client, propertyIndex) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManagePropertyes"))) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER) {
-		if (getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER) {
+		if (getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN) {
-		if (getBusinessData(businessId).ownerId == getPlayerClan(client)) {
-			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
+	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN) {
+		if (getPropertyData(propertyIndex).ownerId == getPlayerClan(client)) {
+			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 				return true;
 			}
 
-			//if(getBusinessData(businessId).clanRank <= getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level) {
+			//if(getPropertyData(propertyIndex).clanRank <= getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level) {
 			//	return true;
 			//}
 		}
@@ -2534,29 +2533,29 @@ function canPlayerManageBusiness(client, businessId) {
 
 // ===========================================================================
 
-function deleteBusinessBlips(business) {
-	deleteBusinessExitBlip(business);
-	deleteBusinessEntranceBlip(business);
+function deletePropertyBlips(business) {
+	deletePropertyExitBlip(business);
+	deletePropertyEntranceBlip(business);
 }
 
 // ===========================================================================
 
-function deleteBusinessPickups(business) {
-	deleteBusinessExitPickup(business);
-	deleteBusinessEntrancePickup(business);
+function deletePropertyPickups(business) {
+	deletePropertyExitPickup(business);
+	deletePropertyEntrancePickup(business);
 }
 
 // ===========================================================================
 
-function getBusinessFromParams(params) {
+function getPropertyFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().businesses) {
-			if (toLowerCase(getServerData().businesses[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in getServerData().properties) {
+			if (toLowerCase(getServerData().properties[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().businesses[params] != "undefined") {
+		if (typeof getServerData().properties[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -2565,24 +2564,24 @@ function getBusinessFromParams(params) {
 
 // ===========================================================================
 
-function deleteAllBusinessBlips() {
-	for (let i in getServerData().businesses) {
-		deleteBusinessBlips(i);
+function deleteAllPropertyBlips() {
+	for (let i in getServerData().properties) {
+		deletePropertyBlips(i);
 	}
 }
 
 // ===========================================================================
 
-function deleteAllBusinessPickups() {
-	for (let i in getServerData().businesses) {
-		deleteBusinessPickups(i);
+function deleteAllPropertyPickups() {
+	for (let i in getServerData().properties) {
+		deletePropertyPickups(i);
 	}
 }
 
 // ===========================================================================
 
-function getBusinessFromInteriorAndDimension(dimension, interior) {
-	let businesses = getServerData().businesses;
+function getPropertyFromInteriorAndDimension(dimension, interior) {
+	let businesses = getServerData().properties;
 	for (let i in businesses) {
 		if (businesses[i].exitInterior == interior && businesses[i].exitDimension == dimension) {
 			return i;
@@ -2594,36 +2593,36 @@ function getBusinessFromInteriorAndDimension(dimension, interior) {
 
 // ===========================================================================
 
-function getClosestBusinessWithBuyableItemOfUseType(position, useType) {
-	let availableBusinesses = getBusinessesWithBuyableItemOfUseType(useType);
+function getClosestPropertyWithBuyableItemOfUseType(position, useType) {
+	let availablePropertyes = getPropertyesWithBuyableItemOfUseType(useType);
 
-	let closestBusiness = 0;
-	for (let i in availableBusinesses) {
-		if (getDistance(position, getBusinessData(availableBusinesses[i]).entrancePosition) < getDistance(position, getBusinessData(availableBusinesses[closestBusiness]).entrancePosition)) {
-			closestBusiness = i;
+	let closestProperty = 0;
+	for (let i in availablePropertyes) {
+		if (getDistance(position, getPropertyData(availablePropertyes[i]).entrancePosition) < getDistance(position, getPropertyData(availablePropertyes[closestProperty]).entrancePosition)) {
+			closestProperty = i;
 		}
 	}
-	return availableBusinesses[closestBusiness];
+	return availablePropertyes[closestProperty];
 }
 
 // ===========================================================================
 
-function getBusinessesWithBuyableItemOfUseType(useType) {
-	let businesses = getServerData().businesses;
-	let availableBusinesses = [];
+function getPropertyesWithBuyableItemOfUseType(useType) {
+	let businesses = getServerData().properties;
+	let availablePropertyes = [];
 	for (let i in businesses) {
-		if (doesBusinessHaveBuyableItemOfUseType(i, useType)) {
-			availableBusinesses.push(i);
+		if (doesPropertyHaveBuyableItemOfUseType(i, useType)) {
+			availablePropertyes.push(i);
 		}
 	}
 
-	return availableBusinesses;
+	return availablePropertyes;
 }
 
 // ===========================================================================
 
-function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
-	let floorItems = getBusinessData(businessId).floorItemCache;
+function doesPropertyHaveBuyableItemOfUseType(propertyIndex, useType) {
+	let floorItems = getPropertyData(propertyIndex).floorItemCache;
 	for (let i in floorItems) {
 		if (floorItems[i] != -1) {
 			if (getItemData(floorItems[i]) != false) {
@@ -2638,4 +2637,22 @@ function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
 
 // ===========================================================================
 
-*/
+function getInlinePropertyColour(propertyIndex) {
+	if (getPropertyData(propertyIndex).type == AGRP_PROP_TYPE_HOUSE) {
+		return "{houseGreen}";
+	} else {
+		return "{businessBlue}";
+	}
+}
+
+// ===========================================================================
+
+function getPropertyTypeName(propertyIndex) {
+	if (getPropertyData(propertyIndex).type == AGRP_PROP_TYPE_HOUSE) {
+		return "House";
+	} else {
+		return "Business";
+	}
+}
+
+// ===========================================================================
