@@ -1207,7 +1207,7 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
 		[`Buy Price`, `${vehicleData.buyPrice}`],
 		[`Rent Price`, `${vehicleData.rentPrice}`],
-		[`Radio Station`, `${(vehicleData.streamingRadioStation == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStation).name}`],
+		[`Radio Station`, `${(vehicleData.streamingRadioStationIndex == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStationIndex).name}`],
 		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
 		[`License Plate`, `${vehicleData.licensePlate}`],
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
