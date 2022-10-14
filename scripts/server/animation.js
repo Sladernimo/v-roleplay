@@ -102,7 +102,7 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 	getPlayerData(client).animationForced = false;
 
 	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
-	setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
+	//setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
 	//if(getAnimationData(animationSlot)[9] != AGRP_ANIMMOVE_NONE) {
 	//	if(getGame() < AGRP_GAME_GTA_SA) {
 	//		setPlayerMouseCameraState(client, true);
