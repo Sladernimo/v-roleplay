@@ -5913,7 +5913,8 @@ let gameData = {
 			Mansion: [toVector3(1461.00, -173.87, 55.78), 0, false, ""],
 			SmallGarage: [toVector3(-420.69, 289.86, 62.96), 0, false, ""],
 			JoeyGarage: [toVector3(1189.40, -867.69, 15.18), 0, false, ""],
-			Warehouse: [toVector3(1497.46, -680.18, 12.14), 0, false, ""],
+			Warehouse1: [toVector3(1497.46, -680.18, 12.14), 0, false, ""],
+			Warehouse2: [toVector3(1131.44, -1113.07, 11.86), 0, false, ""],
 		},
 		[AGRP_GAME_GTA_VC]: { // GTA VC
 			Mall: [toVector3(379.62, 1007.00, 19.22), 4, false, ""],
