@@ -62,16 +62,20 @@ function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 
 // ===========================================================================
 
-function messageAdmins(messageText, colour = getColourByName("softRed")) {
+function messageAdmins(messageText, announceToEventChannel = false) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
-			messagePlayerNormal(clients[i], `🛡️ ${messageText}`, colour);
+			messagePlayerNormal(clients[i], `🛡️ ${messageText}`, getColourByName("white"));
 		}
 	}
 
 	let plainMessage = removeColoursInMessage(messageText);
 	messageDiscordAdminChannel(plainMessage);
+
+	if (announceToEventChannel == true) {
+		messageDiscordEventChannel(`🛡️ ${plainMessage}`);
+	}
 }
 
 // ===========================================================================

@@ -375,7 +375,7 @@ function createVehicleCommand(command, params, client) {
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
 	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
 
 // ===========================================================================
@@ -396,7 +396,7 @@ function createTemporaryVehicleCommand(command, params, client) {
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
 	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
 
 // ===========================================================================
@@ -902,7 +902,7 @@ function setVehicleJobCommand(command, params, client) {
 
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job! (Job ID ${jobId})`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job! (Job ID ${jobId})`, true);
 }
 
 // ===========================================================================
@@ -933,10 +933,10 @@ function setVehicleRankCommand(command, params, client) {
 			return false;
 		}
 		getVehicleData(vehicle).rank = getClanRankData(getVehicleData(vehicle).ownerId, rankId).databaseId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rank to {ALTCOLOUR}${getClanRankData(getVehicleData(vehicle).ownerId, rankId).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${getClanRankData(getVehicleData(vehicle).ownerId, rankId).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`, true);
 	} else if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
 		getVehicleData(vehicle).rank = rankId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rank to {ALTCOLOUR}${rankId}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${rankId}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`, true);
 	}
 
 	getVehicleData(vehicle).needsSaved = true;
@@ -981,14 +981,18 @@ function setVehicleClanCommand(command, params, client) {
 
 // ===========================================================================
 
-function setVehicleToBusinessCommand(command, params, client) {
+function setVehicleBusinessCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessId = getPlayerBusiness(client);
+	let businessId = getClosestBusinessEntrance(client);
+
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses")) && !isNull(params)) {
+		businessId = getBusinessFromParams(params);
+	}
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -1003,7 +1007,7 @@ function setVehicleToBusinessCommand(command, params, client) {
 	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_BIZ;
 	getVehicleData(vehicle).ownerId = getBusinessData(businessId).databaseId;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}business`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}business`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1032,7 +1036,7 @@ function setVehicleOwnerCommand(command, params, client) {
 	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_PLAYER;
 	getVehicleData(vehicle).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to {ALTCOLOUR}${getClientSubAccountName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to {ALTCOLOUR}${getClientSubAccountName(targetClient)}`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1055,7 +1059,7 @@ function setVehiclePublicCommand(command, params, client) {
 	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_PUBLIC;
 	getVehicleData(vehicle).ownerId = 0;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to a public vehicle!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to a public vehicle!`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1086,7 +1090,7 @@ function setVehicleRentPriceCommand(command, params, client) {
 	getVehicleData(vehicle).rentPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`, true);
 }
 
 // ===========================================================================
@@ -1115,7 +1119,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 	getVehicleData(vehicle).buyPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)}`, true);
 }
 
 // ===========================================================================
@@ -1144,7 +1148,7 @@ function removeVehicleOwnerCommand(command, params, client) {
 
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to nobody!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to nobody!`, true);
 	messagePlayerInfo(client, `Nobody will be able to use this vehicle until it receives a new owner (either bought or set by admin).`);
 }
 
@@ -1296,7 +1300,7 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to spawn {ALTCOLOUR}${(getVehicleData(vehicle).spawnLocked) ? "at it's current location" : "wherever a player leaves it."}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to spawn {ALTCOLOUR}${(getVehicleData(vehicle).spawnLocked) ? "at it's current location" : "wherever a player leaves it."}`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }

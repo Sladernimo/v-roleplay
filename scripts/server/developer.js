@@ -152,7 +152,7 @@ function addLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
 	return true;
 }
 
@@ -219,7 +219,7 @@ function removeLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
 	return true;
 }
 
@@ -254,7 +254,7 @@ function simulateCommandForPlayerCommand(command, params, client) {
 	}
 
 	if (!getCommand(tempCommand)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Use /help for commands and information.`);
 		return false;
 	}
 
@@ -288,7 +288,7 @@ function simulateCommandForAllPlayersCommand(command, params, client) {
 	let tempParams = splitParams.slice(1).join(" ");
 
 	if (!getCommand(tempCommand)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Use /help for commands and information.`);
 		return false;
 	}
 
@@ -441,9 +441,9 @@ function testErrorGUICommand(command, params, client) {
 // ===========================================================================
 
 function saveServerDataCommand(command, params, client) {
-	messageAdmins(`{adminOrange}Vortrex{MAINCOLOUR} has forced a manual save of all data. Initiating ...`);
+	messageAdmins(`{adminOrange}Vortrex{MAINCOLOUR} has forced a manual save of all data. Initiating ...`, true);
 	saveServerDataToDatabase();
-	messageAdmins(`{MAINCOLOUR}All server data saved to database successfully!`);
+	messageAdmins(`{MAINCOLOUR}All server data saved to database successfully!`, true);
 	return true;
 }
 

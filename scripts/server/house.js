@@ -217,7 +217,7 @@ function createHouseCommand(command, params, client) {
 	}
 
 	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorScene);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`, true);
 }
 
 // ===========================================================================
@@ -275,7 +275,7 @@ function setHouseDescriptionCommand(command, params, client) {
 
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed house {houseGreen}${oldDescription}{MAINCOLOUR} to {houseGreen}${getHouseData(houseId).description}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed house {houseGreen}${oldDescription}{MAINCOLOUR} to {houseGreen}${getHouseData(houseId).description}`, true);
 }
 
 // ===========================================================================
@@ -468,7 +468,7 @@ function setHousePickupCommand(command, params, client) {
 
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} pickup display to {ALTCOLOUR}${toLowerCase(typeParam)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} pickup to {ALTCOLOUR}${toLowerCase(typeParam)}`, true);
 }
 
 // ===========================================================================
@@ -504,7 +504,7 @@ function setHouseInteriorTypeCommand(command, params, client) {
 			tempHouseLocation.exitInterior = -1;
 			getHouseData(houseId).exitPickupModel = -1;
 			getHouseData(houseId).hasInterior = false;
-			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior`);
+			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior`, true);
 			return false;
 		}
 
@@ -534,7 +534,7 @@ function setHouseInteriorTypeCommand(command, params, client) {
 
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior type to {ALTCOLOUR}${toLowerCase(typeParam)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -585,7 +585,7 @@ function setHouseBlipCommand(command, params, client) {
 	resetHouseBlips(houseId);
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} blip display to {ALTCOLOUR}${toLowerCase(typeParam)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} blip to {ALTCOLOUR}${toLowerCase(typeParam)}`, true);
 }
 
 // ===========================================================================
@@ -621,7 +621,7 @@ function moveHouseEntranceCommand(command, params, client) {
 
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} entrance to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} entrance to their position`, true);
 }
 
 // ===========================================================================
@@ -661,7 +661,7 @@ function moveHouseExitCommand(command, params, client) {
 
 	getHouseData(houseId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} exit to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} exit to their position`, true);
 }
 
 // ===========================================================================

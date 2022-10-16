@@ -515,7 +515,7 @@ function deleteNPCCommand(command, params, client) {
 	let npcName = getNPCData(closestNPC).name;
 
 	deleteNPC(closestNPC);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted NPC {npcPink}${npcName}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted NPC {npcPink}${npcName}`, true);
 }
 
 // ===========================================================================
@@ -619,7 +619,7 @@ function setNPCClanCommand(command, params, client) {
 	getNPCData(closestNPC).ownerId = getClanData(clanId).databaseId;
 	getNPCData(closestNPC).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`, true);
 }
 
 // ===========================================================================
@@ -631,25 +631,11 @@ function addNPCTriggerCommand(command, params, client) {
 	}
 
 	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
-	let clanId = getClanFromParams(params);
 
 	if (!getNPCData(closestNPC)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
 		return false;
 	}
-
-	if (!getClanData(clanId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
-		return false;
-	}
-
-	//let triggerData = new TriggerData();
-
-	getNPCData(closestNPC).ownerType = AGRP_NPC_OWNER_CLAN;
-	getNPCData(closestNPC).ownerId = getClanData(clanId).databaseId;
-	getNPCData(closestNPC).needsSaved = true;
-
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`);
 }
 
 // ===========================================================================

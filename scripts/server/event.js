@@ -133,7 +133,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 
 	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
 	//messageDiscordEventChannel(`👋 ${clientName} has left the server (${reasonTextEnglish})`);
-	messageDiscordEventChannel(getLanguageLocaleString(englishLocale, "PlayerLeftServer", clientName, reasonTextEnglish));
+	messageDiscordEventChannel(`👋 ${getLanguageLocaleString(englishLocale, "PlayerLeftServer", clientName, reasonTextEnglish)}`);
 
 	getClients().filter(c => c != client).forEach(forClient => {
 		messagePlayerNormal(forClient, getLocaleString(forClient, "PlayerLeftServer", clientName, getGroupedLocaleString(forClient, "DisconnectReasons", disconnectName)));
@@ -218,9 +218,10 @@ function onPedExitingVehicle(event, ped, vehicle) {
 function onResourceStart(event, resource) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Resource ${resource.name} started!`);
 
-	//if(resource != thisResource) {
-	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
-	//}
+	if (resource == thisResource) {
+		//messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
+		messageDiscordEventChannel(`✅ Server is starting up!`);
+	}
 }
 
 // ===========================================================================
@@ -237,6 +238,8 @@ function onResourceStop(event, resource) {
 		saveServerDataToDatabase();
 		disconnectFromDatabase(persistentDatabaseConnection, true);
 		collectAllGarbage();
+
+		messageDiscordEventChannel(`⛔ Server is shutting down!`);
 	}
 }
 
@@ -731,7 +734,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
 				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 
-				if (getVehicleData(vehicle).buyPrice > 0 && !doesPlayerHaveVehicleKeys(client, vehicle)) {
+				if (getVehicleData(vehicle).buyPrice > 0) {
 					messagePlayerAlert(client, getLocaleString(client, "VehicleForSale", getVehicleName(vehicle), `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).buyPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehbuy{MAINCOLOUR}`));
 					resetVehiclePosition(vehicle);
 				} else if (getVehicleData(vehicle).rentPrice > 0) {
@@ -763,7 +766,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 							break;
 
 						case AGRP_VEHOWNER_BIZ:
-							ownerName = getBusinessData(getVehicleData(vehicle).ownerId).name;
+							ownerName = getBusinessData(getBusinessIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Business");
 							break;
 

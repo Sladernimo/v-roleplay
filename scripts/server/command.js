@@ -634,7 +634,7 @@ function loadCommands() {
 			new CommandData("vehowner", setVehicleOwnerCommand, "<player id/name>", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehpublic", setVehiclePublicCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehclan", setVehicleClanCommand, "<clan id/name>", getStaffFlagValue(""), true, true),
-			new CommandData("vehbiz", setVehicleToBusinessCommand, "", getStaffFlagValue(""), true, true),
+			new CommandData("vehbiz", setVehicleBusinessCommand, "", getStaffFlagValue(""), true, true),
 			new CommandData("vehjob", setVehicleJobCommand, "[job id/name]", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehdelowner", removeVehicleOwnerCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehrank", setVehicleRankCommand, "<rank id/name>", getStaffFlagValue("None"), true, true),
@@ -785,12 +785,12 @@ function disableCommand(command, params, client) {
 	params = toLowerCase(params);
 
 	if (!getCommand(params)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${params} {MAINCOLOUR} does not exist!`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
 	getCommand(params).enabled = false;
-	messagePlayerSuccess(client, `Command {ALTCOLOUR}/${params} {MAINCOLOUR}has been disabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} disabled the {ALTCOLOUR}${params}{MAINCOLOUR} command!`, true);
 	return true;
 }
 
@@ -805,12 +805,12 @@ function enableCommand(command, params, client) {
 	params = toLowerCase(params);
 
 	if (!getCommand(params)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${params} {MAINCOLOUR} does not exist!`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
 	getCommand(params).enabled = true;
-	messagePlayerSuccess(client, `Command {ALTCOLOUR}/${params} {MAINCOLOUR}has been enabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} enabled the {ALTCOLOUR}${params}{MAINCOLOUR} command!`, true);
 	return true;
 }
 
@@ -825,7 +825,7 @@ function disableAllCommandsByType(command, params, client) {
 	params = toLowerCase(params);
 
 	if (isNull(getServerData().commands[params])) {
-		messagePlayerError(client, `Command type {ALTCOLOUR}${params} {MAINCOLOUR}does not exist!`);
+		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
@@ -833,7 +833,7 @@ function disableAllCommandsByType(command, params, client) {
 		getServerData().commands[params][i].enabled = false;
 	}
 
-	messagePlayerSuccess(client, `{clanOrange}All {ALTCOLOUR}${params} {MAINCOLOUR}commands have been disabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} disabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);
 	return true;
 }
 
@@ -848,7 +848,7 @@ function enableAllCommandsByType(command, params, client) {
 	params = toLowerCase(params);
 
 	if (isNull(getServerData().commands[params])) {
-		messagePlayerError(client, `Command type {ALTCOLOUR}${params} {MAINCOLOUR}does not exist!`);
+		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
@@ -856,7 +856,7 @@ function enableAllCommandsByType(command, params, client) {
 		getServerData().commands[params][i].enabled = true;
 	}
 
-	messagePlayerSuccess(client, `{clanOrange}All {ALTCOLOUR}${params} {MAINCOLOUR}commands have been enabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} enabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);
 	return true;
 }
 

@@ -327,7 +327,7 @@ function createBusinessCommand(command, params, client) {
 		getPlayerDimension(client),
 		getPlayerData(client).interiorScene);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`, true);
 }
 
 // ===========================================================================
@@ -362,7 +362,7 @@ function createBusinessLocationCommand(command, params, client) {
 	let tempBusinessLocationData = createBusinessLocation(locationType, businessId);
 	getServerData().businesses[businessId].push(tempBusinessLocationData);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {businessBlue}${params}{MAINCOLOUR} for business {businessBlue}${tempBusinessData.name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {businessBlue}${params}{MAINCOLOUR} for business {businessBlue}${tempBusinessData.name}`, true);
 }
 
 // ===========================================================================
@@ -422,7 +422,7 @@ function deleteBusinessCommand(command, params, client) {
 	}
 
 	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
 
 // ===========================================================================
@@ -472,7 +472,7 @@ function setBusinessNameCommand(command, params, client) {
 	getBusinessData(businessId).name = newBusinessName;
 	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
 	getBusinessData(businessId).needsSaved = true;
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`, true);
 }
 
 // ===========================================================================
@@ -556,7 +556,7 @@ function setBusinessJobCommand(command, params, client) {
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}to the {jobYellow}${getJobData(jobId).name}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to the {jobYellow}${getJobData(jobId).name}`);
 }
 
 // ===========================================================================
@@ -1075,7 +1075,7 @@ function setBusinessPickupCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} pickup display to {ALTCOLOUR}${typeParam}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} pickup to {ALTCOLOUR}${typeParam}!`, true);
 }
 
 // ===========================================================================
@@ -1113,7 +1113,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			getBusinessData(businessId).exitScene = "";
 			getBusinessData(businessId).exitPickupModel = -1;
 			getBusinessData(businessId).customInterior = false;
-			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`);
+			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`, true);
 			return false;
 		}
 
@@ -1154,7 +1154,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1213,7 +1213,7 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} property template to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1258,7 +1258,7 @@ function setBusinessBlipCommand(command, params, client) {
 	resetBusinessBlips(businessId);
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} blip display to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} blip to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1309,7 +1309,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 
 	cacheBusinessItems(businessId);
 	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${toLowerCase(typeParam)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1334,7 +1334,7 @@ function setBusinessDealershipCommand(command, params, client) {
 	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
 	getBusinessData(businessId).type = AGRP_BIZ_TYPE_DEALERSHIP;
 	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the type of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`, true);
 }
 
 // ===========================================================================
@@ -1363,7 +1363,7 @@ function deleteBusinessFloorItemsCommand(command, params, client) {
 
 	cacheBusinessItems(businessId);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
 
 // ===========================================================================
@@ -1392,7 +1392,7 @@ function deleteBusinessStorageItemsCommand(command, params, client) {
 
 	cacheBusinessItems(businessId);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all stored items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all storage items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
 
 // ===========================================================================
@@ -1710,7 +1710,7 @@ function moveBusinessEntranceCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance to their position`, true);
 }
 
 // ===========================================================================
@@ -1748,7 +1748,7 @@ function moveBusinessExitCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}exit to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} exit to their position`, true);
 }
 
 // ===========================================================================
