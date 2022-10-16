@@ -318,7 +318,7 @@ function processLabelRendering() {
 						}
 
 						if (getDistance(localPlayer.position, business.entrancePosition) <= propertyLabelRenderDistance) {
-							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, getCurrencyString(business.buyPrice), getCurrencyString(business.rentPrice), business.labelInfoType);
+							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType);
 						}
 					}
 				});
@@ -330,7 +330,7 @@ function processLabelRendering() {
 						}
 
 						if (getDistance(localPlayer.position, house.entrancePosition) <= propertyLabelRenderDistance) {
-							renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, getCurrencyString(house.buyPrice), getCurrencyString(house.rentPrice), house.labelInfoType);
+							renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, house.buyPrice, house.rentPrice, house.labelInfoType);
 						}
 					}
 				});
@@ -360,11 +360,11 @@ function processLabelRendering() {
 								let rentPrice = "0";
 								let labelInfoType = AGRP_PROPLABEL_INFO_NONE;
 								if (pickups[i].getData("agrp.label.price") != null) {
-									price = getCurrencyString(pickups[i].getData("agrp.label.price"));
+									price = pickups[i].getData("agrp.label.price");
 								}
 
 								if (pickups[i].getData("agrp.label.rentprice") != null) {
-									rentPrice = getCurrencyString(pickups[i].getData("agrp.label.rentprice"));
+									rentPrice = pickups[i].getData("agrp.label.rentprice");
 								}
 
 								if (pickups[i].getData("agrp.label.help") != null) {
