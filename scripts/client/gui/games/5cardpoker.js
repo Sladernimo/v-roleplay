@@ -3,28 +3,19 @@
 // https://github.com/VortrexFTW/agrp_main
 // (c) 2022 Asshat Gaming
 // ===========================================================================
-// FILE: blackjack.js
-// DESC: Provides blackjack game GUI
+// FILE: 5cardpoker.js
+// DESC: Provides 5-card poker games GUI
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-let blackJackGUI = {
+let fiveCardPokerGUI = {
 	window: null,
-	dealerHand: [],
-	playerHand: [],
-};
+}
 
-// ===========================================================================
-
-let playerCards = [];
-let dealerCards = [];
-
-// ===========================================================================
-
-function initBlackJackGUI() {
-	// Render a blackjack game in MexUI
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating blackjack GUI ...`);
-	blackJackGUI.window = mexui.window(game.width / 2 - 200, game.height - 150, 400, 400, 'Blackjack', {
+function initFiveCardPokerGUI() {
+	// Render a five card poker game in MexUI
+	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating five-card poker GUI ...`);
+	fiveCardPokerGUI.window = mexui.window(game.width / 2 - 200, game.height - 150, 400, 400, 'Five Card Poker', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], 0),
 		},
@@ -39,11 +30,11 @@ function initBlackJackGUI() {
 			backgroundColour: toColour(0, 0, 0, 0),
 		},
 	});
-	blackJackGUI.window.titleBarShown = false;
+	fiveCardPokerGUI.window.titleBarShown = false;
 
-	blackJackGUI.window.shown = false;
+	fiveCardPokerGUI.window.shown = false;
 
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created blackjack GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created five card poker GUI`);
 }
 
 // ===========================================================================
