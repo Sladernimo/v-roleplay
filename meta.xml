@@ -10,7 +10,7 @@
 	<script src="scripts/shared/gamedata.js" type="client" language="javascript" />
 
 	<!-- Multiplayer Mod (Wrapped Natives) -->
-	<!-- The goal is to just swap only these out when I port the script to a new mod, like Oakwood -->
+	<!-- The goal is to just swap only these out when I port the script to a new MP mod -->
 	<script src="scripts/server/native/connected.js" type="server" language="javascript" />
 	<script src="scripts/client/native/connected.js" type="client" language="javascript" />
 
@@ -100,13 +100,19 @@
 	<script src="scripts/client/gui/error.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/housemgr.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/info.js" type="client" language="javascript" />
-	<script src="scripts/client/gui/login.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/inventory.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/inventorybulk.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/list.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/login.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/localechooser.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/newchar.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/register.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/resetpass.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/yesno.js" type="client" language="javascript" />
-	<script src="scripts/client/gui/localechooser.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/games/blackjack.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/games/betting.js" type="client" language="javascript" />
+	<script src="scripts/client/gui/games/5cardpoker.js" type="client" language="javascript" />
+
 
 	<!-- Client Scripts -->
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
