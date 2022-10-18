@@ -118,20 +118,7 @@ function blackJackHitCommand(command, params, client) {
 
 	hand.push(deck.pop());
 
-	let tempHandValue = 0;
-
-	for (let i in hand) {
-		if (hand[i].value == 1) {
-
-			if ((tempHandValue + 11) > 21) {
-				tempHandValue += 1;
-			} else {
-				tempHandValue += 11;
-			}
-		} else {
-			tempHandValue += hand[i].value;
-		}
-	}
+	let tempHandValue = getValueOfBlackJackHand(hand);
 
 	if (handValue > 21) {
 		playerBustBlackJack(client);
@@ -155,14 +142,6 @@ function blackJackStandCommand(command, params, client) {
 
 // ===========================================================================
 
-function blackJackHit(hand, deck) {
-
-
-	return handValue;
-}
-
-// ===========================================================================
-
 function dealPlayerBlackJackHand(deck, players) {
 	// Alternate handing cards to each player, 2 cards each
 	for (var i = 0; i < 2; i++) {
@@ -170,6 +149,25 @@ function dealPlayerBlackJackHand(deck, players) {
 			var card = deck.pop();
 			getPlayerData(players[i]).casinoCardHand.push(card);
 			updateCasinoCardHand(players[i]);
+		}
+	}
+}
+
+// ===========================================================================
+
+function calculateValueOfBlackJackHand(hand) {
+	let tempHandValue = 0;
+
+	for (let i in hand) {
+		if (hand[i].value == 1) {
+
+			if ((tempHandValue + 11) > 21) {
+				tempHandValue += 1;
+			} else {
+				tempHandValue += 11;
+			}
+		} else {
+			tempHandValue += hand[i].value;
 		}
 	}
 }

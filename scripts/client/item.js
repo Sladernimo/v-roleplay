@@ -11,8 +11,8 @@
 let itemActionDelayDuration = 0;
 let itemActionDelayStart = 0;
 let itemActionDelayEnabled = false;
-let itemActionDelayPosition = toVector2(0, game.height - 10);
-let itemActionDelaySize = toVector2(game.width, 10);
+let itemActionDelayPosition = toVector2(game.width / 2 - 100, game.height - 10);
+let itemActionDelaySize = toVector2(200, 5);
 
 // ===========================================================================
 
