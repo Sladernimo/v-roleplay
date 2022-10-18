@@ -38,8 +38,8 @@ function processItemActionRendering() {
 				let width = Math.ceil(getPercentage(itemActionDelaySize.x, progressPercent));
 
 				let backgroundColour = toColour(0, 0, 0, 255);
-				graphics.drawRectangle(null, [itemActionDelayPosition.x - (itemActionDelaySize.x) - 1, itemActionDelayPosition.y - (itemActionDelaySize.y / 2) - 1], [itemActionDelaySize.x + 2, itemActionDelaySize.y + 2], backgroundColour, backgroundColour, backgroundColour, backgroundColour);
-				graphics.drawRectangle(null, [itemActionDelayPosition.x - (itemActionDelaySize.x), itemActionDelayPosition.y - (itemActionDelaySize.y / 2) - 2], [width, itemActionDelaySize.y], COLOUR_LIME, COLOUR_LIME, COLOUR_LIME, COLOUR_LIME);
+				graphics.drawRectangle(null, [itemActionDelayPosition.x - (itemActionDelaySize.x / 2) - 1, itemActionDelayPosition.y - (itemActionDelaySize.y / 2) - 1], [itemActionDelaySize.x + 2, itemActionDelaySize.y + 2], backgroundColour, backgroundColour, backgroundColour, backgroundColour);
+				graphics.drawRectangle(null, [itemActionDelayPosition.x - (itemActionDelaySize.x / 2), itemActionDelayPosition.y - (itemActionDelaySize.y / 2) - 2], [width, itemActionDelaySize.y], COLOUR_LIME, COLOUR_LIME, COLOUR_LIME, COLOUR_LIME);
 			}
 		}
 	}
