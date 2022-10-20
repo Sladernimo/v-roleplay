@@ -211,6 +211,9 @@ function enterExitPropertyCommand(command, params, client) {
 		return false;
 	}
 
+	// The player's currentPickup wasn't always being set. This prevented entering/exiting a property.
+	// Needs further testing and tweaks.
+	/*
 	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
 		if (!getPlayerData(client).currentPickup) {
 			return false;
@@ -248,31 +251,41 @@ function enterExitPropertyCommand(command, params, client) {
 				return false;
 		}
 	} else {
-		for (let i in getServerData().businesses) {
-			if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
-				let businessId = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
+	*/
+
+	// Check business first
+	if (closestProperty == null) {
+		if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
+			let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
+			if (getDistance(getBusinessData(businessIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
 				isBusiness = true;
 				isEntrance = true;
-				closestProperty = getServerData().businesses[businessId];
-			} else {
-				let businessId = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
-				isBusiness = true;
+				closestProperty = getServerData().businesses[businessIndex];
+			}
+		} else {
+			let businessIndex = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
+			if (getDistance(getBusinessData(businessIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
+				isBusiness = false;
 				isEntrance = false;
-				closestProperty = getServerData().businesses[businessId];
+				closestProperty = getServerData().businesses[businessIndex];
 			}
 		}
+	}
 
-		for (let j in getServerData().houses) {
-			if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
-				let houseId = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
+	if (closestProperty == null) {
+		if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
+			let houseIndex = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
+			if (getDistance(getHouseData(houseIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
 				isBusiness = false;
 				isEntrance = true;
-				closestProperty = getServerData().businesses[houseId];
-			} else {
-				let houseId = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
+				closestProperty = getServerData().houses[houseIndex];
+			}
+		} else {
+			let houseIndex = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
+			if (getDistance(getHouseData(houseIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
 				isBusiness = false;
 				isEntrance = false;
-				closestProperty = getServerData().businesses[houseId];
+				closestProperty = getServerData().houses[houseIndex];
 			}
 		}
 	}
