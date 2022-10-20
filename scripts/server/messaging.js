@@ -41,20 +41,10 @@ function announceAdminAction(localeString, ...args) {
 function messagePlayerNormal(client, messageText, colour = COLOUR_WHITE) {
 	if (client != null) {
 		if (client.console) {
-			logToConsole(LOG_INFO, `${messageText}`);
+			logToConsole(LOG_INFO, `${removeColoursInMessage(messageText)}`);
 			return false;
 		}
 	}
-
-	//logToConsole(LOG_INFO, `${messageText}`);
-
-	//messageText = replaceColoursInMessage(messageText);
-
-	//if(client == null) {
-	//	message(messageText, colour);
-	//} else {
-	//	messageClient(messageText, client, colour);
-	//}
 
 	sendChatBoxMessageToPlayer(client, messageText, colour);
 	return true;
@@ -173,7 +163,7 @@ function messagePlayerDoAction(client, doingActionClient, messageText) {
 // ===========================================================================
 
 function messagePlayerMeAction(client, doingActionClient, messageText) {
-	messagePlayerNormal(client, `${getClientSubAccountName(doingActionClient)} ${messageText}`, getColourByType("meActionMessage"));
+	messagePlayerNormal(client, `${getCharacterFullName(doingActionClient)} ${messageText}`, getColourByType("meActionMessage"));
 }
 
 // ===========================================================================
@@ -185,7 +175,7 @@ function messagePlayerClanChat(client, clanChattingClient, messageText) {
 // ===========================================================================
 
 function messagePlayerAdminChat(client, adminChattingClient, messageText) {
-	messagePlayerNormal(client, `🛡️ [ADMIN CHAT] {ALTCOLOUR}${getPlayerData(adminChattingClient).accountData.staffTitle} [#CCCCCC]${getPlayerData(adminChattingClient).accountData.name}: {MAINCOLOUR}${messageText}`, getColourByType("orange"));
+	messagePlayerNormal(client, `🛡️ [ADMIN CHAT] {ALTCOLOUR}${getPlayerData(adminChattingClient).accountData.staffTitle} {lightGrey}${getPlayerData(adminChattingClient).accountData.name}: {MAINCOLOUR}${messageText}`, getColourByType("orange"));
 }
 
 // ===========================================================================
