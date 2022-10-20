@@ -390,9 +390,18 @@ function getVehicleCommand(command, params, client) {
 
 	let vehicle = getServerData().vehicles[toInteger(params) - 1].vehicle;
 
+	let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+
+	setElementStreamInDistance(vehicle, 9999999);
+	setElementStreamOutDistance(vehicle, 9999999 + 1);
+
 	setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
 	setElementInterior(vehicle, getPlayerInterior(client));
 	setElementDimension(vehicle, getPlayerDimension(client));
+
+	setElementStreamInDistance(vehicle, oldStreamInDistance);
+	setElementStreamOutDistance(vehicle, oldStreamOutDistance);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
 }
