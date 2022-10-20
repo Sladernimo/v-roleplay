@@ -207,7 +207,7 @@ function playerPromptAnswerYes(client) {
 			getHouseData(houseId).needsSaved = true;
 			updateHousePickupLabelData(houseId);
 
-			messageDiscordEventChannel(`🏘️ ${getCharacterFullName(client)} is now the owner of *${getHouseData(houseId).description}*!`);
+			messageDiscordEventChannel(`🏘️ ${getCharacterFullName(client)} is now the owner of house *${getHouseData(houseId).description}*!`);
 			messagePlayerSuccess(client, `🏘️ You are now the owner of {houseGreen}${getHouseData(houseId).description}`);
 			break;
 		}
