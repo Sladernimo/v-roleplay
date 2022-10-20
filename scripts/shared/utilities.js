@@ -1815,10 +1815,23 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 
 // ===========================================================================
 
-function getObjectModelIndexFromModel(model, gameId = getGame()) {
+function getObjectModelIndexFromName(model, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
+			return i;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function getObjectModelIndexFromModel(model, gameId = getGame()) {
+	let objects = getGameConfig().objects[gameId];
+	for (let i in objects) {
+		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
