@@ -2326,7 +2326,7 @@ function jobStartRouteCommand(command, params, client) {
 	}
 
 	if (getJobData(getPlayerJob(client)).routes.length == 0) {
-		messagePlayerError(client, getLocaleString(client, "NoRoutesForLocation"));
+		messagePlayerError(client, getLocaleString(client, "NoJobRoutesForLocation"));
 		return false;
 	}
 
