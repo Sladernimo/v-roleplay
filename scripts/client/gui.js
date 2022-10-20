@@ -62,14 +62,14 @@ function initGUI() {
 	initResetPasswordGUI();
 	initChangePasswordGUI();
 	initLocaleChooserGUI();
-	initInventoryGUI();
-	initInventoryBulkGUI();
+	//initInventoryGUI();
+	//initInventoryBulkGUI();
 	//initClanManagerGUI();
 	//initBusinessManagerGUI();
 	//initHouseManagerGUI();
-	initFiveCardPokerGUI();
-	initBettingGUI();
-	initBlackJackGUI();
+	//initFiveCardPokerGUI();
+	//initBettingGUI();
+	//initBlackJackGUI();
 
 	closeAllWindows();
 	guiReady = true;
@@ -98,11 +98,11 @@ function closeAllWindows() {
 	//houseManager.window.shown = false;
 	//businessManager.window.shown = false;
 	//clanManager.window.shown = false;
-	inventoryGUI.window.shown = false;
-	inventoryBulkGUI.window.shown = false;
-	bettingGUI.window.shown = false;
-	blackJackGUI.window.shown = false;
-	fiveCardPokerGUI.window.shown = false;
+	//inventoryGUI.window.shown = false;
+	//inventoryBulkGUI.window.shown = false;
+	//bettingGUI.window.shown = false;
+	//blackJackGUI.window.shown = false;
+	//fiveCardPokerGUI.window.shown = false;
 
 	mexui.setInput(false);
 	mexui.focusedControl = false;
@@ -183,25 +183,25 @@ function isAnyGUIActive() {
 	//	return true;
 	//}
 
-	if (inventorGUI.window.shown == true) {
-		return true;
-	}
+	//if (inventoryGUI.window.shown == true) {
+	//	return true;
+	//}
 
-	if (inventoryBulkGUI.window.shown == true) {
-		return true;
-	}
+	//if (inventoryBulkGUI.window.shown == true) {
+	//	return true;
+	//}
 
-	if (bettingGUI.window.shown == true) {
-		return true;
-	}
+	//if (bettingGUI.window.shown == true) {
+	//	return true;
+	//}
 
-	if (blackJackGUI.window.shown == true) {
-		return true;
-	}
+	//if (blackJackGUI.window.shown == true) {
+	//	return true;
+	//}
 
-	if (fiveCardPokerGUI.window.shown == true) {
-		return true;
-	}
+	//if (fiveCardPokerGUI.window.shown == true) {
+	//	return true;
+	//}
 
 	return false;
 }
