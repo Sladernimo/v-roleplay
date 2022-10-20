@@ -174,7 +174,14 @@ function adminChatCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`{jobYellow}[Admin Chat] {ALTCOLOUR}${getPlayerName(client)}: ${params}`);
+	let clients = getClients();
+	for (let i in clients) {
+		if (doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
+			messagePlayerAdminChat(clients[i], client, params);
+		}
+	}
+
+	messageDiscordAdminChannel(`${getPlayerData(client).accountData.staffTitle} ${getPlayerData(client).accountData.name}: ${messageText}`);
 }
 
 // ===========================================================================
