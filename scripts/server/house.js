@@ -310,11 +310,12 @@ function setHouseOwnerCommand(command, params, client) {
 		}
 	}
 
-	getHouseData(houseId).needsSaved = true;
-
 	getHouseData(houseId).ownerType = AGRP_HOUSE_OWNER_PLAYER;
 	getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(newHouseOwner).databaseId;
-	messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to {ALTCOLOUR}${newHouseOwner.name}`);
+
+	getHouseData(houseId).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(newHouseOwner)}`);
 }
 
 /**
@@ -345,7 +346,7 @@ function removeHouseOwnerCommand(command, params, client) {
 	getHouseData(houseId).ownerId = -1;
 	getHouseData(houseId).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You removed house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} owner`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} owner`);
 }
 
 // ===========================================================================
@@ -385,7 +386,7 @@ function setHouseClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_HOUSEGIVETOCLAN;
+	getPlayerData(client).promptType = AGRP_PROMPT_GIVEHOUSETOCLAN;
 
 	//messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
 }
@@ -1456,8 +1457,8 @@ function buyHouseCommand(command, params, client) {
 		return false;
 	}
 
+	getPlayerData(client).promptType = AGRP_PROMPT_BUYHOUSE;
 	showPlayerPrompt(client, getLocaleString(client, "BuyHouseConfirmMessage"), getLocaleString(client, "BuyHouseConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_HOUSEBUY;
 }
 
 // ===========================================================================
@@ -1793,14 +1794,14 @@ function updateHousePickupLabelData(houseId) {
 		setEntityData(houseData.entrancePickup, "agrp.label.type", AGRP_LABEL_HOUSE, true);
 		setEntityData(houseData.entrancePickup, "agrp.label.name", houseData.description, true);
 		setEntityData(houseData.entrancePickup, "agrp.label.locked", houseData.locked, true);
+		setEntityData(houseData.entrancePickup, "agrp.label.price", houseData.buyPrice, true);
+		setEntityData(houseData.entrancePickup, "agrp.label.rentprice", houseData.rentPrice, true);
+		setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+
 		if (houseData.buyPrice > 0) {
-			setEntityData(houseData.entrancePickup, "agrp.label.price", houseData.buyPrice, true);
 			setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUYHOUSE, true);
-		} else {
-			if (houseData.rentPrice > 0) {
-				setEntityData(houseData.entrancePickup, "agrp.label.rentprice", houseData.rentPrice, true);
-				setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_RENTHOUSE, true);
-			}
+		} else if (houseData.rentPrice > 0) {
+			setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_RENTHOUSE, true);
 		}
 	}
 
