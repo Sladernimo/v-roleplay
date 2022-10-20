@@ -73,8 +73,8 @@ function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, se
 
 	let outputString = messageString;
 	if (chatTimeStampsEnabled == true) {
-		//timeStampString = `{TIMESTAMPCOLOUR}[${findResourceByName("agrp_time").exports.getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
-		let timeStampString = `{TIMESTAMPCOLOUR}[${hour}:${minute}:${second}] `;
+		let colourRGBA = rgbaArrayFromToColour(colour);
+		let timeStampString = `{TIMESTAMPCOLOUR}[${hour}:${minute}:${second}][${rgbToHex(colourRGBA[0], colourRGBA[1], colourRGBA[2])}] `;
 		outputString = `${timeStampString}${messageString}`;
 	}
 
@@ -163,12 +163,9 @@ function updateChatBox() {
 		if (typeof chatBoxHistory[i] != "undefined") {
 			let outputString = chatBoxHistory[i][0];
 			if (chatTimeStampsEnabled == true) {
-				//let timeStampDate = new Date(chatBoxHistory[i][2]);
-				//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
-				//let timeStampText = findResourceByName("agrp_time").exports.getTimeStampOutput(chatBoxHistory[i][2]);
 				let timeStampText = `${chatBoxHistory[i][2]}:${chatBoxHistory[i][3]}:${chatBoxHistory[i][4]}`;
-
-				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
+				let colourRGBA = rgbaArrayFromToColour(chatBoxHistory[i][1]);
+				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}][${rgbToHex(colourRGBA[0], colourRGBA[1], colourRGBA[2])}] ${chatBoxHistory[i][0]}`;
 			}
 
 			outputString = replaceColoursInMessage(outputString);
