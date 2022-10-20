@@ -677,10 +677,6 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			//if (seat == AGRP_VEHSEAT_DRIVER) {
-			//	vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
-			//}
-
 			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
 
 			stopRadioStreamForPlayer(client);
