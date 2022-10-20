@@ -204,9 +204,9 @@ function showAccountHelpMessage(client) {
 function showVehicleHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleHelp")));
 
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 0, `{ALTCOLOUR}/info dealership{MAINCOLOUR}`));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 1, `{ALTCOLOUR}/lock, /engine, /lights, /trunk, /rentveh, /buyveh, /rentprice, /buyprice{MAINCOLOUR}`));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 2));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 0));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 1, `{ALTCOLOUR}/info dealership{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 2, `{ALTCOLOUR}/lock, /engine, /lights, /trunk, /rentveh, /buyveh, /rentprice, /buyprice{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleHelp", 3, `{ALTCOLOUR}/info mechanic{MAINCOLOUR}`));
 }
 
@@ -216,8 +216,8 @@ function showVehicleDealershipHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleDealershipHelp")));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 0, `{ALTCOLOUR}/gps{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 1));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 1, `{ALTCOLOUR}/buyveh{MAINCOLOUR}`));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 2));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 2, `{ALTCOLOUR}/buyveh{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "VehicleDealershipHelp", 3));
 }
 
 // ===========================================================================
