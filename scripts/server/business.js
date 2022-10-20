@@ -595,8 +595,9 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
+	// Use confirm prompt
 	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZGIVETOCLAN;
+	getPlayerData(client).promptType = AGRP_PROMPT_GIVEBIZTOCLAN;
 
 	//getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_CLAN;
 	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
@@ -1670,7 +1671,7 @@ function buyBusinessCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZBUY;
+	getPlayerData(client).promptType = AGRP_PROMPT_BUYBIZ;
 }
 
 // ===========================================================================
