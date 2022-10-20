@@ -1212,6 +1212,30 @@ function setElementStreamOutDistance(element, distance) {
 
 // ===========================================================================
 
+function getElementStreamInDistance(element) {
+	if (!isNull(element) && element != false) {
+		if (typeof element == "Entity") {
+			if (typeof element.streamInDistance != "undefined") {
+				return element.streamInDistance;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function getElementStreamOutDistance(element) {
+	if (!isNull(element) && element != false) {
+		if (typeof element == "Entity") {
+			if (typeof element.streamOutDistance != "undefined") {
+				return element.streamOutDistance;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
 function getPlayerPed(client) {
 	if (isNull(client)) {
 		return null;
