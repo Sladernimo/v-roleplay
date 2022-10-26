@@ -361,7 +361,7 @@ function loadCommands() {
 			new CommandData("itemtypemaxval", setItemTypeMaxValueCommand, "<item type> <max value>", getStaffFlagValue("ManageItems"), true, false, "Sets the maximum value an item type can have"),
 			new CommandData("itemtypeorderval", setItemTypeOrderValueCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the initial value of an item type when ordered by a business"),
 			new CommandData("itemtypesize", setItemTypeSizeCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the item type's size"),
-			new CommandData("itemtypecapacity", setItemTypeSizeCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
+			new CommandData("itemtypecapacity", setItemTypeCapacityCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
 
 			new CommandData("delplritem", deleteItemInPlayerInventoryCommand, "<player name/id> <item slot>", getStaffFlagValue("ManageItems"), true, false, "Removes an item by slot from a player's personal inventory"),
 			new CommandData("delplritems", deleteAllItemsInPlayerInventoryCommand, "<player name/id>", getStaffFlagValue("ManageItems"), true, false, "Removes all items from a player's personal inventory"),
