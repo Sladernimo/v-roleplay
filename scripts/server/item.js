@@ -702,7 +702,7 @@ function dropItemCommand(command, params, client) {
  *
  */
 function putItemCommand(command, params, client) {
-	clearPlayerItemActionState(client);
+	//clearPlayerItemActionState(client);
 
 	let hotBarSlot = toInteger(params);
 
@@ -744,6 +744,8 @@ function putItemCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "CantPutJobEquipmentItem"));
 		return false;
 	}
+
+	clearPlayerItemActionState(client);
 
 	if (getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex, 0.0);
@@ -2141,7 +2143,7 @@ function cacheAllGroundItems() {
 
 function createAllGroundItemObjects() {
 	for (let i in getServerData().groundItemCache) {
-		createGroundItemObject(i);
+		createGroundItemObject(getServerData().groundItemCache[i]);
 	}
 }
 
@@ -2270,6 +2272,20 @@ function deleteItem(itemId, whoDeleted = -1) {
 function getBestNewOwnerToPutItem(client) {
 	let position = getPlayerPosition(client);
 
+	let possibleItem = getClosestItemOnGround(position);
+	if (possibleItem != -1) {
+		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
+			return [AGRP_ITEM_OWNER_ITEM, possibleItem];
+		}
+	}
+
+	let possibleVehicle = getClosestVehicle(position);
+	if (possibleVehicle != false) {
+		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+			return [AGRP_ITEM_OWNER_VEHTRUNK, possibleVehicle];
+		}
+	}
+
 	let possibleHouse = getPlayerHouse(client);
 	if (possibleHouse != -1) {
 		if (getHouseData(possibleHouse) != false) {
@@ -2284,20 +2300,6 @@ function getBestNewOwnerToPutItem(client) {
 		}
 	}
 
-	let possibleVehicle = getClosestVehicle(position);
-	if (possibleVehicle != false) {
-		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
-			return [AGRP_ITEM_OWNER_VEHTRUNK, possibleVehicle];
-		}
-	}
-
-	let possibleItem = getClosestItemOnGround(position);
-	if (possibleItem != -1) {
-		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
-			return [AGRP_ITEM_OWNER_ITEM, possibleItem];
-		}
-	}
-
 	return [AGRP_ITEM_OWNER_NONE, 0];
 }
 
@@ -2309,6 +2311,15 @@ function getBestItemToTake(client, slot) {
 	let itemId = -1;
 	let ownerType = AGRP_ITEM_OWNER_NONE;
 	let ownerId = 0;
+
+	let possibleItem = getClosestItemOnGround(position);
+	if (getItemData(possibleItem)) {
+		if (typeof getItemData(possibleItem).itemCache[slot] != "undefined") {
+			itemId = getItemData(possibleItem).itemCache[slot]
+			ownerType = AGRP_ITEM_OWNER_ITEM;
+			ownerId = possibleItem;
+		}
+	}
 
 	let possibleHouse = getPlayerHouse(client);
 	if (getHouseData(possibleHouse)) {
