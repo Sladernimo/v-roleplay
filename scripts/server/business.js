@@ -1551,17 +1551,17 @@ function orderItemForBusinessCommand(command, params, client) {
 	let itemType = getItemTypeFromParams(splitParams.slice(0, -2).join(" "));
 
 	if (!getItemTypeData(itemType)) {
-		messagePlayerError(client, `Invalid item type name or ID!`);
-		messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes {MAINCOLOUR}for a list of items`);
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes{MAINCOLOUR} for a list of items`);
 		return false;
 	}
 	let pricePerItem = getOrderPriceForItemType(itemType);
 
 	let amount = toInteger(splitParams.slice(-2, -1)) || 1;
-	let value = toInteger(splitParams.slice(-1)) || getItemTypeData(itemType).capacity;
+	let value = getItemTypeData(itemType).orderValue;
 	let businessId = getPlayerBusiness(client);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")}`);
 
 	if (!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -1579,11 +1579,10 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderAmount = amount;
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
-	getPlayerData(client).businessOrderValue = value;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
 
 	getBusinessData(businessId).needsSaved = true;
-	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(pricePerItem)} each will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
+	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
 	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
 }
 
