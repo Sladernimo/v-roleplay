@@ -133,8 +133,13 @@ function thirtyMinuteTimerFunction() {
 	if (getClients().length > 0) {
 		checkPayDays();
 	}
-	saveServerDataToDatabase();
+
+	if (isGameFeatureSupported("snow")) {
+		checkSnowChance();
+	}
+
 	checkInactiveVehicleRespawns();
+	saveServerDataToDatabase();
 }
 
 // ===========================================================================
@@ -262,7 +267,7 @@ function checkServerGameTime() {
 		game.time.minute = getServerConfig().minute;
 	}
 
-	updateTimeRule();
+	updateServerRules();
 }
 
 // ===========================================================================
@@ -333,6 +338,17 @@ function checkInactiveVehicleRespawns() {
 			}
 		}
 	}
+}
+
+// ===========================================================================
+
+function checkSnowChance() {
+	let date = new Date();
+
+	let shouldBeSnowing = getRandomBoolWithProbability(getGlobalConfig().monthlyChanceOfSnow[date.getMonths()]);
+	getServerConfig().groundSnow = shouldBeSnowing;
+	getServerConfig().fallingSnow = shouldBeSnowing;
+	updatePlayerSnowState(null);
 }
 
 // ===========================================================================
