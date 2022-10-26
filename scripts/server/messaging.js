@@ -236,3 +236,23 @@ function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
 }
 
 // ===========================================================================
+
+function showPlayerError(client, errorMessage, errorTitle = "Error") {
+	if (doesPlayerUseGUI(client)) {
+		showPlayerErrorGUI(client, errorMessage, errorTitle);
+	} else {
+		messagePlayerError(client, errorMessage);
+	}
+}
+
+// ===========================================================================
+
+function showPlayerAlert(client, alertMessage, alertTitle = "Alert") {
+	if (doesPlayerUseGUI(client)) {
+		showPlayerInfoGUI(client, alertMessage, alertTitle);
+	} else {
+		messagePlayerAlert(client, alertMessage);
+	}
+}
+
+// ===========================================================================

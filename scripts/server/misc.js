@@ -469,10 +469,10 @@ function checkPlayerSpawning() {
 // ===========================================================================
 
 function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	if (canPlayerUseGUI(client)) {
+	if (doesPlayerUseGUI(client)) {
 		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
-		messagePlayerNormal(client, `❓ ${promptMessage} `);
+		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
 		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
 	}
 }
