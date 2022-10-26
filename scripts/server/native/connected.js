@@ -1506,3 +1506,9 @@ function shutdownServer() {
 }
 
 // ===========================================================================
+
+function setServerRule(ruleName, ruleValue) {
+	server.setRule(ruleName, ruleValue);
+}
+
+// ===========================================================================
