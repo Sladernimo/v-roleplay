@@ -399,7 +399,7 @@ function onPedSpawn(ped) {
 	if (ped.type == ELEMENT_PLAYER) {
 		if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
 			//setTimeout(onPlayerSpawn, 250, ped);
-			onPlayerSpawn();
+			//onPlayerSpawn();
 		}
 	}
 }
