@@ -79,32 +79,44 @@ function initAllClients() {
 function updateServerRules() {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Updating all server rules ...`);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Time support: ${isTimeSupported()}`);
+	let timeWeatherRule = [];
+	let tempText = "";
+
 	if (isTimeSupported()) {
 		if (getServerConfig() != false) {
-			let value = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
-			logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Time" as ${value}`);
-			server.setRule("Time", value);
+			tempText = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
+			timeWeatherRule.push(tempText);
+		}
+	} else {
+		if (getGame() == AGRP_GAME_MAFIA_ONE) {
+			if (isNightTime(getServerConfig().hour)) {
+				tempText = "Night";
+			} else {
+				tempText = "Day";
+			}
+
+			timeWeatherRule.push(tempText);
 		}
 	}
 
 	if (isWeatherSupported()) {
 		if (getServerConfig() != false) {
 			if (typeof getGameConfig().weatherNames[getGame()] != "undefined") {
-				let value = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
-				logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Weather" as ${value}`);
-				server.setRule("Weather", value);
+				let tempText = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
+				timeWeatherRule.push(tempText);
 			}
 		}
 	}
 
 	if (isSnowSupported()) {
 		if (getServerConfig() != false) {
-			let value = getYesNoFromBool(getServerConfig().fallingSnow);
-			logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Setting server rule "Snowing" as ${value}`);
-			server.setRule("Snowing", value);
+			if (getServerConfig().fallingSnow == true) {
+				timeWeatherRule.push("Snowing");
+			}
 		}
 	}
+
+	setServerRule("Time & Weather", timeWeatherRule.join(", "));
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: All server rules updated successfully!`);
 }
 
@@ -406,22 +418,6 @@ function clearTemporaryPeds() {
 					}
 				}
 			}
-		}
-	}
-}
-
-// ===========================================================================
-
-function updateTimeRule() {
-	if (isTimeSupported()) {
-		server.setRule("Time", makeReadableTime(game.time.hour, game.time.minute));
-	}
-
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
-		if (isNightTime(getServerConfig().hour)) {
-			server.setRule("Time", "Night");
-		} else {
-			server.setRule("Time", "Day");
 		}
 	}
 }
