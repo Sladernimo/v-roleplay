@@ -266,7 +266,7 @@ function initClient(client) {
 						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
 
 						if (checkForGeoIPModule()) {
-							let iso = module.geoip.getCountryISO(getPlayerIP(client));
+							let iso = module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
 							let localeId = getLocaleFromCountryISO(iso);
 
 							if (localeId != 0) {
