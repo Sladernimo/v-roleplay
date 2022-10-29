@@ -1121,7 +1121,7 @@ let profanityFilterWords = [
 	"anus",
 	"apeshit",
 	"arsehole",
-	"ass",
+	//"ass",
 	"asshole",
 	"assmunch",
 	"autoerotic",
@@ -3228,6 +3228,22 @@ function isServerGoingToChangeMapsSoon(hour, minute) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getRandomBoolWithProbability(percentChance) {
+	return (Math.random() < percentChance / 100);
+}
+
+// ===========================================================================
+
+function getWeatherData(weatherIndex, gameId = getGame()) {
+	if (typeof getGameConfig().weather[gameId][weatherIndex] == "undefined") {
+		return false;
+	}
+
+	return getGameConfig().weather[gameId][weatherIndex];
 }
 
 // ===========================================================================
