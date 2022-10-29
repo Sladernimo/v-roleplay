@@ -115,7 +115,7 @@ class ClientData {
 
 		// Misc
 		this.changingCharacterName = false;
-		this.currentPickup = false;
+		this.currentPickup = null;
 		this.usingSkinSelect = false;
 		this.keyBinds = [];
 		this.incomingDamageMultiplier = 1;
