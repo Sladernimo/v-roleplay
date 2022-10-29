@@ -232,7 +232,8 @@ function messagePlayersInRace(raceId, message) {
 // ===========================================================================
 
 function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
-	messagePlayerNormal(toClient, `{yellow}[DM] ${getCharacterFullName(fromClient)}{MAINCOLOUR}says: {ALTCOLOUR}${messageText}`);
+	messagePlayerNormal(toClient, `📥 {yellow}DM from ${getCharacterFullName(fromClient)}{MAINCOLOUR}: ${messageText}`);
+	messagePlayerNormal(fromClient, `📤 {yellow}DM to ${getCharacterFullName(toClient)}{MAINCOLOUR}: ${messageText}`);
 }
 
 // ===========================================================================
