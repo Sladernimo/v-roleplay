@@ -222,10 +222,10 @@ function syncPlayerProperties(client) {
 
 // ===========================================================================
 
-function updatePlayerSnowState(client) {
+function updatePlayerSnowState(client, forceGroundSnow = false) {
 	if (isSnowSupported(getGame())) {
 		logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(getServerConfig().fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(getServerConfig().groundSnow))})`);
-		sendNetworkEventToPlayer("agrp.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow);
+		sendNetworkEventToPlayer("agrp.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow, forceGroundSnow);
 	}
 }
 
