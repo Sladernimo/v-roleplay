@@ -211,42 +211,52 @@ function enterExitPropertyCommand(command, params, client) {
 		return false;
 	}
 
+	let position = getPlayerPosition(client);
+	let dimension = getPlayerDimension(client);
+
+	/*
 	// The player's currentPickup wasn't always being set. This prevented entering/exiting a property.
 	// Needs further testing and tweaks.
-	if (!getPlayerData(client).currentPickup) {
-		let ownerType = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.type");
-		let ownerId = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.id");
+	if (getPlayerData(client).currentPickup != null) {
+		if (getDistance(getPlayerData(client).currentPickup.position, getPlayerPosition(client)) <= 2) {
+			let ownerType = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.type");
+			let ownerId = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.id");
 
-		switch (ownerType) {
-			case AGRP_PICKUP_BUSINESS_ENTRANCE:
-				isBusiness = true;
-				isEntrance = true;
-				closestProperty = getServerData().businesses[ownerId];
-				break;
+			switch (ownerType) {
+				case AGRP_PICKUP_BUSINESS_ENTRANCE:
+					isBusiness = true;
+					isEntrance = true;
+					closestProperty = getServerData().businesses[ownerId];
+					break;
 
-			case AGRP_PICKUP_BUSINESS_EXIT:
-				isBusiness = true;
-				isEntrance = false;
-				closestProperty = getServerData().businesses[ownerId];
-				break;
+				case AGRP_PICKUP_BUSINESS_EXIT:
+					isBusiness = true;
+					isEntrance = false;
+					closestProperty = getServerData().businesses[ownerId];
+					break;
 
-			case AGRP_PICKUP_HOUSE_ENTRANCE:
-				isBusiness = false;
-				isEntrance = true;
-				closestProperty = getServerData().houses[ownerId];
-				break;
+				case AGRP_PICKUP_HOUSE_ENTRANCE:
+					isBusiness = false;
+					isEntrance = true;
+					closestProperty = getServerData().houses[ownerId];
+					break;
 
-			case AGRP_PICKUP_HOUSE_EXIT:
-				isBusiness = false;
-				isEntrance = false;
-				closestProperty = getServerData().houses[ownerId];
-				break;
+				case AGRP_PICKUP_HOUSE_EXIT:
+					isBusiness = false;
+					isEntrance = false;
+					closestProperty = getServerData().houses[ownerId];
+					break;
 
-			default:
-				return false;
+				default:
+					return false;
+			}
+		} else {
+			getPlayerData(client).currentPickup = null;
 		}
 	}
+	*/
 
+	/*
 	// Check businesses first
 	if (closestProperty == null) {
 		let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
@@ -284,6 +294,48 @@ function enterExitPropertyCommand(command, params, client) {
 			closestProperty = getServerData().houses[houseIndex];
 		}
 	}
+	*/
+
+	// Check businesses first
+	if (closestProperty == null) {
+		for (let i in getServerData().businesses) {
+			if (getServerData().businesses[i].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().businesses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+					isBusiness = true;
+					isEntrance = true;
+					closestProperty = getServerData().businesses[i];
+				}
+			} else {
+				if (getServerData().businesses[i].exitDimension == dimension) {
+					if (getDistance(position, getServerData().businesses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+						isBusiness = true;
+						isEntrance = false;
+						closestProperty = getServerData().businesses[i];
+					}
+				}
+			}
+		}
+	}
+
+	if (closestProperty == null) {
+		for (let i in getServerData().houses) {
+			if (getServerData().houses[i].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().houses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+					isBusiness = false;
+					isEntrance = true;
+					closestProperty = getServerData().houses[i];
+				}
+			} else {
+				if (getServerData().houses[i].exitDimension == dimension) {
+					if (getDistance(position, getServerData().houses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+						isBusiness = false;
+						isEntrance = false;
+						closestProperty = getServerData().houses[i];
+					}
+				}
+			}
+		}
+	}
 
 	if (closestProperty == null) {
 		logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is null`);
@@ -293,7 +345,7 @@ function enterExitPropertyCommand(command, params, client) {
 	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is ${(isBusiness) ? closestProperty.name : closestProperty.description} ${(isEntrance) ? "entrance" : "exit"}`);
 
 	let englishId = getLocaleFromParams("English");
-	let typeString = (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House");
+	let typeString = (isBusiness) ? getLanguageLocaleString(englishId, "Business") : getLanguageLocaleString(englishId, "House");
 	let nameString = (isBusiness) ? closestProperty.name : closestProperty.description;
 
 	if (isEntrance) {
