@@ -205,12 +205,6 @@ function onPedExitingVehicle(event, ped, vehicle) {
 		let client = getClientFromPlayerElement(ped);
 		getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGVEHICLE;
 	}
-
-	if (!getVehicleData(vehicle).spawnLocked) {
-		getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
-		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
-		getVehicleData(vehicle).needsSaved = true;
-	}
 }
 
 // ===========================================================================
@@ -511,7 +505,7 @@ async function onPlayerSpawn(client) {
 
 	if (isGameFeatureSupported("snow")) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
-		updatePlayerSnowState(client);
+		updatePlayerSnowState(client, true);
 	}
 
 	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
@@ -629,7 +623,9 @@ async function onPlayerSpawn(client) {
 
 	if (areServerElementsSupported()) {
 		if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
-			getPlayerPed(client).netFlags.distanceStreaming = false;
+			//getPlayerPed(client).netFlags.distanceStreaming = false;
+			setElementStreamInDistance(getPlayerPed(client), 99999);
+			setElementStreamOutDistance(getPlayerPed(client), 99999);
 		} else {
 			setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
 			setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
@@ -678,6 +674,12 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
 			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+
+			if (getVehicleData(vehicle).spawnLocked == false && canPlayerManageVehicle(client, vehicle) == true) {
+				getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
+				getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
+				getVehicleData(vehicle).needsSaved = true;
+			}
 
 			stopRadioStreamForPlayer(client);
 
