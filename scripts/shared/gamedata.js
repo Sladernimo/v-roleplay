@@ -29,6 +29,16 @@ class AnimationData {
 
 // ===========================================================================
 
+class WeatherData {
+	constructor(weatherId, name, allowWithSnow) {
+		this.weatherId = weatherId;
+		this.name = name;
+		this.allowWithSnow = allowWithSnow;
+	}
+}
+
+// ===========================================================================
+
 let supportedFeatures = {
 	// Invalid, GTAIII, GTAVC, GTASA, Invalid, GTAIV, Invalid, Invalid, Invalid, M1, M2, M3, M1DE
 	time: {
@@ -563,77 +573,79 @@ let gameData = {
 
 		}
 	},
-	weatherNames: {
+	weather: {
 		[AGRP_GAME_GTA_III]: [ // GTA III
-			"Clear",
-			"Overcast",
-			"Thunderstorm",
-			"Fog",
-			"Clear",
-			"Rainy",
-			"Dark/Cloudy",
-			"Light/Cloudy",
-			"Overcast/Cloudy",
-			"Grey/Cloudy"
+			new WeatherData(0, "Clear", true),
+			new WeatherData(1, "Overcast", false),
+			new WeatherData(2, "Thunderstorm", false),
+			new WeatherData(3, "Fog", true),
+			new WeatherData(4, "Clear", false),
+			new WeatherData(5, "Rainy", false),
+			new WeatherData(6, "Dark/Cloudy", false),
+			new WeatherData(7, "Light/Cloudy", false),
+			new WeatherData(8, "Overcast/Cloudy", true),
+			new WeatherData(9, "Grey/Cloudy", false),
 		],
 		[AGRP_GAME_GTA_VC]: [ // GTA Vice City
-			"Partly Cloudy",
-			"Overcast",
-			"Thunderstorm",
-			"Fog",
-			"Sunny",
-			"Hurricane",
-			"Dark/Cloudy",
-			"Light/Cloudy",
-			"Overcast/Cloudy",
-			"Grey/Cloudy"
+			new WeatherData(0, "Clear", true),
+			new WeatherData(1, "Overcast", false),
+			new WeatherData(2, "Thunderstorm", false),
+			new WeatherData(3, "Fog", true),
+			new WeatherData(4, "Sunny", false),
+			new WeatherData(5, "Hurricane", false),
+			new WeatherData(6, "Dark/Cloudy", false),
+			new WeatherData(7, "Light/Cloudy", false),
+			new WeatherData(8, "Overcast/Cloudy", true),
+			new WeatherData(9, "Grey/Cloudy", false),
 		],
 		[AGRP_GAME_GTA_SA]: [ // GTA San Andreas
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Blue Skies",
-			"Thunderstorm",
-			"Cloudy/Foggy",
-			"Clear Blue Skies",
-			"Heatwave",
-			"Dull/Colorless",
-			"Dull/Colorless",
-			"Dull/Colorless",
-			"Dull/Colorless",
-			"Dull/Rainy",
-			"Heatwave",
-			"Heatwave",
-			"Sandstorm",
-			"Greenish/Foggy"
+			new WeatherData(0, "Blue Skies", false),
+			new WeatherData(1, "Blue Skies", false),
+			new WeatherData(2, "Blue Skies", false),
+			new WeatherData(3, "Blue Skies", false),
+			new WeatherData(4, "Blue Skies", false),
+			new WeatherData(5, "Blue Skies", false),
+			new WeatherData(6, "Blue Skies", false),
+			new WeatherData(7, "Blue Skies", false),
+			new WeatherData(8, "Thunderstorm", false),
+			new WeatherData(9, "Cloudy/Foggy", false),
+			new WeatherData(10, "Clear Blue Skies", false),
+			new WeatherData(11, "Heatwave", false),
+			new WeatherData(12, "Dull/Colorless", false),
+			new WeatherData(13, "Dull/Colorless", false),
+			new WeatherData(14, "Dull/Colorless", false),
+			new WeatherData(15, "Dull/Colorless", false),
+			new WeatherData(16, "Dull/Rainy", false),
+			new WeatherData(17, "Heatwave", false),
+			new WeatherData(18, "Heatwave", false),
+			new WeatherData(19, "Sandstorm", false),
+			new WeatherData(20, "Greenish/Foggy", false),
 		],
 		[AGRP_GAME_GTA_IV]: [ // GTA IV
-			"Extra Sunny",
-			"Sunny",
-			"Sunny/Windy",
-			"Cloudy",
-			"Rain",
-			"Light Rain",
-			"Foggy",
-			"Thunderstorm",
-			"Extra Sunny",
-			"Sunny/Windy",
+			new WeatherData(1, "Blue Skies", false),
+			new WeatherData(2, "Extra Sunny", false),
+			new WeatherData(3, "Sunny", false),
+			new WeatherData(4, "Sunny/Windy", false),
+			new WeatherData(5, "Cloudy", false),
+			new WeatherData(6, "Rain", false),
+			new WeatherData(7, "Light Rain", false),
+			new WeatherData(8, "Foggy", false),
+			new WeatherData(9, "Thunderstorm", false),
+			new WeatherData(10, "Extra Sunny", false),
+			new WeatherData(11, "Sunny/Windy", false),
 		],
 		[AGRP_GAME_GTA_IV_EFLC]: [ // GTA IV EFLC
-			"Extra Sunny",
-			"Sunny",
-			"Sunny/Windy",
-			"Cloudy",
-			"Rain",
-			"Light Rain",
-			"Foggy",
-			"Thunderstorm",
-			"Extra Sunny",
-			"Sunny/Windy",
+			new WeatherData(1, "Blue Skies", false),
+			new WeatherData(2, "Extra Sunny", false),
+			new WeatherData(3, "Sunny", false),
+			new WeatherData(4, "Sunny/Windy", false),
+			new WeatherData(5, "Cloudy", false),
+			new WeatherData(6, "Rain", false),
+			new WeatherData(7, "Light Rain", false),
+			new WeatherData(8, "Foggy", false),
+			new WeatherData(9, "Thunderstorm", false),
+			new WeatherData(10, "Extra Sunny", false),
+			new WeatherData(11, "Sunny/Windy", false),
 		],
 		[AGRP_GAME_GTA_V]: [
 

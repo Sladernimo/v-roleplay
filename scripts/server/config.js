@@ -387,7 +387,7 @@ function applyConfigToServer(tempServerConfig) {
 
 	if (isWeatherSupported()) {
 		logToConsole(LOG_DEBUG, `[AGRP.Config]: Setting weather to ${tempServerConfig.weather}`);
-		game.forceWeather(tempServerConfig.weather);
+		game.forceWeather(getWeatherData(tempServerConfig.weather).weatherId);
 	}
 
 	updateServerRules();
@@ -583,19 +583,19 @@ function setWeatherCommand(command, params, client) {
 		return false;
 	}
 
-	let weatherId = getWeatherFromParams(getParam(params, " ", 1));
+	let weatherIndex = getWeatherFromParams(getParam(params, " ", 1));
 
-	if (!weatherId) {
+	if (!getWeatherData(weatherIndex)) {
 		messagePlayerError(client, `That weather ID or name is invalid!`);
 		return false;
 	}
 
-	game.forceWeather(toInteger(weatherId));
-	getServerConfig().weather = weatherId;
+	game.forceWeather(getWeatherData(weatherIndex).weatherId);
+	getServerConfig().weather = weatherIndex;
 
 	getServerConfig().needsSaved = true;
 
-	announceAdminAction("ServerWeatherSet", getPlayerName(client), getGameConfig().weatherNames[getGame()][toInteger(weatherId)]);
+	announceAdminAction("ServerWeatherSet", getPlayerName(client), getWeatherData(weatherIndex).name);
 	updateServerRules();
 	return true;
 }

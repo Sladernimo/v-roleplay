@@ -101,8 +101,8 @@ function updateServerRules() {
 
 	if (isWeatherSupported()) {
 		if (getServerConfig() != false) {
-			if (typeof getGameConfig().weatherNames[getGame()] != "undefined") {
-				let tempText = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
+			if (getWeatherData(getServerConfig().weather) != false) {
+				let tempText = getWeatherData(getServerConfig().weather).name;
 				timeWeatherRule.push(tempText);
 			}
 		}
@@ -124,14 +124,16 @@ function updateServerRules() {
 
 function getWeatherFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().weatherNames[getGame()]) {
-			if (toLowerCase(getGameConfig().weatherNames[getGame()][i]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in getGameConfig().weather[getGame()]) {
+			if (toLowerCase(getGameConfig().weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().weatherNames[getGame()][params] != "undefined") {
-			return toInteger(params);
+		for (let i in getGameConfig().weather[getGame()]) {
+			if (typeof getGameConfig().weather[getGame()][i].weatherId != "undefined") {
+				return toInteger(i);
+			}
 		}
 	}
 

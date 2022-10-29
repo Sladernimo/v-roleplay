@@ -134,11 +134,18 @@ function thirtyMinuteTimerFunction() {
 		checkPayDays();
 	}
 
+	checkInactiveVehicleRespawns();
+
 	if (isGameFeatureSupported("snow")) {
-		checkSnowChance();
+		setSnowWithChance();
 	}
 
-	checkInactiveVehicleRespawns();
+	if (isGameFeatureSupported("weather")) {
+		setRandomWeather();
+	}
+
+	updateServerRules();
+
 	saveServerDataToDatabase();
 }
 
@@ -330,7 +337,7 @@ function checkInactiveVehicleRespawns() {
 				if (getVehicleData(vehicles[i]).lastActiveTime != false) {
 					if (getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= getGlobalConfig().vehicleInactiveRespawnDelay) {
 						respawnVehicle(vehicles[i]);
-						getVehicleData(vehicles[i]).lastActiveTime = false;
+						//getVehicleData(vehicles[i]).lastActiveTime = false;
 					}
 				}
 			} else {
@@ -342,13 +349,31 @@ function checkInactiveVehicleRespawns() {
 
 // ===========================================================================
 
-function checkSnowChance() {
+function setSnowWithChance() {
 	let date = new Date();
 
-	let shouldBeSnowing = getRandomBoolWithProbability(getGlobalConfig().monthlyChanceOfSnow[date.getMonths()]);
+	let shouldBeSnowing = getRandomBoolWithProbability(getGlobalConfig().monthlyChanceOfSnow[date.getMonth()]);
 	getServerConfig().groundSnow = shouldBeSnowing;
 	getServerConfig().fallingSnow = shouldBeSnowing;
+
 	updatePlayerSnowState(null);
+}
+
+// ===========================================================================
+
+function setRandomWeather() {
+	let randomWeatherIndex = getRandom(0, getGameConfig().weather[getGame()].length - 1);
+
+	if (getServerConfig().fallingSnow == true) {
+		while (getWeatherData(randomWeatherIndex).allowWithSnow == false) {
+			randomWeatherIndex = getRandom(0, getGameConfig().weather[getGame()].length - 1);
+		}
+	}
+
+	game.forceWeather(getWeatherData(weatherIndex).weatherId);
+	getServerConfig().weather = weatherIndex;
+
+	getServerConfig().needsSaved = true;
 }
 
 // ===========================================================================
