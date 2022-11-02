@@ -297,7 +297,7 @@ async function translateMessage(messageText, translateFrom = getGlobalConfig().l
 
 // ===========================================================================
 
-function getLocaleFromCountryISO(isoCode) {
+function getLocaleFromCountryISO(isoCode = "US") {
 	for (let i in getLocales()) {
 		for (let j in getLocales()[i].countries) {
 			if (toLowerCase(getLocales()[i].countries[j]) == toLowerCase(isoCode)) {
