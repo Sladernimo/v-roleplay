@@ -517,22 +517,9 @@ function selectCharacter(client, characterId = -1) {
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = AGRP_PEDSTATE_SPAWNING;
 
-	if (getGame() <= AGRP_GAME_GTA_SA) {
+	if (getGame() <= AGRP_GAME_GTA_IV_EFLC) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		onPlayerSpawn(client);
-	} else if (getGame() == AGRP_GAME_GTA_IV) {
-		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
-		clearPlayerWeapons(client);
-		setPlayerPosition(client, spawnPosition);
-		setPlayerHeading(client, spawnHeading);
-		//setPlayerInterior(client, spawnInterior);
-		//setPlayerDimension(client, spawnDimension);
-		restorePlayerCamera(client);
-		setPlayerSkin(client, skin);
-		setTimeout(function () {
-			onPlayerSpawn(client);
-			//stopRadioStreamForPlayer(client);
-		}, 500);
 	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		//logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
