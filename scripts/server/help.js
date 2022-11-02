@@ -348,22 +348,23 @@ function showCommandHelpMessage(client, commandName) {
 		commandName = commandName.slice(1);
 	}
 
-	let command = getCommandData(commandName);
-	let aliases = getCommandAliasesNames(command);
+	let commandData = getCommandData(commandName);
+	let aliases = getCommandAliasesNames(commandData);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandInfo", commandName)));
-	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Description: ${command.helpDescription}`);
+	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Description: ${commandData.helpDescription}`);
+	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Usage: /${commandData.command} ${commandData.syntaxString}`);
 
 	if (aliases.length > 0) {
-		messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Aliases: ${aliases.join(", ")}`);
+		messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Aliases: ${aliases.map(alias => `/${alias.command}`).join(", ")}`);
 	} else {
 		messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Aliases: (None)`);
 	}
 
-	//messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Usable on Discord: ${getYesNoFromBool(command.allowOnDiscord)}`);
+	//messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Usable on Discord: ${getYesNoFromBool(commandData.allowOnDiscord)}`);
 
 	//if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
-	//    messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Usable on Discord: ${getYesNoFromBool(command.allowOnDiscord)}`);
+	//    messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Usable on Discord: ${getYesNoFromBool(commandData.allowOnDiscord)}`);
 	//}
 }
 
