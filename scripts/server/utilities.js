@@ -640,6 +640,10 @@ function processPlayerEnteringExitingProperty(client) {
 // ===========================================================================
 
 function getPlayerCountryISOCode(client) {
+	if (getPlayerIP(client) == "127.0.0.1" || getPlayerIP(client).indexOf("192.168.") != -1) {
+		return "US";
+	}
+
 	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
 }
 
