@@ -356,7 +356,7 @@ function setSnowWithChance() {
 	getServerConfig().groundSnow = shouldBeSnowing;
 	getServerConfig().fallingSnow = shouldBeSnowing;
 
-	updatePlayerSnowState(null);
+	updatePlayerSnowState(null, false);
 }
 
 // ===========================================================================
@@ -370,8 +370,8 @@ function setRandomWeather() {
 		}
 	}
 
-	game.forceWeather(getWeatherData(weatherIndex).weatherId);
-	getServerConfig().weather = weatherIndex;
+	game.forceWeather(getWeatherData(randomWeatherIndex).weatherId);
+	getServerConfig().weather = randomWeatherIndex;
 
 	getServerConfig().needsSaved = true;
 }
