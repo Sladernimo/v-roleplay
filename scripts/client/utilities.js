@@ -600,7 +600,7 @@ function updateLocalPlayerMoney() {
 	}
 
 	if (getGame() == AGRP_GAME_GTA_IV) {
-		natives.setMultiplayerHudCash(amount);
+		natives.setMultiplayerHudCash(localPlayerMoney);
 	}
 }
 
