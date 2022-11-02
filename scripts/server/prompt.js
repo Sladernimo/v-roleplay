@@ -245,7 +245,22 @@ function playerPromptAnswerYes(client) {
 		}
 
 		case AGRP_PROMPT_RESETKEYBINDS: {
-			messagePlayerSuccess(client, getLocaleString(client, "KeyBindsReset"));
+			// TODO: Needs database query!
+
+			//for (let i in getPlayerData(client).keyBinds) {
+			//	removePlayerKeyBind(client, getPlayerData(client).keyBinds[i].key)
+			//}
+
+			//for (let i in getGlobalConfig().keyBind.defaultKeyBinds) {
+			//	let tempKeyBindData = new KeyBindData(false);
+			//	tempKeyBindData.databaseId = -1;
+			//	tempKeyBindData.key = getKeyIdFromParams(getGlobalConfig().keyBind.defaultKeyBinds[i].keyName);
+			//	tempKeyBindData.commandString = getGlobalConfig().keyBind.defaultKeyBinds[i].commandString;
+			//	tempKeyBindData.keyState = getGlobalConfig().keyBind.defaultKeyBinds[i].keyState;
+			//	getPlayerData(client).keyBinds.push(tempKeyBindData);
+			//}
+
+			//messagePlayerSuccess(client, getLocaleString(client, "KeyBindsReset"));
 			break;
 		}
 
