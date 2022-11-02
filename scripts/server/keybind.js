@@ -106,14 +106,14 @@ function copyKeyBindsToServerCommand(command, params, client) {
 
 // ===========================================================================
 
-function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
+function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
 	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
 
 	getPlayerData(client).keyBinds.push(keyBindData);
-	sendAddAccountKeyBindToClient(client, keys, (keys.length > 1) ? AGRP_KEYSTATE_COMBO : AGRP_KEYSTATE_UP);
+	sendAddAccountKeyBindToClient(client, keyId, AGRP_KEYSTATE_UP);
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
