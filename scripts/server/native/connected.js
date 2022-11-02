@@ -193,9 +193,9 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+	//}
 	return vehicle.heading = heading;
 }
 
@@ -227,12 +227,12 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		if (getVehicleData(vehicle).ivNetworkId != -1) {
-			return getVehicleData(vehicle).ivNetworkId;
-		}
-		return -1;
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	if (getVehicleData(vehicle).ivNetworkId != -1) {
+	//		return getVehicleData(vehicle).ivNetworkId;
+	//	}
+	//	return -1;
+	//}
 	return vehicle.id;
 }
 
@@ -1112,9 +1112,9 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+	//}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }
 
@@ -1241,11 +1241,11 @@ function getPlayerPed(client) {
 		return null;
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return getPlayerData(client).ped;
-	} else {
-		return client.player;
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	return getPlayerData(client).ped;
+	//} else {
+	return client.player;
+	//}
 }
 
 // ===========================================================================
