@@ -1697,7 +1697,7 @@ function isGTAIV() {
 // ===========================================================================
 
 function areServerElementsSupported() {
-	return supportedFeatures.serverElements[getGame()];
+	return isGameFeatureSupported("serverElements")
 }
 
 // ===========================================================================
@@ -1818,7 +1818,7 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 function getObjectModelIndexFromName(model, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
 	for (let i in objects) {
-		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
+		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
@@ -1831,7 +1831,7 @@ function getObjectModelIndexFromName(model, gameId = getGame()) {
 function getObjectModelIndexFromModel(model, gameId = getGame()) {
 	let objects = getGameConfig().objects[gameId];
 	for (let i in objects) {
-		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
+		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
