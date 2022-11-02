@@ -241,16 +241,16 @@ function onResourceStop(event, resource) {
 
 function onPedEnteredSphere(event, ped, sphere) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered sphere ${sphere.id}!`);
-	if (ped.isType(ELEMENT_PLAYER)) {
-		let client = getClientFromPlayerElement(ped);
+	//if (ped.isType(ELEMENT_PLAYER)) {
+	//	let client = getClientFromPlayerElement(ped);
 
-		// Handled client-side since server spheres aren't showing on GTAC atm (bug)
-		//if (isPlayerOnJobRoute(client)) {
-		//	if (sphere == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
-		//		playerArrivedAtJobRouteLocation(client);
-		//	}
-		//}
-	}
+	// Handled client-side since server spheres aren't showing on GTAC atm (bug)
+	//if (isPlayerOnJobRoute(client)) {
+	//	if (sphere == getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker) {
+	//		playerArrivedAtJobRouteLocation(client);
+	//	}
+	//}
+	//}
 }
 
 // ===========================================================================
@@ -280,6 +280,7 @@ function onPedPickupPickedUp(event, ped, pickup) {
 
 // ===========================================================================
 
+/*
 function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} wasted by ped ${killerPed.id}!`);
 
@@ -291,6 +292,7 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 		onPlayerWasted(getClientFromPlayerElement(ped), killerClient, weapon, pedPiece);
 	}
 }
+*/
 
 // ===========================================================================
 
@@ -390,12 +392,12 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 function onPedSpawn(ped) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} spawned!`);
 
-	if (ped.type == ELEMENT_PLAYER) {
-		if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
-			//setTimeout(onPlayerSpawn, 250, ped);
-			//onPlayerSpawn();
-		}
-	}
+	//if (ped.type == ELEMENT_PLAYER) {
+	//	if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+	//		//setTimeout(onPlayerSpawn, 250, getClientFromPlayerElement(ped));
+	//		//onPlayerSpawn(getClientFromPlayerElement(ped));
+	//	}
+	//}
 }
 
 // ===========================================================================
@@ -503,10 +505,10 @@ async function onPlayerSpawn(client) {
 		setPlayer2DRendering(client, true, true, true, true, true, true);
 	}
 
-	if (isGameFeatureSupported("snow")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
-		updatePlayerSnowState(client, true);
-	}
+	//if (isGameFeatureSupported("snow")) {
+	//	logToConsole(LOG_DEBUG, `[AGRP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
+	//	updatePlayerSnowState(client, true);
+	//}
 
 	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
