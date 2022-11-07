@@ -47,15 +47,15 @@ function processSync(event, deltaTime) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		if (!state) {
-			natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 0));
-		} else {
-			natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 1));
-		}
-	} else {
-		getElementFromId(vehicleId).lights = state;
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	if (!state) {
+	//		natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 0));
+	//	} else {
+	//		natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 1));
+	//	}
+	//} else {
+	getElementFromId(vehicleId).lights = state;
+	//}
 }
 
 // ===========================================================================
@@ -73,11 +73,12 @@ function syncVehicleProperties(vehicle) {
 
 	if (doesEntityDataExist(vehicle, "agrp.lights")) {
 		let lightStatus = getEntityData(vehicle, "agrp.lights");
-		if (!lightStatus) {
-			vehicle.lightStatus = 2;
-		} else {
-			vehicle.lightStatus = 1;
-		}
+		vehicle.lights = lightStatus;
+	}
+
+	if (doesEntityDataExist(vehicle, "agrp.locked")) {
+		let lockStatus = getEntityData(vehicle, "agrp.locked");
+		vehicle.locked = lockStatus;
 	}
 
 	if (doesEntityDataExist(vehicle, "agrp.invincible")) {

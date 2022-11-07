@@ -2028,7 +2028,7 @@ function createBusinessEntrancePickup(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for business ${businessData.name}`);
 
-	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
@@ -2105,7 +2105,7 @@ function createBusinessEntranceBlip(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
-	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
 		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
 		if (entranceBlip != null) {
 			if (businessData.entranceDimension != -1) {
@@ -2875,7 +2875,7 @@ function getBusinessIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId) {
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
 		return false;
 	}

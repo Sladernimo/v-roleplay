@@ -38,7 +38,7 @@ function initBusinessScript() {
 function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
 	logToConsole(LOG_DEBUG, `[AGRP.Business] Received business ${businessId} (${name}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		if (getBusinessData(businessId) != false) {
 			let businessData = getBusinessData(businessId);
 			businessData.name = name;

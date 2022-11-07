@@ -29,7 +29,7 @@ class HouseData {
 function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
 	logToConsole(LOG_DEBUG, `[AGRP.House] Received house ${houseId} (${name}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		if (getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
 			houseData.description = description;

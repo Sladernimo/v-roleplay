@@ -393,7 +393,7 @@ function onPedSpawn(ped) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} spawned!`);
 
 	//if (ped.type == ELEMENT_PLAYER) {
-	//	if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+	//	if (getGame() != AGRP_GAME_MAFIA_ONE) {
 	//		//setTimeout(onPlayerSpawn, 250, getClientFromPlayerElement(ped));
 	//		//onPlayerSpawn(getClientFromPlayerElement(ped));
 	//	}
@@ -454,7 +454,7 @@ async function onPlayerSpawn(client) {
 	//	return false;
 	//}
 
-	if (isCustomCameraSupported() && getGame() != AGRP_GAME_GTA_IV && getGame() != AGRP_GAME_GTA_IV_EFLC) {
+	if (isCustomCameraSupported()) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
 		restorePlayerCamera(client);
 	}
@@ -585,11 +585,13 @@ async function onPlayerSpawn(client) {
 		sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
 	}
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
-		sendAllJobsToPlayer(client);
+		if (getGame() != AGRP_GAME_GTA_IV) {
+			sendAllJobsToPlayer(client);
+		}
 		requestPlayerPedNetworkId(client);
 	}
 
@@ -672,6 +674,10 @@ function onPlayerCommand(event, client, command, params) {
 function onPedExitedVehicle(event, ped, vehicle, seat) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
 
+	if (getVehicleData(vehicle) == false) {
+		return false;
+	}
+
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
@@ -714,10 +720,6 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 		if (client != null) {
 			if (getPlayerData(client) == false) {
 				return false;
-			}
-
-			if (getGame() == AGRP_GAME_GTA_IV) {
-				vehicle = getVehicleFromIVNetworkId(clientVehicle);
 			}
 
 			if (!getVehicleData(vehicle)) {

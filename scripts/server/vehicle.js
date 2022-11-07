@@ -338,15 +338,11 @@ function spawnAllVehicles() {
 	* @return {VehicleData} The vehicles's data (class instance)
 	*/
 function getVehicleData(vehicle) {
-	if (getGame() != AGRP_GAME_GTA_IV) {
-		if (isVehicleObject(vehicle)) {
-			let dataIndex = getEntityData(vehicle, "agrp.dataSlot");
-			if (typeof getServerData().vehicles[dataIndex] != "undefined") {
-				return getServerData().vehicles[dataIndex];
-			}
+	if (isVehicleObject(vehicle)) {
+		let dataIndex = getEntityData(vehicle, "agrp.dataSlot");
+		if (typeof getServerData().vehicles[dataIndex] != "undefined") {
+			return getServerData().vehicles[dataIndex];
 		}
-	} else {
-		return getServerData().vehicles.find((v) => v.ivNetworkId == vehicle);
 	}
 
 	return false;

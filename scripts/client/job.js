@@ -140,7 +140,7 @@ function hideJobRouteLocation() {
 function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, pickupModel) {
 	logToConsole(LOG_DEBUG, `[AGRP.Job] Received job ${jobId} (${name}) from server`);
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		if (getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
 			jobData.jobLocationId = jobLocationId;

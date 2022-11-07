@@ -1056,7 +1056,7 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
@@ -1781,7 +1781,7 @@ function getHouseFromParams(params) {
 // ===========================================================================
 
 function updateHousePickupLabelData(houseId) {
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
 		sendHouseToPlayer(null, houseId, getHouseData(houseId).description, getHouseData(houseId).entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), getHouseData(houseId).buyPrice, getHouseData(houseId).rentPrice, getHouseData(houseId).hasInterior, getHouseData(houseId).locked);
 		return false;
 	}
