@@ -588,14 +588,17 @@ function setVehicleLights(vehicle, lights) {
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
-	vehicle.engine = engine;
+	//vehicle.engine = engine;
 	setEntityData(vehicle, "agrp.engine", engine, true);
+	sendNetworkEventToPlayer("agrp.veh.engine", null, vehicle.id, engine);
 }
 
 // ===========================================================================
 
 function setVehicleLocked(vehicle, locked) {
 	vehicle.locked = locked;
+	setEntityData(vehicle, "agrp.locked", locked, true);
+	sendNetworkEventToPlayer("agrp.veh.locked", null, vehicle.id, locked);
 }
 
 // ===========================================================================
