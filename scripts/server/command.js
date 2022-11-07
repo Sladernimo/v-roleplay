@@ -595,6 +595,7 @@ function loadCommands() {
 			new CommandData("biz", getPlayerCurrentBusinessCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which business a player is at/in"),
 			new CommandData("business", getPlayerCurrentBusinessCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which business a player is at/in"),
 			new CommandData("house", getPlayerCurrentHouseCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which house a player is at/in"),
+			//new CommandData("clearchat", clearChatCommand, "", getStaffFlagValue("None"), true, true, "Clears the chat"),
 		],
 		startup: [],
 		subAccount: [
