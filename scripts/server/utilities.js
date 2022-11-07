@@ -441,11 +441,13 @@ function isClientInitialized(client) {
 // ===========================================================================
 
 function getPedForNetworkEvent(ped) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return ped;
-	} else {
-		return ped.id;
-	}
+	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//	return ped;
+	//} else {
+	//	return ped.id;
+	//}
+
+	return ped.id;
 }
 
 // ===========================================================================
