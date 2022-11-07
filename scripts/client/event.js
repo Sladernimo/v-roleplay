@@ -176,10 +176,10 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 			if (areServerElementsSupported()) {
 				if (inVehicleSeat == 0) {
 					//setVehicleEngine(vehicle.id, false);
-					if (!inVehicle.engine) {
-						parkedVehiclePosition = false;
-						parkedVehicleHeading = false;
-					}
+					//if (!inVehicle.engine) {
+					//	parkedVehiclePosition = false;
+					//	parkedVehicleHeading = false;
+					//}
 				}
 			}
 		}
@@ -216,7 +216,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 					//parkedVehiclePosition = inVehicle.position;
 					//parkedVehicleHeading = inVehicle.heading;
 					if (doesEntityDataExist(vehicle, "agrp.server") == true) {
-						setVehicleEngine(vehicle.id, false);
+						//setVehicleEngine(vehicle.id, false);
 						setVehicleEngine(vehicle.id, getEntityData(vehicle, "agrp.engine"));
 						//setLocalPlayerControlState(false, false);
 					}
