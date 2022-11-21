@@ -694,7 +694,7 @@ function buyVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (canPlayerManageVehicle(client, vehicle)) {
+	if (doesPlayerOwnVehicle(client, vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "AlreadyOwnVehicle"));
 		return false;
 	}
@@ -852,6 +852,34 @@ function canPlayerManageVehicle(client, vehicle) {
 	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
 		return true;
 	}
+
+	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
+		if (vehicleData.ownerId == getPlayerData(client).accountData.databaseId) {
+			return true;
+		}
+	}
+
+	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
+		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
+			if (doesPlayerHaveClanPermission(client, "ManageVehicles") || doesPlayerHaveClanPermission(client, "owner")) {
+				return true;
+			}
+		}
+	}
+
+	if (vehicleData.ownerType == AGRP_VEHOWNER_BIZ) {
+		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId))) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function doesPlayerOwnVehicle(client, vehicle) {
+	let vehicleData = getVehicleData(vehicle);
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
 		if (vehicleData.ownerId == getPlayerData(client).accountData.databaseId) {
