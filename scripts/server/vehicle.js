@@ -19,14 +19,6 @@ const AGRP_VEHOWNER_BIZ = 6;                      // Owned by a business (also i
 
 // ===========================================================================
 
-// Vehicle Seats
-const AGRP_VEHSEAT_DRIVER = 0;
-const AGRP_VEHSEAT_FRONTPASSENGER = 1;
-const AGRP_VEHSEAT_REARLEFTPASSENGER = 2;
-const AGRP_VEHSEAT_REARRIGHTPASSENGER = 3;
-
-// ===========================================================================
-
 /**
  * @class Representing a vehicle's data. Loaded and saved in the database
  * @property {Array.<Number>} trunkItemCache
@@ -164,6 +156,14 @@ class VehicleData {
 			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 		}
+	}
+
+	saveToDatabase() {
+		saveVehicleToDatabase(this);
+	}
+
+	respawn() {
+		respawnVehicle(this.vehicle);
 	}
 };
 
@@ -327,8 +327,8 @@ function spawnAllVehicles() {
 		let vehicle = spawnVehicle(getServerData().vehicles[i]);
 		getServerData().vehicles[i].vehicle = vehicle;
 		setEntityData(vehicle, "agrp.dataSlot", i, false);
-		setAllVehicleIndexes();
 	}
+	setAllVehicleIndexes();
 }
 
 // ===========================================================================
@@ -1702,7 +1702,6 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	if (areServerElementsSupported()) {
 		setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
 	}
-
 
 	return vehicle;
 }
