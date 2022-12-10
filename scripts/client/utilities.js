@@ -227,8 +227,13 @@ function setLocalPlayerInterior(interior) {
 function setSnowState(falling, ground, forceGround) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
 	snowing = falling;
-	snow.enabled = ground;
-	forceSnowing(forceGround);
+	//snow.force = ground;
+	//if (forceGround == true) {
+	//	forceSnowing(forceGround);
+	//	groundSnow.flush();
+	//} else {
+	//	snow.enabled = ground;
+	//}
 }
 
 // ===========================================================================
