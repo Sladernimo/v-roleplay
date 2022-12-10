@@ -465,3 +465,9 @@ function updatePlayerPing(playerName, ping) {
 }
 
 // ===========================================================================
+
+function receiveClientVariablesFromServer(clientVariablesString) {
+	serverData.cvars = JSON.parse(clientVariablesString);
+}
+
+// ===========================================================================

@@ -1318,3 +1318,9 @@ function fadePlayerCamera(client, fadeIn, time, colour = toColour(0, 0, 0, 255))
 }
 
 // ==========================================================================
+
+function sendClientVariablesToClient(client) {
+	sendNetworkEventToPlayer("agrp.cvar", client, JSON.stringify(clientVariables));
+}
+
+// ==========================================================================
