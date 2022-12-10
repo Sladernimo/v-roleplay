@@ -84,6 +84,15 @@ let profanityFilterEnabled = false;
 
 let localLocaleId = 0;
 
+/**
+ * @typedef {Object} ServerData
+ * @property {Array.<HouseData>} houses
+ * @property {Array.<BusinessData>} businesses
+ * @property {Array.<VehicleData>} vehicles
+ * @property {Array} localeStrings
+ * @property {Array} localeOptions
+ * @property {Object} cvars
+*/
 let serverData = {
 	houses: [],
 	businesses: [],
@@ -91,6 +100,7 @@ let serverData = {
 	localeOptions: [],
 	vehicles: [],
 	jobs: [],
+	cvars: {},
 };
 
 let localPlayerMoney = 0;
