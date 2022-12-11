@@ -65,7 +65,7 @@ function initLabelJobHelpFont() {
 
 // ===========================================================================
 
-function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, rentPrice, labelInfoType) {
+function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, rentPrice, labelInfoType, fee) {
 	if (localPlayer == null) {
 		return false;
 	}
@@ -116,6 +116,15 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	text = "";
 	if (toInteger(rentPrice) > 0) {
 		text = getLocaleString("PropertyForRentLabel", getCurrencyString(rentPrice));
+		let size = propertyLabelLockedFont.measure(text, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
+		propertyLabelLockedFont.render(text, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(200, 200, 200, 255), false, true, false, true);
+
+		screenPosition.y -= propertyLabelPriceOffset;
+	}
+
+	text = "";
+	if (toInteger(fee) > 0) {
+		text = getLocaleString("PropertyEntranceFeeLabel", getCurrencyString(fee));
 		let size = propertyLabelLockedFont.measure(text, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
 		propertyLabelLockedFont.render(text, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(200, 200, 200, 255), false, true, false, true);
 
@@ -318,7 +327,7 @@ function processLabelRendering() {
 						}
 
 						if (getDistance(localPlayer.position, business.entrancePosition) <= propertyLabelRenderDistance) {
-							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType);
+							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType, business.entranceFee);
 						}
 					}
 				});
@@ -371,9 +380,13 @@ function processLabelRendering() {
 									labelInfoType = pickups[i].getData("agrp.label.help");
 								}
 
+								if (pickups[i].getData("agrp.label.fee") != null) {
+									fee = pickups[i].getData("agrp.label.fee");
+								}
+
 								switch (pickups[i].getData("agrp.label.type")) {
 									case AGRP_LABEL_BUSINESS: {
-										renderPropertyEntranceLabel(pickups[i].getData("agrp.label.name"), pickups[i].position, pickups[i].getData("agrp.label.locked"), true, price, rentPrice, labelInfoType);
+										renderPropertyEntranceLabel(pickups[i].getData("agrp.label.name"), pickups[i].position, pickups[i].getData("agrp.label.locked"), true, price, rentPrice, labelInfoType, fee);
 										break;
 									}
 
