@@ -314,18 +314,14 @@ function loadGlobalConfig() {
 
 // ===========================================================================
 
-function loadServerConfigFromGameAndPort(gameId, port) {
+async function loadServerConfigFromGameAndPort(gameId, port) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} AND svr_port = ${port} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				let dbAssoc = fetchQueryAssoc(dbQuery);
-				let tempServerConfigData = new ServerConfigData(dbAssoc);
-				freeDatabaseQuery(dbQuery);
-				return tempServerConfigData;
-			}
+		let dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+			return tempServerConfigData;
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -334,18 +330,15 @@ function loadServerConfigFromGameAndPort(gameId, port) {
 
 // ===========================================================================
 
-function loadServerConfigFromGame(gameId) {
+async function loadServerConfigFromGame(gameId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				let dbAssoc = fetchQueryAssoc(dbQuery);
-				let tempServerConfigData = new ServerConfigData(dbAssoc);
-				freeDatabaseQuery(dbQuery);
-				return tempServerConfigData;
-			}
+		let dbAssocArray = await fetchQueryAssoc(dbConnection, dbQueryString);
+		logToConsole(LOG_DEBUG | LOG_WARN, `${dbAssocArray[0]}`);
+		if (dbAssocArray.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssocArray[0]);
+			return tempServerConfigData;
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -354,21 +347,17 @@ function loadServerConfigFromGame(gameId) {
 
 // ===========================================================================
 
-function loadServerConfigFromId(tempServerId) {
+async function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_id = ${tempServerId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				let dbAssoc = fetchQueryAssoc(dbQuery);
-				let tempServerConfigData = new ServerConfigData(dbAssoc);
-				freeDatabaseQuery(dbQuery);
-				return tempServerConfigData;
-			}
+		let dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+			return tempServerConfigData;
 		}
-		disconnectFromDatabase(dbConnection);
 	}
+	disconnectFromDatabase(dbConnection);
 	return false;
 }
 
