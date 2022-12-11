@@ -41,11 +41,10 @@ async function loadRadioStationsFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Radio]: Loading radio stations from database ...");
 	let dbConnection = connectToDatabase();
 	let tempRadioStations = [];
-	let dbAssoc;
+	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM radio_main`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		dbAssoc = await fetchQueryAssoc(dbQuery);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempRadioStationData = new RadioStationData(dbAssoc[i]);

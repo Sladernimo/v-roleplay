@@ -200,11 +200,9 @@ async function loadBusinessFromId(businessId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM biz_main WHERE biz_id = ${businessId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = await fetchQueryAssoc(dbQuery);
-			freeDatabaseQuery(dbQuery);
-			return new BusinessData(dbAssoc);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			return new BusinessData(dbAssoc[0]);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -219,24 +217,21 @@ async function loadBusinessesFromDatabase() {
 
 	let tempBusinesses = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
 	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempBusinessData = new BusinessData(dbAssoc[i]);
-					tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
-					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
-					tempBusinesses.push(tempBusinessData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempBusinessData = new BusinessData(dbAssoc[i]);
+				tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
+				//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
+				tempBusinesses.push(tempBusinessData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
+
 		disconnectFromDatabase(dbConnection);
 	}
 
@@ -251,23 +246,18 @@ async function loadBusinessLocationsFromDatabase(businessId) {
 
 	let tempBusinessLocations = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
 	let dbAssoc = [];
 	let dbQueryString = "";
 
 	if (dbConnection) {
 		dbQueryString = `SELECT * FROM biz_loc WHERE biz_loc_biz = ${businessId}`;
-		dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempBusinessLocationData = new BusinessLocationData(dbAssoc[i]);
-					tempBusinessLocations.push(tempBusinessLocationData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
-				}
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempBusinessLocationData = new BusinessLocationData(dbAssoc[i]);
+				tempBusinessLocations.push(tempBusinessLocationData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -290,9 +280,7 @@ async function loadBusinessGameScriptsFromDatabase(businessId) {
 
 	if(dbConnection) {
 		dbQueryString = `SELECT * FROM biz_script WHERE biz_script_biz = ${businessId}`;
-		dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
+			dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
 					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc[i]);
@@ -300,8 +288,6 @@ async function loadBusinessGameScriptsFromDatabase(businessId) {
 					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
 				}
 			}
-			freeDatabaseQuery(dbQuery);
-		}
 		disconnectFromDatabase(dbConnection);
 	}
 

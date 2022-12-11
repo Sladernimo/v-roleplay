@@ -184,14 +184,12 @@ async function loadVehiclesFromDatabase() {
 	let dbAssoc;
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM veh_main WHERE veh_server = ${getServerId()} AND veh_deleted = 0`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		dbAssoc = await fetchQueryAssoc(dbQuery);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
-				let tempVehicleData = new VehicleData(dbAssoc);
+				let tempVehicleData = new VehicleData(dbAssoc[i]);
 				tempVehicles.push(tempVehicleData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

@@ -161,13 +161,12 @@ function initPropertyScript() {
 
 async function loadPropertyFromId(propertyIndex) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM prop_main WHERE prop_id = ${propertyIndex} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = await fetchQueryAssoc(dbQuery);
-			freeDatabaseQuery(dbQuery);
-			return new PropertyData(dbAssoc);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			return new PropertyData(dbAssoc[0]);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -182,21 +181,18 @@ async function loadPropertiesFromDatabase() {
 
 	let tempProperties = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM prop_main WHERE prop_deleted = 0 AND prop_server = ${getServerId()}`);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = await fetchQueryAssoc(dbQuery)) {
-					let tempPropertyData = new PropertyData(dbAssoc[i]);
-					tempPropertyData.locations = loadPropertyLocationsFromDatabase(tempPropertyData.databaseId);
-					tempProperties.push(tempPropertyData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM prop_main WHERE prop_deleted = 0 AND prop_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempPropertyData = new PropertyData(dbAssoc[i]);
+				tempPropertyData.locations = loadPropertyLocationsFromDatabase(tempPropertyData.databaseId);
+				tempProperties.push(tempPropertyData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

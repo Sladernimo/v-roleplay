@@ -551,11 +551,11 @@ function isDevelopmentServer() {
 
 async function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
-	let dbAssoc = false;
+	let dbAssoc = [];
+
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM sacct_main`);
-		dbAssoc = await fetchQueryAssoc(dbQuery);
+		let dbQueryString = `SELECT * FROM sacct_main`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			createDefaultSubAccountServerData(dbAssoc[0]["sacct_id"]);
 
@@ -564,6 +564,7 @@ async function migrateSubAccountsToPerServerData() {
 				freeDatabaseQuery(dbQuery2);
 			}
 		}
+		disconnectFromDatabase();
 	}
 }
 
@@ -571,17 +572,15 @@ async function migrateSubAccountsToPerServerData() {
 
 async function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
-	let dbAssoc = false;
+	let dbAssoc = [];
+
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT acct_id FROM acct_main`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				createDefaultKeybindsForAccount(dbAssoc[0]["acct_id"]);
-			}
-			freeDatabaseQuery(dbQuery);
+		let dbQueryString = `SELECT acct_id FROM acct_main`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			createDefaultKeybindsForAccount(dbAssoc[0]["acct_id"]);
 		}
+		disconnectFromDatabase();
 	}
 }
 

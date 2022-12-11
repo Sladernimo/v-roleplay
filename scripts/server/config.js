@@ -318,13 +318,10 @@ async function loadServerConfigFromGameAndPort(gameId, port) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} AND svr_port = ${port} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
-				return tempServerConfigData;
-			}
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+			return tempServerConfigData;
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -337,15 +334,12 @@ async function loadServerConfigFromGame(gameId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
-				return tempServerConfigData;
-			}
-			disconnectFromDatabase(dbConnection);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+			return tempServerConfigData;
 		}
+		disconnectFromDatabase(dbConnection);
 	}
 	return false;
 }
@@ -356,13 +350,10 @@ async function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_id = ${tempServerId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
-				return tempServerConfigData;
-			}
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+			return tempServerConfigData;
 		}
 		disconnectFromDatabase(dbConnection);
 	}

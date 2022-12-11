@@ -243,17 +243,14 @@ async function loadGatesFromDatabase() {
 	let dbAssoc = [];
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM gate_main WHERE gate_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempGateData = new GateData(dbAssoc[i]);
-					tempGates.push(tempGateData);
-					logToConsole(LOG_DEBUG, `[AGRP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM gate_main WHERE gate_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempGateData = new GateData(dbAssoc[i]);
+				tempGates.push(tempGateData);
+				logToConsole(LOG_DEBUG, `[AGRP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

@@ -292,19 +292,16 @@ async function loadItemsFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_main WHERE item_deleted = 0 AND item_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempItemData = new ItemData(dbAssoc[i]);
-					tempItems.push(tempItemData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
-				}
+		let dbQueryString = `SELECT * FROM item_main WHERE item_deleted = 0 AND item_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempItemData = new ItemData(dbAssoc[i]);
+				tempItems.push(tempItemData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -318,19 +315,17 @@ async function loadItemTypesFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
+
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_type WHERE item_type_deleted = 0 AND item_type_enabled = 1 AND item_type_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempItemTypeData = new ItemTypeData(dbAssoc[i]);
-					tempItemTypes.push(tempItemTypeData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
-				}
+		let dbQueryString = `SELECT * FROM item_type WHERE item_type_deleted = 0 AND item_type_enabled = 1 AND item_type_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempItemTypeData = new ItemTypeData(dbAssoc[i]);
+				tempItemTypes.push(tempItemTypeData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

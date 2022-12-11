@@ -253,17 +253,13 @@ async function loadNPCsFromDatabase() {
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_main WHERE npc_server = ${getServerId()} AND npc_enabled = 1`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempNPCData = new NPCData(dbAssoc[i]);
-					tempNPCData.triggers = loadNPCTriggersFromDatabase(tempNPCData.databaseId);
-					tempNPCs.push(tempNPCData);
-				}
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempNPCData = new NPCData(dbAssoc[i]);
+				tempNPCData.triggers = loadNPCTriggersFromDatabase(tempNPCData.databaseId);
+				tempNPCs.push(tempNPCData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 
 		disconnectFromDatabase(dbConnection);
@@ -308,18 +304,14 @@ async function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 	let dbAssoc;
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_cond WHERE npc_cond_trig = ${npcTriggerDatabaseId} AND npc_cond_enabled = 1`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempNPCTriggerConditionData = new NPCTriggerConditionData(dbAssoc[i]);
-					tempNPCTriggerConditions.push(tempNPCTriggerConditionData);
-				}
-				freeDatabaseQuery(dbQuery);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempNPCTriggerConditionData = new NPCTriggerConditionData(dbAssoc[i]);
+				tempNPCTriggerConditions.push(tempNPCTriggerConditionData);
 			}
-			disconnectFromDatabase(dbConnection);
 		}
+		disconnectFromDatabase(dbConnection);
 	}
 
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);

@@ -182,17 +182,14 @@ async function loadHousesFromDatabase() {
 	let dbAssoc = [];
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM house_main WHERE house_deleted = 0 AND house_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempHouseData = new HouseData(dbAssoc[i]);
-					tempHouses.push(tempHouseData);
-					logToConsole(LOG_VERBOSE, `[AGRP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
-				}
+		let dbQueryString = `SELECT * FROM house_main WHERE house_deleted = 0 AND house_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempHouseData = new HouseData(dbAssoc[i]);
+				tempHouses.push(tempHouseData);
+				logToConsole(LOG_VERBOSE, `[AGRP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

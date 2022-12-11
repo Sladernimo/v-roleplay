@@ -917,14 +917,16 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-async function fetchQueryAssoc(dbQuery) {
-	//logToConsole(LOG_DEBUG, dbQueryString);
+async function fetchQueryAssoc(dbConnection, queryString) {
 	let assocArray = [];
 	let dbAssoc = null;
 
-	while (dbAssoc = dbQuery.fetchAssoc()) {
-		assocArray.push(dbAssoc);
-		//logToConsole(LOG_DEBUG | LOG_WARN, dbAssoc["svr_id"]);
+	let dbQuery = dbConnection.query(queryString);
+	if (dbQuery) {
+		while (dbAssoc = dbQuery.fetchAssoc()) {
+			assocArray.push(dbAssoc);
+		}
+		freeDatabaseQuery(dbQuery);
 	}
 
 	return assocArray;

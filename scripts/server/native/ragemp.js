@@ -838,8 +838,10 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-function fetchQueryAssoc(dbQuery) {
-	return dbQuery.fetchAssoc();
+async function fetchQueryAssoc(dbConnection, queryString) {
+	return dbConnection.query(queryString, function (err, result, fields) {
+		return result;
+	});
 }
 
 // ===========================================================================

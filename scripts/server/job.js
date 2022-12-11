@@ -484,26 +484,22 @@ async function loadJobsFromDatabase() {
 
 	let tempJobs = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_main WHERE job_deleted = 0 AND job_enabled = 1 AND job_server = ${getServerId()}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobData = new JobData(dbAssoc[i]);
-					tempJobData.locations = loadJobLocationsFromDatabase(tempJobData.databaseId);
-					tempJobData.equipment = loadJobEquipmentsFromDatabase(tempJobData.databaseId);
-					tempJobData.uniforms = loadJobUniformsFromDatabase(tempJobData.databaseId);
-					tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
-					tempJobData.ranks = loadJobRanksFromDatabase(tempJobData.databaseId);
-					tempJobs.push(tempJobData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_main WHERE job_deleted = 0 AND job_enabled = 1 AND job_server = ${getServerId()}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobData = new JobData(dbAssoc[i]);
+				tempJobData.locations = loadJobLocationsFromDatabase(tempJobData.databaseId);
+				tempJobData.equipment = loadJobEquipmentsFromDatabase(tempJobData.databaseId);
+				tempJobData.uniforms = loadJobUniformsFromDatabase(tempJobData.databaseId);
+				tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
+				tempJobData.ranks = loadJobRanksFromDatabase(tempJobData.databaseId);
+				tempJobs.push(tempJobData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -551,21 +547,17 @@ async function loadJobRanksFromDatabase(jobDatabaseId) {
 
 	let tempJobRanks = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_rank WHERE job_rank_deleted = 0 AND job_rank_enabled = 1 AND job_rank_job = ${jobDatabaseId}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobRankData = new JobRankData(dbAssoc[i]);
-					tempJobRanks.push(tempJobRankData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job rank '${tempJobRankData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_rank WHERE job_rank_deleted = 0 AND job_rank_enabled = 1 AND job_rank_job = ${jobDatabaseId}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobRankData = new JobRankData(dbAssoc[i]);
+				tempJobRanks.push(tempJobRankData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job rank '${tempJobRankData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -581,22 +573,18 @@ async function loadJobRoutesFromDatabase(jobDatabaseId) {
 
 	let tempJobRoutes = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route WHERE job_route_deleted = 0 AND job_route_enabled = 1 AND job_route_job = ${jobDatabaseId}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobRouteData = new JobRouteData(dbAssoc[i]);
-					tempJobRouteData.locations = loadJobRouteLocationsFromDatabase(tempJobRouteData.databaseId);
-					tempJobRoutes.push(tempJobRouteData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_route WHERE job_route_deleted = 0 AND job_route_enabled = 1 AND job_route_job = ${jobDatabaseId}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobRouteData = new JobRouteData(dbAssoc[i]);
+				tempJobRouteData.locations = loadJobRouteLocationsFromDatabase(tempJobRouteData.databaseId);
+				tempJobRoutes.push(tempJobRouteData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -612,21 +600,17 @@ async function loadJobRouteLocationsFromDatabase(jobRouteId) {
 
 	let tempJobRouteLocations = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_route_loc WHERE job_route_loc_deleted = 0 AND job_route_loc_enabled = 1 AND job_route_loc_route = ${jobRouteId}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobRouteLocationData = new JobRouteLocationData(dbAssoc[i]);
-					tempJobRouteLocations.push(tempJobRouteLocationData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_route_loc WHERE job_route_loc_deleted = 0 AND job_route_loc_enabled = 1 AND job_route_loc_route = ${jobRouteId}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobRouteLocationData = new JobRouteLocationData(dbAssoc[i]);
+				tempJobRouteLocations.push(tempJobRouteLocationData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -642,22 +626,18 @@ async function loadJobEquipmentsFromDatabase(jobDatabaseId) {
 
 	let tempJobEquipments = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_equip WHERE job_equip_deleted = 0 AND job_equip_enabled = 1 AND job_equip_job = ${jobDatabaseId}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobEquipmentData = new JobEquipmentData(dbAssoc[i]);
-					tempJobEquipmentData.items = loadJobEquipmentItemsFromDatabase(tempJobEquipmentData.databaseId);
-					tempJobEquipments.push(tempJobEquipmentData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_equip WHERE job_equip_deleted = 0 AND job_equip_enabled = 1 AND job_equip_job = ${jobDatabaseId}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobEquipmentData = new JobEquipmentData(dbAssoc[i]);
+				tempJobEquipmentData.items = loadJobEquipmentItemsFromDatabase(tempJobEquipmentData.databaseId);
+				tempJobEquipments.push(tempJobEquipmentData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -673,21 +653,17 @@ async function loadJobLocationsFromDatabase(jobDatabaseId) {
 
 	let tempJobLocations = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM job_loc WHERE job_loc_deleted = 0 AND job_loc_enabled = 1 AND job_loc_job = ${jobDatabaseId}`);
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobLocationData = new JobLocationData(dbAssoc[i]);
-					tempJobLocations.push(tempJobLocationData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM job_loc WHERE job_loc_deleted = 0 AND job_loc_enabled = 1 AND job_loc_job = ${jobDatabaseId}`;
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobLocationData = new JobLocationData(dbAssoc[i]);
+				tempJobLocations.push(tempJobLocationData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -703,21 +679,17 @@ async function loadJobUniformsFromDatabase(jobDatabaseId) {
 
 	let tempJobUniforms = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, "SELECT * FROM `job_uniform` WHERE `job_uniform_enabled` = 1 AND `job_uniform_job` = " + toString(jobDatabaseId));
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobUniformData = new JobUniformData(dbAssoc[i]);
-					tempJobUniforms.push(tempJobUniformData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
-				}
+		let dbQueryString = "SELECT * FROM `job_uniform` WHERE `job_uniform_enabled` = 1 AND `job_uniform_job` = " + toString(jobDatabaseId);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobUniformData = new JobUniformData(dbAssoc[i]);
+				tempJobUniforms.push(tempJobUniformData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -733,21 +705,17 @@ async function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
 
 	let tempJobEquipmentItems = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, "SELECT * FROM `job_equip_item` WHERE `job_equip_item_enabled` = 1 AND `job_equip_item_equip` = " + toString(jobEquipmentDatabaseId));
-		if (dbQuery) {
-			dbAssoc = await fetchQueryAssoc(dbQuery);
-			if (dbAssoc.length > 0) {
-				for (let i in dbAssoc) {
-					let tempJobEquipmentItemData = new JobEquipmentItemData(dbAssoc[i]);
-					tempJobEquipmentItems.push(tempJobEquipmentItemData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
-				}
+		let dbQueryString = "SELECT * FROM `job_equip_item` WHERE `job_equip_item_enabled` = 1 AND `job_equip_item_equip` = " + toString(jobEquipmentDatabaseId)
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempJobEquipmentItemData = new JobEquipmentItemData(dbAssoc[i]);
+				tempJobEquipmentItems.push(tempJobEquipmentItemData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
