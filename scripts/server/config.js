@@ -316,6 +316,8 @@ function loadGlobalConfig() {
 
 async function loadServerConfigFromGameAndPort(gameId, port) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} AND svr_port = ${port} LIMIT 1;`;
 		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
@@ -332,6 +334,8 @@ async function loadServerConfigFromGameAndPort(gameId, port) {
 
 async function loadServerConfigFromGame(gameId) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} LIMIT 1;`;
 		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
@@ -348,6 +352,8 @@ async function loadServerConfigFromGame(gameId) {
 
 async function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_id = ${tempServerId} LIMIT 1;`;
 		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
