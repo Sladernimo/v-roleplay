@@ -196,13 +196,13 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-function loadBusinessFromId(businessId) {
+async function loadBusinessFromId(businessId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM biz_main WHERE biz_id = ${businessId} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
-			let dbAssoc = fetchQueryAssoc(dbQuery);
+			let dbAssoc = await fetchQueryAssoc(dbQuery);
 			freeDatabaseQuery(dbQuery);
 			return new BusinessData(dbAssoc);
 		}
@@ -214,20 +214,21 @@ function loadBusinessFromId(businessId) {
 
 // ===========================================================================
 
-function loadBusinessesFromDatabase() {
+async function loadBusinessesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Business]: Loading businesses from database ...");
 
 	let tempBusinesses = [];
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessData = new BusinessData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempBusinessData = new BusinessData(dbAssoc[i]);
 					tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
 					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
 					tempBusinesses.push(tempBusinessData);
@@ -245,22 +246,23 @@ function loadBusinessesFromDatabase() {
 
 // ===========================================================================
 
-function loadBusinessLocationsFromDatabase(businessId) {
+async function loadBusinessLocationsFromDatabase(businessId) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business locations for business ${businessId} from database ...`);
 
 	let tempBusinessLocations = [];
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 	let dbQueryString = "";
 
 	if (dbConnection) {
 		dbQueryString = `SELECT * FROM biz_loc WHERE biz_loc_biz = ${businessId}`;
 		dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessLocationData = new BusinessLocationData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempBusinessLocationData = new BusinessLocationData(dbAssoc[i]);
 					tempBusinessLocations.push(tempBusinessLocationData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
 				}
@@ -277,22 +279,23 @@ function loadBusinessLocationsFromDatabase(businessId) {
 // ===========================================================================
 
 /*
-function loadBusinessGameScriptsFromDatabase(businessId) {
+async function loadBusinessGameScriptsFromDatabase(businessId) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business game scripts for business ${businessId} from database ...`);
 
 	let tempBusinessGameScripts = [];
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 	let dbQueryString = "";
 
 	if(dbConnection) {
 		dbQueryString = `SELECT * FROM biz_script WHERE biz_script_biz = ${businessId}`;
 		dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if(dbQuery) {
-			if(dbQuery.numRows > 0) {
-				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc[i]);
 					tempBusinessGameScripts.push(tempBusinessGameScriptData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
 				}

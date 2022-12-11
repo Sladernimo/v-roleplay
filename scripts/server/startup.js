@@ -8,7 +8,7 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-function initServerScripts() {
+async function initServerScripts() {
 	checkForAllRequiredModules();
 
 	initDatabaseScript();
@@ -42,7 +42,7 @@ function initServerScripts() {
 
 	// Load config and stuff
 	loadGlobalConfig();
-	loadServerConfig();
+	await loadServerConfig();
 	applyConfigToServer(getServerConfig());
 
 	// Load all the server data

@@ -159,13 +159,13 @@ function initPropertyScript() {
 
 // ===========================================================================
 
-function loadPropertyFromId(propertyIndex) {
+async function loadPropertyFromId(propertyIndex) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM prop_main WHERE prop_id = ${propertyIndex} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
-			let dbAssoc = fetchQueryAssoc(dbQuery);
+			let dbAssoc = await fetchQueryAssoc(dbQuery);
 			freeDatabaseQuery(dbQuery);
 			return new PropertyData(dbAssoc);
 		}
@@ -177,7 +177,7 @@ function loadPropertyFromId(propertyIndex) {
 
 // ===========================================================================
 
-function loadPropertiesFromDatabase() {
+async function loadPropertiesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Property]: Loading properties from database ...");
 
 	let tempProperties = [];
@@ -189,8 +189,8 @@ function loadPropertiesFromDatabase() {
 		dbQuery = queryDatabase(dbConnection, `SELECT * FROM prop_main WHERE prop_deleted = 0 AND prop_server = ${getServerId()}`);
 		if (dbQuery) {
 			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempPropertyData = new PropertyData(dbAssoc);
+				while (dbAssoc = await fetchQueryAssoc(dbQuery)) {
+					let tempPropertyData = new PropertyData(dbAssoc[i]);
 					tempPropertyData.locations = loadPropertyLocationsFromDatabase(tempPropertyData.databaseId);
 					tempProperties.push(tempPropertyData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
@@ -207,7 +207,7 @@ function loadPropertiesFromDatabase() {
 
 // ===========================================================================
 
-function loadPropertyLocationsFromDatabase(propertyIndex) {
+async function loadPropertyLocationsFromDatabase(propertyIndex) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Property]: Loading property locations for property ${propertyIndex} from database ...`);
 
 	let tempPropertyLocations = [];
@@ -220,9 +220,9 @@ function loadPropertyLocationsFromDatabase(propertyIndex) {
 		dbQueryString = `SELECT * FROM prop_loc WHERE prop_loc_prop = ${propertyIndex}`;
 		dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempPropertyLocationData = new PropertyLocationData(dbAssoc);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempPropertyLocationData = new PropertyLocationData(dbAssoc[i]);
 					tempPropertyLocations.push(tempPropertyLocationData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Property]: Location '${tempPropertyLocationData.name}' loaded from database successfully!`);
 				}

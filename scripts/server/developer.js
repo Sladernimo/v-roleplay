@@ -549,37 +549,36 @@ function isDevelopmentServer() {
 
 // ===========================================================================
 
-function migrateSubAccountsToPerServerData() {
+async function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
 	let dbAssoc = false;
 	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT * FROM sacct_main`);
-		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				createDefaultSubAccountServerData(dbAssoc["sacct_id"]);
+		dbAssoc = await fetchQueryAssoc(dbQuery);
+		if (dbAssoc.length > 0) {
+			createDefaultSubAccountServerData(dbAssoc[0]["sacct_id"]);
 
-				let dbQuery2 = queryDatabase(dbConnection, `UPDATE sacct_svr SET sacct_svr_skin = ${dbAssoc["sacct_skin"]}, sacct_svr_job = ${dbAssoc["sacct_job"]} WHERE sacct_svr_sacct=${dbAssoc["sacct_id"]} AND sacct_svr_server=${dbAssoc["sacct_server"]}`);
-				if (dbQuery2) {
-					freeDatabaseQuery(dbQuery2);
-				}
+			let dbQuery2 = queryDatabase(dbConnection, `UPDATE sacct_svr SET sacct_svr_skin = ${dbAssoc["sacct_skin"]}, sacct_svr_job = ${dbAssoc["sacct_job"]} WHERE sacct_svr_sacct=${dbAssoc["sacct_id"]} AND sacct_svr_server=${dbAssoc["sacct_server"]}`);
+			if (dbQuery2) {
+				freeDatabaseQuery(dbQuery2);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 	}
 }
 
 // ===========================================================================
 
-function resetAllAccountsHotkeysToDefault() {
+async function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
 	let dbAssoc = false;
 	if (dbConnection) {
 		dbQuery = queryDatabase(dbConnection, `SELECT acct_id FROM acct_main`);
 		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				createDefaultKeybindsForAccount(dbAssoc["acct_id"]);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				createDefaultKeybindsForAccount(dbAssoc[0]["acct_id"]);
 			}
 			freeDatabaseQuery(dbQuery);
 		}

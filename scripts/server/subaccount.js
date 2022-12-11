@@ -129,35 +129,39 @@ function initSubAccountScript() {
 
 // ===========================================================================
 
-function loadSubAccountFromName(firstName, lastName) {
+async function loadSubAccountFromName(firstName, lastName) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
 	if (dbConnection) {
 		firstName = escapeDatabaseString(dbConnection, firstName);
 		lastName = escapeDatabaseString(dbConnection, lastName);
+
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = fetchQueryAssoc(dbQuery);
-			freeDatabaseQuery(dbQuery);
-			return new SubAccountData(dbAssoc);
-		}
-		disconnectFromDatabase(dbConnection);
-	}
 
-	return false;
+		dbAssoc = await fetchQueryAssoc(dbQuery);
+		if (dbAssoc.length > 0) {
+			freeDatabaseQuery(dbQuery);
+			return new SubAccountData(dbAssoc[0]);
+		}
+
+		disconnectFromDatabase(dbConnection);
+		return false;
+	}
 }
 
 // ===========================================================================
 
-function loadSubAccountFromId(subAccountId) {
+async function loadSubAccountFromId(subAccountId) {
 	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_id = ${subAccountId} LIMIT 1;`;
 		let dbQuery = queryDatabase(dbConnection, dbQueryString);
 		if (dbQuery) {
-			let dbAssoc = fetchQueryAssoc(dbQuery);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
 			freeDatabaseQuery(dbQuery);
-			return new SubAccountData(dbAssoc);
+			return new SubAccountData(dbAssoc[0]);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -167,7 +171,7 @@ function loadSubAccountFromId(subAccountId) {
 
 // ===========================================================================
 
-function loadSubAccountsFromAccount(accountId) {
+async function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
 	if (accountId > 0) {
@@ -176,70 +180,73 @@ function loadSubAccountsFromAccount(accountId) {
 			let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_acct = ${accountId} AND sacct_server = ${getServerId()}`;
 			let dbQuery = queryDatabase(dbConnection, dbQueryString);
 			if (dbQuery) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempSubAccount = new SubAccountData(dbAssoc);
+				dbAssoc = await fetchQueryAssoc(dbQuery);
+				if (dbAssoc.length > 0) {
+					for (let i in dbAssoc) {
+						let tempSubAccount = new SubAccountData(dbAssoc[i]);
 
-					// Make sure skin is valid
-					if (tempSubAccount.skin == -1) {
-						tempSubAccount.skin = getServerConfig().newCharacter.skin;
-					}
-
-					// Check if clan and rank are still valid
-					if (tempSubAccount.clan != 0) {
-						let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
-						if (!getClanData(clanIndex)) {
-							tempSubAccount.clan = 0;
-							tempSubAccount.clanRank = 0;
-							tempSubAccount.clanIndex = -1;
-							tempSubAccount.clanRankIndex = -1;
-							tempSubAccount.clanTitle = "";
-							tempSubAccount.clanFlags = 0;
-						} else {
-							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
-							if (!getClanRankData(clanIndex, clanRankIndex)) {
-								let newClanRankIndex = getLowestClanRank(clanIndex);
-								tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId
-								tempSubAccount.clanRankIndex = newClanRankIndex;
-							} else {
-								tempSubAccount.clanRankIndex = clanRankIndex;
-							}
-
-							tempSubAccount.clanIndex = clanIndex;
+						// Make sure skin is valid
+						if (tempSubAccount.skin == -1) {
+							tempSubAccount.skin = getServerConfig().newCharacter.skin;
 						}
-					}
 
-					// Check if job and rank are still valid
-					if (tempSubAccount.job != 0) {
-						let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
-						if (!getJobData(jobIndex)) {
-							tempSubAccount.job = 0;
-							tempSubAccount.jobRank = 0;
-							tempSubAccount.jobIndex = -1;
-							tempSubAccount.jobRankIndex = -1;
-						} else {
-							if (getJobData(jobIndex).ranks.length > 0) {
-								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
-								if (!getJobRankData(jobIndex, jobRankIndex)) {
-									let newJobRankIndex = getLowestJobRank(jobIndex);
-									console.log(`[AGRP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
-									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
-									tempSubAccount.jobRankIndex = newJobRankIndex;
+						// Check if clan and rank are still valid
+						if (tempSubAccount.clan != 0) {
+							let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
+							if (!getClanData(clanIndex)) {
+								tempSubAccount.clan = 0;
+								tempSubAccount.clanRank = 0;
+								tempSubAccount.clanIndex = -1;
+								tempSubAccount.clanRankIndex = -1;
+								tempSubAccount.clanTitle = "";
+								tempSubAccount.clanFlags = 0;
+							} else {
+								let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
+								if (!getClanRankData(clanIndex, clanRankIndex)) {
+									let newClanRankIndex = getLowestClanRank(clanIndex);
+									tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId
+									tempSubAccount.clanRankIndex = newClanRankIndex;
 								} else {
-									tempSubAccount.jobRankIndex = jobRankIndex;
+									tempSubAccount.clanRankIndex = clanRankIndex;
 								}
-							} else {
-								tempSubAccount.jobRankIndex = -1;
+
+								tempSubAccount.clanIndex = clanIndex;
 							}
-
-							tempSubAccount.jobIndex = jobIndex;
 						}
-					}
 
-					tempSubAccounts.push(tempSubAccount);
+						// Check if job and rank are still valid
+						if (tempSubAccount.job != 0) {
+							let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
+							if (!getJobData(jobIndex)) {
+								tempSubAccount.job = 0;
+								tempSubAccount.jobRank = 0;
+								tempSubAccount.jobIndex = -1;
+								tempSubAccount.jobRankIndex = -1;
+							} else {
+								if (getJobData(jobIndex).ranks.length > 0) {
+									let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
+									if (!getJobRankData(jobIndex, jobRankIndex)) {
+										let newJobRankIndex = getLowestJobRank(jobIndex);
+										console.log(`[AGRP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+										tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+										tempSubAccount.jobRankIndex = newJobRankIndex;
+									} else {
+										tempSubAccount.jobRankIndex = jobRankIndex;
+									}
+								} else {
+									tempSubAccount.jobRankIndex = -1;
+								}
+
+								tempSubAccount.jobIndex = jobIndex;
+							}
+						}
+
+						tempSubAccounts.push(tempSubAccount);
+					}
+					freeDatabaseQuery(dbQuery);
 				}
-				freeDatabaseQuery(dbQuery);
+				disconnectFromDatabase(dbConnection);
 			}
-			disconnectFromDatabase(dbConnection);
 		}
 	}
 

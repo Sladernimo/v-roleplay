@@ -288,17 +288,18 @@ function initItemScript() {
 
 // ===========================================================================
 
-function loadItemsFromDatabase() {
+async function loadItemsFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
-	let dbFetchAssoc;
+	let dbAssoc;
 	if (dbConnection) {
 		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_main WHERE item_deleted = 0 AND item_server = ${getServerId()}`);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempItemData = new ItemData(dbFetchAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempItemData = new ItemData(dbAssoc[i]);
 					tempItems.push(tempItemData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
 				}
@@ -313,17 +314,18 @@ function loadItemsFromDatabase() {
 
 // ===========================================================================
 
-function loadItemTypesFromDatabase() {
+async function loadItemTypesFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
-	let dbFetchAssoc;
+	let dbAssoc;
 	if (dbConnection) {
 		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM item_type WHERE item_type_deleted = 0 AND item_type_enabled = 1 AND item_type_server = ${getServerId()}`);
 		if (dbQuery) {
-			if (getQueryNumRows(dbQuery) > 0) {
-				while (dbFetchAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempItemTypeData = new ItemTypeData(dbFetchAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempItemTypeData = new ItemTypeData(dbAssoc[i]);
 					tempItemTypes.push(tempItemTypeData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
 				}

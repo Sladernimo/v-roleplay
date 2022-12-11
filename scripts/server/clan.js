@@ -117,19 +117,20 @@ function initClanScript() {
 
 // ===========================================================================
 
-function loadClansFromDatabase() {
+async function loadClansFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
 		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanData = new ClanData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempClanData = new ClanData(dbAssoc[i]);
 					//tempClanData.members = loadClanMembersFromDatabase(tempClanData.databaseId);
 					tempClanData.ranks = loadClanRanksFromDatabase(tempClanData.databaseId);
 					tempClans.push(tempClanData);
@@ -147,7 +148,7 @@ function loadClansFromDatabase() {
 
 // ===========================================================================
 
-function loadClanMembersFromDatabase() {
+async function loadClanMembersFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
@@ -157,9 +158,10 @@ function loadClanMembersFromDatabase() {
 	if (dbConnection) {
 		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanData = new ClanData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempClanData = new ClanData(dbAssoc[i]);
 					tempClans.push(tempClanData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 				}
@@ -175,7 +177,7 @@ function loadClanMembersFromDatabase() {
 
 // ===========================================================================
 
-function loadClanRanksFromDatabase(clanDatabaseId) {
+async function loadClanRanksFromDatabase(clanDatabaseId) {
 	logToConsole(LOG_INFO, `[AGRP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
 
 	let dbConnection = connectToDatabase();
@@ -185,9 +187,10 @@ function loadClanRanksFromDatabase(clanDatabaseId) {
 	if (dbConnection) {
 		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_rank WHERE clan_rank_clan = ${clanDatabaseId}`);
 		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanRankData = new ClanRankData(dbAssoc);
+			dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempClanRankData = new ClanRankData(dbAssoc[i]);
 					tempClanRanks.push(tempClanRankData);
 					logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
 				}

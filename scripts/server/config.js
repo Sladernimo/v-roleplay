@@ -91,10 +91,10 @@ class ServerConfigData {
 			this.databaseId = dbAssoc["svr_id"];
 			this.newCharacter = {
 				spawnPosition: toVector3(dbAssoc["svr_newchar_pos_x"], dbAssoc["svr_newchar_pos_y"], dbAssoc["svr_newchar_pos_z"]),
-				spawnHeading: dbAssoc["svr_newchar_rot_z"],
-				money: dbAssoc["svr_newchar_money"],
-				bank: dbAssoc["svr_newchar_bank"],
-				skin: dbAssoc["svr_newchar_skin"],
+				spawnHeading: toFloat(dbAssoc["svr_newchar_rot_z"]),
+				money: toInteger(dbAssoc["svr_newchar_money"]),
+				bank: toInteger(dbAssoc["svr_newchar_bank"]),
+				skin: toInteger(dbAssoc["svr_newchar_skin"]),
 			};
 
 			this.connectCameraPosition = toVector3(dbAssoc["svr_connectcam_pos_x"], dbAssoc["svr_connectcam_pos_y"], dbAssoc["svr_connectcam_pos_z"]);
@@ -318,10 +318,13 @@ async function loadServerConfigFromGameAndPort(gameId, port) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} AND svr_port = ${port} LIMIT 1;`;
-		let dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
-		if (dbAssoc.length > 0) {
-			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
-			return tempServerConfigData;
+		let dbQuery = queryDatabase(dbConnection, dbQueryString);
+		if (dbQuery) {
+			let dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+				return tempServerConfigData;
+			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -334,13 +337,15 @@ async function loadServerConfigFromGame(gameId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_game = ${gameId} LIMIT 1;`;
-		let dbAssocArray = await fetchQueryAssoc(dbConnection, dbQueryString);
-		logToConsole(LOG_DEBUG | LOG_WARN, `${dbAssocArray[0]}`);
-		if (dbAssocArray.length > 0) {
-			let tempServerConfigData = new ServerConfigData(dbAssocArray[0]);
-			return tempServerConfigData;
+		let dbQuery = queryDatabase(dbConnection, dbQueryString);
+		if (dbQuery) {
+			let dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+				return tempServerConfigData;
+			}
+			disconnectFromDatabase(dbConnection);
 		}
-		disconnectFromDatabase(dbConnection);
 	}
 	return false;
 }
@@ -351,13 +356,17 @@ async function loadServerConfigFromId(tempServerId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM svr_main WHERE svr_id = ${tempServerId} LIMIT 1;`;
-		let dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
-		if (dbAssoc.length > 0) {
-			let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
-			return tempServerConfigData;
+		let dbQuery = queryDatabase(dbConnection, dbQueryString);
+		if (dbQuery) {
+			let dbAssoc = await fetchQueryAssoc(dbQuery);
+			if (dbAssoc.length > 0) {
+				let tempServerConfigData = new ServerConfigData(dbAssoc[0]);
+				return tempServerConfigData;
+			}
 		}
+		disconnectFromDatabase(dbConnection);
 	}
-	disconnectFromDatabase(dbConnection);
+
 	return false;
 }
 
@@ -883,8 +892,8 @@ function setServerRealWorldTimeZoneCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function reloadServerConfigurationCommand(command, params, client) {
-	serverConfig = loadServerConfigFromGameAndPort(server.game, server.port);
+async function reloadServerConfigurationCommand(command, params, client) {
+	serverConfig = await loadServerConfigFromGameAndPort(server.game, server.port);
 	applyConfigToServer(serverConfig);
 	updateServerRules();
 
@@ -1116,18 +1125,18 @@ function getDatabaseConfig() {
 
 // ===========================================================================
 
-function loadServerConfig() {
+async function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading server configuration");
 
 	if (toInteger(server.getCVar("agrp_devserver")) == 1) {
-		serverConfig = loadServerConfigFromGame(getGame());
+		serverConfig = await loadServerConfigFromGame(getGame());
 
 		if (serverConfig == false) {
 			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()}`);
 			server.shutdown();
 		}
 	} else {
-		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
+		serverConfig = await loadServerConfigFromGameAndPort(getGame(), getServerPort());
 
 		if (serverConfig == false) {
 			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
