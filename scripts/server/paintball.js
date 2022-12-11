@@ -71,10 +71,15 @@ function startPaintBall(client) {
 
 	getPlayerData(client).inPaintBall = true;
 	getPlayerData(client).paintBallBusiness = getPlayerBusiness(client);
+	getPlayerData(client).paintBallKills = 0;
+	getPlayerData(client).paintBallDeaths = 0;
+	getBusinessData(getPlayerData(client).paintBallBusiness).paintBallPlayers.push(client.index);
+	getBusinessData(getPlayerData(client).paintBallBusiness).paintBallPot += getBusinessData(getPlayerData(client).paintBallBusiness).entranceFee * 2;
 
 	givePlayerPaintBallItems(client);
 
 	messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
+
 	logToConsole(LOG_DEBUG, `[AGRP.PaintBall]: Started paintball for ${getPlayerDisplayForConsole(client)} successfully`);
 }
 
@@ -90,7 +95,31 @@ function stopPaintBall(client) {
 	deletePaintBallItems(client);
 	restorePlayerTempLockerItems(client);
 
+	let tempBusiness = getPlayerData(client).paintBallBusiness;
+
 	messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
+
+	getBusinessData(tempBusiness).paintBallPlayers.splice(getBusinessData(tempBusiness).paintBallPlayers.indexOf(client.index), 1);
+
+	if (getBusinessData(tempBusiness).paintBallPlayers.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "PaintBallEnded"));
+		messagePlayerInfo(client, getLocaleString(client, "YourPaintBallResults", getPlayerData(client).paintBallKills, getPlayerData(client).paintBallDeaths));
+
+		//messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderEventWinners")));
+		//messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderEventWinners")));
+
+		givePlayerCash(client, getBusinessData(tempBusiness).paintBallPot);
+		getBusinessData(tempBusiness).paintBallPot = 0;
+	}
+
+	getPlayerData(client).inPaintBall = false;
+	getPlayerData(client).paintBallBusiness = false;
+	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_NONE;
+	getPlayerData(client).paintBallKills = 0;
+	getPlayerData(client).paintBallDeaths = 0;
+
+	//checkRemainingPaintBallPlayers(tempBusiness);
+
 	logToConsole(LOG_DEBUG, `[AGRP.PaintBall]: Stopped paintball for ${getPlayerDisplayForConsole(client)} successfully`);
 }
 
@@ -162,6 +191,14 @@ function respawnPlayerForPaintBall(client) {
 
 function isPlayerInPaintBall(client) {
 	return getPlayerData(client).inPaintBall;
+}
+
+// ===========================================================================
+
+function checkRemainingPaintBallPlayers(businessIndex) {
+	//if (getBusinessData(businessIndex).paintBallPlayers.length == 0) {
+	//
+	//}
 }
 
 // ===========================================================================
