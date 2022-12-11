@@ -92,6 +92,8 @@ class BusinessData {
 		this.streamingRadioStation = 0;
 		//this.streamingRadioStationIndex = -1;
 
+		this.paintBallPlayers = [];
+
 		this.labelHelpType = AGRP_PROPLABEL_INFO_NONE;
 
 		if (dbAssoc) {
@@ -861,6 +863,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
 }
 
@@ -2925,6 +2928,7 @@ function updateBusinessPickupLabelData(businessId) {
 		}
 
 		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.fee", getBusinessData(businessId).entranceFee, true);
 	}
 }
 
