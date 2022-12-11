@@ -917,8 +917,18 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-function fetchQueryAssoc(dbQuery) {
-	return dbQuery.fetchAssoc();
+async function fetchQueryAssoc(dbConnection, dbQueryString) {
+	//logToConsole(LOG_DEBUG, dbQueryString);
+	let dbQuery = dbConnection.query(dbQueryString);
+	let assocArray = [];
+	let dbAssoc = null;
+
+	while (dbAssoc = dbQuery.fetchAssoc()) {
+		assocArray.push(dbAssoc);
+		//logToConsole(LOG_DEBUG | LOG_WARN, dbAssoc["svr_id"]);
+	}
+
+	return assocArray;
 }
 
 // ===========================================================================
