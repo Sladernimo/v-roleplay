@@ -119,6 +119,7 @@
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
 	<script src="scripts/client/animation.js" type="client" language="javascript" />
 	<script src="scripts/client/business.js" type="client" language="javascript" />
+	<script src="scripts/client/core.js" type="client" language="javascript" />
 	<script src="scripts/client/chat.js" type="client" language="javascript" />
 	<script src="scripts/client/cursor.js" type="client" language="javascript" />
 	<script src="scripts/client/economy.js" type="client" language="javascript" />
@@ -132,7 +133,6 @@
 	<script src="scripts/client/label.js" type="client" language="javascript" />
 	<script src="scripts/client/locale.js" type="client" language="javascript" />
 	<script src="scripts/client/logo.js" type="client" language="javascript" />
-	<script src="scripts/client/main.js" type="client" language="javascript" />
 	<script src="scripts/client/messaging.js" type="client" language="javascript" />
 	<script src="scripts/client/mousecam.js" type="client" language="javascript" />
 	<script src="scripts/client/nametag.js" type="client" language="javascript" />
