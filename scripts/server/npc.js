@@ -261,7 +261,6 @@ async function loadNPCsFromDatabase() {
 				tempNPCs.push(tempNPCData);
 			}
 		}
-
 		disconnectFromDatabase(dbConnection);
 	}
 
@@ -275,10 +274,10 @@ async function loadNPCTriggersFromDatabase(npcDatabaseId) {
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggers = [];
-	let dbAssoc;
+	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_trig WHERE npc_trig_npc = ${npcDatabaseId} AND npc_trig_enabled = 1`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
+		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempNPCTriggerData = new NPCTriggerData(dbAssoc[i]);
@@ -286,7 +285,6 @@ async function loadNPCTriggersFromDatabase(npcDatabaseId) {
 				tempNPCTriggerData.responses = loadNPCTriggerResponsesFromDatabase(tempNPCTriggerData.databaseId);
 				tempNPCTriggers.push(tempNPCTriggerData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
