@@ -150,7 +150,7 @@ let serverColours = {
 			businessBlue: "0099FF",
 			houseGreen: "11CC11",
 			clanOrange: "FF9900",
-			vehiclePurple: "960096",
+			vehiclePurple: "B19CD9",
 			jobYellow: "FFFF00",
 			npcPink: "DB7093",
 		},
@@ -213,9 +213,11 @@ let serverColours = {
 		softYellow: toColour(234, 198, 126, 255),
 		businessBlue: toColour(0, 153, 255, 255),
 		houseGreen: toColour(17, 204, 17, 255),
+		vehiclePurple: toColour(177, 156, 217, 255),
 		clanOrange: toColour(255, 153, 0, 255),
 		npcPink: toColour(219, 112, 147, 255),
 		adminOrange: toColour(205, 60, 60, 255),
+		chatBoxListIndex: toColour(0, 153, 255, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
@@ -2340,7 +2342,7 @@ function getGameLocationFromParams(params) {
 			return toInteger(params);
 		}
 	}
-	return false;
+	return -1;
 }
 
 // ===========================================================================
