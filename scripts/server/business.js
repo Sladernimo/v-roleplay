@@ -1351,10 +1351,11 @@ function deleteBusinessFloorItemsCommand(command, params, client) {
 
 	let tempCache = getBusinessData(businessId).floorItemCache;
 	for (let i in tempCache) {
-		deleteItem(tempCache[i]);
+		deleteItem(tempCache[i], getPlayerData(client).accountData.databaseId, false);
 	}
 
 	cacheBusinessItems(businessId);
+	setAllItemDataIndexes();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
@@ -1380,10 +1381,11 @@ function deleteBusinessStorageItemsCommand(command, params, client) {
 
 	let tempCache = getBusinessData(businessId).storageItemCache;
 	for (let i in tempCache) {
-		deleteItem(tempCache[i]);
+		deleteItem(tempCache[i], getPlayerData(client).accountData.databaseId, false);
 	}
 
 	cacheBusinessItems(businessId);
+	setAllItemDataIndexes();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all storage items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
