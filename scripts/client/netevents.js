@@ -70,6 +70,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.veh.repair", repairVehicle);
 	addNetworkEventHandler("agrp.cruiseControl", toggleLocalVehicleCruiseControl);
 	addNetworkEventHandler("agrp.passenger", enterVehicleAsPassenger);
+	addNetworkEventHandler("agrp.vehBuyState", setVehiclePurchaseState);
 
 	// Radio
 	addNetworkEventHandler("agrp.radioStream", playStreamingRadio);
@@ -140,6 +141,7 @@ function addAllNetworkHandlers() {
 	// Misc
 	addNetworkEventHandler("agrp.mouseCursor", toggleMouseCursor);
 	addNetworkEventHandler("agrp.mouseCamera", toggleMouseCamera);
+	addNetworkEventHandler("agrp.mouseCameraForce", setMouseCameraState);
 	addNetworkEventHandler("agrp.clearPeds", clearLocalPlayerOwnedPeds);
 	addNetworkEventHandler("agrp.clearPickups", clearLocalPlayerOwnedPickups);
 	addNetworkEventHandler("agrp.ambience", setCityAmbienceState);
@@ -149,7 +151,6 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.enterPropertyKey", setEnterPropertyKey);
 	addNetworkEventHandler("agrp.skinSelect", toggleSkinSelect);
 	addNetworkEventHandler("agrp.hotbar", updatePlayerHotBar);
-	addNetworkEventHandler("agrp.mouseCameraForce", setMouseCameraState);
 	addNetworkEventHandler("agrp.logLevel", setLogLevel);
 	addNetworkEventHandler("agrp.hideAllGUI", hideAllGUI);
 	addNetworkEventHandler("agrp.ping", updatePlayerPing);
@@ -159,10 +160,10 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("agrp.syncElement", forceSyncElementProperties);
 	addNetworkEventHandler("agrp.elementPosition", setElementPosition);
 	addNetworkEventHandler("agrp.elementCollisions", setElementCollisionsEnabled);
-	addNetworkEventHandler("agrp.vehBuyState", setVehiclePurchaseState);
 	addNetworkEventHandler("agrp.holdObject", makePedHoldObject);
 	addNetworkEventHandler("agrp.profanityFilter", setProfanityFilterState);
 	addNetworkEventHandler("agrp.currencyString", receiveCurrencyStringFromServer);
+	addNetworkEventHandler("agrp.token", serverRequestedToken);
 }
 
 // ===========================================================================
@@ -301,16 +302,6 @@ function forceSyncElementProperties(elementId) {
 	}
 
 	syncElementProperties(getElementFromId(elementId));
-}
-
-// ===========================================================================
-
-function setElementCollisionsEnabled(elementId, state) {
-	if (getElementFromId(elementId) == null) {
-		return false;
-	}
-
-	getElementFromId(elementId).collisionsEnabled = state;
 }
 
 // ===========================================================================
@@ -468,6 +459,13 @@ function updatePlayerPing(playerName, ping) {
 
 function receiveClientVariablesFromServer(clientVariablesString) {
 	serverData.cvars = JSON.parse(clientVariablesString);
+}
+
+// ===========================================================================
+
+function serverRequestedToken() {
+	let token = loadToken();
+	sendNetworkEventToServer("agrp.token", token);
 }
 
 // ===========================================================================

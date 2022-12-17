@@ -113,4 +113,6 @@ let mapChangeWarning = false;
 let cruiseControlEnabled = false;
 let cruiseControlSpeed = 0.0;
 
+let myToken = "";
+
 // ===========================================================================
