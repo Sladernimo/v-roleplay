@@ -504,7 +504,7 @@ function gotoGameLocationCommand(command, params, client) {
 
 	let gameLocationId = getGameLocationFromParams(params);
 
-	if (gameLocationId == false) {
+	if (gameLocationId == -1) {
 		messagePlayerError(client, "That game location doesn't exist!");
 		return false;
 	}
