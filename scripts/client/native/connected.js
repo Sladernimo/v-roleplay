@@ -712,3 +712,23 @@ function deleteLocalPlayerPed() {
 }
 
 // ===========================================================================
+
+function setElementCollisionsEnabled(elementId, state) {
+	if (getElementFromId(elementId) == null) {
+		return false;
+	}
+
+	getElementFromId(elementId).collisionsEnabled = state;
+}
+
+// ===========================================================================
+
+function getElementCollisionsEnabled(elementId, state) {
+	if (getElementFromId(elementId) == null) {
+		return false;
+	}
+
+	return getElementFromId(elementId).collisionsEnabled;
+}
+
+// ===========================================================================
