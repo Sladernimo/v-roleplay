@@ -423,7 +423,7 @@ function getNearbyVehiclesCommand(command, params, client) {
 	}
 
 	let vehiclesList = nearbyVehicles.map(function (x) {
-		return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), getVehiclePosition(x))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x)))))})`;
+		return `{chatBoxListIndex}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), getVehiclePosition(x))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x)))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
@@ -1765,7 +1765,9 @@ function checkVehiclePurchasing(client) {
 		}
 
 		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
-		createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_BUSINESS || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_NONE) {
+			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+		}
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
 		updatePlayerCash(client);
 		getVehicleData(getPlayerData(client).buyingVehicle).ownerId = getPlayerCurrentSubAccount(client).databaseId;
