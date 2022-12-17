@@ -80,6 +80,14 @@ function addAllNetworkEventHandlers() {
 // ===========================================================================
 
 function updatePlayerNameTag(client) {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending ${getPlayerDisplayForConsole(client)}'s updated nametag to all players`);
 	sendNetworkEventToPlayer("agrp.nametag", null, getPlayerName(client), getPlayerNameForNameTag(client), getPlayerColour(client), getPlayerData(client).afk, getPlayerPing(client));
 }
@@ -1321,6 +1329,12 @@ function fadePlayerCamera(client, fadeIn, time, colour = toColour(0, 0, 0, 255))
 
 function sendClientVariablesToClient(client) {
 	sendNetworkEventToPlayer("agrp.cvar", client, JSON.stringify(clientVariables));
+}
+
+// ==========================================================================
+
+function requestPlayerToken(client) {
+	sendNetworkEventToPlayer("agrp.token", client);
 }
 
 // ==========================================================================
