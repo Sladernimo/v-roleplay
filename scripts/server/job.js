@@ -33,12 +33,13 @@ const AGRP_JOB_ROUTE_STATE_ATSTOP = 4;              // For bus/trash stops that 
 // ===========================================================================
 
 // Job Route Location Types
-const AGRP_JOB_ROUTE_LOCATION_TYPE_NONE = 0;				// None
-const AGRP_JOB_ROUTE_LOCATION_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
-const AGRP_JOB_ROUTE_LOCATION_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
-const AGRP_JOB_ROUTE_LOCATION_TYPE_INJURED_PED = 3;         // Injured ped (used for paramedic job)
-const AGRP_JOB_ROUTE_LOCATION_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground (used for street sweeper job)
-const AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector pickup)
+const AGRP_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
+const AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
+const AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
+const AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped (used for paramedic job)
+const AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground (used for street sweeper job)
+const AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
+const AGRP_JOB_ROUTE_LOC_TYPE_FIRE = 5;         		// Scripted fire, placed on buildings and such
 
 // ===========================================================================
 
@@ -175,7 +176,7 @@ class JobRouteLocationData {
 		this.position = toVector3(0.0, 0.0, 0.0);
 		this.stopDelay = 0;
 		this.pay = 0;
-		this.type = AGRP_JOB_ROUTE_LOCATION_TYPE_NONE;
+		this.type = AGRP_JOB_ROUTE_LOC_TYPE_NONE;
 		this.gotoMessage = "";
 		this.departMessage = "";
 		this.whoCreated = 0;
@@ -458,15 +459,71 @@ class JobBlackListData {
 
 // ===========================================================================
 
+class JobRouteLocationType {
+	constructor(jobRouteLocationTypeId, name, animStart = "", animStop = "", inVehicle = false, nearVehicle = false, nearVehicleDistance = 5.0) {
+
+	}
+};
+
+// ===========================================================================
+
 // For use with the /jobrouteloctype command
-let jobRouteLocationTypeNames = {
-	Checkpoint: AGRP_JOB_ROUTE_LOCATION_TYPE_CHECKPOINT,
-	StreetClean: AGRP_JOB_ROUTE_LOCATION_TYPE_GROUND_GARBAGE,
-	GroundGarbage: AGRP_JOB_ROUTE_LOCATION_TYPE_GROUND_GARBAGE,
-	GarbageBin: AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN,
-	GarbagePickup: AGRP_JOB_ROUTE_LOCATION_TYPE_GARBAGE_BIN,
-	BurningVehicle: AGRP_JOB_ROUTE_LOCATION_TYPE_BURNING_VEHICLE,
-	InjuredPed: AGRP_JOB_ROUTE_LOCATION_TYPE_INJURED_PED,
+let jobRouteLocationTypes = {
+	[AGRP_GAME_GTA_III]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_GTA_VC]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_GTA_SA]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_GTA_IV]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_MAFIA_ONE]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_MAFIA_TWO]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
+
+	[AGRP_GAME_MAFIA_ONE_DE]: [
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	],
 }
 
 // ===========================================================================
@@ -2404,7 +2461,7 @@ function startJobRoute(client, forceRoute = -1) {
 	}
 
 	if (jobRoute == -1) {
-		messagePlayerError(client, getLocaleString(client, "NoRoutesForLocation"));
+		messagePlayerError(client, getLocaleString(client, "NoJobRoutesForLocation"));
 		return false;
 	}
 
