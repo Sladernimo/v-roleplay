@@ -295,9 +295,19 @@ function getPlayerGeoIPInformationCommand(command, params, client) {
 		return false;
 	}
 
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+	let countryName = "Unknown";
+	let subDivisionName = "Unknown";
+	let cityName = "Unknown";
+
+	try {
+		countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
+		subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+	} catch (err) {
+		messagePlayerError(client, `There was an error getting the geoip information for ${getPlayerName(targetClient)}`);
+		submitBugReport(client, `[AUTOMATED REPORT] Getting geoip information for ${getPlayerName(targetClient)} (${getPlayerIP(targetClient)} failed: ${err}`);
+		return false;
+	}
 
 	messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} is from {ALTCOLOUR}${cityName}, ${subDivisionName}, ${countryName}`);
 }
