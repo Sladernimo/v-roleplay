@@ -3074,9 +3074,11 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 
 // ===========================================================================
 
-function canPlayerManageBusiness(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
-		return true;
+function canPlayerManageBusiness(client, businessId, exemptAdminFlag = false) {
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+			return true;
+		}
 	}
 
 	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER) {

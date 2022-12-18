@@ -879,34 +879,6 @@ function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
 
 // ===========================================================================
 
-function doesPlayerOwnVehicle(client, vehicle) {
-	let vehicleData = getVehicleData(vehicle);
-
-	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
-		if (vehicleData.ownerId == getPlayerData(client).accountData.databaseId) {
-			return true;
-		}
-	}
-
-	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
-		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
-				return true;
-			}
-		}
-	}
-
-	if (vehicleData.ownerType == AGRP_VEHOWNER_BIZ) {
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId), true)) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-// ===========================================================================
-
 function setVehicleJobCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
