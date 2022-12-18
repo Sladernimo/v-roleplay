@@ -367,6 +367,8 @@ function processLabelRendering() {
 							if (!pickups[i].isOnScreen) {
 								let price = "0";
 								let rentPrice = "0";
+								let fee = "0";
+
 								let labelInfoType = AGRP_PROPLABEL_INFO_NONE;
 								if (pickups[i].getData("agrp.label.price") != null) {
 									price = pickups[i].getData("agrp.label.price");
