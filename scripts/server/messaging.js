@@ -188,6 +188,12 @@ function messagePlayerNewbieTip(client, message) {
 
 // ===========================================================================
 
+function messagePlayerActionTip(client, message) {
+	messagePlayerNormal(client, `💡 ${message}`);
+}
+
+// ===========================================================================
+
 function messagePlayerTimedRandomTip(client, message) {
 	if (isPlayerLoggedIn(client) && isPlayerSpawned(client)) {
 		if (!hasBitFlag(getPlayerData(client).accountData.settings, getAccountSettingsFlagValue("NoRandomTips"))) {
