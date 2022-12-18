@@ -936,7 +936,7 @@ function saveHouseToDatabase(houseId) {
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
 			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
-			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != false) ? getRadioStationData(tempHouseData.streamingRadioStationIndex) : -1],
+			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != false) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
 		];
 
 		let dbQuery = null;
