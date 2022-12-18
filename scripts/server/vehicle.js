@@ -1245,8 +1245,8 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
 		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
 		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
-		[`Buy Price`, `${vehicleData.buyPrice}`],
-		[`Rent Price`, `${vehicleData.rentPrice}`],
+		[`Buy Price`, `${getCurrencyString(vehicleData.buyPrice)}`],
+		[`Rent Price`, `${getCurrencyString(vehicleData.rentPrice)}`],
 		[`Radio Station`, `${(vehicleData.streamingRadioStationIndex == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStationIndex).name}`],
 		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
 		[`License Plate`, `${vehicleData.licensePlate}`],
@@ -1362,16 +1362,20 @@ function reloadAllVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnVehicleCommand(command, params, client) {
-	if (isPlayerInAnyVehicle(client)) {
-		removeAllOccupantsFromVehicle(getPlayerVehicle(client));
-		respawnVehicle(getPlayerVehicle(client));
+	if (!isPlayerInAnyVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
 	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	//removeAllOccupantsFromVehicle(vehicle);
+	respawnVehicle(vehicle);
 
 	setAllVehicleIndexes();
 
 	messagePlayerSuccess(client, getLocaleString(client, `YourVehicleRespawned`));
 }
-
 
 // ===========================================================================
 
@@ -1765,7 +1769,7 @@ function checkVehiclePurchasing(client) {
 		}
 
 		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
-		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_BUSINESS || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_NONE) {
+		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == AGRP_VEHOWNER_NONE) {
 			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
 		}
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
