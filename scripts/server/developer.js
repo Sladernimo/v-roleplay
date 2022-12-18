@@ -647,6 +647,8 @@ function fixAllServerBlipsCommand(command, params, client) {
 	createAllJobBlips();
 	createAllBusinessBlips();
 	createAllHouseBlips();
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server blips`);
 }
 
 // ===========================================================================
@@ -660,6 +662,8 @@ function fixAllServerPickupsCommand(command, params, client) {
 	createAllJobPickups();
 	createAllBusinessPickups();
 	createAllHousePickups();
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server pickups`);
 }
 
 // ===========================================================================
