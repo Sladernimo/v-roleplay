@@ -240,6 +240,14 @@ function onResourceStop(event, resource) {
 // ===========================================================================
 
 function onPedEnteredSphere(event, ped, sphere) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (sphere == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered sphere ${sphere.id}!`);
 	//if (ped.isType(ELEMENT_PLAYER)) {
 	//	let client = getClientFromPlayerElement(ped);
@@ -256,6 +264,14 @@ function onPedEnteredSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedExitedSphere(event, ped, sphere) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (sphere == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} exited sphere ${sphere.id}!`);
 	//if (ped.isType(ELEMENT_PLAYER)) {
 	//	let client = getClientFromPlayerElement(ped);
@@ -265,6 +281,14 @@ function onPedExitedSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedPickupPickedUp(event, ped, pickup) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (pickup == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} picked up pickup ${pickup.id}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
@@ -672,6 +696,14 @@ function onPlayerCommand(event, client, command, params) {
 // ===========================================================================
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
 
 	if (getVehicleData(vehicle) == false) {
@@ -713,6 +745,14 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
@@ -829,6 +869,14 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
@@ -845,6 +893,14 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
+	if (ped == null) {
+		return false;
+	}
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} is exiting vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
