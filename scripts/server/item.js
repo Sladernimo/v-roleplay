@@ -1524,7 +1524,7 @@ function playerUseItem(client, hotBarSlot) {
 
 				markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			} else {
-				messagePlayerError(client, getLocaleString(client, "VehicleFailedTooFar"));
+				messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 			}
 			break;
 		}
@@ -2817,8 +2817,10 @@ function getItemValueDisplay(itemType, value) {
 		return toString(value) + " rounds";
 	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_WALKIETALKIE) {
 		return toString(toString(value).slice(0, -2) + "." + toString(value).slice(-1) + "MHz");
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_VEHCOLOUR) {
-		return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
+	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_BADGE) {
+		return `#${value}`;
+		//} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_VEHCOLOUR) {
+		//	return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
 	} else {
 		return value;
 	}
