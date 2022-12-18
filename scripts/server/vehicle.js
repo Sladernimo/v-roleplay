@@ -177,14 +177,14 @@ function initVehicleScript() {
 
 // ===========================================================================
 
-async function loadVehiclesFromDatabase() {
+function loadVehiclesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Loading vehicles from database ...");
 	let dbConnection = connectToDatabase();
 	let tempVehicles = [];
 	let dbAssoc;
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM veh_main WHERE veh_server = ${getServerId()} AND veh_deleted = 0`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempVehicleData = new VehicleData(dbAssoc[i]);

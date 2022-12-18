@@ -715,20 +715,20 @@ function isAccountPasswordCorrect(accountData, password) {
 
 // ===========================================================================
 
-async function loadAccountFromName(accountName, fullLoad = false) {
+function loadAccountFromName(accountName, fullLoad = false) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
 	if (dbConnection) {
 		accountName = escapeDatabaseString(dbConnection, accountName);
 		let dbQueryString = `SELECT acct_main.*, acct_svr.* FROM acct_main INNER JOIN acct_svr ON acct_svr.acct_svr_acct = acct_main.acct_id AND acct_svr.acct_svr_svr = ${getServerId()} WHERE acct_name = '${accountName}' LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			let tempAccountData = new AccountData(dbAssoc[0]);
 			if (fullLoad) {
-				tempAccountData.messages = await loadAccountMessagesFromDatabase(tempAccountData.databaseId);
-				tempAccountData.notes = await loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
-				tempAccountData.contacts = await loadAccountContactsFromDatabase(tempAccountData.databaseId);
+				tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
+				tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
+				tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
 			}
 			return tempAccountData;
 		}
@@ -739,19 +739,19 @@ async function loadAccountFromName(accountName, fullLoad = false) {
 
 // ===========================================================================
 
-async function loadAccountFromId(accountId, fullLoad = false) {
+function loadAccountFromId(accountId, fullLoad = false) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT acct_main.*, acct_svr.* FROM acct_main INNER JOIN acct_svr ON acct_svr.acct_svr_acct = acct_main.acct_id AND acct_svr.acct_svr_svr = ${getServerId()} WHERE acct_id = ${accountId} LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			let tempAccountData = new AccountData(dbAssoc[0]);
 			if (fullLoad) {
-				tempAccountData.messages = await loadAccountMessagesFromDatabase(tempAccountData.databaseId);
-				tempAccountData.notes = await loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
-				tempAccountData.contacts = await loadAccountContactsFromDatabase(tempAccountData.databaseId);
+				tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
+				tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
+				tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
 			}
 
 			return tempAccountData;
@@ -804,7 +804,7 @@ function getAccountHashingFunction() {
 // ===========================================================================
 
 async function isNameRegistered(name) {
-	let accountData = await loadAccountFromName(name, true);
+	let accountData = loadAccountFromName(name, true);
 	if (accountData.databaseId > 0) {
 		return true;
 	}
@@ -1046,11 +1046,11 @@ async function createAccount(name, password, email = "") {
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let insertId = getDatabaseInsertId(dbConnection);
 			createDefaultAccountServerData(insertId);
-			let tempAccountData = await loadAccountFromId(insertId, false);
+			let tempAccountData = loadAccountFromId(insertId, false);
 
-			tempAccountData.messages = await loadAccountMessagesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.notes = await loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.contacts = await loadAccountContactsFromDatabase(tempAccountData.databaseId);
+			tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
+			tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
+			tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
 			tempAccountData.flags.admin = 0;
 			return tempAccountData;
 		}
@@ -1472,7 +1472,7 @@ function createDefaultAccountServerData(accountDatabaseId) {
 
 // ===========================================================================
 
-async function loadAccountKeybindsFromDatabase(accountDatabaseID) {
+function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account keybinds for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountKeybinds = [];
@@ -1491,7 +1491,7 @@ async function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 	if (accountDatabaseID != 0 && typeof accountDatabaseId != "undefined") {
 		if (dbConnection) {
 			let dbQueryString = `SELECT * FROM acct_hotkey WHERE acct_hotkey_enabled = 1 AND acct_hotkey_acct = ${accountDatabaseID} AND acct_hotkey_server = ${getServerId()}`;
-			dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
 					let tempAccountKeyBindData = new KeyBindData(dbAssoc[i]);
@@ -1509,7 +1509,7 @@ async function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 
 // ===========================================================================
 
-async function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
+function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
 	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account staff notes for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountStaffNotes = [];
@@ -1518,7 +1518,7 @@ async function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
 
 	if (dbConnection) {
 		let dbQueryString = "SELECT * FROM `acct_note` WHERE `acct_note_deleted` = 0 AND `acct_note_acct` = " + toString(accountDatabaseID);
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempAccountStaffNoteData = new AccountStaffNoteData(dbAssoc[i]);
@@ -1535,7 +1535,7 @@ async function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
 
 // ===========================================================================
 
-async function loadAccountContactsFromDatabase(accountDatabaseID) {
+function loadAccountContactsFromDatabase(accountDatabaseID) {
 	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account contacts for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountContacts = [];
@@ -1544,7 +1544,7 @@ async function loadAccountContactsFromDatabase(accountDatabaseID) {
 
 	if (dbConnection) {
 		let dbQueryString = "SELECT * FROM `acct_contact` WHERE `acct_contact_deleted` = 0 AND `acct_contact_acct` = " + toString(accountDatabaseID);
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempAccountContactData = new AccountContactData(dbAssoc[i]);
@@ -1561,7 +1561,7 @@ async function loadAccountContactsFromDatabase(accountDatabaseID) {
 
 // ===========================================================================
 
-async function loadAccountMessagesFromDatabase(accountDatabaseID) {
+function loadAccountMessagesFromDatabase(accountDatabaseID) {
 	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account messages for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountMessages = [];
@@ -1570,7 +1570,7 @@ async function loadAccountMessagesFromDatabase(accountDatabaseID) {
 
 	if (dbConnection) {
 		let dbQueryString = "SELECT * FROM`acct_msg` WHERE `acct_msg_deleted` = 0 AND`acct_msg_acct` = " + toString(accountDatabaseID);
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempAccountMessageData = new AccountContactData(dbAssoc[i]);

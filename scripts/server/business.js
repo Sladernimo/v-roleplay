@@ -196,11 +196,11 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-async function loadBusinessFromId(businessId) {
+function loadBusinessFromId(businessId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM biz_main WHERE biz_id = ${businessId} LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			return new BusinessData(dbAssoc[0]);
 		}
@@ -212,7 +212,7 @@ async function loadBusinessFromId(businessId) {
 
 // ===========================================================================
 
-async function loadBusinessesFromDatabase() {
+function loadBusinessesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Business]: Loading businesses from database ...");
 
 	let tempBusinesses = [];
@@ -221,7 +221,7 @@ async function loadBusinessesFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempBusinessData = new BusinessData(dbAssoc[i]);
@@ -241,7 +241,7 @@ async function loadBusinessesFromDatabase() {
 
 // ===========================================================================
 
-async function loadBusinessLocationsFromDatabase(businessId) {
+function loadBusinessLocationsFromDatabase(businessId) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business locations for business ${businessId} from database ...`);
 
 	let tempBusinessLocations = [];
@@ -251,7 +251,7 @@ async function loadBusinessLocationsFromDatabase(businessId) {
 
 	if (dbConnection) {
 		dbQueryString = `SELECT * FROM biz_loc WHERE biz_loc_biz = ${businessId}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempBusinessLocationData = new BusinessLocationData(dbAssoc[i]);
@@ -269,7 +269,7 @@ async function loadBusinessLocationsFromDatabase(businessId) {
 // ===========================================================================
 
 /*
-async function loadBusinessGameScriptsFromDatabase(businessId) {
+function loadBusinessGameScriptsFromDatabase(businessId) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business game scripts for business ${businessId} from database ...`);
 
 	let tempBusinessGameScripts = [];
@@ -280,7 +280,7 @@ async function loadBusinessGameScriptsFromDatabase(businessId) {
 
 	if(dbConnection) {
 		dbQueryString = `SELECT * FROM biz_script WHERE biz_script_biz = ${businessId}`;
-			dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
 					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc[i]);

@@ -238,6 +238,7 @@ function playerPromptAnswerYes(client) {
 			getBusinessData(businessId).buyPrice = 0;
 			getBusinessData(businessId).needsSaved = true;
 			updateBusinessPickupLabelData(businessId);
+			takePlayerCash(client, getBusinessData(businessId).buyPrice);
 
 			messageDiscordEventChannel(`🏢 ${getCharacterFullName(client)} is now the owner of *${getBusinessData(businessId).name}*!`);
 			messagePlayerSuccess(client, getLocaleString(client, "BusinessPurchased", `{businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}`));

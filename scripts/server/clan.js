@@ -117,7 +117,7 @@ function initClanScript() {
 
 // ===========================================================================
 
-async function loadClansFromDatabase() {
+function loadClansFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
@@ -126,7 +126,7 @@ async function loadClansFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempClanData = new ClanData(dbAssoc[i]);
@@ -145,7 +145,7 @@ async function loadClansFromDatabase() {
 
 // ===========================================================================
 
-async function loadClanMembersFromDatabase() {
+function loadClanMembersFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
@@ -154,7 +154,7 @@ async function loadClanMembersFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempClanData = new ClanData(dbAssoc[i]);
@@ -171,7 +171,7 @@ async function loadClanMembersFromDatabase() {
 
 // ===========================================================================
 
-async function loadClanRanksFromDatabase(clanDatabaseId) {
+function loadClanRanksFromDatabase(clanDatabaseId) {
 	logToConsole(LOG_INFO, `[AGRP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
 
 	let dbConnection = connectToDatabase();
@@ -180,7 +180,7 @@ async function loadClanRanksFromDatabase(clanDatabaseId) {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM clan_rank WHERE clan_rank_clan = ${clanDatabaseId}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempClanRankData = new ClanRankData(dbAssoc[i]);

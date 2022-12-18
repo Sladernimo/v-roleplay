@@ -144,7 +144,7 @@ class ClientData {
 		this.jobRouteEditNextLocationDelay = 0;
 		this.jobRouteEditNextLocationArriveMessage = "";
 		this.jobRouteEditNextLocationGotoMessage = "";
-		this.jobRouteEditNextLocationType = AGRP_JOB_ROUTE_LOCATION_TYPE_NONE;
+		this.jobRouteEditNextLocationType = AGRP_JOB_ROUTE_LOC_TYPE_NONE;
 
 		// Casino Stuff
 		this.casinoChips = 0; // This might become an item with a useId of a business (for chips belonging to specific casinos)

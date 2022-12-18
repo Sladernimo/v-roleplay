@@ -37,20 +37,19 @@ function initRadioScript() {
 
 // ===========================================================================
 
-async function loadRadioStationsFromDatabase() {
+function loadRadioStationsFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Radio]: Loading radio stations from database ...");
 	let dbConnection = connectToDatabase();
 	let tempRadioStations = [];
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM radio_main`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempRadioStationData = new RadioStationData(dbAssoc[i]);
 				tempRadioStations.push(tempRadioStationData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}

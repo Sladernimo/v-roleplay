@@ -917,7 +917,7 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-async function fetchQueryAssoc(dbConnection, queryString) {
+function fetchQueryAssoc(dbConnection, queryString) {
 	let assocArray = [];
 	let dbAssoc = null;
 

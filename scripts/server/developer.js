@@ -555,7 +555,7 @@ async function migrateSubAccountsToPerServerData() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM sacct_main`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			createDefaultSubAccountServerData(dbAssoc[0]["sacct_id"]);
 
@@ -576,7 +576,7 @@ async function resetAllAccountsHotkeysToDefault() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT acct_id FROM acct_main`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			createDefaultKeybindsForAccount(dbAssoc[0]["acct_id"]);
 		}

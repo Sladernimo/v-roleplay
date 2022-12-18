@@ -246,14 +246,14 @@ function createNPCCommand(command, params, client) {
 
 // ===========================================================================
 
-async function loadNPCsFromDatabase() {
+function loadNPCsFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPCs from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCs = [];
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_main WHERE npc_server = ${getServerId()} AND npc_enabled = 1`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempNPCData = new NPCData(dbAssoc[i]);
@@ -270,14 +270,14 @@ async function loadNPCsFromDatabase() {
 
 // ===========================================================================
 
-async function loadNPCTriggersFromDatabase(npcDatabaseId) {
+function loadNPCTriggersFromDatabase(npcDatabaseId) {
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggers = [];
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_trig WHERE npc_trig_npc = ${npcDatabaseId} AND npc_trig_enabled = 1`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempNPCTriggerData = new NPCTriggerData(dbAssoc[i]);
@@ -295,14 +295,14 @@ async function loadNPCTriggersFromDatabase(npcDatabaseId) {
 
 // ===========================================================================
 
-async function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
+function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerConditions = [];
 	let dbAssoc;
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM npc_cond WHERE npc_cond_trig = ${npcTriggerDatabaseId} AND npc_cond_enabled = 1`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempNPCTriggerConditionData = new NPCTriggerConditionData(dbAssoc[i]);
@@ -318,7 +318,7 @@ async function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 
 // ===========================================================================
 
-async function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
+function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
 	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerResponses = [];

@@ -159,12 +159,12 @@ function initPropertyScript() {
 
 // ===========================================================================
 
-async function loadPropertyFromId(propertyIndex) {
+function loadPropertyFromId(propertyIndex) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM prop_main WHERE prop_id = ${propertyIndex} LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			return new PropertyData(dbAssoc[0]);
 		}
@@ -176,7 +176,7 @@ async function loadPropertyFromId(propertyIndex) {
 
 // ===========================================================================
 
-async function loadPropertiesFromDatabase() {
+function loadPropertiesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Property]: Loading properties from database ...");
 
 	let tempProperties = [];
@@ -185,7 +185,7 @@ async function loadPropertiesFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM prop_main WHERE prop_deleted = 0 AND prop_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempPropertyData = new PropertyData(dbAssoc[i]);
@@ -203,7 +203,7 @@ async function loadPropertiesFromDatabase() {
 
 // ===========================================================================
 
-async function loadPropertyLocationsFromDatabase(propertyIndex) {
+function loadPropertyLocationsFromDatabase(propertyIndex) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Property]: Loading property locations for property ${propertyIndex} from database ...`);
 
 	let tempPropertyLocations = [];

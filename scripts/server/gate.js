@@ -235,7 +235,7 @@ function saveGateToDatabase(gateId) {
 
 // ===========================================================================
 
-async function loadGatesFromDatabase() {
+function loadGatesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.Gate]: Loading gates from database ...");
 
 	let tempGates = [];
@@ -244,7 +244,7 @@ async function loadGatesFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM gate_main WHERE gate_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempGateData = new GateData(dbAssoc[i]);

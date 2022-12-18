@@ -129,7 +129,7 @@ function initSubAccountScript() {
 
 // ===========================================================================
 
-async function loadSubAccountFromName(firstName, lastName) {
+function loadSubAccountFromName(firstName, lastName) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 	if (dbConnection) {
@@ -137,7 +137,7 @@ async function loadSubAccountFromName(firstName, lastName) {
 		lastName = escapeDatabaseString(dbConnection, lastName);
 
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			freeDatabaseQuery(dbQuery);
 			return new SubAccountData(dbAssoc[0]);
@@ -150,12 +150,12 @@ async function loadSubAccountFromName(firstName, lastName) {
 
 // ===========================================================================
 
-async function loadSubAccountFromId(subAccountId) {
+function loadSubAccountFromId(subAccountId) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_id = ${subAccountId} LIMIT 1;`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			return new SubAccountData(dbAssoc[0]);
 		}
@@ -167,14 +167,14 @@ async function loadSubAccountFromId(subAccountId) {
 
 // ===========================================================================
 
-async function loadSubAccountsFromAccount(accountId) {
+function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
 	if (accountId > 0) {
 		let dbConnection = connectToDatabase();
 		if (dbConnection) {
 			let dbQueryString = `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct=sacct_main.sacct_id AND sacct_svr.sacct_svr_server=${getServerId()} WHERE sacct_acct = ${accountId} AND sacct_server = ${getServerId()}`;
-			dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
 					let tempSubAccount = new SubAccountData(dbAssoc[i]);

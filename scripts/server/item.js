@@ -288,14 +288,14 @@ function initItemScript() {
 
 // ===========================================================================
 
-async function loadItemsFromDatabase() {
+function loadItemsFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM item_main WHERE item_deleted = 0 AND item_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempItemData = new ItemData(dbAssoc[i]);
@@ -311,7 +311,7 @@ async function loadItemsFromDatabase() {
 
 // ===========================================================================
 
-async function loadItemTypesFromDatabase() {
+function loadItemTypesFromDatabase() {
 	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
@@ -319,7 +319,7 @@ async function loadItemTypesFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM item_type WHERE item_type_deleted = 0 AND item_type_enabled = 1 AND item_type_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempItemTypeData = new ItemTypeData(dbAssoc[i]);

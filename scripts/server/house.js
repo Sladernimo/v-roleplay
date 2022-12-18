@@ -175,7 +175,7 @@ function initHouseScript() {
 
 // ===========================================================================
 
-async function loadHousesFromDatabase() {
+function loadHousesFromDatabase() {
 	logToConsole(LOG_INFO, "[AGRP.House]: Loading houses from database ...");
 	let tempHouses = [];
 	let dbConnection = connectToDatabase();
@@ -183,7 +183,7 @@ async function loadHousesFromDatabase() {
 
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM house_main WHERE house_deleted = 0 AND house_server = ${getServerId()}`;
-		dbAssoc = await fetchQueryAssoc(dbConnection, dbQueryString);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempHouseData = new HouseData(dbAssoc[i]);
