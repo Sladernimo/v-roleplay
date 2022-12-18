@@ -1012,7 +1012,9 @@ function sendPlayerEnterPropertyKey(client, key) {
 // ===========================================================================
 
 function makePedPlayAnimation(ped, animationSlot, positionOffset) {
-	setEntityData(ped, "agrp.anim", animationSlot, true);
+	if (getAnimationData(animationSlot).loop == true) {
+		setEntityData(ped, "agrp.anim", animationSlot, true);
+	}
 	sendNetworkEventToPlayer("agrp.anim", null, getPedForNetworkEvent(ped), animationSlot, positionOffset);
 }
 

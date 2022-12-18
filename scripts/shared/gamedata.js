@@ -16,8 +16,8 @@ class AnimationData {
 		this.animType = (typeof data.animType != "undefined") ? data.animType : AGRP_ANIMTYPE_NORMAL;
 		this.animSpeed = (typeof data.animSpeed != "undefined") ? data.animSpeed : 0.0;
 		this.moveType = (typeof data.moveType != "undefined") ? data.moveType : AGRP_ANIMMOVE_NONE;
-		this.duration = -1;
-		this.loop = true;
+		this.loop = (typeof data.moveType != "undefined") ? data.moveType : false;
+		this.duration = (typeof data.duration != "undefined") ? data.duration : -1;
 
 		// GTA IV
 		this.infiniteLoop = (typeof data.infiniteLoop != "undefined") ? data.infiniteLoop : false;

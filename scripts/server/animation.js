@@ -44,8 +44,10 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (hasPlayerSeenActionTip(client, "AnimationStop")) {
-		messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+	if (getAnimationData(animationSlot).loop == true) {
+		if (hasPlayerSeenActionTip(client, "AnimationStop")) {
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+		}
 	}
 	makePlayerPlayAnimation(client, animationSlot, animationPositionOffset);
 }
@@ -95,11 +97,13 @@ function isPlayerInForcedAnimation(client) {
 // ===========================================================================
 
 function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	getPlayerData(client).currentAnimation = animationSlot;
-	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
-	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
-	getPlayerData(client).animationForced = false;
+	if (getAnimationData(animationSlot).loop == true) {
+		getPlayerData(client).currentAnimation = animationSlot;
+		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
+		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
+		getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+		getPlayerData(client).animationForced = false;
+	}
 
 	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
 	//setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
@@ -113,11 +117,13 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 // ===========================================================================
 
 function forcePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	getPlayerData(client).currentAnimation = animationSlot;
-	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
-	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
-	getPlayerData(client).animationForced = true;
+	if (getAnimationData(animationSlot).loop == true) {
+		getPlayerData(client).currentAnimation = animationSlot;
+		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
+		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
+		getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+		getPlayerData(client).animationForced = true;
+	}
 
 	setPlayerControlState(client, false);
 	forcePedAnimation(getPlayerPed(client), animationSlot, offsetPosition);
