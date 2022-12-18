@@ -662,6 +662,8 @@ async function onPlayerSpawn(client) {
 		resetPlayerBlip(client);
 	}
 
+	updateJobBlipsForPlayer(client);
+
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
 	if (getPlayerDimension(client) != getGameConfig().mainWorldDimension[getGame()]) {
