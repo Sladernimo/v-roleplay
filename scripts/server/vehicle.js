@@ -693,7 +693,7 @@ function buyVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (doesPlayerOwnVehicle(client, vehicle)) {
+	if (canPlayerManageVehicle(client, vehicle, true)) {
 		messagePlayerError(client, getLocaleString(client, "AlreadyOwnVehicle"));
 		return false;
 	}
@@ -845,11 +845,13 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 // ===========================================================================
 
-function canPlayerManageVehicle(client, vehicle) {
+function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
 	let vehicleData = getVehicleData(vehicle);
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
-		return true;
+	if (!exemptAdminFlag) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
+			return true;
+		}
 	}
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
@@ -860,14 +862,14 @@ function canPlayerManageVehicle(client, vehicle) {
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (doesPlayerHaveClanPermission(client, "ManageVehicles") || doesPlayerHaveClanPermission(client, "owner")) {
+			if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
 				return true;
 			}
 		}
 	}
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_BIZ) {
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId))) {
+		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
 			return true;
 		}
 	}
@@ -888,14 +890,14 @@ function doesPlayerOwnVehicle(client, vehicle) {
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (doesPlayerHaveClanPermission(client, "ManageVehicles") || doesPlayerHaveClanPermission(client, "owner")) {
+			if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
 				return true;
 			}
 		}
 	}
 
 	if (vehicleData.ownerType == AGRP_VEHOWNER_BIZ) {
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId))) {
+		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId), true)) {
 			return true;
 		}
 	}

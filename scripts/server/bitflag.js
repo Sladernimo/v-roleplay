@@ -329,7 +329,7 @@ function doesPlayerHaveStaffPermission(client, requiredFlags) {
 
 // ===========================================================================
 
-function doesPlayerHaveClanPermission(client, requiredFlags) {
+function doesPlayerHaveClanPermission(client, requiredFlags, exemptAdminFlag = false) {
 	if (isConsole(client)) {
 		return true;
 	}
@@ -338,8 +338,10 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 		return true;
 	}
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
-		return true;
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			return true;
+		}
 	}
 
 	let clanFlags = 0;
@@ -359,7 +361,7 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 
 // ===========================================================================
 
-function doesPlayerHaveJobPermission(client, requiredFlags) {
+function doesPlayerHaveJobPermission(client, requiredFlags, exemptAdminFlag = false) {
 	if (isConsole(client)) {
 		return true;
 	}
@@ -368,8 +370,10 @@ function doesPlayerHaveJobPermission(client, requiredFlags) {
 		return true;
 	}
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
-		return true;
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
+			return true;
+		}
 	}
 
 	let jobFlags = 0;
