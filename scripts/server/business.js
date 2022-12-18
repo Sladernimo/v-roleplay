@@ -412,8 +412,8 @@ function deleteBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`, true);
+	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
 }
 
 // ===========================================================================
