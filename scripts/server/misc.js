@@ -565,9 +565,11 @@ function listOnlineAdminsCommand(command, params, client) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (getPlayerData(clients[i])) {
-			if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
-				if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
-					admins.push(`{ALTCOLOUR}[${getPlayerData(clients[i]).accountData.staffTitle}]{MAINCOLOUR} ${getCharacterFullName(clients[i])}`);
+			if (isPlayerLoggedIn(clients[i])) {
+				if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
+					if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
+						admins.push(`{ALTCOLOUR}[${getPlayerData(clients[i]).accountData.staffTitle}]{MAINCOLOUR} ${getCharacterFullName(clients[i])}`);
+					}
 				}
 			}
 		}
