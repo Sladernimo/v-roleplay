@@ -438,7 +438,7 @@ function getPlayerInfoCommand(command, params, client) {
 		}
 	}
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo", `${getPlayerName(client)} - ${getCharacterFullName(targetClient)}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo", `${getPlayerName(targetClient)} - ${getCharacterFullName(targetClient)}`)));
 
 	let clanIndex = getClanIndexFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan);
 	let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
@@ -471,13 +471,12 @@ function getPlayerInfoCommand(command, params, client) {
 		["Game Version", `${targetClient.gameVersion}`],
 		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(client).cash)}`],
+		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(targetClient).cash)}`],
 		["Skin", `${skinName}{mediumGrey}[Model: ${skinModel}/Index: ${skinIndex}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
 		["Current Date", `${currentDate.toLocaleDateString()}`],
-	]
+	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]} {MAINCOLOUR}`);
 
