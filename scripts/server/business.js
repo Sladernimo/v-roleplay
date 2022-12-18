@@ -2652,7 +2652,7 @@ function buyFromBusinessCommand(command, params, client) {
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount - amount;
 	if (getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount == 0) {
-		destroyItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
+		deleteItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
 	}
 
 	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
