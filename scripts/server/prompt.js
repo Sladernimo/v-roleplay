@@ -46,7 +46,7 @@ function playerPromptAnswerNo(client) {
 		case AGRP_PROMPT_BIZORDER:
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (doesPlayerUseGUI(client)) {
-					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "Alert"));
+					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarning"));
 				} else {
 					logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} canceled the order of ${getPlayerData(client).businessOrderAmount} ${getPlayerData(client).businessOrderItem} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness)}`);
 					messagePlayerError(client, getLocaleString(client, "BusinessOrderCanceled"));
