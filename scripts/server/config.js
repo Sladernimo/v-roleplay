@@ -247,6 +247,10 @@ let globalConfig = {
 	fishingCastMinStrength: 30,
 	jobRouteLocationSphereRadius: 3,
 	monthlyChanceOfSnow: [90, 50, 10, 0, 0, 0, 0, 0, 0, 0, 50, 90],
+	defaultEnabledAccountSettings: [
+		"ChatBoxTimestamps",
+		"ChatEmoji",
+	],
 };
 
 // ===========================================================================
