@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: object.js
 // DESC: Provides object functions and processing
@@ -20,7 +19,7 @@ function startMovingObject(object) {
 
 function stopMovingObject(object, save = true) {
 	if (save) {
-		sendNetworkEventToServer("agrp.objectSave", object.id, object.position, object.rotation);
+		sendNetworkEventToServer("v.rp.objectSave", object.id, object.position, object.rotation);
 	}
 }
 

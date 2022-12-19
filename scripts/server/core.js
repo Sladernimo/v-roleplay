@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: core.js
 // DESC: Provides core data structures, function, and operations

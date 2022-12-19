@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: radio.js
 // DESC: Provides radio station streaming
@@ -128,7 +127,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "agrp.inHouse") == houseId) {
+					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
 						playRadioStreamForPlayer(clients[i], "");
 					}
 				}
@@ -141,7 +140,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "agrp.inHouse") == houseId) {
+					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
 						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}

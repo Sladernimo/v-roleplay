@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: email.js
 // DESC: Provides email handling, functions and usage
@@ -9,9 +8,9 @@
 // ===========================================================================
 
 // Email Methods
-const AGRP_EMAIL_METHOD_NONE = 0;							// None
-const AGRP_EMAIL_METHOD_SMTP_MODULE = "smtp";				// Use SMTP module
-const AGRP_EMAIL_METHOD_GET_REQUEST = "http";				// Use HTTP request (httpGet to custom PHP page)
+const V_EMAIL_METHOD_NONE = 0;							// None
+const V_EMAIL_METHOD_SMTP_MODULE = "smtp";				// Use SMTP module
+const V_EMAIL_METHOD_GET_REQUEST = "http";				// Use HTTP request (httpGet to custom PHP page)
 
 // ===========================================================================
 
@@ -24,7 +23,7 @@ function initEmailScript() {
 
 async function sendEmail(toEmail, toName, subject, body) {
 	switch (getEmailConfig().method) {
-		case AGRP_EMAIL_METHOD_SMTP_MODULE:
+		case V_EMAIL_METHOD_SMTP_MODULE:
 			if (!checkForSMTPModule()) {
 				return false;
 			}
@@ -46,7 +45,7 @@ async function sendEmail(toEmail, toName, subject, body) {
 			});
 			break;
 
-		case AGRP_EMAIL_METHOD_GET_REQUEST:
+		case V_EMAIL_METHOD_GET_REQUEST:
 			let tempURL = getEmailConfig().http.baseURL;
 			tempURL = tempURL.replace("{0}", encodeURIComponent(getEmailConfig().http.password));
 			tempURL = tempURL.replace("{1}", encodeURIComponent(toEmail));

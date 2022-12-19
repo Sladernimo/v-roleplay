@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: house.js
 // DESC: Provides house functions and usage
@@ -29,7 +28,7 @@ class HouseData {
 function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
 	logToConsole(LOG_DEBUG, `[AGRP.House] Received house ${houseId} (${name}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
 			houseData.description = description;
@@ -42,12 +41,12 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 			houseData.locked = locked;
 
 			if (houseData.buyPrice > 0) {
-				houseData.labelInfoType = AGRP_PROPLABEL_INFO_BUYHOUSE;
+				houseData.labelInfoType = V_PROPLABEL_INFO_BUYHOUSE;
 			} else {
 				if (houseData.rentPrice > 0) {
-					houseData.labelInfoType = AGRP_PROPLABEL_INFO_RENTHOUSE;
+					houseData.labelInfoType = V_PROPLABEL_INFO_RENTHOUSE;
 				} else {
-					houseData.labelInfoType = AGRP_PROPLABEL_INFO_ENTER;
+					houseData.labelInfoType = V_PROPLABEL_INFO_ENTER;
 				}
 			}
 
@@ -55,7 +54,7 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 			if (blipModel == -1) {
 				if (houseData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been removed by the server`);
-					if (getGame() == AGRP_GAME_GTA_IV) {
+					if (getGame() == V_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -67,7 +66,7 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 			} else {
 				if (houseData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been changed by the server`);
-					if (getGame() == AGRP_GAME_GTA_IV) {
+					if (getGame() == V_GAME_GTA_IV) {
 						natives.setBlipCoordinates(houseData.blipId, houseData.entrancePosition);
 						natives.changeBlipSprite(houseData.blipId, houseData.blipModel);
 						natives.setBlipMarkerLongDistance(houseData.blipId, false);

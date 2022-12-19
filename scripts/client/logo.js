@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: logo.js
 // DESC: Provides logo rendering functions
@@ -23,7 +22,7 @@ function initLogoScript() {
 // ===========================================================================
 
 function loadLogoImage() {
-	//if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	//if (getGame() == V_GAME_MAFIA_ONE) {
 	//	return false;
 	//}
 
@@ -40,7 +39,7 @@ function loadLogoImage() {
 // ===========================================================================
 
 function processLogoRendering() {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		return false;
 	}
 

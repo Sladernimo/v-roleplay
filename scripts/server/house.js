@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: house.js
 // DESC: Provides house commands, functions, and usage
@@ -9,19 +8,19 @@
 // ===========================================================================
 
 // House Location Types
-const AGRP_HOUSE_LOC_NONE = 0;                     // None
-const AGRP_HOUSE_LOC_GATE = 1;                     // Center of any moveable gate that belongs to the house
-const AGRP_HOUSE_LOC_GARAGE = 2;                   // Location for garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
+const V_HOUSE_LOC_NONE = 0;                     // None
+const V_HOUSE_LOC_GATE = 1;                     // Center of any moveable gate that belongs to the house
+const V_HOUSE_LOC_GARAGE = 2;                   // Location for garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
 
 // ===========================================================================
 
 // House Owner Types
-const AGRP_HOUSE_OWNER_NONE = 0;                   // Not owned
-const AGRP_HOUSE_OWNER_PLAYER = 1;                 // Owner is a player (character/subaccount)
-const AGRP_HOUSE_OWNER_JOB = 2;                    // Owned by a job
-const AGRP_HOUSE_OWNER_CLAN = 3;                   // Owned by a clan
-const AGRP_HOUSE_OWNER_FACTION = 4;                // Owned by a faction
-const AGRP_HOUSE_OWNER_PUBLIC = 5;                 // Is a public house. Technically not owned. This probably won't be used.
+const V_HOUSE_OWNER_NONE = 0;                   // Not owned
+const V_HOUSE_OWNER_PLAYER = 1;                 // Owner is a player (character/subaccount)
+const V_HOUSE_OWNER_JOB = 2;                    // Owned by a job
+const V_HOUSE_OWNER_CLAN = 3;                   // Owned by a clan
+const V_HOUSE_OWNER_FACTION = 4;                // Owned by a faction
+const V_HOUSE_OWNER_PUBLIC = 5;                 // Is a public house. Technically not owned. This probably won't be used.
 
 // ===========================================================================
 
@@ -32,7 +31,7 @@ class HouseData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0
 		this.description = "";
-		this.ownerType = AGRP_HOUSE_OWNER_NONE;
+		this.ownerType = V_HOUSE_OWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.rentPrice = 0;
@@ -42,7 +41,7 @@ class HouseData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
-		this.propertyType = AGRP_PROPERTY_TYPE_HOUSE;
+		this.propertyType = V_PROPERTY_TYPE_HOUSE;
 
 		this.itemCache = [];
 		this.locations = [];
@@ -269,7 +268,7 @@ function setHouseDescriptionCommand(command, params, client) {
 	let oldDescription = getHouseData(houseId).description;
 	getHouseData(houseId).description = newHouseDescription;
 
-	setEntityData(getHouseData(houseId).entrancePickup, "agrp.label.name", getHouseData(houseId).description, true);
+	setEntityData(getHouseData(houseId).entrancePickup, "v.rp.label.name", getHouseData(houseId).description, true);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -302,13 +301,13 @@ function setHouseOwnerCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
-		if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+		if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
 			return false;
 		}
 	}
 
-	getHouseData(houseId).ownerType = AGRP_HOUSE_OWNER_PLAYER;
+	getHouseData(houseId).ownerType = V_HOUSE_OWNER_PLAYER;
 	getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(newHouseOwner).databaseId;
 
 	getHouseData(houseId).needsSaved = true;
@@ -334,13 +333,13 @@ function removeHouseOwnerCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
-		if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+		if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			messagePlayerError(client, getLocaleString(client, "CantModifyHouse"));
 			return false;
 		}
 	}
 
-	getHouseData(houseId).ownerType = AGRP_HOUSE_OWNER_NONE;
+	getHouseData(houseId).ownerType = V_HOUSE_OWNER_NONE;
 	getHouseData(houseId).ownerId = -1;
 	getHouseData(houseId).needsSaved = true;
 
@@ -373,7 +372,7 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getHouseData(houseId).ownerType != AGRP_VEHOWNER_PLAYER) {
+	if (getHouseData(houseId).ownerType != V_VEHOWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 		return false;
 	}
@@ -384,7 +383,7 @@ function setHouseClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_GIVEHOUSETOCLAN;
+	getPlayerData(client).promptType = V_PROMPT_GIVEHOUSETOCLAN;
 
 	//messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
 }
@@ -1054,7 +1053,7 @@ function createHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
@@ -1131,8 +1130,8 @@ function createHouseEntranceBlip(houseId) {
 			setElementStreamOutDistance(entranceBlip, getGlobalConfig().houseBlipStreamOutDistance);
 		}
 
-		setEntityData(entranceBlip, "agrp.owner.type", AGRP_BLIP_HOUSE_ENTRANCE, false);
-		setEntityData(entranceBlip, "agrp.owner.id", houseId, false);
+		setEntityData(entranceBlip, "v.rp.owner.type", V_BLIP_HOUSE_ENTRANCE, false);
+		setEntityData(entranceBlip, "v.rp.owner.id", houseId, false);
 
 		houseData.entranceBlip = entranceBlip;
 	}
@@ -1239,8 +1238,8 @@ function createHouseExitBlip(houseId) {
 			setElementStreamOutDistance(exitBlip, getGlobalConfig().houseBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
-		setEntityData(exitBlip, "agrp.owner.type", AGRP_BLIP_HOUSE_EXIT, false);
-		setEntityData(exitBlip, "agrp.owner.id", houseId, false);
+		setEntityData(exitBlip, "v.rp.owner.type", V_BLIP_HOUSE_EXIT, false);
+		setEntityData(exitBlip, "v.rp.owner.id", houseId, false);
 		getHouseData(houseId).exitBlip = exitBlip;
 	}
 }
@@ -1249,22 +1248,22 @@ function createHouseExitBlip(houseId) {
 
 function getHouseOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case AGRP_HOUSE_OWNER_CLAN:
+		case V_HOUSE_OWNER_CLAN:
 			return "clan";
 
-		case AGRP_HOUSE_OWNER_PLAYER:
+		case V_HOUSE_OWNER_PLAYER:
 			return "player";
 
-		case AGRP_HOUSE_OWNER_NONE:
+		case V_HOUSE_OWNER_NONE:
 			return "not owned";
 
-		case AGRP_HOUSE_OWNER_PUBLIC:
+		case V_HOUSE_OWNER_PUBLIC:
 			return "not owned";
 
-		case AGRP_HOUSE_OWNER_JOB:
+		case V_HOUSE_OWNER_JOB:
 			return "job";
 
-		case AGRP_HOUSE_OWNER_BIZ:
+		case V_HOUSE_OWNER_BIZ:
 			return "business";
 
 		default:
@@ -1299,28 +1298,28 @@ function getHouseInfoCommand(command, params, client) {
 
 	let ownerName = "Unknown";
 	switch (getHouseData(houseId).ownerType) {
-		case AGRP_HOUSE_OWNER_CLAN:
+		case V_HOUSE_OWNER_CLAN:
 			ownerName = getClanData(houseData).name;
 			break;
 
-		case AGRP_HOUSE_OWNER_PLAYER:
+		case V_HOUSE_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(houseData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case AGRP_HOUSE_OWNER_NONE:
+		case V_HOUSE_OWNER_NONE:
 			ownerName = "None";
 			break;
 
-		case AGRP_HOUSE_OWNER_PUBLIC:
+		case V_HOUSE_OWNER_PUBLIC:
 			ownerName = "Public";
 			break;
 
-		case AGRP_HOUSE_OWNER_BIZ:
+		case V_HOUSE_OWNER_BIZ:
 			ownerName = getBusinessDataFromDatabaseId(houseData.ownerId).name;
 			break;
 
-		case AGRP_HOUSE_OWNER_JOB:
+		case V_HOUSE_OWNER_JOB:
 			ownerName = getJobData(houseData.ownerId).name;
 			break;
 	}
@@ -1455,7 +1454,7 @@ function buyHouseCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(client).promptType = AGRP_PROMPT_BUYHOUSE;
+	getPlayerData(client).promptType = V_PROMPT_BUYHOUSE;
 	showPlayerPrompt(client, getLocaleString(client, "BuyHouseConfirmMessage"), getLocaleString(client, "BuyHouseConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 }
 
@@ -1614,7 +1613,7 @@ function cacheHouseItems(houseId) {
 	getHouseData(houseId).itemCache = [];
 
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
+		if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
 			getHouseData(houseId).itemCache.push(i);
 		}
 	}
@@ -1643,7 +1642,7 @@ function getHouseIdFromDatabaseId(databaseId) {
 
 //function clearPlayerHouseGameScripts(client, houseId) {
 //	for(let i in getHouseData(houseId).gameScripts) {
-//		sendPlayerGameScriptState(client, AGRP_GAMESCRIPT_DENY);
+//		sendPlayerGameScriptState(client, V_GAMESCRIPT_DENY);
 //	}
 //}
 
@@ -1665,11 +1664,11 @@ function canPlayerSetHouseInteriorLights(client, houseId) {
 		return true;
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_CLAN && getHouseData(houseId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_CLAN && getHouseData(houseId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageHouses"))) {
 			return true;
 		}
@@ -1685,11 +1684,11 @@ function canPlayerLockUnlockHouse(client, houseId) {
 		return true;
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_PLAYER && getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_CLAN && getHouseData(houseId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_CLAN && getHouseData(houseId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageHouses"))) {
 			return true;
 		}
@@ -1739,13 +1738,13 @@ function canPlayerManageHouse(client, houseId) {
 		return true;
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_PLAYER) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_PLAYER) {
 		if (getHouseData(houseId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getHouseData(houseId).ownerType == AGRP_HOUSE_OWNER_CLAN) {
+	if (getHouseData(houseId).ownerType == V_HOUSE_OWNER_CLAN) {
 		if (getHouseData(houseId).ownerId == getPlayerClan(client)) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageHouses"))) {
 				return true;
@@ -1779,7 +1778,7 @@ function getHouseFromParams(params) {
 // ===========================================================================
 
 function updateHousePickupLabelData(houseId) {
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		sendHouseToPlayer(null, houseId, getHouseData(houseId).description, getHouseData(houseId).entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), getHouseData(houseId).buyPrice, getHouseData(houseId).rentPrice, getHouseData(houseId).hasInterior, getHouseData(houseId).locked);
 		return false;
 	}
@@ -1787,26 +1786,26 @@ function updateHousePickupLabelData(houseId) {
 	let houseData = getHouseData(houseId);
 
 	if (houseData.entrancePickup != null) {
-		setEntityData(houseData.entrancePickup, "agrp.owner.type", AGRP_PICKUP_HOUSE_ENTRANCE, false);
-		setEntityData(houseData.entrancePickup, "agrp.owner.id", houseId, false);
-		setEntityData(houseData.entrancePickup, "agrp.label.type", AGRP_LABEL_HOUSE, true);
-		setEntityData(houseData.entrancePickup, "agrp.label.name", houseData.description, true);
-		setEntityData(houseData.entrancePickup, "agrp.label.locked", houseData.locked, true);
-		setEntityData(houseData.entrancePickup, "agrp.label.price", houseData.buyPrice, true);
-		setEntityData(houseData.entrancePickup, "agrp.label.rentprice", houseData.rentPrice, true);
-		setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+		setEntityData(houseData.entrancePickup, "v.rp.owner.type", V_PICKUP_HOUSE_ENTRANCE, false);
+		setEntityData(houseData.entrancePickup, "v.rp.owner.id", houseId, false);
+		setEntityData(houseData.entrancePickup, "v.rp.label.type", V_LABEL_HOUSE, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.name", houseData.description, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.locked", houseData.locked, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.price", houseData.buyPrice, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", houseData.rentPrice, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 
 		if (houseData.buyPrice > 0) {
-			setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUYHOUSE, true);
+			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUYHOUSE, true);
 		} else if (houseData.rentPrice > 0) {
-			setEntityData(houseData.entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_RENTHOUSE, true);
+			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_RENTHOUSE, true);
 		}
 	}
 
 	if (houseData.exitPickup != null) {
-		setEntityData(houseData.exitPickup, "agrp.owner.type", AGRP_PICKUP_HOUSE_EXIT, false);
-		setEntityData(houseData.exitPickup, "agrp.owner.id", houseId, false);
-		setEntityData(houseData.exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
+		setEntityData(houseData.exitPickup, "v.rp.owner.type", V_PICKUP_HOUSE_EXIT, false);
+		setEntityData(houseData.exitPickup, "v.rp.owner.id", houseId, false);
+		setEntityData(houseData.exitPickup, "v.rp.label.type", V_LABEL_EXIT, true);
 	}
 }
 

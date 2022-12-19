@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: yesno.js
 // DESC: Provides yes/no prompt dialog GUI
@@ -101,7 +100,7 @@ function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonT
 
 function yesNoDialogAnswerNo() {
     logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer NO to server prompt`);
-    sendNetworkEventToServer("agrp.promptAnswerNo");
+    sendNetworkEventToServer("v.rp.promptAnswerNo");
     closeAllWindows();
 }
 
@@ -109,7 +108,7 @@ function yesNoDialogAnswerNo() {
 
 function yesNoDialogAnswerYes() {
     logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer YES to server prompt`);
-    sendNetworkEventToServer("agrp.promptAnswerYes");
+    sendNetworkEventToServer("v.rp.promptAnswerYes");
     closeAllWindows();
 }
 

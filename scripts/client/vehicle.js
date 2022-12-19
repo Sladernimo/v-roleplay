@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: vehicle.js
 // DESC: Provides vehicle functions and arrays with data
@@ -33,7 +32,7 @@ class VehicleData {
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
 	logToConsole(LOG_DEBUG, `[AGRP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
 
-	if (getGame() != AGRP_GAME_GTA_IV) {
+	if (getGame() != V_GAME_GTA_IV) {
 		return false;
 	}
 
@@ -64,20 +63,20 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 // ===========================================================================
 
 function processVehiclePurchasing() {
-	if (vehiclePurchaseState == AGRP_VEHBUYSTATE_TESTDRIVE) {
+	if (vehiclePurchaseState == V_VEHBUYSTATE_TESTDRIVE) {
 		if (getLocalPlayerVehicle() == false) {
-			vehiclePurchaseState = AGRP_VEHBUYSTATE_EXITVEH;
-			sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_EXITVEH);
+			vehiclePurchaseState = V_VEHBUYSTATE_EXITVEH;
+			sendNetworkEventToServer("v.rp.vehBuyState", V_VEHBUYSTATE_EXITVEH);
 			return false;
 		} else {
 			if (vehiclePurchasing == getLocalPlayerVehicle()) {
 				if (getDistance(getLocalPlayerVehicle().position, vehiclePurchasePosition) >= 25) {
-					vehiclePurchaseState = AGRP_VEHBUYSTATE_FARENOUGH;
-					sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_FARENOUGH);
+					vehiclePurchaseState = V_VEHBUYSTATE_FARENOUGH;
+					sendNetworkEventToServer("v.rp.vehBuyState", V_VEHBUYSTATE_FARENOUGH);
 				}
 			} else {
-				vehiclePurchaseState = AGRP_VEHBUYSTATE_WRONGVEH;
-				sendNetworkEventToServer("agrp.vehBuyState", AGRP_VEHBUYSTATE_WRONGVEH);
+				vehiclePurchaseState = V_VEHBUYSTATE_WRONGVEH;
+				sendNetworkEventToServer("v.rp.vehBuyState", V_VEHBUYSTATE_WRONGVEH);
 			}
 		}
 	}
@@ -154,7 +153,7 @@ function getVehicleSpeed(vehicle) {
 		speed = getLength(vecMoveSpeed[0], vecMoveSpeed[1], vecMoveSpeed[2]);
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+	if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 		speed /= 40.0;
 	}
 

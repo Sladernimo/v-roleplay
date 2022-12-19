@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides shared utilities
@@ -1670,7 +1669,7 @@ function getPercentage(num, per) {
 // ===========================================================================
 
 function getMultiplayerMod() {
-	return (getGame() >= 10) ? AGRP_MPMOD_MAFIAC : AGRP_MPMOD_GTAC;
+	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
 }
 
 // ===========================================================================
@@ -1682,7 +1681,7 @@ function isSnowSupported(gameId) {
 // ===========================================================================
 
 function isGTAIV() {
-	return (getGame() == AGRP_GAME_GTA_IV);
+	return (getGame() == V_GAME_GTA_IV);
 }
 
 // ===========================================================================
@@ -2038,7 +2037,7 @@ function getPosInFrontOfPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (getGame() != V_GAME_MAFIA_ONE) {
 		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
 		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	} else {
@@ -2062,7 +2061,7 @@ function getPosBehindPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() < AGRP_GAME_MAFIA_ONE) {
+	if (getGame() < V_GAME_MAFIA_ONE) {
 		y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
 	} else {
 		angle = radToDeg(angle);
@@ -2077,7 +2076,7 @@ function getPosBehindPos(pos, angle, distance) {
 // ===========================================================================
 
 function getPosAbovePos(pos, distance) {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		return toVector3(pos.x, pos.y + distance, pos.z);
 	}
 	return toVector3(pos.x, pos.y, pos.z + distance);
@@ -2086,7 +2085,7 @@ function getPosAbovePos(pos, distance) {
 // ===========================================================================
 
 function getPosBelowPos(pos, distance) {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		return toVector3(pos.x, pos.y - distance, pos.z);
 	}
 	return toVector3(pos.x, pos.y, pos.z - distance);
@@ -2579,7 +2578,7 @@ function ArrayBufferToString(buffer) {
 // ===========================================================================
 
 function getElementTypeName(typeId) {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		switch (typeId) {
 			case ELEMENT_VEHICLE:
 				return "Vehicle";
@@ -3192,7 +3191,7 @@ function fillLeadingZeros(number, length) {
 // ===========================================================================
 
 function isMainWorldScene(sceneName) {
-	return (sceneName == "agrp.mainWorldScene");
+	return (sceneName == "v.rp.mainWorldScene");
 }
 
 // ===========================================================================

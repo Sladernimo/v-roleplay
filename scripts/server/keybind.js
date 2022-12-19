@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: keybind.js
 // DESC: Provides keybind handlers and functions
@@ -10,7 +9,7 @@
 // ===========================================================================
 
 class KeyBindData {
-	constructor(dbAssoc = false, key = 0, commandString = "", keyState = AGRP_KEYSTATE_UP) {
+	constructor(dbAssoc = false, key = 0, commandString = "", keyState = V_KEYSTATE_UP) {
 		this.databaseId = 0;
 		this.key = key;
 		this.account = 0;
@@ -89,7 +88,7 @@ function removeKeyBindCommand(command, params, client) {
 // ===========================================================================
 
 function resetKeyBindsCommand(command, params, client) {
-	getPlayerData(client).promptType = AGRP_PROMPT_RESETKEYBINDS;
+	getPlayerData(client).promptType = V_PROMPT_RESETKEYBINDS;
 	showPlayerPrompt(client, getLocaleString(client, "ResetAllKeyBindsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	//removePlayerKeyBind(client, keyId);
 	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
@@ -98,7 +97,7 @@ function resetKeyBindsCommand(command, params, client) {
 // ===========================================================================
 
 function copyKeyBindsToServerCommand(command, params, client) {
-	getPlayerData(client).promptType = AGRP_PROMPT_COPYKEYBINDSTOSERVER;
+	getPlayerData(client).promptType = V_PROMPT_COPYKEYBINDSTOSERVER;
 	showPlayerPrompt(client, getLocaleString(client, "CopyAllKeyBindsToServerConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	//removePlayerKeyBind(client, keyId);
 	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
@@ -113,7 +112,7 @@ function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 	}
 
 	getPlayerData(client).keyBinds.push(keyBindData);
-	sendAddAccountKeyBindToClient(client, keyId, AGRP_KEYSTATE_UP);
+	sendAddAccountKeyBindToClient(client, keyId, V_KEYSTATE_UP);
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");

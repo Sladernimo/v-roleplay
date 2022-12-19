@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: config.js
 // DESC: Provides server configuration
@@ -198,18 +197,18 @@ let globalConfig = {
 	geoIPCityDatabaseFilePath: "modules/geoip/geoip-city.mmdb",
 	randomTipInterval: 600000,
 	weaponEquippableTypes: [
-		AGRP_ITEM_USE_TYPE_WEAPON,
-		AGRP_ITEM_USE_TYPE_TAZER,
-		AGRP_ITEM_USE_TYPE_EXTINGUISHER,
-		AGRP_ITEM_USE_TYPE_SPRAYPAINT,
-		AGRP_ITEM_USE_TYPE_PEPPERSPRAY,
+		V_ITEM_USE_TYPE_WEAPON,
+		V_ITEM_USE_TYPE_TAZER,
+		V_ITEM_USE_TYPE_EXTINGUISHER,
+		V_ITEM_USE_TYPE_SPRAYPAINT,
+		V_ITEM_USE_TYPE_PEPPERSPRAY,
 	],
 	onFootOnlyItems: [
-		AGRP_ITEM_USE_TYPE_VEHREPAIR,
-		AGRP_ITEM_USE_TYPE_VEHCOLOUR,
-		AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART,
-		AGRP_ITEM_USE_TYPE_VEHLIVERY,
-		AGRP_ITEM_USE_TYPE_VEHTIRE,
+		V_ITEM_USE_TYPE_VEHREPAIR,
+		V_ITEM_USE_TYPE_VEHCOLOUR,
+		V_ITEM_USE_TYPE_VEHUPGRADE_PART,
+		V_ITEM_USE_TYPE_VEHLIVERY,
+		V_ITEM_USE_TYPE_VEHTIRE,
 	],
 	vehicleInactiveRespawnDelay: 1800000, // 20 minutes
 	chatSectionHeaderLength: 96,

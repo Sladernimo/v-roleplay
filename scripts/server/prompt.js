@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: prompt.js
 // DESC: Provides prompt (yes/no confirmations) functions and usage
@@ -9,15 +8,15 @@
 // ===========================================================================
 
 // Prompts (used for prompt responses)
-const AGRP_PROMPT_NONE = 0;
-const AGRP_PROMPT_CREATEFIRSTCHAR = 1;
-const AGRP_PROMPT_BIZORDER = 2;
-const AGRP_PROMPT_GIVEVEHTOCLAN = 3;
-const AGRP_PROMPT_GIVEBIZTOCLAN = 4;
-const AGRP_PROMPT_GIVEHOUSETOCLAN = 5;
-const AGRP_PROMPT_BUYBIZ = 6;
-const AGRP_PROMPT_BUYHOUSE = 7;
-const AGRP_PROMPT_RESETKEYBINDS = 8;
+const V_PROMPT_NONE = 0;
+const V_PROMPT_CREATEFIRSTCHAR = 1;
+const V_PROMPT_BIZORDER = 2;
+const V_PROMPT_GIVEVEHTOCLAN = 3;
+const V_PROMPT_GIVEBIZTOCLAN = 4;
+const V_PROMPT_GIVEHOUSETOCLAN = 5;
+const V_PROMPT_BUYBIZ = 6;
+const V_PROMPT_BUYHOUSE = 7;
+const V_PROMPT_RESETKEYBINDS = 8;
 
 // ===========================================================================
 
@@ -29,21 +28,21 @@ function initPromptScript() {
 // ===========================================================================
 
 function playerPromptAnswerNo(client) {
-	if (getPlayerData(client).promptType == AGRP_PROMPT_NONE) {
+	if (getPlayerData(client).promptType == V_PROMPT_NONE) {
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
-		case AGRP_PROMPT_CREATEFIRSTCHAR:
+		case V_PROMPT_CREATEFIRSTCHAR:
 			logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} chose not to create a first character. Kicking them from the server ...`);
 			showPlayerErrorGUI(client, getLocaleString(client, "DidNotCreateCharacter"), getLocaleString(client, getLocaleString(client, "GUIWarningTitle")));
 			getPlayerData(targetClient).customDisconnectReason = "FailedToCreateCharacter";
 			setTimeout(function () { disconnectPlayer(client); }, 5000);
 			break;
 
-		case AGRP_PROMPT_BIZORDER:
+		case V_PROMPT_BIZORDER:
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (doesPlayerUseGUI(client)) {
 					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarning"));
@@ -62,25 +61,25 @@ function playerPromptAnswerNo(client) {
 			break;
 	}
 
-	getPlayerData(client).promptType = AGRP_PROMPT_NONE;
+	getPlayerData(client).promptType = V_PROMPT_NONE;
 }
 
 // ===========================================================================
 
 function playerPromptAnswerYes(client) {
-	if (getPlayerData(client).promptType == AGRP_PROMPT_NONE) {
+	if (getPlayerData(client).promptType == V_PROMPT_NONE) {
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
-		case AGRP_PROMPT_CREATEFIRSTCHAR: {
+		case V_PROMPT_CREATEFIRSTCHAR: {
 			showPlayerNewCharacterGUI(client);
 			break;
 		}
 
-		case AGRP_PROMPT_BIZORDER: {
+		case V_PROMPT_BIZORDER: {
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
 					logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
@@ -97,7 +96,7 @@ function playerPromptAnswerYes(client) {
 					logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
 
 					showPlayerInfoGUI(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
-					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
+					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);
 					getBusinessData(getPlayerData(client).businessOrderBusiness).till -= getPlayerData(client).businessOrderCost;
 					updateBusinessPickupLabelData(getPlayerData(client).businessOrderBusiness);
@@ -112,7 +111,7 @@ function playerPromptAnswerYes(client) {
 			break;
 		}
 
-		case AGRP_PROMPT_GIVEVEHTOCLAN: {
+		case V_PROMPT_GIVEVEHTOCLAN: {
 			if (!isPlayerInAnyVehicle(client)) {
 				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
 				return false;
@@ -123,7 +122,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)).ownerType != AGRP_VEHOWNER_PLAYER) {
+			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				return false;
 			}
@@ -133,21 +132,21 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getVehicleData(getPlayerVehicle(client)).ownerType = AGRP_VEHOWNER_CLAN;
+			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_CLAN;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
 
-		case AGRP_PROMPT_GIVEHOUSETOCLAN: {
+		case V_PROMPT_GIVEHOUSETOCLAN: {
 			let houseId = getPlayerHouse(client);
 			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 				return false;
 			}
 
-			if (getHouseData(houseId).ownerType != AGRP_VEHOWNER_PLAYER) {
+			if (getHouseData(houseId).ownerType != V_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 				return false;
 			}
@@ -157,21 +156,21 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getHouseData(houseId).ownerType = AGRP_HOUSE_OWNER_CLAN;
+			getHouseData(houseId).ownerType = V_HOUSE_OWNER_CLAN;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
 
-		case AGRP_PROMPT_GIVEBIZTOCLAN: {
+		case V_PROMPT_GIVEBIZTOCLAN: {
 			let businessId = getPlayerBusiness(client);
 			if (!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 				return false;
 			}
 
-			if (getBusinessData(businessId).ownerType != AGRP_VEHOWNER_PLAYER) {
+			if (getBusinessData(businessId).ownerType != V_VEHOWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
@@ -181,14 +180,14 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_CLAN;
+			getBusinessData(businessId).ownerType = V_BIZ_OWNER_CLAN;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
 
-		case AGRP_PROMPT_BUYHOUSE: {
+		case V_PROMPT_BUYHOUSE: {
 			let houseId = getPlayerHouse(client);
 			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
@@ -205,7 +204,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getHouseData(houseId).ownerType = AGRP_HOUSE_OWNER_PLAYER;
+			getHouseData(houseId).ownerType = V_HOUSE_OWNER_PLAYER;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getHouseData(houseId).buyPrice = 0;
 			getHouseData(houseId).needsSaved = true;
@@ -216,7 +215,7 @@ function playerPromptAnswerYes(client) {
 			break;
 		}
 
-		case AGRP_PROMPT_BUYBIZ: {
+		case V_PROMPT_BUYBIZ: {
 			let businessId = getPlayerBusiness(client);
 			if (!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -233,7 +232,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PLAYER;
+			getBusinessData(businessId).ownerType = V_BIZ_OWNER_PLAYER;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getBusinessData(businessId).buyPrice = 0;
 			getBusinessData(businessId).needsSaved = true;
@@ -245,7 +244,7 @@ function playerPromptAnswerYes(client) {
 			break;
 		}
 
-		case AGRP_PROMPT_RESETKEYBINDS: {
+		case V_PROMPT_RESETKEYBINDS: {
 			// TODO: Needs database query!
 
 			//for (let i in getPlayerData(client).keyBinds) {
@@ -265,7 +264,7 @@ function playerPromptAnswerYes(client) {
 			break;
 		}
 
-		case AGRP_PROMPT_COPYKEYBINDSTOSERVER: {
+		case V_PROMPT_COPYKEYBINDSTOSERVER: {
 			//messagePlayerSuccess(client, getLocaleString(client, "KeyBindsCopiedToServer", serverName));
 			break;
 		}
@@ -277,7 +276,7 @@ function playerPromptAnswerYes(client) {
 		}
 	}
 
-	getPlayerData(client).promptType = AGRP_PROMPT_NONE;
+	getPlayerData(client).promptType = V_PROMPT_NONE;
 }
 
 // ===========================================================================
@@ -295,7 +294,7 @@ function playerPromptAnswerNoCommand(command, params, client) {
 // ===========================================================================
 
 function showPlayerTwoFactorAuthenticationGUI(client) {
-	sendNetworkEventToPlayer("agrp.2fa", client);
+	sendNetworkEventToPlayer("v.rp.2fa", client);
 }
 
 // ===========================================================================

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: newchar.js
 // DESC: Provides new character creation GUI
@@ -144,7 +143,7 @@ function checkNewCharacter() {
 		return false;
 	}
 
-	sendNetworkEventToServer("agrp.checkNewCharacter",
+	sendNetworkEventToServer("v.rp.checkNewCharacter",
 		newCharacter.firstNameInput.lines[0],
 		newCharacter.lastNameInput.lines[0],
 	);

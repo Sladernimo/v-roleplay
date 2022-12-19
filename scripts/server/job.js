@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: job.js
 // DESC: Provides job functions and usage
@@ -9,37 +8,37 @@
 // ===========================================================================
 
 // Job Types
-const AGRP_JOB_NONE = 0;
-const AGRP_JOB_POLICE = 1;
-const AGRP_JOB_MEDICAL = 2;
-const AGRP_JOB_FIRE = 3;
-const AGRP_JOB_BUS = 4;
-const AGRP_JOB_TAXI = 5;
-const AGRP_JOB_GARBAGE = 6;
-const AGRP_JOB_WEAPON = 7;
-const AGRP_JOB_DRUG = 8;
-const AGRP_JOB_PIZZA = 9;
-const AGRP_JOB_GENERIC = 10;
+const V_JOB_NONE = 0;
+const V_JOB_POLICE = 1;
+const V_JOB_MEDICAL = 2;
+const V_JOB_FIRE = 3;
+const V_JOB_BUS = 4;
+const V_JOB_TAXI = 5;
+const V_JOB_GARBAGE = 6;
+const V_JOB_WEAPON = 7;
+const V_JOB_DRUG = 8;
+const V_JOB_PIZZA = 9;
+const V_JOB_GENERIC = 10;
 
 // ===========================================================================
 
 // Job Route States
-const AGRP_JOB_ROUTE_STATE_NONE = 0;                // None
-const AGRP_JOB_ROUTE_STATE_INPROGRESS = 1;          // Route is in progress. Player is in between stops but not at the last one.
-const AGRP_JOB_ROUTE_STATE_LASTSTOP = 2;            // Player is heading to the last stop on the route
-const AGRP_JOB_ROUTE_STATE_PAUSED = 3;              // Route is paused for some reason. For police, this could be player accepted callout and once finished, patrol route will resume
-const AGRP_JOB_ROUTE_STATE_ATSTOP = 4;              // For bus/trash stops that freeze player, this is the state when they're at one
+const V_JOB_ROUTE_STATE_NONE = 0;                // None
+const V_JOB_ROUTE_STATE_INPROGRESS = 1;          // Route is in progress. Player is in between stops but not at the last one.
+const V_JOB_ROUTE_STATE_LASTSTOP = 2;            // Player is heading to the last stop on the route
+const V_JOB_ROUTE_STATE_PAUSED = 3;              // Route is paused for some reason. For police, this could be player accepted callout and once finished, patrol route will resume
+const V_JOB_ROUTE_STATE_ATSTOP = 4;              // For bus/trash stops that freeze player, this is the state when they're at one
 
 // ===========================================================================
 
 // Job Route Location Types
-const AGRP_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
-const AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
-const AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
-const AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped (used for paramedic job)
-const AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground (used for street sweeper job)
-const AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
-const AGRP_JOB_ROUTE_LOC_TYPE_FIRE = 5;         		// Scripted fire, placed on buildings and such
+const V_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
+const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
+const V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
+const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped (used for paramedic job)
+const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground (used for street sweeper job)
+const V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
+const V_JOB_ROUTE_LOC_TYPE_FIRE = 5;         		// Scripted fire, placed on buildings and such
 
 // ===========================================================================
 
@@ -57,7 +56,7 @@ class JobData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.serverId = 0;
-		this.type = AGRP_JOB_NONE;
+		this.type = V_JOB_NONE;
 		this.name = "Unnamed";
 		this.enabled = true;
 		this.blipModel = -1
@@ -176,7 +175,7 @@ class JobRouteLocationData {
 		this.position = toVector3(0.0, 0.0, 0.0);
 		this.stopDelay = 0;
 		this.pay = 0;
-		this.type = AGRP_JOB_ROUTE_LOC_TYPE_NONE;
+		this.type = V_JOB_ROUTE_LOC_TYPE_NONE;
 		this.gotoMessage = "";
 		this.departMessage = "";
 		this.whoCreated = 0;
@@ -469,60 +468,60 @@ class JobRouteLocationType {
 
 // For use with the /jobrouteloctype command
 let jobRouteLocationTypes = {
-	[AGRP_GAME_GTA_III]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_GTA_III]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_GTA_VC]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_GTA_VC]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_GTA_SA]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_GTA_SA]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_GTA_IV]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_GTA_IV]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_MAFIA_ONE]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_MAFIA_ONE]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_MAFIA_TWO]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_MAFIA_TWO]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
-	[AGRP_GAME_MAFIA_ONE_DE]: [
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(AGRP_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+	[V_GAME_MAFIA_ONE_DE]: [
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 }
 
@@ -811,11 +810,11 @@ function createAllJobPickups() {
 			for (let j in getServerData().jobs[i].locations) {
 				pickupCount++;
 				getServerData().jobs[i].locations[j].pickup = game.createPickup(getServerData().jobs[i].pickupModel, getServerData().jobs[i].locations[j].position);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.type", AGRP_PICKUP_JOB, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.owner.id", j, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.type", AGRP_LABEL_JOB, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.name", getServerData().jobs[i].name, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "agrp.label.jobType", getServerData().jobs[i].databaseId, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.owner.id", j, false);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.name", getServerData().jobs[i].name, true);
+				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.jobType", getServerData().jobs[i].databaseId, true);
 				setElementOnAllDimensions(getServerData().jobs[i].locations[j].pickup, false);
 				setElementDimension(getServerData().jobs[i].locations[j].pickup, getServerData().jobs[i].locations[j].dimension);
 				addToWorld(getServerData().jobs[i].locations[j].pickup);
@@ -840,7 +839,7 @@ function showJobInformationToPlayer(client, jobType) {
 	}
 
 	switch (jobType) {
-		case AGRP_JOB_POLICE:
+		case V_JOB_POLICE:
 			if (!canPlayerUsePoliceJob(client)) {
 				return false;
 			}
@@ -853,7 +852,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_MEDICAL:
+		case V_JOB_MEDICAL:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Paramedics help people by healing them.");
 			messagePlayerInfo(client, "- Use /startwork at the hospital to work as a Paramedic.");
@@ -862,7 +861,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_FIRE:
+		case V_JOB_FIRE:
 			if (!canClientUseFireJob(client)) {
 				return false;
 			}
@@ -874,7 +873,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_BUS:
+		case V_JOB_BUS:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Bus Drivers transport people around the city on a route");
 			messagePlayerInfo(client, "- Use /startwork at the bus depot to work as a Bus Driver.");
@@ -883,7 +882,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_TAXI:
+		case V_JOB_TAXI:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Taxi Drivers transport people around the city");
 			messagePlayerInfo(client, "- Use /startwork at the taxi depot to work as a Taxi Driver.");
@@ -893,7 +892,7 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_GARBAGE:
+		case V_JOB_GARBAGE:
 			messagePlayerInfo(client, "== Job Help =================================");
 			messagePlayerInfo(client, "- Garbage Collectors pick up the trash around the city.");
 			messagePlayerInfo(client, "- Use /startwork at the garbage depot to work as a Garbage Collector.");
@@ -904,10 +903,10 @@ function showJobInformationToPlayer(client, jobType) {
 			messagePlayerInfo(client, "- When finished, use /stopwork to stop working.");
 			break;
 
-		case AGRP_JOB_WEAPON:
+		case V_JOB_WEAPON:
 			break;
 
-		case AGRP_JOB_DRUG:
+		case V_JOB_DRUG:
 			break;
 
 		default:
@@ -949,7 +948,7 @@ function takeJobCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).job > AGRP_JOB_NONE) {
+	if (getPlayerCurrentSubAccount(client).job > V_JOB_NONE) {
 		messagePlayerInfo(client, getLocaleString(client, "QuitJobToTakeAnother", "{ALTCOLOUR}/quitjob{MAINCOLOUR}"));
 		return false;
 	}
@@ -981,7 +980,7 @@ function startWorkingCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != V_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -993,7 +992,7 @@ function startWorkingCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == V_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "DontHaveAJob"));
 			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
 			return false;
@@ -1054,41 +1053,41 @@ function startWorking(client) {
 	switchPlayerActiveHotBarSlot(client, -1);
 	getPlayerCurrentSubAccount(client).skin = getPlayerSkin(client);
 	storePlayerItemsInTempLocker(client);
-	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_JOB;
+	getPlayerData(client).tempLockerType = V_TEMP_LOCKER_TYPE_JOB;
 	messagePlayerInfo(client, getLocaleString(client, "ItemsStoredForJob"));
 
 	getPlayerCurrentSubAccount(client).isWorking = true;
 
 	let jobId = getPlayerCurrentSubAccount(client).job;
 	switch (getJobIndexFromDatabaseId(jobId)) {
-		case AGRP_JOB_POLICE:
+		case V_JOB_POLICE:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case AGRP_JOB_MEDICAL:
+		case V_JOB_MEDICAL:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case AGRP_JOB_FIRE:
+		case V_JOB_FIRE:
 			messagePlayerInfo(client, getLocaleString(client, "JobEquipAndUniformLabel", `{ALTCOLOUR}/uniform{MAINCOLOUR}, {ALTCOLOUR}/equip{MAINCOLOUR}`));
 			break;
 
-		case AGRP_JOB_BUS:
+		case V_JOB_BUS:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Bus")));
 			break;
 
-		case AGRP_JOB_TAXI:
+		case V_JOB_TAXI:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "Taxi")));
 			break;
 
-		case AGRP_JOB_GARBAGE:
+		case V_JOB_GARBAGE:
 			messagePlayerInfo(client, getLocaleString(client, "GetStartedJobVehicle", getGroupedLocaleString(client, "VehicleTypes", "GarbageTruck")));
 			break;
 
-		case AGRP_JOB_WEAPON:
+		case V_JOB_WEAPON:
 			break;
 
-		case AGRP_JOB_DRUG:
+		case V_JOB_DRUG:
 			break;
 
 		default:
@@ -1131,10 +1130,10 @@ function givePlayerJobEquipment(client, equipmentId) {
 
 	for (let i in getJobData(jobId).equipment[equipmentId].items) {
 		let value = getJobData(jobId).equipment[equipmentId].items[i].value
-		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == AGRP_ITEM_USE_TYPE_WALKIETALKIE) {
+		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
 			value = getJobData(jobId).walkieTalkieFrequency;
 		}
-		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);
@@ -1188,37 +1187,37 @@ function stopWorking(client) {
 
 	/*
 	switch (getJobType(jobId)) {
-		case AGRP_JOB_POLICE:
+		case V_JOB_POLICE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the police station");
 			break;
 
-		case AGRP_JOB_MEDICAL:
+		case V_JOB_MEDICAL:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the hospital");
 			break;
 
-		case AGRP_JOB_FIRE:
+		case V_JOB_FIRE:
 			messagePlayerInfo(client, "Your uniform, equipment, and vehicle have been returned to the fire station");
 			break;
 
-		case AGRP_JOB_BUS:
+		case V_JOB_BUS:
 			messagePlayerInfo(client, "Your vehicle has been returned to the bus depot");
 			break;
 
-		case AGRP_JOB_TAXI:
+		case V_JOB_TAXI:
 			messagePlayerInfo(client, "Your vehicle has been returned to the taxi depot");
 			break;
 
-		case AGRP_JOB_GARBAGE:
+		case V_JOB_GARBAGE:
 			messagePlayerInfo(client, "Your vehicle has been returned to the city trash dump");
 			break;
 
-		case AGRP_JOB_WEAPON:
+		case V_JOB_WEAPON:
 			break;
 
-		case AGRP_JOB_DRUG:
+		case V_JOB_DRUG:
 			break;
 
-		case AGRP_JOB_GENERIC:
+		case V_JOB_GENERIC:
 			messagePlayerInfo(client, "Your vehicle has been respawned at your job location");
 			break;
 
@@ -1259,7 +1258,7 @@ function jobUniformCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != V_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -1271,7 +1270,7 @@ function jobUniformCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == V_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 			messagePlayerInfo(client, getLocaleString(client, "JobPoints"));
 			return false;
@@ -1362,7 +1361,7 @@ function jobEquipmentCommand(command, params, client) {
 			return false;
 		}
 
-		if (getVehicleData(closestVehicle).ownerType != AGRP_VEHOWNER_JOB) {
+		if (getVehicleData(closestVehicle).ownerType != V_VEHOWNER_JOB) {
 			messagePlayerError(client, getLocaleString(client, "NotAJobVehicle"));
 			return false;
 		}
@@ -1374,7 +1373,7 @@ function jobEquipmentCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == AGRP_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).job == V_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 
 			if (hasPlayerSeenActionTip(client, "JobLocations")) {
@@ -2407,7 +2406,7 @@ function jobStopRouteCommand(command, params, client) {
 		return false;
 	}
 
-	//if(!doesPlayerHaveJobType(client, AGRP_JOB_BUS) && !doesPlayerHaveJobType(client, AGRP_JOB_GARBAGE)) {
+	//if(!doesPlayerHaveJobType(client, V_JOB_BUS) && !doesPlayerHaveJobType(client, V_JOB_GARBAGE)) {
 	//	messagePlayerError(client, "Your job doesn't use a route!");
 	//    return false;
 	//}
@@ -3193,11 +3192,11 @@ function createJobLocationPickup(jobId, locationId) {
 				tempJobData.locations[locationId].pickup = pickup;
 				setElementDimension(pickup, tempJobData.locations[locationId].dimension);
 				setElementOnAllDimensions(pickup, false);
-				setEntityData(pickup, "agrp.owner.type", AGRP_PICKUP_JOB, false);
-				setEntityData(pickup, "agrp.owner.id", locationId, false);
-				setEntityData(pickup, "agrp.label.type", AGRP_LABEL_JOB, true);
-				setEntityData(pickup, "agrp.label.name", tempJobData.name, true);
-				setEntityData(pickup, "agrp.label.jobType", tempJobData.databaseId, true);
+				setEntityData(pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+				setEntityData(pickup, "v.rp.owner.id", locationId, false);
+				setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
+				setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
+				setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
 				addToWorld(pickup);
 			}
 		} else {
@@ -3597,7 +3596,7 @@ function createJobRoute(routeName, closestJobLocation, whoCreated = defaultNoAcc
 
 // ===========================================================================
 
-function createJobRouteLocation(routeLocationName, position, jobRouteData, whoCreated = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", type = AGRP_JOB_ROUTE_LOC_TYPE_NONE) {
+function createJobRouteLocation(routeLocationName, position, jobRouteData, whoCreated = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", type = V_JOB_ROUTE_LOC_TYPE_NONE) {
 	let tempJobRouteLocationData = new JobRouteLocationData(false);
 	tempJobRouteLocationData.name = routeLocationName;
 	tempJobRouteLocationData.routeId = jobRouteData.databaseId;

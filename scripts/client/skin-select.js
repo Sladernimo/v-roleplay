@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: skin-select.js
 // DESC: Provides skin-selector functions and usage
@@ -65,16 +64,16 @@ function processSkinSelectKeyPress(keyCode) {
 			skinSelectMessageTextTop = allowedSkins[skinSelectorIndex][1];
 			setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
 		} else if (keyCode == getKeyIdFromParams("enter")) {
-			sendNetworkEventToServer("agrp.skinSelected", skinSelectorIndex);
+			sendNetworkEventToServer("v.rp.skinSelected", skinSelectorIndex);
 			toggleSkinSelect(false);
 			return true;
 		} else if (keyCode == getKeyIdFromParams("backspace")) {
-			sendNetworkEventToServer("agrp.skinSelected", -1);
+			sendNetworkEventToServer("v.rp.skinSelected", -1);
 			toggleSkinSelect(false);
 			return true;
 		}
 
-		if (getGame() <= AGRP_GAME_GTA_SA) {
+		if (getGame() <= V_GAME_GTA_SA) {
 			localPlayer.heading = skinSelectHeading;
 		}
 	}
@@ -109,7 +108,7 @@ function toggleSkinSelect(state) {
 		if (isCustomCameraSupported()) {
 			let cameraPosition = localPlayer.position;
 			let playerPosition = localPlayer.position;
-			if (getGame() == AGRP_GAME_MAFIA_ONE) {
+			if (getGame() == V_GAME_MAFIA_ONE) {
 				cameraPosition.y += 1.5;
 				playerPosition.y += 1.5;
 				distance = 3;
@@ -121,7 +120,7 @@ function toggleSkinSelect(state) {
 			game.setCameraLookAt(frontCameraPosition, playerPosition, true);
 		}
 
-		if (getGame() == AGRP_GAME_GTA_IV) {
+		if (getGame() == V_GAME_GTA_IV) {
 			let skinId = allowedSkins[skinSelectorIndex][0];
 			if (natives.isModelInCdimage(skinId)) {
 				natives.requestModel(skinId);

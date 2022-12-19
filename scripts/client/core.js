@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: main.js
 // DESC: Main client script (will be reorganized into individual files later)
@@ -65,7 +64,7 @@ let mouseCursorEnabled = false;
 
 let currentPickup = false;
 
-let vehiclePurchaseState = AGRP_VEHBUYSTATE_NONE;
+let vehiclePurchaseState = V_VEHBUYSTATE_NONE;
 let vehiclePurchasing = null;
 let vehiclePurchasePosition = null;
 

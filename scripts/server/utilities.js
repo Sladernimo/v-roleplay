@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides util functions and arrays with data
@@ -88,7 +87,7 @@ function updateServerRules() {
 			timeWeatherRule.push(tempText);
 		}
 	} else {
-		if (getGame() == AGRP_GAME_MAFIA_ONE) {
+		if (getGame() == V_GAME_MAFIA_ONE) {
 			if (isNightTime(getServerConfig().hour)) {
 				tempText = "Night";
 			} else {
@@ -260,8 +259,8 @@ function checkPlayerPedStates() {
 		if (getPlayerData(clients[i])) {
 			if (getPlayerData(clients[i]).pedState) {
 				if (isPlayerInAnyVehicle(clients[i])) {
-					if (getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_EXITINGVEHICLE) {
-						getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_READY;
+					if (getPlayerData(clients[i]).pedState == V_PEDSTATE_EXITINGVEHICLE) {
+						getPlayerData(clients[i]).pedState == V_PEDSTATE_READY;
 					}
 				}
 			}
@@ -441,7 +440,7 @@ function isClientInitialized(client) {
 // ===========================================================================
 
 function getPedForNetworkEvent(ped) {
-	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//if (getGame() == V_GAME_GTA_IV) {
 	//	return ped;
 	//} else {
 	//	return ped.id;
@@ -525,15 +524,15 @@ function processPlayerEnteringExitingProperty(client) {
 	}
 
 	let pedState = getPlayerData(client).pedState;
-	if (pedState != AGRP_PEDSTATE_ENTERINGPROPERTY && pedState != AGRP_PEDSTATE_EXITINGPROPERTY) {
+	if (pedState != V_PEDSTATE_ENTERINGPROPERTY && pedState != V_PEDSTATE_EXITINGPROPERTY) {
 		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
 		return false;
 	}
 
 	let propertyData = null;
-	if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_BUSINESS) {
+	if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
 		propertyData = getBusinessData(getPlayerData(client).enteringExitingProperty[1]);
-	} else if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_HOUSE) {
+	} else if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_HOUSE) {
 		propertyData = getHouseData(getPlayerData(client).enteringExitingProperty[1]);
 	}
 
@@ -542,7 +541,7 @@ function processPlayerEnteringExitingProperty(client) {
 		return false;
 	}
 
-	if (pedState == AGRP_PEDSTATE_ENTERINGPROPERTY) {
+	if (pedState == V_PEDSTATE_ENTERINGPROPERTY) {
 		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
 			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
@@ -563,8 +562,8 @@ function processPlayerEnteringExitingProperty(client) {
 			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
 		}, 1000);
 
-		if (getPlayerData(client).enteringExitingProperty[0] == AGRP_PROPERTY_TYPE_BUSINESS) {
-			if (propertyData.type == AGRP_BIZ_TYPE_PAINTBALL) {
+		if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
+			if (propertyData.type == V_BIZ_TYPE_PAINTBALL) {
 				startPaintBall(client);
 			}
 		}
@@ -579,8 +578,8 @@ function processPlayerEnteringExitingProperty(client) {
 
 		getPlayerData(client).inProperty = [getPlayerData(client).enteringExitingProperty[0], getPlayerData(client).enteringExitingProperty[1]];
 		getPlayerData(client).enteringExitingProperty = null;
-		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
-	} else if (pedState == AGRP_PEDSTATE_EXITINGPROPERTY) {
+		getPlayerData(client).pedState = V_PEDSTATE_READY;
+	} else if (pedState == V_PEDSTATE_EXITINGPROPERTY) {
 		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
 			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
@@ -596,22 +595,22 @@ function processPlayerEnteringExitingProperty(client) {
 
 		// Check if exiting property was into another house/business
 		let inProperty = false;
-		let inPropertyType = AGRP_PROPERTY_TYPE_NONE;
+		let inPropertyType = V_PROPERTY_TYPE_NONE;
 
 		let inBusiness = getPlayerBusiness(client);
 		if (inBusiness != -1) {
 			inProperty = getBusinessData(inBusiness);
-			inPropertyType = AGRP_PROPERTY_TYPE_BUSINESS;
+			inPropertyType = V_PROPERTY_TYPE_BUSINESS;
 		} else {
 			let inHouse = getPlayerHouse(client);
 			if (inHouse != -1) {
 				inProperty = getHouseData(inHouse);
-				inPropertyType = AGRP_PROPERTY_TYPE_HOUSE;
+				inPropertyType = V_PROPERTY_TYPE_HOUSE;
 			}
 		}
 
 		setTimeout(function () {
-			if (getGame() != AGRP_GAME_MAFIA_ONE && getGame() != AGRP_GAME_GTA_IV) {
+			if (getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 				if (isFadeCameraSupported()) {
 					fadeCamera(client, true, 1.0);
 				}
@@ -635,7 +634,7 @@ function processPlayerEnteringExitingProperty(client) {
 
 		getPlayerData(client).inProperty = [inPropertyType, inProperty.index];
 		getPlayerData(client).enteringExitingProperty = null;
-		getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+		getPlayerData(client).pedState = V_PEDSTATE_READY;
 	}
 }
 

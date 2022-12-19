@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: npc.js
 // DESC: Provides NPC usage and functions
@@ -9,27 +8,27 @@
 // ===========================================================================
 
 // NPC Trigger Condition Match Types
-const AGRP_NPC_COND_MATCH_NONE = 0;               // None (invalid)
-const AGRP_NPC_COND_MATCH_EQ = 1;                 // Must be equal to
-const AGRP_NPC_COND_MATCH_GT = 2;                 // Must be greater than
-const AGRP_NPC_COND_MATCH_LT = 3;                 // Must be less than
-const AGRP_NPC_COND_MATCH_GTEQ = 4;               // Must be greater than or equal to
-const AGRP_NPC_COND_MATCH_LTEQ = 5;               // Must be less than or equal to
-const AGRP_NPC_COND_MATCH_CONTAINS = 6;           // Must contain string (case insensitive)
-const AGRP_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case sensitive)
-const AGRP_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
-const AGRP_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
+const V_NPC_COND_MATCH_NONE = 0;               // None (invalid)
+const V_NPC_COND_MATCH_EQ = 1;                 // Must be equal to
+const V_NPC_COND_MATCH_GT = 2;                 // Must be greater than
+const V_NPC_COND_MATCH_LT = 3;                 // Must be less than
+const V_NPC_COND_MATCH_GTEQ = 4;               // Must be greater than or equal to
+const V_NPC_COND_MATCH_LTEQ = 5;               // Must be less than or equal to
+const V_NPC_COND_MATCH_CONTAINS = 6;           // Must contain string (case insensitive)
+const V_NPC_COND_MATCH_CONTAINS_CASE = 7;      // Must contain string (case sensitive)
+const V_NPC_COND_MATCH_EXACT = 8;              // Must match string exactly (case insensitive)
+const V_NPC_COND_MATCH_EXACT_CASE = 9;         // Must match string exactly (case insensitive)
 
 // ===========================================================================
 
 // NPC Owner Types
-const AGRP_NPC_OWNER_NONE = 0;                     // Not owned
-const AGRP_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const AGRP_NPC_OWNER_JOB = 2;                      // Owned by a job
-const AGRP_NPC_OWNER_CLAN = 3;                     // Owned by a clan
-const AGRP_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const AGRP_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
-const AGRP_NPC_OWNER_BIZ = 6;                      // Owned by a business
+const V_NPC_OWNER_NONE = 0;                     // Not owned
+const V_NPC_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const V_NPC_OWNER_JOB = 2;                      // Owned by a job
+const V_NPC_OWNER_CLAN = 3;                     // Owned by a clan
+const V_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const V_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
+const V_NPC_OWNER_BIZ = 6;                      // Owned by a business
 
 // ===========================================================================
 
@@ -57,14 +56,14 @@ class NPCData {
 		this.fightStyle = 0;
 		this.health = 100;
 		this.armour = 100;
-		this.currentAction = AGRP_NPC_ACTION_NONE;
+		this.currentAction = V_NPC_ACTION_NONE;
 		this.triggers = [];
 		this.typeFlags = 0;
 		this.heedThreats = false;
 		this.threats = 0;
 		this.invincible = false;
 		this.animationName = "";
-		this.ownerType = AGRP_NPC_OWNER_NONE;
+		this.ownerType = V_NPC_OWNER_NONE;
 		this.ownerId = 0;
 		this.enabled = false;
 
@@ -481,11 +480,11 @@ function spawnNPC(npcIndex) {
 	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
 	if (ped) {
 		getNPCData(npcIndex).ped = ped;
-		setEntityData(ped, "agrp.dataIndex", npcIndex, false);
+		setEntityData(ped, "v.rp.dataIndex", npcIndex, false);
 		if (npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
 			if (animationId != false) {
-				setEntityData(ped, "agrp.anim", animationId, true);
+				setEntityData(ped, "v.rp.anim", animationId, true);
 			}
 		}
 		setElementDimension(ped, npcData.dimension);
@@ -614,7 +613,7 @@ function setNPCClanCommand(command, params, client) {
 		return false;
 	}
 
-	getNPCData(closestNPC).ownerType = AGRP_NPC_OWNER_CLAN;
+	getNPCData(closestNPC).ownerType = V_NPC_OWNER_CLAN;
 	getNPCData(closestNPC).ownerId = getClanData(clanId).databaseId;
 	getNPCData(closestNPC).needsSaved = true;
 
@@ -649,7 +648,7 @@ function toggleNPCLookAtClosestPlayerCommand(command, params, client) {
 
 	getNPCData(closestNPC).lookAtClosestPlayer = !getNPCData(closestNPC).lookAtClosestPlayer;
 	getNPCData(closestNPC).needsSaved = true;
-	setEntityData(getNPCData(closestNPC).ped, "agrp.lookAtClosestPlayer", getNPCData(closestNPC).lookAtClosestPlayer, true);
+	setEntityData(getNPCData(closestNPC).ped, "v.rp.lookAtClosestPlayer", getNPCData(closestNPC).lookAtClosestPlayer, true);
 	forcePlayerToSyncElementProperties(null, getNPCData(closestNPC).ped);
 	//messagePlayerSuccess(client, getLocaleString(client, "NPCLookAtClosestPlayerSet", `{ALTCOLOUR}${getNPCData(closestNPC).name}{MAINCOLOUR}));
 }
@@ -674,28 +673,28 @@ function getNPCInfoCommand(command, params, client) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (npcData.ownerType) {
-		case AGRP_NPC_OWNER_CLAN:
+		case V_NPC_OWNER_CLAN:
 			ownerName = getClanData(getClanIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
-		case AGRP_NPC_OWNER_JOB:
+		case V_NPC_OWNER_JOB:
 			ownerName = getJobData(getJobIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "job";
 			break;
 
-		case AGRP_NPC_OWNER_PLAYER:
+		case V_NPC_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(npcData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			ownerType = "player";
 			break;
 
-		case AGRP_NPC_OWNER_BIZ:
+		case V_NPC_OWNER_BIZ:
 			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "business";
 			break;
 
-		case AGRP_NPC_OWNER_PUBLIC:
+		case V_NPC_OWNER_PUBLIC:
 			ownerName = "Nobody";
 			ownerType = "public";
 			break;

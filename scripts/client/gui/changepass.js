@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: changepass.js
 // DESC: Provides change password GUI
@@ -129,7 +128,7 @@ function passwordChangeFailed(errorMessage) {
 
 function checkChangePassword() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking password change with server ...`);
-	sendNetworkEventToServer("agrp.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
+	sendNetworkEventToServer("v.rp.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
 }
 
 // ===========================================================================

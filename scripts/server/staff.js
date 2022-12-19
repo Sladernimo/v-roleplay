@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: staff.js
 // DESC: Provides staff commands, functions and usage
@@ -900,7 +899,7 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToDimension = getPlayerDimension(targetClient);
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
-	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_ADMINGET;
+	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
 
 	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
 	setPlayerHeading(targetClient, getPlayerHeading(client));
@@ -952,7 +951,7 @@ function returnPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = null;
 	getPlayerData(targetClient).returnToHouse = null;
 	getPlayerData(targetClient).returnToBusiness = null;
-	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_NONE;
+	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`, true);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);

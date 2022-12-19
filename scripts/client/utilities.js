@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides util functions and arrays with data
@@ -19,9 +18,9 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
 	controlsEnabled = controlState;
 	game.setPlayerControl(controlState);
-	if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
+	if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
 		game.SET_PLAYER_CONTROL(game.GET_PLAYER_ID(), boolToInt(controlState));
-	} else if (getGame() <= AGRP_GAME_GTA_IV) {
+	} else if (getGame() <= V_GAME_GTA_IV) {
 		setElementCollisionsEnabled(localPlayer, controlState);
 		setPedInvincible(localPlayer, true);
 	}
@@ -78,9 +77,9 @@ function setCityAmbienceState(state, clearElements = false) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Ambient civilians and traffic ${(state) ? "enabled" : "disabled"}`);
 	game.setTrafficEnabled(state);
 
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		game.setGenerateCarsAroundCamera(state);
-		if (getGame() != AGRP_GAME_GTA_SA) {
+		if (getGame() != V_GAME_GTA_SA) {
 			game.setCiviliansEnabled(state);
 		}
 
@@ -98,7 +97,7 @@ function runClientCode(code, returnTo) {
 	try {
 		returnValue = eval("(" + code + ")");
 	} catch (error) {
-		sendNetworkEventToServer("agrp.runCodeFail", returnTo, error.toString());
+		sendNetworkEventToServer("v.rp.runCodeFail", returnTo, error.toString());
 		return false;
 	}
 	let returnValueString = returnValue;
@@ -107,7 +106,7 @@ function runClientCode(code, returnTo) {
 	} else {
 		returnValueString = "null/undefined";
 	}
-	sendNetworkEventToServer("agrp.runCodeSuccess", returnTo, returnValueString);
+	sendNetworkEventToServer("v.rp.runCodeSuccess", returnTo, returnValueString);
 }
 
 // ===========================================================================
@@ -115,7 +114,7 @@ function runClientCode(code, returnTo) {
 function enterVehicleAsPassenger() {
 	if (localPlayer.vehicle == null) {
 		let tempVehicle = getClosestVehicle(localPlayer.position);
-		if (getGame() != AGRP_GAME_GTA_IV) {
+		if (getGame() != V_GAME_GTA_IV) {
 			if (tempVehicle != null) {
 				localPlayer.enterVehicle(tempVehicle, false);
 			}
@@ -137,13 +136,13 @@ function enterVehicleAsPassenger() {
 function giveLocalPlayerWeapon(weaponId, ammo, active) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
 	forceWeapon = weaponId;
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		localPlayer.giveWeapon(weaponId, 0, ammo);
 		forceWeaponAmmo = 0;
 		forceWeaponClipAmmo = ammo;
 	} else {
 		localPlayer.giveWeapon(weaponId, ammo, active);
-		if (getGame() < AGRP_GAME_GTA_IV) {
+		if (getGame() < V_GAME_GTA_IV) {
 			forceWeaponAmmo = localPlayer.getWeaponAmmunition(getWeaponSlot(weaponId));
 			forceWeaponClipAmmo = localPlayer.getWeaponClipAmmunition(getWeaponSlot(weaponId));
 		} else {
@@ -197,7 +196,7 @@ function setLocalPlayerHeading(heading) {
 
 function setLocalPlayerInterior(interior) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting interior to ${interior}`);
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		if (!isGTAIV()) {
 			localPlayer.interior = interior;
 			game.cameraInterior = interior;
@@ -215,8 +214,8 @@ function setLocalPlayerInterior(interior) {
 	if (areServerElementsSupported() && isGameFeatureSupported("interior")) {
 		let vehicles = getElementsByType(ELEMENT_VEHICLE);
 		for (let i in vehicles) {
-			if (getEntityData(vehicles[i], "agrp.interior")) {
-				vehicles[i].interior = getEntityData(vehicles[i], "agrp.interior");
+			if (getEntityData(vehicles[i], "v.rp.interior")) {
+				vehicles[i].interior = getEntityData(vehicles[i], "v.rp.interior");
 			}
 		}
 	}
@@ -246,7 +245,7 @@ function setLocalPlayerHealth(health) {
 
 function playPedSpeech(pedName, speechId) {
 	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Making ${pedName}'s ped talk (${speechId})`);
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		game.SET_CHAR_SAY(int, int);
 	}
 }
@@ -267,7 +266,7 @@ function getWeaponSlot(weaponId) {
 // ===========================================================================
 
 function setLocalPlayerDrunkEffect(amount, duration) {
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		logToConsole(LOG_DEBUG, `[AGRP.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
 		drunkEffectAmount = 0;
 		drunkEffectDurationTimer = setInterval(function () {
@@ -400,8 +399,8 @@ function processWantedLevelReset() {
 function processLocalPlayerVehicleControlState() {
 	if (areServerElementsSupported()) {
 		if (localPlayer.vehicle != null) {
-			if (doesEntityDataExist(localPlayer.vehicle, "agrp.engine")) {
-				if (getEntityData(localPlayer.vehicle, "agrp.engine") == false) {
+			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
+				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
 					localPlayer.vehicle.engine = false;
 					//localPlayer.vehicle.netFlags.sendSync = false;
 					if (!localPlayer.vehicle.engine) {
@@ -430,12 +429,12 @@ function forceLocalPlayerEquippedWeaponItem() {
 		if (forceWeapon != 0) {
 			if (localPlayer.weapon != forceWeapon) {
 				localPlayer.weapon = forceWeapon;
-				if (getGame() < AGRP_GAME_GTA_IV) {
+				if (getGame() < V_GAME_GTA_IV) {
 					localPlayer.setWeaponClipAmmunition(getWeaponSlot(forceWeapon), forceWeaponClipAmmo);
 					localPlayer.setWeaponAmmunition(getWeaponSlot(forceWeapon), forceWeaponAmmo);
 				}
 			} else {
-				//if(getGame() < AGRP_GAME_GTA_IV) {
+				//if(getGame() < V_GAME_GTA_IV) {
 				//	forceWeaponClipAmmo = localPlayer.getWeaponClipAmmunition(getWeaponSlot(forceWeapon));
 				//	forceWeaponAmmo = localPlayer.getWeaponAmmunition(getWeaponSlot(forceWeapon));
 				//}
@@ -462,7 +461,7 @@ function getLocalPlayerPosition() {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		return natives.getNetworkIdFromVehicle(vehicle);
 	}
 	return vehicle.id;
@@ -534,7 +533,7 @@ function processNearbyPickups() {
 				//if(pickups[i].interior == localPlayer.interior && pickups[i].dimension == localPlayer.dimension) {
 				if (currentPickup != pickups[i]) {
 					currentPickup = pickups[i];
-					sendNetworkEventToServer("agrp.pickup", pickups[i].id);
+					sendNetworkEventToServer("v.rp.pickup", pickups[i].id);
 				}
 				//}
 			}
@@ -545,7 +544,7 @@ function processNearbyPickups() {
 // ===========================================================================
 
 function processGameSpecifics() {
-	if (getGame() < AGRP_GAME_GTA_IV) {
+	if (getGame() < V_GAME_GTA_IV) {
 		game.clearMessages();
 	}
 
@@ -604,7 +603,7 @@ function updateLocalPlayerMoney() {
 		localPlayer.money = toInteger(localPlayerMoney);
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		natives.setMultiplayerHudCash(localPlayerMoney);
 	}
 }

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: property.js
 // DESC: Provides property (house, business, etc) with functions and usage
@@ -9,35 +8,35 @@
 // ===========================================================================
 
 // Property Types
-const AGRP_PROP_TYPE_NONE = 0;						// None (invalid)
-const AGRP_PROP_TYPE_BIZ_NORMAL = 1;				// Normal business (sells items)
-const AGRP_PROP_TYPE_BIZ_BANK = 2;					// Bank business
-const AGRP_PROP_TYPE_BIZ_PUBLIC = 3;				// Public business (Government, public service, etc)
-const AGRP_PROP_TYPE_BIZ_PAINTBALL = 4;				// Paintball arena. Player joins paintball/airsoft when they enter
-const AGRP_PROP_TYPE_BIZ_DEALERSHIP = 5;			// Vehicle Dealership (also for airplane, boat, etc)
-const AGRP_PROP_TYPE_HOUSE = 6;						// House
+const V_PROP_TYPE_NONE = 0;						// None (invalid)
+const V_PROP_TYPE_BIZ_NORMAL = 1;				// Normal business (sells items)
+const V_PROP_TYPE_BIZ_BANK = 2;					// Bank business
+const V_PROP_TYPE_BIZ_PUBLIC = 3;				// Public business (Government, public service, etc)
+const V_PROP_TYPE_BIZ_PAINTBALL = 4;				// Paintball arena. Player joins paintball/airsoft when they enter
+const V_PROP_TYPE_BIZ_DEALERSHIP = 5;			// Vehicle Dealership (also for airplane, boat, etc)
+const V_PROP_TYPE_HOUSE = 6;						// House
 
 // ===========================================================================
 
 // Property Location Types
-const AGRP_PROP_LOC_NONE = 0;						// None
-const AGRP_PROP_LOC_GATE = 1;						// Moveable gate that belongs to the property
-const AGRP_PROP_LOC_GARAGE = 2;						// Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
-const AGRP_PROP_LOC_FUEL = 3;						// Fuel pump
-const AGRP_PROP_LOC_DRIVETHRU = 4;					// Drivethrough
-const AGRP_PROP_LOC_VENDMACHINE = 5;				// Vending machine
-const AGRP_PROP_LOC_ATM = 6;						// ATM
-const AGRP_PROP_LOC_PAYPHONE = 7;					// Payphone
+const V_PROP_LOC_NONE = 0;						// None
+const V_PROP_LOC_GATE = 1;						// Moveable gate that belongs to the property
+const V_PROP_LOC_GARAGE = 2;						// Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
+const V_PROP_LOC_FUEL = 3;						// Fuel pump
+const V_PROP_LOC_DRIVETHRU = 4;					// Drivethrough
+const V_PROP_LOC_VENDMACHINE = 5;				// Vending machine
+const V_PROP_LOC_ATM = 6;						// ATM
+const V_PROP_LOC_PAYPHONE = 7;					// Payphone
 
 // ===========================================================================
 
 // Property Owner Types
-const AGRP_PROP_OWNER_NONE = 0;                     // Not owned
-const AGRP_PROP_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const AGRP_PROP_OWNER_JOB = 2;                      // Owned by a job
-const AGRP_PROP_OWNER_CLAN = 3;                     // Owned by a clan
-const AGRP_PROP_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const AGRP_PROP_OWNER_PUBLIC = 5;                   // Public property. Used for goverment/official places like police, fire, city hall, DMV, etc
+const V_PROP_OWNER_NONE = 0;                     // Not owned
+const V_PROP_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const V_PROP_OWNER_JOB = 2;                      // Owned by a job
+const V_PROP_OWNER_CLAN = 3;                     // Owned by a clan
+const V_PROP_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const V_PROP_OWNER_PUBLIC = 5;                   // Public property. Used for goverment/official places like police, fire, city hall, DMV, etc
 
 // ===========================================================================
 
@@ -49,7 +48,7 @@ class PropertyData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.ownerType = AGRP_PROP_OWNER_NONE;
+		this.ownerType = V_PROP_OWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.locked = false;
@@ -57,7 +56,7 @@ class PropertyData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
-		this.propertyType = AGRP_PROP_TYPE_NONE;
+		this.propertyType = V_PROP_TYPE_NONE;
 
 		this.entrancePosition = false;
 		this.entranceRotation = 0.0;
@@ -82,7 +81,7 @@ class PropertyData {
 		this.streamingRadioStation = 0;
 		this.streamingRadioStationIndex = -1;
 
-		this.labelHelpType = AGRP_PROPLABEL_INFO_NONE;
+		this.labelHelpType = V_PROPLABEL_INFO_NONE;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["prop_id"]);
@@ -353,7 +352,7 @@ function setPropertyNameCommand(command, params, client) {
 
 	let oldPropertyName = getPropertyData(propertyIndex).name;
 	getPropertyData(propertyIndex).name = newPropertyName;
-	setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.name", getPropertyData(propertyIndex).name, true);
+	setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.name", getPropertyData(propertyIndex).name, true);
 	getPropertyData(propertyIndex).needsSaved = true;
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed property ${getInlinePropertyColour(propertyIndex)}${oldPropertyName}{MAINCOLOUR} to ${getInlinePropertyColour(propertyIndex)}${newPropertyName}`);
 }
@@ -384,7 +383,7 @@ function setPropertyOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_PLAYER;
+	getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_PLAYER;
 	getPropertyData(propertyIndex).ownerId = getPlayerCurrentSubAccount(newPropertyOwner).databaseId;
 	getPropertyData(propertyIndex).needsSaved = true;
 
@@ -417,7 +416,7 @@ function setPropertyJobCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_JOB;
+	getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_JOB;
 	getPropertyData(propertyIndex).ownerId = getJobData(jobId).databaseId;
 	getPropertyData(propertyIndex).needsSaved = true;
 
@@ -441,7 +440,7 @@ function setPropertyClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPropertyData(business).ownerType != AGRP_VEHOWNER_PLAYER) {
+	if (getPropertyData(business).ownerType != V_VEHOWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnProperty"));
 		return false;
 	}
@@ -452,9 +451,9 @@ function setPropertyClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetPropertyClanConfirmMessage"), getLocaleString(client, "SetPropertyClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZGIVETOCLAN;
+	getPlayerData(client).promptType = V_PROMPT_BIZGIVETOCLAN;
 
-	//getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_CLAN;
+	//getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_CLAN;
 	//getPropertyData(propertyIndex).ownerId = getClanData(clanId).databaseId;
 	//getPropertyData(propertyIndex).needsSaved = true;
 }
@@ -476,7 +475,7 @@ function setPropertyRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_CLAN) {
 		let clanId = getClanIndexFromDatabaseId(getPropertyData(propertyIndex).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
@@ -485,7 +484,7 @@ function setPropertyRankCommand(command, params, client) {
 		}
 		getPropertyData(propertyIndex).rank = getClanRankData(clanId, rankId).databaseId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
-	} else if (getPropertyData(propertyIndex).ownerType == AGRP_VEHOWNER_JOB) {
+	} else if (getPropertyData(propertyIndex).ownerType == V_VEHOWNER_JOB) {
 		getPropertyData(propertyIndex).rank = rankId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getPropertyData(propertyIndex).ownerId)).name} {MAINCOLOUR}job!`);
 	}
@@ -564,7 +563,7 @@ function setPropertyJobCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_JOB;
+	getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_JOB;
 	getPropertyData(propertyIndex).ownerId = getJobData(jobId).databaseId;
 
 	getPropertyData(propertyIndex).needsSaved = true;
@@ -585,7 +584,7 @@ function setPropertyPublicCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_PUBLIC;
+	getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_PUBLIC;
 	getPropertyData(propertyIndex).ownerId = 0;
 
 	getPropertyData(propertyIndex).needsSaved = true;
@@ -606,7 +605,7 @@ function removePropertyOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).ownerType = AGRP_BIZ_OWNER_NONE;
+	getPropertyData(propertyIndex).ownerType = V_BIZ_OWNER_NONE;
 	getPropertyData(propertyIndex).ownerId = -1;
 	getPropertyData(propertyIndex).needsSaved = true;
 
@@ -671,7 +670,7 @@ function setPropertyPaintBallCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).type = AGRP_BIZ_TYPE_PAINTBALL;
+	getPropertyData(propertyIndex).type = V_BIZ_TYPE_PAINTBALL;
 	getPropertyData(propertyIndex).needsSaved = true;
 	messagePlayerSuccess(client, getLocaleString(client, "PropertyIsNowPaintBall"));
 }
@@ -694,24 +693,24 @@ function getPropertyInfoCommand(command, params, client) {
 
 	let ownerName = "Unknown";
 	switch (propertyData.ownerType) {
-		case AGRP_BIZ_OWNER_CLAN:
+		case V_BIZ_OWNER_CLAN:
 			ownerName = getClanData(propertyData.ownerId).name;
 			break;
 
-		case AGRP_BIZ_OWNER_JOB:
+		case V_BIZ_OWNER_JOB:
 			ownerName = getJobData(propertyData.ownerId).name;
 			break;
 
-		case AGRP_BIZ_OWNER_PLAYER:
+		case V_BIZ_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(propertyData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case AGRP_BIZ_OWNER_PUBLIC:
+		case V_BIZ_OWNER_PUBLIC:
 			ownerName = "Public";
 			break;
 
-		case AGRP_BIZ_OWNER_NONE:
+		case V_BIZ_OWNER_NONE:
 			//submitBugReport(client, `[AUTOMATED REPORT] getPropertyInfoCommand() - Invalid ownerType for business ${propertyIndex}/${getPropertyData(propertyIndex).databaseId}`);
 			ownerName = "None";
 			break;
@@ -1014,7 +1013,7 @@ function giveDefaultItemsToPropertyCommand(command, params, client) {
 		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultPropertyItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, AGRP_ITEM_OWNER_BIZFLOOR, getPropertyData(propertyIndex).databaseId, getGameConfig().defaultPropertyItems[getGame()][typeParam][i][1]);
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getPropertyData(propertyIndex).databaseId, getGameConfig().defaultPropertyItems[getGame()][typeParam][i][1]);
 			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultPropertyItems[getGame()][typeParam][i][2];
 		}
 	}
@@ -1034,8 +1033,8 @@ function setPropertyDealershipCommand(command, params, client) {
 		return false;
 	}
 
-	getPropertyData(propertyIndex).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
-	getPropertyData(propertyIndex).type = AGRP_BIZ_TYPE_DEALERSHIP;
+	getPropertyData(propertyIndex).labelHelpType == V_PROPLABEL_INFO_ENTERVEHICLE;
+	getPropertyData(propertyIndex).type = V_BIZ_TYPE_DEALERSHIP;
 	updatePropertyPickupLabelData(propertyIndex);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the property type of ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}{MAINCOLOUR} to dealership`);
 }
@@ -1141,7 +1140,7 @@ function setPropertyBuyPriceCommand(command, params, client) {
 	}
 
 	getPropertyData(propertyIndex).buyPrice = amount;
-	setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.price", getPropertyData(propertyIndex).buyPrice, true);
+	setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.price", getPropertyData(propertyIndex).buyPrice, true);
 
 	getPropertyData(propertyIndex).needsSaved = true;
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set property ${getInlinePropertyColour(propertyIndex)}${getPropertyData(propertyIndex).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
@@ -1223,7 +1222,7 @@ function orderItemForPropertyCommand(command, params, client) {
 
 	let orderTotalCost = pricePerItem * amount;
 
-	//getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
+	//getPlayerData(client).promptType = V_PROMPT_BIZORDER;
 	getPlayerData(client).businessOrderAmount = amount;
 	getPlayerData(client).businessOrderProperty = propertyIndex;
 	getPlayerData(client).businessOrderItem = itemType;
@@ -1232,7 +1231,7 @@ function orderItemForPropertyCommand(command, params, client) {
 
 	getPropertyData(propertyIndex).needsSaved = true;
 	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(pricePerItem)} each will cost a total of ${getCurrencyString(orderTotalCost)}`, "Property Order Cost");
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
+	getPlayerData(client).promptType = V_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
@@ -1292,7 +1291,7 @@ function buyPropertyCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyPropertyConfirmMessage"), getLocaleString(client, "BuyPropertyConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZBUY;
+	getPlayerData(client).promptType = V_PROMPT_BIZBUY;
 }
 
 // ===========================================================================
@@ -1578,7 +1577,7 @@ function createPropertyEntrancePickup(propertyIndex) {
 
 	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for property ${propertyData.name}`);
 
-	if (areServerElementsSupported() && getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].Property;
@@ -1859,17 +1858,17 @@ function exitProperty(client) {
 
 function getPropertyOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case AGRP_BIZ_OWNER_CLAN:
+		case V_BIZ_OWNER_CLAN:
 			return "clan";
 
-		case AGRP_BIZ_OWNER_JOB:
+		case V_BIZ_OWNER_JOB:
 			return "job";
 
-		case AGRP_BIZ_OWNER_PLAYER:
+		case V_BIZ_OWNER_PLAYER:
 			return "player";
 
-		case AGRP_BIZ_OWNER_NONE:
-		case AGRP_BIZ_OWNER_PUBLIC:
+		case V_BIZ_OWNER_NONE:
+		case V_BIZ_OWNER_PUBLIC:
 			return "not owned";
 
 		default:
@@ -2003,7 +2002,7 @@ function setPropertyDataIndexes() {
 		//}
 
 		for (let j in getServerData().properties[i].locations) {
-			if (getServerData().properties[i].locations[j].type == AGRP_BIZ_LOC_ATM) {
+			if (getServerData().properties[i].locations[j].type == V_BIZ_LOC_ATM) {
 				getServerData().atmLocationCache.push([i, j, getServerData().properties[i].locations[j].position]);
 			}
 		}
@@ -2019,7 +2018,7 @@ function addToPropertyInventory(propertyIndex, itemType, amount, buyPrice) {
 	tempItemData.buyPrice = buyPrice;
 	tempItemData.itemType = getItemTypeData(itemType).databaseId;
 	tempItemData.ownerId = getPropertyData(propertyIndex).databaseId;
-	tempItemData.ownerType = AGRP_ITEMOWNER_BIZ;
+	tempItemData.ownerType = V_ITEMOWNER_BIZ;
 	tempItemData.ownerIndex = propertyIndex;
 	tempItemData.itemTypeIndex = itemType;
 	saveItemToDatabase(tempItemData);
@@ -2102,7 +2101,7 @@ function buyFromPropertyCommand(command, params, client) {
 	}
 
 	takePlayerCash(client, totalCost);
-	createItem(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
+	createItem(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
 	cachePlayerHotBarItems(client);
 	getPropertyData(propertyIndex).till = getPropertyData(propertyIndex).till + totalCost;
 
@@ -2112,7 +2111,7 @@ function buyFromPropertyCommand(command, params, client) {
 	}
 
 	let useType = getItemTypeData(getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
-	if (useType == AGRP_ITEM_USE_TYPE_WEAPON || AGRP_ITEM_USE_TYPE_TAZER || useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
+	if (useType == V_ITEM_USE_TYPE_WEAPON || V_ITEM_USE_TYPE_TAZER || useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
 		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
 			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
 			return false;
@@ -2197,7 +2196,7 @@ function storeItemInPropertyStorageCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZSTORAGE;
+	getItemData(getPropertyData(propertyIndex).floorItemCache[itemSlot - 1]).ownerType = V_ITEM_OWNER_BIZSTORAGE;
 	getPropertyData(propertyIndex).storageItemCache[firstSlot] = getPropertyData(propertyIndex).floorItemCache[itemSlot - 1];
 	getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getPropertyData(propertyIndex).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} to the business storage in slot ${firstSlot}`);
@@ -2232,7 +2231,7 @@ function stockItemOnPropertyFloorCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getPropertyData(propertyIndex).storageItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
+	getItemData(getPropertyData(propertyIndex).storageItemCache[itemSlot - 1]).ownerType = V_ITEM_OWNER_BIZFLOOR;
 	getPropertyData(propertyIndex).floorItemCache[firstSlot] = getPropertyData(propertyIndex).storageItemCache[itemSlot - 1];
 	getPropertyData(propertyIndex).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getPropertyData(propertyIndex).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} of the business storage to the business floor slot ${firstSlot}`);
@@ -2272,14 +2271,14 @@ function cachePropertyItems(propertyIndex) {
 
 	//let propertyData = getPropertyData(propertyIndex);
 	//logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${propertyData.name}) ...`);
-	//getPropertyData(propertyIndex).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
-	//getPropertyData(propertyIndex).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
+	//getPropertyData(propertyIndex).floorItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
+	//getPropertyData(propertyIndex).storageItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
 
 	logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
 			getPropertyData(propertyIndex).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
 			getPropertyData(propertyIndex).storageItemCache.push(i);
 		}
 	}
@@ -2303,50 +2302,50 @@ function updatePropertyPickupLabelData(propertyIndex) {
 	}
 
 	if (getPropertyData(propertyIndex).exitPickup != null) {
-		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_EXIT, false);
-		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.owner.id", propertyIndex, false);
-		setEntityData(getPropertyData(propertyIndex).exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "v.rp.owner.type", V_PICKUP_BUSINESS_EXIT, false);
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "v.rp.owner.id", propertyIndex, false);
+		setEntityData(getPropertyData(propertyIndex).exitPickup, "v.rp.label.type", V_LABEL_EXIT, true);
 	}
 
 	if (getPropertyData(propertyIndex).entrancePickup != null) {
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_ENTRANCE, false);
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.owner.id", propertyIndex, false);
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.type", AGRP_LABEL_BUSINESS, true);
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.name", getPropertyData(propertyIndex).name, true);
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.locked", getPropertyData(propertyIndex).locked, true);
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_NONE, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.owner.type", V_PICKUP_BUSINESS_ENTRANCE, false);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.owner.id", propertyIndex, false);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.type", V_LABEL_BUSINESS, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.name", getPropertyData(propertyIndex).name, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.locked", getPropertyData(propertyIndex).locked, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_NONE, true);
 
 		switch (getPropertyData(propertyIndex).labelHelpType) {
-			case AGRP_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTERVEHICLE, true);
+			case V_PROPLABEL_INFO_ENTERVEHICLE: {
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTERVEHICLE, true);
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_ENTER: {
-				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+			case V_PROPLABEL_INFO_ENTER: {
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_REPAIR, true);
+			case V_PROPLABEL_INFO_REPAIR: {
+				setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_REPAIR, true);
 				break;
 			}
 
 			default: {
 				if (getPropertyData(propertyIndex).hasInterior) {
-					setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+					setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 				} else {
 					if (doesPropertyHaveAnyItemsToBuy(propertyIndex)) {
-						setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUY, true);
+						setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUY, true);
 					} else {
-						removeEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.help");
+						removeEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.help");
 					}
 				}
 				break;
 			}
 		}
 
-		setEntityData(getPropertyData(propertyIndex).entrancePickup, "agrp.label.price", getPropertyData(propertyIndex).buyPrice, true);
+		setEntityData(getPropertyData(propertyIndex).entrancePickup, "v.rp.label.price", getPropertyData(propertyIndex).buyPrice, true);
 	}
 }
 
@@ -2424,7 +2423,7 @@ function doesPropertyHaveAnyItemsToBuy(propertyIndex) {
 
 //function clearPlayerPropertyGameScripts(client, propertyIndex) {
 //	for(let i in getPropertyData(propertyIndex).gameScripts) {
-//		sendPlayerGameScriptState(client, AGRP_GAMESCRIPT_DENY);
+//		sendPlayerGameScriptState(client, V_GAMESCRIPT_DENY);
 //	}
 //}
 
@@ -2446,11 +2445,11 @@ function canPlayerWithdrawFromPropertyTill(client, propertyIndex) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
@@ -2466,11 +2465,11 @@ function canPlayerSetPropertyInteriorLights(client, propertyIndex) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
@@ -2486,11 +2485,11 @@ function canPlayerLockUnlockProperty(client, propertyIndex) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_PLAYER && getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_CLAN && getPropertyData(propertyIndex).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 			return true;
 		}
@@ -2506,13 +2505,13 @@ function canPlayerManageProperty(client, propertyIndex) {
 		return true;
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_PLAYER) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_PLAYER) {
 		if (getPropertyData(propertyIndex).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getPropertyData(propertyIndex).ownerType == AGRP_BIZ_OWNER_CLAN) {
+	if (getPropertyData(propertyIndex).ownerType == V_BIZ_OWNER_CLAN) {
 		if (getPropertyData(propertyIndex).ownerId == getPlayerClan(client)) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManagePropertyes"))) {
 				return true;
@@ -2634,7 +2633,7 @@ function doesPropertyHaveBuyableItemOfUseType(propertyIndex, useType) {
 // ===========================================================================
 
 function getInlinePropertyColour(propertyIndex) {
-	if (getPropertyData(propertyIndex).type == AGRP_PROP_TYPE_HOUSE) {
+	if (getPropertyData(propertyIndex).type == V_PROP_TYPE_HOUSE) {
 		return "{houseGreen}";
 	} else {
 		return "{businessBlue}";
@@ -2644,7 +2643,7 @@ function getInlinePropertyColour(propertyIndex) {
 // ===========================================================================
 
 function getPropertyTypeName(propertyIndex) {
-	if (getPropertyData(propertyIndex).type == AGRP_PROP_TYPE_HOUSE) {
+	if (getPropertyData(propertyIndex).type == V_PROP_TYPE_HOUSE) {
 		return "House";
 	} else {
 		return "Business";

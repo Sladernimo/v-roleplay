@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: nametags.js
 // DESC: Provides nametag rendering
@@ -53,7 +52,7 @@ function updatePlayerNameTag(clientName, characterName, colour, paused, ping) {
 	playerPaused[clientName] = paused;
 	playerPing[clientName] = ping;
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		let client = getPlayerFromParams(clientName);
 		if (client != false) {
 			if (getPlayerPed(client) != null) {
@@ -85,8 +84,8 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// -------------------------------------------
 	// Health Bar
 
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
-		if (getGame() == AGRP_GAME_GTA_III) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
+		if (getGame() == V_GAME_GTA_III) {
 			// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
 			if (skin == 109) {
 				y -= 20;

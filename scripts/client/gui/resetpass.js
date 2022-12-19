@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: resetpass.js
 // DESC: Provides password reset GUI
@@ -143,7 +142,7 @@ function showResetPasswordGUI() {
 
 function checkResetPassword() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking password reset with server (${passwordReset.emailInput.lines[0]}) ...`);
-	sendNetworkEventToServer("agrp.checkResetPassword", passwordReset.emailInput.lines[0]);
+	sendNetworkEventToServer("v.rp.checkResetPassword", passwordReset.emailInput.lines[0]);
 }
 
 // ===========================================================================

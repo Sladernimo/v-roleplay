@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: connected.js
 // DESC: Provides wrapped natives for GTA Connected and Mafia Connected mods
@@ -193,8 +192,8 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	//if (getGame() == AGRP_GAME_GTA_IV) {
-	//	return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	return sendNetworkEventToPlayer("v.rp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	//}
 	return vehicle.heading = heading;
 }
@@ -227,7 +226,7 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//if (getGame() == V_GAME_GTA_IV) {
 	//	if (getVehicleData(vehicle).ivNetworkId != -1) {
 	//		return getVehicleData(vehicle).ivNetworkId;
 	//	}
@@ -267,8 +266,8 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+	if (getGame() == V_GAME_GTA_IV) {
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
@@ -581,24 +580,24 @@ function repairVehicle(vehicle) {
 // ===========================================================================
 
 function setVehicleLights(vehicle, lights) {
-	setEntityData(vehicle, "agrp.lights", lights, true);
-	sendNetworkEventToPlayer("agrp.veh.lights", null, vehicle.id, lights);
+	setEntityData(vehicle, "v.rp.lights", lights, true);
+	sendNetworkEventToPlayer("v.rp.veh.lights", null, vehicle.id, lights);
 }
 
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
 	//vehicle.engine = engine;
-	setEntityData(vehicle, "agrp.engine", engine, true);
-	sendNetworkEventToPlayer("agrp.veh.engine", null, vehicle.id, engine);
+	setEntityData(vehicle, "v.rp.engine", engine, true);
+	sendNetworkEventToPlayer("v.rp.veh.engine", null, vehicle.id, engine);
 }
 
 // ===========================================================================
 
 function setVehicleLocked(vehicle, locked) {
 	vehicle.locked = locked;
-	setEntityData(vehicle, "agrp.locked", locked, true);
-	sendNetworkEventToPlayer("agrp.veh.locked", null, vehicle.id, locked);
+	setEntityData(vehicle, "v.rp.locked", locked, true);
+	sendNetworkEventToPlayer("v.rp.veh.locked", null, vehicle.id, locked);
 }
 
 // ===========================================================================
@@ -672,15 +671,15 @@ function createGamePed(modelIndex, position, heading, toClient = null) {
 // ===========================================================================
 
 function getIsland(position) {
-	if (getGame() == AGRP_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_III) {
 		if (position.x > 616) {
-			return AGRP_ISLAND_PORTLAND;
+			return V_ISLAND_PORTLAND;
 		} else if (position.x < -283) {
-			return AGRP_ISLAND_SHORESIDEVALE;
+			return V_ISLAND_SHORESIDEVALE;
 		}
-		return AGRP_ISLAND_STAUNTON;
+		return V_ISLAND_STAUNTON;
 	} else {
-		return AGRP_ISLAND_NONE;
+		return V_ISLAND_NONE;
 	}
 
 	//return game.getIslandFromPosition(position);
@@ -725,7 +724,7 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	setEntityData(getPlayerElement(client), "agrp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
+	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
 	forcePlayerToSyncElementProperties(null, getPlayerElement(client));
 }
 
@@ -744,7 +743,7 @@ function getPlayerElement(client) {
 // ===========================================================================
 
 function setElementPosition(element, position) {
-	sendNetworkEventToPlayer("agrp.elementPosition", null, element.id, position);
+	sendNetworkEventToPlayer("v.rp.elementPosition", null, element.id, position);
 }
 
 // ===========================================================================
@@ -762,14 +761,14 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
-	setEntityData(element, "agrp.interior", interior, true);
+	setEntityData(element, "v.rp.interior", interior, true);
 	forcePlayerToSyncElementProperties(null, element);
 }
 
 // ===========================================================================
 
 function setElementCollisionsEnabled(element, state) {
-	sendNetworkEventToPlayer("agrp.elementCollisions", null, element.id, state);
+	sendNetworkEventToPlayer("v.rp.elementCollisions", null, element.id, state);
 }
 
 // ===========================================================================
@@ -1003,7 +1002,7 @@ function setConstantsAsGlobalVariablesInDatabase() {
 	let entries = Object.entries(global);
 	for (let i in entries) {
 		logToConsole(LOG_DEBUG, `[AGRP.Database] Checking entry ${i} (${entries[i]})`);
-		if (toString(i).slice(0, 3).indexOf("AGRP_") != -1) {
+		if (toString(i).slice(0, 3).indexOf("V_") != -1) {
 			logToConsole(LOG_DEBUG, `[AGRP.Database] Adding ${i} (${entries[i]}) to database global variables`);
 		}
 	}
@@ -1126,7 +1125,7 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//if (getGame() == V_GAME_GTA_IV) {
 	//	return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	//}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
@@ -1159,7 +1158,7 @@ function getVehicleFirstEmptySeat(vehicle) {
 // ===========================================================================
 
 function isVehicleTrain(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_III) {
 		if (vehicle.modelIndex == 124) {
 			return true;
 		}
@@ -1190,13 +1189,13 @@ function setVehicleHealth(vehicle, health) {
 
 function givePlayerWeapon(client, weaponId, ammo, active = true) {
 	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	sendNetworkEventToPlayer("agrp.giveWeapon", client, weaponId, ammo, active);
+	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, ammo, active);
 }
 
 // ===========================================================================
 
 function setPlayerWantedLevel(client, wantedLevel) {
-	sendNetworkEventToPlayer("agrp.wantedLevel", client, wantedLevel);
+	sendNetworkEventToPlayer("v.rp.wantedLevel", client, wantedLevel);
 	return true;
 }
 
@@ -1255,7 +1254,7 @@ function getPlayerPed(client) {
 		return null;
 	}
 
-	//if (getGame() == AGRP_GAME_GTA_IV) {
+	//if (getGame() == V_GAME_GTA_IV) {
 	//	return getPlayerData(client).ped;
 	//} else {
 	return client.player;
@@ -1363,7 +1362,7 @@ function serverBanIP(ip) {
 // ===========================================================================
 
 function setVehicleTrunkState(vehicle, trunkState) {
-	sendNetworkEventToPlayer("agrp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+	sendNetworkEventToPlayer("v.rp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
 
 // ===========================================================================
@@ -1490,7 +1489,7 @@ function deletePlayerPed(client) {
 	if (areServerElementsSupported()) {
 		destroyElement(client.player);
 	} else {
-		sendNetworkEventToPlayer("agrp.deleteLocalPlayerPed", client);
+		sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);
 	}
 
 }

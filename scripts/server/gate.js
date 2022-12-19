@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: gate.js
 // DESC: Provides gate functions and commands
@@ -9,14 +8,14 @@
 // ===========================================================================
 
 // Gate Owner Types
-const AGRP_GATEOWNER_NONE = 0;                   // Not owned
-const AGRP_GATEOWNER_PLAYER = 1;                 // Owner is a player (character/subaccount)
-const AGRP_GATEOWNER_JOB = 2;                    // Owned by a job
-const AGRP_GATEOWNER_CLAN = 3;                   // Owned by a clan
-const AGRP_GATEOWNER_FACTION = 4;                // Owned by a faction
-const AGRP_GATEOWNER_PUBLIC = 5;                 // Public gate. Technically not owned. This probably won't be used.
-const AGRP_GATEOWNER_BUSINESS = 6;               // Owned by a business. Back lots, unloading areas, and other stuff like that
-const AGRP_GATEOWNER_HOUSE = 7;                  // Owned by a house. Like for mansions with closed private areas.
+const V_GATEOWNER_NONE = 0;                   // Not owned
+const V_GATEOWNER_PLAYER = 1;                 // Owner is a player (character/subaccount)
+const V_GATEOWNER_JOB = 2;                    // Owned by a job
+const V_GATEOWNER_CLAN = 3;                   // Owned by a clan
+const V_GATEOWNER_FACTION = 4;                // Owned by a faction
+const V_GATEOWNER_PUBLIC = 5;                 // Public gate. Technically not owned. This probably won't be used.
+const V_GATEOWNER_BUSINESS = 6;               // Owned by a business. Back lots, unloading areas, and other stuff like that
+const V_GATEOWNER_HOUSE = 7;                  // Owned by a house. Like for mansions with closed private areas.
 
 // ===========================================================================
 
@@ -28,7 +27,7 @@ class GateData {
 		this.enabled = false;
 		this.position = toVector3(0.0, 0.0, 0.0);
 		this.locked = true;
-		this.ownerType = AGRP_GATEOWNER_NONE;
+		this.ownerType = V_GATEOWNER_NONE;
 		this.ownerId = 0;
 
 		if (dbAssoc) {
@@ -55,17 +54,17 @@ function initGateScript() {
 function doesPlayerHaveGateKeys(client, vehicle) {
 	let gateData = getGateData(vehicle);
 
-	if (gateData.ownerType == AGRP_GATEOWNER_PUBLIC) {
+	if (gateData.ownerType == V_GATEOWNER_PUBLIC) {
 		return true;
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_PLAYER) {
+	if (gateData.ownerType == V_GATEOWNER_PLAYER) {
 		if (gateData.ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_CLAN) {
+	if (gateData.ownerType == V_GATEOWNER_CLAN) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 			return true;
 		}
@@ -77,7 +76,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_FACTION) {
+	if (gateData.ownerType == V_GATEOWNER_FACTION) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageFactions"))) {
 			return true;
 		}
@@ -89,7 +88,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_JOB) {
+	if (gateData.ownerType == V_GATEOWNER_JOB) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
 			return true;
 		}
@@ -99,7 +98,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_BUSINESS) {
+	if (gateData.ownerType == V_GATEOWNER_BUSINESS) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -109,7 +108,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 		}
 	}
 
-	if (gateData.ownerType == AGRP_GATEOWNER_HOUSE) {
+	if (gateData.ownerType == V_GATEOWNER_HOUSE) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
 			return true;
 		}

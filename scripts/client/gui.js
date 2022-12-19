@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: gui.js
 // DESC: Provides GUI functionality and styles (using MexUI)
@@ -76,7 +75,7 @@ function initGUI() {
 
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] All GUI created successfully!`);
 
-	sendNetworkEventToServer("agrp.guiReady", true);
+	sendNetworkEventToServer("v.rp.guiReady", true);
 };
 
 // ===========================================================================
@@ -277,7 +276,7 @@ function processGUIKeyPress(keyCode) {
 
 function processToggleGUIKeyPress(keyCode) {
 	if (keyCode == disableGUIKey) {
-		sendNetworkEventToServer("agrp.toggleGUI");
+		sendNetworkEventToServer("v.rp.toggleGUI");
 	}
 }
 

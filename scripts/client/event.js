@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: event.js
 // DESC: Provides handlers for built in GTAC and Asshat-Gaming created events
@@ -42,7 +41,7 @@ function addAllEventHandlers() {
 		}
 	}
 
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("OnMapLoaded", onMapLoaded);
 	}
 }
@@ -166,7 +165,7 @@ function onElementStreamIn(event, element) {
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
-	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
 	cruiseControlSpeed = 0.0;
@@ -190,7 +189,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
-	//sendNetworkEventToServer("agrp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
@@ -204,7 +203,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped entered vehicle`);
-	//sendNetworkEventToServer("agrp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
+	//sendNetworkEventToServer("v.rp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
 	cruiseControlSpeed = 0.0;
@@ -215,9 +214,9 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				if (inVehicleSeat == 0) {
 					//parkedVehiclePosition = inVehicle.position;
 					//parkedVehicleHeading = inVehicle.heading;
-					if (doesEntityDataExist(vehicle, "agrp.server") == true) {
+					if (doesEntityDataExist(vehicle, "v.rp.server") == true) {
 						//setVehicleEngine(vehicle.id, false);
-						setVehicleEngine(vehicle.id, getEntityData(vehicle, "agrp.engine"));
+						setVehicleEngine(vehicle.id, getEntityData(vehicle, "v.rp.engine"));
 						//setLocalPlayerControlState(false, false);
 					}
 				}
@@ -238,7 +237,7 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 				if (!weaponDamageEnabled[damagerEntity.name]) {
 					preventDefaultEventAction(event);
 				}
-				sendNetworkEventToServer("agrp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
+				sendNetworkEventToServer("v.rp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
 			}
 		}
 	}
@@ -297,7 +296,7 @@ function onEntityProcess(event, entity) {
 // ===========================================================================
 
 function onMapLoaded(mapName) {
-	sendNetworkEventToServer("agrp.mapLoaded", mapName);
+	sendNetworkEventToServer("v.rp.mapLoaded", mapName);
 }
 
 // ===========================================================================

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: 2fa.js
 // DESC: Provides two factor authentication GUI
@@ -130,7 +129,7 @@ function twoFactorAuthSuccess() {
 
 function checkTwoFactorAuth() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking two-factor authentication with server ...`);
-	sendNetworkEventToServer("agrp.2fa", twoFactorAuth.codeInput.lines[0]);
+	sendNetworkEventToServer("v.rp.2fa", twoFactorAuth.codeInput.lines[0]);
 }
 
 // ===========================================================================

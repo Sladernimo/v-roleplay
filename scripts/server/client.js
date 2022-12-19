@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: client.js
 // DESC: Provides client communication and cross-endpoint operations
@@ -9,9 +8,9 @@
 // ===========================================================================
 
 // Return-To types (for when a player is teleported)
-const AGRP_RETURNTO_TYPE_NONE = 0;                // "Return to" data is invalid
-const AGRP_RETURNTO_TYPE_ADMINGET = 1;            // "Return to" data is from admin teleporting
-const AGRP_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin select
+const V_RETURNTO_TYPE_NONE = 0;                // "Return to" data is invalid
+const V_RETURNTO_TYPE_ADMINGET = 1;            // "Return to" data is from admin teleporting
+const V_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin select
 
 // ===========================================================================
 
@@ -37,9 +36,9 @@ class ClientData {
 		this.sessionId = 0;
 
 		// Security
-		this.passwordResetState = AGRP_RESETPASS_STATE_NONE;
+		this.passwordResetState = V_RESETPASS_STATE_NONE;
 		this.passwordResetCode = "";
-		this.twoFactorAuthenticationState = AGRP_2FA_STATE_NONE;
+		this.twoFactorAuthenticationState = V_2FA_STATE_NONE;
 		this.twoFactorAuthenticationCode = 0;
 		this.loginTimeout = null;
 		this.loginAttemptsRemaining = 3;
@@ -65,11 +64,11 @@ class ClientData {
 
 		// Items
 		this.tempLockerCache = new Array(9).fill(-1);
-		this.tempLockerType = AGRP_TEMP_LOCKER_TYPE_NONE;
+		this.tempLockerType = V_TEMP_LOCKER_TYPE_NONE;
 		this.hotBarItems = new Array(9).fill(-1);
 		this.activeHotBarSlot = -1;
 		this.toggleUseItem = false;
-		this.itemActionState = AGRP_ITEM_ACTION_NONE;
+		this.itemActionState = V_ITEM_ACTION_NONE;
 		this.itemActionItem = -1;
 		this.paintBallItemCache = [];
 
@@ -104,7 +103,7 @@ class ClientData {
 		this.returnToDimension = null;
 		this.returnToHouse = null;
 		this.returnToBusiness = null;
-		this.returnToType = AGRP_RETURNTO_TYPE_NONE;
+		this.returnToType = V_RETURNTO_TYPE_NONE;
 
 		// Animation
 		this.currentAnimation = -1;
@@ -119,7 +118,7 @@ class ClientData {
 		this.usingSkinSelect = false;
 		this.keyBinds = [];
 		this.incomingDamageMultiplier = 1;
-		this.weaponDamageEvent = AGRP_WEAPON_DAMAGE_EVENT_NORMAL;
+		this.weaponDamageEvent = V_WEAPON_DAMAGE_EVENT_NORMAL;
 		this.lastJobVehicle = null;
 		this.health = 100;
 		this.locale = 0;
@@ -128,8 +127,8 @@ class ClientData {
 		this.scene = "";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
-		this.pedState = AGRP_PEDSTATE_NONE;
-		this.promptType = AGRP_PROMPT_NONE;
+		this.pedState = V_PEDSTATE_NONE;
+		this.promptType = V_PROMPT_NONE;
 		this.privateMessageReplyTo = null;
 		this.enteringExitingProperty = null;
 		this.inProperty = null;
@@ -144,12 +143,12 @@ class ClientData {
 		this.jobRouteEditNextLocationDelay = 0;
 		this.jobRouteEditNextLocationArriveMessage = "";
 		this.jobRouteEditNextLocationGotoMessage = "";
-		this.jobRouteEditNextLocationType = AGRP_JOB_ROUTE_LOC_TYPE_NONE;
+		this.jobRouteEditNextLocationType = V_JOB_ROUTE_LOC_TYPE_NONE;
 
 		// Casino Stuff
 		this.casinoChips = 0; // This might become an item with a useId of a business (for chips belonging to specific casinos)
 		this.casinoCardHand = [];
-		this.casinoPlayingGame = AGRP_CASINO_GAME_NONE;
+		this.casinoPlayingGame = V_CASINO_GAME_NONE;
 	}
 };
 
@@ -222,7 +221,7 @@ function initClient(client) {
 
 	playerInitialized[client.index] = true;
 
-	//setEntityData(client, "agrp.isInitialized", true, false);
+	//setEntityData(client, "v.rp.isInitialized", true, false);
 
 	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
 	sendPlayerCurrencyString(client);

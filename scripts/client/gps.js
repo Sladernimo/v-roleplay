@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: gps.js
 // DESC: Provides GPS functions and usage
@@ -18,8 +17,8 @@ let gpsBlipBlinkTimer = null;
 
 function showGPSLocation(position, colour) {
 	logToConsole(LOG_DEBUG, `[AGRP.GPS] Showing gps location`);
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
-		if (getGame() == AGRP_GAME_GTA_SA) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
+		if (getGame() == V_GAME_GTA_SA) {
 			// Server-side spheres don't show in GTA SA for some reason.
 			gpsSphere = game.createPickup(1318, position, 1);
 		} else {

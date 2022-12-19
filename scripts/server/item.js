@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: item.js
 // DESC: Provides item functions and usage
@@ -9,111 +8,111 @@
 // ===========================================================================
 
 // Item Owners
-const AGRP_ITEM_OWNER_NONE = 0;                   // None
-const AGRP_ITEM_OWNER_PLAYER = 1;                 // Item is in a player's inventory
-const AGRP_ITEM_OWNER_VEHTRUNK = 2;               // Item is in a vehicle's trunk
-const AGRP_ITEM_OWNER_VEHDASH = 3;                // Item is in a vehicle's glove compartment
-const AGRP_ITEM_OWNER_BIZFLOOR = 4;               // Item is in the public area of a business (on the floor = ready to buy)
-const AGRP_ITEM_OWNER_BIZSTORAGE = 5;             // Item is in a business's storage area (stock room)
-const AGRP_ITEM_OWNER_HOUSE = 6;                  // Item is in a house
-const AGRP_ITEM_OWNER_SAFE = 7;                   // Item is in a safe (safes can be anywhere)
-const AGRP_ITEM_OWNER_ITEM = 8;                   // Item is in another item (trashbag, briefcase, wallet, suitcase, crate/box, barrel, etc)
-const AGRP_ITEM_OWNER_GROUND = 9;                 // Item is on the ground
-const AGRP_ITEM_OWNER_TEMPLOCKER = 10;            // Item is in player's temp locker (used for paintball, jobs, etc)
-const AGRP_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
+const V_ITEM_OWNER_NONE = 0;                   // None
+const V_ITEM_OWNER_PLAYER = 1;                 // Item is in a player's inventory
+const V_ITEM_OWNER_VEHTRUNK = 2;               // Item is in a vehicle's trunk
+const V_ITEM_OWNER_VEHDASH = 3;                // Item is in a vehicle's glove compartment
+const V_ITEM_OWNER_BIZFLOOR = 4;               // Item is in the public area of a business (on the floor = ready to buy)
+const V_ITEM_OWNER_BIZSTORAGE = 5;             // Item is in a business's storage area (stock room)
+const V_ITEM_OWNER_HOUSE = 6;                  // Item is in a house
+const V_ITEM_OWNER_SAFE = 7;                   // Item is in a safe (safes can be anywhere)
+const V_ITEM_OWNER_ITEM = 8;                   // Item is in another item (trashbag, briefcase, wallet, suitcase, crate/box, barrel, etc)
+const V_ITEM_OWNER_GROUND = 9;                 // Item is on the ground
+const V_ITEM_OWNER_TEMPLOCKER = 10;            // Item is in player's temp locker (used for paintball, jobs, etc)
+const V_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
 
 // ===========================================================================
 
 // Item Use Types
-const AGRP_ITEM_USE_TYPE_NONE = 0;                 // Has no effect
-const AGRP_ITEM_USE_TYPE_WEAPON = 1;               // Equips weapon
-const AGRP_ITEM_USE_TYPE_AMMO_CLIP = 2;            // Magazine for weapon. If in inventory, R will load it into gun
-const AGRP_ITEM_USE_TYPE_PHONE = 3;                // Pulls out phone
-const AGRP_ITEM_USE_TYPE_GPS = 4;                  // Not sure how I want this to work yet
-const AGRP_ITEM_USE_TYPE_MAP = 5;                  // Shows minimap on HUD
-const AGRP_ITEM_USE_TYPE_SKIN = 6;                 // Changes skin (uses skin changer)
-const AGRP_ITEM_USE_TYPE_PEDPART = 7;              // Changes ped part (clothing, skin, hair, etc) (UNUSED)
-const AGRP_ITEM_USE_TYPE_PEDPROP = 8;              // Changes ped prop (watches, glasses, hats, etc) (UNUSED)
-const AGRP_ITEM_USE_TYPE_STORAGE = 9;              // Shows stored items. Backpack, crate, briefcase, wallet, etc
-const AGRP_ITEM_USE_TYPE_VEHKEY = 10;              // Locks/unlocks a vehicle and allows starting engine without hotwire
-const AGRP_ITEM_USE_TYPE_BIZKEY = 11;              // Locks/unlocks a business
-const AGRP_ITEM_USE_TYPE_HOUSEKEY = 12;            // Locks/unlocks a house
-const AGRP_ITEM_USE_TYPE_SEED = 13;                // Plants a seed
-const AGRP_ITEM_USE_TYPE_WEED = 14;                // Light drug effect (short term relief of addiction symptoms?)
-const AGRP_ITEM_USE_TYPE_COKE = 15;                // Medium drug effect (medium term relief of addiction symptoms?)
-const AGRP_ITEM_USE_TYPE_METH = 16;                // Heavy drug effect (extended term relief of addiction symptoms?)
-const AGRP_ITEM_USE_TYPE_CIGAR = 17;               // Just for appearance. Makes people look cool I guess
-const AGRP_ITEM_USE_TYPE_WATER = 18;               // Replenishes small amount of health
-const AGRP_ITEM_USE_TYPE_FOOD = 19;                // Eat food. Replenishes a small amount of health
-const AGRP_ITEM_USE_TYPE_BEER = 20;                // Subtle drunk effect. Replenishes small amount of health.
-const AGRP_ITEM_USE_TYPE_WINE = 21;                // Moderate drunk effect. Replenishes moderate amount of health.
-const AGRP_ITEM_USE_TYPE_LIQUOR = 22;              // Heavy drunk effect. Replenishes large amount of health.
-const AGRP_ITEM_USE_TYPE_COFFEE = 23;              // Replenishes moderate amount of health.
-const AGRP_ITEM_USE_TYPE_AMMO_ROUND = 23;          // Bullet. Loads into magazine. Not used at the moment
-const AGRP_ITEM_USE_TYPE_HANDCUFF = 24;            //
-const AGRP_ITEM_USE_TYPE_ROPE = 25;                //
-const AGRP_ITEM_USE_TYPE_BLINDFOLD = 26;           //
-const AGRP_ITEM_USE_TYPE_TAZER = 27;               //
-const AGRP_ITEM_USE_TYPE_ARMOUR = 28;              //
-const AGRP_ITEM_USE_TYPE_HEALTH = 29;              //
-const AGRP_ITEM_USE_TYPE_AED = 30;                 //
-const AGRP_ITEM_USE_TYPE_WALKIETALKIE = 31;        //
-const AGRP_ITEM_USE_TYPE_BOOMBOX = 32;             //
-const AGRP_ITEM_USE_TYPE_EARBUDS = 33;             //
-const AGRP_ITEM_USE_TYPE_BADGE = 34;               //
-const AGRP_ITEM_USE_TYPE_DRINK = 35;               // Drinkable item. Action output shows "Player_Name drinks some (drink name)"
-const AGRP_ITEM_USE_TYPE_EXTINGUISHER = 36;        // Extinguisher item. Allows putting out fires
-const AGRP_ITEM_USE_TYPE_SPRAYPAINT = 37;          // Spraypaint item. Allows spraying custom clan tags on walls
-const AGRP_ITEM_USE_TYPE_PEPPERSPRAY = 38;         // Pepper spray item. Incapacitates nearby player
-const AGRP_ITEM_USE_TYPE_FLASHLIGHT = 39;          // Flashlight item. Unusable for now, but plan to cast a custom light beam
-const AGRP_ITEM_USE_TYPE_AIRPLANETICKET = 40;      // Airplane ticket. Allows a character to move to another server
-const AGRP_ITEM_USE_TYPE_TRAINTICKET = 41;         // Train ticket. Allows a character to move to another server
-const AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART = 42;     // Vehicle update part item. Allows adding custom parts like spoilers, side skirts, roof scoops, etc
-const AGRP_ITEM_USE_TYPE_VEHTIRE = 43;             // Vehicle tire item. Allows changing the tire/rim types
-const AGRP_ITEM_USE_TYPE_FUELCAN = 44;             // Fuel can item. Allows refueling of a nearby vehicle anywhere
-const AGRP_ITEM_USE_TYPE_VEHCOLOUR = 45;           // Vehicle colour item. Changes primary and secondary vehicle colours
-const AGRP_ITEM_USE_TYPE_VEHLIVERY = 46;           // Vehicle livery/paintjob item. Applies decals and special paint jobs
-const AGRP_ITEM_USE_TYPE_VEHREPAIR = 47;           // Vehicle repair item. Much longer use time
-const AGRP_ITEM_USE_TYPE_SMOKEDRUG = 48;           // Smokable drug like weed. Action output shows "Player_Name smokes some (drug)"
-const AGRP_ITEM_USE_TYPE_SNORTDRUG = 49;           // Snortable drug like cocaine. Action output shows "Player_Name snorts some (drug)"
-const AGRP_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants, coke plants, etc
-const AGRP_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
-const AGRP_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
-const AGRP_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
-const AGRP_ITEM_USE_TYPE_METH_LAB = 54;  		   // Meth lab item. Allows creating meth
-const AGRP_ITEM_USE_TYPE_PLANTER = 55;			   // Plant pot. Can be used to plant item of use type AGRP_ITEM_USE_TYPE_PLANT where terrain is not available
-const AGRP_ITEM_USE_TYPE_FISH = 56;				   // Fishing catch ... bass, catfish, etc
-const AGRP_ITEM_USE_TYPE_JUNK = 57;				   // Worthless junk. Some used as fishing catches
-const AGRP_ITEM_USE_TYPE_BAIT = 58;				   // Bait. Used for fishing
-const AGRP_ITEM_USE_TYPE_FISHINGROD = 59;		   // Fishing rod. Used for fishing.
+const V_ITEM_USE_TYPE_NONE = 0;                 // Has no effect
+const V_ITEM_USE_TYPE_WEAPON = 1;               // Equips weapon
+const V_ITEM_USE_TYPE_AMMO_CLIP = 2;            // Magazine for weapon. If in inventory, R will load it into gun
+const V_ITEM_USE_TYPE_PHONE = 3;                // Pulls out phone
+const V_ITEM_USE_TYPE_GPS = 4;                  // Not sure how I want this to work yet
+const V_ITEM_USE_TYPE_MAP = 5;                  // Shows minimap on HUD
+const V_ITEM_USE_TYPE_SKIN = 6;                 // Changes skin (uses skin changer)
+const V_ITEM_USE_TYPE_PEDPART = 7;              // Changes ped part (clothing, skin, hair, etc) (UNUSED)
+const V_ITEM_USE_TYPE_PEDPROP = 8;              // Changes ped prop (watches, glasses, hats, etc) (UNUSED)
+const V_ITEM_USE_TYPE_STORAGE = 9;              // Shows stored items. Backpack, crate, briefcase, wallet, etc
+const V_ITEM_USE_TYPE_VEHKEY = 10;              // Locks/unlocks a vehicle and allows starting engine without hotwire
+const V_ITEM_USE_TYPE_BIZKEY = 11;              // Locks/unlocks a business
+const V_ITEM_USE_TYPE_HOUSEKEY = 12;            // Locks/unlocks a house
+const V_ITEM_USE_TYPE_SEED = 13;                // Plants a seed
+const V_ITEM_USE_TYPE_WEED = 14;                // Light drug effect (short term relief of addiction symptoms?)
+const V_ITEM_USE_TYPE_COKE = 15;                // Medium drug effect (medium term relief of addiction symptoms?)
+const V_ITEM_USE_TYPE_METH = 16;                // Heavy drug effect (extended term relief of addiction symptoms?)
+const V_ITEM_USE_TYPE_CIGAR = 17;               // Just for appearance. Makes people look cool I guess
+const V_ITEM_USE_TYPE_WATER = 18;               // Replenishes small amount of health
+const V_ITEM_USE_TYPE_FOOD = 19;                // Eat food. Replenishes a small amount of health
+const V_ITEM_USE_TYPE_BEER = 20;                // Subtle drunk effect. Replenishes small amount of health.
+const V_ITEM_USE_TYPE_WINE = 21;                // Moderate drunk effect. Replenishes moderate amount of health.
+const V_ITEM_USE_TYPE_LIQUOR = 22;              // Heavy drunk effect. Replenishes large amount of health.
+const V_ITEM_USE_TYPE_COFFEE = 23;              // Replenishes moderate amount of health.
+const V_ITEM_USE_TYPE_AMMO_ROUND = 23;          // Bullet. Loads into magazine. Not used at the moment
+const V_ITEM_USE_TYPE_HANDCUFF = 24;            //
+const V_ITEM_USE_TYPE_ROPE = 25;                //
+const V_ITEM_USE_TYPE_BLINDFOLD = 26;           //
+const V_ITEM_USE_TYPE_TAZER = 27;               //
+const V_ITEM_USE_TYPE_ARMOUR = 28;              //
+const V_ITEM_USE_TYPE_HEALTH = 29;              //
+const V_ITEM_USE_TYPE_AED = 30;                 //
+const V_ITEM_USE_TYPE_WALKIETALKIE = 31;        //
+const V_ITEM_USE_TYPE_BOOMBOX = 32;             //
+const V_ITEM_USE_TYPE_EARBUDS = 33;             //
+const V_ITEM_USE_TYPE_BADGE = 34;               //
+const V_ITEM_USE_TYPE_DRINK = 35;               // Drinkable item. Action output shows "Player_Name drinks some (drink name)"
+const V_ITEM_USE_TYPE_EXTINGUISHER = 36;        // Extinguisher item. Allows putting out fires
+const V_ITEM_USE_TYPE_SPRAYPAINT = 37;          // Spraypaint item. Allows spraying custom clan tags on walls
+const V_ITEM_USE_TYPE_PEPPERSPRAY = 38;         // Pepper spray item. Incapacitates nearby player
+const V_ITEM_USE_TYPE_FLASHLIGHT = 39;          // Flashlight item. Unusable for now, but plan to cast a custom light beam
+const V_ITEM_USE_TYPE_AIRPLANETICKET = 40;      // Airplane ticket. Allows a character to move to another server
+const V_ITEM_USE_TYPE_TRAINTICKET = 41;         // Train ticket. Allows a character to move to another server
+const V_ITEM_USE_TYPE_VEHUPGRADE_PART = 42;     // Vehicle update part item. Allows adding custom parts like spoilers, side skirts, roof scoops, etc
+const V_ITEM_USE_TYPE_VEHTIRE = 43;             // Vehicle tire item. Allows changing the tire/rim types
+const V_ITEM_USE_TYPE_FUELCAN = 44;             // Fuel can item. Allows refueling of a nearby vehicle anywhere
+const V_ITEM_USE_TYPE_VEHCOLOUR = 45;           // Vehicle colour item. Changes primary and secondary vehicle colours
+const V_ITEM_USE_TYPE_VEHLIVERY = 46;           // Vehicle livery/paintjob item. Applies decals and special paint jobs
+const V_ITEM_USE_TYPE_VEHREPAIR = 47;           // Vehicle repair item. Much longer use time
+const V_ITEM_USE_TYPE_SMOKEDRUG = 48;           // Smokable drug like weed. Action output shows "Player_Name smokes some (drug)"
+const V_ITEM_USE_TYPE_SNORTDRUG = 49;           // Snortable drug like cocaine. Action output shows "Player_Name snorts some (drug)"
+const V_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants, coke plants, etc
+const V_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
+const V_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
+const V_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
+const V_ITEM_USE_TYPE_METH_LAB = 54;  		   // Meth lab item. Allows creating meth
+const V_ITEM_USE_TYPE_PLANTER = 55;			   // Plant pot. Can be used to plant item of use type V_ITEM_USE_TYPE_PLANT where terrain is not available
+const V_ITEM_USE_TYPE_FISH = 56;				   // Fishing catch ... bass, catfish, etc
+const V_ITEM_USE_TYPE_JUNK = 57;				   // Worthless junk. Some used as fishing catches
+const V_ITEM_USE_TYPE_BAIT = 58;				   // Bait. Used for fishing
+const V_ITEM_USE_TYPE_FISHINGROD = 59;		   // Fishing rod. Used for fishing.
 
 // ===========================================================================
 
 // Item Drop Types
-const AGRP_ITEM_DROP_TYPE_NONE = 0;                // Can't be dropped
-const AGRP_ITEM_DROP_TYPE_OBJECT = 1;              // Drops as an object on the ground
-const AGRP_ITEM_DROP_TYPE_PICKUP = 2;              // Drops as a pickup
-const AGRP_ITEM_DROP_TYPE_OBJECTLIGHT = 3;         // Object that produces an area light effect (lamp, flashlight, etc)
-const AGRP_ITEM_DROP_TYPE_DESTROY = 4;             // Will destroy the item on drop (keys mostly but for any tiny object)
-const AGRP_ITEM_DROP_TYPE_OBJECTSTACK = 5;         // Stackable objects (crates and such). Will sit on top of closest other stackable
+const V_ITEM_DROP_TYPE_NONE = 0;                // Can't be dropped
+const V_ITEM_DROP_TYPE_OBJECT = 1;              // Drops as an object on the ground
+const V_ITEM_DROP_TYPE_PICKUP = 2;              // Drops as a pickup
+const V_ITEM_DROP_TYPE_OBJECTLIGHT = 3;         // Object that produces an area light effect (lamp, flashlight, etc)
+const V_ITEM_DROP_TYPE_DESTROY = 4;             // Will destroy the item on drop (keys mostly but for any tiny object)
+const V_ITEM_DROP_TYPE_OBJECTSTACK = 5;         // Stackable objects (crates and such). Will sit on top of closest other stackable
 
 // ===========================================================================
 
 // Item Occupied States
-const AGRP_ITEM_ACTION_NONE = 0;                  // None
-const AGRP_ITEM_ACTION_USE = 1;                   // Using item
-const AGRP_ITEM_ACTION_PICKUP = 2;                // Picking up item
-const AGRP_ITEM_ACTION_DROP = 3;                  // Dropping item
-const AGRP_ITEM_ACTION_SWITCH = 4;                // Switching item
-const AGRP_ITEM_ACTION_PUT = 5;                   // Putting item (into trunk, dash, crate, etc)
-const AGRP_ITEM_ACTION_TAKE = 6;                  // Taking item (from trunk, dash, crate, etc)
+const V_ITEM_ACTION_NONE = 0;                  // None
+const V_ITEM_ACTION_USE = 1;                   // Using item
+const V_ITEM_ACTION_PICKUP = 2;                // Picking up item
+const V_ITEM_ACTION_DROP = 3;                  // Dropping item
+const V_ITEM_ACTION_SWITCH = 4;                // Switching item
+const V_ITEM_ACTION_PUT = 5;                   // Putting item (into trunk, dash, crate, etc)
+const V_ITEM_ACTION_TAKE = 6;                  // Taking item (from trunk, dash, crate, etc)
 
 // ===========================================================================
 
 // Player Temporary Locker Types
-const AGRP_TEMP_LOCKER_TYPE_NONE = 0;             // None
-const AGRP_TEMP_LOCKER_TYPE_JOB = 1;				 // Job locker
-const AGRP_TEMP_LOCKER_TYPE_PAINTBALL = 2;		 // Paintball locker
+const V_TEMP_LOCKER_TYPE_NONE = 0;             // None
+const V_TEMP_LOCKER_TYPE_JOB = 1;				 // Job locker
+const V_TEMP_LOCKER_TYPE_PAINTBALL = 2;		 // Paintball locker
 
 // ===========================================================================
 
@@ -123,7 +122,7 @@ class ItemData {
 		this.index = 0;
 		this.itemTypeIndex = 0;
 		this.itemType = 0;
-		this.ownerType = AGRP_ITEM_OWNER_NONE;
+		this.ownerType = V_ITEM_OWNER_NONE;
 		this.ownerId = 0;
 		this.ownerIndex = -1;
 		this.position = toVector3(0.0, 0.0, 0.0);
@@ -165,11 +164,11 @@ class ItemTypeData {
 		this.index = 0;
 		this.name = "Unknown";
 		this.enabled = false;
-		this.useType = AGRP_ITEM_USE_TYPE_NONE;
+		this.useType = V_ITEM_USE_TYPE_NONE;
 		this.useId = 0;
 		this.useValue = 0;
 		this.maxValue = 0;
-		this.dropType = AGRP_ITEM_DROP_TYPE_NONE;
+		this.dropType = V_ITEM_DROP_TYPE_NONE;
 		this.useId = 0;
 		this.dropPosition = toVector3(0.0, 0.0, 0.0);
 		this.dropRotation = toVector3(0.0, 0.0, 0.0);
@@ -354,7 +353,7 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1) {
 // ===========================================================================
 
 function createGroundItem(itemTypeId, value, position, dimension = 0) {
-	let itemIndex = createItem(itemTypeId, value, AGRP_ITEM_OWNER_GROUND, 0);
+	let itemIndex = createItem(itemTypeId, value, V_ITEM_OWNER_GROUND, 0);
 	getItemData(itemIndex).position = position;
 	getItemData(itemIndex).dimension = dimension;
 	createGroundItemObject(itemIndex);
@@ -379,8 +378,8 @@ function createGroundItemObject(itemId) {
 		setElementOnAllDimensions(getItemData(itemId).object, false);
 		setElementDimension(getItemData(itemId).object, getItemData(itemId).dimension);
 		setElementInterior(getItemData(itemId).object, getItemData(itemId).interior);
-		setEntityData(getItemData(itemId).object, "agrp.scale", getItemTypeData(getItemData(itemId).itemTypeIndex).dropScale, true);
-		setEntityData(getItemData(itemId).object, "agrp.collisions", false, true);
+		setEntityData(getItemData(itemId).object, "v.rp.scale", getItemTypeData(getItemData(itemId).itemTypeIndex).dropScale, true);
+		setEntityData(getItemData(itemId).object, "v.rp.collisions", false, true);
 		forcePlayerToSyncElementProperties(null, getItemData(itemId).object);
 		addToWorld(getItemData(itemId).object);
 	}
@@ -456,7 +455,7 @@ function createItemCommand(command, params, client) {
 	//	return false;
 	//}
 
-	let itemId = createItem(itemType, toInteger(value), AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+	let itemId = createItem(itemType, toInteger(value), V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 	cachePlayerHotBarItems(client);
 	messagePlayerSuccess(client, `You created a ${getItemTypeData(itemType).name} in your inventory`);
 }
@@ -503,7 +502,7 @@ function useItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -517,7 +516,7 @@ function useItemCommand(command, params, client) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).useAnimationIndex, 0.0);
 	}
 
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_USE;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_USE;
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemUseDelay(client, hotBarSlot);
 
@@ -596,7 +595,7 @@ function pickupItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -610,7 +609,7 @@ function pickupItemCommand(command, params, client) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).pickupAnimationIndex, 0.0);
 	}
 
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_PICKUP;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_PICKUP;
 	getPlayerData(client).itemActionItem = itemId;
 	showPlayerItemPickupDelay(client, itemId);
 
@@ -661,7 +660,7 @@ function dropItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -680,7 +679,7 @@ function dropItemCommand(command, params, client) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).dropAnimationIndex, 0.0);
 	}
 
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_DROP;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_DROP;
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemDropDelay(client, hotBarSlot);
 
@@ -727,7 +726,7 @@ function putItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -748,7 +747,7 @@ function putItemCommand(command, params, client) {
 		forcePlayerPlayAnimation(client, getItemTypeData(getItemData(itemId).itemTypeIndex).putAnimationIndex, 0.0);
 	}
 
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_PUT;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_PUT;
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemPutDelay(client, hotBarSlot);
 
@@ -780,12 +779,12 @@ function takeItemCommand(command, params, client) {
 	let bestOwner = getBestItemToTake(client, itemSlot);
 	let itemId = bestOwner[2];
 
-	if (bestOwner[1] == AGRP_ITEM_OWNER_NONE) {
+	if (bestOwner[1] == V_ITEM_OWNER_NONE) {
 		messagePlayerError(client, getLocaleString(client, "NothingToTakeItemFrom"));
 		return false;
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -805,7 +804,7 @@ function takeItemCommand(command, params, client) {
 	}
 
 	getPlayerData(client).itemActionItem = itemId;
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_TAKE;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_TAKE;
 	showPlayerItemTakeDelay(client, itemId);
 
 	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
@@ -1372,20 +1371,20 @@ function playerUseItem(client, hotBarSlot) {
 	markPlayerActionTipSeen(client, "UseItemKeyAfterEquipping");
 
 	switch (toInteger(itemTypeData.useType)) {
-		case AGRP_ITEM_USE_TYPE_SKIN: {
+		case V_ITEM_USE_TYPE_SKIN: {
 			getPlayerData(client).itemActionItem = itemIndex;
 			forcePlayerIntoSkinSelect(client);
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_WEAPON: {
+		case V_ITEM_USE_TYPE_WEAPON: {
 			if (isMeleeWeapon(itemTypeData.useId, getGame()) == true) {
 				messagePlayerError(client, getLocaleString(client, "WeaponDoesNotUseAmmo", itemTypeData.name));
 			} else {
 				for (let i in hotBarItems) {
 					if (hotBarItems[i] != -1) {
 						if (getItemData(hotBarItems[i]) != false) {
-							if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
+							if (getItemTypeData(getItemData(hotBarItems[i]).itemTypeIndex).useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
 								let ammoItemData = getItemData(hotBarItems[i]);
 								let ammoItemTypeData = getItemTypeData(ammoItemData.itemTypeIndex);
 								if (ammoItemTypeData.useId == itemTypeData.databaseId) {
@@ -1406,7 +1405,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_AMMO_CLIP: {
+		case V_ITEM_USE_TYPE_AMMO_CLIP: {
 			if (doesPlayerHaveKeyBindForCommand(client, "use")) {
 				messagePlayerError(client, getLocaleString(client, "LoadAmmoIntoWeaponHelpKeyPress", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "use").key))}{MAINCOLOUR}`));
 			} else {
@@ -1415,12 +1414,12 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_STORAGE: {
+		case V_ITEM_USE_TYPE_STORAGE: {
 			showItemInventoryToPlayer(client, itemIndex);
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_FOOD: {
+		case V_ITEM_USE_TYPE_FOOD: {
 			meActionToNearbyPlayers(client, `eats some of their ${itemTypeData.name}`);
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
@@ -1431,7 +1430,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_DRINK: {
+		case V_ITEM_USE_TYPE_DRINK: {
 			meActionToNearbyPlayers(client, `drinks some of their ${itemTypeData.name}`);
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
@@ -1442,7 +1441,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_ARMOUR: {
+		case V_ITEM_USE_TYPE_ARMOUR: {
 			meActionToNearbyPlayers(client, `puts on a ${itemTypeData.name}`);
 			givePlayerArmour(client, itemTypeData.useValue);
 			deleteItem(itemIndex);
@@ -1450,7 +1449,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_ROPE: {
+		case V_ITEM_USE_TYPE_ROPE: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1483,7 +1482,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_HANDCUFF: {
+		case V_ITEM_USE_TYPE_HANDCUFF: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1511,7 +1510,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_VEHREPAIR: {
+		case V_ITEM_USE_TYPE_VEHREPAIR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their repair kit and fixes the vehicle`);
@@ -1529,7 +1528,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART: {
+		case V_ITEM_USE_TYPE_VEHUPGRADE_PART: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
@@ -1541,7 +1540,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_VEHLIVERY: {
+		case V_ITEM_USE_TYPE_VEHLIVERY: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their decal kit and adds some decals to the vehicle.`);
@@ -1550,7 +1549,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_VEHCOLOUR: {
+		case V_ITEM_USE_TYPE_VEHCOLOUR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
 				if (itemData.useId == 1) {
@@ -1570,7 +1569,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_FUELCAN: {
+		case V_ITEM_USE_TYPE_FUELCAN: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			let fuelPump = getClosestFuelPump(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position)) {
@@ -1609,7 +1608,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_WALKIETALKIE: {
+		case V_ITEM_USE_TYPE_WALKIETALKIE: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(itemData.enabled))} their walkie-talkie`);
 
@@ -1621,7 +1620,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_PHONE: {
+		case V_ITEM_USE_TYPE_PHONE: {
 			if (itemData.value == 0) {
 				let phoneNumber = generateRandomPhoneNumber();
 				itemData.value = phoneNumber;
@@ -1639,7 +1638,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_SMOKEDRUG: {
+		case V_ITEM_USE_TYPE_SMOKEDRUG: {
 			meActionToNearbyPlayers(client, `smokes some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1650,7 +1649,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_SNORTDRUG: {
+		case V_ITEM_USE_TYPE_SNORTDRUG: {
 			meActionToNearbyPlayers(client, `snorts some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1661,7 +1660,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_INJECTDRUG: {
+		case V_ITEM_USE_TYPE_INJECTDRUG: {
 			meActionToNearbyPlayers(client, `shoots up some ${itemTypeData.name}`);
 			getPlayerData(client).incomingDamageMultiplier = getPlayerData(client).incomingDamageMultiplier - (itemTypeData.useValue / 100);
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
@@ -1672,7 +1671,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_PLANT: {
+		case V_ITEM_USE_TYPE_PLANT: {
 			meActionToNearbyPlayers(client, `bends down and plants a ${itemTypeData.name} in the ground`);
 			createGroundPlant(itemIndex);
 			if (itemData.value == 0) {
@@ -1682,7 +1681,7 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_BADGE: {
+		case V_ITEM_USE_TYPE_BADGE: {
 			meActionToNearbyPlayers(client, `shows their badge to everyone nearby.`);
 			let clients = getClients();
 			for (let i in clients) {
@@ -1696,12 +1695,12 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_AMMO_CLIP: {
+		case V_ITEM_USE_TYPE_AMMO_CLIP: {
 			messagePlayerError(client, `Equip a compatible weapon and press R to use an ammo clip/magazine`);
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_HEALTH: {
+		case V_ITEM_USE_TYPE_HEALTH: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
@@ -1716,26 +1715,26 @@ function playerUseItem(client, hotBarSlot) {
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_LOTTOTICKET: {
+		case V_ITEM_USE_TYPE_LOTTOTICKET: {
 			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_AREARADIO: {
+		case V_ITEM_USE_TYPE_AREARADIO: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} the boombox radio`);
 			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_PERSONALRADIO: {
+		case V_ITEM_USE_TYPE_PERSONALRADIO: {
 			itemData.enabled = !itemData.enabled;
 			meActionToNearbyPlayers(client, `turns ${getOnOffFromBool(itemData.enabled)} their personal radio`);
 			messagePlayerAlert(client, getLocaleString(client, "ItemRadioStationTip", `{ALTCOLOUR}/radiostation{MAINCOLOUR}`));
 			break;
 		}
 
-		case AGRP_ITEM_USE_TYPE_NONE: {
+		case V_ITEM_USE_TYPE_NONE: {
 			messagePlayerError(client, getLocaleString(client, "ItemDoesntDoAnythingOnUse", itemTypeData.name));
 			break;
 		}
@@ -1768,7 +1767,7 @@ function playerDropItem(client, hotBarSlot) {
 		updatePlayerHotBar(client);
 		clearPlayerWeapons(client);
 
-		getItemData(itemId).ownerType = AGRP_ITEM_OWNER_GROUND;
+		getItemData(itemId).ownerType = V_ITEM_OWNER_GROUND;
 		getItemData(itemId).ownerId = 0;
 		getItemData(itemId).position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
 		getItemData(itemId).dimension = getPlayerDimension(client);
@@ -1786,42 +1785,42 @@ function playerPutItem(client, hotBarSlot) {
 
 	let bestNewOwner = getBestNewOwnerToPutItem(client);
 
-	//if (bestNewOwner[0] == AGRP_ITEM_OWNER_NONE) {
+	//if (bestNewOwner[0] == V_ITEM_OWNER_NONE) {
 	//	return false;
 	//}
 
 	switch (bestNewOwner[0]) {
-		case AGRP_ITEM_OWNER_ITEM:
+		case V_ITEM_OWNER_ITEM:
 			getItemData(itemId).ownerId = getItemData(bestNewOwner[1]).databaseId;
 			getItemData(bestNewOwner[1]).itemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getItemName(bestNewOwner[1])}`);
 			break;
 
-		case AGRP_ITEM_OWNER_VEHTRUNK:
+		case V_ITEM_OWNER_VEHTRUNK:
 			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
 			getVehicleData(bestNewOwner[1]).trunkItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s trunk`);
 			break;
 
-		case AGRP_ITEM_OWNER_VEHDASH:
+		case V_ITEM_OWNER_VEHDASH:
 			getItemData(itemId).ownerId = getVehicleData(bestNewOwner[1]).databaseId;
 			getVehicleData(bestNewOwner[1]).dashItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the ${getVehicleName(getVehicleFromDatabaseId(bestNewOwner[1]))}'s dash compartment`);
 			break;
 
-		case AGRP_ITEM_OWNER_HOUSE:
+		case V_ITEM_OWNER_HOUSE:
 			getItemData(itemId).ownerId = getHouseData(bestNewOwner[1]).databaseId;
 			getHouseData(bestNewOwner[1]).itemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the house`);
 			break;
 
-		case AGRP_ITEM_OWNER_BIZFLOOR:
+		case V_ITEM_OWNER_BIZFLOOR:
 			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
 			getBusinessData(bestNewOwner[1]).floorItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} for sale in the business`);
 			break;
 
-		case AGRP_ITEM_OWNER_BIZSTORAGE:
+		case V_ITEM_OWNER_BIZSTORAGE:
 			getItemData(itemId).ownerId = getBusinessData(bestNewOwner[1]).databaseId;
 			getBusinessData(bestNewOwner[1]).storageItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
@@ -1847,7 +1846,7 @@ function playerPickupItem(client, itemId) {
 
 	let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
 	if (firstSlot != -1) {
-		getItemData(itemId).ownerType = AGRP_ITEM_OWNER_PLAYER;
+		getItemData(itemId).ownerType = V_ITEM_OWNER_PLAYER;
 		getItemData(itemId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 		getItemData(itemId).position = toVector3(0.0, 0.0, 0.0);
 		getItemData(itemId).dimension = 0;
@@ -1869,34 +1868,34 @@ function playerTakeItem(client, itemId) {
 
 	let ownerId = getItemIdFromDatabaseId(getItemData(itemId).ownerId);
 
-	getItemData(itemId).ownerType = AGRP_ITEM_OWNER_PLAYER;
+	getItemData(itemId).ownerType = V_ITEM_OWNER_PLAYER;
 	getItemData(itemId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 
 	getPlayerData(client).hotBarItems[firstSlot] = itemId;
 	updatePlayerHotBar(client);
 
 	switch (bestOwner[1]) {
-		case AGRP_ITEM_OWNER_HOUSE:
+		case V_ITEM_OWNER_HOUSE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromHouse", getItemName(itemId)));
 			break;
 
-		case AGRP_ITEM_OWNER_BIZFLOOR:
+		case V_ITEM_OWNER_BIZFLOOR:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusiness", getItemName(itemId)));
 			break;
 
-		case AGRP_ITEM_OWNER_BIZSTORAGE:
+		case V_ITEM_OWNER_BIZSTORAGE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusinessStorage", getItemName(itemId)));
 			break;
 
-		case AGRP_ITEM_OWNER_VEHTRUNK:
+		case V_ITEM_OWNER_VEHTRUNK:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleTrunk", getItemName(itemId)));
 			break;
 
-		case AGRP_ITEM_OWNER_VEHDASH:
+		case V_ITEM_OWNER_VEHDASH:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleDash", getItemName(itemId)));
 			break;
 
-		case AGRP_ITEM_OWNER_ITEM:
+		case V_ITEM_OWNER_ITEM:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(ownerId));
 			break;
 	}
@@ -1944,28 +1943,28 @@ function playerSwitchItem(client, newHotBarSlot) {
 
 	if (newHotBarItem != -1) {
 		if (getItemData(newHotBarItem)) {
-			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == AGRP_ITEM_USE_TYPE_WEAPON) {
+			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_WEAPON) {
 				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
 					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
 					setPlayerWeaponDamageEnabled(client, true);
-					setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
+					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 				} else {
 					let ammoItemSlot = getPlayerFirstAmmoItemForWeapon(client, getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
 					if (ammoItemSlot != false) {
 						getItemData(newHotBarItem).value = getItemData(getPlayerData(client).hotBarItems[ammoItemSlot]).value;
 						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
 						setPlayerWeaponDamageEnabled(client, true);
-						setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
+						setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 						deleteItem(getPlayerData(client).hotBarItems[ammoItemSlot]);
 					} else {
 						messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
 					}
 				}
-			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == AGRP_ITEM_USE_TYPE_TAZER) {
+			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_TAZER) {
 				if (getItemData(newHotBarItem).value > 0) {
 					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
 					setPlayerWeaponDamageEnabled(client, false);
-					setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_TAZER);
+					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_TAZER);
 				} else {
 					messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
 				}
@@ -1987,31 +1986,31 @@ function playerSwitchItem(client, newHotBarSlot) {
 	}
 
 	switch (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType) {
-		case AGRP_ITEM_USE_TYPE_AMMO_CLIP:
+		case V_ITEM_USE_TYPE_AMMO_CLIP:
 			if (!hasPlayerSeenActionTip(client, "AmmoClipItemUsage")) {
 				messagePlayerTip(client, getGroupedLocaleString(client, "AmmoClipItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
-		case AGRP_ITEM_USE_TYPE_VEHREPAIR:
+		case V_ITEM_USE_TYPE_VEHREPAIR:
 			if (!hasPlayerSeenActionTip(client, "VehicleRepairKitItemUsage")) {
 				messagePlayerTip(client, getGroupedLocaleString(client, "VehicleRepairKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
-		case AGRP_ITEM_USE_TYPE_VEHCOLOUR:
+		case V_ITEM_USE_TYPE_VEHCOLOUR:
 			if (!hasPlayerSeenActionTip(client, "VehicleColourKitItemUsage")) {
 				messagePlayerTip(client, getGroupedLocaleString(client, "VehicleColourKitItemUsage", getKeyOrCommandForPlayerMessage(client, "use")));
 			}
 			break;
 
-		case AGRP_ITEM_USE_TYPE_VEHUPGRADE_PART:
+		case V_ITEM_USE_TYPE_VEHUPGRADE_PART:
 			if (!hasPlayerSeenActionTip(client, "VehiclePartItemUsage")) {
 				messagePlayerTip(client, getGroupedLocaleString(client, "VehiclePartItemUsage", getKeyOrCommandForPlayerMessage(client, "use"), getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).name));
 			}
 			break;
 
-		case AGRP_ITEM_USE_TYPE_WALKIETALKIE:
+		case V_ITEM_USE_TYPE_WALKIETALKIE:
 			if (!hasPlayerSeenActionTip(client, "UseItemKeyAfterEquippingWalkieTalkie")) {
 				messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "UseItemKeyAfterEquippingWalkieTalkie", (doesPlayerHaveKeyBindForCommand(client, "use")) ? `{ALTCOLOUR}U{MAINCOLOUR}` : `{ALTCOLOUR}/use{MAINCOLOUR}`));
 			}
@@ -2066,7 +2065,7 @@ function playerSwitchHotBarSlotCommand(command, params, client) {
 		}
 	}
 
-	if (getPlayerData(client).itemActionState != AGRP_ITEM_ACTION_NONE) {
+	if (getPlayerData(client).itemActionState != V_ITEM_ACTION_NONE) {
 		messagePlayerError(client, getLocaleString(client, "HandsBusy"));
 		return false;
 	}
@@ -2130,7 +2129,7 @@ function setAllItemTypeDataIndexes() {
 function cacheAllGroundItems() {
 	clearArray(getServerData().groundItemCache);
 	for (let i in getServerData().items) {
-		if (getServerData().items[i].ownerType == AGRP_ITEM_OWNER_GROUND) {
+		if (getServerData().items[i].ownerType == V_ITEM_OWNER_GROUND) {
 			getServerData().groundItemCache.push(i);
 		}
 	}
@@ -2174,7 +2173,7 @@ function cachePlayerHotBarItems(client) {
 	}
 
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_PLAYER) {
+		if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER) {
 			if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 				let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
 				if (firstSlot != -1) {
@@ -2191,13 +2190,13 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 	let owner = -1;
 	let ownerTypeString = "Unknown";
 	switch (getItemData(itemId).ownerType) {
-		case AGRP_ITEM_OWNER_GROUND:
+		case V_ITEM_OWNER_GROUND:
 			ownerTypeString = "Ground/Dropped";
 			deleteGroundItemObject(itemId);
 			getServerData().groundItemCache.splice(getServerData().groundItemCache.indexOf(itemId), 1);
 			break;
 
-		case AGRP_ITEM_OWNER_PLAYER:
+		case V_ITEM_OWNER_PLAYER:
 			ownerTypeString = "Player";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
 			if (getPlayerData(owner) != false) {
@@ -2207,7 +2206,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_TEMPLOCKER:
+		case V_ITEM_OWNER_TEMPLOCKER:
 			ownerTypeString = "Job Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
 			if (getPlayerData(owner) != false) {
@@ -2215,7 +2214,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_LOCKER:
+		case V_ITEM_OWNER_LOCKER:
 			ownerTypeString = "Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
 			if (getPlayerData(owner) != false) {
@@ -2223,7 +2222,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_VEHTRUNK:
+		case V_ITEM_OWNER_VEHTRUNK:
 			ownerTypeString = "Vehicle Trunk";
 			owner = getVehicleFromDatabaseId(getItemData(itemId).ownerId)
 			if (getVehicleData(owner) != false) {
@@ -2231,7 +2230,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_BIZFLOOR:
+		case V_ITEM_OWNER_BIZFLOOR:
 			ownerTypeString = "Business Floor";
 			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
 			if (getBusinessData(owner) != false) {
@@ -2239,7 +2238,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_BIZSTORAGE:
+		case V_ITEM_OWNER_BIZSTORAGE:
 			ownerTypeString = "Business Storage";
 			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
 			if (getBusinessData(owner) != false) {
@@ -2247,7 +2246,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			}
 			break;
 
-		case AGRP_ITEM_OWNER_HOUSE:
+		case V_ITEM_OWNER_HOUSE:
 			ownerTypeString = "House";
 			owner = getHouseIdFromDatabaseId(getItemData(itemId).ownerId);
 			if (getHouseData(owner) != false) {
@@ -2275,32 +2274,32 @@ function getBestNewOwnerToPutItem(client) {
 	let possibleItem = getClosestItemOnGround(position);
 	if (possibleItem != -1) {
 		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
-			return [AGRP_ITEM_OWNER_ITEM, possibleItem];
+			return [V_ITEM_OWNER_ITEM, possibleItem];
 		}
 	}
 
 	let possibleVehicle = getClosestVehicle(position);
 	if (possibleVehicle != false) {
 		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
-			return [AGRP_ITEM_OWNER_VEHTRUNK, possibleVehicle];
+			return [V_ITEM_OWNER_VEHTRUNK, possibleVehicle];
 		}
 	}
 
 	let possibleHouse = getPlayerHouse(client);
 	if (possibleHouse != -1) {
 		if (getHouseData(possibleHouse) != false) {
-			return [AGRP_ITEM_OWNER_HOUSE, possibleHouse];
+			return [V_ITEM_OWNER_HOUSE, possibleHouse];
 		}
 	}
 
 	let possibleBusiness = getPlayerBusiness(client);
 	if (possibleBusiness != -1) {
 		if (getBusinessData(possibleBusiness) != false) {
-			return [AGRP_ITEM_OWNER_BIZSTORAGE, possibleBusiness];
+			return [V_ITEM_OWNER_BIZSTORAGE, possibleBusiness];
 		}
 	}
 
-	return [AGRP_ITEM_OWNER_NONE, 0];
+	return [V_ITEM_OWNER_NONE, 0];
 }
 
 // ===========================================================================
@@ -2309,14 +2308,14 @@ function getBestItemToTake(client, slot) {
 	let closestDistance = 100.0;
 	let position = getPlayerPosition(client);
 	let itemId = -1;
-	let ownerType = AGRP_ITEM_OWNER_NONE;
+	let ownerType = V_ITEM_OWNER_NONE;
 	let ownerId = 0;
 
 	let possibleItem = getClosestItemOnGround(position);
 	if (getItemData(possibleItem)) {
 		if (typeof getItemData(possibleItem).itemCache[slot] != "undefined") {
 			itemId = getItemData(possibleItem).itemCache[slot]
-			ownerType = AGRP_ITEM_OWNER_ITEM;
+			ownerType = V_ITEM_OWNER_ITEM;
 			ownerId = possibleItem;
 		}
 	}
@@ -2325,7 +2324,7 @@ function getBestItemToTake(client, slot) {
 	if (getHouseData(possibleHouse)) {
 		if (typeof getHouseData(possibleHouse).itemCache[slot] != "undefined") {
 			itemId = getHouseData(possibleHouse).itemCache[slot];
-			ownerType = AGRP_ITEM_OWNER_HOUSE;
+			ownerType = V_ITEM_OWNER_HOUSE;
 			ownerId = possibleHouse;
 		}
 	}
@@ -2334,7 +2333,7 @@ function getBestItemToTake(client, slot) {
 	if (getBusinessData(possibleBusiness)) {
 		if (typeof getBusinessData(possibleBusiness).floorItemCache[slot] != "undefined") {
 			itemId = getBusinessData(possibleBusiness).floorItemCache[slot];
-			ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
+			ownerType = V_ITEM_OWNER_BIZFLOOR;
 			ownerId = possibleBusiness;
 		}
 	}
@@ -2344,7 +2343,7 @@ function getBestItemToTake(client, slot) {
 		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= closestDistance) {
 			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
 				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
-				ownerType = AGRP_ITEM_OWNER_VEHTRUNK;
+				ownerType = V_ITEM_OWNER_VEHTRUNK;
 				ownerId = possibleVehicle;
 			}
 		}
@@ -2481,7 +2480,7 @@ function listItemInventoryCommand(command, params, client) {
 		return false;
 	}
 
-	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useType != AGRP_ITEM_USE_TYPE_STORAGE) {
+	if (getItemTypeData(getItemData(itemId).itemTypeIndex).useType != V_ITEM_USE_TYPE_STORAGE) {
 		messagePlayerError(client, "This item can't hold anything!");
 		return false;
 	}
@@ -2726,7 +2725,7 @@ function restorePlayerTempLockerItems(client) {
 
 	cachePlayerHotBarItems(client);
 	updatePlayerHotBar(client);
-	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_NONE;
+	getPlayerData(client).tempLockerType = V_TEMP_LOCKER_TYPE_NONE;
 }
 
 // ===========================================================================
@@ -2756,27 +2755,27 @@ function getItemTypeIndexFromDatabaseId(databaseId) {
 function playerItemActionDelayComplete(client) {
 	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Player ${getPlayerDisplayForConsole(client)} item action delay complete (State: ${getPlayerData(client).itemActionState})`);
 	switch (getPlayerData(client).itemActionState) {
-		case AGRP_ITEM_ACTION_USE:
+		case V_ITEM_ACTION_USE:
 			playerUseItem(client, getPlayerData(client).itemActionItem);
 			break;
 
-		case AGRP_ITEM_ACTION_DROP:
+		case V_ITEM_ACTION_DROP:
 			playerDropItem(client, getPlayerData(client).itemActionItem);
 			break;
 
-		case AGRP_ITEM_ACTION_TAKE:
+		case V_ITEM_ACTION_TAKE:
 			playerTakeItem(client, getPlayerData(client).itemActionItem);
 			break;
 
-		case AGRP_ITEM_ACTION_PUT:
+		case V_ITEM_ACTION_PUT:
 			playerPutItem(client, getPlayerData(client).itemActionItem);
 			break;
 
-		case AGRP_ITEM_ACTION_PICKUP:
+		case V_ITEM_ACTION_PICKUP:
 			playerPickupItem(client, getPlayerData(client).itemActionItem);
 			break;
 
-		case AGRP_ITEM_ACTION_SWITCH:
+		case V_ITEM_ACTION_SWITCH:
 			playerSwitchItem(client, getPlayerData(client).itemActionItem);
 			break;
 
@@ -2804,22 +2803,22 @@ function getItemValueDisplayForItem(itemId) {
 // ===========================================================================
 
 function getItemValueDisplay(itemType, value) {
-	if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_SKIN) {
+	if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_SKIN) {
 		return "any";
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_FOOD || getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_DRINK || getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_EXTINGUISHER || getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_SPRAYPAINT || getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_PEPPERSPRAY) {
+	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_FOOD || getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_DRINK || getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_EXTINGUISHER || getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_SPRAYPAINT || getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_PEPPERSPRAY) {
 		return getPercentage(toString(value), getItemTypeData(itemType).capacity) + "%";
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_PHONE) {
+	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_PHONE) {
 		return toString(value);
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_WEAPON || getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_TAZER) {
+	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_WEAPON || getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_TAZER) {
 		if (isMeleeWeapon(getItemTypeData(itemType).useId)) {
 			return false;
 		}
 		return toString(value) + " rounds";
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_WALKIETALKIE) {
+	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
 		return toString(toString(value).slice(0, -2) + "." + toString(value).slice(-1) + "MHz");
-	} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_BADGE) {
+	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_BADGE) {
 		return `#${value}`;
-		//} else if (getItemTypeData(itemType).useType == AGRP_ITEM_USE_TYPE_VEHCOLOUR) {
+		//} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_VEHCOLOUR) {
 		//	return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
 	} else {
 		return value;
@@ -3008,42 +3007,42 @@ function getOrderPriceForItemType(itemType) {
 function clearPlayerItemActionState(client) {
 	if (getPlayerData(client).itemActionItem != -1) {
 		switch (getPlayerData(client).itemActionState) {
-			case AGRP_ITEM_ACTION_DROP: {
+			case V_ITEM_ACTION_DROP: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).dropAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
-			case AGRP_ITEM_ACTION_USE: {
+			case V_ITEM_ACTION_USE: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).useAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
-			case AGRP_ITEM_ACTION_PICKUP: {
+			case V_ITEM_ACTION_PICKUP: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).pickupAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
-			case AGRP_ITEM_ACTION_TAKE: {
+			case V_ITEM_ACTION_TAKE: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).takeAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
-			case AGRP_ITEM_ACTION_PUT: {
+			case V_ITEM_ACTION_PUT: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).putAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
 				break;
 			}
 
-			case AGRP_ITEM_ACTION_SWITCH: {
+			case V_ITEM_ACTION_SWITCH: {
 				if (getItemTypeData(getItemData(getPlayerData(client).itemActionItem).itemTypeIndex).switchAnimationIndex != -1 && !isPlayerInAnyVehicle(client)) {
 					makePlayerStopAnimation(client);
 				}
@@ -3052,7 +3051,7 @@ function clearPlayerItemActionState(client) {
 		}
 	}
 
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_NONE;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_NONE;
 	getPlayerData(client).itemActionItem = -1;
 }
 
@@ -3182,7 +3181,7 @@ function showHouseInventoryToPlayer(client, houseId) {
 
 function switchPlayerActiveHotBarSlot(client, slotId) {
 	getPlayerData(client).itemActionItem = slotId;
-	getPlayerData(client).itemActionState = AGRP_ITEM_ACTION_SWITCH;
+	getPlayerData(client).itemActionState = V_ITEM_ACTION_SWITCH;
 	if (slotId != -1) {
 		showPlayerItemSwitchDelay(client, slotId);
 	}
@@ -3208,14 +3207,14 @@ function isPlayerItemFromJobEquipment(client, hotBarSlot) {
 
 function getItemPosition(itemId) {
 	switch (getItemData(itemId).ownerType) {
-		case AGRP_ITEM_OWNER_PLAYER:
+		case V_ITEM_OWNER_PLAYER:
 			return getPlayerPosition(getPlayerFromCharacterId(getItemData(itemId).ownerId));
 
-		case AGRP_ITEM_OWNER_VEHDASH:
-		case AGRP_ITEM_OWNER_VEHTRUNK:
+		case V_ITEM_OWNER_VEHDASH:
+		case V_ITEM_OWNER_VEHTRUNK:
 			return getVehiclePosition(getVehicleFromDatabaseId(getItemData(itemId).ownerId));
 
-		case AGRP_ITEM_OWNER_GROUND:
+		case V_ITEM_OWNER_GROUND:
 			return getItemData(itemId).position;
 	}
 }
@@ -3251,7 +3250,7 @@ function getPlayerFirstAmmoItemForWeapon(client, weaponId) {
 	for (let i in getPlayerData(client).hotBarItems) {
 		if (getPlayerData(client).hotBarItems[i] != -1) {
 			if (getItemData(getPlayerData(client).hotBarItems[i]) != false) {
-				if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
+				if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
 					if (getItemTypeData(getItemData(getPlayerData(client).hotBarItems[i]).itemTypeIndex).useId == weaponId) {
 						return i;
 					}
@@ -3266,7 +3265,7 @@ function getPlayerFirstAmmoItemForWeapon(client, weaponId) {
 // ===========================================================================
 
 function getItemPosition(itemId) {
-	if (getItemData(itemId).ownerType == AGRP_ITEM_OWNER_GROUND) {
+	if (getItemData(itemId).ownerType == V_ITEM_OWNER_GROUND) {
 		if (getItemData(itemId).object != null) {
 			return getElementPosition(getItemData(itemId).object);
 		}
@@ -3288,7 +3287,7 @@ function cacheAllItemItems() {
 function cacheItemItems(itemId) {
 	let items = getServerData().items;
 	for (let i in items) {
-		if (items[i].ownerType == AGRP_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
+		if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
 			getItemData(itemId).itemCache.push(i);
 		}
 	}

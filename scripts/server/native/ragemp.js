@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: connected.js
 // DESC: Provides wrapped natives for GTA Connected and Mafia Connected mods
@@ -164,8 +163,8 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+	if (getGame() == V_GAME_GTA_IV) {
+		return sendNetworkEventToPlayer("v.rp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
 	}
 	return vehicle.heading = heading;
 }
@@ -198,7 +197,7 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		if (getVehicleData(vehicle).ivNetworkId != -1) {
 			return getVehicleData(vehicle).ivNetworkId;
 		}
@@ -238,8 +237,8 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+	if (getGame() == V_GAME_GTA_IV) {
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
@@ -531,15 +530,15 @@ function repairVehicle(vehicle) {
 // ===========================================================================
 
 function setVehicleLights(vehicle, lights) {
-	setEntityData(vehicle, "agrp.lights", lights, true);
-	sendNetworkEventToPlayer("agrp.veh.lights", null, vehicle.id, lights);
+	setEntityData(vehicle, "v.rp.lights", lights, true);
+	sendNetworkEventToPlayer("v.rp.veh.lights", null, vehicle.id, lights);
 }
 
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
 	vehicle.engine = engine;
-	setEntityData(vehicle, "agrp.engine", engine, true);
+	setEntityData(vehicle, "v.rp.engine", engine, true);
 }
 
 // ===========================================================================
@@ -674,7 +673,7 @@ function getPlayerElement(client) {
 // ===========================================================================
 
 function setElementPosition(element, position) {
-	sendNetworkEventToPlayer("agrp.elementPosition", null, element.id, position);
+	sendNetworkEventToPlayer("v.rp.elementPosition", null, element.id, position);
 }
 
 // ===========================================================================
@@ -698,7 +697,7 @@ function setElementInterior(element, interior) {
 // ===========================================================================
 
 function setElementCollisionsEnabled(element, state) {
-	//sendNetworkEventToPlayer("agrp.elementCollisions", null, element.id, state);
+	//sendNetworkEventToPlayer("v.rp.elementCollisions", null, element.id, state);
 }
 
 // ===========================================================================
@@ -941,7 +940,7 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
@@ -1000,14 +999,14 @@ function setVehicleHealth(vehicle, health) {
 
 function givePlayerWeapon(client, weaponId, ammo, active = true) {
 	//logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	//sendNetworkEventToPlayer("agrp.giveWeapon", client, weaponId, ammo, active);
+	//sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, ammo, active);
 	client.giveWeapon(weaponId, ammo);
 }
 
 // ===========================================================================
 
 function setPlayerWantedLevel(client, wantedLevel) {
-	//sendNetworkEventToPlayer("agrp.wantedLevel", client, wantedLevel);
+	//sendNetworkEventToPlayer("v.rp.wantedLevel", client, wantedLevel);
 	return true;
 }
 
@@ -1110,7 +1109,7 @@ function despawnPlayer(client) {
 // ===========================================================================
 
 function getGame() {
-	return AGRP_GAME_GTA_V;
+	return V_GAME_GTA_V;
 }
 
 // ===========================================================================
@@ -1155,7 +1154,7 @@ function serverBanIP(ip) {
 // ===========================================================================
 
 function setVehicleTrunkState(vehicle, trunkState) {
-	//sendNetworkEventToPlayer("agrp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+	//sendNetworkEventToPlayer("v.rp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
 
 // ===========================================================================
@@ -1247,7 +1246,7 @@ function deletePlayerPed(client) {
 	//if (areServerElementsSupported()) {
 	//	destroyElement(client.player);
 	//} else {
-	//	sendNetworkEventToPlayer("agrp.deleteLocalPlayerPed", client);
+	//	sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);
 	//}
 }
 

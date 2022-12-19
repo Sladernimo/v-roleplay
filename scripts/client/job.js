@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: job.js
 // DESC: Provides job functions and usage
@@ -59,8 +58,8 @@ function setLocalPlayerWorkingState(tempWorking) {
 function showJobRouteLocation(position, colour) {
 	logToConsole(LOG_DEBUG, `[AGRP.Job] Showing job route location at ${position.x}, ${position.y}, ${position.z}`);
 	hideJobRouteLocation();
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
-		if (getGame() == AGRP_GAME_GTA_SA) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
+		if (getGame() == V_GAME_GTA_SA) {
 			// Server-side spheres don't show in GTA SA for some reason.
 			jobRouteLocationSphere = game.createPickup(1318, position, 1);
 		} else {
@@ -140,7 +139,7 @@ function hideJobRouteLocation() {
 function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, pickupModel) {
 	logToConsole(LOG_DEBUG, `[AGRP.Job] Received job ${jobId} (${name}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
 			jobData.jobLocationId = jobLocationId;
@@ -153,7 +152,7 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 			if (blipModel == -1) {
 				if (jobData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[AGRP.Job] Job ${jobId}'s blip has been removed by the server`);
-					if (getGame() == AGRP_GAME_GTA_IV) {
+					if (getGame() == V_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
 					} else {
 						destroyElement(getElementFromId(blipId));
@@ -165,7 +164,7 @@ function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, p
 			} else {
 				if (jobData.blipId != -1) {
 					logToConsole(LOG_DEBUG, `[AGRP.Job] Job ${jobId}'s blip has been changed by the server`);
-					if (getGame() == AGRP_GAME_GTA_IV) {
+					if (getGame() == V_GAME_GTA_IV) {
 						natives.setBlipCoordinates(jobData.blipId, jobData.position);
 						natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
 						natives.setBlipMarkerLongDistance(jobData.blipId, false);

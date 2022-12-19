@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: labels.js
 // DESC: Provides functionality for world labels (3D labels)
@@ -14,7 +13,7 @@ let jobLabels = [];
 
 let propertyLabelNameFont = null;
 let propertyLabelLockedFont = null;
-let propertyLabelHeight = (getGame() == AGRP_GAME_MAFIA_ONE) ? 2.0 : 1.0;
+let propertyLabelHeight = (getGame() == V_GAME_MAFIA_ONE) ? 2.0 : 1.0;
 let propertyPickupRenderDistance = 75.0;
 let propertyLabelRenderDistance = 5.0;
 let propertyLabelLockedOffset = 16;
@@ -78,7 +77,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		return false;
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
 			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
@@ -92,7 +91,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 
 	position = getPosAbovePos(position, propertyLabelHeight);
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
 	} else {
 		screenPosition = getScreenFromWorldPosition(position);
@@ -137,10 +136,10 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		text = (locked) ? toUpperCase(getLocaleString("Locked")) : toUpperCase(getLocaleString("Unlocked"));
 	}
 
-	if (!locked && labelInfoType != AGRP_PROPLABEL_INFO_NONE) {
+	if (!locked && labelInfoType != V_PROPLABEL_INFO_NONE) {
 		let infoText = "";
 		switch (labelInfoType) {
-			case AGRP_PROPLABEL_INFO_ENTER: {
+			case V_PROPLABEL_INFO_ENTER: {
 				if (enterPropertyKey) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
 				} else {
@@ -149,27 +148,27 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_BUY: {
+			case V_PROPLABEL_INFO_BUY: {
 				infoText = getLocaleString("BusinessBuyItemsLabel", "/buy");
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_BUYBIZ: {
+			case V_PROPLABEL_INFO_BUYBIZ: {
 				infoText = getLocaleString("BuyBusinessLabel", "/bizbuy");
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_BUYHOUSE: {
+			case V_PROPLABEL_INFO_BUYHOUSE: {
 				infoText = getLocaleString("BuyHouseLabel", "/housebuy");
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_RENTHOUSE: {
+			case V_PROPLABEL_INFO_RENTHOUSE: {
 				infoText = getLocaleString("RentHouseLabel", "/houserent");
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_ENTERVEHICLE: {
+			case V_PROPLABEL_INFO_ENTERVEHICLE: {
 				infoText = getLocaleString("VehicleDealershipLabel");
 				break;
 			}
@@ -219,7 +218,7 @@ function renderPropertyExitLabel(position) {
 		return false;
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
 			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
@@ -234,7 +233,7 @@ function renderPropertyExitLabel(position) {
 	let tempPosition = position;
 	tempPosition.z = tempPosition.z + propertyLabelHeight;
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		screenPosition = natives.getViewportPositionOfCoord(tempPosition, natives.getGameViewportId());
 	} else {
 		screenPosition = getScreenFromWorldPosition(tempPosition);
@@ -264,7 +263,7 @@ function renderJobLabel(name, position, jobType) {
 		return false;
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
 			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
 			return false;
@@ -279,7 +278,7 @@ function renderJobLabel(name, position, jobType) {
 	let tempPosition = position;
 	tempPosition.z = tempPosition.z + propertyLabelHeight;
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		screenPosition = natives.getViewportPositionOfCoord(tempPosition, natives.getGameViewportId());
 	} else {
 		screenPosition = getScreenFromWorldPosition(tempPosition);
@@ -318,11 +317,11 @@ function renderJobLabel(name, position, jobType) {
 
 function processLabelRendering() {
 	if (renderLabels) {
-		if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE) {
+		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE) {
 			if (localPlayer != null) {
 				getServerData().businesses.forEach((business) => {
 					if (getDistance(localPlayer.position, business.entrancePosition) <= propertyPickupRenderDistance) {
-						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
 						}
 
@@ -334,7 +333,7 @@ function processLabelRendering() {
 
 				getServerData().houses.forEach((house) => {
 					if (getDistance(localPlayer.position, house.entrancePosition) <= propertyPickupRenderDistance) {
-						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
 						}
 
@@ -346,7 +345,7 @@ function processLabelRendering() {
 
 				getServerData().jobs.forEach((job) => {
 					if (getDistance(localPlayer.position, job.position) <= propertyPickupRenderDistance) {
-						if (getGame() == AGRP_GAME_GTA_IV || getGame() == AGRP_GAME_GTA_IV_EFLC) {
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
 						}
 					}
@@ -362,47 +361,47 @@ function processLabelRendering() {
 			if (localPlayer != null) {
 				let pickups = getElementsByType(ELEMENT_PICKUP);
 				for (let i in pickups) {
-					if (pickups[i].getData("agrp.label.type") != null) {
+					if (pickups[i].getData("v.rp.label.type") != null) {
 						if (getDistance(localPlayer.position, pickups[i].position) <= propertyLabelRenderDistance) {
 							if (!pickups[i].isOnScreen) {
 								let price = "0";
 								let rentPrice = "0";
 								let fee = "0";
 
-								let labelInfoType = AGRP_PROPLABEL_INFO_NONE;
-								if (pickups[i].getData("agrp.label.price") != null) {
-									price = pickups[i].getData("agrp.label.price");
+								let labelInfoType = V_PROPLABEL_INFO_NONE;
+								if (pickups[i].getData("v.rp.label.price") != null) {
+									price = pickups[i].getData("v.rp.label.price");
 								}
 
-								if (pickups[i].getData("agrp.label.rentprice") != null) {
-									rentPrice = pickups[i].getData("agrp.label.rentprice");
+								if (pickups[i].getData("v.rp.label.rentprice") != null) {
+									rentPrice = pickups[i].getData("v.rp.label.rentprice");
 								}
 
-								if (pickups[i].getData("agrp.label.help") != null) {
-									labelInfoType = pickups[i].getData("agrp.label.help");
+								if (pickups[i].getData("v.rp.label.help") != null) {
+									labelInfoType = pickups[i].getData("v.rp.label.help");
 								}
 
-								if (pickups[i].getData("agrp.label.fee") != null) {
-									fee = pickups[i].getData("agrp.label.fee");
+								if (pickups[i].getData("v.rp.label.fee") != null) {
+									fee = pickups[i].getData("v.rp.label.fee");
 								}
 
-								switch (pickups[i].getData("agrp.label.type")) {
-									case AGRP_LABEL_BUSINESS: {
-										renderPropertyEntranceLabel(pickups[i].getData("agrp.label.name"), pickups[i].position, pickups[i].getData("agrp.label.locked"), true, price, rentPrice, labelInfoType, fee);
+								switch (pickups[i].getData("v.rp.label.type")) {
+									case V_LABEL_BUSINESS: {
+										renderPropertyEntranceLabel(pickups[i].getData("v.rp.label.name"), pickups[i].position, pickups[i].getData("v.rp.label.locked"), true, price, rentPrice, labelInfoType, fee);
 										break;
 									}
 
-									case AGRP_LABEL_HOUSE: {
-										renderPropertyEntranceLabel(pickups[i].getData("agrp.label.name"), pickups[i].position, pickups[i].getData("agrp.label.locked"), false, price, rentPrice, labelInfoType);
+									case V_LABEL_HOUSE: {
+										renderPropertyEntranceLabel(pickups[i].getData("v.rp.label.name"), pickups[i].position, pickups[i].getData("v.rp.label.locked"), false, price, rentPrice, labelInfoType);
 										break;
 									}
 
-									case AGRP_LABEL_JOB: {
-										renderJobLabel(pickups[i].getData("agrp.label.name"), pickups[i].position, pickups[i].getData("agrp.label.jobType"));
+									case V_LABEL_JOB: {
+										renderJobLabel(pickups[i].getData("v.rp.label.name"), pickups[i].position, pickups[i].getData("v.rp.label.jobType"));
 										break;
 									}
 
-									case AGRP_LABEL_EXIT: {
+									case V_LABEL_EXIT: {
 										renderPropertyExitLabel(pickups[i].position);
 										break;
 									}

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: paintball.js
 // DESC: Provides paintball/airsoft arena functions and commands
@@ -13,7 +12,7 @@ let paintBallItems = [];
 // ===========================================================================
 
 let paintBallItemNames = {
-	[AGRP_GAME_GTA_III]: [
+	[V_GAME_GTA_III]: [
 		"Colt 45",
 		"Uzi",
 		"Shotgun",
@@ -21,7 +20,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[AGRP_GAME_GTA_VC]: [
+	[V_GAME_GTA_VC]: [
 		"Colt 45",
 		"Pump Shotgun",
 		"Ingram",
@@ -30,7 +29,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[AGRP_GAME_GTA_SA]: [
+	[V_GAME_GTA_SA]: [
 		"Desert Eagle",
 		"Shotgun",
 		"MP5",
@@ -38,7 +37,7 @@ let paintBallItemNames = {
 		"Sniper Rifle",
 	],
 
-	[AGRP_GAME_GTA_IV]: [
+	[V_GAME_GTA_IV]: [
 		"Glock 9mm",
 		"Micro Uzi",
 		"Stubby Shotgun",
@@ -67,7 +66,7 @@ function startPaintBall(client) {
 	}
 
 	storePlayerItemsInTempLocker(client);
-	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_PAINTBALL;
+	getPlayerData(client).tempLockerType = V_TEMP_LOCKER_TYPE_PAINTBALL;
 
 	getPlayerData(client).inPaintBall = true;
 	getPlayerData(client).paintBallBusiness = getPlayerBusiness(client);
@@ -114,7 +113,7 @@ function stopPaintBall(client) {
 
 	getPlayerData(client).inPaintBall = false;
 	getPlayerData(client).paintBallBusiness = false;
-	getPlayerData(client).tempLockerType = AGRP_TEMP_LOCKER_TYPE_NONE;
+	getPlayerData(client).tempLockerType = V_TEMP_LOCKER_TYPE_NONE;
 	getPlayerData(client).paintBallKills = 0;
 	getPlayerData(client).paintBallDeaths = 0;
 
@@ -128,7 +127,7 @@ function stopPaintBall(client) {
 function givePlayerPaintBallItems(client) {
 	logToConsole(LOG_DEBUG, `[AGRP.PaintBall]: Giving ${getPlayerDisplayForConsole(client)} paintball items ...`);
 	for (let i in paintBallItems) {
-		let itemId = createItem(paintBallItems[i], 999999, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(paintBallItems[i], 999999, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);

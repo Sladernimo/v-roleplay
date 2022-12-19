@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: timers.js
 // DESC: Provides timer functions and features
@@ -237,7 +236,7 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
 			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
 				sendMapChangeWarningToPlayer(null, true);
@@ -300,7 +299,7 @@ function checkPayDays() {
 	}
 
 	for (let i in getServerData().businesses) {
-		if (getBusinessData(i).ownerType != AGRP_BIZ_OWNER_NONE && getBusinessData(i).ownerType != AGRP_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != AGRP_BIZ_OWNER_FACTION) {
+		if (getBusinessData(i).ownerType != V_BIZ_OWNER_NONE && getBusinessData(i).ownerType != V_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != V_BIZ_OWNER_FACTION) {
 			getBusinessData(i).till += 1000;
 		}
 	}

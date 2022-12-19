@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: charselect.js
 // DESC: Provides character select GUI
@@ -187,21 +186,21 @@ function showNewCharacter() {
 
 function selectNextCharacter() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Requesting next character info from server for character select window`);
-	sendNetworkEventToServer("agrp.nextCharacter");
+	sendNetworkEventToServer("v.rp.nextCharacter");
 }
 
 // ===========================================================================
 
 function selectPreviousCharacter() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Requesting previous character info from server for character select window`);
-	sendNetworkEventToServer("agrp.previousCharacter");
+	sendNetworkEventToServer("v.rp.previousCharacter");
 }
 
 // ===========================================================================
 
 function selectThisCharacter() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Tell server the current shown character was selected in character select window`);
-	sendNetworkEventToServer("agrp.selectCharacter");
+	sendNetworkEventToServer("v.rp.selectCharacter");
 }
 
 // ===========================================================================
@@ -218,7 +217,7 @@ function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, s
 	if (characterSelect.skinImage != null) {
 		characterSelect.skinImage.remove();
 	}
-	characterSelect.skinImage = (getGame() == AGRP_GAME_GTA_III) ? characterSelect.window.image(310, 32, 100, 90, `files/images/skins/gta3/${getSkinImage(skinId)}.png`) : characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
+	characterSelect.skinImage = (getGame() == V_GAME_GTA_III) ? characterSelect.window.image(310, 32, 100, 90, `files/images/skins/gta3/${getSkinImage(skinId)}.png`) : characterSelect.window.image(310, 32, 100, 90, "files/images/skins/none.png");
 
 	characterSelect.window.shown = true;
 

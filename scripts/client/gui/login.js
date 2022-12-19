@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: login.js
 // DESC: Provides login GUI
@@ -166,7 +165,7 @@ function showLoginGUI() {
 
 function checkLogin() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking login with server ...`);
-	sendNetworkEventToServer("agrp.checkLogin", login.passwordInput.lines[0]);
+	sendNetworkEventToServer("v.rp.checkLogin", login.passwordInput.lines[0]);
 }
 
 // ===========================================================================
@@ -192,7 +191,7 @@ function switchToPasswordResetGUI() {
 	//closeAllWindows();
 	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing password reset dialog window`);
 	//showResetPasswordGUI();
-	sendNetworkEventToServer("agrp.checkResetPassword", "");
+	sendNetworkEventToServer("v.rp.checkResetPassword", "");
 	return false;
 }
 

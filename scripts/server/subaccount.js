@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: subaccount.js
 // DESC: Provides subaccount (character) functions and usage
@@ -514,12 +513,12 @@ function selectCharacter(client, characterId = -1) {
 
 	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
-	getPlayerData(client).pedState = AGRP_PEDSTATE_SPAWNING;
+	getPlayerData(client).pedState = V_PEDSTATE_SPAWNING;
 
-	if (getGame() <= AGRP_GAME_GTA_IV_EFLC) {
+	if (getGame() <= V_GAME_GTA_IV_EFLC) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		onPlayerSpawn(client);
-	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	} else if (getGame() == V_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		//logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);

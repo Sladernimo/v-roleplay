@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: list.js
 // DESC: Provides simple list GUI
@@ -96,7 +95,7 @@ function checkListDialogSelection() {
 		return false;
 	}
 
-	sendNetworkEventToServer("agrp.list.select", listDialog.listGrid.activeRow.getEntryIndex());
+	sendNetworkEventToServer("v.rp.list.select", listDialog.listGrid.activeRow.getEntryIndex());
 }
 
 // ===========================================================================
@@ -113,7 +112,7 @@ function selectPreviousListItem() {
 		listDialog.listGrid.activeRow = listDialog.listRows[activeRowId - 1];
 	}
 
-	//sendNetworkEventToServer("agrp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
+	//sendNetworkEventToServer("v.rp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
 }
 
 // ===========================================================================
@@ -126,7 +125,7 @@ function selectNextListItem() {
 		listDialog.listGrid.activeRow = listDialog.listRows[activeRowId + 1];
 	}
 
-	//sendNetworkEventToServer("agrp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
+	//sendNetworkEventToServer("v.rp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
 }
 
 // ===========================================================================

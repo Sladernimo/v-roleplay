@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: npc.js
 // DESC: Provides NPC functions and processing
@@ -10,7 +9,7 @@
 
 function processNPCMovement(npc) {
 	//if(npc.isSyncer == true) {
-	if (getEntityData(npc, "agrp.lookAtClosestPlayer") == true) {
+	if (getEntityData(npc, "v.rp.lookAtClosestPlayer") == true) {
 		let closestPlayer = getClosestPlayer(getElementPosition(npc.id));
 		setPedLookAt(npc, getElementPosition(closestPlayer.id));
 	}

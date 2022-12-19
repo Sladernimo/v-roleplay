@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: chat.js
 // DESC: Provides chat functions and usage
@@ -402,7 +401,7 @@ function clanChat(client, messageText) {
 // ===========================================================================
 
 function canPlayerUseMegaphone(client) {
-	if (getPlayerFirstItemSlotByUseType(client, AGRP_ITEM_USE_TYPE_MEGAPHONE) != -1) {
+	if (getPlayerFirstItemSlotByUseType(client, V_ITEM_USE_TYPE_MEGAPHONE) != -1) {
 		if (isPlayerActiveItemEnabled(client)) {
 			return true;
 		}

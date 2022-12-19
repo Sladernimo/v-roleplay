@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: event.js
 // DESC: Provides handlers for built in GTAC and Asshat-Gaming created events
@@ -34,7 +33,7 @@ function addAllEventHandlers() {
 	addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
 	addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
 
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("onPedFall", onPedFall);
 	}
 }
@@ -168,7 +167,7 @@ function onEntityProcess(event, entity) {
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
-		getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGVEHICLE;
+		getPlayerData(client).pedState = V_PEDSTATE_ENTERINGVEHICLE;
 
 		if (!getVehicleData(vehicle)) {
 			return false;
@@ -203,7 +202,7 @@ function onPedExitingVehicle(event, ped, vehicle) {
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
-		getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGVEHICLE;
+		getPlayerData(client).pedState = V_PEDSTATE_EXITINGVEHICLE;
 	}
 }
 
@@ -324,7 +323,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
 
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
-	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
+	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 	setTimeout(function () {
@@ -417,7 +416,7 @@ function onPedSpawn(ped) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} spawned!`);
 
 	//if (ped.type == ELEMENT_PLAYER) {
-	//	if (getGame() != AGRP_GAME_MAFIA_ONE) {
+	//	if (getGame() != V_GAME_MAFIA_ONE) {
 	//		//setTimeout(onPlayerSpawn, 250, getClientFromPlayerElement(ped));
 	//		//onPlayerSpawn(getClientFromPlayerElement(ped));
 	//	}
@@ -470,7 +469,7 @@ async function onPlayerSpawn(client) {
 
 	if (isGameFeatureSupported("pedScale")) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
-		setEntityData(getPlayerPed(client), "agrp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
+		setEntityData(getPlayerPed(client), "v.rp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 	}
 
 	//if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
@@ -495,7 +494,7 @@ async function onPlayerSpawn(client) {
 
 	// Tried this. Doesn't work for some reason.
 	// Mafia Connected needs fixed to set position on spawn.
-	//if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	//if (getGame() == V_GAME_MAFIA_ONE) {
 	//	setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
 	//	setPlayerHeading(client, getPlayerCurrentSubAccount(client).spawnHeading);
 	//	setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
@@ -536,7 +535,7 @@ async function onPlayerSpawn(client) {
 
 	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
-		setEntityData(getPlayerPed(client), "agrp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
+		setEntityData(getPlayerPed(client), "v.rp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
 	if (isGameFeatureSupported("fightStyle")) {
@@ -571,20 +570,20 @@ async function onPlayerSpawn(client) {
 	//sendPlayerGlobalKeyBindsState(client, !isPlayerAccountSettingEnabled(client, "NoKeyBinds"));
 
 	//if(isGTAIV()) {
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
-	//    setEntityData(getPlayerPed(client), "agrp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
 	//}
 
 	if (isGTAIV()) {
@@ -592,7 +591,7 @@ async function onPlayerSpawn(client) {
 	}
 
 	logToConsole(LOG_DEBUG, `[AGRP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
-	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+	getPlayerData(client).pedState = V_PEDSTATE_READY;
 
 	if (areServerElementsSupported()) {
 		syncPlayerProperties(client);
@@ -609,11 +608,11 @@ async function onPlayerSpawn(client) {
 		sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
 	}
 
-	if (!areServerElementsSupported() || getGame() == AGRP_GAME_MAFIA_ONE || getGame() == AGRP_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
-		if (getGame() != AGRP_GAME_GTA_IV) {
+		if (getGame() != V_GAME_GTA_IV) {
 			sendAllJobsToPlayer(client);
 		}
 		requestPlayerPedNetworkId(client);
@@ -634,7 +633,7 @@ async function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[AGRP.Event] Updating all player name tags`);
 	updateAllPlayerNameTags();
 
-	setPlayerWeaponDamageEvent(client, AGRP_WEAPON_DAMAGE_EVENT_NORMAL);
+	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 
 	if (doesPlayerHaveGUIEnabled(client) && getServerConfig().useGUI == true) {
 		if (checkForGeoIPModule()) {
@@ -715,7 +714,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+			getPlayerData(client).pedState = V_PEDSTATE_READY;
 
 			if (getVehicleData(vehicle).spawnLocked == false && canPlayerManageVehicle(client, vehicle) == true) {
 				getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
@@ -739,7 +738,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 		}
 	}
 }
@@ -768,14 +767,14 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				return false;
 			}
 
-			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("agrp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 
 			getPlayerData(client).lastVehicle = vehicle;
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-			if (seat == AGRP_VEHSEAT_DRIVER) {
+			if (seat == V_VEHSEAT_DRIVER) {
 				vehicle.engine = getVehicleData(vehicle).engine;
-				setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
+				setEntityData(vehicle, "v.rp.engine", getVehicleData(vehicle).engine, true);
 				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 
 				if (getVehicleData(vehicle).buyPrice > 0) {
@@ -793,23 +792,23 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 					let ownerType = getLocaleString(client, "NotOwned");
 					ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
 					switch (getVehicleData(vehicle).ownerType) {
-						case AGRP_VEHOWNER_CLAN:
+						case V_VEHOWNER_CLAN:
 							ownerName = getClanData(getClanIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Clan");
 							break;
 
-						case AGRP_VEHOWNER_JOB:
+						case V_VEHOWNER_JOB:
 							ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Job");
 							break;
 
-						case AGRP_VEHOWNER_PLAYER:
+						case V_VEHOWNER_PLAYER:
 							let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
 							ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
 							ownerType = getLocaleString(client, "Player");
 							break;
 
-						case AGRP_VEHOWNER_BIZ:
+						case V_VEHOWNER_BIZ:
 							ownerName = getBusinessData(getBusinessIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Business");
 							break;
@@ -839,7 +838,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				let currentSubAccount = getPlayerCurrentSubAccount(client);
 
 				if (isPlayerWorking(client)) {
-					if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
+					if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
 						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
 							getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
 							if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
@@ -884,7 +883,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			if (seat == AGRP_VEHSEAT_DRIVER) {
+			if (seat == V_VEHSEAT_DRIVER) {
 				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 			}
 			onPlayerEnteringVehicle(client, vehicle, seat);
@@ -908,7 +907,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			if (seat == AGRP_VEHSEAT_DRIVER) {
+			if (seat == V_VEHSEAT_DRIVER) {
 				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 			}
 			onPlayerExitingVehicle(client, vehicle, seat);

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: economy.js
 // DESC: Provides economy/financial utils, functions and usage
@@ -188,19 +187,19 @@ function repossessFirstAsset(client) {
 // ===========================================================================
 
 function getAllVehiclesOwnedByPlayer(client) {
-	return getServerData().vehicles.filter((v) => v.ownerType == AGRP_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().vehicles.filter((v) => v.ownerType == V_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllBusinessesOwnedByPlayer(client) {
-	return getServerData().businesses.filter((b) => b.ownerType == AGRP_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().businesses.filter((b) => b.ownerType == V_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllHousesOwnedByPlayer(client) {
-	return getServerData().houses.filter((h) => h.ownerType == AGRP_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().houses.filter((h) => h.ownerType == V_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================

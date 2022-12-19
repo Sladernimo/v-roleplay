@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: register.js
 // DESC: Provides account registration GUI
@@ -149,7 +148,7 @@ function registrationFailed(errorMessage) {
 
 function checkRegistration() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking registration with server ...`);
-	sendNetworkEventToServer("agrp.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
+	sendNetworkEventToServer("v.rp.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
 }
 
 // ===========================================================================
