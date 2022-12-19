@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: developer.js
 // DESC: Provides developer operation, commands, functions and usage
@@ -9,7 +8,7 @@
 // ===========================================================================
 
 function initDeveloperScript() {
-	logToConsole(LOG_INFO, "[VRR.Developer]: Initializing developer script ...");
+	logToConsole(LOG_INFO, "[AGRP.Developer]: Initializing developer script ...");
 
 	// Use GTAC command handlers for these since they need to be available on console
 	//addCommandHandler("sc", executeServerCodeCommand);
@@ -18,7 +17,7 @@ function initDeveloperScript() {
 	//addCommandHandler("allcmd", simulateCommandForAllPlayersCommand);
 	//addCommandHandler("addloglvl", setServerLogLevelCommand);
 
-	logToConsole(LOG_INFO, "[VRR.Developer]: Developer script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Developer]: Developer script initialized successfully!");
 	return true;
 }
 
@@ -152,7 +151,7 @@ function addLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} enabled log level {ALTCOLOUR}${toLowerCase(params)}`);
 	return true;
 }
 
@@ -219,7 +218,7 @@ function removeLogLevelCommand(command, params, client) {
 	}
 
 	sendPlayerLogLevel(null, logLevel);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} disabled log level {ALTCOLOUR}${toLowerCase(params)}`);
 	return true;
 }
 
@@ -254,7 +253,7 @@ function simulateCommandForPlayerCommand(command, params, client) {
 	}
 
 	if (!getCommand(tempCommand)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Use /help for commands and information.`);
 		return false;
 	}
 
@@ -288,7 +287,7 @@ function simulateCommandForAllPlayersCommand(command, params, client) {
 	let tempParams = splitParams.slice(1).join(" ");
 
 	if (!getCommand(tempCommand)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${command} {MAINCOLOUR}does not exist! Use /help for commands and information.`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} does not exist! Use /help for commands and information.`);
 		return false;
 	}
 
@@ -441,22 +440,16 @@ function testErrorGUICommand(command, params, client) {
 // ===========================================================================
 
 function saveServerDataCommand(command, params, client) {
-	messageAdmins(`{adminOrange}Vortrex{MAINCOLOUR} has forced a manual save of all data. Initiating ...`);
+	messageAdmins(`{adminOrange}Vortrex{MAINCOLOUR} has forced a manual save of all data. Initiating ...`, true);
 	saveServerDataToDatabase();
-	messageAdmins(`{MAINCOLOUR}All server data saved to database successfully!`);
+	messageAdmins(`{MAINCOLOUR}All server data saved to database successfully!`, true);
 	return true;
 }
 
 // ===========================================================================
 
-function testEmailCommand(command, params, client) {
-	try {
-		messagePlayerAlert(client, `Sending test email to ${params}`);
-		sendEmail(params, "Player", "Test email", "Just testing the SMTP module for the server!");
-	} catch (error) {
-		messagePlayerError(client, "The email could not be sent! Error: ${error}");
-		return false;
-	}
+async function testEmailCommand(command, params, client) {
+	sendEmail(params, "Player", "Test email", "Just testing the email system for the server!");
 
 	return true;
 }
@@ -555,40 +548,38 @@ function isDevelopmentServer() {
 
 // ===========================================================================
 
-function migrateSubAccountsToPerServerData() {
+async function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
-	let dbAssoc = false;
-	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM sacct_main`);
-		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				createDefaultSubAccountServerData(dbAssoc["sacct_id"]);
+	let dbAssoc = [];
 
-				let dbQuery2 = queryDatabase(dbConnection, `UPDATE sacct_svr SET sacct_svr_skin = ${dbAssoc["sacct_skin"]}, sacct_svr_job = ${dbAssoc["sacct_job"]} WHERE sacct_svr_sacct=${dbAssoc["sacct_id"]} AND sacct_svr_server=${dbAssoc["sacct_server"]}`);
-				if (dbQuery2) {
-					freeDatabaseQuery(dbQuery2);
-				}
+	if (dbConnection) {
+		let dbQueryString = `SELECT * FROM sacct_main`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			createDefaultSubAccountServerData(dbAssoc[0]["sacct_id"]);
+
+			let dbQuery2 = queryDatabase(dbConnection, `UPDATE sacct_svr SET sacct_svr_skin = ${dbAssoc["sacct_skin"]}, sacct_svr_job = ${dbAssoc["sacct_job"]} WHERE sacct_svr_sacct=${dbAssoc["sacct_id"]} AND sacct_svr_server=${dbAssoc["sacct_server"]}`);
+			if (dbQuery2) {
+				freeDatabaseQuery(dbQuery2);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
+		disconnectFromDatabase();
 	}
 }
 
 // ===========================================================================
 
-function resetAllAccountsHotkeysToDefault() {
+async function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
-	let dbAssoc = false;
+	let dbAssoc = [];
+
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT acct_id FROM acct_main`);
-		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				createDefaultKeybindsForAccount(dbAssoc["acct_id"]);
-			}
-			freeDatabaseQuery(dbQuery);
+		let dbQueryString = `SELECT acct_id FROM acct_main`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			createDefaultKeybindsForAccount(dbAssoc[0]["acct_id"]);
 		}
+		disconnectFromDatabase();
 	}
 }
 
@@ -655,6 +646,8 @@ function fixAllServerBlipsCommand(command, params, client) {
 	createAllJobBlips();
 	createAllBusinessBlips();
 	createAllHouseBlips();
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server blips`);
 }
 
 // ===========================================================================
@@ -668,6 +661,8 @@ function fixAllServerPickupsCommand(command, params, client) {
 	createAllJobPickups();
 	createAllBusinessPickups();
 	createAllHousePickups();
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server pickups`);
 }
 
 // ===========================================================================

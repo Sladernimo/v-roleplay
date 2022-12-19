@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: connected.js
 // DESC: Provides wrapped natives for GTA Connected and Mafia Connected mods
@@ -24,18 +23,18 @@ let builtInCommands = [
 // ===========================================================================
 
 let disconnectReasons = [
-	"Lost Connection",
+	"LostConnection",
 	"Disconnected",
-	"Unsupported Client",
-	"Wrong Game",
-	"Incorrect Password",
-	"Unsupported Executable",
+	"UnsupportedClient",
+	"WrongGame",
+	"IncorrectPassword",
+	"UnsupportedExecutable",
 	"Disconnected",
 	"Banned",
 	"Failed",
-	"Invalid Name",
+	"InvalidName",
 	"Crashed",
-	"Modified Game"
+	"ModifiedGame"
 ];
 
 // ===========================================================================
@@ -193,9 +192,9 @@ function getVehicleHeading(vehicle) {
 // ===========================================================================
 
 function setVehicleHeading(vehicle, heading) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return sendNetworkEventToPlayer("agrp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	return sendNetworkEventToPlayer("v.rp.vehPosition", null, getVehicleForNetworkEvent(vehicle), heading);
+	//}
 	return vehicle.heading = heading;
 }
 
@@ -227,12 +226,12 @@ function getVehicleSyncer(vehicle) {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		if (getVehicleData(vehicle).ivNetworkId != -1) {
-			return getVehicleData(vehicle).ivNetworkId;
-		}
-		return -1;
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	if (getVehicleData(vehicle).ivNetworkId != -1) {
+	//		return getVehicleData(vehicle).ivNetworkId;
+	//	}
+	//	return -1;
+	//}
 	return vehicle.id;
 }
 
@@ -267,8 +266,8 @@ function removePlayerFromVehicle(client) {
 
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		triggerNetworkEvent("agrp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+	if (getGame() == V_GAME_GTA_IV) {
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
@@ -490,6 +489,15 @@ function createGamePickup(modelIndex, position, type) {
 
 // ===========================================================================
 
+function createGameDummyElement(position) {
+	if (!isGameFeatureSupported("dummyElement")) {
+		return false;
+	}
+	return game.createDummy(position);
+}
+
+// ===========================================================================
+
 function createGameBlip(position, type = 0, size = 1, colour = toColour(255, 255, 255, 255)) {
 	if (!isGameFeatureSupported("blip")) {
 		return false;
@@ -572,21 +580,24 @@ function repairVehicle(vehicle) {
 // ===========================================================================
 
 function setVehicleLights(vehicle, lights) {
-	setEntityData(vehicle, "agrp.lights", lights, true);
-	sendNetworkEventToPlayer("agrp.veh.lights", null, vehicle.id, lights);
+	setEntityData(vehicle, "v.rp.lights", lights, true);
+	sendNetworkEventToPlayer("v.rp.veh.lights", null, vehicle.id, lights);
 }
 
 // ===========================================================================
 
 function setVehicleEngine(vehicle, engine) {
-	vehicle.engine = engine;
-	setEntityData(vehicle, "agrp.engine", engine, true);
+	//vehicle.engine = engine;
+	setEntityData(vehicle, "v.rp.engine", engine, true);
+	sendNetworkEventToPlayer("v.rp.veh.engine", null, vehicle.id, engine);
 }
 
 // ===========================================================================
 
 function setVehicleLocked(vehicle, locked) {
 	vehicle.locked = locked;
+	setEntityData(vehicle, "v.rp.locked", locked, true);
+	sendNetworkEventToPlayer("v.rp.veh.locked", null, vehicle.id, locked);
 }
 
 // ===========================================================================
@@ -660,15 +671,15 @@ function createGamePed(modelIndex, position, heading, toClient = null) {
 // ===========================================================================
 
 function getIsland(position) {
-	if (getGame() == AGRP_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_III) {
 		if (position.x > 616) {
-			return AGRP_ISLAND_PORTLAND;
+			return V_ISLAND_PORTLAND;
 		} else if (position.x < -283) {
-			return AGRP_ISLAND_SHORESIDEVALE;
+			return V_ISLAND_SHORESIDEVALE;
 		}
-		return AGRP_ISLAND_STAUNTON;
+		return V_ISLAND_STAUNTON;
 	} else {
-		return AGRP_ISLAND_NONE;
+		return V_ISLAND_NONE;
 	}
 
 	//return game.getIslandFromPosition(position);
@@ -713,7 +724,7 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	setEntityData(getPlayerElement(client), "agrp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
+	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
 	forcePlayerToSyncElementProperties(null, getPlayerElement(client));
 }
 
@@ -732,7 +743,7 @@ function getPlayerElement(client) {
 // ===========================================================================
 
 function setElementPosition(element, position) {
-	sendNetworkEventToPlayer("agrp.elementPosition", null, element.id, position);
+	sendNetworkEventToPlayer("v.rp.elementPosition", null, element.id, position);
 }
 
 // ===========================================================================
@@ -750,14 +761,14 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
-	setEntityData(element, "agrp.interior", interior, true);
+	setEntityData(element, "v.rp.interior", interior, true);
 	forcePlayerToSyncElementProperties(null, element);
 }
 
 // ===========================================================================
 
 function setElementCollisionsEnabled(element, state) {
-	sendNetworkEventToPlayer("agrp.elementCollisions", null, element.id, state);
+	sendNetworkEventToPlayer("v.rp.elementCollisions", null, element.id, state);
 }
 
 // ===========================================================================
@@ -810,24 +821,24 @@ function getPlayerWeapon(client) {
 function connectToDatabase() {
 	if (getDatabaseConfig().usePersistentConnection) {
 		if (persistentDatabaseConnection == null) {
-			logToConsole(LOG_DEBUG, `[VRR.Database] Initializing database connection ...`);
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Initializing database connection ...`);
 			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
 			if (persistentDatabaseConnection.error) {
-				logToConsole(LOG_ERROR, `[VRR.Database] Database connection error: ${persistentDatabaseConnection.error}`);
+				logToConsole(LOG_ERROR, `[AGRP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 				persistentDatabaseConnection = null;
 				return false;
 			}
 
-			logToConsole(LOG_DEBUG, `[VRR.Database] Database connection successful!`);
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Database connection successful!`);
 			return persistentDatabaseConnection;
 		} else {
-			logToConsole(LOG_DEBUG, `[VRR.Database] Using existing database connection.`);
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Using existing database connection.`);
 			return persistentDatabaseConnection;
 		}
 	} else {
 		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
 		if (databaseConnection.error) {
-			logToConsole(LOG_ERROR, `[VRR.Database] Database connection error: ${persistentDatabaseConnection.error}`);
+			logToConsole(LOG_ERROR, `[AGRP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 			return false;
 		} else {
 			return databaseConnection;
@@ -841,9 +852,9 @@ function disconnectFromDatabase(dbConnection, force = false) {
 	if (!getDatabaseConfig().usePersistentConnection || force == true) {
 		try {
 			dbConnection.close();
-			logToConsole(LOG_DEBUG, `[VRR.Database] Database connection closed successfully`);
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Database connection closed successfully`);
 		} catch (error) {
-			logToConsole(LOG_ERROR, `[VRR.Database] Database connection could not be closed! (Error: ${error})`);
+			logToConsole(LOG_ERROR, `[AGRP.Database] Database connection could not be closed! (Error: ${error})`);
 		}
 	}
 	return true;
@@ -852,7 +863,7 @@ function disconnectFromDatabase(dbConnection, force = false) {
 // ===========================================================================
 
 function queryDatabase(dbConnection, queryString, useThread = false) {
-	logToConsole(LOG_DEBUG, `[VRR.Database] Query string: ${queryString}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Database] Query string: ${queryString}`);
 	if (useThread == true) {
 		Promise.resolve().then(() => {
 			let queryResult = dbConnection.query(queryString);
@@ -905,8 +916,19 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-function fetchQueryAssoc(dbQuery) {
-	return dbQuery.fetchAssoc();
+function fetchQueryAssoc(dbConnection, queryString) {
+	let assocArray = [];
+	let dbAssoc = null;
+
+	let dbQuery = dbConnection.query(queryString);
+	if (dbQuery) {
+		while (dbAssoc = dbQuery.fetchAssoc()) {
+			assocArray.push(dbAssoc);
+		}
+		freeDatabaseQuery(dbQuery);
+	}
+
+	return assocArray;
 }
 
 // ===========================================================================
@@ -915,19 +937,19 @@ function quickDatabaseQuery(queryString) {
 	let dbConnection = connectToDatabase();
 	let insertId = 0;
 	if (dbConnection) {
-		//logToConsole(LOG_DEBUG, `[VRR.Database] Query string: ${queryString}`);
+		//logToConsole(LOG_DEBUG, `[AGRP.Database] Query string: ${queryString}`);
 		let dbQuery = queryDatabase(dbConnection, queryString);
 		if (getDatabaseInsertId(dbConnection)) {
 			insertId = getDatabaseInsertId(dbConnection);
-			logToConsole(LOG_DEBUG, `[VRR.Database] Query returned insert id ${insertId}`);
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Query returned insert id ${insertId}`);
 		}
 
 		if (dbQuery) {
 			try {
 				freeDatabaseQuery(dbQuery);
-				logToConsole(LOG_DEBUG, `[VRR.Database] Query result free'd successfully`);
+				logToConsole(LOG_DEBUG, `[AGRP.Database] Query result free'd successfully`);
 			} catch (error) {
-				logToConsole(LOG_ERROR, `[VRR.Database] Query result could not be free'd! (Error: ${error})`);
+				logToConsole(LOG_ERROR, `[AGRP.Database] Query result could not be free'd! (Error: ${error})`);
 			}
 		}
 
@@ -979,9 +1001,9 @@ function setConstantsAsGlobalVariablesInDatabase() {
 	let dbConnection = connectToDatabase();
 	let entries = Object.entries(global);
 	for (let i in entries) {
-		logToConsole(LOG_DEBUG, `[VRR.Database] Checking entry ${i} (${entries[i]})`);
-		if (toString(i).slice(0, 3).indexOf("AGRP_") != -1) {
-			logToConsole(LOG_DEBUG, `[VRR.Database] Adding ${i} (${entries[i]}) to database global variables`);
+		logToConsole(LOG_DEBUG, `[AGRP.Database] Checking entry ${i} (${entries[i]})`);
+		if (toString(i).slice(0, 3).indexOf("V_") != -1) {
+			logToConsole(LOG_DEBUG, `[AGRP.Database] Adding ${i} (${entries[i]}) to database global variables`);
 		}
 	}
 }
@@ -1103,9 +1125,9 @@ function getClosestCivilian(position) {
 // ===========================================================================
 
 function getVehiclesInRange(position, range) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+	//}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }
 
@@ -1136,7 +1158,7 @@ function getVehicleFirstEmptySeat(vehicle) {
 // ===========================================================================
 
 function isVehicleTrain(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_III) {
 		if (vehicle.modelIndex == 124) {
 			return true;
 		}
@@ -1166,14 +1188,14 @@ function setVehicleHealth(vehicle, health) {
 // ===========================================================================
 
 function givePlayerWeapon(client, weaponId, ammo, active = true) {
-	logToConsole(LOG_DEBUG, `[VRR.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	sendNetworkEventToPlayer("agrp.giveWeapon", client, weaponId, ammo, active);
+	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
+	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, ammo, active);
 }
 
 // ===========================================================================
 
 function setPlayerWantedLevel(client, wantedLevel) {
-	sendNetworkEventToPlayer("agrp.wantedLevel", client, wantedLevel);
+	sendNetworkEventToPlayer("v.rp.wantedLevel", client, wantedLevel);
 	return true;
 }
 
@@ -1203,16 +1225,40 @@ function setElementStreamOutDistance(element, distance) {
 
 // ===========================================================================
 
+function getElementStreamInDistance(element) {
+	if (!isNull(element) && element != false) {
+		if (typeof element == "Entity") {
+			if (typeof element.streamInDistance != "undefined") {
+				return element.streamInDistance;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function getElementStreamOutDistance(element) {
+	if (!isNull(element) && element != false) {
+		if (typeof element == "Entity") {
+			if (typeof element.streamOutDistance != "undefined") {
+				return element.streamOutDistance;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
 function getPlayerPed(client) {
 	if (isNull(client)) {
 		return null;
 	}
 
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return getPlayerData(client).ped;
-	} else {
-		return client.player;
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	return getPlayerData(client).ped;
+	//} else {
+	return client.player;
+	//}
 }
 
 // ===========================================================================
@@ -1316,7 +1362,7 @@ function serverBanIP(ip) {
 // ===========================================================================
 
 function setVehicleTrunkState(vehicle, trunkState) {
-	sendNetworkEventToPlayer("agrp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
+	sendNetworkEventToPlayer("v.rp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
 
 // ===========================================================================
@@ -1443,7 +1489,7 @@ function deletePlayerPed(client) {
 	if (areServerElementsSupported()) {
 		destroyElement(client.player);
 	} else {
-		sendNetworkEventToPlayer("agrp.deleteLocalPlayerPed", client);
+		sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);
 	}
 
 }
@@ -1464,6 +1510,18 @@ function setServerName(name) {
 
 function setServerPassword(password) {
 	server.setPassword(password);
+}
+
+// ===========================================================================
+
+function shutdownServer() {
+	server.shutdown();
+}
+
+// ===========================================================================
+
+function setServerRule(ruleName, ruleValue) {
+	server.setRule(ruleName, ruleValue);
 }
 
 // ===========================================================================

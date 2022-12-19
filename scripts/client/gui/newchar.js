@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: newchar.js
 // DESC: Provides new character creation GUI
@@ -20,7 +19,7 @@ let newCharacter = {
 // ===========================================================================
 
 function initNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating new character GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating new character GUI ...`);
 	newCharacter.window = mexui.window(getScreenWidth() / 2 - 130, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -111,13 +110,13 @@ function initNewCharacterGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 		},
 	}, checkNewCharacter);
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created new character GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created new character GUI`);
 }
 
 // ===========================================================================
 
 function newCharacterFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
 	newCharacter.messageLabel.text = errorMessage;
 	newCharacter.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	newCharacter.firstNameInput.text = "";
@@ -135,7 +134,7 @@ function newCharacterFailed(errorMessage) {
 // ===========================================================================
 
 function checkNewCharacter() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking new character with server ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking new character with server ...`);
 	if (newCharacter.firstNameInput.lines[0].length < 2) {
 		return false;
 	}
@@ -144,7 +143,7 @@ function checkNewCharacter() {
 		return false;
 	}
 
-	sendNetworkEventToServer("agrp.checkNewCharacter",
+	sendNetworkEventToServer("v.rp.checkNewCharacter",
 		newCharacter.firstNameInput.lines[0],
 		newCharacter.lastNameInput.lines[0],
 	);
@@ -153,7 +152,7 @@ function checkNewCharacter() {
 // ===========================================================================
 
 function showNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing new character window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing new character window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);

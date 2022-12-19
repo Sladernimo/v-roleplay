@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: chatbox.js
 // DESC: Provides extra chatbox features
@@ -29,11 +28,11 @@ let scrollDownKey = false;
 // ===========================================================================
 
 function initChatBoxScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Chat]: Initializing chat script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Chat]: Initializing chat script ...");
 	scrollUpKey = getKeyIdFromParams("pageup");
 	scrollDownKey = getKeyIdFromParams("pagedown");
 	bindChatBoxKeys();
-	logToConsole(LOG_DEBUG, "[VRR.Chat]: Chat script initialized!");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Chat script initialized!");
 }
 
 // ===========================================================================
@@ -53,7 +52,7 @@ function unBindChatBoxKeys() {
 // ===========================================================================
 
 function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, second) {
-	logToConsole(LOG_DEBUG, `[VRR.Chat]: Received chatbox message from server: ${messageString}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Chat]: Received chatbox message from server: ${messageString}`);
 
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
@@ -73,21 +72,21 @@ function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, se
 
 	let outputString = messageString;
 	if (chatTimeStampsEnabled == true) {
-		//timeStampString = `{TIMESTAMPCOLOUR}[${findResourceByName("agrp_time").exports.getTimeStampOutput(timeStamp)}]{MAINCOLOUR}`;
-		let timeStampString = `{TIMESTAMPCOLOUR}[${hour}:${minute}:${second}] `;
+		let colourRGBA = rgbaArrayFromToColour(colour);
+		let timeStampString = `{TIMESTAMPCOLOUR}[${hour}:${minute}:${second}][${rgbToHex(colourRGBA[0], colourRGBA[1], colourRGBA[2])}] `;
 		outputString = `${timeStampString}${messageString}`;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Chat]: Changed colours in string: ${outputString}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Chat]: Changed colours in string: ${outputString}`);
 	outputString = replaceColoursInMessage(`${outputString}`);
 
 	if (chatEmojiEnabled == true) {
-		logToConsole(LOG_DEBUG, `[VRR.Chat]: Enabled emoji in string: ${outputString}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Chat]: Enabled emoji in string: ${outputString}`);
 		outputString = replaceEmojiInMessage(outputString);
 	}
 
 	if (profanityFilterEnabled == true) {
-		logToConsole(LOG_DEBUG, `[VRR.Chat]: Removed profanity in string: ${outputString}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Chat]: Removed profanity in string: ${outputString}`);
 		outputString = replaceProfanityInMessage(outputString);
 	}
 
@@ -163,12 +162,9 @@ function updateChatBox() {
 		if (typeof chatBoxHistory[i] != "undefined") {
 			let outputString = chatBoxHistory[i][0];
 			if (chatTimeStampsEnabled == true) {
-				//let timeStampDate = new Date(chatBoxHistory[i][2]);
-				//let timeStampText = `${timeStampDate.getHours()}:${timeStampDate.getMinutes()}:${timeStampDate.getSeconds()}`;
-				//let timeStampText = findResourceByName("agrp_time").exports.getTimeStampOutput(chatBoxHistory[i][2]);
 				let timeStampText = `${chatBoxHistory[i][2]}:${chatBoxHistory[i][3]}:${chatBoxHistory[i][4]}`;
-
-				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}]{MAINCOLOUR} ${chatBoxHistory[i][0]}`;
+				let colourRGBA = rgbaArrayFromToColour(chatBoxHistory[i][1]);
+				outputString = `{TIMESTAMPCOLOUR}[${timeStampText}][${rgbToHex(colourRGBA[0], colourRGBA[1], colourRGBA[2])}] ${chatBoxHistory[i][0]}`;
 			}
 
 			outputString = replaceColoursInMessage(outputString);

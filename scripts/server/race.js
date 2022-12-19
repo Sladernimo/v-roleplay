@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: race.js
 // DESC: Provides racing usage and functions
@@ -9,8 +8,8 @@
 // ===========================================================================
 
 function initRaceScript() {
-	logToConsole(LOG_INFO, "[VRR.Race]: Initializing race script ...");
-	logToConsole(LOG_INFO, "[VRR.Race]: Race script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Race]: Initializing race script ...");
+	logToConsole(LOG_INFO, "[AGRP.Race]: Race script initialized successfully!");
 }
 
 // ===========================================================================

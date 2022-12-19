@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: vehicle.js
 // DESC: Provides vehicle functions and usage
@@ -9,21 +8,13 @@
 // ===========================================================================
 
 // Vehicle Owner Types
-const AGRP_VEHOWNER_NONE = 0;                     // Not owned
-const AGRP_VEHOWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const AGRP_VEHOWNER_JOB = 2;                      // Owned by a job
-const AGRP_VEHOWNER_CLAN = 3;                     // Owned by a clan
-const AGRP_VEHOWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const AGRP_VEHOWNER_PUBLIC = 5;                   // Public vehicle. Anybody can drive it.
-const AGRP_VEHOWNER_BIZ = 6;                      // Owned by a business (also includes dealerships since they're businesses)
-
-// ===========================================================================
-
-// Vehicle Seats
-const AGRP_VEHSEAT_DRIVER = 0;
-const AGRP_VEHSEAT_FRONTPASSENGER = 1;
-const AGRP_VEHSEAT_REARLEFTPASSENGER = 2;
-const AGRP_VEHSEAT_REARRIGHTPASSENGER = 3;
+const V_VEHOWNER_NONE = 0;                     // Not owned
+const V_VEHOWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const V_VEHOWNER_JOB = 2;                      // Owned by a job
+const V_VEHOWNER_CLAN = 3;                     // Owned by a clan
+const V_VEHOWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const V_VEHOWNER_PUBLIC = 5;                   // Public vehicle. Anybody can drive it.
+const V_VEHOWNER_BIZ = 6;                      // Owned by a business (also includes dealerships since they're businesses)
 
 // ===========================================================================
 
@@ -48,7 +39,7 @@ class VehicleData {
 		this.syncHeading = 0.0;
 
 		// Ownership
-		this.ownerType = AGRP_VEHOWNER_NONE;
+		this.ownerType = V_VEHOWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.rentPrice = 0;
@@ -165,37 +156,44 @@ class VehicleData {
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 		}
 	}
+
+	saveToDatabase() {
+		saveVehicleToDatabase(this);
+	}
+
+	respawn() {
+		respawnVehicle(this.vehicle);
+	}
 };
 
 // ===========================================================================
 
 function initVehicleScript() {
-	logToConsole(LOG_INFO, "[VRR.Vehicle]: Initializing vehicle script ...");
-	logToConsole(LOG_INFO, "[VRR.Vehicle]: Vehicle script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Initializing vehicle script ...");
+	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Vehicle script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadVehiclesFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Vehicle]: Loading vehicles from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Loading vehicles from database ...");
 	let dbConnection = connectToDatabase();
 	let tempVehicles = [];
 	let dbAssoc;
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM veh_main WHERE veh_server = ${getServerId()} AND veh_deleted = 0`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				let tempVehicleData = new VehicleData(dbAssoc);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempVehicleData = new VehicleData(dbAssoc[i]);
 				tempVehicles.push(tempVehicleData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Vehicle]: ${tempVehicles.length} vehicles loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Vehicle]: ${tempVehicles.length} vehicles loaded from database successfully!`);
 	return tempVehicles;
 }
 
@@ -206,14 +204,14 @@ function saveAllVehiclesToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, "[VRR.Vehicle]: Saving all server vehicles to database ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Vehicle]: Saving all server vehicles to database ...");
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
 		if (vehicles[i].needsSaved) {
 			saveVehicleToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, "[VRR.Vehicle]: Saved all server vehicles to database!");
+	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Saved all server vehicles to database!");
 
 	return true;
 }
@@ -238,7 +236,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Saving vehicle ${tempVehicleData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Saving vehicle ${tempVehicleData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		if (tempVehicleData.vehicle != false) {
@@ -296,7 +294,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_int", toInteger(tempVehicleData.interior)],
 			["veh_vw", toInteger(tempVehicleData.dimension)],
 			["veh_livery", toInteger(tempVehicleData.livery)],
-			["veh_radio_station", toInteger(tempVehicleData.radioStation)],
+			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
 		];
 
 		let dbQuery = null;
@@ -315,7 +313,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Saved vehicle ${vehicleDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Saved vehicle ${vehicleDataId} to database!`);
 
 	return false;
 }
@@ -326,9 +324,9 @@ function spawnAllVehicles() {
 	for (let i in getServerData().vehicles) {
 		let vehicle = spawnVehicle(getServerData().vehicles[i]);
 		getServerData().vehicles[i].vehicle = vehicle;
-		setEntityData(vehicle, "agrp.dataSlot", i, false);
-		setAllVehicleIndexes();
+		setEntityData(vehicle, "v.rp.dataSlot", i, false);
 	}
+	setAllVehicleIndexes();
 }
 
 // ===========================================================================
@@ -338,15 +336,11 @@ function spawnAllVehicles() {
 	* @return {VehicleData} The vehicles's data (class instance)
 	*/
 function getVehicleData(vehicle) {
-	if (getGame() != AGRP_GAME_GTA_IV) {
-		if (isVehicleObject(vehicle)) {
-			let dataIndex = getEntityData(vehicle, "agrp.dataSlot");
-			if (typeof getServerData().vehicles[dataIndex] != "undefined") {
-				return getServerData().vehicles[dataIndex];
-			}
+	if (isVehicleObject(vehicle)) {
+		let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
+		if (typeof getServerData().vehicles[dataIndex] != "undefined") {
+			return getServerData().vehicles[dataIndex];
 		}
-	} else {
-		return getServerData().vehicles.find((v) => v.ivNetworkId == vehicle);
 	}
 
 	return false;
@@ -368,14 +362,14 @@ function createVehicleCommand(command, params, client) {
 	}
 
 	let heading = getPlayerHeading(client);
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		heading = degToRad(getPlayerHeading(client));
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
 	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
 
 // ===========================================================================
@@ -396,7 +390,7 @@ function createTemporaryVehicleCommand(command, params, client) {
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
 	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
 
 // ===========================================================================
@@ -427,10 +421,12 @@ function getNearbyVehiclesCommand(command, params, client) {
 		return false;
 	}
 
-	let vehiclesList = nearbyVehicles.map(function (x) { return `{ALTCOLOUR}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {darkGrey}(${getDistance(getPlayerPosition(client), getVehiclePosition(x))} ${getLocaleString(client, "Meters")} ${getGroupedLocaleString(client, "CardinalDirections")[getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x))]}})`; });
+	let vehiclesList = nearbyVehicles.map(function (x) {
+		return `{chatBoxListIndex}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), getVehiclePosition(x))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x)))))})`;
+	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehiclesInRangeList", `${distance} ${getLocaleString(client, "Meters")}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehiclesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -461,7 +457,7 @@ function vehicleTrunkCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 	setVehicleTrunkState(vehicle, getVehicleData(vehicle).trunk);
 
-	meActionToNearbyPlayers(client, `${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s trunk.`);
+	meActionToNearbyPlayers(client, `${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)} 's trunk.`);
 }
 
 // ===========================================================================
@@ -506,7 +502,7 @@ function deleteVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	let dataIndex = getEntityData(vehicle, "agrp.dataSlot");
+	let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
 	let vehicleName = getVehicleName(vehicle);
 
 	quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
@@ -544,7 +540,7 @@ function vehicleEngineCommand(command, params, client) {
 
 	getVehicleData(vehicle).engine = !getVehicleData(vehicle).engine;
 	vehicle.engine = getVehicleData(vehicle).engine;
-	setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
+	setEntityData(vehicle, "v.rp.engine", getVehicleData(vehicle).engine, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 
@@ -607,8 +603,8 @@ function vehicleAdminColourCommand(command, params, client) {
 	let colour1 = toInteger(getParam(params, " ", 1)) || 0;
 	let colour2 = toInteger(getParam(params, " ", 2)) || 0;
 
-	takePlayerCash(client, getGlobalConfig().resprayVehicleCost);
-	updatePlayerCash(client);
+	//takePlayerCash(client, getGlobalConfig().resprayVehicleCost);
+	//updatePlayerCash(client);
 	vehicle.colour1 = colour1;
 	vehicle.colour2 = colour2;
 	getVehicleData(vehicle).colour1 = colour1;
@@ -616,7 +612,7 @@ function vehicleAdminColourCommand(command, params, client) {
 
 	getVehicleData(vehicle).needsSaved = true;
 
-	meActionToNearbyPlayers(client, `resprays the ${getVehicleName(vehicle)}'s colours`);
+	//meActionToNearbyPlayers(client, `resprays the ${getVehicleName(vehicle)}'s colours`);
 }
 
 // ===========================================================================
@@ -637,10 +633,10 @@ function vehicleAdminRepairCommand(command, params, client) {
 	}
 
 	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} repaired their ${getVehicleName(vehicle)} vehicle`);
-	takePlayerCash(client, getGlobalConfig().repairVehicleCost);
+	//takePlayerCash(client, getGlobalConfig().repairVehicleCost);
 	repairVehicle(vehicle);
 	getVehicleData(vehicle).needsSaved = true;
-	meActionToNearbyPlayers(client, `repairs the ${getVehicleName(vehicle)}`);
+	//meActionToNearbyPlayers(client, `repairs the ${getVehicleName(vehicle)}`);
 }
 
 // ===========================================================================
@@ -658,10 +654,10 @@ function vehicleAdminLiveryCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getGlobalConfig().repairVehicleCost) {
-		messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need $${makeLargeNumberReadable(getGlobalConfig().resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
-		return false;
-	}
+	//if (getPlayerCurrentSubAccount(client).cash < getGlobalConfig().repairVehicleCost) {
+	//	messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need ${getCurrencyString(getGlobalConfig().resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
+	//	return false;
+	//}
 
 	let livery = toInteger(params) || 3;
 
@@ -670,10 +666,10 @@ function vehicleAdminLiveryCommand(command, params, client) {
 	getVehicleData(vehicle).livery = livery;
 	getVehicleData(vehicle).needsSaved = true;
 
-	setEntityData(vehicle, "agrp.livery", livery, true);
+	setEntityData(vehicle, "v.rp.livery", livery, true);
 	forcePlayerToSyncElementProperties(null, vehicle);
 
-	meActionToNearbyPlayers(client, `sets the ${getVehicleName(vehicle)}'s livery/paintjob'`);
+	//meActionToNearbyPlayers(client, `sets the ${getVehicleName(vehicle)}'s livery/paintjob'`);
 }
 
 // ===========================================================================
@@ -696,6 +692,11 @@ function buyVehicleCommand(command, params, client) {
 		return false;
 	}
 
+	if (canPlayerManageVehicle(client, vehicle, true)) {
+		messagePlayerError(client, getLocaleString(client, "AlreadyOwnVehicle"));
+		return false;
+	}
+
 	if (getPlayerCurrentSubAccount(client).cash < getVehicleData(vehicle).buyPrice) {
 		messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 		return false;
@@ -704,10 +705,10 @@ function buyVehicleCommand(command, params, client) {
 	getPlayerData(client).buyingVehicle = vehicle;
 	getVehicleData(vehicle).engine = true;
 	vehicle.engine = true;
-	setEntityData(vehicle, "agrp.engine", getVehicleData(vehicle).engine, true);
+	setEntityData(vehicle, "v.rp.engine", getVehicleData(vehicle).engine, true);
 
 	getVehicleData(vehicle).needsSaved = true;
-	setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_TESTDRIVE, vehicle.id, getVehiclePosition(vehicle));
+	setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_TESTDRIVE, vehicle.id, getVehiclePosition(vehicle));
 	meActionToNearbyPlayers(client, `receives a set of keys to test drive the ${getVehicleName(vehicle)} and starts the engine`);
 	messagePlayerInfo(client, getLocaleString(client, "DealershipPurchaseTestDrive"));
 	getServerData().purchasingVehicleCache.push(client);
@@ -761,7 +762,7 @@ function rentVehicleCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `rents the ${getVehicleName(vehicle)} and receives a set of vehicle keys!`);
-	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${makeLargeNumberReadable(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehrent{MAINCOLOUR}`));
+	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehstoprent{MAINCOLOUR}`));
 
 	if (!getVehicleData(vehicle).engine) {
 		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
@@ -775,7 +776,7 @@ function rentVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function enterVehicleAsPassengerCommand(command, params, client) {
-	sendNetworkEventToPlayer("agrp.passenger", client);
+	sendNetworkEventToPlayer("v.rp.passenger", client);
 }
 
 // ===========================================================================
@@ -802,17 +803,17 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 		return true;
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_PUBLIC) {
+	if (vehicleData.ownerType == V_VEHOWNER_PUBLIC) {
 		return true;
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
+	if (vehicleData.ownerType == V_VEHOWNER_PLAYER) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
+	if (vehicleData.ownerType == V_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
 			if (vehicleData.clanRank <= getPlayerCurrentSubAccount(client).clanRank) {
 				return true;
@@ -820,7 +821,7 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 		}
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_FACTION) {
+	if (vehicleData.ownerType == V_VEHOWNER_FACTION) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).faction) {
 			if (vehicleData.factionRank <= getPlayerCurrentSubAccount(client).factionRank) {
 				return true;
@@ -828,7 +829,7 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 		}
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_JOB) {
+	if (vehicleData.ownerType == V_VEHOWNER_JOB) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).job) {
 			return true;
 		}
@@ -843,24 +844,32 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 // ===========================================================================
 
-function doesClientOwnVehicle(client, vehicle) {
+function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
 	let vehicleData = getVehicleData(vehicle);
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
-		return true;
+	if (!exemptAdminFlag) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
+			return true;
+		}
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_PLAYER) {
+	if (vehicleData.ownerType == V_VEHOWNER_PLAYER) {
 		if (vehicleData.ownerId == getPlayerData(client).accountData.databaseId) {
 			return true;
 		}
 	}
 
-	if (vehicleData.ownerType == AGRP_VEHOWNER_CLAN) {
+	if (vehicleData.ownerType == V_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (doesPlayerHaveClanPermission(client, "ManageVehicles") || doesPlayerHaveClanPermission(client, "owner")) {
+			if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
 				return true;
 			}
+		}
+	}
+
+	if (vehicleData.ownerType == V_VEHOWNER_BIZ) {
+		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
+			return true;
 		}
 	}
 
@@ -895,12 +904,12 @@ function setVehicleJobCommand(command, params, client) {
 	//	return false;
 	//}
 
-	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_JOB;
+	getVehicleData(vehicle).ownerType = V_VEHOWNER_JOB;
 	getVehicleData(vehicle).ownerId = getJobData(jobId).databaseId;
 
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job! (Job ID ${jobId})`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job! (Job ID ${jobId})`, true);
 }
 
 // ===========================================================================
@@ -924,17 +933,17 @@ function setVehicleRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_CLAN) {
 		rankId = getClanRankFromParams(getVehicleData(vehicle).ownerId, params);
 		if (!getClanRankData(getVehicleData(vehicle).ownerId, rankId)) {
 			messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 			return false;
 		}
 		getVehicleData(vehicle).rank = getClanRankData(getVehicleData(vehicle).ownerId, rankId).databaseId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rank to {ALTCOLOUR}${getClanRankData(getVehicleData(vehicle).ownerId, rankId).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`);
-	} else if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${getClanRankData(getVehicleData(vehicle).ownerId, rankId).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`, true);
+	} else if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
 		getVehicleData(vehicle).rank = rankId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rank to {ALTCOLOUR}${rankId}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`);
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${rankId}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`, true);
 	}
 
 	getVehicleData(vehicle).needsSaved = true;
@@ -961,7 +970,7 @@ function setVehicleClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType != AGRP_VEHOWNER_PLAYER) {
+	if (getVehicleData(vehicle).ownerType != V_VEHOWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 		return false;
 	}
@@ -972,21 +981,25 @@ function setVehicleClanCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "SetVehicleClanConfirmMessage"), getLocaleString(client, "SetVehicleClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_GIVEVEHTOCLAN;
+	getPlayerData(client).promptType = V_PROMPT_GIVEVEHTOCLAN;
 
 	getVehicleData(vehicle).needsSaved = true;
 }
 
 // ===========================================================================
 
-function setVehicleToBusinessCommand(command, params, client) {
+function setVehicleBusinessCommand(command, params, client) {
 	if (!isPlayerInAnyVehicle(client)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessId = getPlayerBusiness(client);
+	let businessId = getClosestBusinessEntrance(client);
+
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses")) && !isNull(params)) {
+		businessId = getBusinessFromParams(params);
+	}
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -998,10 +1011,10 @@ function setVehicleToBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_BIZ;
+	getVehicleData(vehicle).ownerType = V_VEHOWNER_BIZ;
 	getVehicleData(vehicle).ownerId = getBusinessData(businessId).databaseId;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}business`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}business`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1027,10 +1040,10 @@ function setVehicleOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_PLAYER;
+	getVehicleData(vehicle).ownerType = V_VEHOWNER_PLAYER;
 	getVehicleData(vehicle).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to {ALTCOLOUR}${getClientSubAccountName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to {ALTCOLOUR}${getClientSubAccountName(targetClient)}`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1050,10 +1063,10 @@ function setVehiclePublicCommand(command, params, client) {
 		return false;
 	}
 
-	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_PUBLIC;
+	getVehicleData(vehicle).ownerType = V_VEHOWNER_PUBLIC;
 	getVehicleData(vehicle).ownerId = 0;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to a public vehicle!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to a public vehicle!`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1073,9 +1086,10 @@ function setVehicleRentPriceCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesClientOwnVehicle(client, vehicle)) {
+	if (!canPlayerManageVehicle(client, vehicle)) {
 		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
 			messagePlayerError(client, "You can't set the rent price for this vehicle!");
+			return false;
 		}
 	}
 
@@ -1084,7 +1098,7 @@ function setVehicleRentPriceCommand(command, params, client) {
 	getVehicleData(vehicle).rentPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`, true);
 }
 
 // ===========================================================================
@@ -1102,9 +1116,10 @@ function setVehicleBuyPriceCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesClientOwnVehicle(client, vehicle)) {
+	if (!canPlayerManageVehicle(client, vehicle)) {
 		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
 			messagePlayerError(client, "You can't set the buy price for this vehicle!");
+			return false;
 		}
 	}
 
@@ -1113,7 +1128,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 	getVehicleData(vehicle).buyPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)}`, true);
 }
 
 // ===========================================================================
@@ -1137,12 +1152,12 @@ function removeVehicleOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getVehicleData(vehicle).ownerType = AGRP_VEHOWNER_NONE;
+	getVehicleData(vehicle).ownerType = V_VEHOWNER_NONE;
 	getVehicleData(vehicle).ownerId = 0;
 
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to nobody!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to nobody!`, true);
 	messagePlayerInfo(client, `Nobody will be able to use this vehicle until it receives a new owner (either bought or set by admin).`);
 }
 
@@ -1166,28 +1181,28 @@ function getVehicleInfoCommand(command, params, client) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (vehicleData.ownerType) {
-		case AGRP_VEHOWNER_CLAN:
+		case V_VEHOWNER_CLAN:
 			ownerName = getClanData(getClanIndexFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "clan";
 			break;
 
-		case AGRP_VEHOWNER_JOB:
+		case V_VEHOWNER_JOB:
 			ownerName = getJobData(getJobIdFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "job";
 			break;
 
-		case AGRP_VEHOWNER_PLAYER:
+		case V_VEHOWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			ownerType = "player";
 			break;
 
-		case AGRP_VEHOWNER_BIZ:
+		case V_VEHOWNER_BIZ:
 			ownerName = getBusinessData(getBusinessIdFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "business";
 			break;
 
-		case AGRP_VEHOWNER_PUBLIC:
+		case V_VEHOWNER_PUBLIC:
 			ownerName = "Nobody";
 			ownerType = "public";
 			break;
@@ -1203,9 +1218,9 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
 		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
 		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
-		[`Buy Price`, `${vehicleData.buyPrice}`],
-		[`Rent Price`, `${vehicleData.rentPrice}`],
-		[`Radio Station`, `${(vehicleData.streamingRadioStation == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStation).name}`],
+		[`Buy Price`, `${getCurrencyString(vehicleData.buyPrice)}`],
+		[`Rent Price`, `${getCurrencyString(vehicleData.rentPrice)}`],
+		[`Radio Station`, `${(vehicleData.streamingRadioStationIndex == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStationIndex).name}`],
 		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
 		[`License Plate`, `${vehicleData.licensePlate}`],
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
@@ -1243,28 +1258,28 @@ function getLastVehicleInfoCommand(command, params, client) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (vehicleData.ownerType) {
-		case AGRP_VEHOWNER_CLAN:
+		case V_VEHOWNER_CLAN:
 			ownerName = getClanData(vehicleData.ownerId).name;
 			ownerType = "clan";
 			break;
 
-		case AGRP_VEHOWNER_JOB:
+		case V_VEHOWNER_JOB:
 			ownerName = getJobData(vehicleData.ownerId).name;
 			ownerType = "job";
 			break;
 
-		case AGRP_VEHOWNER_PLAYER:
+		case V_VEHOWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			ownerType = "player";
 			break;
 
-		case AGRP_VEHOWNER_BIZ:
+		case V_VEHOWNER_BIZ:
 			ownerName = getBusinessData(vehicleData.ownerId).name;
 			ownerType = "business";
 			break;
 
-		case AGRP_VEHOWNER_PUBLIC:
+		case V_VEHOWNER_PUBLIC:
 			ownerName = "None";
 			ownerType = "public";
 			break;
@@ -1294,7 +1309,7 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to spawn {ALTCOLOUR}${(getVehicleData(vehicle).spawnLocked) ? "at it's current location" : "wherever a player leaves it."}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to spawn {ALTCOLOUR}${(getVehicleData(vehicle).spawnLocked) ? "at it's current location" : "wherever a player leaves it."}`, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 }
@@ -1320,16 +1335,20 @@ function reloadAllVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnVehicleCommand(command, params, client) {
-	if (isPlayerInAnyVehicle(client)) {
-		removeAllOccupantsFromVehicle(getPlayerVehicle(client));
-		respawnVehicle(getPlayerVehicle(client));
+	if (!isPlayerInAnyVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
 	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	//removeAllOccupantsFromVehicle(vehicle);
+	respawnVehicle(vehicle);
 
 	setAllVehicleIndexes();
 
 	messagePlayerSuccess(client, getLocaleString(client, `YourVehicleRespawned`));
 }
-
 
 // ===========================================================================
 
@@ -1371,7 +1390,7 @@ function respawnEmptyVehiclesCommand(command, params, client) {
 
 function respawnJobVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == AGRP_VEHOWNER_JOB) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1383,7 +1402,7 @@ function respawnJobVehiclesCommand(command, params, client) {
 
 function respawnClanVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == AGRP_VEHOWNER_CLAN) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_CLAN) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1395,7 +1414,7 @@ function respawnClanVehiclesCommand(command, params, client) {
 
 function respawnPlayerVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == AGRP_VEHOWNER_PLAYER) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_PLAYER) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1407,7 +1426,7 @@ function respawnPlayerVehiclesCommand(command, params, client) {
 
 function respawnPublicVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == AGRP_VEHOWNER_PUBLIC) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_PUBLIC) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1419,7 +1438,7 @@ function respawnPublicVehiclesCommand(command, params, client) {
 
 function respawnBusinessVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == AGRP_VEHOWNER_BIZ) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_BIZ) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1447,7 +1466,7 @@ function respawnVehicle(vehicle) {
 				vehicles[i].engine = false;
 			}
 
-			if (vehicles[i].ownerType == AGRP_VEHOWNER_JOB) {
+			if (vehicles[i].ownerType == V_VEHOWNER_JOB) {
 				vehicles[i].locked = true;
 			}
 
@@ -1456,7 +1475,7 @@ function respawnVehicle(vehicle) {
 
 			let newVehicle = spawnVehicle(vehicles[i]);
 			vehicles[i].vehicle = newVehicle;
-			setEntityData(newVehicle, "agrp.dataSlot", i, false);
+			setEntityData(newVehicle, "v.rp.dataSlot", i, false);
 		}
 	}
 
@@ -1466,10 +1485,8 @@ function respawnVehicle(vehicle) {
 // ===========================================================================
 
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[VRR.Vehicle]: Spawning ${getVehicleNameFromModel(vehicleData.model)} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Vehicle]: Spawning ${getVehicleNameFromModel(vehicleData.model)} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
 	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
-	setVehicleHeading(vehicle, vehicleData.spawnRotation);
-	setElementTransient(vehicle, false);
 
 	if (!vehicle) {
 		return false;
@@ -1485,35 +1502,39 @@ function spawnVehicle(vehicleData) {
 			vehicle.setRGBColours(vehicleData.colour1RGBA, vehicleData.colour2RGBA);
 			let colour1 = rgbaArrayFromToColour(vehicleData.colour1RGBA);
 			let colour2 = rgbaArrayFromToColour(vehicleData.colour2RGBA);
-			logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Setting vehicle ${vehicle.id}'s colours to RGBA [${colour1[0]}, ${colour1[1]}, ${colour1[2]}, ${colour1[3]}], [(]${colour2[0]}, ${colour2[1]}, ${colour2[2]}, ${colour2[3]}]`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to RGBA [${colour1[0]}, ${colour1[1]}, ${colour1[2]}, ${colour1[3]}], [(]${colour2[0]}, ${colour2[1]}, ${colour2[2]}, ${colour2[3]}]`);
 			vehicle.setRGBColours(vehicleData.colour1RGBA, vehicleData.colour2RGBA);
 		} else {
 			setVehicleColours(vehicle, vehicleData.colour1, vehicleData.colour2, vehicleData.colour3, vehicleData.colour4);
-			logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Setting vehicle ${vehicle.id}'s colours to ${vehicleData.colour1}, ${vehicleData.colour2}, ${vehicleData.colour3}, ${vehicleData.colour4}`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to ${vehicleData.colour1}, ${vehicleData.colour2}, ${vehicleData.colour3}, ${vehicleData.colour4}`);
 		}
 	}
 
 	if (vehicleData.spawnLocked == true) {
 		setVehicleEngine(vehicle, false);
-		logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Setting vehicle ${vehicle.id}'s engine to OFF`);
+		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to OFF`);
 	} else {
-		setVehicleEngine(vehicle, intToBool(vehicleData.engine)); logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Setting vehicle ${vehicle.id}'s engine to ${toUpperCase(getOnOffFromBool(getVehicleEngine(vehicle)))}`);
+		setVehicleEngine(vehicle, intToBool(vehicleData.engine));
+		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to ${toUpperCase(getOnOffFromBool(getVehicleEngine(vehicle)))}`);
 	}
 
 	if (typeof vehicle.locked != "undefined") {
 		setVehicleLocked(vehicle, intToBool(vehicleData.locked));
-		logToConsole(LOG_VERBOSE, `[VRR.Vehicle]: Setting vehicle ${vehicle.id}'s lock state to ${toUpperCase(getOnOffFromBool(getVehicleLocked(vehicle)))}`);
+		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s lock state to ${toUpperCase(getOnOffFromBool(getVehicleLocked(vehicle)))}`);
 	}
 
 	//setVehicleHealth(vehicle, 1000);
 	repairVehicle(vehicle);
 
-	setEntityData(vehicle, "agrp.livery", vehicleData.livery, true);
-	setEntityData(vehicle, "agrp.upgrades", vehicleData.extras, true);
-	setEntityData(vehicle, "agrp.interior", vehicleData.interior, true);
-	setEntityData(vehicle, "agrp.engine", vehicleData.engine, true);
+	setEntityData(vehicle, "v.rp.livery", vehicleData.livery, true);
+	setEntityData(vehicle, "v.rp.upgrades", vehicleData.extras, true);
+	setEntityData(vehicle, "v.rp.interior", vehicleData.interior, true);
+	setEntityData(vehicle, "v.rp.engine", vehicleData.engine, true);
+
+	setEntityData(vehicle, "v.rp.server", true, true);
 
 	forcePlayerToSyncElementProperties(null, vehicle);
+	setElementTransient(vehicle, false);
 
 	return vehicle;
 }
@@ -1533,19 +1554,19 @@ function isVehicleAtPayAndSpray(vehicle) {
 
 function getVehicleOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case AGRP_VEHOWNER_CLAN:
+		case V_VEHOWNER_CLAN:
 			return "clan";
 
-		case AGRP_VEHOWNER_JOB:
+		case V_VEHOWNER_JOB:
 			return "job";
 
-		case AGRP_VEHOWNER_PLAYER:
+		case V_VEHOWNER_PLAYER:
 			return "player";
 
-		case AGRP_VEHOWNER_BIZ:
+		case V_VEHOWNER_BIZ:
 			return "business";
 
-		case AGRP_VEHOWNER_PUBLIC:
+		case V_VEHOWNER_PUBLIC:
 			return "public";
 
 		default:
@@ -1556,7 +1577,7 @@ function getVehicleOwnerTypeText(ownerType) {
 // ===========================================================================
 
 function isVehicleOwnedByJob(vehicle, jobId) {
-	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
 		return (getVehicleData(vehicle).ownerId == jobId);
 	}
 	return false;
@@ -1590,14 +1611,14 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 	tempVehicleData.spawnLocked = true;
 	tempVehicleData.spawnPosition = spawnPosition;
 	tempVehicleData.spawnRotation = spawnRotation;
-	tempVehicleData.ownerType = AGRP_VEHOWNER_BIZ;
+	tempVehicleData.ownerType = V_VEHOWNER_BIZ;
 	tempVehicleData.ownerId = dealershipId;
 	tempVehicleData.needsSaved = true;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
 
 	let slot = getServerData().vehicles.push(tempVehicleData);
-	setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
+	setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
 }
 
 // ===========================================================================
@@ -1622,7 +1643,11 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	}
 
 	let slot = getServerData().vehicles.push(tempVehicleData);
-	setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
+	setAllVehicleIndexes();
+
+	if (areServerElementsSupported()) {
+		setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
+	}
 
 	return vehicle;
 }
@@ -1648,11 +1673,11 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	}
 
 	let slot = getServerData().vehicles.push(tempVehicleData);
+	setAllVehicleIndexes();
 
 	if (areServerElementsSupported()) {
-		setEntityData(vehicle, "agrp.dataSlot", slot - 1, false);
+		setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
 	}
-
 
 	return vehicle;
 }
@@ -1676,22 +1701,22 @@ function processVehiclePurchasing() {
 
 function checkVehiclePurchasing(client) {
 	if (!isPlayerLoggedIn(client)) {
-		setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (!isPlayerSpawned(client)) {
-		setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (!getPlayerData(client)) {
-		setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (!getPlayerData(client).buyingVehicle) {
-		setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
@@ -1701,7 +1726,7 @@ function checkVehiclePurchasing(client) {
 			messagePlayerError(client, getLocaleString(client, "DealershipPurchaseExitedVehicle"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
-			setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		}
 		return false;
 	}
@@ -1712,22 +1737,24 @@ function checkVehiclePurchasing(client) {
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
-			setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 			return false;
 		}
 
 		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
-		createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_NONE) {
+			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+		}
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
 		updatePlayerCash(client);
 		getVehicleData(getPlayerData(client).buyingVehicle).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-		getVehicleData(getPlayerData(client).buyingVehicle).ownerType = AGRP_VEHOWNER_PLAYER;
+		getVehicleData(getPlayerData(client).buyingVehicle).ownerType = V_VEHOWNER_PLAYER;
 		getVehicleData(getPlayerData(client).buyingVehicle).buyPrice = 0;
 		getVehicleData(getPlayerData(client).buyingVehicle).rentPrice = 0;
 		getVehicleData(getPlayerData(client).buyingVehicle).spawnLocked = false;
 		getPlayerData(client).buyingVehicle = false;
 		messagePlayerSuccess(client, getLocaleString(client, "VehiclePurchaseComplete"));
-		setPlayerBuyingVehicleState(client, AGRP_VEHBUYSTATE_NONE, null, null);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return true;
 	}
 }
@@ -1754,9 +1781,9 @@ function processVehicleBurning() {
 function cacheAllVehicleItems() {
 	for (let i in getServerData().vehicles) {
 		for (let j in getServerData().items) {
-			if (getItemData(j).ownerType == AGRP_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
+			if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
 				getServerData().vehicles[i].trunkItemCache.push(j);
-			} else if (getItemData(j).ownerType == AGRP_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
+			} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
 				getServerData().vehicles[i].dashItemCache.push(j);
 			}
 		}
@@ -1787,16 +1814,16 @@ function setAllVehicleIndexes() {
 // ===========================================================================
 
 function doesVehicleHaveMegaphone(vehicle) {
-	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_JOB) {
-		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == AGRP_JOB_POLICE) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_POLICE) {
 			return true;
 		}
 
-		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == AGRP_JOB_FIRE) {
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_FIRE) {
 			return true;
 		}
 
-		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == AGRP_JOB_MEDICAL) {
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_MEDICAL) {
 			return true;
 		}
 	}

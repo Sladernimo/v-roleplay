@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: taxi.js
 // DESC: Provides taxi driver job functions and usage
@@ -24,7 +23,7 @@ function taxiSetFareCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_TAXI)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_TAXI)) {
 		messagePlayerError(client, "You don't have a taxi job.");
 		return false;
 	}

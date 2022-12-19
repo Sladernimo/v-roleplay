@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: localechooser.js
 // DESC: Provides locale chooser GUI
@@ -20,7 +19,7 @@ let flagImageGap = toVector2(5, 5);
 // ===========================================================================
 
 function initLocaleChooserGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating locale chooser GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating locale chooser GUI ...`);
 	localeChooser.window = mexui.window(game.width / 2 - 200, game.height - 150, 60, 60, 'Choose a language', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], 0),
@@ -40,15 +39,13 @@ function initLocaleChooserGUI() {
 
 	localeChooser.window.shown = false;
 
-	loadLocaleConfig();
-
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created locale chooser GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created locale chooser GUI`);
 }
 
 // ===========================================================================
 
 function closeLocaleChooserGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Closing locale chooser window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing locale chooser window`);
 	localeChooser.window.shown = false;
 	for (let i in localeChooser.flagImages) {
 		localeChooser.flagImages[i].shown = false;
@@ -59,9 +56,6 @@ function closeLocaleChooserGUI() {
 // ===========================================================================
 
 function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
-	// Disabled for now until image loading crash can be fixed
-	return false;
-
 	if (position.x != 0.0 && position.y != 0.0) {
 		localeChooser.window.position = position;
 	} else {
@@ -69,7 +63,7 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 	}
 
 	//closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing locale chooser window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
 	localeChooser.window.shown = true;
 
@@ -81,7 +75,7 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 // ===========================================================================
 
 function toggleLocaleChooserGUI() {
-	if (localeChooser.window.shown) {
+	if (localeChooser.window.shown == true) {
 		closeLocaleChooserGUI();
 	} else {
 		showLocaleChooserGUI();
@@ -91,14 +85,14 @@ function toggleLocaleChooserGUI() {
 // ===========================================================================
 
 function localeChooserSetLocale(localeId) {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Asking server to change locale to ${localeId}`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Asking server to change locale to ${localeId}`);
 	sendLocaleSelectToServer(localeId);
 }
 
 // ===========================================================================
 
 function resetLocaleChooserOptions() {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Resetting locale chooser options`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Resetting locale chooser options`);
 
 	// let tempLocaleOptions = getServerData().localeOptions; // getAvailableLocaleOptions();
 	let tempLocaleOptions = getAvailableLocaleOptions();
@@ -122,7 +116,7 @@ function resetLocaleChooserOptions() {
 
 		localeChooser.flagImages[i].shown = false;
 
-		logToConsole(LOG_DEBUG | LOG_WARN, `[VRR.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
 
 		//localeChooser.activeRingImages.push(activeRingImage);
 	}

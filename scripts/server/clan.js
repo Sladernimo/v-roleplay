@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: clan.js
 // DESC: Provides clan functions and usage
@@ -110,94 +109,88 @@ class ClanMemberData {
 // ===========================================================================
 
 function initClanScript() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Initializing clans script ...");
-	logToConsole(LOG_INFO, "[VRR.Clan]: Clan script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Initializing clans script ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Clan script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadClansFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanData = new ClanData(dbAssoc);
-					//tempClanData.members = loadClanMembersFromDatabase(tempClanData.databaseId);
-					tempClanData.ranks = loadClanRanksFromDatabase(tempClanData.databaseId);
-					tempClans.push(tempClanData);
-					logToConsole(LOG_DEBUG, `[VRR.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempClanData = new ClanData(dbAssoc[i]);
+				//tempClanData.members = loadClanMembersFromDatabase(tempClanData.databaseId);
+				tempClanData.ranks = loadClanRanksFromDatabase(tempClanData.databaseId);
+				tempClans.push(tempClanData);
+				logToConsole(LOG_DEBUG, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: ${tempClans.length} clans loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
 	return tempClans;
 }
 
 // ===========================================================================
 
 function loadClanMembersFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanData = new ClanData(dbAssoc);
-					tempClans.push(tempClanData);
-					logToConsole(LOG_VERBOSE, `[VRR.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempClanData = new ClanData(dbAssoc[i]);
+				tempClans.push(tempClanData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: ${tempClans.length} clans loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
 	return tempClans;
 }
 
 // ===========================================================================
 
 function loadClanRanksFromDatabase(clanDatabaseId) {
-	logToConsole(LOG_INFO, `[VRR.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
 
 	let dbConnection = connectToDatabase();
-	let dbAssoc;
+	let dbAssoc = [];
 	let tempClanRanks = [];
 
 	if (dbConnection) {
-		let dbQuery = queryDatabase(dbConnection, `SELECT * FROM clan_rank WHERE clan_rank_clan = ${clanDatabaseId}`);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempClanRankData = new ClanRankData(dbAssoc);
-					tempClanRanks.push(tempClanRankData);
-					logToConsole(LOG_VERBOSE, `[VRR.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM clan_rank WHERE clan_rank_clan = ${clanDatabaseId}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempClanRankData = new ClanRankData(dbAssoc[i]);
+				tempClanRanks.push(tempClanRankData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
 	return tempClanRanks;
 }
 
@@ -1292,10 +1285,10 @@ function setClanRankTitle(clanId, rankId, title) {
 // ===========================================================================
 
 function saveAllClansToDatabase() {
-	logToConsole(LOG_DEBUG, `[VRR.Clan]: Saving all server clans to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Clan]: Saving all server clans to database ...`);
 
 	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG, `[VRR.Clan]: Aborting save all clans to database, dev server is enabled.`);
+		logToConsole(LOG_DEBUG, `[AGRP.Clan]: Aborting save all clans to database, dev server is enabled.`);
 		return false;
 	}
 
@@ -1303,7 +1296,7 @@ function saveAllClansToDatabase() {
 		saveClanToDatabase(i);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Clan]: Saved all server clans to database`);
+	logToConsole(LOG_INFO, `[AGRP.Clan]: Saved all server clans to database`);
 }
 
 // ===========================================================================

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides util functions and arrays with data
@@ -51,12 +50,19 @@ function getGameAreas(gameId) {
  * @return {ClientData} The player/client's data (class instancee)
  */
 function getPlayerData(client) {
-	if (client != null) {
-		if (isClientInitialized(client)) {
-			return getServerData().clients[getPlayerId(client)];
-		}
+	if (client == null) {
+		return false;
 	}
-	return false;
+
+	if (!isClientInitialized(client)) {
+		return false;
+	}
+
+	if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+		return false;
+	}
+
+	return getServerData().clients[getPlayerId(client)];
 }
 
 // ===========================================================================
@@ -70,49 +76,63 @@ function initAllClients() {
 // ===========================================================================
 
 function updateServerRules() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Updating all server rules ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Updating all server rules ...`);
 
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: Time support: ${isTimeSupported()}`);
+	let timeWeatherRule = [];
+	let tempText = "";
+
 	if (isTimeSupported()) {
 		if (getServerConfig() != false) {
-			let value = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
-			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Time" as ${value}`);
-			server.setRule("Time", value);
+			tempText = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
+			timeWeatherRule.push(tempText);
+		}
+	} else {
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isNightTime(getServerConfig().hour)) {
+				tempText = "Night";
+			} else {
+				tempText = "Day";
+			}
+
+			timeWeatherRule.push(tempText);
 		}
 	}
 
 	if (isWeatherSupported()) {
 		if (getServerConfig() != false) {
-			if (typeof getGameConfig().weatherNames[getGame()] != "undefined") {
-				let value = getGameConfig().weatherNames[getGame()][getServerConfig().weather];
-				logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Weather" as ${value}`);
-				server.setRule("Weather", value);
+			if (getWeatherData(getServerConfig().weather) != false) {
+				let tempText = getWeatherData(getServerConfig().weather).name;
+				timeWeatherRule.push(tempText);
 			}
 		}
 	}
 
 	if (isSnowSupported()) {
 		if (getServerConfig() != false) {
-			let value = getYesNoFromBool(getServerConfig().fallingSnow);
-			logToConsole(LOG_DEBUG, `[VRR.Utilities]: Setting server rule "Snowing" as ${value}`);
-			server.setRule("Snowing", value);
+			if (getServerConfig().fallingSnow == true) {
+				timeWeatherRule.push("Snowing");
+			}
 		}
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Utilities]: All server rules updated successfully!`);
+
+	setServerRule("Time & Weather", timeWeatherRule.join(", "));
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: All server rules updated successfully!`);
 }
 
 // ===========================================================================
 
 function getWeatherFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().weatherNames[getGame()]) {
-			if (toLowerCase(getGameConfig().weatherNames[getGame()][i]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in getGameConfig().weather[getGame()]) {
+			if (toLowerCase(getGameConfig().weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().weatherNames[getGame()][params] != "undefined") {
-			return toInteger(params);
+		for (let i in getGameConfig().weather[getGame()]) {
+			if (typeof getGameConfig().weather[getGame()][i].weatherId != "undefined") {
+				return toInteger(i);
+			}
 		}
 	}
 
@@ -239,8 +259,8 @@ function checkPlayerPedStates() {
 		if (getPlayerData(clients[i])) {
 			if (getPlayerData(clients[i]).pedState) {
 				if (isPlayerInAnyVehicle(clients[i])) {
-					if (getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_EXITINGVEHICLE) {
-						getPlayerData(clients[i]).pedState == AGRP_PEDSTATE_READY;
+					if (getPlayerData(clients[i]).pedState == V_PEDSTATE_EXITINGVEHICLE) {
+						getPlayerData(clients[i]).pedState == V_PEDSTATE_READY;
 					}
 				}
 			}
@@ -317,9 +337,9 @@ function getPlayerFromParams(params) {
 
 // ===========================================================================
 
-function updateConnectionLogOnQuit(client, quitReasonId) {
+function updateConnectionLogOnQuit(client) {
 	if (getPlayerData(client) != false) {
-		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW(), conn_how_disconnect=${quitReasonId} WHERE conn_id = ${getPlayerData(client).sessionId}`);
+		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW() WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
 
@@ -405,34 +425,28 @@ function clearTemporaryPeds() {
 
 // ===========================================================================
 
-function updateTimeRule() {
-	if (isTimeSupported()) {
-		server.setRule("Time", makeReadableTime(game.time.hour, game.time.minute));
-	}
-}
-
-// ===========================================================================
-
 function isClientInitialized(client) {
 	//if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
 	//	return false;
 	//}
 
-	//if (playerInitialized[getPlayerId(client)] == false) {
-	//	return false;
-	//}
+	if (playerInitialized[getPlayerId(client)] == true) {
+		return true;
+	}
 
-	return (typeof getServerData().clients[getPlayerId(client)] != "undefined");
+	return false;
 }
 
 // ===========================================================================
 
 function getPedForNetworkEvent(ped) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		return ped;
-	} else {
-		return ped.id;
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	return ped;
+	//} else {
+	//	return ped.id;
+	//}
+
+	return ped.id;
 }
 
 // ===========================================================================
@@ -470,6 +484,168 @@ function updateAllPlayerWeaponDamageStates() {
 			setPlayerWeaponDamageEvent(clients[i], getPlayerData(clients[i]).weaponDamageEvent);
 		}
 	}
+}
+
+// ===========================================================================
+
+function removeAllPlayersFromProperties() {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerInAnyBusiness(clients[i])) {
+			removePlayerFromBusiness(clients[i]);
+		}
+
+		if (isPlayerInAnyHouse(clients[i])) {
+			removePlayerFromHouse(clients[i]);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
+
+function removeAllPlayersFromVehicles() {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerInAnyVehicle(clients[i])) {
+			removePlayerFromVehicle(clients[i]);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
+
+function processPlayerEnteringExitingProperty(client) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Processing property enter/exit for player ${getPlayerDisplayForConsole(client)} ...`);
+	if (getPlayerData(client).enteringExitingProperty == null) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Assigned property data is null.`);
+		return false;
+	}
+
+	let pedState = getPlayerData(client).pedState;
+	if (pedState != V_PEDSTATE_ENTERINGPROPERTY && pedState != V_PEDSTATE_EXITINGPROPERTY) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
+		return false;
+	}
+
+	let propertyData = null;
+	if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
+		propertyData = getBusinessData(getPlayerData(client).enteringExitingProperty[1]);
+	} else if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_HOUSE) {
+		propertyData = getHouseData(getPlayerData(client).enteringExitingProperty[1]);
+	}
+
+	if (propertyData == null || propertyData == false) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Property is invalid.`);
+		return false;
+	}
+
+	if (pedState == V_PEDSTATE_ENTERINGPROPERTY) {
+		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
+		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
+			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
+			spawnPlayer(client, propertyData.exitPosition, propertyData.exitRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+			onPlayerSpawn(client);
+		} else {
+			setPlayerPosition(client, propertyData.exitPosition);
+			setPlayerHeading(client, propertyData.exitRotation);
+		}
+
+		setPlayerDimension(client, propertyData.exitDimension);
+		setPlayerInterior(client, propertyData.exitInterior);
+
+		setTimeout(function () {
+			if (isFadeCameraSupported()) {
+				fadeCamera(client, true, 1.0);
+			}
+			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
+		}, 1000);
+
+		if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
+			if (propertyData.type == V_BIZ_TYPE_PAINTBALL) {
+				startPaintBall(client);
+			}
+		}
+
+		let radioStationIndex = propertyData.streamingRadioStationIndex;
+		if (radioStationIndex != -1) {
+			if (getRadioStationData(radioStationIndex)) {
+				playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
+				getPlayerData(client).streamingRadioStation = radioStationIndex;
+			}
+		}
+
+		getPlayerData(client).inProperty = [getPlayerData(client).enteringExitingProperty[0], getPlayerData(client).enteringExitingProperty[1]];
+		getPlayerData(client).enteringExitingProperty = null;
+		getPlayerData(client).pedState = V_PEDSTATE_READY;
+	} else if (pedState == V_PEDSTATE_EXITINGPROPERTY) {
+		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
+		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
+			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
+			spawnPlayer(client, propertyData.entrancePosition, propertyData.entranceRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+			onPlayerSpawn(client);
+		} else {
+			setPlayerPosition(client, propertyData.entrancePosition);
+			setPlayerHeading(client, propertyData.entranceRotation);
+		}
+
+		setPlayerDimension(client, propertyData.entranceDimension);
+		setPlayerInterior(client, propertyData.entranceInterior);
+
+		// Check if exiting property was into another house/business
+		let inProperty = false;
+		let inPropertyType = V_PROPERTY_TYPE_NONE;
+
+		let inBusiness = getPlayerBusiness(client);
+		if (inBusiness != -1) {
+			inProperty = getBusinessData(inBusiness);
+			inPropertyType = V_PROPERTY_TYPE_BUSINESS;
+		} else {
+			let inHouse = getPlayerHouse(client);
+			if (inHouse != -1) {
+				inProperty = getHouseData(inHouse);
+				inPropertyType = V_PROPERTY_TYPE_HOUSE;
+			}
+		}
+
+		setTimeout(function () {
+			if (getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+				if (isFadeCameraSupported()) {
+					fadeCamera(client, true, 1.0);
+				}
+			}
+			updateInteriorLightsForPlayer(client, (inProperty != false) ? inProperty.interiorLights : true);
+		}, 1000);
+
+		stopPaintBall(client);
+
+		if (inProperty != false) {
+			if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
+				if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
+					playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
+					getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
+				}
+			}
+		} else {
+			stopRadioStreamForPlayer(client);
+			getPlayerData(client).streamingRadioStation = -1;
+		}
+
+		getPlayerData(client).inProperty = [inPropertyType, inProperty.index];
+		getPlayerData(client).enteringExitingProperty = null;
+		getPlayerData(client).pedState = V_PEDSTATE_READY;
+	}
+}
+
+// ===========================================================================
+
+function getPlayerCountryISOCode(client) {
+	if (getPlayerIP(client) == "127.0.0.1" || getPlayerIP(client).indexOf("192.168.") != -1) {
+		return "US";
+	}
+
+	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
 }
 
 // ===========================================================================

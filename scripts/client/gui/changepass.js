@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: changepass.js
 // DESC: Provides change password GUI
@@ -20,7 +19,7 @@ let passwordChange = {
 // ===========================================================================
 
 function initChangePasswordGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating password change GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating password change GUI ...`);
 	passwordChange.window = mexui.window(game.width / 2 - 130, game.height / 2 - 125, 300, 250, 'Change Password', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -111,13 +110,13 @@ function initChangePasswordGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 		},
 	}, checkChangePassword);
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created change password GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created change password GUI`);
 }
 
 // ===========================================================================
 
 function passwordChangeFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports change password failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports change password failed. Reason: ${errorMessage}`);
 	passwordChange.messageLabel.text = errorMessage;
 	passwordChange.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	passwordChange.passwordInput.text = "";
@@ -128,14 +127,14 @@ function passwordChangeFailed(errorMessage) {
 // ===========================================================================
 
 function checkChangePassword() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Checking password change with server ...`);
-	sendNetworkEventToServer("agrp.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking password change with server ...`);
+	sendNetworkEventToServer("v.rp.checkChangePassword", passwordChange.passwordInput.lines[0], passwordChange.confirmPasswordInput.lines[0]);
 }
 
 // ===========================================================================
 
 function showChangePasswordGUI(errorMessage) {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing change password window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing change password window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
@@ -150,7 +149,7 @@ function showChangePasswordGUI(errorMessage) {
 // ===========================================================================
 
 function passwordChangeSuccess() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Server reports password change was successful`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports password change was successful`);
 	guiSubmitKey = false;
 	closeAllWindows();
 }

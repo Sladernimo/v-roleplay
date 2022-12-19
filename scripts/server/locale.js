@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: locale.js
 // DESC: Provides locale structures, functions and usage
@@ -23,9 +22,13 @@ class LocaleData {
 
 // ===========================================================================
 
+let englishLocale = 0;
+
+// ===========================================================================
+
 function initLocaleScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Locale]: Initializing locale script ...");
-	logToConsole(LOG_INFO, "[VRR.Locale]: Locale script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Locale]: Initializing locale script ...");
+	logToConsole(LOG_INFO, "[AGRP.Locale]: Locale script initialized!");
 }
 
 // ===========================================================================
@@ -35,9 +38,9 @@ function getLocaleString(client, stringName, ...args) {
 		return "";
 	}
 
-	let tempString = getRawLocaleString(stringName, getPlayerData(client).locale);
+	let tempString = getRawLocaleString(getPlayerData(client).locale, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
+		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
 		submitBugReport(client, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getPlayerLocaleName(client)}"`);
 		return "";
 	}
@@ -52,10 +55,27 @@ function getLocaleString(client, stringName, ...args) {
 // ===========================================================================
 
 function getLanguageLocaleString(localeId, stringName, ...args) {
-	let tempString = getRawLocaleString(stringName, localeId);
+	let tempString = getRawLocaleString(localeId, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
+		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
+		return "";
+	}
+
+	for (let i = 1; i <= args.length; i++) {
+		tempString = tempString.replace(`{${i}}`, args[i - 1]);
+	}
+
+	return tempString;
+}
+
+// ===========================================================================
+
+function getLanguageGroupedLocaleString(localeId, stringName, index, ...args) {
+	let tempString = getRawGroupedLocaleString(localeId, stringName, index);
+	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
+		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
+		submitBugReport(null, `(AUTOMATED REPORT) Locale string index ${index} of "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
 		return "";
 	}
 
@@ -73,7 +93,7 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 		return "";
 	}
 
-	let tempString = getRawGroupedLocaleString(stringName, getPlayerData(client).locale, index);
+	let tempString = getRawGroupedLocaleString(getPlayerData(client).locale, stringName, index);
 
 	for (let i = 1; i <= args.length; i++) {
 		tempString = tempString.replace(`{${i}}`, args[i - 1]);
@@ -84,9 +104,9 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 
 // ===========================================================================
 
-function getRawLocaleString(stringName, localeId) {
+function getRawLocaleString(localeId, stringName) {
 	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		return "";
 	}
@@ -105,9 +125,9 @@ function getRawLocaleString(stringName, localeId) {
 
 // ===========================================================================
 
-function getRawGroupedLocaleString(stringName, localeId, index) {
+function getRawGroupedLocaleString(localeId, stringName, index) {
 	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
-		logToConsole(LOG_WARN, `[VRR.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[AGRP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		return "";
 	}
@@ -258,7 +278,7 @@ async function translateMessage(messageText, translateFrom = getGlobalConfig().l
 			}
 		}
 
-		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURI(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
+		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
 		httpGet(
 			thisTranslationURL,
 			"",
@@ -272,6 +292,18 @@ async function translateMessage(messageText, translateFrom = getGlobalConfig().l
 			}
 		);
 	});
+}
+
+// ===========================================================================
+
+function getLocaleFromCountryISO(isoCode = "US") {
+	for (let i in getLocales()) {
+		for (let j in getLocales()[i].countries) {
+			if (toLowerCase(getLocales()[i].countries[j]) == toLowerCase(isoCode)) {
+				return getLocales()[i].id;
+			}
+		}
+	}
 }
 
 // ===========================================================================

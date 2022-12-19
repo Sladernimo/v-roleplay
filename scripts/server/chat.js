@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: chat.js
 // DESC: Provides chat functions and usage
@@ -9,8 +8,8 @@
 // ===========================================================================
 
 function initChatScript() {
-	logToConsole(LOG_INFO, "[VRR.Chat]: Initializing chat script ...");
-	logToConsole(LOG_INFO, "[VRR.Chat]: Chat script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Initializing chat script ...");
+	logToConsole(LOG_INFO, "[AGRP.Chat]: Chat script initialized successfully!");
 	return true;
 }
 
@@ -174,7 +173,14 @@ function adminChatCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`{jobYellow}[Admin Chat] {ALTCOLOUR}${getPlayerName(client)}: ${params}`);
+	let clients = getClients();
+	for (let i in clients) {
+		if (doesPlayerHaveStaffPermission(clients[i], getStaffFlagValue("BasicModeration"))) {
+			messagePlayerAdminChat(clients[i], client, params);
+		}
+	}
+
+	messageDiscordAdminChannel(`${getPlayerData(client).accountData.staffTitle} ${getPlayerData(client).accountData.name}: ${messageText}`);
 }
 
 // ===========================================================================
@@ -217,7 +223,10 @@ function privateMessageCommand(command, params, client) {
 
 	getPlayerData(targetClient).privateMessageReplyTo = client;
 	messagePlayerPrivateMessage(targetClient, client, messageText);
-	messagePlayerTip(client, getLocaleString(client, "PrivateMessageReplyCommandTip", "{ALTCOLOUR}/reply{MAINCOLOUR}"))
+
+	if (!hasPlayerSeenActionTip(targetClient, "ReplyToDirectMessage")) {
+		messagePlayerTip(targetClient, getGroupedLocaleString(targetClient, "ActionTips", "ReplyToDirectMessage", "{ALTCOLOUR}/reply{MAINCOLOUR}"));
+	}
 }
 
 // ===========================================================================
@@ -240,6 +249,8 @@ function replyToLastPrivateMessageCommand(command, params, client) {
 
 	getPlayerData(targetClient).privateMessageReplyTo = client;
 	messagePlayerPrivateMessage(targetClient, client, messageText);
+
+	markPlayerActionTipSeen(client, "ReplyToDirectMessage");
 }
 
 // ===========================================================================
@@ -390,7 +401,7 @@ function clanChat(client, messageText) {
 // ===========================================================================
 
 function canPlayerUseMegaphone(client) {
-	if (getPlayerFirstItemSlotByUseType(client, AGRP_ITEM_USE_TYPE_MEGAPHONE) != -1) {
+	if (getPlayerFirstItemSlotByUseType(client, V_ITEM_USE_TYPE_MEGAPHONE) != -1) {
 		if (isPlayerActiveItemEnabled(client)) {
 			return true;
 		}

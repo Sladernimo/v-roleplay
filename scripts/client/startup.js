@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: startup.js
 // DESC: Provides startup/shutdown procedures
@@ -13,7 +12,7 @@ function initClientScripts() {
 	initNameTagScript();
 	initScoreBoardScript();
 	initMessagingScript();
-	initServerScript();
+	initNetworkEventsScript();
 	initLogoScript();
 	initLabelScript();
 	initChatBoxScript();
@@ -21,12 +20,15 @@ function initClientScripts() {
 	initKeyBindScript();
 	initEventScript();
 	initSkinSelectScript();
+	initCursorScript();
+
+	addAllNetworkHandlers();
 }
 
 // ===========================================================================
 
 function setUpInitialGame() {
-	if (getGame() == AGRP_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_III) {
 		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA III ...");
 
 		// Turn off unlimited sprint
@@ -45,7 +47,7 @@ function setUpInitialGame() {
 
 		// Provided by mouse camera script (mousecam.js)
 		SetStandardControlsEnabled(true);
-	} else if (getGame() == AGRP_GAME_GTA_VC) {
+	} else if (getGame() == V_GAME_GTA_VC) {
 		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA Vice City ...");
 
 		// Turn off unlimited sprint
@@ -88,7 +90,7 @@ function setUpInitialGame() {
 
 		// Provided by mouse camera script (mousecam.js)
 		SetStandardControlsEnabled(true);
-	} else if (getGame() == AGRP_GAME_GTA_SA) {
+	} else if (getGame() == V_GAME_GTA_SA) {
 		logToConsole(LOG_DEBUG | LOG_WARN, "Setting up initial game stuff for GTA San Andreas ...");
 		// Turn weapon skills down a bit
 		game.setGameStat(STAT_WEAPONTYPE_PISTOL_SKILL, 400);
@@ -125,7 +127,7 @@ function setUpInitialGame() {
 
 		// Disables taxi/vigilante/etc and other start mission triggers
 		game.onMission = true;
-	} else if (getGame() == AGRP_GAME_GTA_IV) {
+	} else if (getGame() == V_GAME_GTA_IV) {
 		natives.allowEmergencyServices(false);
 		natives.setCreateRandomCops(true);
 		natives.setMaxWantedLevel(0);
@@ -187,7 +189,7 @@ function setUpInitialGame() {
 
 		// Some last steps
 		//natives.loadAllObjectsNow();
-	} else if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	} else if (getGame() == V_GAME_MAFIA_ONE) {
 		game.mapEnabled = false;
 		game.setTrafficEnabled(false);
 	}

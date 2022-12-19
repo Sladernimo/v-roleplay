@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: radio.js
 // DESC: Provides internet streaming radio functions and usage
@@ -45,3 +44,7 @@ function playAudioFile(audioName, loop, volume) {
 }
 
 // ===========================================================================
+
+function getStreamingRadioVolumeForPosition(position1, position2) {
+	return false;
+}

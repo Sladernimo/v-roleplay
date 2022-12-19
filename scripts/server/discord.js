@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: discord.js
 // DESC: Provides discord bridging and connection functions and usage
@@ -9,15 +8,15 @@
 // ===========================================================================
 
 // Discord Webhook Types
-const AGRP_DISCORD_WEBHOOK_NONE = 0;
-const AGRP_DISCORD_WEBHOOK_LOG = 1;
-const AGRP_DISCORD_WEBHOOK_ADMIN = 2;
+const V_DISCORD_WEBHOOK_NONE = 0;
+const V_DISCORD_WEBHOOK_LOG = 1;
+const V_DISCORD_WEBHOOK_ADMIN = 2;
 
 // ===========================================================================
 
 function initDiscordScript() {
-	logToConsole(LOG_INFO, "[VRR.Discord]: Initializing discord script ...");
-	logToConsole(LOG_INFO, "[VRR.Discord]: Discord script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Discord]: Initializing discord script ...");
+	logToConsole(LOG_INFO, "[AGRP.Discord]: Discord script initialized successfully!");
 }
 
 // ===========================================================================
@@ -111,7 +110,7 @@ function messageDiscordChatChannel(messageString) {
 
 	messageString = removeColoursInMessage(messageString);
 	messageString = replaceProfanityInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), V_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
@@ -131,7 +130,7 @@ function messageDiscordEventChannel(messageString) {
 
 	messageString = removeColoursInMessage(messageString);
 	messageString = replaceProfanityInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_LOG);
+	triggerDiscordWebHook(messageString, getServerId(), V_DISCORD_WEBHOOK_LOG);
 }
 
 // ===========================================================================
@@ -150,7 +149,7 @@ function messageDiscordAdminChannel(messageString) {
 	}
 
 	messageString = removeColoursInMessage(messageString);
-	triggerDiscordWebHook(messageString, getServerId(), AGRP_DISCORD_WEBHOOK_ADMIN);
+	triggerDiscordWebHook(messageString, getServerId(), V_DISCORD_WEBHOOK_ADMIN);
 }
 
 // ===========================================================================
@@ -178,13 +177,13 @@ function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) 
 
 // ===========================================================================
 
-function triggerDiscordWebHook(messageString, serverId = getServerId(), type = AGRP_DISCORD_WEBHOOK_LOG) {
+function triggerDiscordWebHook(messageString, serverId = getServerId(), type = V_DISCORD_WEBHOOK_LOG) {
 	if (!getGlobalConfig().discord.webhook.enabled) {
 		return false;
 	}
 
 	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
-	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
 	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
@@ -211,7 +210,7 @@ function triggerClanDiscordWebHook(clanIndex, messageString) {
 	let webhookURL = getClanData(clanIndex).discordWebhookURL;
 
 	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
-	tempURL = tempURL.replace("{0}", encodeURI(messageString));
+	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
 	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);

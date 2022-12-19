@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: misc.js
 // DESC: Provides any uncategorized functions and usage
@@ -9,49 +8,54 @@
 // ===========================================================================
 
 // Pickup Types
-const AGRP_PICKUP_NONE = 0;
-const AGRP_PICKUP_JOB = 1;
-const AGRP_PICKUP_BUSINESS_ENTRANCE = 2;
-const AGRP_PICKUP_BUSINESS_EXIT = 3;
-const AGRP_PICKUP_HOUSE_ENTRANCE = 4;
-const AGRP_PICKUP_HOUSE_EXIT = 5;
-const AGRP_PICKUP_EXIT = 6;
+const V_PICKUP_NONE = 0;
+const V_PICKUP_JOB = 1;
+const V_PICKUP_BUSINESS_ENTRANCE = 2;
+const V_PICKUP_BUSINESS_EXIT = 3;
+const V_PICKUP_HOUSE_ENTRANCE = 4;
+const V_PICKUP_HOUSE_EXIT = 5;
+const V_PICKUP_EXIT = 6;
 
 // ===========================================================================
 
 // Blip Owner Types
-const AGRP_BLIP_NONE = 0;
-const AGRP_BLIP_JOB = 1;
-const AGRP_BLIP_BUSINESS_ENTRANCE = 2;
-const AGRP_BLIP_BUSINESS_EXIT = 3;
-const AGRP_BLIP_HOUSE_ENTRANCE = 4;
-const AGRP_BLIP_HOUSE_EXIT = 5;
-const AGRP_BLIP_EXIT = 6;
+const V_BLIP_NONE = 0;
+const V_BLIP_JOB = 1;
+const V_BLIP_BUSINESS_ENTRANCE = 2;
+const V_BLIP_BUSINESS_EXIT = 3;
+const V_BLIP_HOUSE_ENTRANCE = 4;
+const V_BLIP_HOUSE_EXIT = 5;
+const V_BLIP_EXIT = 6;
 
 // ===========================================================================
 
 // Ped States
-const AGRP_PEDSTATE_NONE = 2;                     // None
-const AGRP_PEDSTATE_READY = 1;                    // Ready
-const AGRP_PEDSTATE_DRIVER = 2;                   // Driving a vehicle
-const AGRP_PEDSTATE_PASSENGER = 3;                // In a vehicle as passenger
-const AGRP_PEDSTATE_DEAD = 4;                     // Dead
-const AGRP_PEDSTATE_ENTERINGPROPERTY = 5;         // Entering a property
-const AGRP_PEDSTATE_EXITINGPROPERTY = 6;          // Exiting a property
-const AGRP_PEDSTATE_ENTERINGVEHICLE = 7;          // Entering a vehicle
-const AGRP_PEDSTATE_EXITINGVEHICLE = 8;           // Exiting a vehicle
-const AGRP_PEDSTATE_BINDED = 9;                   // Binded by rope or handcuffs
-const AGRP_PEDSTATE_TAZED = 10;                   // Under incapacitating effect of tazer
-const AGRP_PEDSTATE_INTRUNK = 11;                 // In vehicle trunk
-const AGRP_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
-const AGRP_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
-const AGRP_PEDSTATE_SPAWNING = 14;                // Spawning
+const V_PEDSTATE_NONE = 0;                     // None
+const V_PEDSTATE_READY = 1;                    // Ready
+const V_PEDSTATE_DRIVER = 2;                   // Driving a vehicle
+const V_PEDSTATE_PASSENGER = 3;                // In a vehicle as passenger
+const V_PEDSTATE_DEAD = 4;                     // Dead
+const V_PEDSTATE_ENTERINGPROPERTY = 5;         // Entering a property
+const V_PEDSTATE_EXITINGPROPERTY = 6;          // Exiting a property
+const V_PEDSTATE_ENTERINGVEHICLE = 7;          // Entering a vehicle
+const V_PEDSTATE_EXITINGVEHICLE = 8;           // Exiting a vehicle
+const V_PEDSTATE_BINDED = 9;                   // Binded by rope or handcuffs
+const V_PEDSTATE_TAZED = 10;                   // Under incapacitating effect of tazer
+const V_PEDSTATE_INTRUNK = 11;                 // In vehicle trunk
+const V_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
+const V_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
+const V_PEDSTATE_SPAWNING = 14;                // Spawning
+
+// Property Types
+const V_PROPERTY_TYPE_NONE = 0;				  // None
+const V_PROPERTY_TYPE_BUSINESS = 1;			  // Business
+const V_PROPERTY_TYPE_HOUSE = 2;				  // House
 
 // ===========================================================================
 
 function initMiscScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Misc]: Initializing misc script ...");
-	logToConsole(LOG_INFO, "[VRR.Misc]: Misc script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Misc]: Initializing misc script ...");
+	logToConsole(LOG_INFO, "[AGRP.Misc]: Misc script initialized successfully!");
 	return true;
 }
 
@@ -111,7 +115,7 @@ function suicideCommand(command, params, client) {
 // ===========================================================================
 
 function toggleMouseCameraCommand(command, params, client) {
-	if (getGame() != AGRP_GAME_GTA_VC) {
+	if (getGame() != V_GAME_GTA_VC) {
 		sendPlayerMouseCameraToggle(client);
 	}
 	return true;
@@ -144,7 +148,7 @@ function setNewCharacterMoneyCommand(command, params, client) {
 	getServerConfig().newCharacter.cash = amount;
 	getServerConfig().needsSaved = true;
 
-	messagePlayerNormal(client, `The new character money has been set to $${amount}`);
+	messagePlayerNormal(client, `The new character money has been set to ${getCurrencyString(amount)}`);
 	return true;
 }
 
@@ -200,80 +204,147 @@ function enterExitPropertyCommand(command, params, client) {
 	let isEntrance = false;
 	let isBusiness = false;
 
-	if (areServerElementsSupported()) {
-		if (!getPlayerData(client).currentPickup) {
-			return false;
-		}
+	// Make sure they aren't already trying to enter/exit a property
+	if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
 
-		let ownerType = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.type");
-		let ownerId = getEntityData(getPlayerData(client).currentPickup, "agrp.owner.id");
+	let position = getPlayerPosition(client);
+	let dimension = getPlayerDimension(client);
 
-		switch (ownerType) {
-			case AGRP_PICKUP_BUSINESS_ENTRANCE:
-				isBusiness = true;
-				isEntrance = true;
-				closestProperty = getServerData().businesses[ownerId];
-				break;
+	/*
+	// The player's currentPickup wasn't always being set. This prevented entering/exiting a property.
+	// Needs further testing and tweaks.
+	if (getPlayerData(client).currentPickup != null) {
+		if (getDistance(getPlayerData(client).currentPickup.position, getPlayerPosition(client)) <= 2) {
+			let ownerType = getEntityData(getPlayerData(client).currentPickup, "v.rp.owner.type");
+			let ownerId = getEntityData(getPlayerData(client).currentPickup, "v.rp.owner.id");
 
-			case AGRP_PICKUP_BUSINESS_EXIT:
-				isBusiness = true;
-				isEntrance = false;
-				closestProperty = getServerData().businesses[ownerId];
-				break;
+			switch (ownerType) {
+				case V_PICKUP_BUSINESS_ENTRANCE:
+					isBusiness = true;
+					isEntrance = true;
+					closestProperty = getServerData().businesses[ownerId];
+					break;
 
-			case AGRP_PICKUP_HOUSE_ENTRANCE:
-				isBusiness = false;
-				isEntrance = true;
-				closestProperty = getServerData().houses[ownerId];
-				break;
+				case V_PICKUP_BUSINESS_EXIT:
+					isBusiness = true;
+					isEntrance = false;
+					closestProperty = getServerData().businesses[ownerId];
+					break;
 
-			case AGRP_PICKUP_HOUSE_EXIT:
-				isBusiness = false;
-				isEntrance = false;
-				closestProperty = getServerData().houses[ownerId];
-				break;
+				case V_PICKUP_HOUSE_ENTRANCE:
+					isBusiness = false;
+					isEntrance = true;
+					closestProperty = getServerData().houses[ownerId];
+					break;
 
-			default:
-				return false;
-		}
-	} else {
-		for (let i in getServerData().businesses) {
-			if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
-				let businessId = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
-				isBusiness = true;
-				isEntrance = true;
-				closestProperty = getServerData().businesses[businessId];
-			} else {
-				let businessId = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
-				isBusiness = true;
-				isEntrance = false;
-				closestProperty = getServerData().businesses[businessId];
+				case V_PICKUP_HOUSE_EXIT:
+					isBusiness = false;
+					isEntrance = false;
+					closestProperty = getServerData().houses[ownerId];
+					break;
+
+				default:
+					return false;
 			}
+		} else {
+			getPlayerData(client).currentPickup = null;
 		}
+	}
+	*/
 
-		for (let j in getServerData().houses) {
-			if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()] && getPlayerInterior(client) == getGameConfig().mainWorldInterior[getGame()]) {
-				let houseId = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
-				isBusiness = false;
-				isEntrance = true;
-				closestProperty = getServerData().businesses[houseId];
+	/*
+	// Check businesses first
+	if (closestProperty == null) {
+		let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getBusinessData(businessIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
+			isBusiness = true;
+			isEntrance = true;
+			closestProperty = getServerData().businesses[businessIndex];
+		}
+	}
+
+	if (closestProperty == null) {
+		let businessIndex = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getBusinessData(businessIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
+			isBusiness = true;
+			isEntrance = false;
+			closestProperty = getServerData().businesses[businessIndex];
+		}
+	}
+
+	// Check houses second
+	if (closestProperty == null) {
+		let houseIndex = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getHouseData(houseIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
+			isBusiness = false;
+			isEntrance = true;
+			closestProperty = getServerData().houses[houseIndex];
+		}
+	}
+
+	if (closestProperty == null) {
+		let houseIndex = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getHouseData(houseIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
+			isBusiness = false;
+			isEntrance = false;
+			closestProperty = getServerData().houses[houseIndex];
+		}
+	}
+	*/
+
+	// Check businesses first
+	if (closestProperty == null) {
+		for (let i in getServerData().businesses) {
+			if (getServerData().businesses[i].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().businesses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+					isBusiness = true;
+					isEntrance = true;
+					closestProperty = getServerData().businesses[i];
+				}
 			} else {
-				let houseId = getClosestHouseExit(getPlayerPosition(client), getPlayerDimension(client));
-				isBusiness = false;
-				isEntrance = false;
-				closestProperty = getServerData().businesses[houseId];
+				if (getServerData().businesses[i].exitDimension == dimension) {
+					if (getDistance(position, getServerData().businesses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+						isBusiness = true;
+						isEntrance = false;
+						closestProperty = getServerData().businesses[i];
+					}
+				}
 			}
 		}
 	}
 
 	if (closestProperty == null) {
+		for (let i in getServerData().houses) {
+			if (getServerData().houses[i].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().houses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+					isBusiness = false;
+					isEntrance = true;
+					closestProperty = getServerData().houses[i];
+				}
+			} else {
+				if (getServerData().houses[i].exitDimension == dimension) {
+					if (getDistance(position, getServerData().houses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+						isBusiness = false;
+						isEntrance = false;
+						closestProperty = getServerData().houses[i];
+					}
+				}
+			}
+		}
+	}
+
+	if (closestProperty == null) {
+		logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is null`);
 		return false;
 	}
 
 	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)}'s closest door is ${(isBusiness) ? closestProperty.name : closestProperty.description} ${(isEntrance) ? "entrance" : "exit"}`);
 
 	let englishId = getLocaleFromParams("English");
-	let typeString = (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House");
+	let typeString = (isBusiness) ? getLanguageLocaleString(englishId, "Business") : getLanguageLocaleString(englishId, "House");
 	let nameString = (isBusiness) ? closestProperty.name : closestProperty.description;
 
 	if (isEntrance) {
@@ -289,44 +360,28 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			clearPlayerStateToEnterExitProperty(client);
-			getPlayerData(client).pedState = AGRP_PEDSTATE_ENTERINGPROPERTY;
+			getPlayerData(client).pedState = V_PEDSTATE_ENTERINGPROPERTY;
+			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? V_PROPERTY_TYPE_BUSINESS : V_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
+
+			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
+				if (isMainWorldScene(closestProperty.exitScene) || closestProperty.exitScene == "AGRP.MAINWORLD") {
+					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+				} else {
+					setPlayerScene(client, closestProperty.exitScene);
+				}
+				return false;
+			}
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
 			}
 
 			setTimeout(function () {
-				setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
-				setPlayerDimension(client, closestProperty.exitDimension);
-				setPlayerInterior(client, closestProperty.exitInterior);
-				setPlayerPosition(client, closestProperty.exitPosition);
-				setPlayerHeading(client, closestProperty.exitRotation);
-				setTimeout(function () {
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
-					updateInteriorLightsForPlayer(client, closestProperty.interiorLights);
-				}, 1000);
-				//setPlayerInCutsceneInterior(client, closestProperty.exitCutscene);
-				//updateAllInteriorVehiclesForPlayer(client, closestProperty.exitInterior, closestProperty.exitDimension);
+				processPlayerEnteringExitingProperty(client);
 			}, 1100);
-
-			if (isBusiness) {
-				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-					messagePlayerAlert(client, getLocaleString(client, "JoinedPaintBall"));
-					startPaintBall(client);
-				}
-			}
-
-			let radioStationIndex = closestProperty.streamingRadioStationIndex;
-			if (radioStationIndex != -1) {
-				if (getRadioStationData(radioStationIndex)) {
-					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
-					getPlayerData(client).streamingRadioStation = radioStationIndex;
-				}
-			}
 			return true;
 		}
 	} else {
@@ -335,69 +390,34 @@ function enterExitPropertyCommand(command, params, client) {
 				meActionToNearbyPlayers(client, getLocaleString(client, "EnterExitPropertyDoorLocked", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 				return false;
 			}
-			getPlayerData(client).pedState = AGRP_PEDSTATE_EXITINGPROPERTY;
+
 			clearPlayerStateToEnterExitProperty(client);
+			getPlayerData(client).pedState = V_PEDSTATE_EXITINGPROPERTY;
+			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? V_PROPERTY_TYPE_BUSINESS : V_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
+
+			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
+				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
+				if (isMainWorldScene(closestProperty.entranceScene) || closestProperty.entranceScene == "AGRP.MAINWORLD") {
+					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+				} else {
+					setPlayerScene(client, closestProperty.entranceScene);
+				}
+
+				return false;
+			}
 
 			if (isFadeCameraSupported()) {
 				fadeCamera(client, false, 1.0);
 			}
 
-			disableCityAmbienceForPlayer(client, true);
 			setTimeout(function () {
-				setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
-				setPlayerPosition(client, closestProperty.entrancePosition);
-				setPlayerHeading(client, closestProperty.entranceRotation);
-				setPlayerDimension(client, closestProperty.entranceDimension);
-				setPlayerInterior(client, closestProperty.entranceInterior);
-				setTimeout(function () {
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
-
-					updateInteriorLightsForPlayer(client, true);
-				}, 1000);
+				processPlayerEnteringExitingProperty(client);
 			}, 1100);
-
-			if (isBusiness) {
-				if (closestProperty.type == AGRP_BIZ_TYPE_PAINTBALL) {
-					messagePlayerAlert(client, getLocaleString(client, "LeftPaintBall"));
-					stopPaintBall(client);
-				}
-			}
-
-			clearLocalPickupsForPlayer(client);
-
-			//setPlayerInCutsceneInterior(client, closestProperty.entranceCutscene);
-			stopRadioStreamForPlayer(client);
-			getPlayerData(client).streamingRadioStation = -1;
-
-			// Check if exiting property was into another house/business and set radio station accordingly
-			let inHouse = getPlayerHouse(client);
-			let inBusiness = getPlayerBusiness(client);
-
-			if (inBusiness != -1) {
-				if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
-					if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
-						getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
-					}
-				}
-			} else if (inHouse != -1) {
-				if (getHouseData(inHouse).streamingRadioStationIndex != -1) {
-					if (getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex)) {
-						playRadioStreamForPlayer(client, getRadioStationData(getHouseData(inHouse).streamingRadioStationIndex).url);
-						getPlayerData(client).streamingRadioStation = getHouseData(inHouse).streamingRadioStationIndex;
-					}
-				}
-			}
-
-			//logToConsole(LOG_DEBUG, `[VRR.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
-			return true;
 		}
 	}
-
+	//logToConsole(LOG_DEBUG, `[AGRP.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 	return true;
 }
 
@@ -417,7 +437,7 @@ function getPlayerInfoCommand(command, params, client) {
 		}
 	}
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo", `${getPlayerName(client)} - ${getCharacterFullName(targetClient)}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerInfo", `${getPlayerName(targetClient)} - ${getCharacterFullName(targetClient)}`)));
 
 	let clanIndex = getClanIndexFromDatabaseId(getPlayerCurrentSubAccount(targetClient).clan);
 	let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
@@ -446,17 +466,16 @@ function getPlayerInfoCommand(command, params, client) {
 		["Account", `${getPlayerData(targetClient).accountData.name}{mediumGrey}[${getPlayerData(targetClient).accountData.databaseId}]{ALTCOLOUR}`],
 		["Character", `${getCharacterFullName(targetClient)}{mediumGrey}[${getPlayerCurrentSubAccount(targetClient).databaseId}]{ALTCOLOUR}`],
 		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
-		["Registered", `${registerDate.toLocaleDateString()} - ${registerDate.toLocaleTimeString()}`],
+		["Registered", `${registerDate.toLocaleDateString()}`],
 		["Game Version", `${targetClient.gameVersion}`],
 		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
-		["Cash", `$${getPlayerCurrentSubAccount(client).cash}`],
-		["Skin", `${skinName}{mediumGrey}[${skinModel}]{ALTCOLOUR}`],
+		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(targetClient).cash)}`],
+		["Skin", `${skinName}{mediumGrey}[Model: ${skinModel}/Index: ${skinIndex}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
-		["Current Date", `${currentDate.toLocaleDateString()} - ${currentDate.toLocaleTimeString()}`],
-	]
+		["Current Date", `${currentDate.toLocaleDateString()}`],
+	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]} {MAINCOLOUR}`);
 
@@ -500,11 +519,11 @@ function checkPlayerSpawning() {
 // ===========================================================================
 
 function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	if (canPlayerUseGUI(client)) {
+	if (doesPlayerUseGUI(client)) {
 		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
 	} else {
-		messagePlayerNormal(client, `❓ ${promptMessage} `);
-		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ ALTCOLOUR } /yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{ MAINCOLOUR } `));
+		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
 	}
 }
 
@@ -545,9 +564,11 @@ function listOnlineAdminsCommand(command, params, client) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (getPlayerData(clients[i])) {
-			if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
-				if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
-					admins.push(`{ ALTCOLOUR } [${getPlayerData(clients[i]).accountData.staffTitle}] { MAINCOLOUR }${getCharacterFullName(clients[i])} `);
+			if (isPlayerLoggedIn(clients[i])) {
+				if (typeof getPlayerData(clients[i]).accountData.flags.admin != "undefined") {
+					if (getPlayerData(clients[i]).accountData.flags.admin > 0 || getPlayerData(clients[i]).accountData.flags.admin == -1) {
+						admins.push(`{ALTCOLOUR}[${getPlayerData(clients[i]).accountData.staffTitle}]{MAINCOLOUR} ${getCharacterFullName(clients[i])}`);
+					}
 				}
 			}
 		}
@@ -582,7 +603,7 @@ function stuckPlayerCommand(command, params, client) {
 	messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
 
 	if (getGameConfig().skinChangePosition[getGame()].length > 0) {
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_SKINSELECT) {
+		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
 			messagePlayerAlert(client, "You canceled the skin change.");
 			restorePlayerCamera(client);
 
@@ -596,11 +617,11 @@ function stuckPlayerCommand(command, params, client) {
 			getPlayerData(client).returnToInterior = null;
 			getPlayerData(client).returnToDimension = null;
 
-			getPlayerData(client).returnToType = AGRP_RETURNTO_TYPE_NONE;
+			getPlayerData(client).returnToType = V_RETURNTO_TYPE_NONE;
 		}
 	}
 
-	//if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == AGRP_RETURNTO_TYPE_ADMINGET) {
+	//if(getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_ADMINGET) {
 	//    messagePlayerError(client, `You were teleported by an admin and can't use the stuck command`);
 	//    return false;
 	//}
@@ -900,13 +921,11 @@ function deletePlayerBlip(client) {
 // ===========================================================================
 
 function processPlayerDeath(client) {
-	getPlayerData(client).pedState = AGRP_PEDSTATE_DEAD;
+	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 	setTimeout(function () {
-		if (isFadeCameraSupported()) {
-			fadeCamera(client, false, 1.0);
-		}
+		fadePlayerCamera(client, false, 1000);
 		setTimeout(function () {
 			if (isPlayerInPaintBall(client)) {
 				respawnPlayerForPaintBall(client);
@@ -921,15 +940,9 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestJail.position, closestJail.heading);
-					} else {
-						spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
+					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
+					fadePlayerCamera(client, true, 1000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
@@ -944,16 +957,8 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					if (getGame() == AGRP_GAME_MAFIA_ONE) {
-						spawnPlayer(client, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0], closestHospital.position, closestHospital.heading);
-					} else {
-						spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					}
-
-					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
-					}
-
+					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					fadePlayerCamera(client, true, 1000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
@@ -978,13 +983,31 @@ function processPlayerDeath(client) {
 // ===========================================================================
 
 function isPlayerSurrendered(client) {
-	return (getPlayerData(client).pedState == AGRP_PEDSTATE_TAZED || getPlayerData(client).pedState == AGRP_PEDSTATE_HANDSUP);
+	return (getPlayerData(client).pedState == V_PEDSTATE_TAZED || getPlayerData(client).pedState == V_PEDSTATE_HANDSUP);
 }
 
 // ===========================================================================
 
 function isPlayerRestrained(client) {
-	return (getPlayerData(client).pedState == AGRP_PEDSTATE_BINDED);
+	return (getPlayerData(client).pedState == V_PEDSTATE_BINDED);
+}
+
+// ===========================================================================
+
+function getPlayerInPropertyData(client) {
+	let businessId = getPlayerBusiness(client);
+	if (businessId != -1) {
+		getPlayerData(client).inProperty = [V_PROPERTY_TYPE_BUSINESS, businessId];
+		return false;
+	}
+
+	let houseId = getPlayerHouse(client);
+	if (houseId != -1) {
+		getPlayerData(client).inProperty = [V_PROPERTY_TYPE_HOUSE, houseId];
+		return false;
+	}
+
+	getPlayerData(client).inProperty = null;
 }
 
 // ===========================================================================

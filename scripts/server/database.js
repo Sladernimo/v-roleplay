@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: database.js
 // DESC: Provides database handling, functions and usage
@@ -15,8 +14,8 @@ let persistentDatabaseConnection = null;
 // ===========================================================================
 
 function initDatabaseScript() {
-	logToConsole(LOG_INFO, "[VRR.Database]: Initializing database script ...");
-	logToConsole(LOG_INFO, "[VRR.Database]: Database script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Database]: Initializing database script ...");
+	logToConsole(LOG_INFO, "[AGRP.Database]: Database script initialized successfully!");
 }
 
 // ===========================================================================

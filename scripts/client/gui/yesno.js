@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: yesno.js
 // DESC: Provides yes/no prompt dialog GUI
@@ -19,7 +18,7 @@ let yesNoDialog = {
 // ===========================================================================
 
 function initYesNoDialogGUI() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Created prompt GUI ...`);
+    logToConsole(LOG_DEBUG, `[AGRP.GUI] Created prompt GUI ...`);
     yesNoDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 140, 'Question', {
         main: {
             backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -74,14 +73,14 @@ function initYesNoDialogGUI() {
             borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 255),
         },
     }, yesNoDialogAnswerNo);
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Created prompt GUI`);
+    logToConsole(LOG_DEBUG, `[AGRP.GUI] Created prompt GUI`);
 }
 
 // ===========================================================================
 
 function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonText) {
     closeAllWindows();
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
+    logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
     mexui.setInput(true);
 
     yesNoDialog.messageLabel.text = "";
@@ -100,16 +99,16 @@ function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonT
 // ===========================================================================
 
 function yesNoDialogAnswerNo() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer NO to server prompt`);
-    sendNetworkEventToServer("agrp.promptAnswerNo");
+    logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer NO to server prompt`);
+    sendNetworkEventToServer("v.rp.promptAnswerNo");
     closeAllWindows();
 }
 
 // ===========================================================================
 
 function yesNoDialogAnswerYes() {
-    logToConsole(LOG_DEBUG, `[VRR.GUI] Responding with answer YES to server prompt`);
-    sendNetworkEventToServer("agrp.promptAnswerYes");
+    logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer YES to server prompt`);
+    sendNetworkEventToServer("v.rp.promptAnswerYes");
     closeAllWindows();
 }
 

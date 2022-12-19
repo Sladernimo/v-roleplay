@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: handcuff.js
 // DESC: Provides features and usage for the handcuff item type
@@ -11,20 +10,20 @@
 // ===========================================================================
 
 function isPlayerHandCuffed(client) {
-	return (getPlayerData(client).pedState == AGRP_PEDSTATE_BINDED);
+	return (getPlayerData(client).pedState == V_PEDSTATE_BINDED);
 }
 
 // ===========================================================================
 
 function handCuffPlayer(client) {
-	getPlayerData(client).pedState = AGRP_PEDSTATE_BINDED;
+	getPlayerData(client).pedState = V_PEDSTATE_BINDED;
 	setPlayerControlState(client, false);
 }
 
 // ===========================================================================
 
 function unHandCuffPlayer(client) {
-	getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+	getPlayerData(client).pedState = V_PEDSTATE_READY;
 	setPlayerControlState(client, true);
 }
 

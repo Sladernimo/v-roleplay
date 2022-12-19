@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: economy.js
 // DESC: Provides economy/financial utils, functions and usage
@@ -9,8 +8,8 @@
 // ===========================================================================
 
 function initEconomyScript() {
-	logToConsole(LOG_INFO, "[VRR.Economy]: Initializing economy script ...");
-	logToConsole(LOG_INFO, "[VRR.Economy]: Economy script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Economy]: Initializing economy script ...");
+	logToConsole(LOG_INFO, "[AGRP.Economy]: Economy script initialized successfully!");
 }
 
 // ===========================================================================
@@ -47,15 +46,15 @@ function playerPayDay(client) {
 	let netIncome = Math.round(grossIncome - incomeTaxAmount);
 
 	messagePlayerAlert(client, "== Payday! =============================");
-	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}$${grossIncome}`);
-	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}$${incomeTaxAmount}`);
-	messagePlayerInfo(client, `You receive: {ALTCOLOUR}$${netIncome}`);
+	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}${getCurrencyString(grossIncome)}`);
+	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}`);
+	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
 	if (netIncome < incomeTaxAmount) {
 		let totalCash = getPlayerCash(client);
 		let canPayNow = totalCash + netIncome;
 		if (incomeTaxAmount <= canPayNow) {
 			takePlayerCash(client, canPayNow);
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${canPayNow}{MAINCOLOUR}`)}`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInCash", `{ALTCOLOUR}${getCurrencyString(canPayNow)}{MAINCOLOUR}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
 		} else {
@@ -141,14 +140,14 @@ function setPayDayBonusMultiplier(command, params, client) {
 function taxInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
 	let tax = calculateIncomeTax(wealth);
-	messagePlayerInfo(client, `Your tax on payday is: $${tax}. Use {ALTCOLOUR}/help tax {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, getLocaleString(client, "YourTax", `{ALTCOLOUR}${getCurrencyString(tax)}{MAINCOLOUR}`, `{ALTCOLOUR}/help tax{MAINCOLOUR}`));
 }
 
 // ===========================================================================
 
 function wealthInfoCommand(command, params, client) {
 	let wealth = calculateWealth(client);
-	messagePlayerInfo(client, `Your wealth is: {ALTCOLOUR}$${wealth}{MAINCOLOUR}. Use {ALTCOLOUR}/help wealth {MAINCOLOUR}for more information.`);
+	messagePlayerInfo(client, getLocaleString(client, "YourWealth", `{ALTCOLOUR}${getCurrencyString(wealth)}{MAINCOLOUR}`, `{ALTCOLOUR}/help wealth{MAINCOLOUR}`));
 }
 
 // ===========================================================================
@@ -188,19 +187,19 @@ function repossessFirstAsset(client) {
 // ===========================================================================
 
 function getAllVehiclesOwnedByPlayer(client) {
-	return getServerData().vehicles.filter((v) => v.ownerType == AGRP_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().vehicles.filter((v) => v.ownerType == V_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllBusinessesOwnedByPlayer(client) {
-	return getServerData().businesses.filter((b) => b.ownerType == AGRP_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().businesses.filter((b) => b.ownerType == V_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllHousesOwnedByPlayer(client) {
-	return getServerData().houses.filter((h) => h.ownerType == AGRP_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return getServerData().houses.filter((h) => h.ownerType == V_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
@@ -211,6 +210,14 @@ function isDoubleBonusActive() {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getCurrencyString(amount) {
+	let tempString = getGlobalConfig().economy.currencyString;
+	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
+	return tempString;
 }
 
 // ===========================================================================

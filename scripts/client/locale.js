@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: locale.js
 // DESC: Provides locale functions and usage
@@ -38,7 +37,7 @@ function loadLocaleConfig() {
 	let configFile = loadTextFile("config/client/locale.json");
 	getServerData().localeOptions = JSON.parse(configFile);
 
-	resetLocaleChooserOptions();
+	//resetLocaleChooserOptions();
 	loadAllLocaleStrings();
 }
 
@@ -47,11 +46,12 @@ function loadLocaleConfig() {
 function loadAllLocaleStrings() {
 	let localeOptions = getServerData().localeOptions;
 	for (let i in localeOptions) {
-		logToConsole(LOG_INFO, `[VRR.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
-		let localeFile = loadTextFile(`locale/${localeOptions[i].stringsFile}`);
-		let localeData = JSON.parse(localeFile);
+		logToConsole(LOG_INFO, `[AGRP.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
+		let localeStringFile = loadTextFile(`locale/${localeOptions[i].stringsFile}`);
+		let localeStringData = JSON.parse(localeStringFile);
 
-		getServerData().localeStrings[i] = localeData;
+		let localeId = localeOptions[i].id;
+		getServerData().localeStrings[localeId] = localeStringData;
 	}
 
 	resetGUIStrings();
@@ -60,7 +60,7 @@ function loadAllLocaleStrings() {
 // ===========================================================================
 
 function setLocale(tempLocaleId) {
-	logToConsole(LOG_DEBUG, `[VRR.Locale] Setting locale to ${tempLocaleId} (${getServerData().localeOptions[tempLocaleId].englishName})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Locale] Setting locale to ${tempLocaleId} (${getServerData().localeOptions[tempLocaleId].englishName})`);
 	localLocaleId = tempLocaleId;
 	resetGUIStrings();
 }

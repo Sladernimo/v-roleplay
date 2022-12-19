@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: command.js
 // DESC: Provides command data, functions and usage
@@ -44,8 +43,8 @@ let serverCommands = [];
 // ===========================================================================
 
 function initCommandScript() {
-	logToConsole(LOG_INFO, "[VRR.Command]: Initializing commands script ...");
-	logToConsole(LOG_INFO, "[VRR.Command]: Initialized commands script!");
+	logToConsole(LOG_INFO, "[AGRP.Command]: Initializing commands script ...");
+	logToConsole(LOG_INFO, "[AGRP.Command]: Initialized commands script!");
 }
 
 // ===========================================================================
@@ -81,6 +80,8 @@ function loadCommands() {
 			new CommandData("chatfilter", toggleAccountProfanityFilterCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off profanity filter"),
 			new CommandData("chatemoji", toggleAccountReplaceEmojiCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off automatic emoji"),
 			new CommandData("emoji", toggleAccountReplaceEmojiCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off automatic emoji"),
+			//new CommandData("resetkeybinds", resetKeyBindsCommand, "", getStaffFlagValue("None"), true, false, "Resets all your keybinds to default"),
+			//new CommandData("copykeybinds", copyKeyBindsToServerCommand, "<server id>", getStaffFlagValue("None"), true, false, "Copies all your current keybinds to another server"),
 			//new CommandData("noblood", toggleAccountHideBloodCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off blood in-game"),
 		],
 		ammunation: [],
@@ -353,6 +354,7 @@ function loadCommands() {
 			new CommandData("itemtypeorderprice", setItemTypeOrderPriceCommand, "<item type> <order price>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's order price (base price when ordering for a business"),
 			new CommandData("itemtyperiskmult", setItemTypeRiskMultiplierCommand, "<item type> <risk multiplier>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's risk multiplayer (higher value for more dangerous or rare illegal items)"),
 			new CommandData("itemtypeenabled", toggleItemTypeEnabledCommand, "<item type>", getStaffFlagValue("ManageItems"), true, false, "Toggles an item type on or off (if off, any items with that type can't be interacted with)"),
+			new CommandData("itemtypedropmodel", setItemTypeDropModelCommand, "<item type> <object name/id>", getStaffFlagValue("ManageItems"), true, false, "Sets the drop model for the object of an item type when dropped"),
 			new CommandData("itemtypedroppos", setItemTypeDropPositionCommand, "<item type> [x] [y] [z]", getStaffFlagValue("ManageItems"), true, false, "Sets the offset position for the object of an item type when dropped"),
 			new CommandData("itemtypedroprot", setItemTypeDropRotationCommand, "<item type> [x] [y] [z]", getStaffFlagValue("ManageItems"), true, false, "Sets the rotation for the object of an item type when dropped"),
 			new CommandData("itemtypedropscale", setItemTypeDropScaleCommand, "<item type> [x] [y] [z]", getStaffFlagValue("ManageItems"), true, false, "Sets the scale for the object of an item type when dropped"),
@@ -360,7 +362,7 @@ function loadCommands() {
 			new CommandData("itemtypemaxval", setItemTypeMaxValueCommand, "<item type> <max value>", getStaffFlagValue("ManageItems"), true, false, "Sets the maximum value an item type can have"),
 			new CommandData("itemtypeorderval", setItemTypeOrderValueCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the initial value of an item type when ordered by a business"),
 			new CommandData("itemtypesize", setItemTypeSizeCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the item type's size"),
-			new CommandData("itemtypecapacity", setItemTypeSizeCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
+			new CommandData("itemtypecapacity", setItemTypeCapacityCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
 
 			new CommandData("delplritem", deleteItemInPlayerInventoryCommand, "<player name/id> <item slot>", getStaffFlagValue("ManageItems"), true, false, "Removes an item by slot from a player's personal inventory"),
 			new CommandData("delplritems", deleteAllItemsInPlayerInventoryCommand, "<player name/id>", getStaffFlagValue("ManageItems"), true, false, "Removes all items from a player's personal inventory"),
@@ -592,6 +594,7 @@ function loadCommands() {
 			new CommandData("biz", getPlayerCurrentBusinessCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which business a player is at/in"),
 			new CommandData("business", getPlayerCurrentBusinessCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which business a player is at/in"),
 			new CommandData("house", getPlayerCurrentHouseCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which house a player is at/in"),
+			//new CommandData("clearchat", clearChatCommand, "", getStaffFlagValue("None"), true, true, "Clears the chat"),
 		],
 		startup: [],
 		subAccount: [
@@ -634,7 +637,7 @@ function loadCommands() {
 			new CommandData("vehowner", setVehicleOwnerCommand, "<player id/name>", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehpublic", setVehiclePublicCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehclan", setVehicleClanCommand, "<clan id/name>", getStaffFlagValue(""), true, true),
-			new CommandData("vehbiz", setVehicleToBusinessCommand, "", getStaffFlagValue(""), true, true),
+			new CommandData("vehbiz", setVehicleBusinessCommand, "", getStaffFlagValue(""), true, true),
 			new CommandData("vehjob", setVehicleJobCommand, "[job id/name]", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehdelowner", removeVehicleOwnerCommand, "", getStaffFlagValue("ManageVehicles"), true, true),
 			new CommandData("vehrank", setVehicleRankCommand, "<rank id/name>", getStaffFlagValue("None"), true, true),
@@ -704,7 +707,7 @@ function addAllCommandHandlers() {
 	let commands = getCommands();
 	for (let i in commands) {
 		for (let j in commands[i]) {
-			logToConsole(LOG_DEBUG, `[VRR.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
 			addCommandHandler(commands[i][j].command, processPlayerCommand);
 			commandCount++;
 		}
@@ -713,11 +716,14 @@ function addAllCommandHandlers() {
 	removeCommandHandler("help");
 	addCommandHandler("help", helpCommand);
 
-	logToConsole(LOG_INFO, `[VRR.Command] ${commandCount} command handlers added!`);
+	logToConsole(LOG_INFO, `[AGRP.Command] ${commandCount} command handlers added!`);
 }
 
 // ===========================================================================
 
+/**
+ * @return {CommandData} command
+ */
 function getCommand(command) {
 	let commandGroups = getCommands()
 	for (let i in commandGroups) {
@@ -734,6 +740,9 @@ function getCommand(command) {
 
 // ===========================================================================
 
+/**
+ * @return {CommandData} command
+ */
 function getCommandData(command) {
 	return getCommand(command);
 }
@@ -785,12 +794,12 @@ function disableCommand(command, params, client) {
 	params = toLowerCase(params);
 
 	if (!getCommand(params)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${params} {MAINCOLOUR} does not exist!`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
 	getCommand(params).enabled = false;
-	messagePlayerSuccess(client, `Command {ALTCOLOUR}/${params} {MAINCOLOUR}has been disabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} disabled the {ALTCOLOUR}${params}{MAINCOLOUR} command!`, true);
 	return true;
 }
 
@@ -805,12 +814,12 @@ function enableCommand(command, params, client) {
 	params = toLowerCase(params);
 
 	if (!getCommand(params)) {
-		messagePlayerError(client, `The command {ALTCOLOUR}/${params} {MAINCOLOUR} does not exist!`);
+		messagePlayerError(client, `The command {ALTCOLOUR}/${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
 	getCommand(params).enabled = true;
-	messagePlayerSuccess(client, `Command {ALTCOLOUR}/${params} {MAINCOLOUR}has been enabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} enabled the {ALTCOLOUR}${params}{MAINCOLOUR} command!`, true);
 	return true;
 }
 
@@ -825,7 +834,7 @@ function disableAllCommandsByType(command, params, client) {
 	params = toLowerCase(params);
 
 	if (isNull(getServerData().commands[params])) {
-		messagePlayerError(client, `Command type {ALTCOLOUR}${params} {MAINCOLOUR}does not exist!`);
+		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
@@ -833,7 +842,7 @@ function disableAllCommandsByType(command, params, client) {
 		getServerData().commands[params][i].enabled = false;
 	}
 
-	messagePlayerSuccess(client, `{clanOrange}All {ALTCOLOUR}${params} {MAINCOLOUR}commands have been disabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} disabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);
 	return true;
 }
 
@@ -848,7 +857,7 @@ function enableAllCommandsByType(command, params, client) {
 	params = toLowerCase(params);
 
 	if (isNull(getServerData().commands[params])) {
-		messagePlayerError(client, `Command type {ALTCOLOUR}${params} {MAINCOLOUR}does not exist!`);
+		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
@@ -856,7 +865,7 @@ function enableAllCommandsByType(command, params, client) {
 		getServerData().commands[params][i].enabled = true;
 	}
 
-	messagePlayerSuccess(client, `{clanOrange}All {ALTCOLOUR}${params} {MAINCOLOUR}commands have been enabled!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} enabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);
 	return true;
 }
 
@@ -881,7 +890,7 @@ function processPlayerCommand(command, params, client) {
 	}
 
 	if (!doesCommandExist(toLowerCase(command))) {
-		logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (invalid command): /${command} ${paramsDisplay}`);
+		logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (invalid command): /${command} ${paramsDisplay}`);
 
 		let possibleCommand = getCommandFromParams(command);
 		if (possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
@@ -893,7 +902,7 @@ function processPlayerCommand(command, params, client) {
 	}
 
 	if (!commandData.enabled) {
-		logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (command is disabled): /${command} ${paramsDisplay}`);
+		logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (command is disabled): /${command} ${paramsDisplay}`);
 		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} is disabled!`);
 		messagePlayerError(client, getLocaleString(client, "CommandDisabled", `{ALTCOLOUR}/${command}{MAINCOLOUR}`));
 		return false;
@@ -901,7 +910,7 @@ function processPlayerCommand(command, params, client) {
 
 	if (doesCommandRequireLogin(toLowerCase(command))) {
 		if (!isPlayerLoggedIn(client)) {
-			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (requires login first): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (requires login first): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, getLocaleString(client, "CommandRequiresLogin", `{ALTCOLOUR}/${command}{MAINCOLOUR}`));
 			return false;
 		}
@@ -909,7 +918,7 @@ function processPlayerCommand(command, params, client) {
 
 	if (isClientFromDiscord(client)) {
 		if (!isCommandAllowedOnDiscord(command)) {
-			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, `The {ALTCOLOUR}/${command}{MAINCOLOUR} command isn't available on discord!`);
 			return false;
 		}
@@ -917,13 +926,13 @@ function processPlayerCommand(command, params, client) {
 
 	if (!isConsole(client)) {
 		if (!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(command)))) {
-			logToConsole(LOG_WARN, `[VRR.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, getLocaleString(client, "CommandNoPermissions", `{ALTCOLOUR}/${toLowerCase(command)}{MAINCOLOUR}`));
 			return false;
 		}
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Command] ${getPlayerDisplayForConsole(client)} used command: /${command} ${paramsDisplay}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} used command: /${command} ${paramsDisplay}`);
 	commandData.handlerFunction(toLowerCase(command), params, client);
 }
 
@@ -1028,10 +1037,10 @@ function cacheAllCommandsAliases() {
 
 // ===========================================================================
 
-function getCommandAliasesNames(command) {
+function getCommandAliasesNames(commandData) {
 	let commandAliases = [];
-	for (let i in command.aliases) {
-		commandAliases.push(command.aliases[i].name);
+	for (let i in commandData.aliases) {
+		commandAliases.push(commandData.aliases[i].name);
 	}
 
 	return commandAliases;

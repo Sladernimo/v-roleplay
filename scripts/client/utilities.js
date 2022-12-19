@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides util functions and arrays with data
@@ -9,18 +8,19 @@
 // ===========================================================================
 
 function setLocalPlayerFrozenState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting frozen state to ${state}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting frozen state to ${state}`);
 	gui.showCursor(state, !state);
 }
 
 // ===========================================================================
 
 function setLocalPlayerControlState(controlState, cursorState = false) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting control state to ${controlState} (Cursor: ${cursorState})`);
 	controlsEnabled = controlState;
-	if (getGame() == AGRP_GAME_GTA_III || getGame() == AGRP_GAME_GTA_VC) {
+	game.setPlayerControl(controlState);
+	if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
 		game.SET_PLAYER_CONTROL(game.GET_PLAYER_ID(), boolToInt(controlState));
-	} else if (getGame() != AGRP_GAME_GTA_IV) {
+	} else if (getGame() <= V_GAME_GTA_IV) {
 		setElementCollisionsEnabled(localPlayer, controlState);
 		setPedInvincible(localPlayer, true);
 	}
@@ -28,14 +28,15 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 
 // ===========================================================================
 
-function fadeLocalCamera(state, time) {
-	if (isFadeCameraSupported()) {
-		logToConsole(LOG_DEBUG, `[VRR.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time} seconds`);
+function fadeLocalCamera(state, duration, colour) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time}ms`);
 
-		if (isFadeCameraSupported()) {
-			game.fadeCamera(state, time);
-		}
-	}
+	cameraFadeDuration = duration;
+	cameraFadeStart = sdl.ticks;
+	cameraFadeEnabled = true;
+	cameraFadeIn = state;
+	cameraFadeColour = colour;
+	cameraFadeAlpha = (state) ? 255 : 0;
 }
 
 // ===========================================================================
@@ -47,7 +48,7 @@ function removeLocalPlayerFromVehicle() {
 // ===========================================================================
 
 function restoreLocalCamera() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Camera restored`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Camera restored`);
 	if (isGameFeatureSupported("customCamera")) {
 		game.restoreCamera(true);
 	}
@@ -55,16 +56,8 @@ function restoreLocalCamera() {
 
 // ===========================================================================
 
-function clearLocalPlayerOwnedPeds() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing all self-owned peds ...`);
-	clearSelfOwnedPeds();
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] All self-owned peds cleared`);
-};
-
-// ===========================================================================
-
 function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
 	if (isCustomCameraSupported()) {
 		game.setCameraLookAt(cameraPosition, cameraLookAt, true);
 	}
@@ -72,13 +65,21 @@ function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
 
 // ===========================================================================
 
+function clearLocalPlayerOwnedPeds() {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing all self-owned peds ...`);
+	clearSelfOwnedPeds();
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] All self-owned peds cleared`);
+};
+
+// ===========================================================================
+
 function setCityAmbienceState(state, clearElements = false) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Ambient civilians and traffic ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Ambient civilians and traffic ${(state) ? "enabled" : "disabled"}`);
 	game.setTrafficEnabled(state);
 
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		game.setGenerateCarsAroundCamera(state);
-		if (getGame() != AGRP_GAME_GTA_SA) {
+		if (getGame() != V_GAME_GTA_SA) {
 			game.setCiviliansEnabled(state);
 		}
 
@@ -96,7 +97,7 @@ function runClientCode(code, returnTo) {
 	try {
 		returnValue = eval("(" + code + ")");
 	} catch (error) {
-		sendNetworkEventToServer("agrp.runCodeFail", returnTo, error.toString());
+		sendNetworkEventToServer("v.rp.runCodeFail", returnTo, error.toString());
 		return false;
 	}
 	let returnValueString = returnValue;
@@ -105,7 +106,7 @@ function runClientCode(code, returnTo) {
 	} else {
 		returnValueString = "null/undefined";
 	}
-	sendNetworkEventToServer("agrp.runCodeSuccess", returnTo, returnValueString);
+	sendNetworkEventToServer("v.rp.runCodeSuccess", returnTo, returnValueString);
 }
 
 // ===========================================================================
@@ -113,7 +114,7 @@ function runClientCode(code, returnTo) {
 function enterVehicleAsPassenger() {
 	if (localPlayer.vehicle == null) {
 		let tempVehicle = getClosestVehicle(localPlayer.position);
-		if (getGame() != AGRP_GAME_GTA_IV) {
+		if (getGame() != V_GAME_GTA_IV) {
 			if (tempVehicle != null) {
 				localPlayer.enterVehicle(tempVehicle, false);
 			}
@@ -133,15 +134,15 @@ function enterVehicleAsPassenger() {
 // ===========================================================================
 
 function giveLocalPlayerWeapon(weaponId, ammo, active) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
 	forceWeapon = weaponId;
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		localPlayer.giveWeapon(weaponId, 0, ammo);
 		forceWeaponAmmo = 0;
 		forceWeaponClipAmmo = ammo;
 	} else {
 		localPlayer.giveWeapon(weaponId, ammo, active);
-		if (getGame() < AGRP_GAME_GTA_IV) {
+		if (getGame() < V_GAME_GTA_IV) {
 			forceWeaponAmmo = localPlayer.getWeaponAmmunition(getWeaponSlot(weaponId));
 			forceWeaponClipAmmo = localPlayer.getWeaponClipAmmunition(getWeaponSlot(weaponId));
 		} else {
@@ -154,7 +155,7 @@ function giveLocalPlayerWeapon(weaponId, ammo, active) {
 // ===========================================================================
 
 function clearLocalPlayerWeapons(clearData) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing weapons`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing weapons`);
 	localPlayer.clearWeapons();
 	if (clearData == true) {
 		forceWeapon = 0;
@@ -172,7 +173,7 @@ function getClosestVehicle(pos) {
 // ===========================================================================
 
 function setLocalPlayerPosition(position) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
 	if (typeof localPlayer.velocity != "undefined") {
 		localPlayer.velocity = toVector3(0.0, 0.0, 0.0);
 	}
@@ -185,7 +186,7 @@ function setLocalPlayerPosition(position) {
 // ===========================================================================
 
 function setLocalPlayerHeading(heading) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting heading to ${heading}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting heading to ${heading}`);
 	if (typeof localPlayer.heading != "undefined") {
 		localPlayer.heading = heading;
 	}
@@ -194,8 +195,8 @@ function setLocalPlayerHeading(heading) {
 // ===========================================================================
 
 function setLocalPlayerInterior(interior) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting interior to ${interior}`);
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting interior to ${interior}`);
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		if (!isGTAIV()) {
 			localPlayer.interior = interior;
 			game.cameraInterior = interior;
@@ -213,8 +214,8 @@ function setLocalPlayerInterior(interior) {
 	if (areServerElementsSupported() && isGameFeatureSupported("interior")) {
 		let vehicles = getElementsByType(ELEMENT_VEHICLE);
 		for (let i in vehicles) {
-			if (getEntityData(vehicles[i], "agrp.interior")) {
-				vehicles[i].interior = getEntityData(vehicles[i], "agrp.interior");
+			if (getEntityData(vehicles[i], "v.rp.interior")) {
+				vehicles[i].interior = getEntityData(vehicles[i], "v.rp.interior");
 			}
 		}
 	}
@@ -222,13 +223,16 @@ function setLocalPlayerInterior(interior) {
 
 // ===========================================================================
 
-function setSnowState(falling, ground) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
+function setSnowState(falling, ground, forceGround) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
 	snowing = falling;
-	if (ground) {
-		forceSnowing(false);
-		forceSnowing(ground);
-	}
+	//snow.force = ground;
+	//if (forceGround == true) {
+	//	forceSnowing(forceGround);
+	//	groundSnow.flush();
+	//} else {
+	//	snow.enabled = ground;
+	//}
 }
 
 // ===========================================================================
@@ -240,8 +244,8 @@ function setLocalPlayerHealth(health) {
 // ===========================================================================
 
 function playPedSpeech(pedName, speechId) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Making ${pedName}'s ped talk (${speechId})`);
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Making ${pedName}'s ped talk (${speechId})`);
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
 		game.SET_CHAR_SAY(int, int);
 	}
 }
@@ -249,7 +253,7 @@ function playPedSpeech(pedName, speechId) {
 // ===========================================================================
 
 function clearLocalPedState() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Clearing local ped state`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Clearing local ped state`);
 	localPlayer.clearObjective();
 }
 
@@ -262,8 +266,8 @@ function getWeaponSlot(weaponId) {
 // ===========================================================================
 
 function setLocalPlayerDrunkEffect(amount, duration) {
-	if (getMultiplayerMod() == AGRP_MPMOD_GTAC) {
-		logToConsole(LOG_DEBUG, `[VRR.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
+	if (getMultiplayerMod() == V_MPMOD_GTAC) {
+		logToConsole(LOG_DEBUG, `[AGRP.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
 		drunkEffectAmount = 0;
 		drunkEffectDurationTimer = setInterval(function () {
 			drunkEffectAmount = drunkEffectAmount;
@@ -313,7 +317,7 @@ function clearSelfOwnedVehicles() {
 // ===========================================================================
 
 function setMouseCameraState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(state) ? "Enabled" : "Disabled"} mouse camera`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(state) ? "Enabled" : "Disabled"} mouse camera`);
 	mouseCameraEnabled = state;
 	SetStandardControlsEnabled(!mouseCameraEnabled);
 }
@@ -321,46 +325,29 @@ function setMouseCameraState(state) {
 // ===========================================================================
 
 function toggleMouseCursor() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
 	gui.showCursor(!gui.cursorEnabled, gui.cursorEnabled);
 }
 
 // ===========================================================================
 
 function toggleMouseCursor() {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(!gui.cursorEnabled) ? "Enabled" : "Disabled"} mouse cursor`);
 	setMouseCameraState(!mouseCameraEnabled);
 }
 
 // ===========================================================================
 
 function setPlayerWeaponDamageEvent(clientName, eventType) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Set ${clientName} damage event type to ${eventType}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Set ${clientName} damage event type to ${eventType}`);
 	weaponDamageEvent[clientName] = eventType;
 }
 
 // ===========================================================================
 
 function setPlayerWeaponDamageEnabled(clientName, state) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] ${(state) ? "Enabled" : "Disabled"} damage from ${clientName}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] ${(state) ? "Enabled" : "Disabled"} damage from ${clientName}`);
 	weaponDamageEnabled[clientName] = state;
-}
-
-// ===========================================================================
-
-function setLocalPlayerCash(amount) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting local player money`);
-	if (localPlayer == null) {
-		return false;
-	}
-
-	if (typeof localPlayer.money != "undefined") {
-		localPlayer.money = toInteger(amount);
-	}
-
-	if (getGame() == AGRP_GAME_GTA_IV) {
-		natives.setMultiplayerHudCash(amount);
-	}
 }
 
 // ===========================================================================
@@ -411,21 +398,24 @@ function processWantedLevelReset() {
 
 function processLocalPlayerVehicleControlState() {
 	if (areServerElementsSupported()) {
-		if (inVehicle && localPlayer.vehicle != null) {
-			if (doesEntityDataExist(localPlayer.vehicle, "agrp.engine")) {
-				if (getEntityData(localPlayer.vehicle, "agrp.engine") == false) {
+		if (localPlayer.vehicle != null) {
+			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
+				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
 					localPlayer.vehicle.engine = false;
+					//localPlayer.vehicle.netFlags.sendSync = false;
 					if (!localPlayer.vehicle.engine) {
 						if (typeof localPlayer.vehicle.velocity != "undefined") {
 							localPlayer.vehicle.velocity = toVector3(0.0, 0.0, 0.0);
 							localPlayer.vehicle.turnVelocity = toVector3(0.0, 0.0, 0.0);
 						}
 
-						//if(parkedVehiclePosition) {
+						//if (parkedVehiclePosition) {
 						//	localPlayer.vehicle.position = parkedVehiclePosition;
 						//	localPlayer.vehicle.heading = parkedVehicleHeading;
 						//}
 					}
+				} else {
+					//localPlayer.vehicle.netFlags.sendSync = true;
 				}
 			}
 		}
@@ -439,12 +429,12 @@ function forceLocalPlayerEquippedWeaponItem() {
 		if (forceWeapon != 0) {
 			if (localPlayer.weapon != forceWeapon) {
 				localPlayer.weapon = forceWeapon;
-				if (getGame() < AGRP_GAME_GTA_IV) {
+				if (getGame() < V_GAME_GTA_IV) {
 					localPlayer.setWeaponClipAmmunition(getWeaponSlot(forceWeapon), forceWeaponClipAmmo);
 					localPlayer.setWeaponAmmunition(getWeaponSlot(forceWeapon), forceWeaponAmmo);
 				}
 			} else {
-				//if(getGame() < AGRP_GAME_GTA_IV) {
+				//if(getGame() < V_GAME_GTA_IV) {
 				//	forceWeaponClipAmmo = localPlayer.getWeaponClipAmmunition(getWeaponSlot(forceWeapon));
 				//	forceWeaponAmmo = localPlayer.getWeaponAmmunition(getWeaponSlot(forceWeapon));
 				//}
@@ -471,7 +461,7 @@ function getLocalPlayerPosition() {
 // ===========================================================================
 
 function getVehicleForNetworkEvent(vehicle) {
-	if (getGame() == AGRP_GAME_GTA_IV) {
+	if (getGame() == V_GAME_GTA_IV) {
 		return natives.getNetworkIdFromVehicle(vehicle);
 	}
 	return vehicle.id;
@@ -480,7 +470,7 @@ function getVehicleForNetworkEvent(vehicle) {
 // ===========================================================================
 
 function setMinuteDuration(minuteDuration) {
-	logToConsole(LOG_DEBUG, `[VRR.Utilities] Setting minute duration to ${minuteDuration}ms`);
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting minute duration to ${minuteDuration}ms`);
 
 	if (isTimeSupported()) {
 		game.time.minuteDuration = minuteDuration;
@@ -543,7 +533,7 @@ function processNearbyPickups() {
 				//if(pickups[i].interior == localPlayer.interior && pickups[i].dimension == localPlayer.dimension) {
 				if (currentPickup != pickups[i]) {
 					currentPickup = pickups[i];
-					sendNetworkEventToServer("agrp.pickup", pickups[i].id);
+					sendNetworkEventToServer("v.rp.pickup", pickups[i].id);
 				}
 				//}
 			}
@@ -554,7 +544,7 @@ function processNearbyPickups() {
 // ===========================================================================
 
 function processGameSpecifics() {
-	if (getGame() < AGRP_GAME_GTA_IV) {
+	if (getGame() < V_GAME_GTA_IV) {
 		game.clearMessages();
 	}
 
@@ -572,6 +562,58 @@ function getServerData() {
 function setProfanityFilterState(state) {
 	profanityFilterEnabled = state;
 	updateChatBox();
+}
+
+// ===========================================================================
+
+function processVehicleCruiseControl() {
+	if (localPlayer.vehicle == null) {
+		return false;
+	}
+
+	if (!localPlayer.vehicle.isSyncer) {
+		return false;
+	}
+
+	if (getLocalPlayerVehicleSeat() != 0) {
+		return false;
+	}
+
+	if (cruiseControlEnabled) {
+		setVehicleSpeed(cruiseControlSpeed);
+	}
+}
+
+// ===========================================================================
+
+function getCurrencyString(amount) {
+	let tempString = currencyString;
+	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
+	return tempString;
+}
+
+// ===========================================================================
+
+function updateLocalPlayerMoney() {
+	if (localPlayer == null) {
+		return false;
+	}
+
+	if (typeof localPlayer.money != "undefined") {
+		localPlayer.money = toInteger(localPlayerMoney);
+	}
+
+	if (getGame() == V_GAME_GTA_IV) {
+		natives.setMultiplayerHudCash(localPlayerMoney);
+	}
+}
+
+// ===========================================================================
+
+function setLocalPlayerMoney(amount) {
+	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Setting local player money`);
+	localPlayerMoney = amount;
+	updateLocalPlayerMoney();
 }
 
 // ===========================================================================

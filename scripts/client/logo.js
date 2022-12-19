@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: logo.js
 // DESC: Provides logo rendering functions
@@ -15,14 +14,18 @@ let logoSize = toVector2(128, 128);
 // ===========================================================================
 
 function initLogoScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Logo]: Initializing logo script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Initializing logo script ...");
 	//logoImage = loadLogoImage();
-	logToConsole(LOG_DEBUG, "[VRR.Logo]: Logo script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Logo script initialized!");
 }
 
 // ===========================================================================
 
 function loadLogoImage() {
+	//if (getGame() == V_GAME_MAFIA_ONE) {
+	//	return false;
+	//}
+
 	let logoStream = openFile(mainLogoPath);
 	let tempLogoImage = null;
 	if (logoStream != null) {
@@ -36,6 +39,10 @@ function loadLogoImage() {
 // ===========================================================================
 
 function processLogoRendering() {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	if (renderLogo) {
 		if (logoImage != null) {
 			graphics.drawRectangle(logoImage, logoPos, logoSize);
@@ -46,7 +53,7 @@ function processLogoRendering() {
 // ===========================================================================
 
 function setServerLogoRenderState(state) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
 	renderLogo = state;
 }
 

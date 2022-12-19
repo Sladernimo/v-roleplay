@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: radio.js
 // DESC: Provides radio station streaming
@@ -30,32 +29,31 @@ class RadioStationData {
 // ===========================================================================
 
 function initRadioScript() {
-	logToConsole(LOG_INFO, "[VRR.Radio]: Initializing radio script ...");
-	logToConsole(LOG_INFO, "[VRR.Radio]: Radio script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Radio]: Initializing radio script ...");
+	logToConsole(LOG_INFO, "[AGRP.Radio]: Radio script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadRadioStationsFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Radio]: Loading radio stations from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Radio]: Loading radio stations from database ...");
 	let dbConnection = connectToDatabase();
 	let tempRadioStations = [];
-	let dbAssoc;
+	let dbAssoc = [];
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM radio_main`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-				let tempRadioStationData = new RadioStationData(dbAssoc);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempRadioStationData = new RadioStationData(dbAssoc[i]);
 				tempRadioStations.push(tempRadioStationData);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Radio]: ${tempRadioStations.length} radio stations loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Radio]: ${tempRadioStations.length} radio stations loaded from database successfully!`);
 	return tempRadioStations;
 }
 
@@ -129,7 +127,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "agrp.inHouse") == houseId) {
+					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
 						playRadioStreamForPlayer(clients[i], "");
 					}
 				}
@@ -142,7 +140,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "agrp.inHouse") == houseId) {
+					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
 						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
@@ -325,6 +323,20 @@ function getRadioStationIdFromDatabaseId(databaseId) {
 	}
 
 	return -1;
+}
+
+// ===========================================================================
+
+function getRadioStationData(radioStationIndex) {
+	if (radioStationIndex == -1) {
+		return false;
+	}
+
+	if (typeof getServerData().radioStations[radioStationIndex] == "undefined") {
+		return false;
+	}
+
+	return getServerData().radioStations[radioStationIndex];
 }
 
 // ===========================================================================

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: business.js
 // DESC: Provides business functions and usage
@@ -9,34 +8,34 @@
 // ===========================================================================
 
 // Business Types
-const AGRP_BIZ_TYPE_NONE = 0;                     // None (invalid)
-const AGRP_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
-const AGRP_BIZ_TYPE_BANK = 2;                     // Bank
-const AGRP_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
-const AGRP_BIZ_TYPE_PAINTBALL = 4;				  // Paintball arena. Player joins paintball/airsoft when they enter
-const AGRP_BIZ_TYPE_DEALERSHIP = 5;				  // Vehicle Dealership (also for airplane, boat, etc)
+const V_BIZ_TYPE_NONE = 0;                     // None (invalid)
+const V_BIZ_TYPE_NORMAL = 1;                   // Normal business (sells items)
+const V_BIZ_TYPE_BANK = 2;                     // Bank
+const V_BIZ_TYPE_PUBLIC = 3;                   // Public business (Government, public service, etc)
+const V_BIZ_TYPE_PAINTBALL = 4;				  // Paintball arena. Player joins paintball/airsoft when they enter
+const V_BIZ_TYPE_DEALERSHIP = 5;				  // Vehicle Dealership (also for airplane, boat, etc)
 
 // ===========================================================================
 
 // Business Location Types
-const AGRP_BIZ_LOC_NONE = 0;                       // None
-const AGRP_BIZ_LOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
-const AGRP_BIZ_LOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
-const AGRP_BIZ_LOC_FUEL = 3;                       // Fuel pump
-const AGRP_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
-const AGRP_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
-const AGRP_BIZ_LOC_ATM = 6;						  // ATM
-const AGRP_BIZ_LOC_PAYPHONE = 7;				      // Payphone
+const V_BIZ_LOC_NONE = 0;                       // None
+const V_BIZ_LOC_GATE = 1;                       // Center of any moveable gate that belongs to the biz
+const V_BIZ_LOC_GARAGE = 2;                     // Location for attached garage (pos1 = outside, pos2 = inside). Use pos to teleport or spawn veh/ped
+const V_BIZ_LOC_FUEL = 3;                       // Fuel pump
+const V_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
+const V_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
+const V_BIZ_LOC_ATM = 6;						  // ATM
+const V_BIZ_LOC_PAYPHONE = 7;				      // Payphone
 
 // ===========================================================================
 
 // Business Owner Types
-const AGRP_BIZ_OWNER_NONE = 0;                     // Not owned
-const AGRP_BIZ_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
-const AGRP_BIZ_OWNER_JOB = 2;                      // Owned by a job
-const AGRP_BIZ_OWNER_CLAN = 3;                     // Owned by a clan
-const AGRP_BIZ_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
-const AGRP_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
+const V_BIZ_OWNER_NONE = 0;                     // Not owned
+const V_BIZ_OWNER_PLAYER = 1;                   // Owned by a player (character/subaccount)
+const V_BIZ_OWNER_JOB = 2;                      // Owned by a job
+const V_BIZ_OWNER_CLAN = 3;                     // Owned by a clan
+const V_BIZ_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
+const V_BIZ_OWNER_PUBLIC = 5;                   // Public Business. Used for goverment/official places like police, fire, city hall, DMV, etc
 
 // ===========================================================================
 
@@ -50,7 +49,7 @@ class BusinessData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.ownerType = AGRP_BIZ_OWNER_NONE;
+		this.ownerType = V_BIZ_OWNER_NONE;
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.locked = false;
@@ -58,7 +57,8 @@ class BusinessData {
 		this.index = -1;
 		this.needsSaved = false;
 		this.interiorLights = true;
-		this.type = AGRP_BIZ_TYPE_NONE;
+		this.type = V_BIZ_TYPE_NONE;
+		this.propertyType = V_PROPERTY_TYPE_BUSINESS;
 
 		this.floorItemCache = [];
 		this.storageItemCache = [];
@@ -73,6 +73,7 @@ class BusinessData {
 		this.entranceBlipModel = -1;
 		this.entrancePickup = null;
 		this.entranceBlip = null;
+		this.entranceScene = "";
 
 		this.exitPosition = false;
 		this.exitRotation = 0.0;
@@ -82,6 +83,7 @@ class BusinessData {
 		this.exitBlipModel = -1;
 		this.exitPickup = null;
 		this.exitBlip = null;
+		this.exitScene = "";
 
 		this.entranceFee = 0;
 		this.till = 0;
@@ -89,7 +91,9 @@ class BusinessData {
 		this.streamingRadioStation = 0;
 		//this.streamingRadioStationIndex = -1;
 
-		this.labelHelpType = AGRP_PROPLABEL_INFO_NONE;
+		this.paintBallPlayers = [];
+
+		this.labelHelpType = V_PROPLABEL_INFO_NONE;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_id"]);
@@ -108,6 +112,7 @@ class BusinessData {
 			this.entranceDimension = toInteger(dbAssoc["biz_entrance_vw"]);
 			this.entrancePickupModel = toInteger(dbAssoc["biz_entrance_pickup"]);
 			this.entranceBlipModel = toInteger(dbAssoc["biz_entrance_blip"]);
+			this.entranceScene = toString(dbAssoc["biz_entrance_scene"]);
 
 			this.exitPosition = toVector3(dbAssoc["biz_exit_pos_x"], dbAssoc["biz_exit_pos_y"], dbAssoc["biz_exit_pos_z"]);
 			this.exitRotation = toInteger(dbAssoc["biz_exit_rot_z"]);
@@ -115,6 +120,7 @@ class BusinessData {
 			this.exitDimension = toInteger(dbAssoc["biz_exit_vw"]);
 			this.exitPickupModel = toInteger(dbAssoc["biz_exit_pickup"]);
 			this.exitBlipModel = toInteger(dbAssoc["biz_exit_blip"]);
+			this.exitScene = toString(dbAssoc["biz_exit_scene"]);
 
 			this.entranceFee = toInteger(dbAssoc["biz_entrance_fee"]);
 			this.till = toInteger(dbAssoc["biz_till"]);
@@ -182,8 +188,8 @@ class BusinessGameScriptData {
 // ===========================================================================
 
 function initBusinessScript() {
-	logToConsole(LOG_INFO, "[VRR.Business]: Initializing business script ...");
-	logToConsole(LOG_INFO, "[VRR.Business]: Business script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Initializing business script ...");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Business script initialized successfully!");
 	return true;
 }
 
@@ -193,11 +199,9 @@ function loadBusinessFromId(businessId) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let dbQueryString = `SELECT * FROM biz_main WHERE biz_id = ${businessId} LIMIT 1;`;
-		let dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			let dbAssoc = fetchQueryAssoc(dbQuery);
-			freeDatabaseQuery(dbQuery);
-			return new BusinessData(dbAssoc);
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			return new BusinessData(dbAssoc[0]);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
@@ -208,62 +212,56 @@ function loadBusinessFromId(businessId) {
 // ===========================================================================
 
 function loadBusinessesFromDatabase() {
-	logToConsole(LOG_INFO, "[VRR.Business]: Loading businesses from database ...");
+	logToConsole(LOG_INFO, "[AGRP.Business]: Loading businesses from database ...");
 
 	let tempBusinesses = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessData = new BusinessData(dbAssoc);
-					tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
-					//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
-					tempBusinesses.push(tempBusinessData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
-				}
+		let dbQueryString = `SELECT * FROM biz_main WHERE biz_deleted = 0 AND biz_server = ${getServerId()}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempBusinessData = new BusinessData(dbAssoc[i]);
+				tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
+				//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
+				tempBusinesses.push(tempBusinessData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
+
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[VRR.Business]: ${tempBusinesses.length} businesses loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[AGRP.Business]: ${tempBusinesses.length} businesses loaded from database successfully!`);
 	return tempBusinesses;
 }
 
 // ===========================================================================
 
 function loadBusinessLocationsFromDatabase(businessId) {
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: Loading business locations for business ${businessId} from database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business locations for business ${businessId} from database ...`);
 
 	let tempBusinessLocations = [];
 	let dbConnection = connectToDatabase();
-	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 	let dbQueryString = "";
 
 	if (dbConnection) {
 		dbQueryString = `SELECT * FROM biz_loc WHERE biz_loc_biz = ${businessId}`;
-		dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if (dbQuery) {
-			if (dbQuery.numRows > 0) {
-				while (dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessLocationData = new BusinessLocationData(dbAssoc);
-					tempBusinessLocations.push(tempBusinessLocationData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
-				}
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempBusinessLocationData = new BusinessLocationData(dbAssoc[i]);
+				tempBusinessLocations.push(tempBusinessLocationData);
+				logToConsole(LOG_VERBOSE, `[AGRP.Business]: Location '${tempBusinessLocationData.name}' loaded from database successfully!`);
 			}
-			freeDatabaseQuery(dbQuery);
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: ${tempBusinessLocations.length} location for business ${businessId} loaded from database successfully!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: ${tempBusinessLocations.length} location for business ${businessId} loaded from database successfully!`);
 	return tempBusinessLocations;
 }
 
@@ -271,31 +269,28 @@ function loadBusinessLocationsFromDatabase(businessId) {
 
 /*
 function loadBusinessGameScriptsFromDatabase(businessId) {
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: Loading business game scripts for business ${businessId} from database ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: Loading business game scripts for business ${businessId} from database ...`);
 
 	let tempBusinessGameScripts = [];
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
-	let dbAssoc;
+	let dbAssoc = [];
 	let dbQueryString = "";
 
 	if(dbConnection) {
 		dbQueryString = `SELECT * FROM biz_script WHERE biz_script_biz = ${businessId}`;
-		dbQuery = queryDatabase(dbConnection, dbQueryString);
-		if(dbQuery) {
-			if(dbQuery.numRows > 0) {
-				while(dbAssoc = fetchQueryAssoc(dbQuery)) {
-					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc);
+			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+			if (dbAssoc.length > 0) {
+				for (let i in dbAssoc) {
+					let tempBusinessGameScriptData = new BusinessGameScriptData(dbAssoc[i]);
 					tempBusinessGameScripts.push(tempBusinessGameScriptData);
-					logToConsole(LOG_VERBOSE, `[VRR.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[AGRP.Business]: Game script '${tempBusinessGameScriptData.name}' loaded from database successfully!`);
 				}
 			}
-			freeDatabaseQuery(dbQuery);
-		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business]: ${tempBusinessGameScripts.length} game scripts for business ${businessId} loaded from database successfully!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business]: ${tempBusinessGameScripts.length} game scripts for business ${businessId} loaded from database successfully!`);
 	return tempBusinessGameScripts;
 }
 */
@@ -312,9 +307,17 @@ function loadBusinessGameScriptsFromDatabase(businessId) {
  *
  */
 function createBusinessCommand(command, params, client) {
-	createBusiness(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].Business, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorCutscene);
+	createBusiness(
+		params,
+		getPlayerPosition(client),
+		toVector3(0.0, 0.0, 0.0),
+		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Business : -1,
+		-1,
+		getPlayerInterior(client),
+		getPlayerDimension(client),
+		getPlayerData(client).interiorScene);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`, true);
 }
 
 // ===========================================================================
@@ -349,12 +352,12 @@ function createBusinessLocationCommand(command, params, client) {
 	let tempBusinessLocationData = createBusinessLocation(locationType, businessId);
 	getServerData().businesses[businessId].push(tempBusinessLocationData);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {businessBlue}${params}{MAINCOLOUR} for business {businessBlue}${tempBusinessData.name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location {businessBlue}${params}{MAINCOLOUR} for business {businessBlue}${tempBusinessData.name}`, true);
 }
 
 // ===========================================================================
 
-function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceCutscene = -1) {
+function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
 	let tempBusinessData = new BusinessData(false);
 	tempBusinessData.name = name;
 
@@ -364,7 +367,7 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.entranceBlipModel = entranceBlipModel;
 	tempBusinessData.entranceInterior = entranceInterior;
 	tempBusinessData.entranceDimension = entranceDimension;
-	tempBusinessData.entranceCutscene = entranceCutscene;
+	tempBusinessData.entranceScene = entranceScene;
 
 	tempBusinessData.exitPosition = exitPosition;
 	tempBusinessData.exitRotation = 0.0;
@@ -372,7 +375,7 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.exitBlipModel = -1;
 	tempBusinessData.exitInterior = 0;
 	tempBusinessData.exitDimension = 0;
-	tempBusinessData.exitCutscene = -1;
+	tempBusinessData.exitScene = -1;
 
 	tempBusinessData.needsSaved = true;
 	let businessId = getServerData().businesses.push(tempBusinessData);
@@ -408,8 +411,8 @@ function deleteBusinessCommand(command, params, client) {
 		return false;
 	}
 
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`, true);
 	deleteBusiness(businessId, getPlayerData(client).accountData.databaseId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted business {businessBlue}${getBusinessData(businessId).name}`);
 }
 
 // ===========================================================================
@@ -457,9 +460,9 @@ function setBusinessNameCommand(command, params, client) {
 
 	let oldBusinessName = getBusinessData(businessId).name;
 	getBusinessData(businessId).name = newBusinessName;
-	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
+	setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.name", getBusinessData(businessId).name, true);
 	getBusinessData(businessId).needsSaved = true;
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`, true);
 }
 
 // ===========================================================================
@@ -497,7 +500,7 @@ function setBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PLAYER;
+	getBusinessData(businessId).ownerType = V_BIZ_OWNER_PLAYER;
 	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(newBusinessOwner).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -539,11 +542,11 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
+	getBusinessData(businessId).ownerType = V_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 	getBusinessData(businessId).needsSaved = true;
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}to the {jobYellow}${getJobData(jobId).name}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to the {jobYellow}${getJobData(jobId).name}`);
 }
 
 // ===========================================================================
@@ -572,7 +575,7 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getBusinessData(business).ownerType != AGRP_VEHOWNER_PLAYER) {
+	if (getBusinessData(business).ownerType != V_VEHOWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
@@ -582,10 +585,11 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
+	// Use confirm prompt
 	showPlayerPrompt(client, getLocaleString(client, "SetBusinessClanConfirmMessage"), getLocaleString(client, "SetBusinessClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZGIVETOCLAN;
+	getPlayerData(client).promptType = V_PROMPT_GIVEBIZTOCLAN;
 
-	//getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_CLAN;
+	//getBusinessData(businessId).ownerType = V_BIZ_OWNER_CLAN;
 	//getBusinessData(businessId).ownerId = getClanData(clanId).databaseId;
 	//getBusinessData(businessId).needsSaved = true;
 }
@@ -616,7 +620,7 @@ function setBusinessRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType == AGRP_VEHOWNER_CLAN) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_CLAN) {
 		let clanId = getClanIndexFromDatabaseId(getBusinessData(businessId).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
@@ -625,7 +629,7 @@ function setBusinessRankCommand(command, params, client) {
 		}
 		getBusinessData(businessId).rank = getClanRankData(clanId, rankId).databaseId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
-	} else if (getBusinessData(businessId).ownerType == AGRP_VEHOWNER_JOB) {
+	} else if (getBusinessData(businessId).ownerType == V_VEHOWNER_JOB) {
 		getBusinessData(businessId).rank = rankId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getBusinessData(businessId).ownerId)).name} {MAINCOLOUR}job!`);
 	}
@@ -722,7 +726,7 @@ function setBusinessJobCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_JOB;
+	getBusinessData(businessId).ownerType = V_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -752,7 +756,7 @@ function setBusinessPublicCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_PUBLIC;
+	getBusinessData(businessId).ownerType = V_BIZ_OWNER_PUBLIC;
 	getBusinessData(businessId).ownerId = 0;
 
 	getBusinessData(businessId).needsSaved = true;
@@ -782,7 +786,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).ownerType = AGRP_BIZ_OWNER_NONE;
+	getBusinessData(businessId).ownerType = V_BIZ_OWNER_NONE;
 	getBusinessData(businessId).ownerId = -1;
 	getBusinessData(businessId).needsSaved = true;
 
@@ -847,7 +851,8 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to [#AAAAAAA]$${entranceFee}`);
+	updateBusinessPickupLabelData(businessId);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
 }
 
 // ===========================================================================
@@ -874,7 +879,7 @@ function setBusinessPaintBallCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).type = AGRP_BIZ_TYPE_PAINTBALL;
+	getBusinessData(businessId).type = V_BIZ_TYPE_PAINTBALL;
 	getBusinessData(businessId).needsSaved = true;
 	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
 }
@@ -906,24 +911,24 @@ function getBusinessInfoCommand(command, params, client) {
 
 	let ownerName = "Unknown";
 	switch (businessData.ownerType) {
-		case AGRP_BIZ_OWNER_CLAN:
+		case V_BIZ_OWNER_CLAN:
 			ownerName = getClanData(businessData.ownerId).name;
 			break;
 
-		case AGRP_BIZ_OWNER_JOB:
+		case V_BIZ_OWNER_JOB:
 			ownerName = getJobData(businessData.ownerId).name;
 			break;
 
-		case AGRP_BIZ_OWNER_PLAYER:
+		case V_BIZ_OWNER_PLAYER:
 			let subAccountData = loadSubAccountFromId(businessData.ownerId);
 			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
 			break;
 
-		case AGRP_BIZ_OWNER_PUBLIC:
+		case V_BIZ_OWNER_PUBLIC:
 			ownerName = "Public";
 			break;
 
-		case AGRP_BIZ_OWNER_NONE:
+		case V_BIZ_OWNER_NONE:
 			//submitBugReport(client, `[AUTOMATED REPORT] getBusinessInfoCommand() - Invalid ownerType for business ${businessId}/${getBusinessData(businessId).databaseId}`);
 			ownerName = "None";
 			break;
@@ -940,14 +945,14 @@ function getBusinessInfoCommand(command, params, client) {
 		[`ID`, `${businessData.index}/${businessData.databaseId}`],
 		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
-		[`BuyPrice`, `$${businessData.buyPrice}`],
+		[`BuyPrice`, `${getCurrencyString(businessData.buyPrice)}`],
 		//[`RentPrice`, `${businessData.rentPrice}`],
 		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
 		[`HasBuyableItems`, `${getYesNoFromBool(doesBusinessHaveAnyItemsToBuy(businessId))}`],
-		[`EntranceFee`, `$${businessData.entranceFee}`],
+		[`EntranceFee`, `${getCurrencyString(businessData.entranceFee)}`],
 		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
-		[`Balance`, `$${businessData.till}`],
+		[`Balance`, `${getCurrencyString(businessData.till)}`],
 		[`RadioStation`, `${businessData.streamingRadioStation}`],
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
@@ -1012,6 +1017,11 @@ function getBusinessStorageItemsCommand(command, params, client) {
 		return false;
 	}
 
+	if (!canPlayerManageBusiness(client, businessId)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+		return false;
+	}
+
 	showBusinessStorageInventoryToPlayer(client, businessId);
 }
 
@@ -1057,7 +1067,7 @@ function setBusinessPickupCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} pickup display to {ALTCOLOUR}${typeParam}!`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} pickup to {ALTCOLOUR}${typeParam}!`, true);
 }
 
 // ===========================================================================
@@ -1091,10 +1101,11 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			getBusinessData(businessId).exitDimension = 0;
 			getBusinessData(businessId).exitInterior = -1;
 			getBusinessData(businessId).hasInterior = false;
-			getBusinessData(businessId).interiorCutscene = "";
+			getBusinessData(businessId).entranceScene = "";
+			getBusinessData(businessId).exitScene = "";
 			getBusinessData(businessId).exitPickupModel = -1;
 			getBusinessData(businessId).customInterior = false;
-			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`);
+			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`, true);
 			return false;
 		}
 
@@ -1113,10 +1124,17 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
 		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
 		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getBusinessData(businessId).exitPickupModel = (isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Exit : -1;
 		getBusinessData(businessId).hasInterior = true;
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
+
+		if (isGameFeatureSupported("interiorScene")) {
+			if (isMainWorldScene(getPlayerData(client).scene)) {
+				getBusinessData(businessId).exitScene = getGameConfig().mainWorldScene[getGame()];
+			} else {
+				getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
+			}
+		}
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1128,7 +1146,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1175,7 +1193,7 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
 		getBusinessData(businessId).hasInterior = true;
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorCutscene = getGameConfig().interiors[getGame()][typeParam][3];
+		getBusinessData(businessId).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1187,7 +1205,7 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior type to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} property template to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1232,7 +1250,7 @@ function setBusinessBlipCommand(command, params, client) {
 	resetBusinessBlips(businessId);
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} blip display to {ALTCOLOUR}${typeParam}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} blip to {ALTCOLOUR}${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1276,14 +1294,14 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultBusinessItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, AGRP_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
 			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultBusinessItems[getGame()][typeParam][i][2];
 		}
 	}
 
 	cacheBusinessItems(businessId);
 	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${toLowerCase(typeParam)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${typeParam}`, true);
 }
 
 // ===========================================================================
@@ -1305,10 +1323,10 @@ function setBusinessDealershipCommand(command, params, client) {
 		return false;
 	}
 
-	getBusinessData(businessId).labelHelpType == AGRP_PROPLABEL_INFO_ENTERVEHICLE;
-	getBusinessData(businessId).type = AGRP_BIZ_TYPE_DEALERSHIP;
+	getBusinessData(businessId).labelHelpType == V_PROPLABEL_INFO_ENTERVEHICLE;
+	getBusinessData(businessId).type = V_BIZ_TYPE_DEALERSHIP;
 	updateBusinessPickupLabelData(businessId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the business type of {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the type of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`, true);
 }
 
 // ===========================================================================
@@ -1332,12 +1350,13 @@ function deleteBusinessFloorItemsCommand(command, params, client) {
 
 	let tempCache = getBusinessData(businessId).floorItemCache;
 	for (let i in tempCache) {
-		deleteItem(tempCache[i]);
+		deleteItem(tempCache[i], getPlayerData(client).accountData.databaseId, false);
 	}
 
 	cacheBusinessItems(businessId);
+	setAllItemDataIndexes();
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all on-sale items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
 
 // ===========================================================================
@@ -1361,12 +1380,13 @@ function deleteBusinessStorageItemsCommand(command, params, client) {
 
 	let tempCache = getBusinessData(businessId).storageItemCache;
 	for (let i in tempCache) {
-		deleteItem(tempCache[i]);
+		deleteItem(tempCache[i], getPlayerData(client).accountData.databaseId, false);
 	}
 
 	cacheBusinessItems(businessId);
+	setAllItemDataIndexes();
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all stored items for business {businessBlue}${getBusinessData(businessId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted all storage items for business {businessBlue}${getBusinessData(businessId).name}`, true);
 }
 
 // ===========================================================================
@@ -1409,7 +1429,7 @@ function withdrawFromBusinessCommand(command, params, client) {
 	updatePlayerCash(client);
 	getBusinessData(businessId).needsSaved = true;
 
-	messagePlayerSuccess(client, `You withdrew $${amount} from business {businessBlue}${getBusinessData(businessId).name} till`);
+	messagePlayerSuccess(client, `You withdrew ${getCurrencyString(amount)} from business {businessBlue}${getBusinessData(businessId).name} till`);
 }
 
 // ===========================================================================
@@ -1448,10 +1468,10 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).buyPrice = amount;
-	setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
+	setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", getBusinessData(businessId).buyPrice, true);
 
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s {MAINCOLOUR}for-sale price to {ALTCOLOUR}$${makeLargeNumberReadable(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
@@ -1486,7 +1506,7 @@ function depositIntoBusinessCommand(command, params, client) {
 	//}
 
 	if (getPlayerCurrentSubAccount(client).cash < amount) {
-		messagePlayerError(client, `You don't have that much money! You only have $${getPlayerCurrentSubAccount(client).cash}`);
+		messagePlayerError(client, `You don't have that much money! You only have ${getCurrencyString(getPlayerCurrentSubAccount(client).cash)}`);
 		return false;
 	}
 
@@ -1495,7 +1515,7 @@ function depositIntoBusinessCommand(command, params, client) {
 	updatePlayerCash(client);
 
 	getBusinessData(businessId).needsSaved = true;
-	messagePlayerSuccess(client, `You deposited $${amount} into business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}till`);
+	messagePlayerSuccess(client, `You deposited ${getCurrencyString(amount)} into business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till`);
 }
 
 // ===========================================================================
@@ -1524,17 +1544,17 @@ function orderItemForBusinessCommand(command, params, client) {
 	let itemType = getItemTypeFromParams(splitParams.slice(0, -2).join(" "));
 
 	if (!getItemTypeData(itemType)) {
-		messagePlayerError(client, `Invalid item type name or ID!`);
-		messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes {MAINCOLOUR}for a list of items`);
+		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
+		messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes{MAINCOLOUR} for a list of items`);
 		return false;
 	}
 	let pricePerItem = getOrderPriceForItemType(itemType);
 
 	let amount = toInteger(splitParams.slice(-2, -1)) || 1;
-	let value = toInteger(splitParams.slice(-1)) || getItemTypeData(itemType).capacity;
+	let value = getItemTypeData(itemType).orderValue;
 	let businessId = getPlayerBusiness(client);
 
-	logToConsole(LOG_DEBUG, `[VRR.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")}`);
 
 	if (!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -1548,16 +1568,15 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	let orderTotalCost = pricePerItem * amount;
 
-	//getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
+	//getPlayerData(client).promptType = V_PROMPT_BIZORDER;
 	getPlayerData(client).businessOrderAmount = amount;
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
-	getPlayerData(client).businessOrderValue = value;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
 
 	getBusinessData(businessId).needsSaved = true;
-	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${makeLargeNumberReadable(pricePerItem)} each will cost a total of $${makeLargeNumberReadable(orderTotalCost)}`, "Business Order Cost");
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZORDER;
+	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
+	getPlayerData(client).promptType = V_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
@@ -1574,13 +1593,13 @@ function orderItemForBusinessCommand(command, params, client) {
 function orderItemForBusiness(businessId, itemType, amount) {
 	if (getBusinessData(businessId).till < orderTotalCost) {
 		let neededAmount = orderTotalCost - getBusinessData(businessId).till;
-		//messagePlayerError(client, `The business doesn't have enough money (needs {ALTCOLOUR}$${neededAmount} {MAINCOLOUR}more)! Use {ALTCOLOUR}/bizdeposit {MAINCOLOUR}to add money to the business.`);
+		//messagePlayerError(client, `The business doesn't have enough money (needs {ALTCOLOUR}${getCurrencyString(neededAmount)} {MAINCOLOUR}more)! Use {ALTCOLOUR}/bizdeposit {MAINCOLOUR}to add money to the business.`);
 		return false;
 	}
 
 	getBusinessData(businessId).till -= orderTotalCost;
 	addToBusinessInventory(businessId, itemType, amount);
-	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at $${getItemTypeData(itemType).orderPrice} each for business {businessBlue}${getBusinessData(businessId).name}`);
+	//messagePlayerSuccess(client, `You ordered ${amount} ${getPluralForm(getItemTypeData(itemType).name)} (${getItemValueDisplay(itemType, value)}) at ${getCurrencyString(getItemTypeData(itemType).orderPrice)} each for business {businessBlue}${getBusinessData(businessId).name}`);
 }
 
 // ===========================================================================
@@ -1611,7 +1630,7 @@ function viewBusinessTillAmountCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, `Business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till has {ALTCOLOUR}$${getBusinessData(businessId).till}`);
+	messagePlayerSuccess(client, `Business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} till has {ALTCOLOUR}${getCurrencyString(getBusinessData(businessId).till)}`);
 }
 
 // ===========================================================================
@@ -1644,7 +1663,7 @@ function buyBusinessCommand(command, params, client) {
 	}
 
 	showPlayerPrompt(client, getLocaleString(client, "BuyBusinessConfirmMessage"), getLocaleString(client, "BuyBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
-	getPlayerData(client).promptType = AGRP_PROMPT_BIZBUY;
+	getPlayerData(client).promptType = V_PROMPT_BUYBIZ;
 }
 
 // ===========================================================================
@@ -1684,7 +1703,7 @@ function moveBusinessEntranceCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance to their position`, true);
 }
 
 // ===========================================================================
@@ -1722,7 +1741,7 @@ function moveBusinessExitCommand(command, params, client) {
 
 	getBusinessData(businessId).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}exit to their position`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} moved business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} exit to their position`, true);
 }
 
 // ===========================================================================
@@ -1874,7 +1893,7 @@ function saveBusinessToDatabase(businessId) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.Business]: Saving business '${tempBusinessData.name}' to database ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business]: Saving business '${tempBusinessData.name}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeBusinessName = escapeDatabaseString(dbConnection, tempBusinessData.name);
@@ -1895,7 +1914,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_entrance_vw", tempBusinessData.entranceDimension],
 			["biz_entrance_pickup", tempBusinessData.entrancePickupModel],
 			["biz_entrance_blip", tempBusinessData.entranceBlipModel],
-			//["biz_entrance_cutscene", tempBusinessData.entranceCutscene],
+			["biz_entrance_scene", tempBusinessData.entranceScene],
 			["biz_exit_pos_x", tempBusinessData.exitPosition.x],
 			["biz_exit_pos_y", tempBusinessData.exitPosition.y],
 			["biz_exit_pos_z", tempBusinessData.exitPosition.z],
@@ -1904,11 +1923,11 @@ function saveBusinessToDatabase(businessId) {
 			["biz_exit_vw", tempBusinessData.exitDimension],
 			["biz_exit_pickup", tempBusinessData.exitPickupModel],
 			["biz_exit_blip", tempBusinessData.exitBlipModel],
-			//["biz_exit_cutscene", tempBusinessData.exitCutscene],
+			["biz_exit_scene", tempBusinessData.exitScene],
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
-			["biz_radio_station", toInteger(tempBusinessData.streamingRadioStation)],
+			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 			["biz_buy_price", tempBusinessData.buyPrice],
 			//["biz_rent_price", tempBusinessData.rentPrice],
@@ -1930,7 +1949,7 @@ function saveBusinessToDatabase(businessId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[VRR.Business]: Saved business '${tempBusinessData.name}' to database!`);
+	logToConsole(LOG_DEBUG, `[AGRP.Business]: Saved business '${tempBusinessData.name}' to database!`);
 
 	return false;
 }
@@ -1945,10 +1964,6 @@ function saveBusinessToDatabase(businessId) {
  */
 function createAllBusinessPickups() {
 	if (!getServerConfig().createBusinessPickups) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -1994,15 +2009,7 @@ function createAllBusinessBlips() {
  *
  */
 function createBusinessEntrancePickup(businessId) {
-	if (!areServerElementsSupported()) {
-		return false;
-	}
-
 	if (!getServerConfig().createBusinessPickups) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2012,20 +2019,24 @@ function createBusinessEntrancePickup(businessId) {
 	//	return false;
 	//}
 
-	if (businessData.entrancePickupModel == -1) {
-		return false;
-	}
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for business ${businessData.name}`);
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+		let entrancePickup = null;
+		if (isGameFeatureSupported("pickup")) {
+			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
 
-	if (businessData.entrancePickupModel != 0) {
-		pickupModelId = businessData.entrancePickupModel;
-	}
+			if (businessData.entrancePickupModel == -1) {
+				return false;
+			}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance pickup for business ${businessData.name} (model ${pickupModelId})`);
+			if (businessData.entrancePickupModel != 0) {
+				pickupModelId = businessData.entrancePickupModel;
+			}
 
-	if (areServerElementsSupported()) {
-		let entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+		}
+
 		if (entrancePickup != null) {
 			if (businessData.entranceDimension != -1) {
 				setElementDimension(entrancePickup, businessData.entranceDimension);
@@ -2044,14 +2055,9 @@ function createBusinessEntrancePickup(businessId) {
 			getBusinessData(businessId).entrancePickup = entrancePickup;
 			updateBusinessPickupLabelData(businessId);
 		}
-	} else {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
-
-		if (businessData.entrancePickupModel != 0) {
-			pickupModelId = businessData.entrancePickupModel;
-		}
-		sendBusinessToPlayer(null, businessId, businessData.name, businessData.entrancePosition, blipModelId, pickupModelId, businessData.hasInterior, doesBusinessHaveAnyItemsToBuy(businessId));
 	}
+
+	updateBusinessPickupLabelData(businessId);
 
 	return false;
 }
@@ -2066,10 +2072,6 @@ function createBusinessEntrancePickup(businessId) {
  *
  */
 function createBusinessEntranceBlip(businessId) {
-	if (!areServerElementsSupported()) {
-		return false;
-	}
-
 	if (!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -2094,9 +2096,9 @@ function createBusinessEntranceBlip(businessId) {
 		blipModelId = businessData.entranceBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
 		if (entranceBlip != null) {
 			if (businessData.entranceDimension != -1) {
@@ -2136,10 +2138,6 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	let businessData = getBusinessData(businessId);
 
 	//if(!businessData.hasInterior) {
@@ -2150,15 +2148,19 @@ function createBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit pickup for business ${businessData.name}`);
 
-	if (businessData.exitPickupModel != 0) {
-		pickupModelId = businessData.exitPickupModel;
+	let exitPickup = null;
+	if (isGameFeatureSupported("pickup")) {
+		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+
+		if (businessData.exitPickupModel != 0) {
+			pickupModelId = businessData.exitPickupModel;
+		}
+
+		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit pickup for business ${businessData.name} (model ${pickupModelId})`);
-
-	let exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
 	if (exitPickup != null) {
 		if (businessData.exitDimension != -1) {
 			setElementDimension(exitPickup, businessData.exitDimension);
@@ -2177,6 +2179,7 @@ function createBusinessExitPickup(businessId) {
 		getBusinessData(businessId).exitPickup = exitPickup;
 		updateBusinessPickupLabelData(businessId);
 	}
+
 }
 
 // ===========================================================================
@@ -2217,7 +2220,7 @@ function createBusinessExitBlip(businessId) {
 		blipModelId = businessData.exitBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit blip for business ${businessData.name} (model ${blipModelId})`);
 
 	let exitBlip = createGameBlip(businessData.exitPosition, blipModelId, 1, getColourByName("businessBlue"));
 	if (exitBlip != null) {
@@ -2281,11 +2284,13 @@ function deleteBusiness(businessId, whoDeleted = 0) {
  * @return {Boolean} Whether or not the players were forced to exit
  *
  */
-function removePlayersFromBusiness(businessId) {
+function removePlayersFromBusiness(businessIndex) {
 	getClients().forEach(function (client) {
-		if (doesBusinessHaveInterior(businessId)) {
-			if (getPlayerBusiness(client) == businessId) {
-				exitBusiness(client);
+		if (doesBusinessHaveInterior(businessIndex)) {
+			if (getPlayerBusiness(client) == businessIndex) {
+				if (getPlayerInterior(client) == getBusinessData(businessIndex).exitInterior && getPlayerDimension(client) == getBusinessData(businessIndex).exitDimension) {
+					exitBusiness(client);
+				}
 			}
 		}
 	});
@@ -2344,17 +2349,17 @@ function exitBusiness(client) {
  */
 function getBusinessOwnerTypeText(ownerType) {
 	switch (ownerType) {
-		case AGRP_BIZ_OWNER_CLAN:
+		case V_BIZ_OWNER_CLAN:
 			return "clan";
 
-		case AGRP_BIZ_OWNER_JOB:
+		case V_BIZ_OWNER_JOB:
 			return "job";
 
-		case AGRP_BIZ_OWNER_PLAYER:
+		case V_BIZ_OWNER_PLAYER:
 			return "player";
 
-		case AGRP_BIZ_OWNER_NONE:
-		case AGRP_BIZ_OWNER_PUBLIC:
+		case V_BIZ_OWNER_NONE:
+		case V_BIZ_OWNER_PUBLIC:
 			return "not owned";
 
 		default:
@@ -2402,10 +2407,6 @@ function deleteBusinessEntrancePickup(businessId) {
 		return false;
 	}
 
-	if (!isGameFeatureSupported("pickup")) {
-		return false;
-	}
-
 	if (getBusinessData(businessId).entrancePickup != null) {
 		//removeFromWorld(getBusinessData(businessId).entrancePickup);
 		deleteGameElement(getBusinessData(businessId).entrancePickup);
@@ -2426,10 +2427,6 @@ function deleteBusinessEntrancePickup(businessId) {
  */
 function deleteBusinessExitPickup(businessId) {
 	if (!areServerElementsSupported()) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("pickup")) {
 		return false;
 	}
 
@@ -2540,7 +2537,7 @@ function setBusinessDataIndexes() {
 		//}
 
 		for (let j in getServerData().businesses[i].locations) {
-			if (getServerData().businesses[i].locations[j].type == AGRP_BIZ_LOC_ATM) {
+			if (getServerData().businesses[i].locations[j].type == V_BIZ_LOC_ATM) {
 				getServerData().atmLocationCache.push([i, j, getServerData().businesses[i].locations[j].position]);
 			}
 		}
@@ -2556,7 +2553,7 @@ function addToBusinessInventory(businessId, itemType, amount, buyPrice) {
 	tempItemData.buyPrice = buyPrice;
 	tempItemData.itemType = getItemTypeData(itemType).databaseId;
 	tempItemData.ownerId = getBusinessData(business).databaseId;
-	tempItemData.ownerType = AGRP_ITEMOWNER_BIZ;
+	tempItemData.ownerType = V_ITEMOWNER_BIZ;
 	tempItemData.ownerIndex = businessId;
 	tempItemData.itemTypeIndex = itemType;
 	saveItemToDatabase(tempItemData);
@@ -2648,17 +2645,17 @@ function buyFromBusinessCommand(command, params, client) {
 	}
 
 	takePlayerCash(client, totalCost);
-	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, AGRP_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
+	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
 	cachePlayerHotBarItems(client);
 	getBusinessData(businessId).till = getBusinessData(businessId).till + totalCost;
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount - amount;
 	if (getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount == 0) {
-		destroyItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
+		deleteItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
 	}
 
 	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
-	if (useType == AGRP_ITEM_USE_TYPE_WEAPON || AGRP_ITEM_USE_TYPE_TAZER || useType == AGRP_ITEM_USE_TYPE_AMMO_CLIP) {
+	if (useType == V_ITEM_USE_TYPE_WEAPON || V_ITEM_USE_TYPE_TAZER || useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
 		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
 			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
 			return false;
@@ -2668,12 +2665,16 @@ function buyFromBusinessCommand(command, params, client) {
 	//messagePlayerSuccess(client, `You bought ${amount} {ALTCOLOUR}${itemName} {MAINCOLOUR}for ${totalCost} ${priceEach}`);
 	meActionToNearbyPlayers(client, `buys a ${itemName}`);
 
-	if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
-		let keyData = getPlayerKeyBindForCommand("inv");
-		messagePlayerNewbieTip(client, getLocaleString(client, "ViewInventoryKeyPressTip", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
-	} else {
-		messagePlayerNewbieTip(client, getLocaleString(client, "ViewInventoryCommandTip", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+	if (!hasPlayerSeenActionTip(client, "ViewInventory")) {
+		if (doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand("inv")) {
+			let keyData = getPlayerKeyBindForCommand("inv");
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}${getKeyNameFromId(keyData.key)}{MAINCOLOUR}`));
+		} else {
+			messagePlayerActionTip(client, getGroupedLocaleString(client, "ActionTips", "ViewInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
+		}
 	}
+
+	markPlayerActionTipSeen(client, "ViewInventory");
 }
 
 // ===========================================================================
@@ -2716,7 +2717,7 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
 
-	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from $${makeLargeNumberReadable(oldPrice)} to $${makeLargeNumberReadable(newprice)}`);
+	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newprice)}`);
 }
 
 // ===========================================================================
@@ -2757,7 +2758,7 @@ function storeItemInBusinessStorageCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZSTORAGE;
+	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).ownerType = V_ITEM_OWNER_BIZSTORAGE;
 	getBusinessData(businessId).storageItemCache[firstSlot] = getBusinessData(businessId).floorItemCache[itemSlot - 1];
 	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} to the business storage in slot ${firstSlot}`);
@@ -2801,7 +2802,7 @@ function stockItemOnBusinessFloorCommand(command, params, client) {
 		return false;
 	}
 
-	getItemData(getBusinessData(businessId).storageItemCache[itemSlot - 1]).ownerType = AGRP_ITEM_OWNER_BIZFLOOR;
+	getItemData(getBusinessData(businessId).storageItemCache[itemSlot - 1]).ownerType = V_ITEM_OWNER_BIZFLOOR;
 	getBusinessData(businessId).floorItemCache[firstSlot] = getBusinessData(businessId).storageItemCache[itemSlot - 1];
 	getBusinessData(businessId).storageItemCache[itemSlot - 1] = -1;
 	messagePlayerSuccess(client, `You moved the ${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[firstSlot]).itemTypeIndex).name}s in slot ${itemSlot} of the business storage to the business floor slot ${firstSlot}`);
@@ -2825,11 +2826,11 @@ function getBusinessFloorFirstFreeItemSlot(businessId) {
 
 // Caches all items for all businesses
 function cacheAllBusinessItems() {
-	logToConsole(LOG_DEBUG, "[VRR.Business] Caching all business items ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Business] Caching all business items ...");
 	for (let i in getServerData().businesses) {
 		cacheBusinessItems(i);
 	}
-	logToConsole(LOG_DEBUG, "[VRR.Business] Cached all business items successfully!");
+	logToConsole(LOG_DEBUG, "[AGRP.Business] Cached all business items successfully!");
 }
 
 // ===========================================================================
@@ -2840,20 +2841,20 @@ function cacheBusinessItems(businessId) {
 	clearArray(getBusinessData(businessId).storageItemCache);
 
 	//let businessData = getBusinessData(businessId);
-	//logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
-	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+	//logToConsole(LOG_VERBOSE, `[AGRP.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
+	//getBusinessData(businessId).floorItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
+	//getBusinessData(businessId).storageItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
 			getBusinessData(businessId).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == AGRP_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
 			getBusinessData(businessId).storageItemCache.push(i);
 		}
 	}
 
-	logToConsole(LOG_VERBOSE, `[VRR.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
+	logToConsole(LOG_VERBOSE, `[AGRP.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
 }
 
 // ===========================================================================
@@ -2867,55 +2868,57 @@ function getBusinessIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+		sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
 		return false;
 	}
 
 	if (getBusinessData(businessId).exitPickup != null) {
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_EXIT, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).exitPickup, "agrp.label.type", AGRP_LABEL_EXIT, true);
+		setEntityData(getBusinessData(businessId).exitPickup, "v.rp.owner.type", V_PICKUP_BUSINESS_EXIT, false);
+		setEntityData(getBusinessData(businessId).exitPickup, "v.rp.owner.id", businessId, false);
+		setEntityData(getBusinessData(businessId).exitPickup, "v.rp.label.type", V_LABEL_EXIT, true);
 	}
 
 	if (getBusinessData(businessId).entrancePickup != null) {
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.type", AGRP_PICKUP_BUSINESS_ENTRANCE, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.owner.id", businessId, false);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.type", AGRP_LABEL_BUSINESS, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.name", getBusinessData(businessId).name, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.locked", getBusinessData(businessId).locked, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_NONE, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.owner.type", V_PICKUP_BUSINESS_ENTRANCE, false);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.owner.id", businessId, false);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.type", V_LABEL_BUSINESS, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.name", getBusinessData(businessId).name, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.locked", getBusinessData(businessId).locked, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_NONE, true);
 
 		switch (getBusinessData(businessId).labelHelpType) {
-			case AGRP_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTERVEHICLE, true);
+			case V_PROPLABEL_INFO_ENTERVEHICLE: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTERVEHICLE, true);
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_ENTER: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+			case V_PROPLABEL_INFO_ENTER: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 				break;
 			}
 
-			case AGRP_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_REPAIR, true);
+			case V_PROPLABEL_INFO_REPAIR: {
+				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_REPAIR, true);
 				break;
 			}
 
 			default: {
 				if (getBusinessData(businessId).hasInterior) {
-					setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_ENTER, true);
+					setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 				} else {
 					if (doesBusinessHaveAnyItemsToBuy(businessId)) {
-						setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help", AGRP_PROPLABEL_INFO_BUY, true);
+						setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUY, true);
 					} else {
-						removeEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.help");
+						removeEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help");
 					}
 				}
 				break;
 			}
 		}
 
-		setEntityData(getBusinessData(businessId).entrancePickup, "agrp.label.price", getBusinessData(businessId).buyPrice, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", getBusinessData(businessId).buyPrice, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.fee", getBusinessData(businessId).entranceFee, true);
 	}
 }
 
@@ -2993,7 +2996,7 @@ function doesBusinessHaveAnyItemsToBuy(businessId) {
 
 //function clearPlayerBusinessGameScripts(client, businessId) {
 //	for(let i in getBusinessData(businessId).gameScripts) {
-//		sendPlayerGameScriptState(client, AGRP_GAMESCRIPT_DENY);
+//		sendPlayerGameScriptState(client, V_GAMESCRIPT_DENY);
 //	}
 //}
 
@@ -3015,11 +3018,11 @@ function canPlayerWithdrawFromBusinessTill(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3035,11 +3038,11 @@ function canPlayerSetBusinessInteriorLights(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3055,11 +3058,11 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_PLAYER && getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 		return true;
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN && getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 		if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 			return true;
 		}
@@ -3070,18 +3073,20 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 
 // ===========================================================================
 
-function canPlayerManageBusiness(client, businessId) {
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
-		return true;
+function canPlayerManageBusiness(client, businessId, exemptAdminFlag = false) {
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+			return true;
+		}
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_PLAYER) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_PLAYER) {
 		if (getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == AGRP_BIZ_OWNER_CLAN) {
+	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN) {
 		if (getBusinessData(businessId).ownerId == getPlayerClan(client)) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 				return true;
@@ -3198,6 +3203,36 @@ function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
 		}
 	}
 	return false;
+}
+
+// ===========================================================================
+
+function getBusinessEntranceBlipModelForNetworkEvent(businessIndex) {
+	let blipModelId = -1;
+	if (isGameFeatureSupported("blip")) {
+		blipModelId = getGameConfig().blipSprites[getGame()].Business;
+
+		if (getBusinessData(businessIndex).entranceBlipModel != 0) {
+			blipModelId = getBusinessData(businessIndex).entranceBlipModel;
+		}
+	}
+
+	return blipModelId;
+}
+
+// ===========================================================================
+
+function getBusinessEntrancePickupModelForNetworkEvent(businessIndex) {
+	let pickupModelId = -1;
+	if (isGameFeatureSupported("pickup")) {
+		pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+
+		if (getBusinessData(businessIndex).entrancePickupModel != 0) {
+			pickupModelId = getBusinessData(businessIndex).entrancePickupModel;
+		}
+	}
+
+	return pickupModelId;
 }
 
 // ===========================================================================

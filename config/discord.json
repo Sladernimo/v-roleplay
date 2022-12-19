@@ -5,6 +5,8 @@
 	"sendVehicleEvents": false,
 	"sendDeathEvents": false,
 	"sendAdmin": false,
+	"sendClan": false,
+	"sendAction": false,
 	"webhook": {
 		"enabled": false,
 		"webhookBaseURL": "http://127.0.0.1:8090/discord.php?message={0}&server={1}&type={2}&pass={3}",

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: messaging.js
 // DESC: Provides messaging/textdraw functions and usage
@@ -23,10 +22,10 @@ let smallGameMessageTimer = null;
 // ===========================================================================
 
 function initMessagingScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Messaging]: Initializing messaging script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Messaging]: Initializing messaging script ...");
 	smallGameMessageFonts = loadSmallGameMessageFonts();
 	bigGameMessageFonts = loadSmallGameMessageFonts();
-	logToConsole(LOG_DEBUG, "[VRR.Messaging]: Messaging script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Messaging]: Messaging script initialized!");
 }
 
 // ===========================================================================
@@ -36,6 +35,12 @@ function loadSmallGameMessageFonts() {
 	let fontStream = openFile("files/fonts/pricedown.ttf");
 	if (fontStream != null) {
 		tempSmallGameMessageFonts["Pricedown"] = lucasFont.createFont(fontStream, 20.0);
+		fontStream.close();
+	}
+
+	fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
+	if (fontStream != null) {
+		tempSmallGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 20.0);
 		fontStream.close();
 	}
 
@@ -55,6 +60,12 @@ function loadBigGameMessageFont() {
 		fontStream.close();
 	}
 
+	fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
+	if (fontStream != null) {
+		tempBigGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 20.0);
+		fontStream.close();
+	}
+
 	tempBigGameMessageFonts["Roboto"] = lucasFont.createDefaultFont(28.0, "Roboto");
 	tempBigGameMessageFonts["RobotoLight"] = lucasFont.createDefaultFont(28.0, "Roboto", "Light");
 
@@ -64,10 +75,10 @@ function loadBigGameMessageFont() {
 // ===========================================================================
 
 function processSmallGameMessageRendering() {
-	logToConsole(LOG_VERBOSE, "[VRR.Messaging]: Processing small game message rendering ...");
+	logToConsole(LOG_VERBOSE, "[AGRP.Messaging]: Processing small game message rendering ...");
 	if (renderSmallGameMessage) {
 		if (smallGameMessageText != "") {
-			logToConsole(LOG_VERBOSE, `[VRR.Messaging]: Rendering small game message: ${smallGameMessageText}`);
+			logToConsole(LOG_VERBOSE, `[AGRP.Messaging]: Rendering small game message: ${smallGameMessageText}`);
 			if (smallGameMessageFonts[smallGameMessageFontName] != null) {
 				smallGameMessageFonts[smallGameMessageFontName].render(smallGameMessageText, [0, game.height - 90], game.width, 0.5, 0.0, smallGameMessageFonts[smallGameMessageFontName].size, smallGameMessageColour, true, true, false, true);
 			}
@@ -78,7 +89,7 @@ function processSmallGameMessageRendering() {
 // ===========================================================================
 
 function showSmallGameMessage(text, colour, duration, fontName) {
-	logToConsole(LOG_DEBUG, `[VRR.Messaging] Showing small game message '${text}' using font ${fontName} for ${duration}ms`);
+	logToConsole(LOG_DEBUG, `[AGRP.Messaging] Showing small game message '${text}' using font ${fontName} for ${duration}ms`);
 	if (smallGameMessageText != "") {
 		clearTimeout(smallGameMessageTimer);
 	}

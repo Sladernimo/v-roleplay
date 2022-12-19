@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: utilities.js
 // DESC: Provides shared utilities
@@ -13,47 +12,6 @@ let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒
 //let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
 
 let bindableKeys = {
-	8: "backspace",
-	9: "tab",
-	13: "return",
-	27: "escape",
-	32: "space",
-	33: "exclamation",
-	34: "doublequote",
-	35: "hashtag",
-	36: "dollar",
-	37: "percent",
-	38: "ampersand",
-	39: "quote",
-	40: "leftparenthesis",
-	41: "rightparenthesis",
-	42: "asterisk",
-	43: "plus",
-	44: "comma",
-	45: "minus",
-	46: "period",
-	47: "slash",
-	48: "0",
-	49: "1",
-	50: "2",
-	51: "3",
-	52: "4",
-	53: "5",
-	54: "6",
-	55: "7",
-	56: "8",
-	57: "9",
-	58: "colon",
-	59: "semicolon",
-	60: "less",
-	61: "equals",
-	62: "greater",
-	63: "questionmark",
-	64: "at",
-	91: "leftbracket",
-	92: "backslash",
-	93: "rightbracket",
-	95: "underscore",
 	97: "a",
 	98: "b",
 	99: "c",
@@ -80,8 +38,16 @@ let bindableKeys = {
 	120: "x",
 	121: "y",
 	122: "z",
-	127: "delete",
-	1073741881: "capslock",
+	48: "0",
+	49: "1",
+	50: "2",
+	51: "3",
+	52: "4",
+	53: "5",
+	54: "6",
+	55: "7",
+	56: "8",
+	57: "9",
 	1073741882: "f12",
 	1073741883: "f2",
 	1073741884: "f3",
@@ -94,23 +60,6 @@ let bindableKeys = {
 	1073741891: "f10",
 	1073741892: "f11",
 	1073741893: "f12",
-	1073741894: "printscreen",
-	1073741895: "scrolllock",
-	1073741896: "pause",
-	1073741897: "insert",
-	1073741898: "home",
-	1073741899: "pageup",
-	1073741901: "end",
-	1073741902: "pagedown",
-	1073741903: "right",
-	1073741904: "left",
-	1073741905: "down",
-	1073741906: "up",
-	1073741908: "numdivide",
-	1073741909: "nummultiply",
-	1073741910: "numminus",
-	1073741911: "numplus",
-	1073741912: "numenter",
 	1073741913: "num1",
 	1073741914: "num2",
 	1073741915: "num3",
@@ -121,6 +70,57 @@ let bindableKeys = {
 	1073741920: "num8",
 	1073741921: "num9",
 	1073741922: "num0",
+	1073741903: "right",
+	1073741904: "left",
+	1073741905: "down",
+	1073741906: "up",
+	8: "backspace",
+	9: "tab",
+	13: "return",
+	13: "enter",
+	27: "escape",
+	32: "space",
+	33: "exclamation",
+	34: "doublequote",
+	35: "hashtag",
+	36: "dollar",
+	37: "percent",
+	38: "ampersand",
+	39: "quote",
+	40: "leftparenthesis",
+	41: "rightparenthesis",
+	42: "asterisk",
+	43: "plus",
+	44: "comma",
+	45: "minus",
+	46: "period",
+	47: "slash",
+	58: "colon",
+	59: "semicolon",
+	60: "less",
+	61: "equals",
+	62: "greater",
+	63: "questionmark",
+	64: "at",
+	91: "leftbracket",
+	92: "backslash",
+	93: "rightbracket",
+	95: "underscore",
+	127: "delete",
+	1073741881: "capslock",
+	1073741894: "printscreen",
+	1073741895: "scrolllock",
+	1073741896: "pause",
+	1073741897: "insert",
+	1073741898: "home",
+	1073741899: "pageup",
+	1073741901: "end",
+	1073741902: "pagedown",
+	1073741908: "numdivide",
+	1073741909: "nummultiply",
+	1073741910: "numminus",
+	1073741911: "numplus",
+	1073741912: "numenter",
 	1073741923: "numperiod",
 	1073742048: "leftctrl",
 	1073742049: "leftshift",
@@ -149,9 +149,10 @@ let serverColours = {
 			businessBlue: "0099FF",
 			houseGreen: "11CC11",
 			clanOrange: "FF9900",
-			vehiclePurple: "960096",
+			vehiclePurple: "B19CD9",
 			jobYellow: "FFFF00",
 			npcPink: "DB7093",
+			chatBoxListIndex: "0099FF",
 		},
 		byName: {
 			white: "FFFFFF",
@@ -184,6 +185,7 @@ let serverColours = {
 			vehiclePurple: "960096",
 			jobYellow: "FFFF00",
 			adminOrange: "ED4337",
+			chatBoxListIndex: "0099FF",
 		},
 	},
 
@@ -212,9 +214,11 @@ let serverColours = {
 		softYellow: toColour(234, 198, 126, 255),
 		businessBlue: toColour(0, 153, 255, 255),
 		houseGreen: toColour(17, 204, 17, 255),
-		clanOrange: toColour(255, 153, 0, 255),
+		vehiclePurple: toColour(177, 156, 217, 255),
+		chatBoxListIndex: toColour(0, 153, 255, 255),
 		npcPink: toColour(219, 112, 147, 255),
 		adminOrange: toColour(205, 60, 60, 255),
+		clanOrange: toColour(255, 153, 0, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
@@ -230,22 +234,9 @@ let serverColours = {
 		lightGrey: toColour(200, 200, 200, 255),
 		mediumGrey: toColour(150, 150, 150, 255),
 		darkGrey: toColour(64, 64, 64, 255),
-		policeBlue: toColour(50, 80, 200, 255),
-		medicPink: toColour(219, 112, 147, 255),
-		firefighterRed: toColour(205, 60, 60, 255),
-		busDriverGreen: toColour(50, 160, 50, 255),
-		taxiDriverYellow: toColour(240, 230, 100, 255),
-		deliveryPurple: toColour(177, 156, 217, 255),
-		civilianWhite: toColour(200, 200, 200, 255),
+		softYellow: toColour(234, 198, 126, 255),
 		burntYellow: toColour(210, 210, 0, 255),
 		burntOrange: toColour(210, 120, 0, 255),
-		bankGreen: toColour(0, 150, 0, 255),
-		softYellow: toColour(234, 198, 126, 255),
-		businessBlue: toColour(0, 153, 255, 255),
-		houseGreen: toColour(17, 204, 17, 255),
-		clanOrange: toColour(255, 153, 0, 255),
-		npcPink: toColour(219, 112, 147, 255),
-		adminOrange: toColour(205, 60, 60, 255),
 	},
 };
 
@@ -1120,7 +1111,7 @@ let profanityFilterWords = [
 	"anus",
 	"apeshit",
 	"arsehole",
-	"ass",
+	//"ass",
 	"asshole",
 	"assmunch",
 	"autoerotic",
@@ -1384,9 +1375,6 @@ let placesOfOrigin = [
 
 // ===========================================================================
 
-/**
- * @return {GameConfig} The game data
- */
 function getGameConfig() {
 	return gameData;
 }
@@ -1418,6 +1406,12 @@ function getKeyIdFromParams(params) {
 
 function getKeyNameFromId(params) {
 	return bindableKeys[toInteger(params)];
+}
+
+// ===========================================================================
+
+function getKeyComboName(keys) {
+	return keys.map(x => getKeyNameFromId(x.key)).join(" + ");
 }
 
 // ===========================================================================
@@ -1675,7 +1669,7 @@ function getPercentage(num, per) {
 // ===========================================================================
 
 function getMultiplayerMod() {
-	return (getGame() >= 10) ? AGRP_MPMOD_MAFIAC : AGRP_MPMOD_GTAC;
+	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
 }
 
 // ===========================================================================
@@ -1687,13 +1681,13 @@ function isSnowSupported(gameId) {
 // ===========================================================================
 
 function isGTAIV() {
-	return (getGame() == AGRP_GAME_GTA_IV);
+	return (getGame() == V_GAME_GTA_IV);
 }
 
 // ===========================================================================
 
 function areServerElementsSupported() {
-	return supportedFeatures.serverElements[getGame()];
+	return isGameFeatureSupported("serverElements")
 }
 
 // ===========================================================================
@@ -1802,6 +1796,19 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 	let skins = getGameConfig().skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
+			return i;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function getObjectModelIndexFromName(model, gameId = getGame()) {
+	let objects = getGameConfig().objects[gameId];
+	for (let i in objects) {
+		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
 			return i;
 		}
 	}
@@ -2030,7 +2037,7 @@ function getPosInFrontOfPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() != AGRP_GAME_MAFIA_ONE) {
+	if (getGame() != V_GAME_MAFIA_ONE) {
 		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
 		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	} else {
@@ -2054,7 +2061,7 @@ function getPosBehindPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() < AGRP_GAME_MAFIA_ONE) {
+	if (getGame() < V_GAME_MAFIA_ONE) {
 		y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
 	} else {
 		angle = radToDeg(angle);
@@ -2069,12 +2076,18 @@ function getPosBehindPos(pos, angle, distance) {
 // ===========================================================================
 
 function getPosAbovePos(pos, distance) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return toVector3(pos.x, pos.y + distance, pos.z);
+	}
 	return toVector3(pos.x, pos.y, pos.z + distance);
 }
 
 // ===========================================================================
 
 function getPosBelowPos(pos, distance) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return toVector3(pos.x, pos.y - distance, pos.z);
+	}
 	return toVector3(pos.x, pos.y, pos.z - distance);
 }
 
@@ -2317,7 +2330,7 @@ function getGameLocationFromParams(params) {
 			return toInteger(params);
 		}
 	}
-	return false;
+	return -1;
 }
 
 // ===========================================================================
@@ -2565,7 +2578,7 @@ function ArrayBufferToString(buffer) {
 // ===========================================================================
 
 function getElementTypeName(typeId) {
-	if (getGame() == AGRP_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		switch (typeId) {
 			case ELEMENT_VEHICLE:
 				return "Vehicle";
@@ -3173,6 +3186,54 @@ function fillLeadingZeros(number, length) {
 		str = "0" + str;
 	}
 	return str;
+}
+
+// ===========================================================================
+
+function isMainWorldScene(sceneName) {
+	return (sceneName == "v.rp.mainWorldScene");
+}
+
+// ===========================================================================
+
+function isNightTime(hour) {
+	if (hour >= 7 && hour <= 19) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+// ===========================================================================
+
+function isServerGoingToChangeMapsSoon(hour, minute) {
+	if (server.mapName == "FREERIDENOC") {
+		if (hour == 6 && minute >= 30) {
+			return true
+		}
+	} else if (server.mapName == "FREERIDE") {
+		if (hour == 18 && minute >= 30) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function getRandomBoolWithProbability(percentChance) {
+	return (Math.random() < percentChance / 100);
+}
+
+// ===========================================================================
+
+function getWeatherData(weatherIndex, gameId = getGame()) {
+	if (typeof getGameConfig().weather[gameId][weatherIndex] == "undefined") {
+		return false;
+	}
+
+	return getGameConfig().weather[gameId][weatherIndex];
 }
 
 // ===========================================================================

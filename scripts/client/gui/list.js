@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: list.js
 // DESC: Provides simple list GUI
@@ -12,12 +11,14 @@ let listDialog = {
 	window: null,
 	messageLabel: null,
 	listGrid: null,
+
+	listRows: [],
 };
 
 // ===========================================================================
 
 function initListGUI() {
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Creating list dialog GUI ...`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating list dialog GUI ...`);
 	listDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 500, 'List', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -71,14 +72,14 @@ function initListGUI() {
 			}
 		}
 	});
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Created list dialog GUI`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created list dialog GUI`);
 }
 
 // ===========================================================================
 
 function showListGUI() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[VRR.GUI] Showing login window`);
+	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing list window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	listDialog.window.shown = true;
@@ -90,19 +91,56 @@ function showListGUI() {
 // ===========================================================================
 
 function checkListDialogSelection() {
+	if (!listDialog.listGrid.activeRow) {
+		return false;
+	}
 
+	sendNetworkEventToServer("v.rp.list.select", listDialog.listGrid.activeRow.getEntryIndex());
 }
 
 // ===========================================================================
 
 function selectPreviousListItem() {
+	if (!listDialog.listGrid.activeRow) {
+		return false;
+	}
 
+	let activeRowId = listDialog.listGrid.activeRow.getEntryIndex();
+	if (activeRowId <= 1) {
+		listDialog.listGrid.activeRow = 0;
+	} else {
+		listDialog.listGrid.activeRow = listDialog.listRows[activeRowId - 1];
+	}
+
+	//sendNetworkEventToServer("v.rp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
 }
 
 // ===========================================================================
 
 function selectNextListItem() {
+	let activeRowId = listDialog.listGrid.activeRow.getEntryIndex();
+	if (activeRowId >= listDialog.listRows.length - 1) {
+		listDialog.listGrid.activeRow = 0;
+	} else {
+		listDialog.listGrid.activeRow = listDialog.listRows[activeRowId + 1];
+	}
 
+	//sendNetworkEventToServer("v.rp.list.next", listDialog.listGrid.activeRow.getEntryIndex());
+}
+
+// ===========================================================================
+
+function clearListGUI() {
+	listDialog.listGrid.removeAllEntries();
+}
+
+// ===========================================================================
+
+function populateListGUI(listItems) {
+	for (let i in listItems) {
+		let row = listDialog.listGrid.row(listItems[i]);
+		listDialog.listRows.push(row);
+	}
 }
 
 // ===========================================================================

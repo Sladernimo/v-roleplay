@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: police.js
 // DESC: Provides police officer job functions and usage
@@ -24,7 +23,7 @@ function policeTazerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}
@@ -50,7 +49,7 @@ function policeCuffCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}
@@ -76,7 +75,7 @@ function policeArrestCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}
@@ -102,7 +101,7 @@ function policeSearchCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}
@@ -128,7 +127,7 @@ function policeDragCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}
@@ -154,7 +153,7 @@ function policeDetainCommand(command, params, client) {
 		return false;
 	}
 
-	if (!doesPlayerHaveJobType(client, AGRP_JOB_POLICE)) {
+	if (!doesPlayerHaveJobType(client, V_JOB_POLICE)) {
 		messagePlayerError(client, "You don't have a police job.");
 		return false;
 	}

@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: animation.js
 // DESC: Provides animation functions and usage
@@ -9,8 +8,8 @@
 // ===========================================================================
 
 function initAnimationScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Animation]: Initializing animation script ...");
-	logToConsole(LOG_DEBUG, "[VRR.Animation]: Animation script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Initializing animation script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Animation script initialized!");
 }
 
 // ===========================================================================
@@ -35,8 +34,8 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (getAnimationData(animationSlot)[3] == AGRP_ANIMTYPE_SURRENDER) {
-		getPlayerData(client).pedState = AGRP_PEDSTATE_HANDSUP;
+	if (getAnimationData(animationSlot)[3] == V_ANIMTYPE_SURRENDER) {
+		getPlayerData(client).pedState = V_PEDSTATE_HANDSUP;
 	}
 
 	if (isPlayerHandCuffed(client) || isPlayerTazed(client) || isPlayerInForcedAnimation(client)) {
@@ -44,7 +43,11 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerTip(client, getLocaleString(client, "AnimationStopCommandTip", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+	if (getAnimationData(animationSlot).loop == true) {
+		if (hasPlayerSeenActionTip(client, "AnimationStop")) {
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
+		}
+	}
 	makePlayerPlayAnimation(client, animationSlot, animationPositionOffset);
 }
 
@@ -66,6 +69,8 @@ function stopPlayerAnimationCommand(command, params, client) {
 	getPlayerData(client).animationForced = false;
 
 	//setPlayerMouseCameraState(client, false);
+
+	markPlayerActionTipSeen(client, "AnimationStop");
 }
 
 // ===========================================================================
@@ -91,16 +96,18 @@ function isPlayerInForcedAnimation(client) {
 // ===========================================================================
 
 function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	getPlayerData(client).currentAnimation = animationSlot;
-	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
-	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
-	getPlayerData(client).animationForced = false;
+	if (getAnimationData(animationSlot).loop == true) {
+		getPlayerData(client).currentAnimation = animationSlot;
+		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
+		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
+		getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+		getPlayerData(client).animationForced = false;
+	}
 
 	makePedPlayAnimation(getPlayerPed(client), animationSlot, offsetPosition);
-	setEntityData(getPlayerPed(client), "agrp.anim", animationSlot, true);
-	//if(getAnimationData(animationSlot)[9] != AGRP_ANIMMOVE_NONE) {
-	//	if(getGame() < AGRP_GAME_GTA_SA) {
+	//setEntityData(getPlayerPed(client), "v.rp.anim", animationSlot, true);
+	//if(getAnimationData(animationSlot)[9] != V_ANIMMOVE_NONE) {
+	//	if(getGame() < V_GAME_GTA_SA) {
 	//		setPlayerMouseCameraState(client, true);
 	//	}
 	//}
@@ -109,11 +116,13 @@ function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
 // ===========================================================================
 
 function forcePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	getPlayerData(client).currentAnimation = animationSlot;
-	getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
-	getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
-	getPlayerData(client).animationStart = getCurrentUnixTimestamp();
-	getPlayerData(client).animationForced = true;
+	if (getAnimationData(animationSlot).loop == true) {
+		getPlayerData(client).currentAnimation = animationSlot;
+		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
+		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
+		getPlayerData(client).animationStart = getCurrentUnixTimestamp();
+		getPlayerData(client).animationForced = true;
+	}
 
 	setPlayerControlState(client, false);
 	forcePedAnimation(getPlayerPed(client), animationSlot, offsetPosition);

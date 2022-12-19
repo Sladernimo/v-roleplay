@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: bitflags.js
 // DESC: Provides bitwise operations, functions and usage
@@ -16,7 +15,7 @@ let serverBitFlags = {
 	accountSettingsFlags: {},
 	subAccountSettingsFlags: {},
 	accountFlags: {},
-	seenHelpTipsFlags: {},
+	seenActionTipsFlags: {},
 	npcTriggerTypeFlags: {},
 	npcTriggerConditionTypesFlags: {},
 	npcTriggerResponseTypeFlags: {},
@@ -240,12 +239,28 @@ let serverBitFlagKeys = {
 		"EnterProperty",
 		"SearchArea",
 	],
-	seenHelpTipsKeys: [
+	seenActionTipsKeys: [
 		"None",
 		"VehicleEngineOffWhenEntering",
 		"VehicleLockedAfterEntryAttempt",
 		"ShowItemsAfterPurchase",
 		"BuyCommandAfterEnterBusiness",
+		"UseItemKeyAfterEquipping",
+		"UseItemKeyAfterEquippingWalkieTalkie",
+		"RadioCommandAfterEnablingWalkieTalkie",
+		"ReplyToDirectMessage",
+		"UseItemKeyAmmoAfterEquippingWeapon",
+		"AnimationStop",
+		"JobEquipmentInventory",
+		"ViewInventory",
+		"VehicleRepairItemUsage",
+		"VehicleColourItemUsage",
+		"VehiclePartItemUsage",
+		"AmmoClipItemUsage",
+		"GenericItemUsage",
+		"EnterJobVehicleForRoute",
+		"JobLocations",
+		"JobRouteStart",
 	],
 	jobRankKeys: [
 		"None",
@@ -265,7 +280,7 @@ let serverBitFlagKeys = {
 // ===========================================================================
 
 function initBitFlagScript() {
-	logToConsole(LOG_DEBUG, "[VRR.BitFlag]: Initializing bit flag script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.BitFlag]: Initializing bit flag script ...");
 	serverBitFlags.staffFlags = createBitFlagTable(serverBitFlagKeys.staffFlagKeys);
 	serverBitFlags.moderationFlags = createBitFlagTable(serverBitFlagKeys.moderationFlagKeys);
 	serverBitFlags.accountSettingsFlags = createBitFlagTable(serverBitFlagKeys.accountSettingsFlagKeys);
@@ -277,9 +292,9 @@ function initBitFlagScript() {
 	serverBitFlags.npcTriggerTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerTypeKeys);
 	serverBitFlags.npcTriggerConditionTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerConditionTypeKeys);
 	serverBitFlags.npcTriggerResponseTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerResponseTypeKeys);
-	serverBitFlags.seenHelpTips = createBitFlagTable(serverBitFlagKeys.seenHelpTipsKeys);
+	serverBitFlags.seenActionTips = createBitFlagTable(serverBitFlagKeys.seenActionTipsKeys);
 	serverBitFlags.jobRankFlags = createBitFlagTable(serverBitFlagKeys.jobRankKeys);
-	logToConsole(LOG_INFO, "[VRR.BitFlag]: Bit flag script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.BitFlag]: Bit flag script initialized successfully!");
 	return true;
 }
 
@@ -313,7 +328,7 @@ function doesPlayerHaveStaffPermission(client, requiredFlags) {
 
 // ===========================================================================
 
-function doesPlayerHaveClanPermission(client, requiredFlags) {
+function doesPlayerHaveClanPermission(client, requiredFlags, exemptAdminFlag = false) {
 	if (isConsole(client)) {
 		return true;
 	}
@@ -322,8 +337,10 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 		return true;
 	}
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
-		return true;
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			return true;
+		}
 	}
 
 	let clanFlags = 0;
@@ -343,7 +360,7 @@ function doesPlayerHaveClanPermission(client, requiredFlags) {
 
 // ===========================================================================
 
-function doesPlayerHaveJobPermission(client, requiredFlags) {
+function doesPlayerHaveJobPermission(client, requiredFlags, exemptAdminFlag = false) {
 	if (isConsole(client)) {
 		return true;
 	}
@@ -352,8 +369,10 @@ function doesPlayerHaveJobPermission(client, requiredFlags) {
 		return true;
 	}
 
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
-		return true;
+	if (exemptAdminFlag == false) {
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
+			return true;
+		}
 	}
 
 	let jobFlags = 0;
@@ -439,6 +458,20 @@ function getClanDiscordWebhookValue(flagName) {
 	}
 
 	return serverBitFlags.clanDiscordWebhookFlags[flagName];
+}
+
+// ===========================================================================
+
+function getSeenActionTipsValue(flagName) {
+	if (flagName == "All") {
+		return -1;
+	}
+
+	if (typeof serverBitFlags.seenActionTips[flagName] == "undefined") {
+		return false;
+	}
+
+	return serverBitFlags.seenActionTips[flagName];
 }
 
 // ===========================================================================

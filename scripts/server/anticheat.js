@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: anticheat.js
 // DESC: Provides anticheat functions and usage
@@ -9,17 +8,17 @@
 // ===========================================================================
 
 function initAntiCheatScript() {
-	logToConsole(LOG_DEBUG, "[VRR.AntiCheat]: Initializing anticheat script ...");
-	logToConsole(LOG_DEBUG, "[VRR.AntiCheat]: Anticheat script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.AntiCheat]: Initializing anticheat script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.AntiCheat]: Anticheat script initialized!");
 }
 
 // ===========================================================================
 
 function clearPlayerStateToEnterExitProperty(client) {
-	if (getPlayerData(client).pedState != AGRP_PEDSTATE_READY) {
-		if (getPlayerData(client).pedState == AGRP_PEDSTATE_ENTERINGVEHICLE) {
+	if (getPlayerData(client).pedState != V_PEDSTATE_READY) {
+		if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGVEHICLE) {
 			sendPlayerClearPedState(client);
-			getPlayerData(client).pedState = AGRP_PEDSTATE_READY;
+			getPlayerData(client).pedState = V_PEDSTATE_READY;
 		} else {
 			return false;
 		}

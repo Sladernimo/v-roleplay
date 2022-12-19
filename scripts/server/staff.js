@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: staff.js
 // DESC: Provides staff commands, functions and usage
@@ -9,8 +8,8 @@
 // ===========================================================================
 
 function initStaffScript() {
-	logToConsole(LOG_INFO, "[VRR.Staff]: Initializing staff script ...");
-	logToConsole(LOG_INFO, "[VRR.Staff]: Staff script initialized successfully!");
+	logToConsole(LOG_INFO, "[AGRP.Staff]: Initializing staff script ...");
+	logToConsole(LOG_INFO, "[AGRP.Staff]: Staff script initialized successfully!");
 }
 
 // ===========================================================================
@@ -46,7 +45,7 @@ function kickClientCommand(command, params, client) {
 
 	//getPlayerData(targetClient).customDisconnectReason = reason;
 	announceAdminAction(`PlayerKicked`, getPlayerName(targetClient));
-	getPlayerData(targetClient).customDisconnectReason = `Kicked - ${reason}`;
+	getPlayerData(targetClient).customDisconnectReason = "Kicked";
 	disconnectPlayer(targetClient);
 }
 
@@ -295,9 +294,19 @@ function getPlayerGeoIPInformationCommand(command, params, client) {
 		return false;
 	}
 
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+	let countryName = "Unknown";
+	let subDivisionName = "Unknown";
+	let cityName = "Unknown";
+
+	try {
+		countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
+		subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+	} catch (err) {
+		messagePlayerError(client, `There was an error getting the geoip information for ${getPlayerName(targetClient)}`);
+		submitBugReport(client, `[AUTOMATED REPORT] Getting geoip information for ${getPlayerName(targetClient)} (${getPlayerIP(targetClient)} failed: ${err}`);
+		return false;
+	}
 
 	messagePlayerInfo(client, `{ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} is from {ALTCOLOUR}${cityName}, ${subDivisionName}, ${countryName}`);
 }
@@ -390,11 +399,20 @@ function getVehicleCommand(command, params, client) {
 
 	let vehicle = getServerData().vehicles[toInteger(params) - 1].vehicle;
 
+	let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+
+	setElementStreamInDistance(vehicle, 9999999);
+	setElementStreamOutDistance(vehicle, 9999999 + 1);
+
 	setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
 	setElementInterior(vehicle, getPlayerInterior(client));
 	setElementDimension(vehicle, getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`);
+	setElementStreamInDistance(vehicle, oldStreamInDistance);
+	setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
 }
 
 // ===========================================================================
@@ -419,7 +437,7 @@ function warpIntoVehicleCommand(command, params, client) {
 	} else {
 		let vehicleIndex = getParam(params, " ", 1);
 		if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
-			messagePlayerError(client, getLocaleString(client, "InvaliVehicle"));
+			messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 			return false;
 		}
 
@@ -495,7 +513,7 @@ function gotoGameLocationCommand(command, params, client) {
 
 	let gameLocationId = getGameLocationFromParams(params);
 
-	if (gameLocationId == false) {
+	if (gameLocationId == -1) {
 		messagePlayerError(client, "That game location doesn't exist!");
 		return false;
 	}
@@ -881,14 +899,14 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToDimension = getPlayerDimension(targetClient);
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
-	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_ADMINGET;
+	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
 
 	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
 	setPlayerHeading(targetClient, getPlayerHeading(client));
 	setPlayerInterior(targetClient, getPlayerInterior(client));
 	setPlayerDimension(targetClient, getPlayerDimension(client));
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their position.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their position.`, true);
 	messagePlayerAlert(targetClient, `An admin has teleported you to their location`);
 }
 
@@ -933,9 +951,9 @@ function returnPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = null;
 	getPlayerData(targetClient).returnToHouse = null;
 	getPlayerData(targetClient).returnToBusiness = null;
-	getPlayerData(targetClient).returnToType = AGRP_RETURNTO_TYPE_NONE;
+	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`, true);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);
 }
 
@@ -1181,9 +1199,9 @@ function givePlayerMoneyCommand(command, params, client) {
 
 	givePlayerCash(targetClient, toInteger(amount));
 	updatePlayerCash(targetClient);
-	//messagePlayerSuccess(client, `You gave {ALTCOLOUR}$${amount} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}$${amount}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
-	messagePlayerAlert(targetClient, `An admin gave you {ALTCOLOUR}$${amount}`);
+	//messagePlayerSuccess(client, `You gave {ALTCOLOUR}${getCurrencyString(amount)} {MAINCOLOUR}to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(targetClient)}`)
+	messagePlayerAlert(targetClient, `An admin gave you {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
 // ===========================================================================
@@ -1810,6 +1828,85 @@ function getPlayerCurrentBusinessCommand(command, params, client) {
 
 	let businessData = getBusinessData(houseId);
 	messagePlayerInfo(client, `${getPlayerName(targetClient)}'s is at/in business '${businessData.name}' (ID ${businessId}/${businessData.databaseId})`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function addAccountStaffNoteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let noteMessage = params.split(" ").slice(1).join(" ");
+
+	if (!getPlayerData(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+	//let dbConnection = connectToDatabase();
+	//let safeNoteMessage = escapeDatabaseString(dbConnection, noteMessage);
+	//queryDatabase(dbConnection, `INSERT INTO acct_note (acct_note_acct, acct_note_server, acct_note_message, acct_note_who_added, acct_note_when_added) VALUES (${getPlayerData(targetClient).accountData.databaseId}, ${getServerId()}, ${safeNoteMessage}, ${}, UNIX_TIMESTAMP())`);
+
+	let tempNoteData = new AccountStaffNoteData();
+	tempNoteData.whoAdded = getPlayerData(client).accountData.databaseId;
+	tempNoteData.whenAdded = getCurrentUnixTimestamp();
+	tempNoteData.note = noteMessage;
+	tempNoteData.account = getPlayerData(targetClient).databaseId;
+	tempNoteData.serverId = getServerId();
+	tempNoteData.deleted = false;
+	tempNoteData.needsSaved = true;
+	getPlayerData(targetClient).accountData.staffNotes.push(tempNoteData);
+
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} added a staff note for {ALTCOLOUR}${targetClient.name}{MAINCOLOUR}: ${noteMessage}`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function showAccountStaffNotesCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let noteMessage = params.split(" ").slice(1).join(" ");
+
+	if (!getPlayerData(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{ALTCOLOUR}${toInteger(i) + 1}. (Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: ${x.note}` });
+
+	//let chunkedList = splitArrayIntoChunks(staffNoteList, 1);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderAccountStaffNotesList")));
+
+	for (let i in staffNoteList) {
+		messagePlayerInfo(client, staffNoteList[i]);
+	}
 	return true;
 }
 

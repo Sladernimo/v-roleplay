@@ -65,7 +65,7 @@ mexui.bindEvents = function () {
 	});
 
 	{
-		var eventName = (game.game == AGRP_GAME_GTA_SA || game.game == AGRP_GAME_MAFIA_ONE) ? 'onDrawnHUD' : 'onBeforeDrawHUD';
+		var eventName = (game.game == V_GAME_GTA_SA || game.game == V_GAME_MAFIA_ONE) ? 'onDrawnHUD' : 'onBeforeDrawHUD';
 		addEventHandler(eventName, function (event) {
 			mexui.render();
 		});

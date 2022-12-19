@@ -1,16 +1,15 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: core.js
 // DESC: Provides core data structures, function, and operations
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let scriptVersion = "1.2";
+let scriptVersion = "1.3";
 let serverStartTime = 0;
-let logLevel = LOG_INFO | LOG_DEBUG | LOG_VERBOSE; // LOG_ERROR|LOG_WARN;
+let logLevel = LOG_INFO | LOG_ERROR | LOG_WARN | LOG_DEBUG | LOG_VERBOSE;
 
 let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);

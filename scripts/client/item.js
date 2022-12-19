@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: item.js
 // DESC: Provides item action and hotbar functions
@@ -17,8 +16,8 @@ let itemActionDelaySize = toVector2(200, 5);
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Initializing item script ...");
-	logToConsole(LOG_DEBUG, "[VRR.Item]: Item script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.Item]: Initializing item script ...");
+	logToConsole(LOG_DEBUG, "[AGRP.Item]: Item script initialized!");
 }
 
 // ===========================================================================
@@ -48,7 +47,7 @@ function processItemActionRendering() {
 // ===========================================================================
 
 function updatePlayerHotBar(activeSlot, itemsArray) {
-	logToConsole(LOG_DEBUG, `[VRR.Main] Updating hotbar`);
+	logToConsole(LOG_DEBUG, `[AGRP.Main] Updating hotbar`);
 }
 
 // ===========================================================================

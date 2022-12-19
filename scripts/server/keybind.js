@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Resource
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: keybind.js
 // DESC: Provides keybind handlers and functions
@@ -10,7 +9,7 @@
 // ===========================================================================
 
 class KeyBindData {
-	constructor(dbAssoc = false, key = 0, commandString = "", keyState = AGRP_KEYSTATE_UP) {
+	constructor(dbAssoc = false, key = 0, commandString = "", keyState = V_KEYSTATE_UP) {
 		this.databaseId = 0;
 		this.key = key;
 		this.account = 0;
@@ -36,8 +35,8 @@ class KeyBindData {
 // ===========================================================================
 
 function initKeyBindScript() {
-	logToConsole(LOG_DEBUG, "[VRR.KeyBind]: Initializing key bind script ...");
-	logToConsole(LOG_INFO, "[VRR.KeyBind]: Key bind script initialized!");
+	logToConsole(LOG_DEBUG, "[AGRP.KeyBind]: Initializing key bind script ...");
+	logToConsole(LOG_INFO, "[AGRP.KeyBind]: Key bind script initialized!");
 }
 
 // ===========================================================================
@@ -78,7 +77,7 @@ function removeKeyBindCommand(command, params, client) {
 	if (!keyId) {
 		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
 		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
-		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExampleList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
+		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExamplesList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
 		return false;
 	}
 
@@ -89,7 +88,7 @@ function removeKeyBindCommand(command, params, client) {
 // ===========================================================================
 
 function resetKeyBindsCommand(command, params, client) {
-	getPlayerData(client).promptType = AGRP_PROMPT_RESETKEYBINDS;
+	getPlayerData(client).promptType = V_PROMPT_RESETKEYBINDS;
 	showPlayerPrompt(client, getLocaleString(client, "ResetAllKeyBindsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	//removePlayerKeyBind(client, keyId);
 	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
@@ -98,7 +97,7 @@ function resetKeyBindsCommand(command, params, client) {
 // ===========================================================================
 
 function copyKeyBindsToServerCommand(command, params, client) {
-	getPlayerData(client).promptType = AGRP_PROMPT_COPYKEYBINDSTOSERVER;
+	getPlayerData(client).promptType = V_PROMPT_COPYKEYBINDSTOSERVER;
 	showPlayerPrompt(client, getLocaleString(client, "CopyAllKeyBindsToServerConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	//removePlayerKeyBind(client, keyId);
 	//messagePlayerSuccess(client, `You removed the keybind for the {ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))} {MAINCOLOUR}key`);
@@ -106,18 +105,18 @@ function copyKeyBindsToServerCommand(command, params, client) {
 
 // ===========================================================================
 
-function addPlayerKeyBind(client, keys, command, params, tempKey = false) {
+function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
 	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
 
 	getPlayerData(client).keyBinds.push(keyBindData);
-	sendAddAccountKeyBindToClient(client, keys, (keys.length > 1) ? AGRP_KEYSTATE_COMBO : AGRP_KEYSTATE_UP);
+	sendAddAccountKeyBindToClient(client, keyId, V_KEYSTATE_UP);
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -141,7 +140,7 @@ function removePlayerKeyBind(client, keyId) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[VRR.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -209,7 +208,7 @@ function playerUsedKeyBind(client, key, duration = 0) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[VRR.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
+	logToConsole(LOG_DEBUG, `[AGRP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
 		let keyBindData = getPlayerKeyBindForKey(client, key);
 		if (keyBindData.enabled) {
