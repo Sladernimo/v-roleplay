@@ -113,9 +113,6 @@ function oneMinuteTimerFunction() {
 		logToConsole(LOG_DEBUG, `[AGRP.Event] Updating all player name tags`);
 		updateAllPlayerNameTags();
 	}
-
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Collecting all garbage`);
-	collectAllGarbage();
 }
 
 // ===========================================================================
