@@ -89,7 +89,8 @@
 	<file type="client" src="files/fonts/aurora-bold-condensed.ttf" />
 	<file type="client" src="files/images/skins/none.png" />
 	<!--<file type="client" src="files/images/server-logo.png" />-->
-	<file type="client" src="files/images/asshat-logo.png" />
+	<file type="client" src="files/images/gtac-logo.png" />
+	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/cursor.png" />
 
 	<!-- GUI -->
@@ -113,7 +114,6 @@
 	<script src="scripts/client/gui/games/blackjack.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/games/betting.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/games/5cardpoker.js" type="client" language="javascript" />
-
 
 	<!-- Client Scripts -->
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
