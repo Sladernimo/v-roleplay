@@ -405,7 +405,15 @@ Player police officers can issue an APB for a player suspect. NPC police drive a
 ---
 ### Multi-command one-liners
 
-Obviously this would still be using slashes for commands still. The way this works is simple: Every command returns a value `{RETURN}`, and provides indexed numerical references to it's args that can be *piped* to another command `{1}`, `{2}`, etc. For example, the /tempveh command adds a vehicle and provides both a reference to the vehicle itself (`{RETURN}`) and a reference to it's only argument (`{1}`). Some commands already implement a final, optional command to override the default chosen entity to act on (for example, `/bizname Some Business 3` will set business ID 3's name instead of the closest business to the player. Only works for staff with the manageBusinesses permission or if the player using it owns or is in the clan that owns business ID 3 and has the ability to set it's name. So this: `/tempveh infernus | /vehrgb 0 0 0 0 {RETURN} | /vehrgb 1 {2} {3} {4} {RETURN}` Would spawn a temporary infernus and immediately set both colours as completely black RGB values.
+```
+Obviously this would still be using slashes for commands still. The way this works is simple: Every command returns a value {RETURN}, and provides indexed numerical references to it's args that can be piped to another command {1}, {2}, etc. For example, the /tempveh command adds a vehicle and provides both a reference to the vehicle itself (`{RETURN}`) and a reference to it's only argument (`{1}`). Some commands already implement a final, optional command to override the default chosen entity to act on (for example, `/bizname Some Business 3` will set business ID 3's name instead of the closest business to the player. Only works for staff with the ManageBusinesses permission or if the player using it owns or is in the clan that owns business ID 3 and has the ability to set it's name.
+
+So this:
+/tempveh infernus | /vehrgb 1 0 0 0 {RETURN} | /vehrgb 2 {2} {3} {4} {RETURN}`
+
+Would spawn a temporary infernus and immediately set both colours as completely black RGB values.
+```
+
 ---
 ### Real time clock display
 *Inspiration from Steam in-game overlay*
