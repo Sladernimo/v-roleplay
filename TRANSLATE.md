@@ -2,7 +2,7 @@
 
 ## Want to provide a translation?
 ### **Here's some info about how it works:**
-* You can either submit a pull request with your changes, or send me the file over DM each time and I'll add them in.
+* You can submit a pull request with your changes.
 
 * There's no rush. You can translate at your own pace, and you don't need to translate it all right away. There's no errors or anything *"missing"* from an incomplete translation. Anything that you haven't been able to translated yet will show up as English.
 
