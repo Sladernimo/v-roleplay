@@ -327,7 +327,8 @@
 	* Auth token header
 
 ### Newspaper GUI
-	* Similar to SimCity 2000 ![Image](https://images.gog-statics.com/43b6c3011fbe107e37f397110065d90e8090a15ed9d5a89b749297897881ad9f_product_card_v2_mobile_slider_639.jpg)
+	* Similar to SimCity 2000
+	![Image](https://images.gog-statics.com/43b6c3011fbe107e37f397110065d90e8090a15ed9d5a89b749297897881ad9f_product_card_v2_mobile_slider_639.jpg)
 
 ### Tutorial Stuff
     * Two sets of flags for each tutorial. One for "already finished" and "declined tutorial"
