@@ -525,7 +525,7 @@ function selectCharacter(client, characterId = -1) {
 		onPlayerSpawn(client);
 	}
 
-	removePlayerKeyBind(client, getKeyIdFromParams("insert"));
+	//removePlayerKeyBind(client, getKeyIdFromParams("insert"));
 
 	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 
