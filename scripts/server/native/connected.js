@@ -267,7 +267,12 @@ function removePlayerFromVehicle(client) {
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
 	if (getGame() == V_GAME_GTA_IV) {
-		triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+		let position = getPlayerPosition(client);
+		let heading = getPlayerHeading(client);
+		let interior = getPlayerInterior(client);
+		let dimension = getPlayerDimension(client);
+		//triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+		spawnPlayer(client, position, heading, getGameConfig().skins[getGame()][skinIndex][0], interior, dimension);
 	} else {
 		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
 	}
