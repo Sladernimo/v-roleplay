@@ -22,10 +22,11 @@ This is Vortrex's Roleplay Resource
 * [SMTP](https://github.com/VortrexFTW/mod_smtp) (Optional)
 
 ### Git Branches
+*The nightly branch is not recommended for public server. Some features may or may not work as intended, or the script may be broken entirely. `master` will always be the stable branch, although slower to get new features.*  
 * master/main - The current release. *This branch is never committed to directly, only merged*
 * nightly - The next upcoming release. All feature/fix/change branches are merged into this one.
-* feature/fix/change - This is where the stuff currently being working on goes into.
-The nightly branch is not recommended for public server. Some features may or may not work as intended, or the script may be broken entirely. `master` will always be the stable branch, although slower to get new features.
+* feature/fix/change - This is where the stuff currently being working on goes into.  
+
 
 ### Scripting Style
 * Always use camelCase, even for event names.
