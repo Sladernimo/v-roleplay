@@ -8,8 +8,9 @@ This is Vortrex's Roleplay Resource
 * Download this resource via git clone or directly from GitHub with the green zip download button.
 * Add this resource as-is into a resource folder of your choice inside the resources directory of your server. I named my resource folder "gtac_roleplay"
 * Add the resource to the server config. You should also disable a lot of the cvars in the config too. I only have traffic, civilians, planes, and bigmap enabled.
+* Add the [v-roleplay-intro](https://github.com/VortrexFTW/v-roleplay-intro) resource to your server to make the screen fade in (needs to be a separate resource)
 * Download the required modules and add them to your server config. See list of modules below.
-* Import the database to your MySQL server, and edit database.json in the resource's config folder with the info to connect to the database.
+* Import the database.sql to your MySQL server, and edit database.json in the resource's config folder with the info to connect to the database.
 * (Optional) Edit the email SMTP connection info. Without this, the email features will be disabled.
 * Start the server and connect. Register your account, make a character, and disconnect.
 * Edit your account in the database (get your account ID from the acct_main table and then edit the four entries in acct_svr for your account, changing acct_svr_staff_flags to negative 1 (-1) ... **you must not be connected to the server when doing this**
@@ -21,9 +22,10 @@ This is Vortrex's Roleplay Resource
 * [SMTP](https://github.com/VortrexFTW/mod_smtp) (Optional)
 
 ### Git Branches
-* master/main - The current release. *Never commit to this branch directly*
-* nightly - The next upcoming release. All feature/fix/change branches are merged into this one
+* master/main - The current release. *This branch is never committed to directly, only merged*
+* nightly - The next upcoming release. All feature/fix/change branches are merged into this one.
 * feature/fix/change - This is where the stuff currently being working on goes into.
+The nightly branch is not recommended for public server. Some features may or may not work as intended, or the script may be broken entirely. `master` will always be the stable branch, although slower to get new features.
 
 ### Scripting Style
 * Always use camelCase, even for event names.
