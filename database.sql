@@ -370,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `biz_main` (
   KEY `biz_server` (`biz_server`),
   KEY `biz_owner` (`biz_owner_type`,`biz_owner_id`),
   CONSTRAINT `fk_biz_server` FOREIGN KEY (`biz_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=731 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Businesses';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Businesses';
 
 -- Dumping data for table v-roleplay.biz_main: ~0 rows (approximately)
 
@@ -383,7 +383,7 @@ CREATE TABLE IF NOT EXISTS `biz_script` (
   PRIMARY KEY (`biz_script_id`),
   KEY `fk_biz_script_biz` (`biz_script_biz`),
   CONSTRAINT `fk_biz_script_biz` FOREIGN KEY (`biz_script_biz`) REFERENCES `biz_main` (`biz_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Businesses - Game Scripts';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Businesses - Game Scripts';
 
 -- Dumping data for table v-roleplay.biz_script: ~0 rows (approximately)
 
@@ -407,7 +407,7 @@ CREATE TABLE IF NOT EXISTS `bug_main` (
   KEY `fk_bug_who_added` (`bug_who_added`),
   CONSTRAINT `fk_bug_server` FOREIGN KEY (`bug_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_bug_who_added` FOREIGN KEY (`bug_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3043 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Submitted Bugs';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Submitted Bugs';
 
 -- Dumping data for table v-roleplay.bug_main: ~0 rows (approximately)
 
@@ -438,7 +438,7 @@ CREATE TABLE IF NOT EXISTS `clan_main` (
   CONSTRAINT `fk_clan_server` FOREIGN KEY (`clan_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_clan_who_added` FOREIGN KEY (`clan_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_clan_who_deleted` FOREIGN KEY (`clan_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Clans';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Clans';
 
 -- Dumping data for table v-roleplay.clan_main: ~0 rows (approximately)
 
@@ -480,7 +480,7 @@ CREATE TABLE IF NOT EXISTS `clan_rank` (
   PRIMARY KEY (`clan_rank_id`),
   KEY `clan_rank_clan` (`clan_rank_clan`),
   CONSTRAINT `fk_clan_rank_clan` FOREIGN KEY (`clan_rank_clan`) REFERENCES `clan_main` (`clan_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Clans - Ranks';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Clans - Ranks';
 
 -- Dumping data for table v-roleplay.clan_rank: ~0 rows (approximately)
 
@@ -503,7 +503,7 @@ CREATE TABLE IF NOT EXISTS `conn_main` (
   PRIMARY KEY (`conn_id`),
   KEY `conn_server` (`conn_server`),
   CONSTRAINT `fk_conn_server` FOREIGN KEY (`conn_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13309 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Connections (Sessions)';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Connections (Sessions)';
 
 -- Dumping data for table v-roleplay.conn_main: ~0 rows (approximately)
 
@@ -560,7 +560,7 @@ CREATE TABLE IF NOT EXISTS `gate_main` (
   PRIMARY KEY (`gate_id`),
   KEY `gate_server` (`gate_server`),
   CONSTRAINT `fk_gate_server` FOREIGN KEY (`gate_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Gates and Doors';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Gates and Doors';
 
 -- Dumping data for table v-roleplay.gate_main: ~0 rows (approximately)
 
@@ -641,7 +641,7 @@ CREATE TABLE IF NOT EXISTS `house_main` (
   KEY `house_server` (`house_server`),
   KEY `house_owner` (`house_owner_type`,`house_owner_id`),
   CONSTRAINT `fk_house_server` FOREIGN KEY (`house_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2559 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Houses';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Houses';
 
 -- Dumping data for table v-roleplay.house_main: ~0 rows (approximately)
 
@@ -677,7 +677,7 @@ CREATE TABLE IF NOT EXISTS `idea_main` (
   KEY `idea_who_added` (`idea_who_added`),
   CONSTRAINT `fk_idea_server` FOREIGN KEY (`idea_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_idea_who_added` FOREIGN KEY (`idea_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=707 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Submitted Ideas';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='User Submitted Ideas';
 
 -- Dumping data for table v-roleplay.idea_main: ~0 rows (approximately)
 
@@ -806,7 +806,7 @@ CREATE TABLE IF NOT EXISTS `item_main` (
   CONSTRAINT `fk_item_type` FOREIGN KEY (`item_type`) REFERENCES `item_type` (`item_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_item_who_added` FOREIGN KEY (`item_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_item_who_deleted` FOREIGN KEY (`item_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2265 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Items';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Items';
 
 -- Dumping data for table v-roleplay.item_main: ~0 rows (approximately)
 
@@ -2318,7 +2318,7 @@ CREATE TABLE IF NOT EXISTS `job_equip` (
   CONSTRAINT `fk_job_equip_job` FOREIGN KEY (`job_equip_job`) REFERENCES `job_main` (`job_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_equip_who_added` FOREIGN KEY (`job_equip_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_equip_who_deleted` FOREIGN KEY (`job_equip_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Equipments';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Equipments';
 
 -- Dumping data for table v-roleplay.job_equip: ~0 rows (approximately)
 
@@ -2343,7 +2343,7 @@ CREATE TABLE IF NOT EXISTS `job_equip_item` (
   CONSTRAINT `fk_job_equip_item_item` FOREIGN KEY (`job_equip_item_type`) REFERENCES `item_type` (`item_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_equip_item_who_added` FOREIGN KEY (`job_equip_item_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_equip_item_who_deleted` FOREIGN KEY (`job_equip_item_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Equipments - Items';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Equipments - Items';
 
 -- Dumping data for table v-roleplay.job_equip_item: ~0 rows (approximately)
 
@@ -2371,7 +2371,7 @@ CREATE TABLE IF NOT EXISTS `job_loc` (
   CONSTRAINT `fk_job_loc_job` FOREIGN KEY (`job_loc_job`) REFERENCES `job_main` (`job_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_loc_who_added` FOREIGN KEY (`job_loc_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_loc_who_deleted` FOREIGN KEY (`job_loc_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Locations';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Locations';
 
 -- Dumping data for table v-roleplay.job_loc: ~0 rows (approximately)
 
@@ -2405,7 +2405,7 @@ CREATE TABLE IF NOT EXISTS `job_main` (
   CONSTRAINT `fk_job_server` FOREIGN KEY (`job_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_who_added` FOREIGN KEY (`job_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_who_deleted` FOREIGN KEY (`job_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs';
 
 -- Dumping data for table v-roleplay.job_main: ~0 rows (approximately)
 
@@ -2432,7 +2432,7 @@ CREATE TABLE IF NOT EXISTS `job_rank` (
   CONSTRAINT `fk_job_rank_job` FOREIGN KEY (`job_rank_job`) REFERENCES `job_main` (`job_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_rank_who_added` FOREIGN KEY (`job_rank_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_rank_who_deleted` FOREIGN KEY (`job_rank_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Ranks';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Ranks';
 
 -- Dumping data for table v-roleplay.job_rank: ~0 rows (approximately)
 
@@ -2465,7 +2465,7 @@ CREATE TABLE IF NOT EXISTS `job_route` (
   CONSTRAINT `fk_job_route_job_loc` FOREIGN KEY (`job_route_job_loc`) REFERENCES `job_loc` (`job_loc_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_route_who_added` FOREIGN KEY (`job_route_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_route_who_deleted` FOREIGN KEY (`job_route_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Routes';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Routes';
 
 -- Dumping data for table v-roleplay.job_route: ~0 rows (approximately)
 
@@ -2494,7 +2494,7 @@ CREATE TABLE IF NOT EXISTS `job_route_loc` (
   CONSTRAINT `fk_job_route_loc_route` FOREIGN KEY (`job_route_loc_route`) REFERENCES `job_route` (`job_route_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_route_loc_who_added` FOREIGN KEY (`job_route_loc_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_route_loc_who_deleted` FOREIGN KEY (`job_route_loc_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=461 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Routes - Locations (Stops)';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Job Routes - Locations (Stops)';
 
 -- Dumping data for table v-roleplay.job_route_loc: ~0 rows (approximately)
 
@@ -2518,7 +2518,7 @@ CREATE TABLE IF NOT EXISTS `job_uniform` (
   CONSTRAINT `fk_job_uniform_job` FOREIGN KEY (`job_uniform_job`) REFERENCES `job_main` (`job_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_uniform_who_added` FOREIGN KEY (`job_uniform_who_added`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_job_uniform_who_deleted` FOREIGN KEY (`job_uniform_who_deleted`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Uniforms';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Jobs - Uniforms';
 
 -- Dumping data for table v-roleplay.job_uniform: ~0 rows (approximately)
 
@@ -2680,7 +2680,7 @@ CREATE TABLE IF NOT EXISTS `npc_main` (
   PRIMARY KEY (`npc_id`),
   KEY `npc_server` (`npc_server`),
   CONSTRAINT `fk_npc_server` FOREIGN KEY (`npc_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='NPCs';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='NPCs';
 
 -- Dumping data for table v-roleplay.npc_main: ~0 rows (approximately)
 
@@ -2739,7 +2739,7 @@ CREATE TABLE IF NOT EXISTS `payphone_main` (
   PRIMARY KEY (`payphone_id`),
   KEY `fk_payphone_server` (`payphone_server`),
   CONSTRAINT `fk_payphone_server` FOREIGN KEY (`payphone_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Payphones';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Payphones';
 
 -- Dumping data for table v-roleplay.payphone_main: ~0 rows (approximately)
 
@@ -2753,7 +2753,7 @@ CREATE TABLE IF NOT EXISTS `radio_main` (
   `radio_codec` int(11) NOT NULL DEFAULT '0',
   `radio_server` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`radio_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Radio Stations';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Radio Stations';
 
 -- Dumping data for table v-roleplay.radio_main: ~0 rows (approximately)
 
@@ -2810,7 +2810,7 @@ CREATE TABLE IF NOT EXISTS `sacct_main` (
   KEY `fk_sacct_acct` (`sacct_acct`),
   CONSTRAINT `fk_sacct_acct` FOREIGN KEY (`sacct_acct`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_sacct_server` FOREIGN KEY (`sacct_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1621 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Sub Accounts (Characters)';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Sub Accounts (Characters)';
 
 -- Dumping data for table v-roleplay.sacct_main: ~0 rows (approximately)
 
@@ -2922,7 +2922,7 @@ CREATE TABLE IF NOT EXISTS `sacct_svr` (
   KEY `sacct_svr_server` (`sacct_svr_server`),
   CONSTRAINT `fk_sacct_svr_sacct` FOREIGN KEY (`sacct_svr_sacct`) REFERENCES `sacct_main` (`sacct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_sacct_svr_server` FOREIGN KEY (`sacct_svr_server`) REFERENCES `svr_main` (`svr_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7595 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Sub Accounts - Per-Server Data';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Sub Accounts - Per-Server Data';
 
 -- Dumping data for table v-roleplay.sacct_svr: ~0 rows (approximately)
 
@@ -3064,7 +3064,7 @@ CREATE TABLE IF NOT EXISTS `svr_main` (
   PRIMARY KEY (`svr_id`),
   KEY `fk_svr_manager` (`svr_manager`),
   CONSTRAINT `fk_svr_manager` FOREIGN KEY (`svr_manager`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Servers';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Servers';
 
 -- Dumping data for table v-roleplay.svr_main: ~1 rows (approximately)
 INSERT INTO `svr_main` (`svr_id`, `svr_mpmod`, `svr_game`, `svr_port`, `svr_name`, `svr_password`, `svr_start_time_hour`, `svr_start_time_min`, `svr_start_weather`, `svr_newchar_pos_x`, `svr_newchar_pos_y`, `svr_newchar_pos_z`, `svr_newchar_rot_z`, `svr_newchar_money`, `svr_newchar_bank`, `svr_newchar_skin`, `svr_manager`, `svr_connectcam_pos_x`, `svr_connectcam_pos_y`, `svr_connectcam_pos_z`, `svr_connectcam_lookat_x`, `svr_connectcam_lookat_y`, `svr_connectcam_lookat_z`, `svr_charselect_cam_pos_x`, `svr_charselect_cam_pos_y`, `svr_charselect_cam_pos_z`, `svr_charselect_cam_lookat_x`, `svr_charselect_cam_lookat_y`, `svr_charselect_cam_lookat_z`, `svr_charselect_ped_pos_x`, `svr_charselect_ped_pos_y`, `svr_charselect_ped_pos_z`, `svr_charselect_ped_rot_z`, `svr_charselect_int`, `svr_charselect_vw`, `svr_logo`, `svr_gui`, `svr_gui_col1_r`, `svr_gui_col1_g`, `svr_gui_col1_b`, `svr_gui_col1_a`, `svr_gui_col2_r`, `svr_gui_col2_g`, `svr_gui_col2_b`, `svr_gui_col2_a`, `svr_gui_textcol1_r`, `svr_gui_textcol1_g`, `svr_gui_textcol1_b`, `svr_gui_textcol1_a`, `svr_inflation_multiplier`, `svr_discord_bot`, `svr_time_min_duration`, `svr_real_time`, `svr_real_time_timezone`, `svr_intro_music`, `svr_discord_url`, `svr_nametag_distance`, `svr_house_blips`, `svr_job_blips`, `svr_biz_blips`, `svr_house_pickups`, `svr_job_pickups`, `svr_biz_pickups`, `svr_snow_falling`, `svr_snow_ground`, `svr_discord_send_chat`, `svr_discord_send_admin`, `svr_discord_send_events`, `svr_income_tax_rate`, `svr_passive_income`) VALUES
@@ -3165,7 +3165,7 @@ CREATE TABLE IF NOT EXISTS `veh_main` (
   PRIMARY KEY (`veh_id`),
   KEY `veh_server` (`veh_server`),
   KEY `veh_owner` (`veh_owner_type`,`veh_owner_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Vehicles';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Vehicles';
 
 -- Dumping data for table v-roleplay.veh_main: ~0 rows (approximately)
 
