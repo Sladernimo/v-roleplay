@@ -230,7 +230,7 @@ function onResourceStop(event, resource) {
 		kickAllClients();
 		saveServerDataToDatabase();
 		disconnectFromDatabase(persistentDatabaseConnection, true);
-		collectAllGarbage();
+		//collectAllGarbage();
 
 		messageDiscordEventChannel(`⛔ Server is shutting down!`);
 	}

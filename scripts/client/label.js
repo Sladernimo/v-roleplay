@@ -317,7 +317,7 @@ function renderJobLabel(name, position, jobType) {
 
 function processLabelRendering() {
 	if (renderLabels) {
-		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE) {
+		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
 				getServerData().businesses.forEach((business) => {
 					if (getDistance(localPlayer.position, business.entrancePosition) <= propertyPickupRenderDistance) {

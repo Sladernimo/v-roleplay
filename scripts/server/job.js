@@ -3645,7 +3645,7 @@ function deleteJobRouteLocationCommand(command, params, client) {
 
 	getJobData(getJobIdFromDatabaseId(tempJob)).routes[tempJobRoute].locations.splice(tempIndex, 1);
 	setAllJobDataIndexes();
-	collectAllGarbage();
+	//collectAllGarbage();
 }
 
 // ===========================================================================
@@ -3683,7 +3683,7 @@ function deleteJobRouteCommand(command, params, client) {
 	getServerData().jobs[jobId].routes.splice(jobRoute, 1);
 
 	setAllJobDataIndexes();
-	collectAllGarbage();
+	//collectAllGarbage();
 }
 
 // ===========================================================================
@@ -3711,7 +3711,7 @@ function deleteJobUniformCommand(command, params, client) {
 	getJobData(jobId).uniforms.splice(uniformIndex, 1);
 
 	setAllJobDataIndexes();
-	collectAllGarbage();
+	//collectAllGarbage();
 }
 
 // ===========================================================================

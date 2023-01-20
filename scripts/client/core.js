@@ -16,8 +16,6 @@ let inVehicleSeat = false;
 let isWalking = false;
 let isSpawned = false;
 
-let garbageCollectorInterval = null;
-
 //let parkedVehiclePosition = false;
 //let parkedVehicleHeading = false;
 
@@ -30,7 +28,7 @@ let renderHotBar = true;
 let renderItemActionDelay = true;
 let renderInteriorLights = true;
 
-let logLevel = LOG_INFO | LOG_DEBUG;
+let logLevel = LOG_INFO;
 
 let weaponDamageEnabled = {};
 let weaponDamageEvent = {};

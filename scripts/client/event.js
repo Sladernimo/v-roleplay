@@ -64,7 +64,6 @@ function onResourceStart(event, resource) {
 
 	if (resource == thisResource) {
 		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStart called - Sending signal to server`);
-		garbageCollectorInterval = setInterval(collectAllGarbage, 1000 * 60);
 		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 		sendResourceStartedSignalToServer();
 	}

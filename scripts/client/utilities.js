@@ -21,7 +21,7 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 	if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
 		game.SET_PLAYER_CONTROL(game.GET_PLAYER_ID(), boolToInt(controlState));
 	} else if (getGame() <= V_GAME_GTA_IV) {
-		setElementCollisionsEnabled(localPlayer, controlState);
+		setElementCollisionsEnabled(localPlayer.id, controlState);
 		setPedInvincible(localPlayer, true);
 	}
 }
@@ -546,6 +546,10 @@ function processNearbyPickups() {
 function processGameSpecifics() {
 	if (getGame() < V_GAME_GTA_IV) {
 		game.clearMessages();
+	}
+
+	if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
+		gta.terminateScript("mpcellphonemain");
 	}
 
 	destroyAutoCreatedPickups();

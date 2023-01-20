@@ -27,7 +27,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	let freezePlayer = false;
 	switch (animationData.moveType) {
 		case V_ANIMMOVE_FORWARD: {
-			setElementCollisionsEnabled(ped, false);
+			setElementCollisionsEnabled(pedId, false);
 			if (ped.isSyncer) {
 				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}

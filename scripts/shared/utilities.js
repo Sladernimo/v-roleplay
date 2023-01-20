@@ -2788,7 +2788,7 @@ function getPlayerColour(client) {
 		}
 	}
 
-	return getColourByName("civilianWhite");
+	return getColourByType("civilianWhite");
 }
 
 // ===========================================================================
