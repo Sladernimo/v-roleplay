@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `acct_svr` (
 
 -- Dumping data for table v-roleplay.acct_svr: ~1 rows (approximately)
 INSERT INTO `acct_svr` (`acct_svr_id`, `acct_svr_acct`, `acct_svr_svr`, `acct_svr_staff_title`, `acct_svr_staff_flags`, `acct_svr_mod_flags`, `acct_svr_settings`, `acct_svr_chat_scroll_lines`, `acct_svr_chat_auto_hide_delay`, `acct_svr_seen_action_tips`) VALUES
-	(1, 1, 11, '', 0, 0, 0, 1, 0, 0);
+	(1, 1, 1, '', 0, 0, 0, 1, 0, 0);
 
 -- Dumping structure for table v-roleplay.acct_wl
 CREATE TABLE IF NOT EXISTS `acct_wl` (
@@ -3068,7 +3068,7 @@ CREATE TABLE IF NOT EXISTS `svr_main` (
 
 -- Dumping data for table v-roleplay.svr_main: ~1 rows (approximately)
 INSERT INTO `svr_main` (`svr_id`, `svr_mpmod`, `svr_game`, `svr_port`, `svr_name`, `svr_password`, `svr_start_time_hour`, `svr_start_time_min`, `svr_start_weather`, `svr_newchar_pos_x`, `svr_newchar_pos_y`, `svr_newchar_pos_z`, `svr_newchar_rot_z`, `svr_newchar_money`, `svr_newchar_bank`, `svr_newchar_skin`, `svr_manager`, `svr_connectcam_pos_x`, `svr_connectcam_pos_y`, `svr_connectcam_pos_z`, `svr_connectcam_lookat_x`, `svr_connectcam_lookat_y`, `svr_connectcam_lookat_z`, `svr_charselect_cam_pos_x`, `svr_charselect_cam_pos_y`, `svr_charselect_cam_pos_z`, `svr_charselect_cam_lookat_x`, `svr_charselect_cam_lookat_y`, `svr_charselect_cam_lookat_z`, `svr_charselect_ped_pos_x`, `svr_charselect_ped_pos_y`, `svr_charselect_ped_pos_z`, `svr_charselect_ped_rot_z`, `svr_charselect_int`, `svr_charselect_vw`, `svr_logo`, `svr_gui`, `svr_gui_col1_r`, `svr_gui_col1_g`, `svr_gui_col1_b`, `svr_gui_col1_a`, `svr_gui_col2_r`, `svr_gui_col2_g`, `svr_gui_col2_b`, `svr_gui_col2_a`, `svr_gui_textcol1_r`, `svr_gui_textcol1_g`, `svr_gui_textcol1_b`, `svr_gui_textcol1_a`, `svr_inflation_multiplier`, `svr_discord_bot`, `svr_time_min_duration`, `svr_real_time`, `svr_real_time_timezone`, `svr_intro_music`, `svr_discord_url`, `svr_nametag_distance`, `svr_house_blips`, `svr_job_blips`, `svr_biz_blips`, `svr_house_pickups`, `svr_job_pickups`, `svr_biz_pickups`, `svr_snow_falling`, `svr_snow_ground`, `svr_discord_send_chat`, `svr_discord_send_admin`, `svr_discord_send_events`, `svr_income_tax_rate`, `svr_passive_income`) VALUES
-	(11, 0, 1, 22000, 'Test', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 255, 0, 0, 0, 0, 32, 0, 0, 0, 255, 1, 0, 60000, 0, 0, '', '', 50, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0.7, 0);
+	(1, 0, 1, 22000, 'Test', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 255, 0, 0, 0, 0, 32, 0, 0, 0, 255, 1, 0, 60000, 0, 0, '', '', 50, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0.7, 0);
 
 -- Dumping structure for table v-roleplay.veh_history
 CREATE TABLE IF NOT EXISTS `veh_history` (
