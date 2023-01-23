@@ -1463,10 +1463,15 @@ function saveConnectionToDatabase(client) {
 // ===========================================================================
 
 function createDefaultAccountServerData(accountDatabaseId) {
-	for (let i = 1; i <= 5; i++) {
-		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${i})`;
+	let dbConnection = connectToDatabase();
+	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
+
+	for (let i in serversAssoc) {
+		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serversAssoc[i]["svr_id"]})`;
 		quickDatabaseQuery(dbQueryString);
 	}
+
+	disconnectFromDatabase(dbConnection);
 }
 
 // ===========================================================================
