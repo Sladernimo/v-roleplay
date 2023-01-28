@@ -3,6 +3,13 @@
 ### Description
 This is Vortrex's Roleplay Resource
 
+### Supported Games and Multiplayer Mods
+* GTA III (on [GTA Connected](https://gtaconnected.com/))
+* GTA VC (on [GTA Connected](https://gtaconnected.com/))
+* GTA SA (on [GTA Connected](https://gtaconnected.com/))
+* GTA IV (on [GTA Connected](https://gtaconnected.com/))
+* Mafia: The City of Lost Heaven (on [Mafia Connected](https://mafiaconnected.com/))
+
 ## Setup
 * Download the server from the [downloads page](https://gtaconnected.com/downloads) of the GTA Connected website.
 * Download this resource via git clone or directly from GitHub with the green zip download button.
@@ -10,7 +17,7 @@ This is Vortrex's Roleplay Resource
 * Add the resource to the server config. You should also disable a lot of the cvars in the config too. I only have traffic, civilians, planes, and bigmap enabled.
 * Download the required modules and add them to your server config. See list of modules below.
 * Import the database to your MySQL server, and edit database.json in the resource's config folder with the info to connect to the database.
-* Edit `svr_main` table, and set the `svr_game` and `svr_port` to your server's info. Game ID numbers are found [here](https://wiki.gtaconnected.com/GameIdentifiers)
+* Edit `svr_main` table, and set the `svr_game` and `svr_port` to your server's info. Game ID numbers are [here](https://wiki.gtaconnected.com/GameIdentifiers)
 * (Optional) Edit the email SMTP connection info. Without this, the email features will be disabled.
 * Start the server and connect. Register your account, make a character, and disconnect.
 * Edit your account in the database (get your account ID from the acct_main table and then edit the four entries in acct_svr for your account, changing `acct_svr_staff_flags` to negative 1 (-1) ... **you must not be connected to the server when doing this**
