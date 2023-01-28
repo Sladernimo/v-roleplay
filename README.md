@@ -10,6 +10,7 @@ This is Vortrex's Roleplay Resource
 * Add the resource to the server config. You should also disable a lot of the cvars in the config too. I only have traffic, civilians, planes, and bigmap enabled.
 * Download the required modules and add them to your server config. See list of modules below.
 * Import the database to your MySQL server, and edit database.json in the resource's config folder with the info to connect to the database.
+* Edit `svr_main` table, and set the `svr_game` and `svr_port` to your server's info. Game ID numbers are found [here](https://wiki.gtaconnected.com/GameIdentifiers)
 * (Optional) Edit the email SMTP connection info. Without this, the email features will be disabled.
 * Start the server and connect. Register your account, make a character, and disconnect.
 * Edit your account in the database (get your account ID from the acct_main table and then edit the four entries in acct_svr for your account, changing `acct_svr_staff_flags` to negative 1 (-1) ... **you must not be connected to the server when doing this**
@@ -42,9 +43,11 @@ This is Vortrex's Roleplay Resource
 * Prefix field names with the table name, except for _main tables (i.e. acct_id, job_loc_id)
 * Tables use primary key on their ID column
 * Tables use both secondary keys & cascading foreign key links to any ID that points to another table
+* Prefix table names with func_ if they are a custom function or procedure
 
 ### Notes
 * The resource is designed to load the script files first, then initialize after that's done.
+* The resource is designed to run on multiple servers. Each server needs a row in `svr_main` table with matching port and [game ID](https://wiki.gtaconnected.com/GameIdentifiers)
 * The IDEAS.md file is not a to-do list. It's just a random file to throw ideas into when they come to mind.
 * Bitwise values are used for several different aspects, mostly related to permissions. 
 * Bitwise value of -1 is **always** used as "*all flags*" for that set. For admin permissions, -1 is god-tier admin level
