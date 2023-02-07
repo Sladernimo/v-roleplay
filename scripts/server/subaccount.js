@@ -122,8 +122,8 @@ class SubAccountData {
 // ===========================================================================
 
 function initSubAccountScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.SubAccount]: Initializing subaccount script ...");
-	logToConsole(LOG_INFO, "[AGRP.SubAccount]: SubAccount script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.SubAccount]: Initializing subaccount script ...");
+	logToConsole(LOG_INFO, "[V.RP.SubAccount]: SubAccount script initialized!");
 }
 
 // ===========================================================================
@@ -354,7 +354,7 @@ function createSubAccount(accountId, firstName, lastName) {
 		//if(dbQuery) {
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let dbInsertId = getDatabaseInsertId(dbConnection);
-			createDefaultSubAccountServerData(dbInsertId, getServerConfig().newCharacter.skin);
+			createDefaultSubAccountServerData(dbInsertId);
 			let tempSubAccount = loadSubAccountFromId(dbInsertId);
 			return tempSubAccount;
 		}
@@ -681,15 +681,13 @@ function setFightStyleCommand(command, params, client) {
 
 // ===========================================================================
 
-function createDefaultSubAccountServerData(databaseId, thisServerSkin) {
-	for (let i = 1; i <= 5; i++) {
-		if (i == getServerId()) {
-			let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${i}, ${thisServerSkin})`;
-			quickDatabaseQuery(dbQueryString);
-		} else {
-			let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${i}, -1)`;
-			quickDatabaseQuery(dbQueryString);
-		}
+function createDefaultSubAccountServerData(databaseId) {
+	let dbConnection = connectToDatabase();
+	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
+
+	for (let i in serversAssoc) {
+		let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${i}, ${serversAssoc[i]["svr_newchar_skin"]})`;
+		quickDatabaseQuery(dbQueryString);
 	}
 }
 
