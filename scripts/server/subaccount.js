@@ -686,7 +686,7 @@ function createDefaultSubAccountServerData(databaseId) {
 	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
 
 	for (let i in serversAssoc) {
-		let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${i}, ${serversAssoc[i]["svr_newchar_skin"]})`;
+		let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server, sacct_svr_skin) VALUES (${databaseId}, ${serversAssoc[i]["svr_id"]}, ${serversAssoc[i]["svr_newchar_skin"]})`;
 		quickDatabaseQuery(dbQueryString);
 	}
 }
