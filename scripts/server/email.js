@@ -15,8 +15,8 @@ const V_EMAIL_METHOD_GET_REQUEST = "http";				// Use HTTP request (httpGet to cu
 // ===========================================================================
 
 function initEmailScript() {
-	logToConsole(LOG_INFO, "[AGRP.Email]: Initializing email script ...");
-	logToConsole(LOG_INFO, "[AGRP.Email]: Email script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Email]: Initializing email script ...");
+	logToConsole(LOG_INFO, "[V.RP.Email]: Email script initialized successfully!");
 }
 
 // ===========================================================================

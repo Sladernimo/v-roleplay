@@ -235,7 +235,7 @@ function saveGateToDatabase(gateId) {
 // ===========================================================================
 
 function loadGatesFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Gate]: Loading gates from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Gate]: Loading gates from database ...");
 
 	let tempGates = [];
 	let dbConnection = connectToDatabase();

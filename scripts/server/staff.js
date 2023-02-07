@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function initStaffScript() {
-	logToConsole(LOG_INFO, "[AGRP.Staff]: Initializing staff script ...");
-	logToConsole(LOG_INFO, "[AGRP.Staff]: Staff script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Staff]: Initializing staff script ...");
+	logToConsole(LOG_INFO, "[V.RP.Staff]: Staff script initialized successfully!");
 }
 
 // ===========================================================================

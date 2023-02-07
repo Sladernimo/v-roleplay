@@ -29,15 +29,15 @@ class RadioStationData {
 // ===========================================================================
 
 function initRadioScript() {
-	logToConsole(LOG_INFO, "[AGRP.Radio]: Initializing radio script ...");
-	logToConsole(LOG_INFO, "[AGRP.Radio]: Radio script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Radio]: Initializing radio script ...");
+	logToConsole(LOG_INFO, "[V.RP.Radio]: Radio script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadRadioStationsFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Radio]: Loading radio stations from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Radio]: Loading radio stations from database ...");
 	let dbConnection = connectToDatabase();
 	let tempRadioStations = [];
 	let dbAssoc = [];

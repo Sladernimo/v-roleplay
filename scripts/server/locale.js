@@ -27,8 +27,8 @@ let englishLocale = 0;
 // ===========================================================================
 
 function initLocaleScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Locale]: Initializing locale script ...");
-	logToConsole(LOG_INFO, "[AGRP.Locale]: Locale script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Locale]: Initializing locale script ...");
+	logToConsole(LOG_INFO, "[V.RP.Locale]: Locale script initialized!");
 }
 
 // ===========================================================================

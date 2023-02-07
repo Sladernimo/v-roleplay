@@ -280,7 +280,7 @@ let serverBitFlagKeys = {
 // ===========================================================================
 
 function initBitFlagScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.BitFlag]: Initializing bit flag script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.BitFlag]: Initializing bit flag script ...");
 	serverBitFlags.staffFlags = createBitFlagTable(serverBitFlagKeys.staffFlagKeys);
 	serverBitFlags.moderationFlags = createBitFlagTable(serverBitFlagKeys.moderationFlagKeys);
 	serverBitFlags.accountSettingsFlags = createBitFlagTable(serverBitFlagKeys.accountSettingsFlagKeys);
@@ -294,7 +294,7 @@ function initBitFlagScript() {
 	serverBitFlags.npcTriggerResponseTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerResponseTypeKeys);
 	serverBitFlags.seenActionTips = createBitFlagTable(serverBitFlagKeys.seenActionTipsKeys);
 	serverBitFlags.jobRankFlags = createBitFlagTable(serverBitFlagKeys.jobRankKeys);
-	logToConsole(LOG_INFO, "[AGRP.BitFlag]: Bit flag script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.BitFlag]: Bit flag script initialized successfully!");
 	return true;
 }
 

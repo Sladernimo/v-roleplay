@@ -43,8 +43,8 @@ let serverCommands = [];
 // ===========================================================================
 
 function initCommandScript() {
-	logToConsole(LOG_INFO, "[AGRP.Command]: Initializing commands script ...");
-	logToConsole(LOG_INFO, "[AGRP.Command]: Initialized commands script!");
+	logToConsole(LOG_INFO, "[V.RP.Command]: Initializing commands script ...");
+	logToConsole(LOG_INFO, "[V.RP.Command]: Initialized commands script!");
 }
 
 // ===========================================================================

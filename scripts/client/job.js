@@ -35,8 +35,8 @@ class JobData {
 // ===========================================================================
 
 function initJobScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Job]: Initializing job script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Job]: Job script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Job]: Initializing job script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Job]: Job script initialized!");
 }
 
 // ===========================================================================

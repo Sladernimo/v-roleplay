@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function initAnimationScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Initializing animation script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Animation]: Animation script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Animation]: Initializing animation script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Animation]: Animation script initialized!");
 }
 
 // ===========================================================================

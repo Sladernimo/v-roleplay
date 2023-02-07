@@ -205,8 +205,8 @@ class NPCTriggerResponseData {
 // ===========================================================================
 
 function initNPCScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.NPC]: Initializing NPC script ...");
-	logToConsole(LOG_INFO, "[AGRP.NPC]: NPC script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.NPC]: Initializing NPC script ...");
+	logToConsole(LOG_INFO, "[V.RP.NPC]: NPC script initialized successfully!");
 }
 
 // ===========================================================================

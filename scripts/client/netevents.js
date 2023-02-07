@@ -8,14 +8,14 @@
 // ===========================================================================
 
 function initNetworkEventsScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.NetEvents]: Initializing server script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.NetEvents]: Server script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.NetEvents]: Initializing server script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.NetEvents]: Server script initialized!");
 }
 
 // ===========================================================================
 
 function addAllNetworkHandlers() {
-	logToConsole(LOG_DEBUG, "[AGRP.Server]: Adding network handlers ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Server]: Adding network handlers ...");
 
 	// Chat Box
 	addNetworkEventHandler("m", receiveChatBoxMessageFromServer); // Not prefixed with VRR to make it as small as possible

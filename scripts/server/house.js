@@ -167,15 +167,15 @@ class HouseGameScriptData {
 // ===========================================================================
 
 function initHouseScript() {
-	logToConsole(LOG_INFO, "[AGRP.House]: Initializing house script ...");
-	logToConsole(LOG_INFO, "[AGRP.House]: House script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.House]: Initializing house script ...");
+	logToConsole(LOG_INFO, "[V.RP.House]: House script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadHousesFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.House]: Loading houses from database ...");
+	logToConsole(LOG_INFO, "[V.RP.House]: Loading houses from database ...");
 	let tempHouses = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];

@@ -155,8 +155,8 @@ class ClientData {
 // ===========================================================================
 
 function initClientScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Client]: Initializing client script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Client]: Client script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Client]: Initializing client script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Client]: Client script initialized!");
 }
 
 // ===========================================================================

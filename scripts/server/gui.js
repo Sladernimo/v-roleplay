@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function initGUIScript() {
-	logToConsole(LOG_INFO, "[AGRP.GUI]: Initializing GUI script ...");
-	logToConsole(LOG_INFO, "[AGRP.GUI]: GUI script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.GUI]: Initializing GUI script ...");
+	logToConsole(LOG_INFO, "[V.RP.GUI]: GUI script initialized successfully!");
 }
 
 // ===========================================================================

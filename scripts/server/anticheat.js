@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function initAntiCheatScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.AntiCheat]: Initializing anticheat script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.AntiCheat]: Anticheat script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.AntiCheat]: Initializing anticheat script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.AntiCheat]: Anticheat script initialized!");
 }
 
 // ===========================================================================

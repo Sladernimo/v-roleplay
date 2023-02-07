@@ -86,8 +86,8 @@ let fishingParticleEffects = {
 // ===========================================================================
 
 function initFishingScript() {
-	logToConsole(LOG_INFO, "[AGRP.Fishing]: Initializing fishing script ...");
-	logToConsole(LOG_INFO, "[AGRP.Fishing]: Fishing script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Fishing]: Initializing fishing script ...");
+	logToConsole(LOG_INFO, "[V.RP.Fishing]: Fishing script initialized successfully!");
 }
 
 // ===========================================================================

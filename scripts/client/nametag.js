@@ -22,10 +22,10 @@ let playerPing = {};
 // ===========================================================================
 
 function initNameTagScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.NameTag]: Initializing nametag script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.NameTag]: Initializing nametag script ...");
 	nametagFont = loadNameTagFont();
 	afkStatusFont = loadPausedStatusFont();
-	logToConsole(LOG_DEBUG, "[AGRP.NameTag]: Nametag script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.NameTag]: Nametag script initialized!");
 }
 
 // ===========================================================================
