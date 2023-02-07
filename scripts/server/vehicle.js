@@ -169,15 +169,15 @@ class VehicleData {
 // ===========================================================================
 
 function initVehicleScript() {
-	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Initializing vehicle script ...");
-	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Vehicle script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Vehicle]: Initializing vehicle script ...");
+	logToConsole(LOG_INFO, "[V.RP.Vehicle]: Vehicle script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadVehiclesFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Loading vehicles from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Vehicle]: Loading vehicles from database ...");
 	let dbConnection = connectToDatabase();
 	let tempVehicles = [];
 	let dbAssoc;
@@ -204,14 +204,14 @@ function saveAllVehiclesToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, "[AGRP.Vehicle]: Saving all server vehicles to database ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Vehicle]: Saving all server vehicles to database ...");
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
 		if (vehicles[i].needsSaved) {
 			saveVehicleToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, "[AGRP.Vehicle]: Saved all server vehicles to database!");
+	logToConsole(LOG_INFO, "[V.RP.Vehicle]: Saved all server vehicles to database!");
 
 	return true;
 }

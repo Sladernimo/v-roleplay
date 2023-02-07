@@ -16,8 +16,8 @@ let itemActionDelaySize = toVector2(200, 5);
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Item]: Initializing item script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Item]: Item script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Item]: Initializing item script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Item]: Item script initialized!");
 }
 
 // ===========================================================================

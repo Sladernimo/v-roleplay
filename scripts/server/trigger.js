@@ -217,8 +217,8 @@ class TriggerResponseData {
 // ===========================================================================
 
 function initTriggerScript() {
-	logToConsole(LOG_INFO, "[AGRP.Trigger]: Initializing trigger script ...");
-	logToConsole(LOG_INFO, "[AGRP.Trigger]: Trigger script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Trigger]: Initializing trigger script ...");
+	logToConsole(LOG_INFO, "[V.RP.Trigger]: Trigger script initialized successfully!");
 	return true;
 }
 

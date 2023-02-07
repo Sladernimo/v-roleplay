@@ -98,33 +98,33 @@ function checkForSMTPModule() {
 // ===========================================================================
 
 function checkForAllRequiredModules() {
-	logToConsole(LOG_DEBUG, "[AGRP.Startup]: Checking for required modules ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Startup]: Checking for required modules ...");
 
 	if (!checkForHashingModule()) {
-		logToConsole(LOG_WARN, "[AGRP.Startup]: Hashing module is not loaded!");
-		logToConsole(LOG_ERROR, "[AGRP.Startup]: This server will now shutdown.");
+		logToConsole(LOG_WARN, "[V.RP.Startup]: Hashing module is not loaded!");
+		logToConsole(LOG_ERROR, "[V.RP.Startup]: This server will now shutdown.");
 		shutdownServer();
 	}
 
 	if (!checkForMySQLModule()) {
-		logToConsole(LOG_WARN, "[AGRP.Startup]: MySQL module is not loaded!");
-		logToConsole(LOG_ERROR, "[AGRP.Startup]: This server will now shutdown.");
+		logToConsole(LOG_WARN, "[V.RP.Startup]: MySQL module is not loaded!");
+		logToConsole(LOG_ERROR, "[V.RP.Startup]: This server will now shutdown.");
 		shutdownServer();
 	}
 
 	//if (!checkForSMTPModule()) {
-	//	logToConsole(LOG_WARN, "[AGRP.Startup]: SMTP Email module is not loaded!");
-	//	logToConsole(LOG_WARN, "[AGRP.Startup]: Email features will NOT be available!");
+	//	logToConsole(LOG_WARN, "[V.RP.Startup]: SMTP Email module is not loaded!");
+	//	logToConsole(LOG_WARN, "[V.RP.Startup]: Email features will NOT be available!");
 	//}
 
-	logToConsole(LOG_DEBUG, "[AGRP.Startup]: All required modules loaded!");
+	logToConsole(LOG_DEBUG, "[V.RP.Startup]: All required modules loaded!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadServerDataFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Config]: Loading server data ...");
+	logToConsole(LOG_INFO, "[V.RP.Config]: Loading server data ...");
 
 	// Always load these regardless of "test server" status
 	getServerData().localeStrings = loadAllLocaleStrings();

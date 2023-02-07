@@ -1,0 +1,194 @@
+## Player Commands
+
+### Account  
+	* /login
+	* /register
+	* /changepass
+	* /setemail
+	* /verifyemail
+
+### Character  
+	* /newchar /usechar /switchchar
+	* /autolastchar
+
+### Settings  
+	* /logo
+	* /gui
+	* /lang
+	* /notips
+	* /loginalert
+	* /scrolllines
+	* /chatautohide
+	* /chatfilter
+	* /chatemoji
+	* /chattime
+
+### Chat  
+	* /me
+	* /do
+	* /s
+	* /shout
+	* /talk
+	* /local
+	* /l
+	* /w
+	* /whisper
+	* /clanchat
+	* /clan
+	* /c
+	* /m
+	* /dm
+	* /reply
+
+### Items  
+	* /i
+	* /item
+	* /pickup
+	* /=--drop
+	* /put
+	* /take
+	* /use
+	* /inv
+	* /inventory
+	* /items
+	* /houseitems
+	* /bizstorage
+	* /bizfloor
+	* /buylist
+	* /power
+	* /freq
+	* /radio
+	* /r
+
+### Vehicle  
+	* /nearveh
+	* /oldveh
+	* /lastveh
+	* /oldcar
+	* /lastcar
+	* /engine
+	* /siren
+	* /lights
+	* /vehclan
+	* /vehbiz
+	* /vehrank
+	* /vehinfo
+	* /vehrent
+	* /vehrentprice
+	* /vehbuyprice
+	* /vehstoprent
+	* /vehbuy
+	* /vehcolour
+	* /vehlivery
+	* /vehrepair
+	* /passenger
+
+### Business  
+	* /bizbuy
+	* /bizfee
+	* /biztill
+	* /bizbalance
+	* /bizwithdraw
+	* /bizdeposit
+	* /buy
+	* /bizstock
+	* /bizstore
+	* /bizorder
+	* /bizitemprice
+	* /bizname
+	* /bizowner
+	* /bizrank
+	* /bizclan
+	* /bizbuyprice
+	* /bizinfo
+	* /bizflooritems
+	* /bizstorageitems
+	* /bizdealership
+	* /bizpaintball
+
+### Clan  
+	* /clans
+	* /clanchat 
+	* /c 
+	* /clanranks
+	* /clanflags
+	* /clanaddrank
+	* /clandelrank
+	* /clansetrank
+	* /clanowner
+	* /clantag
+	* /clanranktag
+	* /clanmembertag
+	* /clanrankname
+	* /clanranklevel
+	* /clanmembertitle
+	* /clanaddrankflag
+	* /clanrankflags
+	* /clandelrankflag
+	* /clanaddmemberflag
+	* /clandelmemberflag
+
+### House  
+	* /houseinfo
+	* /housebuy
+	* /houseclan
+	* /houseowner
+	* /housebuyprice
+	* /houserentprice
+
+### Keybinds  
+	* /bindkey
+	* /unbindkey
+	* /keybinds
+
+### Misc  
+	* /idea
+	* /bug 
+	* /pos 
+	* /enter 
+	* /cursor 
+	* /yes 
+	* /no 
+	* /help
+	* /suicide
+	* /lights
+	* /lock
+	* /admins
+	* /mousecam
+	* /cursor
+	* /speak
+	* /gps
+	* /stuck
+
+### Job  
+	* /takejob
+	* /startwork
+	* /stopwork
+	* /startjob
+	* /stopjob
+	* /quitjob
+	* /uniform
+	* /equip
+	* /department
+	* /d
+	* /fare
+	* /detain
+	* /drag
+	* /search
+	* /startroute
+	* /stoproute
+	* /jobinfo
+	* /joblocinfo
+
+### Animation  
+	* /anim 
+	* /an 
+	* /e 
+	* /anims 
+	* /animlist 
+	* /stopanim
+
+### Radio  
+	* /radiostation
+	* /radiostations
+	* /radiovolume

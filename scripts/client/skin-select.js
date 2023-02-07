@@ -23,10 +23,10 @@ let skinSelectHeading = null;
 // ===========================================================================
 
 function initSkinSelectScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.SkinSelect]: Initializing skin selector script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.SkinSelect]: Initializing skin selector script ...");
 	skinSelectMessageFontTop = loadSkinSelectMessageFontTop();
 	skinSelectMessageFontBottom = loadSkinSelectMessageFontBottom();
-	logToConsole(LOG_DEBUG, "[AGRP.SkinSelect]: Skin selector script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.SkinSelect]: Skin selector script initialized!");
 }
 
 // ===========================================================================

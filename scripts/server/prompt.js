@@ -21,8 +21,8 @@ const V_PROMPT_RESETKEYBINDS = 8;
 // ===========================================================================
 
 function initPromptScript() {
-	logToConsole(LOG_INFO, "[AGRP.Prompt]: Initializing Prompt script ...");
-	logToConsole(LOG_INFO, "[AGRP.Prompt]: Prompt script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Prompt]: Initializing Prompt script ...");
+	logToConsole(LOG_INFO, "[V.RP.Prompt]: Prompt script initialized successfully!");
 }
 
 // ===========================================================================

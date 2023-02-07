@@ -8,14 +8,14 @@
 // ===========================================================================
 
 function initNetworkEventsScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.NetEvents]: Initializing network events script ...");
-	logToConsole(LOG_INFO, "[AGRP.NetEvents]: Network events script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.NetEvents]: Initializing network events script ...");
+	logToConsole(LOG_INFO, "[V.RP.NetEvents]: Network events script initialized!");
 }
 
 // ===========================================================================
 
 function addAllNetworkEventHandlers() {
-	logToConsole(LOG_DEBUG, "[AGRP.Client]: Adding network handlers ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Client]: Adding network handlers ...");
 
 	// KeyBind
 	addNetworkEventHandler("v.rp.useKeyBind", playerUsedKeyBind);

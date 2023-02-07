@@ -35,8 +35,8 @@ class KeyBindData {
 // ===========================================================================
 
 function initKeyBindScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.KeyBind]: Initializing key bind script ...");
-	logToConsole(LOG_INFO, "[AGRP.KeyBind]: Key bind script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.KeyBind]: Initializing key bind script ...");
+	logToConsole(LOG_INFO, "[V.RP.KeyBind]: Key bind script initialized!");
 }
 
 // ===========================================================================

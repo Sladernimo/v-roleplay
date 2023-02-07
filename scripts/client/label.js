@@ -30,12 +30,12 @@ let jobHelpColour = toColour(234, 198, 126, 255);
 // ===========================================================================
 
 function initLabelScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Label]: Initializing label script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Label]: Initializing label script ...");
 	propertyLabelNameFont = initLabelPropertyNameFont();
 	propertyLabelLockedFont = initLabelPropertyLockedFont();
 	jobNameLabelFont = initLabelJobNameFont();
 	jobHelpLabelFont = initLabelJobHelpFont();
-	logToConsole(LOG_DEBUG, "[AGRP.Label]: Label script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Label]: Label script initialized!");
 }
 
 // ===========================================================================
@@ -79,12 +79,12 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
@@ -220,12 +220,12 @@ function renderPropertyExitLabel(position) {
 
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
@@ -265,12 +265,12 @@ function renderJobLabel(name, position, jobType) {
 
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport does not exist!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[AGRP.Label]: Game viewport is not active!");
+			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}

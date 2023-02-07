@@ -8,9 +8,9 @@
 // ===========================================================================
 
 function initEventScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Event]: Initializing event script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Event]: Initializing event script ...");
 	addAllEventHandlers();
-	logToConsole(LOG_DEBUG, "[AGRP.Event]: Event script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Event]: Event script initialized!");
 }
 
 // ===========================================================================

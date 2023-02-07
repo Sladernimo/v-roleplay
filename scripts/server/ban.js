@@ -38,8 +38,8 @@ class BanData {
 // ===========================================================================
 
 function initBanScript() {
-	logToConsole(LOG_INFO, "[AGRP.Ban]: Initializing ban script ...");
-	logToConsole(LOG_INFO, "[AGRP.Ban]: Ban script initialized!");
+	logToConsole(LOG_INFO, "[V.RP.Ban]: Initializing ban script ...");
+	logToConsole(LOG_INFO, "[V.RP.Ban]: Ban script initialized!");
 }
 
 // ===========================================================================

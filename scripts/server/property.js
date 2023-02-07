@@ -151,8 +151,8 @@ class PropertyLocationData {
 // ===========================================================================
 
 function initPropertyScript() {
-	logToConsole(LOG_INFO, "[AGRP.Property]: Initializing property script ...");
-	logToConsole(LOG_INFO, "[AGRP.Property]: Property script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Property]: Initializing property script ...");
+	logToConsole(LOG_INFO, "[V.RP.Property]: Property script initialized successfully!");
 	return true;
 }
 
@@ -176,7 +176,7 @@ function loadPropertyFromId(propertyIndex) {
 // ===========================================================================
 
 function loadPropertiesFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Property]: Loading properties from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Property]: Loading properties from database ...");
 
 	let tempProperties = [];
 	let dbConnection = connectToDatabase();
@@ -2255,11 +2255,11 @@ function getPropertyFloorFirstFreeItemSlot(propertyIndex) {
 
 // Caches all items for all businesses
 function cacheAllPropertyItems() {
-	logToConsole(LOG_DEBUG, "[AGRP.Property] Caching all business items ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Property] Caching all business items ...");
 	for (let i in getServerData().properties) {
 		cachePropertyItems(i);
 	}
-	logToConsole(LOG_DEBUG, "[AGRP.Property] Cached all business items successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Property] Cached all business items successfully!");
 }
 
 // ===========================================================================

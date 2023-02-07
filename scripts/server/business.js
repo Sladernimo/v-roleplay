@@ -188,8 +188,8 @@ class BusinessGameScriptData {
 // ===========================================================================
 
 function initBusinessScript() {
-	logToConsole(LOG_INFO, "[AGRP.Business]: Initializing business script ...");
-	logToConsole(LOG_INFO, "[AGRP.Business]: Business script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Business]: Initializing business script ...");
+	logToConsole(LOG_INFO, "[V.RP.Business]: Business script initialized successfully!");
 	return true;
 }
 
@@ -212,7 +212,7 @@ function loadBusinessFromId(businessId) {
 // ===========================================================================
 
 function loadBusinessesFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Business]: Loading businesses from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Business]: Loading businesses from database ...");
 
 	let tempBusinesses = [];
 	let dbConnection = connectToDatabase();
@@ -2826,11 +2826,11 @@ function getBusinessFloorFirstFreeItemSlot(businessId) {
 
 // Caches all items for all businesses
 function cacheAllBusinessItems() {
-	logToConsole(LOG_DEBUG, "[AGRP.Business] Caching all business items ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Business] Caching all business items ...");
 	for (let i in getServerData().businesses) {
 		cacheBusinessItems(i);
 	}
-	logToConsole(LOG_DEBUG, "[AGRP.Business] Cached all business items successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Business] Cached all business items successfully!");
 }
 
 // ===========================================================================

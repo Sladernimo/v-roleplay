@@ -1,9 +1,10 @@
 # Ideas
 
 **NOTICE: Most of these ideas are totally random and some might be unrealistic. Every time I thought of something, I just immediately threw it into this file. I never checked to see if I had already added it, so there may be duplicates or similar entries spread out and unorganized.**
-
-### Businesses
+---
+### Businesses  
 *Inspiration from GTA Online*
+
 	* Nightclubs
 	* Executive Offices
 	* Warehouses
@@ -12,7 +13,7 @@
 	* Garages
 	* Casinos
 ---
-### Interactive peds with each one having a background story, characteristics, certain people or groups they like/dislike
+### Interactive peds with each one having a background story, characteristics, certain people or groups they like/dislike  
 *Inspiration from Skyrim and many other RPGs*
 
 	* Procedurally generated?

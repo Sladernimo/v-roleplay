@@ -29,8 +29,8 @@ class BusinessData {
 // ===========================================================================
 
 function initBusinessScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Business]: Initializing business script ...");
-	logToConsole(LOG_INFO, "[AGRP.Business]: Business script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Business]: Initializing business script ...");
+	logToConsole(LOG_INFO, "[V.RP.Business]: Business script initialized!");
 }
 
 // ===========================================================================

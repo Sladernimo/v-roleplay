@@ -255,14 +255,14 @@ let globalConfig = {
 // ===========================================================================
 
 function initConfigScript() {
-	logToConsole(LOG_INFO, "[AGRP.Config]: Initializing config script ...");
-	logToConsole(LOG_INFO, "[AGRP.Config]: Config script initialized!");
+	logToConsole(LOG_INFO, "[V.RP.Config]: Initializing config script ...");
+	logToConsole(LOG_INFO, "[V.RP.Config]: Config script initialized!");
 }
 
 // ===========================================================================
 
 function loadGlobalConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading global configuration ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading global configuration ...");
 	try {
 		getGlobalConfig().database = loadDatabaseConfig();
 	} catch (error) {
@@ -312,7 +312,7 @@ function loadGlobalConfig() {
 		thisResource.stop();
 	}
 
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loaded global configuration successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loaded global configuration successfully!");
 }
 
 // ===========================================================================
@@ -373,8 +373,8 @@ function loadServerConfigFromId(tempServerId) {
 // ===========================================================================
 
 function applyConfigToServer(tempServerConfig) {
-	logToConsole(LOG_INFO, "[AGRP.Config]: Applying server config ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Config]: Server config applied successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Config]: Applying server config ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Config]: Server config applied successfully!");
 
 	updateServerGameTime();
 
@@ -980,7 +980,7 @@ function getServerIntroMusicURL() {
 // ===========================================================================
 
 function loadLocaleConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading locale configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading locale configuration");
 	let localeConfig = JSON.parse(loadTextFile(`config/locale.json`));
 	if (localeConfig != null) {
 		return localeConfig;
@@ -990,7 +990,7 @@ function loadLocaleConfig() {
 // ===========================================================================
 
 function loadEconomyConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading economy configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading economy configuration");
 	let economyConfig = JSON.parse(loadTextFile(`config/economy.json`));
 	if (economyConfig != null) {
 		return economyConfig;
@@ -1000,7 +1000,7 @@ function loadEconomyConfig() {
 // ===========================================================================
 
 function loadAccentConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading accents configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading accents configuration");
 	let accentConfig = JSON.parse(loadTextFile(`config/accents.json`));
 	if (accentConfig != null) {
 		return accentConfig;
@@ -1010,7 +1010,7 @@ function loadAccentConfig() {
 // ===========================================================================
 
 function loadDiscordConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading discord configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading discord configuration");
 	let discordConfig = JSON.parse(loadTextFile(`config/discord.json`));
 	if (discordConfig != null) {
 		return discordConfig;
@@ -1021,7 +1021,7 @@ function loadDiscordConfig() {
 // ===========================================================================
 
 function loadDatabaseConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading database configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading database configuration");
 	let databaseConfig = JSON.parse(loadTextFile("config/database.json"));
 	if (databaseConfig != null) {
 		return databaseConfig;
@@ -1032,7 +1032,7 @@ function loadDatabaseConfig() {
 // ===========================================================================
 
 function loadKeyBindConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading keybind configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading keybind configuration");
 	let keyBindConfig = JSON.parse(loadTextFile("config/keybind.json"));
 	if (keyBindConfig != null) {
 		return keyBindConfig;
@@ -1043,7 +1043,7 @@ function loadKeyBindConfig() {
 // ===========================================================================
 
 function loadEmailConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading email configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading email configuration");
 	let emailConfig = JSON.parse(loadTextFile("config/email.json"));
 	if (emailConfig != null) {
 		return emailConfig;
@@ -1126,7 +1126,7 @@ function getDatabaseConfig() {
 // ===========================================================================
 
 function loadServerConfig() {
-	logToConsole(LOG_DEBUG, "[AGRP.Config] Loading server configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading server configuration");
 
 	if (toInteger(server.getCVar("agrp_devserver")) == 1) {
 		serverConfig = loadServerConfigFromGame(getGame());

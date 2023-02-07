@@ -528,15 +528,15 @@ let jobRouteLocationTypes = {
 // ===========================================================================
 
 function initJobScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Job]: Initializing job script ...");
-	logToConsole(LOG_INFO, "[AGRP.Job]: Job script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Job]: Initializing job script ...");
+	logToConsole(LOG_INFO, "[V.RP.Job]: Job script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadJobsFromDatabase() {
-	logToConsole(LOG_DEBUG, "[AGRP.Job]: Loading jobs from database ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Job]: Loading jobs from database ...");
 
 	let tempJobs = [];
 	let dbConnection = connectToDatabase();

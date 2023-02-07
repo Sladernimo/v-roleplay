@@ -28,11 +28,11 @@ let scrollDownKey = false;
 // ===========================================================================
 
 function initChatBoxScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Chat]: Initializing chat script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Chat]: Initializing chat script ...");
 	scrollUpKey = getKeyIdFromParams("pageup");
 	scrollDownKey = getKeyIdFromParams("pagedown");
 	bindChatBoxKeys();
-	logToConsole(LOG_INFO, "[AGRP.Chat]: Chat script initialized!");
+	logToConsole(LOG_INFO, "[V.RP.Chat]: Chat script initialized!");
 }
 
 // ===========================================================================

@@ -14,9 +14,9 @@ let logoSize = toVector2(128, 128);
 // ===========================================================================
 
 function initLogoScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Initializing logo script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Logo]: Initializing logo script ...");
 	//logoImage = loadLogoImage();
-	logToConsole(LOG_DEBUG, "[AGRP.Logo]: Logo script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Logo]: Logo script initialized!");
 }
 
 // ===========================================================================

@@ -20,7 +20,7 @@ let newCharacter = {
 
 function initNewCharacterGUI() {
 	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(getScreenWidth() / 2 - 130, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
+	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -42,7 +42,7 @@ function initNewCharacterGUI() {
 	newCharacter.window.titleBarShown = false;
 	newCharacter.window.titleBarHeight = 30;
 
-	newCharacter.mainLogoImage = newCharacter.window.image(80, 20, 80, 80, mainLogoPath, {
+	newCharacter.mainLogoImage = newCharacter.window.image(100, 10, 100, 100, mainLogoPath, {
 		focused: {
 			borderColour: toColour(0, 0, 0, 0),
 		},

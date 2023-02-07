@@ -14,8 +14,8 @@ let persistentDatabaseConnection = null;
 // ===========================================================================
 
 function initDatabaseScript() {
-	logToConsole(LOG_INFO, "[AGRP.Database]: Initializing database script ...");
-	logToConsole(LOG_INFO, "[AGRP.Database]: Database script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Database]: Initializing database script ...");
+	logToConsole(LOG_INFO, "[V.RP.Database]: Database script initialized successfully!");
 }
 
 // ===========================================================================

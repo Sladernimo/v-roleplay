@@ -40,8 +40,8 @@ let creatingCharacter = false;
 // ===========================================================================
 
 function initGUIScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.GUI]: Initializing GUI script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.GUI]: GUI script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.GUI]: Initializing GUI script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.GUI]: GUI script initialized!");
 }
 
 // ===========================================================================

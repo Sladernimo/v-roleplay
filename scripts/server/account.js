@@ -194,8 +194,8 @@ class AccountStaffNoteData {
 // ===========================================================================
 
 function initAccountScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Account]: Initializing account script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.Account]: Account script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.Account]: Initializing account script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Account]: Account script initialized!");
 }
 
 // ===========================================================================
@@ -1403,11 +1403,11 @@ function isValidEmailAddress(emailAddress) {
 // ===========================================================================
 
 function saveAllPlayersToDatabase() {
-	logToConsole(LOG_DEBUG, "[AGRP.Account]: Saving all clients to database ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Account]: Saving all clients to database ...");
 	getClients().forEach(function (client) {
 		savePlayerToDatabase(client);
 	});
-	logToConsole(LOG_DEBUG, "[AGRP.Account]: All clients saved to database successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Account]: All clients saved to database successfully!");
 }
 
 // ===========================================================================

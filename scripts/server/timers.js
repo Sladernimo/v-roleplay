@@ -16,7 +16,7 @@ function saveServerDataToDatabase() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, "[AGRP.Utilities]: Saving all server data to database ...");
+	logToConsole(LOG_DEBUG, "[V.RP.Utilities]: Saving all server data to database ...");
 
 	try {
 		saveAllPlayersToDatabase();
@@ -84,7 +84,7 @@ function saveServerDataToDatabase() {
 		logToConsole(LOG_ERROR, `Could not save server config to database: ${error}`);
 	}
 
-	logToConsole(LOG_DEBUG, "[AGRP.Utilities]: Saved all server data to database!");
+	logToConsole(LOG_DEBUG, "[V.RP.Utilities]: Saved all server data to database!");
 }
 
 // ===========================================================================
@@ -210,7 +210,7 @@ function updatePings() {
 // ===========================================================================
 
 function checkServerGameTime() {
-	//logToConsole(LOG_DEBUG | LOG_WARN, "[AGRP.Timers] Checking server game time");
+	//logToConsole(LOG_DEBUG | LOG_WARN, "[V.RP.Timers] Checking server game time");
 
 	//if (isGameFeatureSupported("time")) {
 	//	return false;

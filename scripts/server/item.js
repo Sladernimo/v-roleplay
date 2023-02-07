@@ -280,8 +280,8 @@ let itemRecipes = [
 // ===========================================================================
 
 function initItemScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Item]: Initializing item script ...");
-	logToConsole(LOG_INFO, "[AGRP.Item]: Item script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Item]: Initializing item script ...");
+	logToConsole(LOG_INFO, "[V.RP.Item]: Item script initialized successfully!");
 	return true;
 }
 

@@ -9,8 +9,8 @@
 
 // Init AFK script
 function initAFKScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.AFK]: Initializing AFK script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.AFK]: AFK script initialized!");
+	logToConsole(LOG_DEBUG, "[V.RP.AFK]: Initializing AFK script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.AFK]: AFK script initialized!");
 }
 
 // ===========================================================================

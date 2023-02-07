@@ -9,8 +9,8 @@
 // ===========================================================================
 
 function initMessagingScript() {
-	logToConsole(LOG_INFO, "[AGRP.Messaging]: Initializing messaging script ...");
-	logToConsole(LOG_INFO, "[AGRP.Messaging]: Messaging script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Messaging]: Initializing messaging script ...");
+	logToConsole(LOG_INFO, "[V.RP.Messaging]: Messaging script initialized successfully!");
 }
 
 // ===========================================================================

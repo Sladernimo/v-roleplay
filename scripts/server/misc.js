@@ -54,8 +54,8 @@ const V_PROPERTY_TYPE_HOUSE = 2;				  // House
 // ===========================================================================
 
 function initMiscScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.Misc]: Initializing misc script ...");
-	logToConsole(LOG_INFO, "[AGRP.Misc]: Misc script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.Misc]: Initializing misc script ...");
+	logToConsole(LOG_INFO, "[V.RP.Misc]: Misc script initialized successfully!");
 	return true;
 }
 

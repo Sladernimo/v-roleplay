@@ -49,8 +49,8 @@ let paintBallItemNames = {
 // ===========================================================================
 
 function initPaintBallScript() {
-	logToConsole(LOG_DEBUG, "[AGRP.PaintBall]: Initializing paintball script ...");
-	logToConsole(LOG_DEBUG, "[AGRP.PaintBall]: Paintball script initialized successfully!");
+	logToConsole(LOG_DEBUG, "[V.RP.PaintBall]: Initializing paintball script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.PaintBall]: Paintball script initialized successfully!");
 }
 
 // ===========================================================================

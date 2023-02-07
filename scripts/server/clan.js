@@ -109,15 +109,15 @@ class ClanMemberData {
 // ===========================================================================
 
 function initClanScript() {
-	logToConsole(LOG_INFO, "[AGRP.Clan]: Initializing clans script ...");
-	logToConsole(LOG_INFO, "[AGRP.Clan]: Clan script initialized successfully!");
+	logToConsole(LOG_INFO, "[V.RP.Clan]: Initializing clans script ...");
+	logToConsole(LOG_INFO, "[V.RP.Clan]: Clan script initialized successfully!");
 	return true;
 }
 
 // ===========================================================================
 
 function loadClansFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
@@ -145,7 +145,7 @@ function loadClansFromDatabase() {
 // ===========================================================================
 
 function loadClanMembersFromDatabase() {
-	logToConsole(LOG_INFO, "[AGRP.Clan]: Loading clans from database ...");
+	logToConsole(LOG_INFO, "[V.RP.Clan]: Loading clans from database ...");
 
 	let tempClans = [];
 	let dbConnection = connectToDatabase();
