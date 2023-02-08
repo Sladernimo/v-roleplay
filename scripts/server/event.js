@@ -27,14 +27,19 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamIn", onElementStreamIn);
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 	addEventHandler("onPedSpawn", onPedSpawn);
-	addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
-	addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
-	addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
-	addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
-	addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+
+	if (getGame() <= V_GAME_GTA_IV) {
+		addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
+		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
+		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
+		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("onPedFall", onPedFall);
+		addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
 	}
 }
 
@@ -747,10 +752,12 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (ped == null) {
+		logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but ped is null`);
 		return false;
 	}
 
 	if (vehicle == null) {
+		logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle is null`);
 		return false;
 	}
 
@@ -760,10 +767,12 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
 			if (getPlayerData(client) == false) {
+				logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but player data is false`);
 				return false;
 			}
 
 			if (!getVehicleData(vehicle)) {
+				logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle data is false`);
 				return false;
 			}
 
