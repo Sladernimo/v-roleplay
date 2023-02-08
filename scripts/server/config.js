@@ -140,8 +140,8 @@ class ServerConfigData {
 				passiveIncome: toFloat(dbAssoc["svr_passive_income"]),
 			}
 
-			this.devServer = intToBool(toInteger(server.getCVar("agrp_devserver")));
-			this.testerOnly = intToBool(toInteger(server.getCVar("agrp_testeronly")));
+			this.devServer = intToBool(toInteger(server.getCVar("v_devserver")));
+			this.testerOnly = intToBool(toInteger(server.getCVar("v_testeronly")));
 		}
 	}
 };
