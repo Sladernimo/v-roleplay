@@ -4974,6 +4974,9 @@ let gameData = {
 		[V_GAME_GTA_IV]: [ // GTA IV
 			new AnimationData("dance1", { groupId: "DAN_LOOP_A", animId: "DANCING", animSpeed: 16.0, infiniteLoop: true, infiniteLoopNoMovement: false, dontReturnToStartCoords: true, freezeLastFrame: false }),
 		],
+		[V_GAME_MAFIA_ONE]: [ // Mafia: The City of Lost Heaven
+			//new AnimationData("wave", { animId: "", infiniteLoop: true }),
+		],
 	},
 	meleeWeapons: {
 		[V_GAME_GTA_III]: [1],
@@ -4981,6 +4984,7 @@ let gameData = {
 		[V_GAME_GTA_SA]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
 		[V_GAME_GTA_IV]: [1, 2, 3],
 		[V_GAME_GTA_IV_EFLC]: [1, 2, 3],
+		[V_GAME_MAFIA_ONE]: [2, 3, 4],
 	},
 	blipSprites: {
 		[V_GAME_GTA_III]: {	// GTA III
