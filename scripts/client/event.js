@@ -32,17 +32,21 @@ function addAllEventHandlers() {
 	addEventHandler("OnMouseWheel", onMouseWheel);
 	addEventHandler("OnEntityProcess", onEntityProcess);
 
-	if (findResourceByName("v-events") != null) {
-		if (findResourceByName("v-events").isStarted) {
-			addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
-			addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-			addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
-			addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+	if (getGame() <= V_GAME_GTA_SA) {
+		if (findResourceByName("v-events") != null) {
+			if (findResourceByName("v-events").isStarted) {
+				addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+				addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+				addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+				addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+			}
 		}
 	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("OnMapLoaded", onMapLoaded);
+		addEventHandler("OnPedEnteredVehicle", onPedEnteredVehicle);
+		addEventHandler("OnPedExitedVehicle", onPedExitedVehicle);
 	}
 }
 
@@ -56,10 +60,16 @@ function onResourceStart(event, resource) {
 		removeEventHandler("OnPedEnteredSphereEx");
 		removeEventHandler("OnPedExitedSphereEx");
 
-		addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
-		addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-		addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
-		addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+		if (getGame() <= V_GAME_GTA_SA) {
+			if (findResourceByName("v-events") != null) {
+				if (findResourceByName("v-events").isStarted) {
+					addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+					addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+					addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+					addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+				}
+			}
+		}
 	}
 
 	if (resource == thisResource) {
