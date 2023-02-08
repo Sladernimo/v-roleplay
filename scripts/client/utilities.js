@@ -285,11 +285,13 @@ function setLocalPlayerDrunkEffect(amount, duration) {
 // ===========================================================================
 
 function getLocalPlayerVehicleSeat() {
-	for (let i = 0; i <= 4; i++) {
-		if (localPlayer.vehicle.getOccupant(i) == localPlayer) {
-			return i;
-		}
-	}
+	return inVehicleSeat;
+
+	//for (let i = 0; i <= 4; i++) {
+	//	if (localPlayer.vehicle.getOccupant(i) == localPlayer) {
+	//		return i;
+	//	}
+	//}
 }
 
 // ===========================================================================
