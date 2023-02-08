@@ -2271,6 +2271,7 @@ function deleteBusiness(businessId, whoDeleted = 0) {
 	removePlayersFromBusiness(businessId);
 
 	getServerData().businesses.splice(businessId, 1);
+	updateBusinessPickupLabelData(businessId);
 
 	return true;
 }
@@ -2869,7 +2870,11 @@ function getBusinessIdFromDatabaseId(databaseId) {
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId) {
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
+		if (getBusinessData(businessId) == false) {
+			sendBusinessToPlayer(null, businessId, "", false, -1, -1, 0, 0, false, false, false);
+		} else {
+			sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
+		}
 		return false;
 	}
 
