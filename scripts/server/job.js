@@ -1560,6 +1560,11 @@ function reloadAllJobsCommand(command, params, client) {
 // ===========================================================================
 
 function createJobCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
 	createJob(params);
 
 	messagePlayerSuccess(client, `Job {jobYellow}${params} {MAINCOLOUR}created!`);
@@ -3551,7 +3556,11 @@ function createJobUniformCommand(command, params, client) {
 
 	let splitParams = params.split(" ");
 	let jobId = getJobFromParams(getParam(params, " ", 1));
-	let skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
+	let skinIndex = getPlayerCurrentSubAccount(client).skin;
+
+	if (areThereEnoughParams(params, 2, " ")) {
+		skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
+	}
 
 	if (!getJobData(jobId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
