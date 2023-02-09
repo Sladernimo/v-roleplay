@@ -45,8 +45,8 @@ function addAllEventHandlers() {
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("OnMapLoaded", onMapLoaded);
-		addEventHandler("OnPedEnteredVehicle", onPedEnteredVehicle);
-		addEventHandler("OnPedExitedVehicle", onPedExitedVehicle);
+		addEventHandler("OnPedEnteringVehicle", onPedEnteredVehicle);
+		addEventHandler("OnPedExitingVehicle", onPedExitedVehicle);
 	}
 }
 
