@@ -1466,8 +1466,13 @@ function createDefaultAccountServerData(accountDatabaseId) {
 	let dbConnection = connectToDatabase();
 	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
 
+	let defaultSettings = 0;
+	for (let i in getGlobalConfig().defaultEnabledAccountSettings) {
+		defaultSettings = addBitFlag(defaultSettings, getAccountSettingsFlagValue(getGlobalConfig().defaultEnabledAccountSettings[i]));
+	}
+
 	for (let i in serversAssoc) {
-		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serversAssoc[i]["svr_id"]})`;
+		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr, acct_svr_settings) VALUES (${accountDatabaseId}, ${serversAssoc[i]["svr_id"]}, ${defaultSettings})`;
 		quickDatabaseQuery(dbQueryString);
 	}
 
