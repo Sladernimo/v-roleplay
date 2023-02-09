@@ -1453,7 +1453,10 @@ function stopRentingVehicle(client) {
 	let vehicle = getPlayerData(client).rentingVehicle;
 	getPlayerData(client).rentingVehicle = false;
 	getVehicleData(vehicle).rentedBy = false;
-	respawnVehicle(vehicle);
+	removeAllOccupantsFromVehicle(vehicle);
+	setTimeout(function () {
+		respawnVehicle(vehicle);
+	}, 1000);
 }
 
 // ===========================================================================
