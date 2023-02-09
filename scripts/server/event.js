@@ -29,17 +29,16 @@ function addAllEventHandlers() {
 	addEventHandler("onPedSpawn", onPedSpawn);
 
 	if (getGame() <= V_GAME_GTA_IV) {
-		addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
 		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
 		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
 		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+		addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
 	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
-		addEventHandler("onPedFall", onPedFall);
-		addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
-		addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
+		addEventHandler("onPedEnteringVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitingVehicleEx", onPedExitedVehicle);
 	}
 }
 
