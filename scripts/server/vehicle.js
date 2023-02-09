@@ -193,7 +193,7 @@ function loadVehiclesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Vehicle]: ${tempVehicles.length} vehicles loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Vehicle]: ${tempVehicles.length} vehicles loaded from database successfully!`);
 	return tempVehicles;
 }
 
@@ -236,7 +236,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Saving vehicle ${tempVehicleData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Saving vehicle ${tempVehicleData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		if (tempVehicleData.vehicle != false) {
@@ -313,7 +313,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Saved vehicle ${vehicleDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Saved vehicle ${vehicleDataId} to database!`);
 
 	return false;
 }
@@ -1488,7 +1488,7 @@ function respawnVehicle(vehicle) {
 // ===========================================================================
 
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[AGRP.Vehicle]: Spawning ${getVehicleNameFromModel(vehicleData.model)} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getVehicleNameFromModel(vehicleData.model)} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
 	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
 
 	if (!vehicle) {
@@ -1505,25 +1505,25 @@ function spawnVehicle(vehicleData) {
 			vehicle.setRGBColours(vehicleData.colour1RGBA, vehicleData.colour2RGBA);
 			let colour1 = rgbaArrayFromToColour(vehicleData.colour1RGBA);
 			let colour2 = rgbaArrayFromToColour(vehicleData.colour2RGBA);
-			logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to RGBA [${colour1[0]}, ${colour1[1]}, ${colour1[2]}, ${colour1[3]}], [(]${colour2[0]}, ${colour2[1]}, ${colour2[2]}, ${colour2[3]}]`);
+			logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to RGBA [${colour1[0]}, ${colour1[1]}, ${colour1[2]}, ${colour1[3]}], [(]${colour2[0]}, ${colour2[1]}, ${colour2[2]}, ${colour2[3]}]`);
 			vehicle.setRGBColours(vehicleData.colour1RGBA, vehicleData.colour2RGBA);
 		} else {
 			setVehicleColours(vehicle, vehicleData.colour1, vehicleData.colour2, vehicleData.colour3, vehicleData.colour4);
-			logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to ${vehicleData.colour1}, ${vehicleData.colour2}, ${vehicleData.colour3}, ${vehicleData.colour4}`);
+			logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s colours to ${vehicleData.colour1}, ${vehicleData.colour2}, ${vehicleData.colour3}, ${vehicleData.colour4}`);
 		}
 	}
 
 	if (vehicleData.spawnLocked == true) {
 		setVehicleEngine(vehicle, false);
-		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to OFF`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to OFF`);
 	} else {
 		setVehicleEngine(vehicle, intToBool(vehicleData.engine));
-		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to ${toUpperCase(getOnOffFromBool(getVehicleEngine(vehicle)))}`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to ${toUpperCase(getOnOffFromBool(getVehicleEngine(vehicle)))}`);
 	}
 
 	if (typeof vehicle.locked != "undefined") {
 		setVehicleLocked(vehicle, intToBool(vehicleData.locked));
-		logToConsole(LOG_VERBOSE, `[AGRP.Vehicle]: Setting vehicle ${vehicle.id}'s lock state to ${toUpperCase(getOnOffFromBool(getVehicleLocked(vehicle)))}`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s lock state to ${toUpperCase(getOnOffFromBool(getVehicleLocked(vehicle)))}`);
 	}
 
 	//setVehicleHealth(vehicle, 1000);

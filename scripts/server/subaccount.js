@@ -220,7 +220,7 @@ function loadSubAccountsFromAccount(accountId) {
 								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
 								if (!getJobRankData(jobIndex, jobRankIndex)) {
 									let newJobRankIndex = getLowestJobRank(jobIndex);
-									console.log(`[AGRP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+									console.log(`[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
 									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
 									tempSubAccount.jobRankIndex = newJobRankIndex;
 								} else {
@@ -339,7 +339,7 @@ function saveSubAccountToDatabase(subAccountData) {
 // ===========================================================================
 
 function createSubAccount(accountId, firstName, lastName) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Attempting to create subaccount ${firstName} ${lastName} in database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Attempting to create subaccount ${firstName} ${lastName} in database`);
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
@@ -373,7 +373,7 @@ function showCharacterSelectToClient(client) {
 
 	if (doesPlayerHaveAutoSelectLastCharacterEnabled(client)) {
 		if (getPlayerData(client).subAccounts.length > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being auto-spawned as character ID ${getPlayerLastUsedSubAccount(client)}`);
+			logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being auto-spawned as character ID ${getPlayerLastUsedSubAccount(client)}`);
 			selectCharacter(client, getPlayerLastUsedSubAccount(client));
 			return true;
 		}
@@ -381,7 +381,7 @@ function showCharacterSelectToClient(client) {
 
 	if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 		getPlayerData(client).currentSubAccount = 0;
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 		let tempSubAccount = getPlayerData(client).subAccounts[0];
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
@@ -391,7 +391,7 @@ function showCharacterSelectToClient(client) {
 		//setTimeout(function() {
 		//	showCharacterSelectCameraToPlayer(client);
 		//}, 500);
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
 	} else {
 		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{teal}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
 		let chunkedList = splitArrayIntoChunks(charactersList, 5);
@@ -400,7 +400,7 @@ function showCharacterSelectToClient(client) {
 			messagePlayerNormal(client, chunkedList[i].join("{MAINCOLOUR} • "));
 		}
 		messagePlayerInfo(client, getLocaleString(client, "CharacterSelectHelpText", `{ALTCOLOUR}/usechar{MAINCOLOUR}`, `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
 	}
 }
 
@@ -420,7 +420,7 @@ function checkNewCharacter(client, firstName, lastName) {
 	lastName = lastName.trim();
 
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
-		logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
+		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
 		return false;
 	}
@@ -467,7 +467,7 @@ function checkPreviousCharacter(client) {
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 	}
 }
 
@@ -488,16 +488,16 @@ function checkNextCharacter(client) {
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
 		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
 
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 	}
 }
 
 // ===========================================================================
 
 function selectCharacter(client, characterId = -1) {
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} character select called (Character ID ${characterId})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} character select called (Character ID ${characterId})`);
 	if (characterId != -1) {
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} provided character ID (${characterId}) to spawn with`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} provided character ID (${characterId}) to spawn with`);
 		getPlayerData(client).currentSubAccount = characterId;
 	}
 
@@ -511,7 +511,7 @@ function selectCharacter(client, characterId = -1) {
 
 	getPlayerData(client).switchingCharacter = false;
 
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = V_PEDSTATE_SPAWNING;
 
@@ -520,14 +520,14 @@ function selectCharacter(client, characterId = -1) {
 		onPlayerSpawn(client);
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
 		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		//logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
+		//logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 		onPlayerSpawn(client);
 	}
 
 	//removePlayerKeyBind(client, getKeyIdFromParams("insert"));
 
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 
 	getPlayerCurrentSubAccount(client).lastLogin = getCurrentUnixTimestamp();
 }
@@ -535,14 +535,14 @@ function selectCharacter(client, characterId = -1) {
 // ===========================================================================
 
 function switchCharacterCommand(command, params, client) {
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is requesting to switch characters (current character: ${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}])`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is requesting to switch characters (current character: ${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}])`);
 	if (!isPlayerSpawned(client)) {
-		logToConsole(LOG_WARN, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (not spawned)`);
+		logToConsole(LOG_WARN, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (not spawned)`);
 		return false;
 	}
 
 	if (isPlayerSwitchingCharacter(client)) {
-		logToConsole(LOG_WARN, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
+		logToConsole(LOG_WARN, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
 		messagePlayerError(client, "You are already selecting/switching characters!");
 		return false;
 	}

@@ -266,49 +266,49 @@ function loadGlobalConfig() {
 	try {
 		getGlobalConfig().database = loadDatabaseConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load global configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load global configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().economy = loadEconomyConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load economy configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load economy configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().locale = loadLocaleConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load locale configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load locale configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().accents = loadAccentConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load accent configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load accent configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().discord = loadDiscordConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load discord configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load discord configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().keyBind = loadKeyBindConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load keybind configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load keybind configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
 	try {
 		getGlobalConfig().email = loadEmailConfig();
 	} catch (error) {
-		logToConsole(LOG_ERROR, `[AGRP.Config] Failed to load email configuration. Error: ${error}`);
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load email configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
@@ -379,12 +379,12 @@ function applyConfigToServer(tempServerConfig) {
 	updateServerGameTime();
 
 	//if (isTimeSupported()) {
-	//	logToConsole(LOG_DEBUG, `[AGRP.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
+	//	logToConsole(LOG_DEBUG, `[V.RP.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
 	//	setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
 	//}
 
 	if (isWeatherSupported()) {
-		logToConsole(LOG_DEBUG, `[AGRP.Config]: Setting weather to ${tempServerConfig.weather}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Config]: Setting weather to ${tempServerConfig.weather}`);
 		game.forceWeather(getWeatherData(tempServerConfig.weather).weatherId);
 	}
 
@@ -394,7 +394,7 @@ function applyConfigToServer(tempServerConfig) {
 // ===========================================================================
 
 function saveServerConfigToDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.Config]: Saving server ${getServerConfig().databaseId} configuration to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Config]: Saving server ${getServerConfig().databaseId} configuration to database ...`);
 	if (getServerConfig().needsSaved) {
 		let dbConnection = connectToDatabase();
 		if (dbConnection) {
@@ -458,7 +458,7 @@ function saveServerConfigToDatabase() {
 
 		}
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Config]: Server ${getServerConfig().databaseId} configuration saved to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Config]: Server ${getServerConfig().databaseId} configuration saved to database!`);
 }
 
 // ===========================================================================
@@ -932,7 +932,7 @@ function reloadEmailConfigurationCommand(command, params, client) {
  */
 function reloadDatabaseConfigurationCommand(command, params, client) {
 	if (getDatabaseConfig().usePersistentConnection && isDatabaseConnected(persistentDatabaseConnection)) {
-		logToConsole(LOG_WARN, `[AGRP.Database] Closing persistent database connection`);
+		logToConsole(LOG_WARN, `[V.RP.Database] Closing persistent database connection`);
 		persistentDatabaseConnection.close();
 		persistentDatabaseConnection = null;
 	}
@@ -1132,14 +1132,14 @@ function loadServerConfig() {
 		serverConfig = loadServerConfigFromGame(getGame());
 
 		if (serverConfig == false) {
-			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()}`);
+			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()}`);
 			server.shutdown();
 		}
 	} else {
 		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
 
 		if (serverConfig == false) {
-			logToConsole(LOG_ERROR, `[AGRP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
+			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
 			server.shutdown();
 		}
 	}

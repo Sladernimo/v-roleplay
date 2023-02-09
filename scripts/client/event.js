@@ -73,7 +73,7 @@ function onResourceStart(event, resource) {
 	}
 
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStart called - Sending signal to server`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceStart called - Sending signal to server`);
 		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 		sendResourceStartedSignalToServer();
 	}
@@ -83,7 +83,7 @@ function onResourceStart(event, resource) {
 
 function onResourceStop(event, resource) {
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStop called - Sending signal to server`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceStop called - Sending signal to server`);
 		sendResourceStoppedSignalToServer();
 	}
 }
@@ -92,7 +92,7 @@ function onResourceStop(event, resource) {
 
 function onResourceReady(event, resource) {
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceReady called - Sending signal to server`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceReady called - Sending signal to server`);
 		loadLocaleConfig();
 		sendResourceReadySignalToServer();
 	}
@@ -101,7 +101,7 @@ function onResourceReady(event, resource) {
 // ===========================================================================
 
 function onProcess(event, deltaTime) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Event] onProcess`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess`);
 	if (localPlayer == null) {
 		return false;
 	}
@@ -136,7 +136,7 @@ function onKeyUp(event, keyCode, scanCode, keyModifiers) {
 // ===========================================================================
 
 function onDrawnHUD(event) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Event] HUD drawn`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] HUD drawn`);
 	processMouseCursorRendering();
 
 	if (!renderHUD) {
@@ -160,7 +160,7 @@ function onDrawnHUD(event) {
 // ===========================================================================
 
 function onPedWasted(event, wastedPed, killerPed, weapon, pedPiece) {
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped ${wastedPed.name} died`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${wastedPed.name} died`);
 	wastedPed.clearWeapons();
 }
 
@@ -173,7 +173,7 @@ function onElementStreamIn(event, element) {
 // ===========================================================================
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
@@ -197,7 +197,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if (localPlayer != null) {
@@ -211,7 +211,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped entered vehicle`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped entered vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
@@ -239,7 +239,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healthLoss, pedPiece) {
 	//let damagerEntityString = (!isNull(damagedEntity)) ? `${damagerEntity.name} (${damagerEntity.name}, ${damagerEntity.type} - ${typeof damagerEntity})` : `Unknown ped`;
 	//let damagedEntityString = (!isNull(damagedEntity)) ? `${damagedEntity.name} (${damagedEntity.name}, ${damagedEntity.type} - ${typeof damagedEntity})` : `Unknown ped`;
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] ${damagerEntityString} damaged ${damagedEntityString}'s '${pedPiece} with weapon ${weaponId}`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] ${damagerEntityString} damaged ${damagedEntityString}'s '${pedPiece} with weapon ${weaponId}`);
 	if (!isNull(damagedEntity) && !isNull(damagerEntity)) {
 		if (damagedEntity.isType(ELEMENT_PLAYER)) {
 			if (damagedEntity == localPlayer) {

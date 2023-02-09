@@ -16,7 +16,7 @@ let errorDialog = {
 // ===========================================================================
 
 function initErrorDialogGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating error GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating error GUI ...`);
 	errorDialog.window = mexui.window(getScreenWidth() / 2 - 200, getScreenHeight() / 2 - 70, 400, 140, 'ERROR', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -58,14 +58,14 @@ function initErrorDialogGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 255),
 		},
 	}, closeErrorDialog);
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created error GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created error GUI ...`);
 }
 
 // ===========================================================================
 
 function showErrorGUI(errorMessage, errorTitle, buttonText) {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing error window. Error: ${errorTitle} - ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing error window. Error: ${errorTitle} - ${errorMessage}`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	errorDialog.messageLabel.text = errorMessage;
@@ -77,7 +77,7 @@ function showErrorGUI(errorMessage, errorTitle, buttonText) {
 // ===========================================================================
 
 function closeErrorDialog() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing error dialog`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Closing error dialog`);
 	errorDialog.window.shown = false;
 	mexui.setInput(false);
 }

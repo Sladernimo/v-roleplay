@@ -162,7 +162,7 @@ function initClientScript() {
 // ===========================================================================
 
 function resetClientStuff(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
 
 	if (!getPlayerData(client)) {
 		return false;
@@ -207,15 +207,15 @@ function kickAllClients() {
 // ===========================================================================
 
 function initClient(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
 
 	if (isConsole(client)) {
-		logToConsole(LOG_DEBUG | LOG_ERROR, `[AGRP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
 		return false;
 	}
 
 	if (playerInitialized[client.index] == true) {
-		logToConsole(LOG_DEBUG | LOG_ERROR, `[AGRP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
 		return false;
 	}
 
@@ -223,25 +223,25 @@ function initClient(client) {
 
 	//setEntityData(client, "v.rp.isInitialized", true, false);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
 	sendPlayerCurrencyString(client);
 	sendPlayerGUIColours(client);
 	sendPlayerGUIInit(client);
 	updatePlayerSnowState(client, getServerConfig().groundSnow);
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
 	//showConnectCameraToPlayer(client);
 
 	messageClient(`Please wait ...`, client, getColourByName("softGreen"));
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Waiting for 2.5 seconds to prevent race attack ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Waiting for 2.5 seconds to prevent race attack ...`);
 	setTimeout(function () {
 		if (client != null) {
 			clearChatBox(client);
-			logToConsole(LOG_DEBUG, `[AGRP.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
 			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
 
-			logToConsole(LOG_DEBUG, `[AGRP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
 			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
 
 			getServerData().clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
@@ -258,10 +258,10 @@ function initClient(client) {
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 				} else {
 					if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-						logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI.`);
+						logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI.`);
 						showPlayerLoginGUI(client);
 					} else {
-						logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
+						logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
 						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
 
 						if (checkForGeoIPModule()) {
@@ -281,10 +281,10 @@ function initClient(client) {
 			} else {
 				sendPlayerLocaleId(client, 0);
 				if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-					logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
+					logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
 					showPlayerRegistrationGUI(client);
 				} else {
-					logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
+					logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
 					messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "/register"), getColourByName("softGreen"));
 				}
 				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));

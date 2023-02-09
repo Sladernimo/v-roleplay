@@ -23,7 +23,7 @@ let characterSelect = {
 // ===========================================================================
 
 function initCharacterSelectGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating character select GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating character select GUI ...`);
 	characterSelect.window = mexui.window(game.width / 2 - 215, game.height / 2 - 83, 430, 190, 'SELECT CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -150,14 +150,14 @@ function initCharacterSelectGUI() {
 			borderColour: toColour(0, 0, 0, 0),
 		}
 	});
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created character select GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created character select GUI`);
 }
 
 // ===========================================================================
 
 function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, skinId) {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing character selection window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing character selection window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	characterSelect.nameText.text = `${firstName} ${lastName}`;
@@ -178,35 +178,35 @@ function showCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, ski
 
 function showNewCharacter() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing new character dialog window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing new character dialog window`);
 	showNewCharacterGUI();
 }
 
 // ===========================================================================
 
 function selectNextCharacter() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Requesting next character info from server for character select window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Requesting next character info from server for character select window`);
 	sendNetworkEventToServer("v.rp.nextCharacter");
 }
 
 // ===========================================================================
 
 function selectPreviousCharacter() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Requesting previous character info from server for character select window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Requesting previous character info from server for character select window`);
 	sendNetworkEventToServer("v.rp.previousCharacter");
 }
 
 // ===========================================================================
 
 function selectThisCharacter() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Tell server the current shown character was selected in character select window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Tell server the current shown character was selected in character select window`);
 	sendNetworkEventToServer("v.rp.selectCharacter");
 }
 
 // ===========================================================================
 
 function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, skinId) {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Updating character info with data from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Updating character info with data from server`);
 	setChatWindowEnabled(false);
 	characterSelect.window.shown = false;
 	characterSelect.nameText.text = `${firstName} ${lastName}`;
@@ -229,7 +229,7 @@ function switchCharacterSelectGUI(firstName, lastName, cash, clan, lastPlayed, s
 // ===========================================================================
 
 function characterSelectSuccess() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports character selection was successful`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Server reports character selection was successful`);
 	closeAllWindows();
 }
 

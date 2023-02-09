@@ -53,7 +53,7 @@ function processLogoRendering() {
 // ===========================================================================
 
 function setServerLogoRenderState(state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
 	renderLogo = state;
 }
 

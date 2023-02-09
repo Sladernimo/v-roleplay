@@ -46,7 +46,7 @@ function addAllEventHandlers() {
 // ===========================================================================
 
 function onPlayerConnect(event, ipAddress, port) {
-	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerConnect - Client connecting (IP: ${ipAddress})`);
+	logToConsole(LOG_INFO, `[V.RP.Event] onPlayerConnect - Client connecting (IP: ${ipAddress})`);
 	//if(isIpAddressBanned(ipAddress)) {
 	//    messagePlayerError(client, "You are banned from this server!");
 	//    return false;
@@ -56,7 +56,7 @@ function onPlayerConnect(event, ipAddress, port) {
 // ===========================================================================
 
 function onPlayerJoin(event, client) {
-	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerJoin - Client ${getPlayerDisplayForConsole(client)} joining from ${getPlayerIP(client)}`);
+	logToConsole(LOG_INFO, `[V.RP.Event] onPlayerJoin - Client ${getPlayerDisplayForConsole(client)} joining from ${getPlayerIP(client)}`);
 
 	playerResourceReady[getPlayerId(client)] = false;
 	playerResourceStarted[getPlayerId(client)] = false;
@@ -77,7 +77,7 @@ function onPlayerJoin(event, client) {
 // ===========================================================================
 
 function onPlayerJoined(event, client) {
-	logToConsole(LOG_INFO, `[AGRP.Event] onPlayerJoined - Client ${getPlayerDisplayForConsole(client)} joined from ${getPlayerIP(client)}`);
+	logToConsole(LOG_INFO, `[V.RP.Event] onPlayerJoined - Client ${getPlayerDisplayForConsole(client)} joined from ${getPlayerIP(client)}`);
 	//initClient(client);
 }
 
@@ -214,7 +214,7 @@ function onPedExitingVehicle(event, ped, vehicle) {
 // ===========================================================================
 
 function onResourceStart(event, resource) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Resource ${resource.name} started!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Resource ${resource.name} started!`);
 
 	if (resource == thisResource) {
 		//messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} started!`);
@@ -225,7 +225,7 @@ function onResourceStart(event, resource) {
 // ===========================================================================
 
 function onResourceStop(event, resource) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Resource ${resource.name} stopped!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Resource ${resource.name} stopped!`);
 
 	//if(resource != thisResource) {
 	//	messageAdmins(`{MAINCOLOUR}Resource {ALTCOLOUR}${resource.name}{MAINCOLOUR} stopped!`);
@@ -252,7 +252,7 @@ function onPedEnteredSphere(event, ped, sphere) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered sphere ${sphere.id}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} entered sphere ${sphere.id}!`);
 	//if (ped.isType(ELEMENT_PLAYER)) {
 	//	let client = getClientFromPlayerElement(ped);
 
@@ -276,7 +276,7 @@ function onPedExitedSphere(event, ped, sphere) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} exited sphere ${sphere.id}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} exited sphere ${sphere.id}!`);
 	//if (ped.isType(ELEMENT_PLAYER)) {
 	//	let client = getClientFromPlayerElement(ped);
 	//}
@@ -293,7 +293,7 @@ function onPedPickupPickedUp(event, ped, pickup) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} picked up pickup ${pickup.id}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} picked up pickup ${pickup.id}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
@@ -310,7 +310,7 @@ function onPedPickupPickedUp(event, ped, pickup) {
 
 /*
 function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} wasted by ped ${killerPed.id}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} wasted by ped ${killerPed.id}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let killerClient = null;
@@ -325,7 +325,7 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 // ===========================================================================
 
 function onPlayerDeath(client, killer, weapon, pedPiece) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
 
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
 	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
@@ -418,7 +418,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 // ===========================================================================
 
 function onPedSpawn(ped) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} spawned!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} spawned!`);
 
 	//if (ped.type == ELEMENT_PLAYER) {
 	//	if (getGame() != V_GAME_MAFIA_ONE) {
@@ -431,14 +431,14 @@ function onPedSpawn(ped) {
 // ===========================================================================
 
 async function onPlayerSpawn(client) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
 	//if(getPlayerPed(client) == null) {
-	//    logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player element not set yet. Rechecking ...`);
+	//    logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player element not set yet. Rechecking ...`);
 	//    setTimeout(onPlayerSpawn, 500, client);
 	//    return false;
 	//}
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
 
 	if (areServerElementsSupported()) {
 		await waitUntil(() => client != null && getPlayerPed(client) != null);
@@ -446,53 +446,53 @@ async function onPlayerSpawn(client) {
 
 	stopRadioStreamForPlayer(client);
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
 	if (!getPlayerData(client)) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
 	if (!isPlayerLoggedIn(client)) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
 	if (getPlayerData(client).currentSubAccount == -1) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
 	if (isGameFeatureSupported("pedScale")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 		setEntityData(getPlayerPed(client), "v.rp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 	}
 
 	//if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
-	//	logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
+	//	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
 	//	return false;
 	//}
 
 	if (isCustomCameraSupported()) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
 		restorePlayerCamera(client);
 	}
 
 	if (areServerElementsSupported()) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data `);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data `);
 		getPlayerData(client).ped = getPlayerPed(client);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Sending ${getPlayerDisplayForConsole(client)} the 'now playing as' message`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)} the 'now playing as' message`);
 	messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
 	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
@@ -506,65 +506,65 @@ async function onPlayerSpawn(client) {
 	//}
 
 	if (isGameFeatureSupported("interior")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 		setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player dimension for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player dimension for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
 	setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
 
 	//if(getPlayerCurrentSubAccount(client).interior != 0 || getPlayerCurrentSubAccount(client).dimension != 0) {
 	//    updateAllInteriorVehiclesForPlayer(client, getPlayerCurrentSubAccount(client).interior, getPlayerCurrentSubAccount(client).dimension);
 	//}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player health for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).health}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player health for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).health}`);
 	setPlayerHealth(client, getPlayerCurrentSubAccount(client).health);
 
 	if (isGameFeatureSupported("pedArmour")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player armour for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).armour}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player armour for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).armour}`);
 		setPlayerArmour(client, getPlayerCurrentSubAccount(client).armour);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Sending ${getPlayerDisplayForConsole(client)}'s job type to their client (${getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(client))})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)}'s job type to their client (${getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(client))})`);
 	sendPlayerJobType(client, getPlayerCurrentSubAccount(client).job);
 
 	if (isGameFeatureSupported("rendering2D")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
 		setPlayer2DRendering(client, true, true, true, true, true, true);
 	}
 
 	//if (isGameFeatureSupported("snow")) {
-	//	logToConsole(LOG_DEBUG, `[AGRP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
+	//	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
 	//	updatePlayerSnowState(client, true);
 	//}
 
 	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
 	if (isGameFeatureSupported("fightStyle")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
 		setPlayerFightStyle(client, getPlayerCurrentSubAccount(client).fightStyle);
 	}
 
 	if (isGameFeatureSupported("rendering2D")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
 		updatePlayerShowLogoState(client, (getServerConfig().showLogo && doesPlayerHaveLogoEnabled(client)));
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items`);
 	cachePlayerHotBarItems(client);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s hotbar`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s hotbar`);
 	updatePlayerHotBar(client);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Setting ${getPlayerDisplayForConsole(client)}'s switchchar state to false`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s switchchar state to false`);
 	getPlayerData(client).switchingCharacter = false;
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	}
 
@@ -595,7 +595,7 @@ async function onPlayerSpawn(client) {
 		//sendPlayerPedPartsAndProps(client);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
 	getPlayerData(client).pedState = V_PEDSTATE_READY;
 
 	if (areServerElementsSupported()) {
@@ -605,16 +605,16 @@ async function onPlayerSpawn(client) {
 		//}, 1000);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s cash ${getPlayerCurrentSubAccount(client).cash}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s cash ${getPlayerCurrentSubAccount(client).cash}`);
 	updatePlayerCash(client);
 
 	if (isGameFeatureSupported("customNametag")) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
 		sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
 	}
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
 		if (getGame() != V_GAME_GTA_IV) {
@@ -627,7 +627,7 @@ async function onPlayerSpawn(client) {
 		sendAllVehiclesToPlayer(client);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
 	updatePlayerSpawnedState(client, true);
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
@@ -635,7 +635,7 @@ async function onPlayerSpawn(client) {
 	// Locales are handled via resource files now. No need to send anymore, but kept in case revert is needed.
 	//sendPlayerLocaleStrings(client);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Updating all player name tags`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
 	updateAllPlayerNameTags();
 
 	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
@@ -692,7 +692,7 @@ async function onPlayerSpawn(client) {
 // ===========================================================================
 
 function onPlayerCommand(event, client, command, params) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Player used command ${command}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player used command ${command}!`);
 
 	if (!doesCommandExist(command)) {
 		processPlayerCommand(command, params, client);
@@ -710,7 +710,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
 
 	if (getVehicleData(vehicle) == false) {
 		return false;
@@ -743,7 +743,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 		}
 	}
 }
@@ -752,31 +752,31 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (ped == null) {
-		logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but ped is null`);
+		logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but ped is null`);
 		return false;
 	}
 
 	if (vehicle == null) {
-		logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle is null`);
+		logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle is null`);
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
 			if (getPlayerData(client) == false) {
-				logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but player data is false`);
+				logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but player data is false`);
 				return false;
 			}
 
 			if (!getVehicleData(vehicle)) {
-				logToConsole(LOG_ERROR | LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle data is false`);
+				logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle data is false`);
 				return false;
 			}
 
-			logToConsole(LOG_DEBUG, `[AGRP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 
 			getPlayerData(client).lastVehicle = vehicle;
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
@@ -887,7 +887,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
@@ -911,7 +911,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 		return false;
 	}
 
-	logToConsole(LOG_WARN | LOG_DEBUG, `[AGRP.Event] Ped ${ped.id} is exiting vehicle ${vehicle.id} in seat ${seat}!`);
+	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} is exiting vehicle ${vehicle.id} in seat ${seat}!`);
 
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);

@@ -76,7 +76,7 @@ function initAllClients() {
 // ===========================================================================
 
 function updateServerRules() {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Updating all server rules ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Updating all server rules ...`);
 
 	let timeWeatherRule = [];
 	let tempText = "";
@@ -116,7 +116,7 @@ function updateServerRules() {
 	}
 
 	setServerRule("Time & Weather", timeWeatherRule.join(", "));
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: All server rules updated successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: All server rules updated successfully!`);
 }
 
 // ===========================================================================
@@ -517,15 +517,15 @@ function removeAllPlayersFromVehicles() {
 // ===========================================================================
 
 function processPlayerEnteringExitingProperty(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Processing property enter/exit for player ${getPlayerDisplayForConsole(client)} ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Processing property enter/exit for player ${getPlayerDisplayForConsole(client)} ...`);
 	if (getPlayerData(client).enteringExitingProperty == null) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Assigned property data is null.`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Assigned property data is null.`);
 		return false;
 	}
 
 	let pedState = getPlayerData(client).pedState;
 	if (pedState != V_PEDSTATE_ENTERINGPROPERTY && pedState != V_PEDSTATE_EXITINGPROPERTY) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
 		return false;
 	}
 
@@ -537,14 +537,14 @@ function processPlayerEnteringExitingProperty(client) {
 	}
 
 	if (propertyData == null || propertyData == false) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Property is invalid.`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Property is invalid.`);
 		return false;
 	}
 
 	if (pedState == V_PEDSTATE_ENTERINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
-			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
+			logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
 			spawnPlayer(client, propertyData.exitPosition, propertyData.exitRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 			onPlayerSpawn(client);
 		} else {
@@ -580,9 +580,9 @@ function processPlayerEnteringExitingProperty(client) {
 		getPlayerData(client).enteringExitingProperty = null;
 		getPlayerData(client).pedState = V_PEDSTATE_READY;
 	} else if (pedState == V_PEDSTATE_EXITINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
-			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
+			logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
 			spawnPlayer(client, propertyData.entrancePosition, propertyData.entranceRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 			onPlayerSpawn(client);
 		} else {

@@ -30,7 +30,7 @@ class VehicleData {
 // ===========================================================================
 
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
 
 	if (getGame() != V_GAME_GTA_IV) {
 		return false;
@@ -52,7 +52,7 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 
 		let vehicle = natives.getVehicleFromNetworkId(vehicleId.ivNetworkId);
 	} else {
-		//logToConsole(LOG_DEBUG, `[AGRP.Vehicle] Vehicle ${vehicleId} doesn't exist. Adding ...`);
+		//logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Vehicle ${vehicleId} doesn't exist. Adding ...`);
 		//let tempVehicleData = new VehicleData(vehicleId, name, position, blipModel, pickupModel);
 
 		//vehicles.push(tempVehicleData);

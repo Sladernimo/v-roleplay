@@ -32,7 +32,7 @@ function playerPromptAnswerNo(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} answered NO to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
 		case V_PROMPT_CREATEFIRSTCHAR:
@@ -71,7 +71,7 @@ function playerPromptAnswerYes(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} answered YES to their prompt (${getPlayerData(client).promptType})`);
 
 	switch (getPlayerData(client).promptType) {
 		case V_PROMPT_CREATEFIRSTCHAR: {
@@ -82,7 +82,7 @@ function playerPromptAnswerYes(client) {
 		case V_PROMPT_BIZORDER: {
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
-					logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
+					logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
 					if (doesPlayerHaveGUIEnabled(client)) {
 						showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderNotEnoughMoney", `{ALTCOLOUR}/bizdeposit{MAINCOLOUR}`), getLocaleString(client, "BusinessOrderCanceled"));
 					} else {
@@ -93,7 +93,7 @@ function playerPromptAnswerYes(client) {
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
 				} else {
-					logToConsole(LOG_DEBUG, `[AGRP.Prompt] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
+					logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
 
 					showPlayerInfoGUI(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
 					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);

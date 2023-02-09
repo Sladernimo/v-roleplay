@@ -40,7 +40,7 @@ function getLocaleString(client, stringName, ...args) {
 
 	let tempString = getRawLocaleString(getPlayerData(client).locale, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
 		submitBugReport(client, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getPlayerLocaleName(client)}"`);
 		return "";
 	}
@@ -57,7 +57,7 @@ function getLocaleString(client, stringName, ...args) {
 function getLanguageLocaleString(localeId, stringName, ...args) {
 	let tempString = getRawLocaleString(localeId, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
 		return "";
 	}
@@ -74,7 +74,7 @@ function getLanguageLocaleString(localeId, stringName, ...args) {
 function getLanguageGroupedLocaleString(localeId, stringName, index, ...args) {
 	let tempString = getRawGroupedLocaleString(localeId, stringName, index);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string index ${index} of "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
 		return "";
 	}
@@ -106,7 +106,7 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 
 function getRawLocaleString(localeId, stringName) {
 	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		return "";
 	}
@@ -127,7 +127,7 @@ function getRawLocaleString(localeId, stringName) {
 
 function getRawGroupedLocaleString(localeId, stringName, index) {
 	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		return "";
 	}

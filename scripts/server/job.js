@@ -554,13 +554,13 @@ function loadJobsFromDatabase() {
 				tempJobData.routes = loadJobRoutesFromDatabase(tempJobData.databaseId);
 				tempJobData.ranks = loadJobRanksFromDatabase(tempJobData.databaseId);
 				tempJobs.push(tempJobData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job '${tempJobData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobs.length} jobs loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobs.length} jobs loaded from database successfully!`);
 	return tempJobs;
 }
 
@@ -599,7 +599,7 @@ function loadAllJobLocationsFromDatabase() {
 // ===========================================================================
 
 function loadJobRanksFromDatabase(jobDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading ranks for job ${jobDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading ranks for job ${jobDatabaseId} from database ...`);
 
 	let tempJobRanks = [];
 	let dbConnection = connectToDatabase();
@@ -612,20 +612,20 @@ function loadJobRanksFromDatabase(jobDatabaseId) {
 			for (let i in dbAssoc) {
 				let tempJobRankData = new JobRankData(dbAssoc[i]);
 				tempJobRanks.push(tempJobRankData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job rank '${tempJobRankData.name}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job rank '${tempJobRankData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobRanks.length} ranks for job ${jobDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobRanks.length} ranks for job ${jobDatabaseId} loaded from database successfully!`);
 	return tempJobRanks;
 }
 
 // ===========================================================================
 
 function loadJobRoutesFromDatabase(jobDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading job routes for job ${jobDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading job routes for job ${jobDatabaseId} from database ...`);
 
 	let tempJobRoutes = [];
 	let dbConnection = connectToDatabase();
@@ -639,20 +639,20 @@ function loadJobRoutesFromDatabase(jobDatabaseId) {
 				let tempJobRouteData = new JobRouteData(dbAssoc[i]);
 				tempJobRouteData.locations = loadJobRouteLocationsFromDatabase(tempJobRouteData.databaseId);
 				tempJobRoutes.push(tempJobRouteData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job route '${tempJobRouteData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobRoutes.length} job routes for job ${jobDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobRoutes.length} job routes for job ${jobDatabaseId} loaded from database successfully!`);
 	return tempJobRoutes;
 }
 
 // ===========================================================================
 
 function loadJobRouteLocationsFromDatabase(jobRouteId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading locations for job route ${jobRouteId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading locations for job route ${jobRouteId} from database ...`);
 
 	let tempJobRouteLocations = [];
 	let dbConnection = connectToDatabase();
@@ -665,20 +665,20 @@ function loadJobRouteLocationsFromDatabase(jobRouteId) {
 			for (let i in dbAssoc) {
 				let tempJobRouteLocationData = new JobRouteLocationData(dbAssoc[i]);
 				tempJobRouteLocations.push(tempJobRouteLocationData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job route location '${tempJobRouteLocationData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobRouteLocations.length} locations for job route ${jobRouteId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobRouteLocations.length} locations for job route ${jobRouteId} loaded from database successfully!`);
 	return tempJobRouteLocations;
 }
 
 // ===========================================================================
 
 function loadJobEquipmentsFromDatabase(jobDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading job equipments for job ${jobDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading job equipments for job ${jobDatabaseId} from database ...`);
 
 	let tempJobEquipments = [];
 	let dbConnection = connectToDatabase();
@@ -692,20 +692,20 @@ function loadJobEquipmentsFromDatabase(jobDatabaseId) {
 				let tempJobEquipmentData = new JobEquipmentData(dbAssoc[i]);
 				tempJobEquipmentData.items = loadJobEquipmentItemsFromDatabase(tempJobEquipmentData.databaseId);
 				tempJobEquipments.push(tempJobEquipmentData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job equipment '${tempJobEquipmentData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobEquipments.length} job equipments for job ${jobDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobEquipments.length} job equipments for job ${jobDatabaseId} loaded from database successfully!`);
 	return tempJobEquipments;
 }
 
 // ===========================================================================
 
 function loadJobLocationsFromDatabase(jobDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading job locations for job ${jobDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading job locations for job ${jobDatabaseId} from database ...`);
 
 	let tempJobLocations = [];
 	let dbConnection = connectToDatabase();
@@ -718,20 +718,20 @@ function loadJobLocationsFromDatabase(jobDatabaseId) {
 			for (let i in dbAssoc) {
 				let tempJobLocationData = new JobLocationData(dbAssoc[i]);
 				tempJobLocations.push(tempJobLocationData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job location '${tempJobLocationData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobLocations.length} job locations for job ${jobDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobLocations.length} job locations for job ${jobDatabaseId} loaded from database successfully!`);
 	return tempJobLocations;
 }
 
 // ===========================================================================
 
 function loadJobUniformsFromDatabase(jobDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading job uniforms for job ${jobDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading job uniforms for job ${jobDatabaseId} from database ...`);
 
 	let tempJobUniforms = [];
 	let dbConnection = connectToDatabase();
@@ -744,20 +744,20 @@ function loadJobUniformsFromDatabase(jobDatabaseId) {
 			for (let i in dbAssoc) {
 				let tempJobUniformData = new JobUniformData(dbAssoc[i]);
 				tempJobUniforms.push(tempJobUniformData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job uniform '${tempJobUniformData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobUniforms.length} job uniforms for job ${jobDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobUniforms.length} job uniforms for job ${jobDatabaseId} loaded from database successfully!`);
 	return tempJobUniforms;
 }
 
 // ===========================================================================
 
 function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Loading job equipment items for job equipment ${jobEquipmentDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Loading job equipment items for job equipment ${jobEquipmentDatabaseId} from database ...`);
 
 	let tempJobEquipmentItems = [];
 	let dbConnection = connectToDatabase();
@@ -770,13 +770,13 @@ function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
 			for (let i in dbAssoc) {
 				let tempJobEquipmentItemData = new JobEquipmentItemData(dbAssoc[i]);
 				tempJobEquipmentItems.push(tempJobEquipmentItemData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job]: Job equipment item '${tempJobEquipmentItemData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: ${tempJobEquipmentItems.length} job equipment items for equipment ${jobEquipmentDatabaseId} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: ${tempJobEquipmentItems.length} job equipment items for equipment ${jobEquipmentDatabaseId} loaded from database successfully!`);
 	return tempJobEquipmentItems;
 }
 
@@ -787,13 +787,13 @@ function createAllJobBlips() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job] Spawning all job location blips ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Spawning all job location blips ...`);
 	for (let i in getServerData().jobs) {
 		for (let j in getServerData().jobs[i].locations) {
 			createJobLocationBlip(i, j);
 		}
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job] All job location blips spawned!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] All job location blips spawned!`);
 }
 
 // ===========================================================================
@@ -803,7 +803,7 @@ function createAllJobPickups() {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job] Spawning all job location pickups ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Spawning all job location pickups ...`);
 	let pickupCount = 0;
 	for (let i in getServerData().jobs) {
 		if (getServerData().jobs[i].pickupModel != 0) {
@@ -819,11 +819,11 @@ function createAllJobPickups() {
 				setElementDimension(getServerData().jobs[i].locations[j].pickup, getServerData().jobs[i].locations[j].dimension);
 				addToWorld(getServerData().jobs[i].locations[j].pickup);
 
-				logToConsole(LOG_VERBOSE, `[AGRP.Job] Job '${getServerData().jobs[i].name}' location pickup ${j} spawned!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job] Job '${getServerData().jobs[i].name}' location pickup ${j} spawned!`);
 			}
 		}
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job] All job location pickups (${pickupCount}) spawned!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] All job location pickups (${pickupCount}) spawned!`);
 }
 
 // ===========================================================================
@@ -2720,11 +2720,11 @@ function saveJobToDatabase(jobData) {
 	}
 
 	if (jobData.needsSaved == false) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job ${jobData.name} doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job ${jobData.name} doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job ${jobData.name} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job ${jobData.name} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobData.name);
@@ -2761,7 +2761,7 @@ function saveJobToDatabase(jobData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job ${jobData.name} to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job ${jobData.name} to database!`);
 
 	return false;
 }
@@ -2775,11 +2775,11 @@ function saveJobRankToDatabase(jobRankData) {
 	}
 
 	if (jobRankData.needsSaved == false) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job route ${jobRankData.name} (DB ID ${jobRankData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job route ${jobRankData.name} (DB ID ${jobRankData.databaseId}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job route ${jobRankData.name} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job route ${jobRankData.name} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobRankData.name);
@@ -2810,7 +2810,7 @@ function saveJobRankToDatabase(jobRankData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job rank ${jobRankData.name} to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job rank ${jobRankData.name} to database!`);
 
 	return false;
 }
@@ -2824,11 +2824,11 @@ function saveJobRouteToDatabase(jobRouteData) {
 	}
 
 	if (jobRouteData.needsSaved == false) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job route ${jobRouteData.name} (DB ID ${jobRouteData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job route ${jobRouteData.name} (DB ID ${jobRouteData.databaseId}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job route ${jobRouteData.name} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job route ${jobRouteData.name} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobRouteData.name);
@@ -2869,7 +2869,7 @@ function saveJobRouteToDatabase(jobRouteData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job route ${jobRouteData.name} to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job route ${jobRouteData.name} to database!`);
 
 	return false;
 }
@@ -2883,11 +2883,11 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 	}
 
 	if (jobRouteLocationData.needsSaved == false) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job route location ${jobRouteLocationData.name} (DB ID ${jobRouteLocationData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job route location ${jobRouteLocationData.name} (DB ID ${jobRouteLocationData.databaseId}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job route location ${jobRouteLocationData.name} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job route location ${jobRouteLocationData.name} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobRouteLocationData.name);
@@ -2919,7 +2919,7 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job route location ${jobRoutePositionData.name} (${jobRouteLocationData.databaseId}) to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job route location ${jobRoutePositionData.name} (${jobRouteLocationData.databaseId}) to database!`);
 
 	return false;
 }
@@ -2933,11 +2933,11 @@ function saveJobLocationToDatabase(jobLocationData) {
 	}
 
 	if (!jobLocationData.needsSaved) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job location ${jobLocationData.name} (${jobLocationData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job location ${jobLocationData.name} (${jobLocationData.databaseId}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job location ${jobLocationData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job location ${jobLocationData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -2968,7 +2968,7 @@ function saveJobLocationToDatabase(jobLocationData) {
 		return true;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job location ${jobLocationData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job location ${jobLocationData.databaseId} to database`);
 
 	return false;
 }
@@ -2982,11 +2982,11 @@ function saveJobEquipmentToDatabase(jobEquipmentData) {
 	}
 
 	if (!jobEquipmentData.needsSaved) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job equipment ${jobEquipmentData.name} (${jobEquipmentData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment ${jobEquipmentData.name} (${jobEquipmentData.databaseId}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job equipment ${jobEquipmentData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment ${jobEquipmentData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobEquipmentData.name);
@@ -3014,7 +3014,7 @@ function saveJobEquipmentToDatabase(jobEquipmentData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job equipment ${jobEquipmentData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment ${jobEquipmentData.databaseId} to database`);
 
 	return false;
 }
@@ -3028,11 +3028,11 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 	}
 
 	if (!jobEquipmentItemData.needsSaved) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job equipment item ${jobEquipmentItemData.databaseId} doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment item ${jobEquipmentItemData.databaseId} doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job equipment weapon ${jobEquipmentItemData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment weapon ${jobEquipmentItemData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -3059,7 +3059,7 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job equipment weapon ${jobEquipmentItemData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment weapon ${jobEquipmentItemData.databaseId} to database`);
 
 	return false;
 }
@@ -3073,11 +3073,11 @@ function saveJobUniformToDatabase(jobUniformData) {
 	}
 
 	if (!jobUniformData.needSaved) {
-		logToConsole(LOG_DEBUG, `[AGRP.Job]: Job uniform ${jobUniformData.databaseId} doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData.databaseId} doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saving job uniform ${jobUniformData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job uniform ${jobUniformData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobUniformData.name);
@@ -3106,7 +3106,7 @@ function saveJobUniformToDatabase(jobUniformData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Job]: Saved job uniform ${jobUniformData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job uniform ${jobUniformData.databaseId} to database`);
 
 	return false;
 }
@@ -3174,7 +3174,7 @@ function createJobLocationPickup(jobId, locationId) {
 
 	let tempJobData = getJobData(jobId);
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
 
 	if (tempJobData.pickupModel != -1) {
 		let pickupModelId = -1;

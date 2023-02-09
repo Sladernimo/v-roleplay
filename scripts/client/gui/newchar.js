@@ -19,7 +19,7 @@ let newCharacter = {
 // ===========================================================================
 
 function initNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating new character GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating new character GUI ...`);
 	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -110,13 +110,13 @@ function initNewCharacterGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 		},
 	}, checkNewCharacter);
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created new character GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
 }
 
 // ===========================================================================
 
 function newCharacterFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
 	newCharacter.messageLabel.text = errorMessage;
 	newCharacter.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	newCharacter.firstNameInput.text = "";
@@ -134,7 +134,7 @@ function newCharacterFailed(errorMessage) {
 // ===========================================================================
 
 function checkNewCharacter() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking new character with server ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Checking new character with server ...`);
 	if (newCharacter.firstNameInput.lines[0].length < 2) {
 		return false;
 	}
@@ -152,7 +152,7 @@ function checkNewCharacter() {
 // ===========================================================================
 
 function showNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing new character window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing new character window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);

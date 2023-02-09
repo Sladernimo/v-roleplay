@@ -417,7 +417,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}, 1100);
 		}
 	}
-	//logToConsole(LOG_DEBUG, `[AGRP.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
 	return true;
 }
 

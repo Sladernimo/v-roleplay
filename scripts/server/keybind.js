@@ -116,7 +116,7 @@ function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -140,7 +140,7 @@ function removePlayerKeyBind(client, keyId) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -208,7 +208,7 @@ function playerUsedKeyBind(client, key, duration = 0) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
+	logToConsole(LOG_DEBUG, `[V.RP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
 		let keyBindData = getPlayerKeyBindForKey(client, key);
 		if (keyBindData.enabled) {

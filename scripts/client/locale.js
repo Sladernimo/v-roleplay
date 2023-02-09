@@ -46,7 +46,7 @@ function loadLocaleConfig() {
 function loadAllLocaleStrings() {
 	let localeOptions = getServerData().localeOptions;
 	for (let i in localeOptions) {
-		logToConsole(LOG_INFO, `[AGRP.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
+		logToConsole(LOG_INFO, `[V.RP.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
 		let localeStringFile = loadTextFile(`locale/${localeOptions[i].stringsFile}`);
 		let localeStringData = JSON.parse(localeStringFile);
 
@@ -60,7 +60,7 @@ function loadAllLocaleStrings() {
 // ===========================================================================
 
 function setLocale(tempLocaleId) {
-	logToConsole(LOG_DEBUG, `[AGRP.Locale] Setting locale to ${tempLocaleId} (${getServerData().localeOptions[tempLocaleId].englishName})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Locale] Setting locale to ${tempLocaleId} (${getServerData().localeOptions[tempLocaleId].englishName})`);
 	localLocaleId = tempLocaleId;
 	resetGUIStrings();
 }

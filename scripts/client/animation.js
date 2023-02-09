@@ -22,7 +22,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	}
 
 	let animationData = getAnimationData(animationSlot);
-	logToConsole(LOG_DEBUG, `[AGRP.Animation] Playing animation ${animationData[0]} for ped ${pedId}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Animation] Playing animation ${animationData[0]} for ped ${pedId}`);
 
 	let freezePlayer = false;
 	switch (animationData.moveType) {

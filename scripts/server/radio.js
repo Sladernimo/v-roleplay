@@ -53,7 +53,7 @@ function loadRadioStationsFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Radio]: ${tempRadioStations.length} radio stations loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Radio]: ${tempRadioStations.length} radio stations loaded from database successfully!`);
 	return tempRadioStations;
 }
 

@@ -190,20 +190,20 @@ function loadPropertiesFromDatabase() {
 				let tempPropertyData = new PropertyData(dbAssoc[i]);
 				tempPropertyData.locations = loadPropertyLocationsFromDatabase(tempPropertyData.databaseId);
 				tempProperties.push(tempPropertyData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Property]: Property '${tempPropertyData.name}' (ID ${tempPropertyData.databaseId}) loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Property]: ${tempProperties.length} properties loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Property]: ${tempProperties.length} properties loaded from database successfully!`);
 	return tempProperties;
 }
 
 // ===========================================================================
 
 function loadPropertyLocationsFromDatabase(propertyIndex) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Property]: Loading property locations for property ${propertyIndex} from database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Property]: Loading property locations for property ${propertyIndex} from database ...`);
 
 	let tempPropertyLocations = [];
 	let dbConnection = connectToDatabase();
@@ -219,7 +219,7 @@ function loadPropertyLocationsFromDatabase(propertyIndex) {
 				for (let i in dbAssoc) {
 					let tempPropertyLocationData = new PropertyLocationData(dbAssoc[i]);
 					tempPropertyLocations.push(tempPropertyLocationData);
-					logToConsole(LOG_VERBOSE, `[AGRP.Property]: Location '${tempPropertyLocationData.name}' loaded from database successfully!`);
+					logToConsole(LOG_VERBOSE, `[V.RP.Property]: Location '${tempPropertyLocationData.name}' loaded from database successfully!`);
 				}
 			}
 			freeDatabaseQuery(dbQuery);
@@ -227,7 +227,7 @@ function loadPropertyLocationsFromDatabase(propertyIndex) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Property]: ${tempPropertyLocations.length} location for property ${propertyIndex} loaded from database successfully!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Property]: ${tempPropertyLocations.length} location for property ${propertyIndex} loaded from database successfully!`);
 	return tempPropertyLocations;
 }
 
@@ -1208,7 +1208,7 @@ function orderItemForPropertyCommand(command, params, client) {
 	let value = toInteger(splitParams.slice(-1)) || getItemTypeData(itemType).capacity;
 	let propertyIndex = getPlayerProperty(client);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Property] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Property] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")} (${value})`);
 
 	if (!getPropertyData(propertyIndex)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidProperty"));
@@ -1460,7 +1460,7 @@ function savePropertyToDatabase(propertyIndex) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saving business '${tempPropertyData.name}' to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Property]: Saving business '${tempPropertyData.name}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safePropertyName = escapeDatabaseString(dbConnection, tempPropertyData.name);
@@ -1516,7 +1516,7 @@ function savePropertyToDatabase(propertyIndex) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Property]: Saved property '${tempPropertyData.name}' to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Property]: Saved property '${tempPropertyData.name}' to database!`);
 
 	return false;
 }
@@ -1575,7 +1575,7 @@ function createPropertyEntrancePickup(propertyIndex) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance pickup for property ${propertyData.name}`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance pickup for property ${propertyData.name}`);
 
 	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
@@ -1652,7 +1652,7 @@ function createPropertyEntranceBlip(propertyIndex) {
 		blipModelId = propertyData.entranceBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating entrance blip for business ${propertyData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance blip for business ${propertyData.name} (model ${blipModelId})`);
 
 	if (areServerElementsSupported()) {
 		let entranceBlip = createGameBlip(propertyData.entrancePosition, blipModelId, 1, getColourByType("propertyColour"));
@@ -1697,7 +1697,7 @@ function createPropertyExitPickup(propertyIndex) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit pickup for business ${propertyData.name}`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating exit pickup for business ${propertyData.name}`);
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
@@ -1764,7 +1764,7 @@ function createPropertyExitBlip(propertyIndex) {
 		blipModelId = propertyData.exitBlipModel;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Job]: Creating exit blip for property ${propertyData.name} (model ${blipModelId})`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating exit blip for property ${propertyData.name} (model ${blipModelId})`);
 
 	let exitBlip = createGameBlip(propertyData.exitPosition, blipModelId, 1, getColourByName("propertyColour"));
 	if (exitBlip != null) {
@@ -2270,11 +2270,11 @@ function cachePropertyItems(propertyIndex) {
 	clearArray(getPropertyData(propertyIndex).storageItemCache);
 
 	//let propertyData = getPropertyData(propertyIndex);
-	//logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${propertyData.name}) ...`);
+	//logToConsole(LOG_VERBOSE, `[V.RP.Property] Caching business items for business ${propertyIndex} (${propertyData.name}) ...`);
 	//getPropertyData(propertyIndex).floorItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
 	//getPropertyData(propertyIndex).storageItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
 	for (let i in getServerData().items) {
 		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
 			getPropertyData(propertyIndex).floorItemCache.push(i);
@@ -2283,7 +2283,7 @@ function cachePropertyItems(propertyIndex) {
 		}
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Property] Successfully cached ${getPropertyData(propertyIndex).floorItemCache.length} floor items and ${getPropertyData(propertyIndex).storageItemCache} storage items for business ${propertyIndex} (${getPropertyData(propertyIndex).name})!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Property] Successfully cached ${getPropertyData(propertyIndex).floorItemCache.length} floor items and ${getPropertyData(propertyIndex).storageItemCache} storage items for business ${propertyIndex} (${getPropertyData(propertyIndex).name})!`);
 }
 
 // ===========================================================================

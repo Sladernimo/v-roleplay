@@ -707,7 +707,7 @@ function addAllCommandHandlers() {
 	let commands = getCommands();
 	for (let i in commands) {
 		for (let j in commands[i]) {
-			logToConsole(LOG_VERBOSE, `[AGRP.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
+			logToConsole(LOG_VERBOSE, `[V.RP.Command] Adding command handler for ${i} - ${commands[i][j].command}`);
 			addCommandHandler(commands[i][j].command, processPlayerCommand);
 			commandCount++;
 		}
@@ -716,7 +716,7 @@ function addAllCommandHandlers() {
 	removeCommandHandler("help");
 	addCommandHandler("help", helpCommand);
 
-	logToConsole(LOG_INFO, `[AGRP.Command] ${commandCount} command handlers added!`);
+	logToConsole(LOG_INFO, `[V.RP.Command] ${commandCount} command handlers added!`);
 }
 
 // ===========================================================================
@@ -890,7 +890,7 @@ function processPlayerCommand(command, params, client) {
 	}
 
 	if (!doesCommandExist(toLowerCase(command))) {
-		logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (invalid command): /${command} ${paramsDisplay}`);
+		logToConsole(LOG_WARN, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (invalid command): /${command} ${paramsDisplay}`);
 
 		let possibleCommand = getCommandFromParams(command);
 		if (possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
@@ -902,7 +902,7 @@ function processPlayerCommand(command, params, client) {
 	}
 
 	if (!commandData.enabled) {
-		logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (command is disabled): /${command} ${paramsDisplay}`);
+		logToConsole(LOG_WARN, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (command is disabled): /${command} ${paramsDisplay}`);
 		messagePlayerError(client, `The command {ALTCOLOUR}/${command}{MAINCOLOUR} is disabled!`);
 		messagePlayerError(client, getLocaleString(client, "CommandDisabled", `{ALTCOLOUR}/${command}{MAINCOLOUR}`));
 		return false;
@@ -910,7 +910,7 @@ function processPlayerCommand(command, params, client) {
 
 	if (doesCommandRequireLogin(toLowerCase(command))) {
 		if (!isPlayerLoggedIn(client)) {
-			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (requires login first): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (requires login first): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, getLocaleString(client, "CommandRequiresLogin", `{ALTCOLOUR}/${command}{MAINCOLOUR}`));
 			return false;
 		}
@@ -918,7 +918,7 @@ function processPlayerCommand(command, params, client) {
 
 	if (isClientFromDiscord(client)) {
 		if (!isCommandAllowedOnDiscord(command)) {
-			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command from discord, but failed (not available on discord): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, `The {ALTCOLOUR}/${command}{MAINCOLOUR} command isn't available on discord!`);
 			return false;
 		}
@@ -926,13 +926,13 @@ function processPlayerCommand(command, params, client) {
 
 	if (!isConsole(client)) {
 		if (!doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(command)))) {
-			logToConsole(LOG_WARN, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
+			logToConsole(LOG_WARN, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} attempted to use command, but failed (no permission): /${command} ${paramsDisplay}`);
 			messagePlayerError(client, getLocaleString(client, "CommandNoPermissions", `{ALTCOLOUR}/${toLowerCase(command)}{MAINCOLOUR}`));
 			return false;
 		}
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Command] ${getPlayerDisplayForConsole(client)} used command: /${command} ${paramsDisplay}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Command] ${getPlayerDisplayForConsole(client)} used command: /${command} ${paramsDisplay}`);
 	commandData.handlerFunction(toLowerCase(command), params, client);
 }
 

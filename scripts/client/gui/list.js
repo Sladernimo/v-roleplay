@@ -18,7 +18,7 @@ let listDialog = {
 // ===========================================================================
 
 function initListGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating list dialog GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating list dialog GUI ...`);
 	listDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 500, 'List', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -72,14 +72,14 @@ function initListGUI() {
 			}
 		}
 	});
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created list dialog GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created list dialog GUI`);
 }
 
 // ===========================================================================
 
 function showListGUI() {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing list window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing list window`);
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
 	listDialog.window.shown = true;

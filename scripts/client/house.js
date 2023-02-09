@@ -26,7 +26,7 @@ class HouseData {
 // ===========================================================================
 
 function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
-	logToConsole(LOG_DEBUG, `[AGRP.House] Received house ${houseId} (${name}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (getHouseData(houseId) != false) {
@@ -50,10 +50,10 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 				}
 			}
 
-			logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId} already exists. Checking blip ...`);
+			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} already exists. Checking blip ...`);
 			if (blipModel == -1) {
 				if (houseData.blipId != -1) {
-					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been removed by the server`);
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been removed by the server`);
 					if (getGame() == V_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);
 					} else {
@@ -61,11 +61,11 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 					}
 					houseData.blipId = -1;
 				} else {
-					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip is unchanged`);
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip is unchanged`);
 				}
 			} else {
 				if (houseData.blipId != -1) {
-					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been changed by the server`);
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been changed by the server`);
 					if (getGame() == V_GAME_GTA_IV) {
 						natives.setBlipCoordinates(houseData.blipId, houseData.entrancePosition);
 						natives.changeBlipSprite(houseData.blipId, houseData.blipModel);
@@ -78,20 +78,20 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 					if (blipId != -1) {
 						houseData.blipId = blipId;
 					}
-					logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 				}
 			}
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId} doesn't exist. Adding ...`);
+			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} doesn't exist. Adding ...`);
 			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
 			if (blipModel != -1) {
 				let blipId = createGameBlip(tempHouseData.blipModel, tempHouseData.entrancePosition, "House");
 				if (blipId != -1) {
 					tempHouseData.blipId = blipId;
 				}
-				logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+				logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 			} else {
-				logToConsole(LOG_DEBUG, `[AGRP.House] House ${houseId} has no blip.`);
+				logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} has no blip.`);
 			}
 			getServerData().houses.push(tempHouseData);
 			setAllHouseDataIndexes();

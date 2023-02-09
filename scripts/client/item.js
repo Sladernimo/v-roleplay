@@ -47,7 +47,7 @@ function processItemActionRendering() {
 // ===========================================================================
 
 function updatePlayerHotBar(activeSlot, itemsArray) {
-	logToConsole(LOG_DEBUG, `[AGRP.Main] Updating hotbar`);
+	logToConsole(LOG_DEBUG, `[V.RP.Main] Updating hotbar`);
 }
 
 // ===========================================================================

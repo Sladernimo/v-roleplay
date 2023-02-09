@@ -103,14 +103,14 @@ function initTimers() {
 // ===========================================================================
 
 function oneMinuteTimerFunction() {
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Checking server game time`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Checking server game time`);
 	checkServerGameTime();
 
 	if (getClients().length > 0) {
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Checking rentable vehicles`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Checking rentable vehicles`);
 		checkVehicleRenting();
 
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Updating all player name tags`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
 		updateAllPlayerNameTags();
 	}
 }
@@ -244,7 +244,7 @@ function checkServerGameTime() {
 				removeAllPlayersFromProperties();
 				removeAllPlayersFromVehicles();
 				saveServerDataToDatabase();
-				logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Timers] Changing server map to night`);
+				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
 				messageDiscordEventChannel("🌙 Changing server map to night");
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
 			}
@@ -258,7 +258,7 @@ function checkServerGameTime() {
 				removeAllPlayersFromProperties();
 				removeAllPlayersFromVehicles();
 				saveServerDataToDatabase();
-				logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Timers] Changing server map to day`);
+				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
 				messageDiscordEventChannel("🌞 Changing server map to day");
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
 			}

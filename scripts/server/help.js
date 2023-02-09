@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function initHelpScript() {
-	logToConsole(LOG_INFO, `[AGRP.Help]: Initializing help script ...`);
-	logToConsole(LOG_INFO, `[AGRP.Help]: Help script initialized successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Help]: Initializing help script ...`);
+	logToConsole(LOG_INFO, `[V.RP.Help]: Help script initialized successfully!`);
 }
 
 // ===========================================================================

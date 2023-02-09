@@ -36,7 +36,7 @@ function initBusinessScript() {
 // ===========================================================================
 
 function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
-	logToConsole(LOG_DEBUG, `[AGRP.Business] Received business ${businessId} (${name}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.Business] Received business ${businessId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (getBusinessData(businessId) != false) {
@@ -62,10 +62,10 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 				}
 			}
 
-			logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId} already exists. Checking blip ...`);
+			logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} already exists. Checking blip ...`);
 			if (blipModel == -1) {
 				if (businessData.blipId != -1) {
-					logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId}'s blip has been removed by the server`);
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been removed by the server`);
 					if (getGame() == V_GAME_GTA_IV) {
 						natives.removeBlipAndClearIndex(getBusinessData(businessId).blipId);
 					} else {
@@ -75,11 +75,11 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 					//businesses.splice(businessData.index, 1);
 					//setAllBusinessDataIndexes();
 				} else {
-					logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId}'s blip is unchanged`);
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip is unchanged`);
 				}
 			} else {
 				if (businessData.blipId != -1) {
-					logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId}'s blip has been changed by the server`);
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been changed by the server`);
 					if (getGame() == V_GAME_GTA_IV) {
 						natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
 						natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
@@ -92,20 +92,20 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 					if (blipId != -1) {
 						tempBusinessData.blipId = blipId;
 					}
-					logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 				}
 			}
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId} doesn't exist. Adding ...`);
+			logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} doesn't exist. Adding ...`);
 			let tempBusinessData = new BusinessData(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems);
 			if (blipModel != -1) {
 				let blipId = createGameBlip(tempBusinessData.blipModel, tempBusinessData.entrancePosition, tempBusinessData.name);
 				if (blipId != -1) {
 					tempBusinessData.blipId = blipId;
 				}
-				logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 			} else {
-				logToConsole(LOG_DEBUG, `[AGRP.Business] Business ${businessId} has no blip.`);
+				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} has no blip.`);
 			}
 			getServerData().businesses.push(tempBusinessData);
 			setAllBusinessDataIndexes();

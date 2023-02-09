@@ -97,7 +97,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		screenPosition = getScreenFromWorldPosition(position);
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
 
 	if (screenPosition.x < 0 || screenPosition.x > game.width) {
 		return false;

@@ -1748,7 +1748,7 @@ function areWorldLabelsSupported() {
 
 function isGameFeatureSupported(featureName) {
 	if (typeof supportedFeatures[featureName] === "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
+		logToConsole(LOG_WARN, `[V.RP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
 		if (isServerScript()) {
 			submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
 			return false;

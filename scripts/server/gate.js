@@ -45,8 +45,8 @@ class GateData {
 // ===========================================================================
 
 function initGateScript() {
-	logToConsole(LOG_INFO, `[AGRP.Gate]: Initializing gate script ...`);
-	logToConsole(LOG_INFO, `[AGRP.Gate]: Gate script initialized successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: Initializing gate script ...`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: Gate script initialized successfully!`);
 }
 
 // ===========================================================================
@@ -193,7 +193,7 @@ function saveGateToDatabase(gateId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeGateName = escapeDatabaseString(tempGateData.name);
@@ -227,7 +227,7 @@ function saveGateToDatabase(gateId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saved gate ${gateDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Gate]: Saved gate ${gateDataId} to database!`);
 
 	return true;
 }
@@ -248,13 +248,13 @@ function loadGatesFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempGateData = new GateData(dbAssoc[i]);
 				tempGates.push(tempGateData);
-				logToConsole(LOG_DEBUG, `[AGRP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Gate]: ${tempGates.length} gates loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: ${tempGates.length} gates loaded from database successfully!`);
 	return tempGates;
 }
 

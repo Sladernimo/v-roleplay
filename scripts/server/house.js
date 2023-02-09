@@ -187,12 +187,12 @@ function loadHousesFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempHouseData = new HouseData(dbAssoc[i]);
 				tempHouses.push(tempHouseData);
-				logToConsole(LOG_VERBOSE, `[AGRP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	logToConsole(LOG_INFO, `[AGRP.House]: ${tempHouses.length} houses loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.House]: ${tempHouses.length} houses loaded from database successfully!`);
 	return tempHouses;
 }
 
@@ -877,9 +877,9 @@ function getPlayerHouse(client) {
 // ===========================================================================
 
 function saveAllHousesToDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.House]: Saving all server houses to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.House]: Saving all server houses to database ...`);
 	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.House]: Aborting save all houses to database, dev server is enabled.`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.House]: Aborting save all houses to database, dev server is enabled.`);
 		return false;
 	}
 
@@ -888,7 +888,7 @@ function saveAllHousesToDatabase() {
 			saveHouseToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, `[AGRP.House]: Saved all server houses to database`);
+	logToConsole(LOG_INFO, `[V.RP.House]: Saved all server houses to database`);
 }
 
 // ===========================================================================
@@ -900,7 +900,7 @@ function saveHouseToDatabase(houseId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house '${tempHouseData.description}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saving house '${tempHouseData.description}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeHouseDescription = escapeDatabaseString(dbConnection, tempHouseData.description);
@@ -954,7 +954,7 @@ function saveHouseToDatabase(houseId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved house '${tempHouseData.description}' to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saved house '${tempHouseData.description}' to database!`);
 
 	return false;
 }
@@ -968,7 +968,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -1009,7 +1009,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved location ${locationId} for house ${houseId} to database`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saved location ${locationId} for house ${houseId} to database`);
 
 	return false;
 }
