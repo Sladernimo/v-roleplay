@@ -62,7 +62,7 @@ function loadBigGameMessageFont() {
 
 	fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
 	if (fontStream != null) {
-		tempBigGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 20.0);
+		tempBigGameMessageFonts["AuroraBdCnBT"] = lucasFont.createFont(fontStream, 28.0);
 		fontStream.close();
 	}
 
