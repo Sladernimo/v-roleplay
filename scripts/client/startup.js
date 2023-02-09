@@ -21,6 +21,7 @@ function initClientScripts() {
 	initEventScript();
 	initSkinSelectScript();
 	initCursorScript();
+	initCustomHUDScript();
 
 	addAllNetworkHandlers();
 }

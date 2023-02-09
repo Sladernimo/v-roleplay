@@ -127,6 +127,7 @@
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
 	<script src="scripts/client/gps.js" type="client" language="javascript" />
 	<script src="scripts/client/house.js" type="client" language="javascript" />
+	<script src="scripts/client/hud.js" type="client" language="javascript" />
 	<script src="scripts/client/item.js" type="client" language="javascript" />
 	<script src="scripts/client/job.js" type="client" language="javascript" />
 	<script src="scripts/client/keybind.js" type="client" language="javascript" />

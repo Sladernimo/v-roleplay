@@ -155,6 +155,7 @@ function onDrawnHUD(event) {
 	processSkinSelectRendering();
 	processNameTagRendering();
 	processInteriorLightsRendering();
+	processCustomHUDRendering();
 }
 
 // ===========================================================================
