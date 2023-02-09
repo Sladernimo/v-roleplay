@@ -1874,9 +1874,14 @@ function getVehicleTrunkPosition(vehicle) {
 // ===========================================================================
 
 function removeAllOccupantsFromVehicle(vehicle) {
-	for (let i = 0; i <= 16; i++) {
-		if (vehicle.getOccupant(i) != null) {
-			removePlayerFromVehicle(vehicle.getOccupant(i));
+	let clients = getClients();
+	for (let i in clients) {
+		if (clients[i].player != null) {
+			if (clients[i].player.vehicle != null) {
+				if (clients[i].player.vehicle == vehicle) {
+					removePlayerFromVehicle(clients[i]);
+				}
+			}
 		}
 	}
 }
