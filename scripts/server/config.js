@@ -1128,7 +1128,7 @@ function getDatabaseConfig() {
 function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading server configuration");
 
-	if (toInteger(server.getCVar("agrp_devserver")) == 1) {
+	if (toInteger(server.getCVar("v_devserver")) == 1) {
 		serverConfig = loadServerConfigFromGame(getGame());
 
 		if (serverConfig == false) {
