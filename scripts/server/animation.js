@@ -29,6 +29,12 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
+	if (!getAnimationData(animationSlot)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
+		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
+		return false;
+	}
+
 	if (toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
