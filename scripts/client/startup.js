@@ -191,8 +191,8 @@ function setUpInitialGame() {
 		// Some last steps
 		//natives.loadAllObjectsNow();
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		game.mapEnabled = false;
-		game.setTrafficEnabled(false);
+		game.mapEnabled = true;
+		//game.setTrafficEnabled(false);
 	}
 }
 
