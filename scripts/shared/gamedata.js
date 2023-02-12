@@ -6117,7 +6117,7 @@ let gameData = {
 		[V_GAME_GTA_IV_EFLC]: { // GTA IV EFLC
 		},
 		[V_GAME_MAFIA_ONE]: { // Mafia 1
-			SalieriBar: [toVector3(-336.53, -1494.56, 9.945), 0, false, "MISE02-SALIERY"],
+			SalieriBar: [toVector3(-1774.74, -3.73, 5.70), 0, false, "MISE02-SALIERY"],
 		},
 		[V_GAME_MAFIA_TWO]: { // Mafia 2
 		},
