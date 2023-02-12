@@ -552,8 +552,13 @@ function processPlayerEnteringExitingProperty(client) {
 			setPlayerHeading(client, propertyData.exitRotation);
 		}
 
-		setPlayerDimension(client, propertyData.exitDimension);
-		setPlayerInterior(client, propertyData.exitInterior);
+		if (isGameFeatureSupported("dimension")) {
+			setPlayerDimension(client, propertyData.exitDimension);
+		}
+
+		if (isGameFeatureSupported("interior")) {
+			setPlayerInterior(client, propertyData.exitInterior);
+		}
 
 		setTimeout(function () {
 			if (isFadeCameraSupported()) {
@@ -590,8 +595,13 @@ function processPlayerEnteringExitingProperty(client) {
 			setPlayerHeading(client, propertyData.entranceRotation);
 		}
 
-		setPlayerDimension(client, propertyData.entranceDimension);
-		setPlayerInterior(client, propertyData.entranceInterior);
+		if (isGameFeatureSupported("dimension")) {
+			setPlayerDimension(client, propertyData.entranceDimension);
+		}
+
+		if (isGameFeatureSupported("interior")) {
+			setPlayerInterior(client, propertyData.entranceInterior);
+		}
 
 		// Check if exiting property was into another house/business
 		let inProperty = false;
