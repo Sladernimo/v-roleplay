@@ -1809,7 +1809,7 @@ function setAllVehicleIndexes() {
 		getServerData().vehicles[i].index = i;
 
 		if (getServerData().vehicles[i].streamingRadioStation != 0) {
-			getServerData().vehicles[i].streamingRadioStationIndex = getRadioStationIndexFromDatabase(getServerData().vehicles[i].streamingRadioStation);
+			getServerData().vehicles[i].streamingRadioStationIndex = getRadioStationIdFromDatabaseId(getServerData().vehicles[i].streamingRadioStation);
 		}
 	}
 }
