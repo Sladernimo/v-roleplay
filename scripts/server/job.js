@@ -3192,17 +3192,19 @@ function createJobLocationPickup(jobId, locationId) {
 		}
 
 		if (areServerElementsSupported()) {
-			let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
-			if (pickup != false) {
-				tempJobData.locations[locationId].pickup = pickup;
-				setElementDimension(pickup, tempJobData.locations[locationId].dimension);
-				setElementOnAllDimensions(pickup, false);
-				setEntityData(pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
-				setEntityData(pickup, "v.rp.owner.id", locationId, false);
-				setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
-				setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
-				setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
-				addToWorld(pickup);
+			if (isGameFeatureSupported("pickup")) {
+				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
+				if (pickup != false) {
+					tempJobData.locations[locationId].pickup = pickup;
+					setElementDimension(pickup, tempJobData.locations[locationId].dimension);
+					setElementOnAllDimensions(pickup, false);
+					setEntityData(pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+					setEntityData(pickup, "v.rp.owner.id", locationId, false);
+					setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
+					setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
+					setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
+					addToWorld(pickup);
+				}
 			}
 		} else {
 			let blipModelId = -1;
@@ -3573,7 +3575,7 @@ function createJobUniformCommand(command, params, client) {
 	}
 
 	createJobUniform(jobId, skinIndex);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getGameConfig().skins[skinIndex][1]} (${getGameConfig().skins[skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]} (${getGameConfig().skins[skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
 	return true;
 }
 
