@@ -1311,6 +1311,11 @@ function playerMapLoaded(client, mapName) {
 
 	setTimeout(function () {
 		processPlayerEnteringExitingProperty(client);
+
+		setTimeout(function () {
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for ${getPlayerDisplayForConsole(client)} since map switch finished`);
+			setPlayer2DRendering(client, true, true, true, true, true, true);
+		}, 500);
 	}, 500);
 }
 
