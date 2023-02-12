@@ -305,7 +305,7 @@ function onEntityProcess(event, entity) {
 
 // ===========================================================================
 
-function onMapLoaded(mapName) {
+function onMapLoaded(event, mapName) {
 	sendNetworkEventToServer("v.rp.mapLoaded", mapName);
 }
 
