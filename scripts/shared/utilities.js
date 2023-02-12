@@ -182,7 +182,7 @@ let serverColours = {
 			businessBlue: "0099FF",
 			houseGreen: "11CC11",
 			clanOrange: "FF9900",
-			vehiclePurple: "960096",
+			vehiclePurple: "B19CD9",
 			jobYellow: "FFFF00",
 			adminOrange: "ED4337",
 			chatBoxListIndex: "0099FF",
@@ -206,7 +206,7 @@ let serverColours = {
 		firefighterRed: toColour(205, 60, 60, 255),
 		busDriverGreen: toColour(50, 160, 50, 255),
 		taxiDriverYellow: toColour(240, 230, 100, 255),
-		deliveryPurple: toColour(177, 156, 217, 255),
+		deliveryPurple: toColour(150, 0, 150, 255),
 		civilianWhite: toColour(200, 200, 200, 255),
 		burntYellow: toColour(210, 210, 0, 255),
 		burntOrange: toColour(210, 120, 0, 255),
@@ -214,7 +214,7 @@ let serverColours = {
 		softYellow: toColour(234, 198, 126, 255),
 		businessBlue: toColour(0, 153, 255, 255),
 		houseGreen: toColour(17, 204, 17, 255),
-		vehiclePurple: toColour(177, 156, 217, 255),
+		vehiclePurple: toColour(150, 0, 150, 255),
 		chatBoxListIndex: toColour(0, 153, 255, 255),
 		npcPink: toColour(219, 112, 147, 255),
 		adminOrange: toColour(205, 60, 60, 255),
@@ -3175,7 +3175,15 @@ function getAnimationFromParams(params) {
  * @return {AnimationData} The animation's data (array)
  */
 function getAnimationData(animationSlot, gameId = getGame()) {
-	return getGameConfig().animations[gameId][animationSlot];
+	if (animationSlot == -1) {
+		return false;
+	}
+
+	if (typeof getGameConfig().animations[gameId][animationSlot] != "undefined") {
+		return getGameConfig().animations[gameId][animationSlot];
+	}
+
+	return false;
 }
 
 // ===========================================================================
