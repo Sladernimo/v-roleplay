@@ -367,7 +367,7 @@ function enterExitPropertyCommand(command, params, client) {
 
 			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
 				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
-				if (isMainWorldScene(closestProperty.exitScene) || closestProperty.exitScene == "AGRP.MAINWORLD") {
+				if (isMainWorldScene(closestProperty.exitScene) || closestProperty.exitScene == "V.MAINWORLD") {
 					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
 				} else {
 					setPlayerScene(client, closestProperty.exitScene);
@@ -399,9 +399,11 @@ function enterExitPropertyCommand(command, params, client) {
 
 			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
 				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
-				if (isMainWorldScene(closestProperty.entranceScene) || closestProperty.entranceScene == "AGRP.MAINWORLD") {
+				if (isMainWorldScene(closestProperty.entranceScene) || closestProperty.entranceScene == "V.MAINWORLD") {
+					destroyGameElement(client.player);
 					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
 				} else {
+					destroyGameElement(client.player);
 					setPlayerScene(client, closestProperty.entranceScene);
 				}
 
