@@ -379,7 +379,17 @@ function changeScene(sceneName) {
 			natives.initCutscene(cutsceneName);
 		}
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		game.changeMap(sceneName);
+		renderHUD = false;
+		renderHotBar = false;
+		renderInteriorLights = false;
+		renderItemActionDelay = false;
+		renderLabels = false;
+		renderLogo = false;
+		renderScoreBoard = false;
+		renderSmallGameMessage = false;
+		setTimeout(function () {
+			game.changeMap(sceneName, false);
+		}, 250);
 	}
 }
 
