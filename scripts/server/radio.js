@@ -77,7 +77,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 	let radioStationId = getRadioStationFromParams(params);
 
-	if (radioStationId != 0 && typeof getServerData().radioStations[radioStationId - 1] == "undefined") {
+	if (getRadioStationData(radioStationId) == -1) {
 		messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
 		return false;
 	}
@@ -90,7 +90,7 @@ function playStreamingRadioCommand(command, params, client) {
 			return false;
 		}
 
-		if (radioStationId == 0) {
+		if (radioStationId == -1) {
 			getVehicleData(vehicle).streamingRadioStation = -1;
 			getVehicleData(vehicle).needsSaved = true;
 			getPlayerData(client).streamingRadioStation = -1;
@@ -105,20 +105,20 @@ function playStreamingRadioCommand(command, params, client) {
 			return false;
 		}
 
-		getVehicleData(vehicle).streamingRadioStation = radioStationId - 1;
-		getPlayerData(client).streamingRadioStation = radioStationId - 1;
-		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
+		getVehicleData(vehicle).streamingRadioStation = radioStationId;
+		getPlayerData(client).streamingRadioStation = radioStationId;
+		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
 		let clients = getClients();
 		for (let i in clients) {
 			if (vehicle == getPlayerVehicle(clients[i])) {
-				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(client));
+				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(client));
 			}
 		}
 	} else {
 		if (isPlayerInAnyHouse(client)) {
 			let houseId = getPlayerHouse(client);
-			if (radioStationId == 0) {
+			if (radioStationId == -1) {
 				getHouseData(houseId).streamingRadioStationIndex = -1;
 				getHouseData(houseId).streamingRadioStationIndex = 0;
 				getHouseData(houseId).needsSaved = true;
@@ -132,22 +132,22 @@ function playStreamingRadioCommand(command, params, client) {
 					}
 				}
 			} else {
-				getHouseData(houseId).streamingRadioStationIndex = radioStationId - 1;
-				getHouseData(houseId).streamingRadioStation = getRadioStationData(radioStationId - 1).databaseId;
+				getHouseData(houseId).streamingRadioStationIndex = radioStationId;
+				getHouseData(houseId).streamingRadioStation = getRadioStationData(radioStationId).databaseId;
 				getHouseData(houseId).needsSaved = true;
-				getPlayerData(client).streamingRadioStation = radioStationId - 1;
-				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
+				getPlayerData(client).streamingRadioStation = radioStationId;
+				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
 				let clients = getClients();
 				for (let i in clients) {
 					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
 			}
 		} else if (isPlayerInAnyBusiness(client)) {
 			let businessId = getPlayerBusiness(client);
-			if (radioStationId == 0) {
+			if (radioStationId == -1) {
 				getBusinessData(businessId).streamingRadioStation = 0;
 				getBusinessData(businessId).streamingRadioStationIndex = -1;
 				getBusinessData(businessId).needsSaved = true;
@@ -161,16 +161,16 @@ function playStreamingRadioCommand(command, params, client) {
 					}
 				}
 			} else {
-				getBusinessData(businessId).streamingRadioStationIndex = radioStationId - 1;
-				getBusinessData(businessId).streamingRadioStation = getRadioStationData(radioStationId - 1).databaseId;
+				getBusinessData(businessId).streamingRadioStationIndex = radioStationId;
+				getBusinessData(businessId).streamingRadioStation = getRadioStationData(radioStationId).databaseId;
 				getBusinessData(businessId).needsSaved = true;
-				getPlayerData(client).streamingRadioStation = radioStationId - 1;
-				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId - 1).name, getRadioStationData(radioStationId - 1).genre));
+				getPlayerData(client).streamingRadioStation = radioStationId;
+				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
 				let clients = getClients();
 				for (let i in clients) {
 					if (getPlayerBusiness(clients[i]) == businessId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId - 1).url, true, getPlayerStreamingRadioVolume(clients[i]));
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
 			}
@@ -264,16 +264,6 @@ function setAllRadioStationIndexes() {
 // ===========================================================================
 
 /**
- * @param {number} radioStationId - The data index of the radio station
- * @return {RadioStationData} The radio station's data (class instance)
- */
-function getRadioStationData(radioStationId) {
-	return getServerData().radioStations[radioStationId];
-}
-
-// ===========================================================================
-
-/**
  * This is a command handler function.
  *
  * @param {string} command - The command name used by the player
@@ -301,12 +291,12 @@ function getRadioStationFromParams(params) {
 			}
 		}
 	} else {
-		if (typeof getServerData().radioStations[params] != "undefined") {
-			return toInteger(params);
+		if (typeof getServerData().radioStations[params - 1] != "undefined") {
+			return toInteger(params - 1);
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================
