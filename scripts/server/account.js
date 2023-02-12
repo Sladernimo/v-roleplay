@@ -1033,7 +1033,7 @@ function saveAccountContactsToDatabase(accountContactData) {
 
 // ===========================================================================
 
-async function createAccount(name, password, email = "") {
+function createAccount(name, password, email = "") {
 	let dbConnection = connectToDatabase();
 
 	if (dbConnection) {
