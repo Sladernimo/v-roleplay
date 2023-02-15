@@ -125,8 +125,8 @@ class ServerConfigData {
 			this.discordBotToken = intToBool(dbAssoc["svr_discord_bot_token"]);
 			this.introMusicURL = dbAssoc["svr_intro_music"];
 
-			this.useRealTime = intToBool(toInteger(dbAssoc["svr_real_time_enabled"]));
-			this.realTimeZone = dbAssoc["svr_real_time_timezone"];
+			this.useRealTime = intToBool(toInteger(dbAssoc["svr_real_time"]));
+			this.realTimeZone = toInteger(dbAssoc["svr_real_time_timezone"]);
 
 			this.discord = {
 				sendEvents: intToBool(dbAssoc["svr_discord_send_events"]),
@@ -250,6 +250,7 @@ let globalConfig = {
 		"ChatBoxTimestamps",
 		"ChatEmoji",
 	],
+	mainChatType: V_CHAT_TYPE_TALK,
 };
 
 // ===========================================================================
@@ -446,6 +447,8 @@ function saveServerConfigToDatabase() {
 				["svr_job_blips", getServerConfig().createJobBlips],
 				["svr_job_pickups", getServerConfig().createJobPickups],
 				["svr_nametag_distance", getServerConfig().nameTagDistance],
+				["svr_real_time", boolToInt(getServerConfig().useRealTime)],
+				["svr_real_time_timezone", getServerConfig().realTimeZone],
 			];
 
 			let dbQuery = null;
