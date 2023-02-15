@@ -356,13 +356,13 @@ function createGroundItem(itemTypeId, value, position, dimension = 0) {
 	let itemIndex = createItem(itemTypeId, value, V_ITEM_OWNER_GROUND, 0);
 	getItemData(itemIndex).position = position;
 	getItemData(itemIndex).dimension = dimension;
-	createGroundItemObject(itemIndex);
+	spawnGroundItemObject(itemIndex);
 	return itemIndex;
 }
 
 // ===========================================================================
 
-function createGroundItemObject(itemId) {
+function spawnGroundItemObject(itemId) {
 	if (!getItemData(itemId)) {
 		return false;
 	}
@@ -1772,7 +1772,7 @@ function playerDropItem(client, hotBarSlot) {
 		getItemData(itemId).position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
 		getItemData(itemId).dimension = getPlayerDimension(client);
 		//getItemData(itemId).interior = getPlayerInterior(client);
-		createGroundItemObject(itemId);
+		spawnGroundItemObject(itemId);
 		getItemData(itemId).needsSaved = true;
 		getServerData().groundItemCache.push(itemId);
 	}
@@ -2137,9 +2137,9 @@ function cacheAllGroundItems() {
 
 // ===========================================================================
 
-function createAllGroundItemObjects() {
+function spawnAllGroundItemObjects() {
 	for (let i in getServerData().groundItemCache) {
-		createGroundItemObject(getServerData().groundItemCache[i]);
+		spawnGroundItemObject(getServerData().groundItemCache[i]);
 	}
 }
 
@@ -3289,6 +3289,17 @@ function cacheItemItems(itemId) {
 	for (let i in items) {
 		if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
 			getItemData(itemId).itemCache.push(i);
+		}
+	}
+}
+
+// ===========================================================================
+
+function despawnAllGroundItemObjects() {
+	for (let i in getServerData().groundItemCache) {
+		if (getItemData(getServerData().groundItemCache[i]).object != null) {
+			destroyGameElement(getItemData(getServerData().groundItemCache[i]).object);
+			getItemData(getServerData().groundItemCache[i]).object = null;
 		}
 	}
 }

@@ -643,9 +643,9 @@ function fixAllServerBlipsCommand(command, params, client) {
 		deleteGameElement(blip);
 	});
 
-	createAllJobBlips();
-	createAllBusinessBlips();
-	createAllHouseBlips();
+	spawnAllJobBlips();
+	spawnAllBusinessBlips();
+	spawnAllHouseBlips();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server blips`);
 }
@@ -658,9 +658,9 @@ function fixAllServerPickupsCommand(command, params, client) {
 		deleteGameElement(pickup);
 	});
 
-	createAllJobPickups();
-	createAllBusinessPickups();
-	createAllHousePickups();
+	spawnAllJobPickups();
+	spawnAllBusinessPickups();
+	spawnAllHousePickups();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server pickups`);
 }

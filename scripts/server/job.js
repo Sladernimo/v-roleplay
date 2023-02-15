@@ -782,7 +782,7 @@ function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
 
 // ===========================================================================
 
-function createAllJobBlips() {
+function spawnAllJobBlips() {
 	if (!getServerConfig().createJobBlips) {
 		return false;
 	}
@@ -790,7 +790,7 @@ function createAllJobBlips() {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Spawning all job location blips ...`);
 	for (let i in getServerData().jobs) {
 		for (let j in getServerData().jobs[i].locations) {
-			createJobLocationBlip(i, j);
+			spawnJobLocationBlip(i, j);
 		}
 	}
 	logToConsole(LOG_DEBUG, `[V.RP.Job] All job location blips spawned!`);
@@ -798,7 +798,7 @@ function createAllJobBlips() {
 
 // ===========================================================================
 
-function createAllJobPickups() {
+function spawnAllJobPickups() {
 	if (!getServerConfig().createJobPickups) {
 		return false;
 	}
@@ -942,6 +942,11 @@ function takeJobCommand(command, params, client) {
 
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = getJobData(closestJobLocation.jobIndex);
+
+	if (closestJobLocation == false) {
+		messagePlayerError(client, getLocaleString(client, "NoJobLocationCloseEnough"));
+		return false;
+	}
 
 	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().takeJobDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoJobLocationCloseEnough"));
@@ -1550,8 +1555,8 @@ function reloadAllJobsCommand(command, params, client) {
 
 	Promise.resolve().then(() => {
 		getServerData().jobs = loadJobsFromDatabase();
-		createAllJobPickups();
-		createAllJobBlips();
+		spawnAllJobPickups();
+		spawnAllJobBlips();
 	});
 
 	announceAdminAction("AllJobsReloaded");
@@ -3223,7 +3228,7 @@ function createJobLocationPickup(jobId, locationId) {
 
 // ===========================================================================
 
-function createJobLocationBlip(jobId, locationId) {
+function spawnJobLocationBlip(jobId, locationId) {
 	if (!getServerConfig().createJobBlips) {
 		return false;
 	}
@@ -3425,14 +3430,14 @@ function respawnPlayerLastJobVehicle(client) {
 
 function resetAllJobBlips() {
 	deleteAllJobBlips();
-	createAllJobBlips();
+	spawnAllJobBlips();
 }
 
 // ===========================================================================
 
 function resetAllJobPickups() {
 	deleteAllJobPickups();
-	createAllJobPickups();
+	spawnAllJobPickups();
 }
 
 // ===========================================================================

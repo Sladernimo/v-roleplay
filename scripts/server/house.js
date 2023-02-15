@@ -462,7 +462,7 @@ function setHousePickupCommand(command, params, client) {
 	}
 
 	deleteHouseEntrancePickup(houseId);
-	createHouseEntrancePickup(houseId);
+	spawnHouseEntrancePickup(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -527,8 +527,8 @@ function setHouseInteriorTypeCommand(command, params, client) {
 
 	deleteHouseEntrancePickup(houseId);
 	deleteHouseExitPickup(houseId);
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+	spawnHouseEntrancePickup(houseId);
+	spawnHouseExitPickup(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -654,8 +654,8 @@ function moveHouseExitCommand(command, params, client) {
 
 	deleteHouseExitPickup(houseId);
 	deleteHouseExitBlip(houseId);
-	createHouseExitPickup(houseId);
-	createHouseExitBlip(houseId);
+	spawnHouseExitPickup(houseId);
+	spawnHouseExitBlip(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -798,8 +798,8 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 	saveHouseToDatabase(houseId - 1);
 	setHouseDataIndexes();
 
-	createHousePickups(houseId - 1);
-	createHouseBlips(houseId - 1);
+	spawnHousePickups(houseId - 1);
+	spawnHouseBlips(houseId - 1);
 
 	return houseId - 1;
 }
@@ -1016,25 +1016,25 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 
 // ===========================================================================
 
-function createAllHousePickups() {
+function spawnAllHousePickups() {
 	for (let i in getServerData().houses) {
-		createHouseEntrancePickup(i);
-		createHouseExitPickup(i);
+		spawnHouseEntrancePickup(i);
+		spawnHouseExitPickup(i);
 	}
 }
 
 // ===========================================================================
 
-function createAllHouseBlips() {
+function spawnAllHouseBlips() {
 	for (let i in getServerData().houses) {
-		createHouseEntranceBlip(i);
-		createHouseExitBlip(i);
+		spawnHouseEntranceBlip(i);
+		spawnHouseExitBlip(i);
 	}
 }
 
 // ===========================================================================
 
-function createHouseEntrancePickup(houseId) {
+function spawnHouseEntrancePickup(houseId) {
 	if (!getServerConfig().createHousePickups) {
 		return false;
 	}
@@ -1082,7 +1082,7 @@ function createHouseEntrancePickup(houseId) {
 
 // ===========================================================================
 
-function createHouseEntranceBlip(houseId) {
+function spawnHouseEntranceBlip(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1139,7 +1139,7 @@ function createHouseEntranceBlip(houseId) {
 
 // ===========================================================================
 
-function createHouseExitPickup(houseId) {
+function spawnHouseExitPickup(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1189,7 +1189,7 @@ function createHouseExitPickup(houseId) {
 
 // ===========================================================================
 
-function createHouseExitBlip(houseId) {
+function spawnHouseExitBlip(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1702,8 +1702,8 @@ function canPlayerLockUnlockHouse(client, houseId) {
 function resetHousePickups(houseId) {
 	deleteHouseEntrancePickup(houseId);
 	deleteHouseExitPickup(houseId);
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+	spawnHouseEntrancePickup(houseId);
+	spawnHouseExitPickup(houseId);
 }
 
 // ===========================================================================
@@ -1711,8 +1711,8 @@ function resetHousePickups(houseId) {
 function resetHouseBlips(houseId) {
 	deleteHouseEntranceBlip(houseId);
 	deleteHouseExitBlip(houseId);
-	createHouseEntranceBlip(houseId);
-	createHouseExitBlip(houseId);
+	spawnHouseEntranceBlip(houseId);
+	spawnHouseExitBlip(houseId);
 }
 
 // ===========================================================================
@@ -1830,15 +1830,15 @@ function deleteAllHousePickups() {
 // ===========================================================================
 
 function createHouseBlips(houseId) {
-	createHouseEntranceBlip(houseId);
-	createHouseExitBlip(houseId);
+	spawnHouseEntranceBlip(houseId);
+	spawnHouseExitBlip(houseId);
 }
 
 // ===========================================================================
 
 function createHousePickups(houseId) {
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+	spawnHouseEntrancePickup(houseId);
+	spawnHouseExitPickup(houseId);
 }
 
 // ===========================================================================

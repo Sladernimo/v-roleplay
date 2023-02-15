@@ -49,8 +49,9 @@ async function initServerScripts() {
 	setAllServerDataIndexes();
 
 	checkServerGameTime();
-	createAllServerElements();
+	spawnAllServerElements();
 	addAllNetworkEventHandlers();
+	addAllCommandHandlers();
 	initAllClients();
 	initTimers();
 
@@ -175,17 +176,16 @@ function setAllServerDataIndexes() {
 
 // ===========================================================================
 
-function createAllServerElements() {
-	createAllBusinessPickups();
-	createAllBusinessBlips();
-	createAllHousePickups();
-	createAllHouseBlips();
-	createAllJobPickups();
-	createAllJobBlips();
-	createAllGroundItemObjects();
+function spawnAllServerElements() {
+	spawnAllBusinessPickups();
+	spawnAllBusinessBlips();
+	spawnAllHousePickups();
+	spawnAllHouseBlips();
+	spawnAllJobPickups();
+	spawnAllJobBlips();
+	spawnAllGroundItemObjects();
 	spawnAllVehicles();
 	spawnAllNPCs();
-	addAllCommandHandlers();
 
 	// Using client-side spheres since server-side ones don't show on GTAC atm (bug)
 	//createAllJobRouteLocationMarkers();

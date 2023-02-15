@@ -246,7 +246,13 @@ function checkServerGameTime() {
 				saveServerDataToDatabase();
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
 				messageDiscordEventChannel("🌙 Changing server map to night");
+				despawnAllVehicles();
+				despawnAllNPCs();
+				despawnAllGroundItemObjects();
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				spawnAllVehicles();
+				spawnAllNPCs();
+				spawnAllGroundItemObjects();
 			}
 		} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
 			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
@@ -260,7 +266,13 @@ function checkServerGameTime() {
 				saveServerDataToDatabase();
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
 				messageDiscordEventChannel("🌞 Changing server map to day");
+				despawnAllVehicles();
+				despawnAllNPCs();
+				despawnAllGroundItemObjects();
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+				spawnAllVehicles();
+				spawnAllNPCs();
+				spawnAllGroundItemObjects();
 			}
 		}
 	}

@@ -382,8 +382,8 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	setBusinessDataIndexes();
 	saveAllBusinessesToDatabase();
 
-	createBusinessPickups(businessId - 1);
-	createBusinessBlips(businessId - 1);
+	spawnBusinessPickups(businessId - 1);
+	spawnBusinessBlips(businessId - 1);
 
 	return tempBusinessData;
 }
@@ -460,8 +460,9 @@ function setBusinessNameCommand(command, params, client) {
 
 	let oldBusinessName = getBusinessData(businessId).name;
 	getBusinessData(businessId).name = newBusinessName;
-	setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.name", getBusinessData(businessId).name, true);
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} renamed business {businessBlue}${oldBusinessName}{MAINCOLOUR} to {businessBlue}${newBusinessName}`, true);
 }
 
@@ -503,6 +504,7 @@ function setBusinessOwnerCommand(command, params, client) {
 	getBusinessData(businessId).ownerType = V_BIZ_OWNER_PLAYER;
 	getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(newBusinessOwner).databaseId;
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
 
 	messagePlayerSuccess(client, `{MAINCOLOUR}You gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to {ALTCOLOUR}${getCharacterFullName(newBusinessOwner)}`);
 }
@@ -545,6 +547,7 @@ function setBusinessJobCommand(command, params, client) {
 	getBusinessData(businessId).ownerType = V_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
 
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set the owner of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to the {jobYellow}${getJobData(jobId).name}`);
 }
@@ -728,8 +731,9 @@ function setBusinessJobCommand(command, params, client) {
 
 	getBusinessData(businessId).ownerType = V_BIZ_OWNER_JOB;
 	getBusinessData(businessId).ownerId = getJobData(jobId).databaseId;
-
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}owner to the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR}job`);
 }
 
@@ -758,8 +762,9 @@ function setBusinessPublicCommand(command, params, client) {
 
 	getBusinessData(businessId).ownerType = V_BIZ_OWNER_PUBLIC;
 	getBusinessData(businessId).ownerId = 0;
-
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}owner set to {ALTCOLOUR}public`);
 }
 
@@ -789,6 +794,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 	getBusinessData(businessId).ownerType = V_BIZ_OWNER_NONE;
 	getBusinessData(businessId).ownerId = -1;
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
 
 	messagePlayerSuccess(client, `{MAINCOLOUR}You removed business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} owner`);
 }
@@ -819,8 +825,8 @@ function toggleBusinessInteriorLightsCommand(command, params, client) {
 
 	getBusinessData(businessId).interiorLights = !getBusinessData(businessId).interiorLights;
 	updateBusinessInteriorLightsForOccupants(businessId);
-
 	getBusinessData(businessId).needsSaved = true;
+
 	meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(getBusinessData(businessId).interiorLights))} the business lights`);
 }
 
@@ -852,6 +858,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 	getBusinessData(businessId).entranceFee = entranceFee;
 	getBusinessData(businessId).needsSaved = true;
 	updateBusinessPickupLabelData(businessId);
+
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} entrance fee to {ALTCOLOUR}${getCurrencyString(entranceFee)}`);
 }
 
@@ -881,6 +888,8 @@ function setBusinessPaintBallCommand(command, params, client) {
 
 	getBusinessData(businessId).type = V_BIZ_TYPE_PAINTBALL;
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
 	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowPaintBall"));
 }
 
@@ -1139,8 +1148,8 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 
 	//deleteBusinessExitPickup(businessId);
 	//deleteBusinessExitBlip(businessId);
-	//createBusinessExitBlip(businessId);
-	//createBusinessExitPickup(businessId);
+	//spawnBusinessExitBlip(businessId);
+	//spawnBusinessExitPickup(businessId);
 
 	resetBusinessPickups(businessId);
 
@@ -1198,8 +1207,8 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 
 	//deleteBusinessExitPickup(businessId);
 	//deleteBusinessExitBlip(businessId);
-	//createBusinessExitBlip(businessId);
-	//createBusinessExitPickup(businessId);
+	//spawnBusinessExitBlip(businessId);
+	//spawnBusinessExitPickup(businessId);
 
 	resetBusinessPickups(businessId);
 
@@ -1301,6 +1310,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 
 	cacheBusinessItems(businessId);
 	updateBusinessPickupLabelData(businessId);
+
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} the default items for ${typeParam}`, true);
 }
 
@@ -1326,6 +1336,7 @@ function setBusinessDealershipCommand(command, params, client) {
 	getBusinessData(businessId).labelHelpType == V_PROPLABEL_INFO_ENTERVEHICLE;
 	getBusinessData(businessId).type = V_BIZ_TYPE_DEALERSHIP;
 	updateBusinessPickupLabelData(businessId);
+
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the type of business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} to dealership`, true);
 }
 
@@ -1468,9 +1479,9 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).buyPrice = amount;
-	setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", getBusinessData(businessId).buyPrice, true);
-
 	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
 	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
@@ -1573,23 +1584,14 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
-
 	getBusinessData(businessId).needsSaved = true;
+
 	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
 	getPlayerData(client).promptType = V_PROMPT_BIZORDER;
 }
 
 // ===========================================================================
 
-/**
- * This is a command handler function.
- *
- * @param {string} command - The command name used by the player
- * @param {string} params - The parameters/args string used with the command by the player
- * @param {Client} client - The client/player that used the command
- * @return {bool} Whether or not the command was successful
- *
- */
 function orderItemForBusiness(businessId, itemType, amount) {
 	if (getBusinessData(businessId).till < orderTotalCost) {
 		let neededAmount = orderTotalCost - getBusinessData(businessId).till;
@@ -1695,8 +1697,8 @@ function moveBusinessEntranceCommand(command, params, client) {
 
 	//deleteBusinessEntranceBlip(businessId);
 	//deleteBusinessEntrancePickup(businessId);
-	//createBusinessEntranceBlip(businessId);
-	//createBusinessEntrancePickup(businessId);
+	//spawnBusinessEntranceBlip(businessId);
+	//spawnBusinessEntrancePickup(businessId);
 
 	resetBusinessPickups(businessId);
 	resetBusinessBlips(businessId);
@@ -1736,8 +1738,8 @@ function moveBusinessExitCommand(command, params, client) {
 	deleteBusinessExitBlip(businessId);
 	deleteBusinessExitPickup(businessId);
 
-	createBusinessExitBlip(businessId);
-	createBusinessExitPickup(businessId);
+	spawnBusinessExitBlip(businessId);
+	spawnBusinessExitPickup(businessId);
 
 	getBusinessData(businessId).needsSaved = true;
 
@@ -1962,14 +1964,14 @@ function saveBusinessToDatabase(businessId) {
  * @return {Boolean} Whether or not the server pickups were created
  *
  */
-function createAllBusinessPickups() {
+function spawnAllBusinessPickups() {
 	if (!getServerConfig().createBusinessPickups) {
 		return false;
 	}
 
 	for (let i in getServerData().businesses) {
-		createBusinessEntrancePickup(i);
-		createBusinessExitPickup(i);
+		spawnBusinessEntrancePickup(i);
+		spawnBusinessExitPickup(i);
 		updateBusinessPickupLabelData(i);
 	}
 
@@ -1984,7 +1986,7 @@ function createAllBusinessPickups() {
  * @return {Boolean} Whether or not the server blips were created
  *
  */
-function createAllBusinessBlips() {
+function spawnAllBusinessBlips() {
 	if (!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -1994,8 +1996,8 @@ function createAllBusinessBlips() {
 	}
 
 	for (let i in getServerData().businesses) {
-		createBusinessEntranceBlip(i);
-		createBusinessExitBlip(i);
+		spawnBusinessEntranceBlip(i);
+		spawnBusinessExitBlip(i);
 	}
 }
 
@@ -2008,7 +2010,7 @@ function createAllBusinessBlips() {
  * @return {Boolean} Whether or not the blip was created
  *
  */
-function createBusinessEntrancePickup(businessId) {
+function spawnBusinessEntrancePickup(businessId) {
 	if (!getServerConfig().createBusinessPickups) {
 		return false;
 	}
@@ -2071,7 +2073,7 @@ function createBusinessEntrancePickup(businessId) {
  * @return {Boolean} Whether or not the blip was created
  *
  */
-function createBusinessEntranceBlip(businessId) {
+function spawnBusinessEntranceBlip(businessId) {
 	if (!getServerConfig().createBusinessBlips) {
 		return false;
 	}
@@ -2129,7 +2131,7 @@ function createBusinessEntranceBlip(businessId) {
  * @return {Boolean} Whether or not the pickup was created
  *
  */
-function createBusinessExitPickup(businessId) {
+function spawnBusinessExitPickup(businessId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -2191,7 +2193,7 @@ function createBusinessExitPickup(businessId) {
  * @return {Boolean} Whether or not the blip was created
  *
  */
-function createBusinessExitBlip(businessId) {
+function spawnBusinessExitBlip(businessId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -2412,7 +2414,7 @@ function deleteBusinessEntrancePickup(businessId) {
 		//removeFromWorld(getBusinessData(businessId).entrancePickup);
 		deleteGameElement(getBusinessData(businessId).entrancePickup);
 		getBusinessData(businessId).entrancePickup = null;
-
+		updateBusinessPickupLabelData(businessId);
 		return true;
 	}
 
@@ -2511,8 +2513,8 @@ function reloadAllBusinessesCommand(command, params, client) {
 	//forceAllPlayersToStopWorking();
 	clearArray(getServerData().businesses);
 	getServerData().businesses = loadBusinessesFromDatabase();
-	createAllBusinessPickups();
-	createAllBusinessBlips();
+	spawnAllBusinessPickups();
+	spawnAllBusinessBlips();
 	setBusinessDataIndexes();
 	cacheAllBusinessItems();
 
@@ -2871,9 +2873,9 @@ function getBusinessIdFromDatabaseId(databaseId) {
 function updateBusinessPickupLabelData(businessId) {
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (getBusinessData(businessId) == false) {
-			sendBusinessToPlayer(null, businessId, "", false, -1, -1, 0, 0, false, false, false);
+			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, false, false);
 		} else {
-			sendBusinessToPlayer(null, businessId, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
+			sendBusinessToPlayer(null, businessId, false, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
 		}
 		return false;
 	}
@@ -2931,24 +2933,24 @@ function updateBusinessPickupLabelData(businessId) {
 
 function resetBusinessPickups(businessId) {
 	deleteBusinessPickups(businessId);
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+	spawnBusinessEntrancePickup(businessId);
+	spawnBusinessExitPickup(businessId);
 }
 
 // ===========================================================================
 
 function resetBusinessBlips(businessId) {
 	deleteBusinessBlips(businessId);
-	createBusinessEntranceBlip(businessId);
-	createBusinessExitBlip(businessId);
+	spawnBusinessEntranceBlip(businessId);
+	spawnBusinessExitBlip(businessId);
 }
 
 // ===========================================================================
 
 function resetAllBusinessPickups(businessId) {
 	deleteBusinessPickups(businessId);
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+	spawnBusinessEntrancePickup(businessId);
+	spawnBusinessExitPickup(businessId);
 }
 
 // ===========================================================================
@@ -2956,15 +2958,15 @@ function resetAllBusinessPickups(businessId) {
 function resetAllBusinessBlips() {
 	for (let i in getServerData().businesses) {
 		deleteBusinessBlips(i);
-		createBusinessBlips(i);
+		spawnBusinessBlips(i);
 	}
 }
 
 // ===========================================================================
 
-function createBusinessBlips(businessId) {
-	createBusinessEntranceBlip(businessId);
-	createBusinessExitBlip(businessId);
+function spawnBusinessBlips(businessId) {
+	spawnBusinessEntranceBlip(businessId);
+	spawnBusinessExitBlip(businessId);
 }
 
 // ===========================================================================
@@ -2972,15 +2974,15 @@ function createBusinessBlips(businessId) {
 function resetAllBusinessPickups() {
 	for (let i in getServerData().businesses) {
 		deleteBusinessPickups(i);
-		createBusinessPickups(i);
+		spawnBusinessPickups(i);
 	}
 }
 
 // ===========================================================================
 
-function createBusinessPickups(businessId) {
-	createBusinessEntrancePickup(businessId);
-	createBusinessExitPickup(businessId);
+function spawnBusinessPickups(businessId) {
+	spawnBusinessEntrancePickup(businessId);
+	spawnBusinessExitPickup(businessId);
 }
 
 // ===========================================================================
