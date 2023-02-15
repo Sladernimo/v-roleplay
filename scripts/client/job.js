@@ -136,10 +136,19 @@ function hideJobRouteLocation() {
 
 // ===========================================================================
 
-function receiveJobFromServer(jobId, jobLocationId, name, position, blipModel, pickupModel) {
+function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel) {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+		if (isDeleted == true) {
+			if (getGame() == V_GAME_GTA_IV) {
+				natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
+			}
+
+			getServerData().jobs.splice(jobs, 1);
+			return false;
+		}
+
 		if (getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
 			jobData.jobLocationId = jobLocationId;
@@ -217,8 +226,14 @@ function getJobData(jobId) {
 
 function setAllJobDataIndexes() {
 	for (let i in getServerData().jobs) {
-		jobs[i].index = i;
+		getServerData().jobs[i].index = i;
 	}
+}
+
+// ===========================================================================
+
+function removeJobsFromClient() {
+	getServerData().jobs.splice(0);
 }
 
 // ===========================================================================
