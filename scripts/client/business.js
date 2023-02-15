@@ -35,10 +35,19 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
+function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
 	logToConsole(LOG_DEBUG, `[V.RP.Business] Received business ${businessId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+		if (isDeleted == true) {
+			if (getGame() == V_GAME_GTA_IV) {
+				natives.removeBlipAndClearIndex(getBusinessData(businessId).blipId);
+			}
+
+			getServerData().businesses.splice(businessId, 1);
+			return false;
+		}
+
 		if (getBusinessData(businessId) != false) {
 			let businessData = getBusinessData(businessId);
 			businessData.name = name;
@@ -52,13 +61,15 @@ function receiveBusinessFromServer(businessId, name, entrancePosition, blipModel
 			businessData.locked = locked;
 			businessData.entranceFee = entranceFee;
 
-			if (hasInterior && !hasItems) {
-				businessData.labelInfoType = V_PROPLABEL_INFO_ENTER;
-			} else if (!hasInterior && hasItems) {
-				businessData.labelInfoType = V_PROPLABEL_INFO_BUY;
+			if (businessData.buyPrice > 0) {
+				businessData.labelInfoType = V_PROPLABEL_INFO_BUYBIZ;
 			} else {
-				if (businessData.buyPrice > 0) {
-					businessData.labelInfoType = V_PROPLABEL_INFO_BUYBIZ;
+				if (hasInterior && !hasItems) {
+					businessData.labelInfoType = V_PROPLABEL_INFO_ENTER;
+				} else if (!hasInterior && hasItems) {
+					businessData.labelInfoType = V_PROPLABEL_INFO_BUY;
+				} else {
+					businessData.labelInfoType = V_PROPLABEL_INFO_NONE;
 				}
 			}
 
@@ -140,6 +151,12 @@ function setAllBusinessDataIndexes() {
 	for (let i in getServerData().businesses) {
 		getServerData().businesses[i].index = i;
 	}
+}
+
+// ===========================================================================
+
+function removeBusinessesFromClient() {
+	getServerData().businesses.splice(0);
 }
 
 // ===========================================================================
