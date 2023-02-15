@@ -19,24 +19,27 @@ function processSync(event, deltaTime) {
 			//}
 		}
 
-		if (localPlayer.health <= 0) {
-			if (!calledDeathEvent) {
-				logToConsole(LOG_DEBUG, `Local player died`);
-				localPlayer.clearWeapons();
-				calledDeathEvent = true;
-				sendNetworkEventToServer("v.rp.playerDeath");
+
+		if (calledDeathEvent == false) {
+			if (localPlayer.health <= 0) {
+				if (!calledDeathEvent) {
+					logToConsole(LOG_DEBUG, `Local player died`);
+					localPlayer.clearWeapons();
+					calledDeathEvent = true;
+					sendNetworkEventToServer("v.rp.playerDeath");
+				}
 			}
 		}
 	}
 
-	if (localPlayer.health <= 0) {
-		if (!calledDeathEvent) {
-			logToConsole(LOG_DEBUG, `Local player died`);
-			localPlayer.clearWeapons();
-			calledDeathEvent = true;
-			sendNetworkEventToServer("v.rp.playerDeath");
-		}
-	}
+	//if (localPlayer.health <= 0) {
+	//	if (!calledDeathEvent) {
+	//		logToConsole(LOG_DEBUG, `Local player died`);
+	//		localPlayer.clearWeapons();
+	//		calledDeathEvent = true;
+	//		sendNetworkEventToServer("v.rp.playerDeath");
+	//	}
+	//}
 
 	if (streamingRadioElement) {
 		//streamingRadio.volume = getStreamingRadioVolumeForPosition(streamingRadio.position);
