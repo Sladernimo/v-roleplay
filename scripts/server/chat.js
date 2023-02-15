@@ -7,6 +7,17 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+// ===========================================================================
+
+const V_CHAT_TYPE_NONE = 0;					// None (invalid)
+const V_CHAT_TYPE_GLOBAL = 1;				// Global OOC
+const V_CHAT_TYPE_LOCAL = 2;				// Local OOC
+const V_CHAT_TYPE_TALK = 3;					// Local IC (normal talking)
+const V_CHAT_TYPE_SHOUT = 4;				// Local IC (shouting)
+const V_CHAT_TYPE_WHISPER = 5;				// Local IC (whispering)
+
+// ===========================================================================
+
 function initChatScript() {
 	logToConsole(LOG_INFO, "[V.RP.Chat]: Initializing chat script ...");
 	logToConsole(LOG_INFO, "[V.RP.Chat]: Chat script initialized successfully!");
@@ -38,8 +49,17 @@ function processPlayerChat(client, messageText) {
 		}
 
 		messageText = messageText.substring(0, 128);
-		messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}${messageText}`, getPlayerColour(client));
-		messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
+
+		switch (getGlobalConfig().mainChatType) {
+			case V_CHAT_TYPE_TALK:
+				talkToNearbyPlayers(client, messageText);
+				break;
+
+			case V_CHAT_TYPE_GLOBAL:
+			default:
+				chatToAllPlayers(client, messageTest);
+				break;
+		}
 	} else {
 		messagePlayerNormal(null, `🛡️ (ADMIN) - ${messageText}`);
 	}
@@ -414,6 +434,13 @@ function canPlayerUseMegaphone(client) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function chatToAllPlayers(client, messageText) {
+	messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}${messageText}`, getPlayerColour(client));
+	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
 }
 
 // ===========================================================================
