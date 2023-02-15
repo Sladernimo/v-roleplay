@@ -164,3 +164,11 @@ function getVehicleSpeed(vehicle) {
 }
 
 // ===========================================================================
+
+function removeVehiclesFromClient() {
+	// Need to destroy elements before clearing array
+
+	getServerData().vehicles.splice(0);
+}
+
+// ===========================================================================
