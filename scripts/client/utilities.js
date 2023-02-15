@@ -29,14 +29,14 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 // ===========================================================================
 
 function fadeLocalCamera(state, duration, colour) {
-	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${time}ms`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${duration}ms`);
 
 	cameraFadeDuration = duration;
 	cameraFadeStart = sdl.ticks;
-	cameraFadeEnabled = true;
 	cameraFadeIn = state;
 	cameraFadeColour = colour;
 	cameraFadeAlpha = (state) ? 255 : 0;
+	cameraFadeEnabled = true;
 }
 
 // ===========================================================================
@@ -403,7 +403,9 @@ function processLocalPlayerVehicleControlState() {
 		if (localPlayer.vehicle != null) {
 			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
 				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
-					localPlayer.vehicle.engine = false;
+					if (localPlayer.vehicle.engine == true) {
+						localPlayer.vehicle.engine = false;
+					}
 					//localPlayer.vehicle.netFlags.sendSync = false;
 					if (!localPlayer.vehicle.engine) {
 						if (typeof localPlayer.vehicle.velocity != "undefined") {
