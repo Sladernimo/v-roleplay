@@ -102,6 +102,7 @@ function onResourceReady(event, resource) {
 
 function onProcess(event, deltaTime) {
 	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess`);
+
 	if (localPlayer == null) {
 		return false;
 	}
@@ -156,6 +157,7 @@ function onDrawnHUD(event) {
 	processNameTagRendering();
 	processInteriorLightsRendering();
 	processCustomHUDRendering();
+	processCameraFadeRendering();
 }
 
 // ===========================================================================
