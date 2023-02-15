@@ -25,10 +25,19 @@ class HouseData {
 
 // ===========================================================================
 
-function receiveHouseFromServer(houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
+function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
 	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+		if (isDeleted == true) {
+			if (getGame() == V_GAME_GTA_IV) {
+				natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);
+			}
+
+			getServerData().houses.splice(houseId, 1);
+			return false;
+		}
+
 		if (getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
 			houseData.description = description;
@@ -46,7 +55,11 @@ function receiveHouseFromServer(houseId, description, entrancePosition, blipMode
 				if (houseData.rentPrice > 0) {
 					houseData.labelInfoType = V_PROPLABEL_INFO_RENTHOUSE;
 				} else {
-					houseData.labelInfoType = V_PROPLABEL_INFO_ENTER;
+					if (houseData.hasInterior) {
+						houseData.labelInfoType = V_PROPLABEL_INFO_ENTER;
+					} else {
+						houseData.labelInfoType = V_PROPLABEL_INFO_NONE;
+					}
 				}
 			}
 
@@ -122,6 +135,12 @@ function setAllHouseDataIndexes() {
 	for (let i in getServerData().houses) {
 		getServerData().houses[i].index = i;
 	}
+}
+
+// ===========================================================================
+
+function removeHousesFromClient() {
+	getServerData().houses.splice(0);
 }
 
 // ===========================================================================
