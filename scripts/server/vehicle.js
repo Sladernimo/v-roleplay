@@ -1926,3 +1926,12 @@ function isPlayerInVehicleDriverSeat(client) {
 }
 
 // ===========================================================================
+
+function despawnAllVehicles() {
+	for (let i in getServerData().vehicles) {
+		destroyGameElement(getServerData().vehicles[i].vehicle);
+		getServerData().vehicles[i].vehicle = null;
+	}
+}
+
+// ===========================================================================
