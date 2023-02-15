@@ -33,7 +33,10 @@ function addAllEventHandlers() {
 		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
 		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
 		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
-		addEventHandler("OnPickupPickedUp", onPedPickupPickedUp);
+	}
+
+	if (getGame() <= V_GAME_GTA_SA) {
+		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
 	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
@@ -243,6 +246,8 @@ function onResourceStop(event, resource) {
 // ===========================================================================
 
 function onPedEnteredSphere(event, ped, sphere) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedEnteredSphere event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -267,6 +272,8 @@ function onPedEnteredSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedExitedSphere(event, ped, sphere) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedExitedSphere event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -284,6 +291,8 @@ function onPedExitedSphere(event, ped, sphere) {
 // ===========================================================================
 
 function onPedPickupPickedUp(event, ped, pickup) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedPickupPickedUp event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -323,8 +332,13 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 
 // ===========================================================================
 
-function onPlayerDeath(client, killer, weapon, pedPiece) {
+function onPlayerDeath(client, killer, weapon = 0, pedPiece = 0) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
+
+	// Death is already being processed
+	if (getPlayerData(client).pedState == V_PEDSTATE_DEAD) {
+		return false;
+	}
 
 	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
 	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
@@ -332,7 +346,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 	setPlayerControlState(client, false);
 	setTimeout(function () {
 		if (isFadeCameraSupported()) {
-			fadeCamera(client, false, 1.0);
+			fadePlayerCamera(client, false, 1000);
 		}
 		setTimeout(function () {
 			if (isPlayerInPaintBall(client)) {
@@ -354,6 +368,7 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 					}
 				} else {
 					respawnPlayerForPaintBall(client);
+					getPlayerData(client).pedState = V_PEDSTATE_READY;
 				}
 			} else {
 				if (getPlayerCurrentSubAccount(client).inJail) {
@@ -367,14 +382,14 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 					}
 
 					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-
 					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
+						fadePlayerCamera(client, true, 1000);
 					}
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
 					resetPlayerBlip(client);
+					getPlayerData(client).pedState = V_PEDSTATE_READY;
 				} else {
 					let closestHospital = getClosestHospital(getPlayerPosition(client));
 					despawnPlayer(client);
@@ -388,13 +403,14 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
 					if (isFadeCameraSupported()) {
-						fadeCamera(client, true, 1.0);
+						fadePlayerCamera(client, true, 1000);
 					}
 
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
 					resetPlayerBlip(client);
+					getPlayerData(client).pedState = V_PEDSTATE_READY;
 				}
 			}
 		}, 2000);
@@ -417,6 +433,12 @@ function onPlayerDeath(client, killer, weapon, pedPiece) {
 // ===========================================================================
 
 function onPedSpawn(ped) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedSpawn event called`);
+
+	if (ped != null) {
+		return false;
+	}
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} spawned!`);
 
 	//if (ped.type == ELEMENT_PLAYER) {
@@ -691,6 +713,8 @@ async function onPlayerSpawn(client) {
 // ===========================================================================
 
 function onPlayerCommand(event, client, command, params) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPlayerCommand event called`);
+
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player used command ${command}!`);
 
 	if (!doesCommandExist(command)) {
@@ -701,6 +725,8 @@ function onPlayerCommand(event, client, command, params) {
 // ===========================================================================
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedExitedVehicle event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -750,6 +776,8 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedEnteredVehicle event called`);
+
 	if (ped == null) {
 		logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}, but ped is null`);
 		return false;
@@ -878,6 +906,8 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteringVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedEnteringVehicle event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -902,6 +932,8 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
+	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedExitingVehicle event called`);
+
 	if (ped == null) {
 		return false;
 	}
@@ -938,12 +970,12 @@ function onPlayerExitingVehicle(client, vehicle, seat) {
 // ===========================================================================
 
 function onPedFall(ped) {
-	if (ped.isType(ELEMENT_PLAYER)) {
-		let client = getClientFromPlayerElement(ped);
-		if (client != null) {
-			processPlayerDeath(client);
-		}
-	}
+	//if (ped.isType(ELEMENT_PLAYER)) {
+	//	let client = getClientFromPlayerElement(ped);
+	//	if (client != null) {
+	//		processPlayerDeath(client);
+	//	}
+	//}
 }
 
 // ===========================================================================
