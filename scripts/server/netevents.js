@@ -31,7 +31,7 @@ function addAllNetworkEventHandlers() {
 
 	// Event
 	addNetworkEventHandler("v.rp.pickup", onPlayerNearPickup);
-	addNetworkEventHandler("v.rp.playerDeath", onPlayerDeath);
+	addNetworkEventHandler("v.rp.playerDeath", processPlayerDeath);
 
 	// Job
 	addNetworkEventHandler("v.rp.arrivedAtJobRouteLocation", playerArrivedAtJobRouteLocation);
@@ -1112,53 +1112,59 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
-	sendNetworkEventToPlayer("v.rp.business", client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems);
+function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
+	sendNetworkEventToPlayer("v.rp.business", client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems);
 }
 
 // ==========================================================================
 
-function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
-	sendNetworkEventToPlayer("v.rp.house", client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked);
+function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
+	sendNetworkEventToPlayer("v.rp.house", client, houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked);
 }
 
 // ==========================================================================
 
-function sendJobToPlayer(client, jobId, jobLocationId, name, position, blipModel, pickupModel) {
-	sendNetworkEventToPlayer("v.rp.job", client, jobId, jobLocationId, name, position);
+function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel) {
+	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position);
 }
 
 // ==========================================================================
 
-function sendVehicleToPlayer(client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4) {
-	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4);
+function sendVehicleToPlayer(client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4) {
+	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4);
 }
 
 // ==========================================================================
 
 function sendAllBusinessesToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removeBusinesses", client);
+
 	let businesses = getServerData().businesses;
 	for (let i in businesses) {
-		sendBusinessToPlayer(client, businesses[i].index, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].buyPrice, businesses[i].rentPrice, businesses[i].hasInterior, doesBusinessHaveAnyItemsToBuy(i));
+		sendBusinessToPlayer(client, businesses[i].index, false, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].buyPrice, businesses[i].rentPrice, businesses[i].hasInterior, doesBusinessHaveAnyItemsToBuy(i));
 	}
 }
 
 // ==========================================================================
 
 function sendAllHousesToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removeHouses", client);
+
 	let houses = getServerData().houses;
 	for (let i in houses) {
-		sendHouseToPlayer(client, houses[i].index, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
+		sendHouseToPlayer(client, houses[i].index, false, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
 	}
 }
 
 // ==========================================================================
 
 function sendAllJobsToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removeJobs", client);
+
 	let jobs = getServerData().jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].pickupModel, jobs[i].blipModel);
+			sendJobToPlayer(client, jobs[i].index, false, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].pickupModel, jobs[i].blipModel);
 		}
 	}
 }
@@ -1166,9 +1172,11 @@ function sendAllJobsToPlayer(client) {
 // ==========================================================================
 
 function sendAllVehiclesToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removeVehicles", client);
+
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
-		sendVehicleToPlayer(client, vehicles[i].index, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
+		sendVehicleToPlayer(client, vehicles[i].index, false, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
 	}
 }
 
