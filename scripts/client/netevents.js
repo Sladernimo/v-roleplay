@@ -29,6 +29,7 @@ function addAllNetworkHandlers() {
 
 	// Job
 	addNetworkEventHandler("v.rp.job", receiveJobFromServer);
+	addNetworkEventHandler("v.rp.removeJobs", removeJobsFromClient);
 	addNetworkEventHandler("v.rp.working", setLocalPlayerWorkingState);
 	addNetworkEventHandler("v.rp.jobType", setLocalPlayerJobType);
 	addNetworkEventHandler("v.rp.showJobRouteLocation", showJobRouteLocation);
@@ -64,6 +65,7 @@ function addAllNetworkHandlers() {
 
 	// Vehicle
 	addNetworkEventHandler("v.rp.vehicle", receiveVehicleFromServer);
+	addNetworkEventHandler("v.rp.removeVehicles", removeVehiclesFromClient);
 	addNetworkEventHandler("v.rp.veh.lights", setVehicleLights);
 	addNetworkEventHandler("v.rp.veh.engine", setVehicleEngine);
 	addNetworkEventHandler("v.rp.veh.repair", repairVehicle);
@@ -117,9 +119,11 @@ function addAllNetworkHandlers() {
 
 	// Business
 	addNetworkEventHandler("v.rp.business", receiveBusinessFromServer);
+	addNetworkEventHandler("v.rp.removeBusinesses", removeBusinessesFromClient);
 
 	// House
 	addNetworkEventHandler("v.rp.house", receiveHouseFromServer);
+	addNetworkEventHandler("v.rp.removeHouses", removeHousesFromClient);
 
 	// GPS
 	addNetworkEventHandler("v.rp.showGPSBlip", showGPSLocation);
@@ -216,6 +220,7 @@ function onServerSpawnedLocalPlayer(state) {
 	logToConsole(LOG_DEBUG, `[V.RP.Main] Setting spawned state to ${state}`);
 	isSpawned = state;
 	setUpInitialGame();
+	calledDeathEvent = false;
 	if (state) {
 		setTimeout(function () {
 			calledDeathEvent = false;
