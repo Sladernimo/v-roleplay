@@ -348,10 +348,10 @@ function processLabelRendering() {
 						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
 						}
-					}
 
-					if (getDistance(localPlayer.position, job.position) <= 5.0) {
-						renderJobLabel(job.name, job.position, job.jobType);
+						if (getDistance(localPlayer.position, job.position) <= propertyPickupRenderDistance) {
+							renderJobLabel(job.name, job.position, job.jobType);
+						}
 					}
 				});
 			}
