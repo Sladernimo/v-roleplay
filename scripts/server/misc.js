@@ -376,7 +376,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			if (isFadeCameraSupported()) {
-				fadeCamera(client, false, 1.0);
+				fadePlayerCamera(client, false, 1000);
 			}
 
 			setTimeout(function () {
@@ -411,7 +411,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			if (isFadeCameraSupported()) {
-				fadeCamera(client, false, 1.0);
+				fadePlayerCamera(client, false, 1000);
 			}
 
 			setTimeout(function () {
@@ -927,7 +927,7 @@ function processPlayerDeath(client) {
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 	setTimeout(function () {
-		fadePlayerCamera(client, false, 1000);
+		fadePlayerCamera(client, false, 2000);
 		setTimeout(function () {
 			if (isPlayerInPaintBall(client)) {
 				respawnPlayerForPaintBall(client);
@@ -944,7 +944,7 @@ function processPlayerDeath(client) {
 
 					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
-					fadePlayerCamera(client, true, 1000);
+					fadePlayerCamera(client, true, 2000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);
@@ -960,7 +960,7 @@ function processPlayerDeath(client) {
 					}
 
 					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					fadePlayerCamera(client, true, 1000);
+					fadePlayerCamera(client, true, 2000);
 					updatePlayerSpawnedState(client, true);
 					makePlayerStopAnimation(client);
 					setPlayerControlState(client, true);

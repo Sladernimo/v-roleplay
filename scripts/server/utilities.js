@@ -272,7 +272,7 @@ function checkPlayerPedStates() {
 
 function showConnectCameraToPlayer(client) {
 	if (isFadeCameraSupported()) {
-		fadeCamera(client, true, 1);
+		fadePlayerCamera(client, true, 1000);
 	}
 
 	if (isCustomCameraSupported()) {
@@ -562,7 +562,7 @@ function processPlayerEnteringExitingProperty(client) {
 
 		setTimeout(function () {
 			if (isFadeCameraSupported()) {
-				fadeCamera(client, true, 1.0);
+				fadePlayerCamera(client, true, 1000);
 			}
 			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
 		}, 1000);
@@ -622,7 +622,7 @@ function processPlayerEnteringExitingProperty(client) {
 		setTimeout(function () {
 			if (getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 				if (isFadeCameraSupported()) {
-					fadeCamera(client, true, 1.0);
+					fadePlayerCamera(client, true, 1000);
 				}
 			}
 			updateInteriorLightsForPlayer(client, (inProperty != false) ? inProperty.interiorLights : true);
