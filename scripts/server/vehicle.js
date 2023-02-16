@@ -1588,17 +1588,6 @@ function isVehicleOwnedByJob(vehicle, jobId) {
 
 // ===========================================================================
 
-async function getPlayerNewVehicle(client) {
-	while (true) {
-		if (isPlayerInAnyVehicle(client)) {
-			return getPlayerVehicle(client);
-		}
-		await null;
-	}
-}
-
-// ===========================================================================
-
 function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, price, dealershipId, interior = 0, dimension = 0) {
 	let vehicle = createGameVehicle(modelIndex, spawnPosition, spawnRotation);
 	if (!vehicle) {
