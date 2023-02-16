@@ -224,6 +224,10 @@ function setLocalPlayerInterior(interior) {
 // ===========================================================================
 
 function setSnowState(falling, ground, forceGround) {
+	if (!isGameFeatureSupported("snow")) {
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting falling snow to ${falling} and ground snow to ${ground}`);
 	snowing = falling;
 	//snow.force = ground;
@@ -238,6 +242,9 @@ function setSnowState(falling, ground, forceGround) {
 // ===========================================================================
 
 function setLocalPlayerHealth(health) {
+	if (localPlayer == null) {
+		return false;
+	}
 	localPlayer.health = health;
 }
 
