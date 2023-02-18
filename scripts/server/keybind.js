@@ -53,6 +53,8 @@ function addKeyBindCommand(command, params, client) {
 	let tempCommand = getParam(params, " ", 2);
 	let tempParams = (splitParams.length > 2) ? splitParams.slice(2).join(" ") : "";
 
+	tempCommand = removeSlashesFromString(tempCommand);
+
 	if (!keyId) {
 		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
 		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
@@ -61,7 +63,7 @@ function addKeyBindCommand(command, params, client) {
 	}
 
 	addPlayerKeyBind(client, keyId, tempCommand, tempParams);
-	messagePlayerSuccess(client, getLocaleString(client, "KeyBindRemoved", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`, `{ALTCOLOUR}/${tempCommand} ${tempParams}`));
+	messagePlayerSuccess(client, getLocaleString(client, "KeyBindAdded", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`, `{ALTCOLOUR}/${tempCommand} ${tempParams}`));
 }
 
 // ===========================================================================
@@ -106,7 +108,7 @@ function copyKeyBindsToServerCommand(command, params, client) {
 // ===========================================================================
 
 function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
-	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
+	let keyBindData = new KeyBindData(false, keyId, `${command} ${params}`);
 	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
@@ -141,7 +143,7 @@ function removePlayerKeyBind(client, keyId) {
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
-		sendPlayerEnterPropertyKey(client, keyId.key);
+		sendPlayerEnterPropertyKey(client, -1);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
 	}
@@ -238,7 +240,7 @@ function sendAccountKeyBindsToClient(client) {
 // ===========================================================================
 
 function showKeyBindListCommand(command, params, client) {
-	let keybindList = getPlayerData(client).keyBinds.map(function (x) { return `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
+	let keybindList = getPlayerData(client).keyBinds.map(function (x) { return `{chatBoxListIndex}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
 
 	let chunkedList = splitArrayIntoChunks(keybindList, 6);
 
