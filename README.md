@@ -9,6 +9,8 @@ This is Vortrex's Roleplay Resource. Originally created for [GTA Connected](http
 * GTA SA (on [GTA Connected](https://gtaconnected.com/))
 * GTA IV (on [GTA Connected](https://gtaconnected.com/))
 * Mafia: The City of Lost Heaven (on [Mafia Connected](https://mafiaconnected.com/))
+* **(Coming Soon!)** GTA V (on [RAGEMP](https://rage.mp/))
+* **(Coming Soon!)** Mafia Definitive Edition (on MafiaMP)
 
 ### Features
 *Some features may be disabled on specific multiplayer mods depending on functionality*
