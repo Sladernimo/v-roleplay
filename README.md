@@ -1,7 +1,7 @@
 # Vortrex's Roleplay Resource
 
 ### Description
-This is Vortrex's Roleplay Resource
+This is Vortrex's Roleplay Resource. Originally created for [GTA Connected](https://gtaconnected.com/) but support for other multiplayer mods coming soon!
 
 ### Supported Games and Multiplayer Mods
 * GTA III (on [GTA Connected](https://gtaconnected.com/))
