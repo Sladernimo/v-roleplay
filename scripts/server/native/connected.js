@@ -499,7 +499,7 @@ function getPlayerName(client) {
 // ===========================================================================
 
 function getServerName() {
-	return "Asshat Gaming RP";
+	return "Connected Roleplay";
 }
 
 // ===========================================================================
@@ -815,29 +815,16 @@ function getVehicleName(vehicle) {
 // ===========================================================================
 
 function getElementModel(element) {
-	if (typeof element.modelIndex != "undefined") {
-		return element.modelIndex;
-	}
-
-	if (typeof element.model != "undefined") {
-		return element.model;
-	}
 }
 
 // ===========================================================================
 
 function givePlayerWeaponAmmo(client, ammo) {
-	givePlayerWeapon(client, getPlayerWeapon(client), getPlayerWeaponAmmo(client) + ammo);
 }
 
 // ===========================================================================
 
 function getPlayerWeapon(client) {
-	if (areServerElementsSupported(client)) {
-		return getPlayerPed(client).weapon;
-	} else {
-		return getPlayerData(client).syncWeapon;
-	}
 }
 
 // ===========================================================================
@@ -1017,72 +1004,6 @@ function executeDatabaseQueryCommand(command, params, client) {
 		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
 	}
 	return true;
-}
-
-// ===========================================================================
-
-function setConstantsAsGlobalVariablesInDatabase() {
-	let dbConnection = connectToDatabase();
-	let entries = Object.entries(global);
-	for (let i in entries) {
-		logToConsole(LOG_DEBUG, `[V.RP.Database] Checking entry ${i} (${entries[i]})`);
-		if (toString(i).slice(0, 3).indexOf("V_") != -1) {
-			logToConsole(LOG_DEBUG, `[V.RP.Database] Adding ${i} (${entries[i]}) to database global variables`);
-		}
-	}
-}
-
-// ===========================================================================
-
-function createDatabaseInsertQuery(tableName, data) {
-	let fields = [];
-	let values = [];
-
-	for (let i in data) {
-		if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][0] != 'NaN') {
-			if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				fields.push(data[i][0]);
-
-				if (typeof data[i][1] == "string") {
-					if (data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push("UNIX_TIMESTAMP()");
-					} else {
-						values.push(`'${data[i][1]}'`);
-					}
-				} else {
-					values.push(data[i][1]);
-				}
-			}
-		}
-	}
-
-	let queryString = `INSERT INTO ${tableName} (${fields.join(", ")}) VALUES (${values.join(", ")})`;
-	return queryString;
-}
-
-// ===========================================================================
-
-function createDatabaseUpdateQuery(tableName, data, whereClause) {
-	let values = [];
-
-	for (let i in data) {
-		if (data[i][0] != "undefined" && data[i][0] != NaN && data[i][0] != 'NaN') {
-			if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				if (typeof data[i][1] == "string") {
-					if (data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push(`${data[i][0]}=UNIX_TIMESTAMP()`);
-					} else {
-						values.push(`${data[i][0]}='${data[i][1]}'`);
-					}
-				} else {
-					values.push(`${data[i][0]}=${data[i][1]}`);
-				}
-			}
-		}
-	}
-
-	let queryString = `UPDATE ${tableName} SET ${values.join(", ")} WHERE ${whereClause}`;
-	return queryString;
 }
 
 // ===========================================================================
@@ -1391,38 +1312,6 @@ function setVehicleTrunkState(vehicle, trunkState) {
 
 // ===========================================================================
 
-/*
-function addAllEventHandlers() {
-	bindServerEventHandler("onResourceStart", onResourceStart)
-	bindServerEventHandler("onResourceStop", onResourceStart)
-	addServerEventHandler("onServerStop", onResourceStart);
-
-	addServerEventHandler("onResourceStart", onResourceStart);
-	addServerEventHandler("onResourceStop", onResourceStop);
-	addServerEventHandler("onServerStop", onResourceStop);
-
-	addServerEventHandler("onProcess", onProcess);
-	addServerEventHandler("onEntityProcess", onEntityProcess);
-
-	addServerEventHandler("onPlayerConnect", onInitialConnectionToServer);
-	addServerEventHandler("onPlayerJoin", onPlayerJoin);
-	addServerEventHandler("onPlayerJoined", onPlayerJoined);
-	addServerEventHandler("onPlayerChat", onPlayerChat);
-	addServerEventHandler("onPlayerQuit", onPlayerQuit);
-	addServerEventHandler("onElementStreamIn", onElementStreamIn);
-	addServerEventHandler("onElementStreamOut", onElementStreamOut);
-
-	addServerEventHandler("onPedSpawn", onPedSpawn);
-	addServerEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	addServerEventHandler("onPedExitVehicle", onPedExitingVehicle);
-
-	addServerEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
-	addServerEventHandler("onPedExitingVehicle", onPedExitingVehicle);
-}
-*/
-
-// ===========================================================================
-
 function addServerCommandHandler(command, handlerFunction) {
 	addCommandHandler(command, handlerFunction);
 }
@@ -1546,6 +1435,38 @@ function shutdownServer() {
 
 function setServerRule(ruleName, ruleValue) {
 	server.setRule(ruleName, ruleValue);
+}
+
+// ===========================================================================
+
+function addAllEventHandlers() {
+	addEventHandler("onResourceStart", onResourceStart);
+	addEventHandler("onResourceStop", onResourceStop);
+	addEventHandler("onProcess", onProcess);
+	addEventHandler("onPlayerConnect", onPlayerConnect);
+	addEventHandler("onPlayerJoin", onPlayerJoin);
+	addEventHandler("onPlayerJoined", onPlayerJoined);
+	addEventHandler("onPlayerChat", onPlayerChat);
+	addEventHandler("onPlayerQuit", onPlayerQuit);
+	addEventHandler("onElementStreamIn", onElementStreamIn);
+	addEventHandler("onElementStreamOut", onElementStreamOut);
+	addEventHandler("onPedSpawn", onPedSpawn);
+
+	if (getGame() <= V_GAME_GTA_IV) {
+		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
+		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
+		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+	}
+
+	if (getGame() <= V_GAME_GTA_SA) {
+		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
+	}
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		addEventHandler("onPedEnteringVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitingVehicleEx", onPedExitedVehicle);
+	}
 }
 
 // ===========================================================================
