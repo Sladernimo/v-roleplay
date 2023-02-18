@@ -2302,6 +2302,15 @@ function removeHexColoursFromString(str) {
 
 // ===========================================================================
 
+function removeSlashesFromString(str) {
+	let matchRegex = /\//gi;
+	str.replace(matchRegex, ``);
+
+	return str;
+}
+
+// ===========================================================================
+
 async function waitUntil(condition) {
 	return new Promise((resolve) => {
 		let interval = setInterval(() => {
@@ -2648,11 +2657,11 @@ function fixCharacterName(name) {
 function getCurrentTimeStampWithTimeZone(timeZone) {
 	let date = new Date();
 
-	let utcDate = new Date(date.toLocaleString('en-US', { timeZone: "UTC" }));
-	let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
-	let offset = utcDate.getTime() - tzDate.getTime();
+	//let utcDate = new Date(date.toLocaleString('en-US', { timeZone: "UTC" }));
+	//let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
+	//let offset = utcDate.getTime() - tzDate.getTime();
 
-	date.setTime(date.getTime() + offset);
+	//date.setTime(date.getTime() + offset);
 
 	return date;
 };
