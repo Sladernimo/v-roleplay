@@ -140,7 +140,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		let infoText = "";
 		switch (labelInfoType) {
 			case V_PROPLABEL_INFO_ENTER: {
-				if (enterPropertyKey) {
+				if (enterPropertyKey != null) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
 				} else {
 					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
@@ -174,7 +174,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 			}
 
 			default: {
-				if (enterPropertyKey) {
+				if (enterPropertyKey != null) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
 				} else {
 					infoText = getLocaleString("PropertyEnterCommandLabel", "/enter");
