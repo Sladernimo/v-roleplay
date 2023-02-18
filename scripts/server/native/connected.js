@@ -7,6 +7,25 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+class vPlayer {
+	constructor(id, name = "", object = null) {
+		object: null;
+		name: null;
+		id: -1;
+	}
+}
+
+// ===========================================================================
+
+class vVehicle {
+	constructor(id, object = null) {
+		object: null;
+		id: -1;
+	}
+}
+
+// ===========================================================================
+
 let builtInCommands = [
 	"refresh",
 	"restart",
@@ -827,7 +846,7 @@ function connectToDatabase() {
 	if (getDatabaseConfig().usePersistentConnection) {
 		if (persistentDatabaseConnection == null) {
 			logToConsole(LOG_DEBUG, `[V.RP.Database] Initializing database connection ...`);
-			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
+			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port, getDatabaseConfig().useSSL);
 			if (persistentDatabaseConnection.error) {
 				logToConsole(LOG_ERROR, `[V.RP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 				persistentDatabaseConnection = null;
@@ -841,7 +860,7 @@ function connectToDatabase() {
 			return persistentDatabaseConnection;
 		}
 	} else {
-		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
+		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port, getDatabaseConfig().useSSL);
 		if (databaseConnection.error) {
 			logToConsole(LOG_ERROR, `[V.RP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 			return false;
