@@ -267,8 +267,7 @@ function replyToLastPrivateMessageCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(targetClient).privateMessageReplyTo = client;
-	messagePlayerPrivateMessage(targetClient, client, messageText);
+	messagePlayerPrivateMessage(getPlayerData(client).privateMessageReplyTo, client, params);
 
 	markPlayerActionTipSeen(client, "ReplyToDirectMessage");
 }
