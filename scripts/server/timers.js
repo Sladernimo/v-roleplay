@@ -121,6 +121,7 @@ function tenMinuteTimerFunction() {
 	//showRandomTipToAllPlayers();
 	//saveServerDataToDatabase();
 	//checkInactiveVehicleRespawns();
+	updateVehicleSavedPositions();
 }
 
 // ===========================================================================

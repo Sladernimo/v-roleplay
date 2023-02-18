@@ -104,7 +104,7 @@ class VehicleData {
 
 			// Position and Rotation
 			this.spawnPosition = toVector3(dbAssoc["veh_pos_x"], dbAssoc["veh_pos_y"], dbAssoc["veh_pos_z"]);
-			this.spawnRotation = toInteger(dbAssoc["veh_rot_z"]);
+			this.spawnRotation = toFloat(dbAssoc["veh_rot_z"]);
 			this.spawnLocked = intToBool(toInteger(dbAssoc["veh_spawn_lock"]));
 			this.interior = toInteger(dbAssoc["veh_int"]);
 			this.dimension = toInteger(dbAssoc["veh_vw"]);
@@ -490,16 +490,10 @@ function vehicleLightsCommand(command, params, client) {
 // ===========================================================================
 
 function deleteVehicleCommand(command, params, client) {
-	if (!getPlayerVehicle(client)) {
-		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
-		return false;
-	}
+	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
-	let vehicle = getPlayerVehicle(client);
-
-	if (!getVehicleData(vehicle)) {
-		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
-		return false;
+	if (getPlayerVehicle(client)) {
+		vehicle = getPlayerVehicle(client);
 	}
 
 	let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
@@ -583,6 +577,11 @@ function vehicleSirenCommand(command, params, client) {
 // ===========================================================================
 
 function vehicleAdminColourCommand(command, params, client) {
+	if (isGameFeatureSupported("vehicleColour")) {
+		messagePlayerError(client, "Vehicle colours are not supported in this game!");
+		return false;
+	}
+
 	if (areParamsEmpty(params) && areThereEnoughParams(params, 2)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -776,6 +775,10 @@ function rentVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function enterVehicleAsPassengerCommand(command, params, client) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	sendNetworkEventToPlayer("v.rp.passenger", client);
 }
 
@@ -1164,12 +1167,11 @@ function removeVehicleOwnerCommand(command, params, client) {
 // ===========================================================================
 
 function getVehicleInfoCommand(command, params, client) {
-	if (!isPlayerInAnyVehicle(client)) {
-		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
-		return false;
-	}
+	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
-	let vehicle = getPlayerVehicle(client);
+	if (getPlayerVehicle(client)) {
+		vehicle = getPlayerVehicle(client);
+	}
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -1227,7 +1229,7 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Last Driver`, `${vehicleData.lastDriverName}`],
 	];
 
-	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleInfo")));
 	let chunkedList = splitArrayIntoChunks(stats, 6);
@@ -1920,6 +1922,17 @@ function despawnAllVehicles() {
 	for (let i in getServerData().vehicles) {
 		destroyGameElement(getServerData().vehicles[i].vehicle);
 		getServerData().vehicles[i].vehicle = null;
+	}
+}
+
+// ===========================================================================
+
+function updateVehicleSavedPositions() {
+	for (let i in getServerData().vehicles) {
+		if (!getServerData().vehicles[i].spawnLocked) {
+			getServerData().vehicles[i].spawnPosition = getVehiclePosition(getServerData().vehicles[i].vehicle);
+			getServerData().vehicles[i].spawnRotation = getVehicleHeading(getServerData().vehicles[i].vehicle);
+		}
 	}
 }
 
