@@ -393,7 +393,7 @@ function showCharacterSelectToClient(client) {
 		//}, 500);
 		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
 	} else {
-		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{teal}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
+		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{chatBoxListIndex}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
 		let chunkedList = splitArrayIntoChunks(charactersList, 5);
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCharactersListSelf")));
 		for (let i in chunkedList) {
