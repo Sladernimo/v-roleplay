@@ -251,6 +251,8 @@ let globalConfig = {
 		"ChatEmoji",
 	],
 	mainChatType: V_CHAT_TYPE_TALK,
+	nightMapStartHour: 19,
+	nightMapEndHour: 7,
 };
 
 // ===========================================================================
@@ -983,7 +985,7 @@ function getServerIntroMusicURL() {
 // ===========================================================================
 
 function loadLocaleConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading locale configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading locale configuration ...");
 	let localeConfig = JSON.parse(loadTextFile(`config/locale.json`));
 	if (localeConfig != null) {
 		return localeConfig;
@@ -993,7 +995,7 @@ function loadLocaleConfig() {
 // ===========================================================================
 
 function loadEconomyConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading economy configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading economy configuration ...");
 	let economyConfig = JSON.parse(loadTextFile(`config/economy.json`));
 	if (economyConfig != null) {
 		return economyConfig;
@@ -1003,7 +1005,7 @@ function loadEconomyConfig() {
 // ===========================================================================
 
 function loadAccentConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading accents configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading accents configuration ...");
 	let accentConfig = JSON.parse(loadTextFile(`config/accents.json`));
 	if (accentConfig != null) {
 		return accentConfig;
@@ -1013,7 +1015,7 @@ function loadAccentConfig() {
 // ===========================================================================
 
 function loadDiscordConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading discord configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading discord configuration ...");
 	let discordConfig = JSON.parse(loadTextFile(`config/discord.json`));
 	if (discordConfig != null) {
 		return discordConfig;
@@ -1024,7 +1026,7 @@ function loadDiscordConfig() {
 // ===========================================================================
 
 function loadDatabaseConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading database configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading database configuration ...");
 	let databaseConfig = JSON.parse(loadTextFile("config/database.json"));
 	if (databaseConfig != null) {
 		return databaseConfig;
@@ -1035,7 +1037,7 @@ function loadDatabaseConfig() {
 // ===========================================================================
 
 function loadKeyBindConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading keybind configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading keybind configuration ...");
 	let keyBindConfig = JSON.parse(loadTextFile("config/keybind.json"));
 	if (keyBindConfig != null) {
 		return keyBindConfig;
@@ -1046,7 +1048,7 @@ function loadKeyBindConfig() {
 // ===========================================================================
 
 function loadEmailConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading email configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading email configuration ...");
 	let emailConfig = JSON.parse(loadTextFile("config/email.json"));
 	if (emailConfig != null) {
 		return emailConfig;
@@ -1129,20 +1131,30 @@ function getDatabaseConfig() {
 // ===========================================================================
 
 function loadServerConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading server configuration");
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading server configuration ...");
 
 	if (toInteger(server.getCVar("v_devserver")) == 1) {
-		serverConfig = loadServerConfigFromGame(getGame());
+		try {
+			serverConfig = loadServerConfigFromGame(getGame());
 
-		if (serverConfig == false) {
-			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()}`);
+			if (serverConfig == false) {
+				logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()}`);
+				server.shutdown();
+			}
+		} catch (error) {
+			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()} (${error})`);
 			server.shutdown();
 		}
 	} else {
-		serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
+		try {
+			serverConfig = loadServerConfigFromGameAndPort(getGame(), getServerPort());
 
-		if (serverConfig == false) {
-			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
+			if (serverConfig == false) {
+				logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()} and port ${getServerPort()}`);
+				server.shutdown();
+			}
+		} catch (error) {
+			logToConsole(LOG_ERROR, `[V.RP.Config] Could not load server configuration for game ${getGame()} (${error})`);
 			server.shutdown();
 		}
 	}
