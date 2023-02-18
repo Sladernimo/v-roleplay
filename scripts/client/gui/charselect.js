@@ -31,13 +31,13 @@ function initCharacterSelectGUI() {
 		title: {
 			textSize: 12.0,
 			textFont: mainFont,
-			textColour: toColour(0, 0, 0, 255),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		},
 		icon: {
 			textSize: 10.0,
 			textFont: mainFont,
-			textColour: toColour(0, 0, 0, 255),
+			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], windowTitleAlpha),
 		}
 	});
