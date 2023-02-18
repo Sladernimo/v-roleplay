@@ -242,7 +242,7 @@ function getPlayerStreamingRadioVolume(client) {
  *
  */
 function showRadioStationListCommand(command, params, client) {
-	let stationList = getServerData().radioStations.map(function (x) { return `{ALTCOLOUR}${toInteger(x.index) + 1}: {MAINCOLOUR}${x.name}`; });
+	let stationList = getServerData().radioStations.map(function (x) { return `{chatBoxListIndex}${toInteger(x.index) + 1}: {MAINCOLOUR}${x.name}`; });
 
 	let chunkedList = splitArrayIntoChunks(stationList, 4);
 
