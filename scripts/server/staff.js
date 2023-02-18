@@ -1898,7 +1898,7 @@ function showAccountStaffNotesCommand(command, params, client) {
 		return false;
 	}
 
-	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{ALTCOLOUR}${toInteger(i) + 1}. (Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: ${x.note}` });
+	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{chatBoxListIndex}${toInteger(i) + 1}. {ALTCOLOUR}(Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: {MAINCOLOUR}${x.note}` });
 
 	//let chunkedList = splitArrayIntoChunks(staffNoteList, 1);
 
