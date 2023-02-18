@@ -454,6 +454,8 @@ function loadCommands() {
 			new CommandData("language", setLocaleCommand, "<language name>", getStaffFlagValue("None"), true, false, "Sets your language"),
 			new CommandData("locale", setLocaleCommand, "<language name>", getStaffFlagValue("None"), true, false, "Sets your language"),
 			new CommandData("setlang", setLocaleCommand, "<language name>", getStaffFlagValue("None"), true, false, "Sets your language"),
+			new CommandData("locales", showLocaleListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of available languages"),
+			new CommandData("languages", showLocaleListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of available languages"),
 		],
 		messaging: [],
 		misc: [
@@ -880,6 +882,12 @@ function enableAllCommandsByType(command, params, client) {
 function processPlayerCommand(command, params, client) {
 	if (builtInCommands.indexOf(toLowerCase(command)) != -1) {
 		return true;
+	}
+
+	let possibleAlias = getPlayerAliasForCommand(command);
+	if (possibleAlias) {
+		// Just change to the command the alias is for, then continue as normal
+		command = possibleAlias.forCommand;
 	}
 
 	let commandData = getCommand(toLowerCase(command));

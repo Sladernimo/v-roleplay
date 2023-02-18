@@ -935,6 +935,10 @@ function saveAccountToDatabase(accountData) {
 		let dbQuery2 = queryDatabase(dbConnection, queryString2);
 		freeDatabaseQuery(dbQuery2);
 
+		//saveAllAccountCommandAliasesToDatabase(accountData);
+		//saveAllAccountStaffNotesToDatabase(accountData);
+		//saveAllAccountKeyBindsToDatabase(accountData);
+
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
@@ -1003,6 +1007,39 @@ function saveAccountStaffNotesDatabase(staffNoteData) {
 		}
 
 		staffNoteData.needsSaved = false;
+		freeDatabaseQuery(dbQuery);
+		disconnectFromDatabase(dbConnection);
+	}
+}
+
+// ===========================================================================
+
+function saveAccountCommandAliasesToDatabase(commandAliasData) {
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let safeOriginalCommandName = escapeDatabaseString(dbConnection, commandAliasData.forCommand);
+		let safeAliasCommandName = escapeDatabaseString(dbConnection, commandAliasData.aliasCommand);
+
+		let data = [
+			["acct_cmd_for_cmd", safeOriginalCommandName],
+			["acct_cmd_alias_cmd", safeAliasCommandName],
+			["acct_cmd_deleted", boolToInt(commandAliasData.whoAdded)],
+			["acct_cmd_when_added", commandAliasData.whenAdded],
+			["acct_cmd_server", commandAliasData.server],
+			["acct_cmd_acct", commandAliasData.account],
+		];
+
+		let dbQuery = null;
+		if (commandAliasData.databaseId == 0) {
+			let queryString = createDatabaseInsertQuery("acct_cmd", data);
+			dbQuery = queryDatabase(dbConnection, queryString);
+			commandAliasData.databaseId = getDatabaseInsertId(dbConnection);
+		} else {
+			let queryString = createDatabaseUpdateQuery("acct_cmd", data, `acct_cmd_id=${commandAliasData.databaseId}`);
+			dbQuery = queryDatabase(dbConnection, queryString);
+		}
+
+		commandAliasData.needsSaved = false;
 		freeDatabaseQuery(dbQuery);
 		disconnectFromDatabase(dbConnection);
 	}
@@ -1540,6 +1577,32 @@ function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
 
 	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountStaffNotes.length} account staff notes for account ${accountDatabaseID} loaded from database successfully!`);
 	return tempAccountStaffNotes;
+}
+
+// ===========================================================================
+
+function loadAccountCommandAliasesFromDatabase(accountDatabaseID) {
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account command aliases for account ${accountDatabaseID} from database ...`);
+
+	let tempAccountCommandAliases = [];
+	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
+	if (dbConnection) {
+		let dbQueryString = `SELECT * FROM acct_cmd WHERE acct_cmd_deleted = 0 AND acct_cmd_acct = ${accountDatabaseID}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempAccountCommandAliasData = new AccountCommandAliasData(dbAssoc[i]);
+				tempAccountCommandAliases.push(tempAccountCommandAliasData);
+				logToConsole(LOG_DEBUG, `[V.RP.Account]: Account command alias '${tempAccountCommandAliasData.databaseId}' loaded from database successfully!`);
+			}
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountCommandAliases.length} account command aliases for account ${accountDatabaseID} loaded from database successfully!`);
+	return tempAccountCommandAliases;
 }
 
 // ===========================================================================
