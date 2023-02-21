@@ -273,7 +273,7 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_THREE]: false, // Needs world pos to screen implemented
 	},
 	dimension: {
-		[V_GAMtE_GTA_III]: true,
+		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
 		[V_GAME_GTA_IV]: true,
