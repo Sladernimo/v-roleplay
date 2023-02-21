@@ -66,6 +66,22 @@ CREATE TABLE IF NOT EXISTS `acct_contact` (
 
 -- Dumping data for table v-roleplay.acct_contact: ~0 rows (approximately)
 
+-- Dumping structure for table v-roleplay.acct_cmd
+CREATE TABLE `acct_cmd` (
+  `acct_cmd_id` int(11) NOT NULL,
+  `acct_cmd_acct` int(11) NOT NULL DEFAULT '1',
+  `acct_cmd_for_cmd` varchar(128) NOT NULL DEFAULT '',
+  `acct_cmd_alias_cmd` varchar(128) NOT NULL DEFAULT '',
+  `acct_cmd_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `acct_cmd_enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `acct_cmd_when_added` bigint(32) NOT NULL DEFAULT '0'
+  PRIMARY KEY (`acct_cmd_id`),
+  KEY `acct_cmd_acct` (`acct_cmd_acct`),
+  CONSTRAINT `fk_acct_cmd_acct` FOREIGN KEY (`acct_cmd_acct`) REFERENCES `acct_main` (`acct_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Account - Command Aliases';
+
+-- Dumping data for table v-roleplay.acct_cmd: ~0 rows (approximately)
+
 -- Dumping structure for table v-roleplay.acct_hotkey
 CREATE TABLE IF NOT EXISTS `acct_hotkey` (
   `acct_hotkey_id` int(11) NOT NULL AUTO_INCREMENT,
