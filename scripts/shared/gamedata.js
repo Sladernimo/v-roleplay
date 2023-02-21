@@ -268,12 +268,12 @@ let supportedFeatures = {
 		[V_GAME_GTA_SA]: true,
 		[V_GAME_GTA_IV]: false, // World pos to screen native crashes game
 		[V_GAME_GTA_IV_EFLC]: false, // World pos to screen native crashes game
-		[V_GAME_MAFIA_ONE]: false, // Needs world pos to screen implemented
+		[V_GAME_MAFIA_ONE]: true, // Needs world pos to screen implemented
 		[V_GAME_MAFIA_TWO]: false, // Needs world pos to screen implemented
 		[V_GAME_MAFIA_THREE]: false, // Needs world pos to screen implemented
 	},
 	dimension: {
-		[V_GAME_GTA_III]: true,
+		[V_GAMtE_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
 		[V_GAME_GTA_IV]: true,
@@ -3361,12 +3361,12 @@ let gameData = {
 			["hudtu00.i3d", "Umber Guardian Terraplane Tudor"],
 			["hudtu01.i3d", "Beige Guardian Terraplane Tudor"],
 			["hudtu02.i3d", "Black Guardian Terraplane Tudor"],
-			["cad_ford00.i3d", "Lassister Fordor"],
-			["cad_phaeton00", "Lassister Phaeton"],
-			["cad_road00.i3d", "Lassister Roadster"],
-			["hartmann00.i3d", "Lassister Appolyon"],
-			["hearseCa00.i3d", "Lassister Charon"],
-			["polCad00.i3d", "Lassister Police"],
+			["cad_ford00.i3d", "Lassiter Fordor"],
+			["cad_phaeton00", "Lassiter Phaeton"],
+			["cad_road00.i3d", "Lassiter Roadster"],
+			["hartmann00.i3d", "Lassiter Appolyon"],
+			["hearseCa00.i3d", "Lassiter Charon"],
+			["polCad00.i3d", "Lassiter Police"],
 			["chemaFor00.i3d", "Green Shubert Extra Six Fordor"],
 			["chemaFor01.i3d", "White Shubert Extra Six Fordor"],
 			["chemaFor02.i3d", "Blue Shubert Extra Six Fordor"],
