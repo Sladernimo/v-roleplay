@@ -2311,17 +2311,17 @@ function removeSlashesFromString(str) {
 
 // ===========================================================================
 
-async function waitUntil(condition) {
-	return new Promise((resolve) => {
-		let interval = setInterval(() => {
-			if (!condition()) {
-				return;
-			}
-
-			clearInterval(interval);
-			resolve();
-		}, 1);
-	});
+function waitUntil(condition) {
+	//return new Promise((resolve) => {
+	//	let interval = setInterval(() => {
+	//		if (!condition()) {
+	//			return;
+	//		}
+	//
+	//		clearInterval(interval);
+	//		resolve();
+	//	}, 1);
+	//});
 }
 
 // ===========================================================================

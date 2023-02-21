@@ -264,34 +264,34 @@ function reloadLocaleConfigurationCommand(command, params, client) {
 
 // ===========================================================================
 
-async function translateMessage(messageText, translateFrom = getGlobalConfig().locale.defaultLanguageId, translateTo = getGlobalConfig().locale.defaultLanguageId) {
-	return new Promise(resolve => {
-		if (translateFrom == translateTo) {
-			resolve(messageText);
-		}
+function translateMessage(messageText, translateFrom = getGlobalConfig().locale.defaultLanguageId, translateTo = getGlobalConfig().locale.defaultLanguageId) {
+	//return new Promise(resolve => {
+	if (translateFrom == translateTo) {
+		resolve(messageText);
+	}
 
-		for (let i in cachedTranslations[translateFrom][translateTo]) {
-			if (cachedTranslations[translateFrom][translateTo][i][0] == messageText) {
-				logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${getGlobalConfig().locale.locales[translateFrom].englishName} to ${getGlobalConfig().locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
-				resolve(cachedTranslations[translateFrom][translateTo][i][1]);
-				return true;
-			}
+	for (let i in cachedTranslations[translateFrom][translateTo]) {
+		if (cachedTranslations[translateFrom][translateTo][i][0] == messageText) {
+			logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${getGlobalConfig().locale.locales[translateFrom].englishName} to ${getGlobalConfig().locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
+			resolve(cachedTranslations[translateFrom][translateTo][i][1]);
+			return true;
 		}
+	}
 
-		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
-		httpGet(
-			thisTranslationURL,
-			"",
-			function (data) {
-				data = ArrayBufferToString(data);
-				let translationData = JSON.parse(data);
-				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
-				resolve(translationData.responseData.translatedText);
-			},
-			function (data) {
-			}
-		);
-	});
+	let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
+	httpGet(
+		thisTranslationURL,
+		"",
+		function (data) {
+			data = ArrayBufferToString(data);
+			let translationData = JSON.parse(data);
+			cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
+			resolve(translationData.responseData.translatedText);
+		},
+		function (data) {
+		}
+	);
+	//});
 }
 
 // ===========================================================================

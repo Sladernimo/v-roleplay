@@ -884,11 +884,11 @@ function processPlayerCommand(command, params, client) {
 		return true;
 	}
 
-	let possibleAlias = getPlayerAliasForCommand(command);
-	if (possibleAlias) {
-		// Just change to the command the alias is for, then continue as normal
-		command = possibleAlias.forCommand;
-	}
+	//let possibleAlias = getPlayerAliasForCommand(client, command);
+	//if (possibleAlias) {
+	//	// Just change to the command the alias is for, then continue as normal
+	//	command = possibleAlias.forCommand;
+	//}
 
 	let commandData = getCommand(toLowerCase(command));
 
@@ -1095,6 +1095,12 @@ function getCommandFromParams(params) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getPlayerAliasForCommand(client, command) {
+	return command;
 }
 
 // ===========================================================================

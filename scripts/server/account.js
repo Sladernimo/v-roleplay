@@ -802,7 +802,7 @@ function getAccountHashingFunction() {
 
 // ===========================================================================
 
-async function isNameRegistered(name) {
+function isNameRegistered(name) {
 	let accountData = loadAccountFromName(name, true);
 	if (accountData.databaseId > 0) {
 		return true;
@@ -1732,34 +1732,34 @@ function generateEmailVerificationCode() {
 
 // ===========================================================================
 
-async function sendEmailVerificationEmail(client, emailVerificationCode) {
+function sendEmailVerificationEmail(client, emailVerificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-async function sendPasswordResetEmail(client, verificationCode) {
+function sendPasswordResetEmail(client, verificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmPasswordReset;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", verificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-async function verifyAccountEmail(accountData, verificationCode) {
+function verifyAccountEmail(accountData, verificationCode) {
 	let emailVerificationCode = generateRandomString(10);
 
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 
 	getPlayerData(client).accountData.emailAddress = emailAddress;
 	getPlayerData(client).accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
@@ -1767,7 +1767,7 @@ async function verifyAccountEmail(accountData, verificationCode) {
 
 // ===========================================================================
 
-async function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
+function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
 	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
 	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
 	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
@@ -1779,13 +1779,13 @@ async function sendAccountLoginFailedNotification(emailAddress, name, ip, game =
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	await sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
 // ===========================================================================
 
-async function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
+function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
 	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
 	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
 	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
@@ -1797,7 +1797,7 @@ async function sendAccountLoginSuccessNotification(emailAddress, name, ip, game 
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	await sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
@@ -1843,13 +1843,13 @@ function isPlayerATester(client) {
 
 // ===========================================================================
 
-async function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
+function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 	let emailBodyText = getEmailConfig().bodyContent.twoFactorAuthentication;
 	emailBodyText = emailBodyText.replace("{2FACODE}", twoFactorAuthCode);
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(getGame()));
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
 	return true;
 }
 

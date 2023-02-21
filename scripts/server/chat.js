@@ -68,7 +68,7 @@ function processPlayerChat(client, messageText) {
 	let clients = getClients();
 	for(let i in clients) {
 		let translatedText;
-		translatedText = await translateMessage(messageText, getPlayerData(client).locale, getPlayerData(clients[i]).locale);
+		translatedText = translateMessage(messageText, getPlayerData(client).locale, getPlayerData(clients[i]).locale);
 
 		let original = (getPlayerData(client).locale == getPlayerData(clients[i]).locale) ? `` : ` {ALTCOLOUR}(${messageText})`;
 		messagePlayerNormal(clients[i], `💬 ${getCharacterFullName(client)}: [#FFFFFF]${translatedText}${original}`, clients[i], getColourByName("mediumGrey"));

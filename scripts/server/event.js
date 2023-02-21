@@ -148,7 +148,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 
 // ===========================================================================
 
-async function onPlayerChat(event, client, messageText) {
+function onPlayerChat(event, client, messageText) {
 	event.preventDefault();
 	processPlayerChat(client, messageText);
 }
@@ -451,7 +451,7 @@ function onPedSpawn(ped) {
 
 // ===========================================================================
 
-async function onPlayerSpawn(client) {
+function onPlayerSpawn(client) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
 	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
 	//if(getPlayerPed(client) == null) {
@@ -462,7 +462,7 @@ async function onPlayerSpawn(client) {
 	//logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
 
 	if (areServerElementsSupported()) {
-		await waitUntil(() => client != null && getPlayerPed(client) != null);
+		waitUntil(() => client != null && getPlayerPed(client) != null);
 	}
 
 	stopRadioStreamForPlayer(client);

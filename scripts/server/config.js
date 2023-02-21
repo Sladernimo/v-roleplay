@@ -897,7 +897,7 @@ function setServerRealWorldTimeZoneCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-async function reloadServerConfigurationCommand(command, params, client) {
+function reloadServerConfigurationCommand(command, params, client) {
 	serverConfig = loadServerConfigFromGameAndPort(server.game, server.port);
 	applyConfigToServer(serverConfig);
 	updateServerRules();

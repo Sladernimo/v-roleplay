@@ -806,10 +806,10 @@ function disconnectFromDatabase(dbConnection) {
 function queryDatabase(dbConnection, queryString, useThread = false) {
 	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
 	if (useThread == true) {
-		Promise.resolve().then(() => {
-			let queryResult = dbConnection.query(queryString);
-			return queryResult;
-		});
+		//Promise.resolve().then(() => {
+		let queryResult = dbConnection.query(queryString);
+		return queryResult;
+		//});
 	} else {
 		return dbConnection.query(queryString);
 	}
@@ -857,7 +857,7 @@ function freeDatabaseQuery(dbQuery) {
 
 // ===========================================================================
 
-async function fetchQueryAssoc(dbConnection, queryString) {
+function fetchQueryAssoc(dbConnection, queryString) {
 	return dbConnection.query(queryString, function (err, result, fields) {
 		return result;
 	});

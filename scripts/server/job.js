@@ -1553,11 +1553,11 @@ function reloadAllJobsCommand(command, params, client) {
 	deleteAllJobPickups();
 	clearArray(getServerData().jobs);
 
-	Promise.resolve().then(() => {
-		getServerData().jobs = loadJobsFromDatabase();
-		spawnAllJobPickups();
-		spawnAllJobBlips();
-	});
+	//Promise.resolve().then(() => {
+	getServerData().jobs = loadJobsFromDatabase();
+	spawnAllJobPickups();
+	spawnAllJobBlips();
+	//});
 
 	announceAdminAction("AllJobsReloaded");
 }

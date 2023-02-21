@@ -448,7 +448,7 @@ function saveServerDataCommand(command, params, client) {
 
 // ===========================================================================
 
-async function testEmailCommand(command, params, client) {
+function testEmailCommand(command, params, client) {
 	sendEmail(params, "Player", "Test email", "Just testing the email system for the server!");
 
 	return true;
@@ -548,7 +548,7 @@ function isDevelopmentServer() {
 
 // ===========================================================================
 
-async function migrateSubAccountsToPerServerData() {
+function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
@@ -569,7 +569,7 @@ async function migrateSubAccountsToPerServerData() {
 
 // ===========================================================================
 
-async function resetAllAccountsHotkeysToDefault() {
+function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 

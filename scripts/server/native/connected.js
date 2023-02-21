@@ -876,10 +876,10 @@ function disconnectFromDatabase(dbConnection, force = false) {
 function queryDatabase(dbConnection, queryString, useThread = false) {
 	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
 	if (useThread == true) {
-		Promise.resolve().then(() => {
-			let queryResult = dbConnection.query(queryString);
-			return queryResult;
-		});
+		//Promise.resolve().then(() => {
+		let queryResult = dbConnection.query(queryString);
+		return queryResult;
+		//});
 	} else {
 		return dbConnection.query(queryString);
 	}
