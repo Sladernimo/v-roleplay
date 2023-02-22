@@ -480,6 +480,7 @@ function loadCommands() {
 			new CommandData("light", lightsCommand, "", getStaffFlagValue("None"), true, false, "Turns on and off the lights for your vehicle, house, or business"),
 			new CommandData("kill", suicideCommand, "", getStaffFlagValue("None"), true, false, "Kills yourself"),
 			new CommandData("suicide", suicideCommand, "", getStaffFlagValue("None"), true, false, "Kills yourself"),
+			new CommandData("scoreboard", scoreBoardCommand, "", getStaffFlagValue("None"), true, false, "Shows the scoreboard (key press only)"),
 		],
 		npc: [
 			new CommandData("addnpc", createNPCCommand, "<skin id/name>", getStaffFlagValue("ManageNPCs"), true, false, "Creates an NPC with the specified skin"),
