@@ -494,6 +494,11 @@ function loadCommands() {
 			//new CommandData("npcrespawn", respawnNPCCommand, "", getStaffFlagValue("ManageNPCs"), true, false, "Respawns the nearest NPC"),
 		],
 		paintball: [],
+		payPhone: [
+			new CommandData("addpayphone", createPayPhoneCommand, "[number]", getStaffFlagValue("ManagePayPhones"), true, false, "Creates an payphone with optional number (random number if not added)"),
+			new CommandData("call", callPlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Rings the nearest payphone to the player"),
+			//new CommandData("callphone", callPhoneNumberCommand, "<number>", getStaffFlagValue("None"), true, false, "Rings the payphone with number"),
+		],
 		race: [
 			// Unfinished!
 			//new CommandData("addrace", createRaceCommand, "<name>", getStaffFlagValue("ManageRaces"), true, false, "Creates a race"),
