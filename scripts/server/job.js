@@ -2514,8 +2514,10 @@ function startJobRoute(client, forceRoute = -1) {
 	getPlayerData(client).jobRouteLocation = 0;
 	getPlayerData(client).jobRouteVehicle = getPlayerVehicle(client);
 
-	getPlayerVehicle(client).colour1 = getJobRouteData(jobId, jobRoute).vehicleColour1;
-	getPlayerVehicle(client).colour2 = getJobRouteData(jobId, jobRoute).vehicleColour2;
+	if (isGameFeatureSupported("vehicleColour")) {
+		getPlayerVehicle(client).colour1 = getJobRouteData(jobId, jobRoute).vehicleColour1;
+		getPlayerVehicle(client).colour2 = getJobRouteData(jobId, jobRoute).vehicleColour2;
+	}
 
 	messagePlayerNormal(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, jobRoute).startMessage, jobId, jobRoute));
 
