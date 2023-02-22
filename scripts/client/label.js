@@ -230,17 +230,12 @@ function renderPropertyExitLabel(position) {
 		}
 	}
 
-	let tempPosition = position;
-	tempPosition.z = tempPosition.z + propertyLabelHeight;
+	position = getPosAbovePos(position, propertyLabelHeight);
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
 	if (getGame() == V_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(tempPosition, natives.getGameViewportId());
+		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
 	} else {
-		screenPosition = getScreenFromWorldPosition(tempPosition);
-	}
-
-	if (screenPosition.x < 0 || screenPosition.x > game.width) {
-		return false;
+		screenPosition = getScreenFromWorldPosition(position);
 	}
 
 	let text = "EXIT";
@@ -275,14 +270,15 @@ function renderJobLabel(name, position, jobType) {
 		}
 	}
 
-	let tempPosition = position;
-	tempPosition.z = tempPosition.z + propertyLabelHeight;
+	position = getPosAbovePos(position, propertyLabelHeight);
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
 	if (getGame() == V_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(tempPosition, natives.getGameViewportId());
+		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
 	} else {
-		screenPosition = getScreenFromWorldPosition(tempPosition);
+		screenPosition = getScreenFromWorldPosition(position);
 	}
+
+	logToConsole(LOG_VERBOSE, `[V.RP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
 
 	if (screenPosition.x < 0 || screenPosition.x > game.width) {
 		return false;
@@ -325,9 +321,7 @@ function processLabelRendering() {
 							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
 						}
 
-						if (getDistance(localPlayer.position, business.entrancePosition) <= propertyLabelRenderDistance) {
-							renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType, business.entranceFee);
-						}
+						renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType, business.entranceFee);
 					}
 				});
 
@@ -337,9 +331,7 @@ function processLabelRendering() {
 							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
 						}
 
-						if (getDistance(localPlayer.position, house.entrancePosition) <= propertyLabelRenderDistance) {
-							renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, house.buyPrice, house.rentPrice, house.labelInfoType);
-						}
+						renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, house.buyPrice, house.rentPrice, house.labelInfoType);
 					}
 				});
 
@@ -349,15 +341,13 @@ function processLabelRendering() {
 							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
 						}
 
-						if (getDistance(localPlayer.position, job.position) <= propertyPickupRenderDistance) {
-							renderJobLabel(job.name, job.position, job.jobType);
-						}
+						renderJobLabel(job.name, job.position, job.jobId);
 					}
 				});
 			}
 		}
 
-		if (areWorldLabelsSupported()) {
+		if (arePickupsSupported() && areWorldLabelsSupported()) {
 			if (localPlayer != null) {
 				let pickups = getElementsByType(ELEMENT_PICKUP);
 				for (let i in pickups) {
