@@ -754,5 +754,6 @@
 	"Cancel": "Cancel",
 	"AlreadyOwnVehicle": "You already own this vehicle!",
 	"PropertyEntranceFeeLabel": "Entrance Fee: {1}",
-	"NeedToBeInJobVehicle": "You need to be in a job vehicle!"
+	"NeedToBeInJobVehicle": "You need to be in a job vehicle!",
+	"InvalidJobRank": "Job rank not found!"
 }

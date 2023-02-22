@@ -747,5 +747,6 @@
 	"Cancel": "Anuluj",
 	"AlreadyOwnVehicle": "Już posiadasz ten pojazd!",
 	"PropertyEntranceFeeLabel": "Opłata wejściowa: {1}",
-	"NeedToBeInJobVehicle": "Musisz być w firmowym pojeździe!"
+	"NeedToBeInJobVehicle": "Musisz być w firmowym pojeździe!",
+	"InvalidJobRank": "Job rank not found!"
 }
