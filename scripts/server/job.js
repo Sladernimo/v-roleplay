@@ -1540,7 +1540,7 @@ function takeJob(client, jobId) {
 	getPlayerCurrentSubAccount(client).jobRank = rankId;
 	getPlayerCurrentSubAccount(client).jobIndex = jobId;
 	getPlayerCurrentSubAccount(client).jobRankIndex = rankIndex;
-	sendPlayerJobType(client, getJobData(jobId).databaseId);
+	sendPlayerJobType(client, jobId);
 	updateJobBlipsForPlayer(client);
 }
 
