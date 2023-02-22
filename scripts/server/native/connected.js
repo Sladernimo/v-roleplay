@@ -815,6 +815,7 @@ function getVehicleName(vehicle) {
 // ===========================================================================
 
 function getElementModel(element) {
+	return element.modelIndex;
 }
 
 // ===========================================================================
@@ -825,6 +826,7 @@ function givePlayerWeaponAmmo(client, ammo) {
 // ===========================================================================
 
 function getPlayerWeapon(client) {
+	return getPlayerPed(client).weapon;
 }
 
 // ===========================================================================
