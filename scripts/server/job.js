@@ -1523,7 +1523,7 @@ function quitJob(client) {
 	getPlayerCurrentSubAccount(client).jobRank = 0;
 	getPlayerCurrentSubAccount(client).jobIndex = -1;
 	getPlayerCurrentSubAccount(client).jobRankIndex = -1;
-	sendPlayerJobType(client, 0);
+	sendPlayerJobType(client, -1);
 	updateJobBlipsForPlayer(client);
 }
 
@@ -1783,6 +1783,40 @@ function setJobPickupCommand(command, params, client) {
 	getJobData(jobId).needsSaved = true;
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${getJobData(jobId).name}'s{MAINCOLOUR} pickup to ${pickupString}`);
 	resetAllJobPickups();
+}
+
+// ===========================================================================
+
+function setPlayerJobRankCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobIndex = getPlayerJob(client);
+
+	if (getJobData(jobIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 0));
+	let rankIndex = getJobRankFromParams(jobIndex, params.split(" ").slice(1).join(" "));
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (rankIndex == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobRank"));
+		return false;
+	}
+
+	getPlayerCurrentSubAccount(targetClient).jobRankIndex = rankIndex;
+	getPlayerCurrentSubAccount(targetClient).jobRank = getJobRankData(jobIndex, rankIndex).databaseId;
+
+	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`)
 }
 
 // ===========================================================================
@@ -3078,7 +3112,7 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 
 function saveJobUniformToDatabase(jobUniformData) {
 	if (jobUniformData == null) {
-		// Invalid job uniform data
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData} is invalid. Skipping ...`);
 		return false;
 	}
 
@@ -3580,7 +3614,7 @@ function createJobUniformCommand(command, params, client) {
 	}
 
 	createJobUniform(jobId, skinIndex);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)} (${getGameConfig().skins[skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)} (${getGameConfig().skins[getGame()][skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
 	return true;
 }
 
@@ -3639,6 +3673,7 @@ function createJobUniform(jobId, skinIndex) {
 	tempJobUniformData.skin = skinIndex;
 	tempJobUniformData.jobIndex = jobId;
 	tempJobUniformData.job = getJobData(jobId);
+	tempJobUniformData.name = getGameConfig().skins[getGame()][skinIndex][1];
 	tempJobUniformData.needsSaved = true;
 
 	getJobData(jobId).uniforms.push(tempJobUniformData);
@@ -3893,7 +3928,7 @@ function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
 /**
  * @param {number} jobIndex - The data index of the job
  * @param {number} rankIndex - The data index of the job rank
- * @return {JobRouteData} The job rank's data (class instance)
+ * @return {JobRankData} The job rank's data (class instance)
  */
 function getJobRankData(jobIndex, rankIndex) {
 	if (typeof getServerData().jobs[jobIndex] == "undefined") {
@@ -4177,6 +4212,31 @@ function createAllJobRouteLocationMarkers() {
 
 function doesJobLocationHaveAnyRoutes(jobLocationData) {
 	return (getRandomJobRouteForLocation(jobLocationData) != -1);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} jobIndex - The job index to search ranks for
+ * @param {String} params - The params to search for
+ * @return {Number} The data index of a matching job
+ */
+function getJobRankFromParams(jobIndex, params) {
+	if (isNaN(params)) {
+		for (let i in getJobData(jobIndex).ranks) {
+			if ((toLowerCase(getJobData(jobIndex).ranks[i].name).indexOf(toLowerCase(params)) != -1)) {
+				return i;
+			}
+		}
+	} else {
+		for (let i in getJobData(jobIndex).ranks) {
+			if (getJobData(jobIndex).ranks[i].level == toInteger(params)) {
+				return i;
+			}
+		}
+	}
+
+	return false;
 }
 
 // ===========================================================================
