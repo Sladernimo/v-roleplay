@@ -619,9 +619,9 @@ function setVehicleEngine(vehicle, engine) {
 // ===========================================================================
 
 function setVehicleLocked(vehicle, locked) {
-	vehicle.locked = locked;
 	setEntityData(vehicle, "v.rp.locked", locked, true);
 	sendNetworkEventToPlayer("v.rp.veh.locked", null, vehicle.id, locked);
+	vehicle.locked = locked;
 }
 
 // ===========================================================================
