@@ -250,7 +250,7 @@ let globalConfig = {
 		"ChatBoxTimestamps",
 		"ChatEmoji",
 	],
-	mainChatType: V_CHAT_TYPE_TALK,
+	mainChatType: V_CHAT_TYPE_GLOBAL,
 	nightMapStartHour: 19,
 	nightMapEndHour: 7,
 };
