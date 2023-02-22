@@ -316,7 +316,7 @@ function processLabelRendering() {
 		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
 				getServerData().businesses.forEach((business) => {
-					if (getDistance(localPlayer.position, business.entrancePosition) <= propertyPickupRenderDistance) {
+					if (getDistance(localPlayer.position, business.entrancePosition) <= propertyLabelRenderDistance) {
 						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
 						}
@@ -326,7 +326,7 @@ function processLabelRendering() {
 				});
 
 				getServerData().houses.forEach((house) => {
-					if (getDistance(localPlayer.position, house.entrancePosition) <= propertyPickupRenderDistance) {
+					if (getDistance(localPlayer.position, house.entrancePosition) <= propertyLabelRenderDistance) {
 						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
 						}
@@ -336,7 +336,7 @@ function processLabelRendering() {
 				});
 
 				getServerData().jobs.forEach((job) => {
-					if (getDistance(localPlayer.position, job.position) <= propertyPickupRenderDistance) {
+					if (getDistance(localPlayer.position, job.position) <= propertyLabelRenderDistance) {
 						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
 						}
