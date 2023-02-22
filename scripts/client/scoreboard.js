@@ -38,66 +38,84 @@ function initScoreBoardListFont() {
 // ===========================================================================
 
 function processScoreBoardRendering() {
-	if (isAnyGUIActive()) {
+	if (!renderScoreBoard) {
+		logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.ScoreBoard] Could not render scoreboard. Scoreboard rendering is disabled!`);
 		return false;
 	}
 
-	if (renderScoreBoard) {
-		if (isKeyDown(scoreBoardKey)) {
-			if (scoreBoardListFont != null && scoreBoardTitleFont != null) {
-				let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
-				let titleSize = scoreBoardTitleFont.measure("PLAYERS", game.width, 0.0, 1.0, 10, false, false);
-				scoreBoardTitleFont.render("PLAYERS", [game.width / 2, scoreboardStart - 50], 0, 0.5, 0.0, scoreBoardTitleFont.size, COLOUR_WHITE, false, false, false, true);
+	if (scoreBoardListFont == null) {
+		logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.ScoreBoard] Could not render scoreboard. List font is null!`);
+		return false;
+	}
 
-				titleSize = scoreBoardTitleFont.measure("____________________________", game.width, 0.0, 1.0, 10, false, false);
-				scoreBoardTitleFont.render("____________________________", [game.width / 2, scoreboardStart - 35], 0, 0.5, 0.0, scoreBoardTitleFont.size, COLOUR_WHITE, false, false, false, true);
+	if (scoreBoardTitleFont == null) {
+		logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.ScoreBoard] Could not render scoreboard. Title font is null!`);
+		return false;
+	}
 
-				let clients = getClients();
-				for (let i in clients) {
-					if (!clients[i].console) {
-						let name = clients[i].name;
-						let colour = COLOUR_WHITE;
-						let paused = false;
-						let ping = "-1";
+	if (isAnyGUIActive()) {
+		logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.ScoreBoard] Could not render scoreboard. A GUI window is active!`);
+		return false;
+	}
 
-						if (typeof playerNames[clients[i].name] != "undefined") {
-							name = playerNames[clients[i].name];
-						}
+	if (scoreBoardKey == null) {
+		return false;
+	}
 
-						if (typeof playerPaused[clients[i].name] != "undefined") {
-							paused = playerPaused[clients[i].name];
-						}
+	if (!isKeyDown(scoreBoardKey)) {
+		return false;
+	}
 
-						if (typeof playerColours[clients[i].name] != "undefined") {
-							colour = playerColours[clients[i].name];
-						}
+	let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
+	let titleSize = scoreBoardTitleFont.measure("PLAYERS", game.width, 0.0, 1.0, 10, false, false);
+	scoreBoardTitleFont.render("PLAYERS", [game.width / 2, scoreboardStart - 50], 0, 0.5, 0.0, scoreBoardTitleFont.size, COLOUR_WHITE, false, false, false, true);
 
-						if (typeof playerPing[clients[i].name] != "undefined") {
-							ping = toString(playerPing[clients[i].name]);
-						}
+	titleSize = scoreBoardTitleFont.measure("____________________________", game.width, 0.0, 1.0, 10, false, false);
+	scoreBoardTitleFont.render("____________________________", [game.width / 2, scoreboardStart - 35], 0, 0.5, 0.0, scoreBoardTitleFont.size, COLOUR_WHITE, false, false, false, true);
 
-						// Player ID
-						let text = String(clients[i].index);
-						let size = scoreBoardListFont.measure(text, 75, 0.0, 1.0, 10, false, false);
-						scoreBoardListFont.render(text, [game.width / 2 - 100, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, COLOUR_WHITE, false, false, false, true);
+	let clients = getClients();
+	for (let i in clients) {
+		if (!clients[i].console) {
+			let name = clients[i].name;
+			let colour = COLOUR_WHITE;
+			let paused = false;
+			let ping = "-1";
 
-						// Player Name
-						text = name;
-						size = scoreBoardListFont.measure(text, 100, 0.0, 1.0, 10, false, false);
-						scoreBoardListFont.render(text, [game.width / 2, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, colour, false, false, false, true);
+			if (typeof playerNames[clients[i].name] != "undefined") {
+				name = playerNames[clients[i].name];
+			}
 
-						// Ping
-						text = ping;
-						size = scoreBoardListFont.measure(ping, 75, 0.0, 1.0, 10, false, false);
-						scoreBoardListFont.render(ping, [game.width / 2 + 100, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, COLOUR_WHITE, false, false, false, true);
+			if (typeof playerPaused[clients[i].name] != "undefined") {
+				paused = playerPaused[clients[i].name];
+			}
 
-						// PAUSED Status (depends on resource "afk")
-						if (paused == true) {
-							size = scoreBoardListFont.measure("PAUSED", 100, 0.0, 1.0, 10, false, false);
-							scoreBoardListFont.render("PAUSED", [game.width / 2 + 200, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, pausedColour, false, false, false, true);
-						}
-					}
-				}
+			if (typeof playerColours[clients[i].name] != "undefined") {
+				colour = playerColours[clients[i].name];
+			}
+
+			if (typeof playerPing[clients[i].name] != "undefined") {
+				ping = toString(playerPing[clients[i].name]);
+			}
+
+			// Player ID
+			let text = String(clients[i].index);
+			let size = scoreBoardListFont.measure(text, 75, 0.0, 1.0, 10, false, false);
+			scoreBoardListFont.render(text, [game.width / 2 - 100, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, COLOUR_WHITE, false, false, false, true);
+
+			// Player Name
+			text = name;
+			size = scoreBoardListFont.measure(text, 100, 0.0, 1.0, 10, false, false);
+			scoreBoardListFont.render(text, [game.width / 2, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, colour, false, false, false, true);
+
+			// Ping
+			text = ping;
+			size = scoreBoardListFont.measure(ping, 75, 0.0, 1.0, 10, false, false);
+			scoreBoardListFont.render(ping, [game.width / 2 + 100, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, COLOUR_WHITE, false, false, false, true);
+
+			// PAUSED Status (depends on resource "afk")
+			if (paused == true) {
+				size = scoreBoardListFont.measure("PAUSED", 100, 0.0, 1.0, 10, false, false);
+				scoreBoardListFont.render("PAUSED", [game.width / 2 + 200, scoreboardStart + (i * 20)], 0, 0.5, 0.0, scoreBoardListFont.size, pausedColour, false, false, false, true);
 			}
 		}
 	}
