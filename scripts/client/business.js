@@ -64,12 +64,14 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			if (businessData.buyPrice > 0) {
 				businessData.labelInfoType = V_PROPLABEL_INFO_BUYBIZ;
 			} else {
-				if (hasInterior && !hasItems) {
+				if (hasInterior) {
 					businessData.labelInfoType = V_PROPLABEL_INFO_ENTER;
-				} else if (!hasInterior && hasItems) {
-					businessData.labelInfoType = V_PROPLABEL_INFO_BUY;
 				} else {
-					businessData.labelInfoType = V_PROPLABEL_INFO_NONE;
+					if (hasItems) {
+						businessData.labelInfoType = V_PROPLABEL_INFO_BUY;
+					} else {
+						businessData.labelInfoType = V_PROPLABEL_INFO_NONE;
+					}
 				}
 			}
 
