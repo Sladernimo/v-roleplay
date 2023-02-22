@@ -292,7 +292,7 @@ function renderJobLabel(name, position, jobType) {
 			text = getLocaleString("StartWorkLabel", "/startwork");
 		}
 	} else {
-		if (localPlayerJobType == 0) {
+		if (localPlayerJobType == -1) {
 			text = getLocaleString("TakeJobLabel", "/takejob");
 		} else {
 			text = getLocaleString("NotYourJobLabel", "/quitjob");

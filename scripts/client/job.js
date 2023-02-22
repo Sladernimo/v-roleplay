@@ -7,7 +7,7 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-let localPlayerJobType = 0;
+let localPlayerJobType = -1;
 let localPlayerWorking = false;
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
