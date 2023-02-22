@@ -38,6 +38,7 @@ function initServerScripts() {
 	initRadioScript();
 	initLocaleScript();
 	initCommandScript();
+	initPayPhoneScript();
 
 	// Load config and stuff
 	loadGlobalConfig();
@@ -150,6 +151,7 @@ function loadServerDataFromDatabase() {
 		getServerData().radioStations = loadRadioStationsFromDatabase();
 		getServerData().gates = loadGatesFromDatabase();
 		getServerData().jobs = loadJobsFromDatabase();
+		getServerData().payPhones = loadPayPhonesFromDatabase();
 	}
 
 	getServerData().commands = loadCommands();
