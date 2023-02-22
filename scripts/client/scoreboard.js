@@ -127,7 +127,7 @@ function setScoreBoardKey(key) {
 	if (key == -1) {
 		scoreBoardKey = null;
 	} else {
-		scoreBoardKey = key;
+		scoreBoardKey = toInteger(key);
 	}
 }
 
