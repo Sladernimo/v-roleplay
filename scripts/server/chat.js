@@ -57,7 +57,7 @@ function processPlayerChat(client, messageText) {
 
 			case V_CHAT_TYPE_GLOBAL:
 			default:
-				chatToAllPlayers(client, messageTest);
+				chatToAllPlayers(client, messageText);
 				break;
 		}
 	} else {
