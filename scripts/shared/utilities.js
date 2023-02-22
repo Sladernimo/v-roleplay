@@ -3208,7 +3208,7 @@ function fillLeadingZeros(number, length) {
 // ===========================================================================
 
 function isMainWorldScene(sceneName) {
-	return (sceneName == "v.rp.mainWorldScene");
+	return (sceneName == "V.RP.MAINWORLD");
 }
 
 // ===========================================================================
