@@ -287,7 +287,7 @@ function setEnterPropertyKey(key) {
 	if (key == -1) {
 		enterPropertyKey = null;
 	} else {
-		enterPropertyKey = key;
+		enterPropertyKey = toInteger(key);
 	}
 }
 
