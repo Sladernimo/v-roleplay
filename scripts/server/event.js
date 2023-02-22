@@ -15,38 +15,6 @@ function initEventScript() {
 
 // ===========================================================================
 
-function addAllEventHandlers() {
-	addEventHandler("onResourceStart", onResourceStart);
-	addEventHandler("onResourceStop", onResourceStop);
-	addEventHandler("onProcess", onProcess);
-	addEventHandler("onPlayerConnect", onPlayerConnect);
-	addEventHandler("onPlayerJoin", onPlayerJoin);
-	addEventHandler("onPlayerJoined", onPlayerJoined);
-	addEventHandler("onPlayerChat", onPlayerChat);
-	addEventHandler("onPlayerQuit", onPlayerQuit);
-	addEventHandler("onElementStreamIn", onElementStreamIn);
-	addEventHandler("onElementStreamOut", onElementStreamOut);
-	addEventHandler("onPedSpawn", onPedSpawn);
-
-	if (getGame() <= V_GAME_GTA_IV) {
-		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
-		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
-		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
-		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
-	}
-
-	if (getGame() <= V_GAME_GTA_SA) {
-		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
-	}
-
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		addEventHandler("onPedEnteringVehicleEx", onPedEnteredVehicle);
-		addEventHandler("onPedExitingVehicleEx", onPedExitedVehicle);
-	}
-}
-
-// ===========================================================================
-
 function onPlayerConnect(event, ipAddress, port) {
 	logToConsole(LOG_INFO, `[V.RP.Event] onPlayerConnect - Client connecting (IP: ${ipAddress})`);
 	//if(isIpAddressBanned(ipAddress)) {
@@ -587,6 +555,16 @@ function onPlayerSpawn(client) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
+	} else {
+		sendPlayerEnterPropertyKey(client, -1);
+	}
+
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "scoreboard")) {
+		let keyId = getPlayerKeyBindForCommand(client, "scoreboard");
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending scoreboard key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerScoreboardKey(client, keyId.key);
+	} else {
+		sendPlayerScoreboardKey(client, -1);
 	}
 
 	sendPlayerChatBoxTimeStampsState(client, isPlayerAccountSettingEnabled(client, "ChatBoxTimestamps"));
