@@ -40,6 +40,7 @@ let serverBitFlagKeys = {
 		"Developer",
 		"ManageNPCs",
 		"ManageRaces",
+		"ManagePayPhones",
 	],
 	moderationFlagKeys: [
 		"None",
