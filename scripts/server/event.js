@@ -515,7 +515,7 @@ function onPlayerSpawn(client) {
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)}'s job type to their client (${getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(client))})`);
-	sendPlayerJobType(client, getPlayerCurrentSubAccount(client).job);
+	sendPlayerJobType(client, (getPlayerCurrentSubAccount(client).job != 0) ? getPlayerCurrentSubAccount(client).jobIndex : -1);
 
 	if (isGameFeatureSupported("rendering2D")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
