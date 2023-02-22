@@ -443,6 +443,7 @@ function loadCommands() {
 			new CommandData("jobreloadall", reloadAllJobsCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobinfo", getJobInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job"),
 			new CommandData("joblocinfo", getJobLocationInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job location"),
+			new CommandData("jobrank", setPlayerJobRankCommand, "", getStaffFlagValue("None"), true, true, "Sets a player's job rank"),
 		],
 		keybind: [
 			new CommandData("bindkey", addKeyBindCommand, "<key id/name> <command> [params]", getStaffFlagValue("None"), true, false, "Binds a key to a command and optional parameters"),
