@@ -318,8 +318,8 @@ function executeServerCodeCommand(command, params, client) {
 	}
 
 	messagePlayerSuccess(client, "Server code executed!");
-	messagePlayerNormal(client, `Code: ${params}`, COLOUR_YELLOW);
-	messagePlayerNormal(client, `Returns: ${returnValue} (${typeof returnValue})`, COLOUR_YELLOW);
+	messagePlayerNormal(client, `Code: ${params}`, getColourByName("yellow"));
+	messagePlayerNormal(client, `Returns: ${returnValue} (${typeof returnValue})`, getColourByName("yellow"));
 	logToConsole(LOG_INFO, `Server code executed by ${getPlayerDisplayForConsole(client)}: ${params}`);
 	return true;
 }
@@ -349,7 +349,7 @@ function executeClientCodeCommand(command, params, client) {
 	sendRunCodeToClient(targetClient, targetCode, client);
 
 	messagePlayerSuccess(client, `Executing client code for ${getPlayerName(targetClient)}`);
-	messagePlayerNormal(client, `Code: ${targetCode}`);
+	messagePlayerNormal(client, `Code: ${targetCode}`, getColourByName("yellow"));
 	return true;
 }
 
@@ -483,7 +483,7 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 
 	//messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
 	//messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
-	messagePlayerNormal(returnClient, `(${getPlayerName(client)}) Code returns: ${returnVal}`, getColourByName("white"));
+	messagePlayerNormal(returnClient, `(${getPlayerName(client)}) Code returns: ${returnVal}`, getColourByName("yellow"));
 }
 
 // ===========================================================================
