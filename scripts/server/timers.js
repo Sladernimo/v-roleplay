@@ -234,6 +234,7 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
+	/*
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
 			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
@@ -277,6 +278,7 @@ function checkServerGameTime() {
 			}
 		}
 	}
+	*/
 
 	if (isGameFeatureSupported("time")) {
 		game.time.hour = getServerConfig().hour;
