@@ -565,19 +565,19 @@ function processPlayerEnteringExitingProperty(client) {
 				fadePlayerCamera(client, true, 1000);
 			}
 			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
+
+			let radioStationIndex = propertyData.streamingRadioStationIndex;
+			if (radioStationIndex != -1) {
+				if (getRadioStationData(radioStationIndex)) {
+					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
+					getPlayerData(client).streamingRadioStation = radioStationIndex;
+				}
+			}
 		}, 1000);
 
 		if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
 			if (propertyData.type == V_BIZ_TYPE_PAINTBALL) {
 				startPaintBall(client);
-			}
-		}
-
-		let radioStationIndex = propertyData.streamingRadioStationIndex;
-		if (radioStationIndex != -1) {
-			if (getRadioStationData(radioStationIndex)) {
-				playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
-				getPlayerData(client).streamingRadioStation = radioStationIndex;
 			}
 		}
 
