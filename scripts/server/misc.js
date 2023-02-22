@@ -364,19 +364,23 @@ function enterExitPropertyCommand(command, params, client) {
 			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? V_PROPERTY_TYPE_BUSINESS : V_PROPERTY_TYPE_HOUSE, closestProperty.index];
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
-
-			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
-				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
-				if (isMainWorldScene(closestProperty.exitScene)) {
-					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-				} else {
-					setPlayerScene(client, closestProperty.exitScene);
-				}
-				return false;
-			}
+			setPlayerDimension(client, 50000 + getPlayerId(client));
 
 			if (isFadeCameraSupported()) {
-				fadePlayerCamera(client, false, 1000);
+				fadePlayerCamera(client, false, 2000);
+			}
+
+			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+				setTimeout(function () {
+					getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
+					if (isMainWorldScene(closestProperty.exitScene)) {
+						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+					} else {
+						setPlayerScene(client, closestProperty.exitScene);
+					}
+				}, 1000);
+
+				return false;
 			}
 
 			setTimeout(function () {
