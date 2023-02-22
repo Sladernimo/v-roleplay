@@ -12,7 +12,7 @@ let scoreBoardListFont = null;
 
 let pausedColour = COLOUR_RED;
 
-let scoreboardKey = SDLK_TAB;
+let scoreBoardKey = null;
 
 // ===========================================================================
 
@@ -43,7 +43,7 @@ function processScoreBoardRendering() {
 	}
 
 	if (renderScoreBoard) {
-		if (isKeyDown(SDLK_TAB)) {
+		if (isKeyDown(scoreBoardKey)) {
 			if (scoreBoardListFont != null && scoreBoardTitleFont != null) {
 				let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
 				let titleSize = scoreBoardTitleFont.measure("PLAYERS", game.width, 0.0, 1.0, 10, false, false);
@@ -102,3 +102,15 @@ function processScoreBoardRendering() {
 		}
 	}
 }
+
+// ===========================================================================
+
+function setScoreBoardKey(key) {
+	if (key == -1) {
+		scoreBoardKey = null;
+	} else {
+		scoreBoardKey = key;
+	}
+}
+
+// ===========================================================================

@@ -152,6 +152,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.minuteDuration", setMinuteDuration);
 	addNetworkEventHandler("v.rp.snow", setSnowState);
 	addNetworkEventHandler("v.rp.enterPropertyKey", setEnterPropertyKey);
+	addNetworkEventHandler("v.rp.scoreBoardKey", setScoreBoardKey);
 	addNetworkEventHandler("v.rp.skinSelect", toggleSkinSelect);
 	addNetworkEventHandler("v.rp.hotbar", updatePlayerHotBar);
 	addNetworkEventHandler("v.rp.logLevel", setLogLevel);
@@ -288,7 +289,6 @@ function setEnterPropertyKey(key) {
 	} else {
 		enterPropertyKey = key;
 	}
-
 }
 
 // ===========================================================================

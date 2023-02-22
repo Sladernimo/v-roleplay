@@ -104,6 +104,11 @@
             "keyName": "9",
             "commandString": "item 9",
             "keyState": 1
+        },
+        {
+            "keyName": "f5",
+            "commandString": "scoreboard",
+            "keyState": 1
         }
     ]
 }

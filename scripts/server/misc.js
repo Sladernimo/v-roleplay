@@ -1013,3 +1013,10 @@ function getPlayerInPropertyData(client) {
 }
 
 // ===========================================================================
+
+function scoreBoardCommand(command, params, client) {
+	// Handled client side
+	return false;
+}
+
+// ===========================================================================

@@ -1010,6 +1010,12 @@ function sendPlayerEnterPropertyKey(client, key) {
 
 // ===========================================================================
 
+function sendPlayerScoreBoardKey(client, key) {
+	sendNetworkEventToPlayer("v.rp.scoreBoardKey", client, key);
+}
+
+// ===========================================================================
+
 function makePedPlayAnimation(ped, animationSlot, positionOffset) {
 	if (getAnimationData(animationSlot).loop == true) {
 		setEntityData(ped, "v.rp.anim", animationSlot, true);
