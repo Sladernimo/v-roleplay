@@ -311,7 +311,7 @@ function deleteClanCommand(command, params, client) {
 // ===========================================================================
 
 function setClanOwnerCommand(command, params, client) {
-	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("owner"))) {
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("Owner"))) {
 		messagePlayerError(client, "You must be the clan owner to use this command!");
 		return false;
 	}
@@ -334,18 +334,20 @@ function setClanOwnerCommand(command, params, client) {
 		return false;
 	}
 
+	let highestRankIndex = getHighestClanRank(clanIndex);
+
 	getClanData(clanIndex).owner = getPlayerCurrentSubAccount(targetClient).databaseId;
 	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
-	getPlayerCurrentSubAccount(targetClient).clanRank = getHighestClanRank(clanIndex);
-	getPlayerCurrentSubAccount(targetClient).clanIndex = getClanIndexFromDatabaseId(clanIndex)
-	getPlayerCurrentSubAccount(targetClient).clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
+	getPlayerCurrentSubAccount(targetClient).clanIndex = getClanIndexFromDatabaseId(clanIndex);
+	getPlayerCurrentSubAccount(targetClient).clanRank = getClanRankData(clanIndex, highestRankIndex).databaseId;
+	getPlayerCurrentSubAccount(targetClient).clanRankIndex = highestRankIndex;
 	getClanData(clanIndex).needsSaved = true;
 
 	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
 	getPlayerCurrentSubAccount(targetClient).clanFlags = getClanFlagValue("All");
 
 	//messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set clan {clanOrange}${getClanData(clanIndex).name} {MAINCOLOUR}owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
-	messagePlayerSuccess(client, `You changed the clan owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	messagePlayerSuccess(client, `You changed clan {clanOrange}${getClanData(clanIndex).name}'s {MAINCOLOUR}owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
 }
 
 // ===========================================================================
@@ -1047,7 +1049,12 @@ function createClan(name) {
 		let tempClan = new ClanData(false);
 		tempClan.databaseId = getDatabaseInsertId(dbConnection);
 		tempClan.name = name;
-		getServerData().clans.push(tempClan);
+		let clanId = getServerData().clans.push(tempClan);
+
+		let tempDefaultRank = new ClanRankData(false);
+		tempDefaultRank.name = "Default Rank";
+		tempDefaultRank.needsSaved = true;
+		getServerData().clans[clanId - 1].ranks.push(tempDefaultRank);
 
 		setAllClanDataIndexes();
 	}
@@ -1521,7 +1528,7 @@ function getLowestClanRank(clanIndex) {
 
 // ===========================================================================
 
-function getHighestJobRank(clanIndex) {
+function getHighestClanRank(clanIndex) {
 	let highestRank = 0;
 	for (let i in getServerData().clans[clanIndex].ranks) {
 		if (getClanRankData(clanIndex, i).level > getClanRankData(clanIndex, highestRank).level) {
