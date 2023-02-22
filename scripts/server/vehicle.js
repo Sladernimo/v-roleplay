@@ -156,14 +156,6 @@ class VehicleData {
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 		}
 	}
-
-	saveToDatabase() {
-		saveVehicleToDatabase(this);
-	}
-
-	respawn() {
-		respawnVehicle(this.vehicle);
-	}
 };
 
 // ===========================================================================
@@ -186,7 +178,7 @@ function loadVehiclesFromDatabase() {
 		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
-				let tempVehicleData = new VehicleData(dbAssoc[i]);
+				let tempVehicleData = new VehicleData(dbAssoc[i], false);
 				tempVehicles.push(tempVehicleData);
 			}
 		}
@@ -322,9 +314,11 @@ function saveVehicleToDatabase(vehicleDataId) {
 
 function spawnAllVehicles() {
 	for (let i in getServerData().vehicles) {
-		let vehicle = spawnVehicle(getServerData().vehicles[i]);
-		getServerData().vehicles[i].vehicle = vehicle;
-		setEntityData(vehicle, "v.rp.dataSlot", i, false);
+		if (getServerData().vehicles[i].vehicle == false) {
+			let vehicle = spawnVehicle(getServerData().vehicles[i]);
+			getServerData().vehicles[i].vehicle = vehicle;
+			setEntityData(vehicle, "v.rp.dataSlot", i, false);
+		}
 	}
 	setAllVehicleIndexes();
 }
@@ -1464,22 +1458,21 @@ function stopRentingVehicle(client) {
 // ===========================================================================
 
 function respawnVehicle(vehicle) {
-	let vehicles = getServerData().vehicles;
-	for (let i in vehicles) {
-		if (vehicle == vehicles[i].vehicle) {
-			if (vehicles[i].spawnLocked == true) {
-				vehicles[i].engine = false;
+	for (let i in getServerData().vehicles) {
+		if (vehicle == getServerData().vehicles[i].vehicle) {
+			if (getServerData().vehicles[i].spawnLocked == true) {
+				getServerData().vehicles[i].engine = false;
 			}
 
-			if (vehicles[i].ownerType == V_VEHOWNER_JOB) {
-				vehicles[i].locked = true;
+			if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
+				getServerData().vehicles[i].locked = true;
 			}
 
 			destroyElement(vehicle);
-			vehicles[i].vehicle = false;
+			getServerData().vehicles[i].vehicle = false;
 
-			let newVehicle = spawnVehicle(vehicles[i]);
-			vehicles[i].vehicle = newVehicle;
+			let newVehicle = spawnVehicle(getServerData().vehicles[i]);
+			getServerData().vehicles[i].vehicle = newVehicle;
 			setEntityData(newVehicle, "v.rp.dataSlot", i, false);
 		}
 	}
@@ -1868,7 +1861,7 @@ function removeAllOccupantsFromVehicle(vehicle) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (clients[i].player != null) {
-			if (clients[i].player.vehicle != null) {
+			if (clients[i].player.vehicle != false) {
 				if (clients[i].player.vehicle == vehicle) {
 					removePlayerFromVehicle(clients[i]);
 				}
@@ -1920,8 +1913,10 @@ function isPlayerInVehicleDriverSeat(client) {
 
 function despawnAllVehicles() {
 	for (let i in getServerData().vehicles) {
-		destroyGameElement(getServerData().vehicles[i].vehicle);
-		getServerData().vehicles[i].vehicle = null;
+		if (getServerData().vehicles[i].vehicle != false) {
+			destroyGameElement(getServerData().vehicles[i].vehicle);
+			getServerData().vehicles[i].vehicle = false;
+		}
 	}
 }
 
