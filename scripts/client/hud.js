@@ -33,7 +33,7 @@ function processCustomHUDRendering() {
 			let text = getCurrencyString(localPlayerMoney);
 			logToConsole(LOG_VERBOSE, `[V.RP.HUD]: Rendering custom HUD money (${text})...`);
 			customHUDMoneyFont.render(text, [game.width - 150, 20], 130, 1.0, 0.0, customHUDMoneyFont.size, customHUDMoneyColour, true, true, false, true);
-			graphics.drawRectangle()
+			//graphics.drawRectangle()
 		} else {
 			logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.HUD]: Rendering custom HUD money FAILED. Font object is null!`);
 		}
