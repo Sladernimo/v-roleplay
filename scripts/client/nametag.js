@@ -84,20 +84,14 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// -------------------------------------------
 	// Health Bar
 
-	if (getMultiplayerMod() == V_MPMOD_GTAC) {
-		if (getGame() == V_GAME_GTA_III) {
-			// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
-			if (skin == 109) {
-				y -= 20;
-			} else {
-				y -= 5;
-			}
-		} else {
-			y -= 5;
+	if (getGame() == V_GAME_GTA_III) {
+		// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
+		if (skin == 109) {
+			y -= 15;
 		}
-	} else {
-		y -= 5;
 	}
+
+	y -= 5;
 
 	if (health > 0.0) {
 		let hx = x - width / 2;
@@ -143,7 +137,7 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 // ===========================================================================
 
 function updateNametag(element) {
-	if (!areWorldLabelsSupported()) {
+	if (!isGameFeatureSupported("customNametag")) {
 		return false;
 	}
 
@@ -156,7 +150,7 @@ function updateNametag(element) {
 		//if(typeof element.getComponentPosition()) {
 
 		let screenPos = getScreenFromWorldPosition(elementPos);
-		if (screenPos[2] >= 0.0) {
+		if (screenPos[2] >= 0.0 || getGame() == V_GAME_MAFIA_ONE) {
 			let health = element.health / 100.0;
 			if (health > 1.0) {
 				health = 1.0;
@@ -182,22 +176,20 @@ function updateNametag(element) {
 					let paused = false;
 					let ping = -1;
 
-					if (element.isType(ELEMENT_PLAYER)) {
-						if (typeof playerNames[element.name] != "undefined") {
-							name = playerNames[element.name];
-						}
+					if (typeof playerNames[element.name] != "undefined") {
+						name = playerNames[element.name];
+					}
 
-						if (typeof playerPaused[element.name] != "undefined") {
-							paused = playerPaused[element.name];
-						}
+					if (typeof playerPaused[element.name] != "undefined") {
+						paused = playerPaused[element.name];
+					}
 
-						if (typeof playerColours[element.name] != "undefined") {
-							colour = playerColours[element.name];
-						}
+					if (typeof playerColours[element.name] != "undefined") {
+						colour = playerColours[element.name];
+					}
 
-						if (typeof playerPing[element.name] != "undefined") {
-							ping = playerPing[element.name];
-						}
+					if (typeof playerPing[element.name] != "undefined") {
+						ping = playerPing[element.name];
 					}
 
 					drawNametag(screenPos[0], screenPos[1], health, armour, name, ping, 1.0 - distance / nametagDistance, distance, colour, paused, element.skin);
