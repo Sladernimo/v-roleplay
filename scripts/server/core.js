@@ -35,6 +35,7 @@ let defaultNoAccountId = 1;
  * @property {Array.<JobData>} jobs
  * @property {Array.<GateData>} gates
  * @property {Array.<RadioStationData>} radioStations
+ * @property {Array.<PayPhoneData>} payPhones
  * @property {Array} locales
  * @property {Array} localeStrings
  * @property {Array} groundItemCache
@@ -60,6 +61,7 @@ let serverData = {
 	jobs: [],
 	gates: [],
 	radioStations: [],
+	payPhones: [],
 	localeStrings: {},
 	groundItemCache: [],
 	groundPlantCache: [],
