@@ -13,6 +13,7 @@ let afkStatusFont = null;
 let pingFont = null;
 let nametagDistance = 50.0;
 let nametagWidth = 70;
+let nametagHeight = (getGame() == V_GAME_MAFIA_ONE) ? 2.5 : 0.9;
 
 let playerNames = {};
 let playerColours = {};
@@ -142,15 +143,13 @@ function updateNametag(element) {
 	}
 
 	if (localPlayer != null) {
-		let playerPos = localPlayer.position;
-		let elementPos = element.position;
+		let playerPosition = localPlayer.position;
+		let elementPosition = element.position;
 
-		elementPos[2] += 0.9;
+		elementPosition = getPosAbovePos(elementPosition, nametagHeight);
 
-		//if(typeof element.getComponentPosition()) {
-
-		let screenPos = getScreenFromWorldPosition(elementPos);
-		if (screenPos[2] >= 0.0 || getGame() == V_GAME_MAFIA_ONE) {
+		let screenPosition = getScreenFromWorldPosition(elementPosition);
+		if (screenPosition[2] >= 0.0 || getGame() == V_GAME_MAFIA_ONE) {
 			let health = element.health / 100.0;
 			if (health > 1.0) {
 				health = 1.0;
@@ -161,10 +160,10 @@ function updateNametag(element) {
 				armour = 1.0;
 			}
 
-			let distance = playerPos.distance(elementPos);
+			let distance = playerPosition.distance(elementPosition);
 			if (distance <= nametagDistance) {
 				if (typeof game.processLineOfSight != "undefined") {
-					let losCheck = game.processLineOfSight(playerPos, elementPos, true, false, false, true, true, false, true, true);
+					let losCheck = game.processLineOfSight(playerPosition, elementPosition, true, false, false, true, true, false, true, true);
 					if (losCheck != null) {
 						return false;
 					}
@@ -192,7 +191,7 @@ function updateNametag(element) {
 						ping = playerPing[element.name];
 					}
 
-					drawNametag(screenPos[0], screenPos[1], health, armour, name, ping, 1.0 - distance / nametagDistance, distance, colour, paused, element.skin);
+					drawNametag(screenPosition[0], screenPosition[1], health, armour, name, ping, 1.0 - distance / nametagDistance, distance, colour, paused, element.skin);
 				}
 			}
 		}
