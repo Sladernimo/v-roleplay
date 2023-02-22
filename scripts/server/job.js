@@ -1184,7 +1184,7 @@ function stopWorking(client) {
 	setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 	deleteJobItems(client);
 	restorePlayerTempLockerItems(client);
-	respawnJobVehicle(client);
+	//respawnJobVehicle(client);
 	sendPlayerStopJobRoute(client);
 
 	let jobId = getPlayerJob(client);
@@ -2564,7 +2564,7 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
-	respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = false;
 	getPlayerData(client).jobRoute = -1;
@@ -4047,7 +4047,7 @@ function finishSuccessfulJobRoute(client) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
-	respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = false;
 	getPlayerData(client).jobRoute = -1;
