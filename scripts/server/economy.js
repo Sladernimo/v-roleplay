@@ -33,6 +33,11 @@ function playerPayDay(client) {
 	// Passive income
 	grossIncome = Math.round(grossIncome + getGlobalConfig().economy.passiveIncomePerPayDay);
 
+	// Job Pay
+	if (getPlayerJob(client) != -1) {
+		grossIncome = Math.round(grossIncome + getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).pay);
+	}
+
 	// Payday bonus
 	grossIncome = Math.round(grossIncome * getGlobalConfig().economy.grossIncomeMultiplier);
 
