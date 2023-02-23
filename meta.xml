@@ -93,6 +93,7 @@
 	<file type="client" src="files/images/gtac-logo.png" />
 	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/cursor.png" />
+	<file type="client" src="files/images/objective-icon.png" />
 
 	<!-- GUI -->
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
