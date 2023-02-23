@@ -216,6 +216,16 @@ function clanChatCommand(command, params, client) {
 		return false;
 	}
 
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (getClanData(getPlayerClan) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
 	clanChat(client, params);
 }
 
