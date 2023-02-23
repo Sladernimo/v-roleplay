@@ -12,6 +12,12 @@ let localPlayerWorking = false;
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
 
+let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
+let jobRouteLocationIndicatorSize = [32, 32];
+let jobRouteLocationIndicatorEnabled = false;
+let jobRouteLocationIndicatorImagePath = "files/images/objective-icon.png";
+let jobRouteLocationIndicatorImage = null;
+
 let jobBlipBlinkAmount = 0;
 let jobBlipBlinkTimes = 10;
 let jobBlipBlinkInterval = 500;
@@ -36,7 +42,21 @@ class JobData {
 
 function initJobScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.Job]: Initializing job script ...");
+	jobRouteLocationIndicatorImage = loadJobRouteLocationIndicatorImage();
 	logToConsole(LOG_DEBUG, "[V.RP.Job]: Job script initialized!");
+}
+
+// ===========================================================================
+
+function loadJobRouteLocationIndicatorImage() {
+	let imageStream = openFile(jobRouteLocationIndicatorImagePath);
+	let tempImage = null;
+	if (imageStream != null) {
+		tempImage = graphics.loadPNG(imageStream);
+		imageStream.close();
+	}
+
+	return tempImage
 }
 
 // ===========================================================================
@@ -74,6 +94,11 @@ function showJobRouteLocation(position, colour) {
 		// Blinking is bugged if player hit the spot before it stops blinking.
 		blinkJobRouteLocationBlip(10, position, colour);
 		jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
+	}
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		jobRouteLocationIndicatorPosition = position;
+		jobRouteLocationIndicatorEnabled = true;
 	}
 }
 
@@ -116,22 +141,30 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 function hideJobRouteLocation() {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Hiding job route location`);
 
-	if (jobRouteLocationBlip != null) {
-		destroyElement(jobRouteLocationBlip);
-		jobRouteLocationBlip = null;
+	if (isGameFeatureSupported("blip")) {
+		if (jobRouteLocationBlip != null) {
+			destroyElement(jobRouteLocationBlip);
+			jobRouteLocationBlip = null;
+		}
+
+		if (jobRouteLocationSphere != null) {
+			destroyElement(jobRouteLocationSphere);
+			jobRouteLocationSphere = null;
+		}
+
+		if (jobBlipBlinkTimer != null) {
+			clearInterval(jobBlipBlinkTimer);
+		}
+
+		jobBlipBlinkAmount = 0;
+		jobBlipBlinkTimes = 0;
 	}
 
-	if (jobRouteLocationSphere != null) {
-		destroyElement(jobRouteLocationSphere);
-		jobRouteLocationSphere = null;
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
+		jobRouteLocationIndicatorEnabled = false;
 	}
 
-	if (jobBlipBlinkTimer != null) {
-		clearInterval(jobBlipBlinkTimer);
-	}
-
-	jobBlipBlinkAmount = 0;
-	jobBlipBlinkTimes = 0;
 }
 
 // ===========================================================================
@@ -237,3 +270,20 @@ function removeJobsFromClient() {
 }
 
 // ===========================================================================
+
+function processJobLocationIndicatorRendering() {
+	if (jobRouteLocationIndicatorImage == null) {
+		return false;
+	}
+
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
+	if (!jobRouteLocationIndicatorEnabled) {
+		return false;
+	}
+
+	let screenPosition = getScreenFromWorldPosition(jobRouteLocationIndicatorPosition);
+	graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize[0] / 2), screenPosition.y - (jobRouteLocationIndicatorSize[1] / 2)], [jobRouteLocationIndicatorSize[0], jobRouteLocationIndicatorSize[1]]);
+}
