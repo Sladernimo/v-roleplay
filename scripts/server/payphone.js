@@ -56,7 +56,7 @@ function initPayPhoneScript() {
 function createPayPhoneCommand(command, params, client) {
 	let payPhoneNumber = generateRandomPhoneNumber();
 
-	if (areParamsEmpty(params)) {
+	if (!areParamsEmpty(params)) {
 		if (isNaN(params)) {
 			messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
 			return false;
@@ -77,7 +77,7 @@ function createPayPhone(position, number) {
 	tempPayPhoneData.position = position;
 	tempPayPhoneData.needsSaved = true;
 
-	getServerData().payphones.push(tempPayPhoneData);
+	getServerData().payPhones.push(tempPayPhoneData);
 
 	return true;
 }
