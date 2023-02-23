@@ -1472,3 +1472,18 @@ function addAllEventHandlers() {
 }
 
 // ===========================================================================
+
+function getVehicleOccupants(vehicle) {
+	let occupants = [];
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (getPlayerVehicle(clients[i]) == vehicle) {
+			occupants.push(clients[i]);
+		}
+	}
+
+	return occupants;
+}
+
+// ===========================================================================
