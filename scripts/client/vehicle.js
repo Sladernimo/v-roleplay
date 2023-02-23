@@ -172,3 +172,26 @@ function removeVehiclesFromClient() {
 }
 
 // ===========================================================================
+
+function processLocalPlayerVehicleControlState() {
+	if (areServerElementsSupported()) {
+		if (localPlayer.vehicle != null) {
+			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
+				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
+					setImmediate(function () {
+						localPlayer.vehicle.engine = getEntityData(localPlayer.vehicle, "v.rp.engine");
+					});
+
+					if (!getEntityData(localPlayer.vehicle, "v.rp.engine")) {
+						if (typeof localPlayer.vehicle.velocity != "undefined") {
+							localPlayer.vehicle.velocity = toVector3(0.0, 0.0, 0.0);
+							localPlayer.vehicle.turnVelocity = toVector3(0.0, 0.0, 0.0);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
