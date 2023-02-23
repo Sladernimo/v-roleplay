@@ -158,6 +158,7 @@ function onDrawnHUD(event) {
 	processInteriorLightsRendering();
 	processCustomHUDRendering();
 	processCameraFadeRendering();
+	processJobLocationIndicatorRendering();
 }
 
 // ===========================================================================
@@ -182,6 +183,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	cruiseControlEnabled = false;
 	cruiseControlSpeed = 0.0;
 
+	/*
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
@@ -195,6 +197,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 			}
 		}
 	}
+	*/
 }
 
 // ===========================================================================
