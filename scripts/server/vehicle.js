@@ -496,7 +496,7 @@ function deleteVehicleCommand(command, params, client) {
 	quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
 
 	getServerData().vehicles.splice(dataIndex, 1);
-	destroyElement(vehicle);
+	destroyGameElement(vehicle);
 
 	messagePlayerSuccess(client, `The ${vehicleName} has been deleted!`);
 }
@@ -1313,12 +1313,7 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 // ===========================================================================
 
 function reloadAllVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicle) {
-			deleteGameElement(getServerData().vehicles[i].vehicle);
-		}
-	}
-
+	despawnAllVehicles();
 	clearArray(getServerData().vehicles);
 	getServerData().vehicles = loadVehiclesFromDatabase();
 	spawnAllVehicles();
