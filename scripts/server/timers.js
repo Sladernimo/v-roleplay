@@ -312,7 +312,12 @@ function checkPayDays() {
 
 	for (let i in getServerData().businesses) {
 		if (getBusinessData(i).ownerType != V_BIZ_OWNER_NONE && getBusinessData(i).ownerType != V_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != V_BIZ_OWNER_FACTION) {
-			getBusinessData(i).till += 1000;
+			let addToTill = getGlobalConfig().economy.passiveIncomePerPayDay;
+			if (isDoubleBonusActive()) {
+				addToTill = addToTill * 2;
+			}
+			getBusinessData(i).till = getBusinessData(i).till + addToTill;
+			getBusinessData(i).needsSaved = true;
 		}
 	}
 }
