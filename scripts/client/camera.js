@@ -41,3 +41,16 @@ function processCameraFadeRendering() {
 }
 
 // ===========================================================================
+
+function fadeLocalCamera(state, duration, colour) {
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${duration}ms`);
+
+	cameraFadeDuration = duration;
+	cameraFadeStart = sdl.ticks;
+	cameraFadeIn = state;
+	cameraFadeColour = colour;
+	cameraFadeAlpha = (state) ? 255 : 0;
+	cameraFadeEnabled = true;
+}
+
+// ===========================================================================
