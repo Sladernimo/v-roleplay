@@ -28,20 +28,12 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 
 // ===========================================================================
 
-function fadeLocalCamera(state, duration, colour) {
-	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Fading camera ${(state) ? "in" : "out"} for ${duration}ms`);
-
-	cameraFadeDuration = duration;
-	cameraFadeStart = sdl.ticks;
-	cameraFadeIn = state;
-	cameraFadeColour = colour;
-	cameraFadeAlpha = (state) ? 255 : 0;
-	cameraFadeEnabled = true;
-}
-
-// ===========================================================================
-
 function removeLocalPlayerFromVehicle() {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		localPlayer.removeFromVehicle(localPlayer.vehicle, 0);
+		localPlayer.position = getPosAbovePos(localPlayer.position, 5);
+	}
+
 	localPlayer.removeFromVehicle();
 }
 
@@ -400,36 +392,6 @@ function processWantedLevelReset() {
 
 	if (typeof localPlayer.wantedLevel != "undefined") {
 		localPlayer.wantedLevel = forceWantedLevel;
-	}
-}
-
-// ===========================================================================
-
-function processLocalPlayerVehicleControlState() {
-	if (areServerElementsSupported()) {
-		if (localPlayer.vehicle != null) {
-			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
-				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
-					if (localPlayer.vehicle.engine == true) {
-						localPlayer.vehicle.engine = false;
-					}
-					//localPlayer.vehicle.netFlags.sendSync = false;
-					if (!localPlayer.vehicle.engine) {
-						if (typeof localPlayer.vehicle.velocity != "undefined") {
-							localPlayer.vehicle.velocity = toVector3(0.0, 0.0, 0.0);
-							localPlayer.vehicle.turnVelocity = toVector3(0.0, 0.0, 0.0);
-						}
-
-						//if (parkedVehiclePosition) {
-						//	localPlayer.vehicle.position = parkedVehiclePosition;
-						//	localPlayer.vehicle.heading = parkedVehicleHeading;
-						//}
-					}
-				} else {
-					//localPlayer.vehicle.netFlags.sendSync = true;
-				}
-			}
-		}
 	}
 }
 
