@@ -43,6 +43,7 @@ function saveServerDataToDatabase() {
 	}
 
 	try {
+		updateVehicleSavedPositions();
 		saveAllVehiclesToDatabase();
 	} catch (error) {
 		logToConsole(LOG_ERROR, `Could not save vehicles to database: ${error}`);
@@ -76,6 +77,12 @@ function saveServerDataToDatabase() {
 		saveAllGatesToDatabase();
 	} catch (error) {
 		logToConsole(LOG_ERROR, `Could not save gates to database: ${error}`);
+	}
+
+	try {
+		saveAllPayPhonesToDatabase();
+	} catch (error) {
+		logToConsole(LOG_ERROR, `Could not save payphones to database: ${error}`);
 	}
 
 	try {
@@ -113,6 +120,8 @@ function oneMinuteTimerFunction() {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
 		updateAllPlayerNameTags();
 	}
+
+	updateVehicleSavedPositions();
 }
 
 // ===========================================================================
@@ -121,7 +130,6 @@ function tenMinuteTimerFunction() {
 	//showRandomTipToAllPlayers();
 	//saveServerDataToDatabase();
 	//checkInactiveVehicleRespawns();
-	updateVehicleSavedPositions();
 }
 
 // ===========================================================================
