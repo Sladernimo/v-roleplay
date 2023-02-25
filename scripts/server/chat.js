@@ -50,6 +50,11 @@ function processPlayerChat(client, messageText) {
 
 		messageText = messageText.substring(0, 128);
 
+		if (getPlayerData(client).usingPayPhone != -1 && getPayPhoneData(getPlayerData(client).usingPayPhone).state == V_PAYPHONE_STATE_ACTIVE_CALL) {
+			messagePlayerPhoneCall(client, getPlayerData(client).payPhoneOtherPlayer, messageText);
+			return true;
+		}
+
 		switch (getGlobalConfig().mainChatType) {
 			case V_CHAT_TYPE_TALK:
 				talkToNearbyPlayers(client, messageText);
