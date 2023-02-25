@@ -141,6 +141,14 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.nametag", updatePlayerNameTag);
 	addNetworkEventHandler("v.rp.nametagDistance", setNameTagDistance);
 
+	// PayPhones
+	addNetworkEventHandler("v.rp.payPhone", receivePayPhoneFromServer);
+	addNetworkEventHandler("v.rp.payPhoneState", receivePayPhoneStateFromServer);
+	addNetworkEventHandler("v.rp.removePayPhones", removePayPhonesFromClient);
+	addNetworkEventHandler("v.rp.payPhoneDial", payPhoneDial);
+	addNetworkEventHandler("v.rp.payPhoneHangup", payPhoneHangup);
+	addNetworkEventHandler("v.rp.payPhonePickup", payPhonePickup);
+
 	// Misc
 	addNetworkEventHandler("v.rp.mouseCursor", toggleMouseCursor);
 	addNetworkEventHandler("v.rp.mouseCamera", toggleMouseCamera);
