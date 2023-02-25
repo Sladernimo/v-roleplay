@@ -496,7 +496,10 @@ function loadCommands() {
 		paintball: [],
 		payPhone: [
 			new CommandData("addpayphone", createPayPhoneCommand, "[number]", getStaffFlagValue("ManagePayPhones"), true, false, "Creates an payphone with optional number (random number if not added)"),
-			new CommandData("call", callPlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Rings the nearest payphone to the player"),
+			new CommandData("call", callPayPhoneCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Calls the player (nearest payphone or their cellphone if applicable"),
+			new CommandData("hangup", hangupPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Ends a phone call"),
+			new CommandData("answer", answerPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Answer's a phone"),
+			new CommandData("givephone", givePayPhoneToPlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Gives a phone to another player to talk on the call"),
 			//new CommandData("callphone", callPhoneNumberCommand, "<number>", getStaffFlagValue("None"), true, false, "Rings the payphone with number"),
 		],
 		race: [
