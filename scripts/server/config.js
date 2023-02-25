@@ -253,6 +253,8 @@ let globalConfig = {
 	mainChatType: V_CHAT_TYPE_GLOBAL,
 	nightMapStartHour: 19,
 	nightMapEndHour: 7,
+	payPhoneGiveDistance: 2.5,
+	payPhoneAnswerDistance: 2.5,
 };
 
 // ===========================================================================
