@@ -121,6 +121,8 @@ function onProcess(event, deltaTime) {
 	processVehiclePurchasing();
 	processVehicleBurning();
 	processVehicleCruiseControl();
+	processPayPhonesDistance();
+	processJobRouteLocationDistance();
 	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
 	//processVehicleFires();
 }
