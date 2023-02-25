@@ -149,6 +149,12 @@ class ClientData {
 		this.casinoChips = 0; // This might become an item with a useId of a business (for chips belonging to specific casinos)
 		this.casinoCardHand = [];
 		this.casinoPlayingGame = V_CASINO_GAME_NONE;
+
+		// PayPhone
+		this.usingPayPhone = -1;
+		this.payPhoneOtherPlayer = null;
+		this.payPhoneCallStart = 0;
+		this.payPhoneInitiatedCall = false;
 	}
 };
 
