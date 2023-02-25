@@ -616,6 +616,7 @@ function onPlayerSpawn(client) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
+		sendAllPayPhonesToPlayer(client);
 		if (getGame() != V_GAME_GTA_IV) {
 			sendAllJobsToPlayer(client);
 		}
