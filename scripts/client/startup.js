@@ -22,8 +22,12 @@ function initClientScripts() {
 	initSkinSelectScript();
 	initCursorScript();
 	initCustomHUDScript();
+	initPayPhoneScript();
+	initTimersScript();
 
 	addAllNetworkHandlers();
+
+	initTimers();
 }
 
 // ===========================================================================
