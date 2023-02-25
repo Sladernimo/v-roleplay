@@ -1142,6 +1142,12 @@ function sendVehicleToPlayer(client, vehicleId, isDeleted, model, position, head
 
 // ==========================================================================
 
+function sendPayPhoneToPlayer(client, payPhoneId, isDeleted, state, position) {
+	sendNetworkEventToPlayer("v.rp.payPhone", client, payPhoneId, isDeleted, state, position);
+}
+
+// ==========================================================================
+
 function sendAllBusinessesToPlayer(client) {
 	sendNetworkEventToPlayer("v.rp.removeBusinesses", client);
 
@@ -1183,6 +1189,17 @@ function sendAllVehiclesToPlayer(client) {
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
 		sendVehicleToPlayer(client, vehicles[i].index, false, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
+	}
+}
+
+// ==========================================================================
+
+function sendAllPayPhonesToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removePayPhones", client);
+
+	let payPhones = getServerData().payPhones;
+	for (let i in payPhones) {
+		sendPayPhoneToPlayer(client, payPhones[i].index, false, payPhones[i].state, payPhones[i].position);
 	}
 }
 
@@ -1355,6 +1372,30 @@ function sendClientVariablesToClient(client) {
 
 function requestPlayerToken(client) {
 	sendNetworkEventToPlayer("v.rp.token", client);
+}
+
+// ==========================================================================
+
+function sendPayPhoneStateToClient(client, payPhoneIndex, state) {
+	sendNetworkEventToPlayer("v.rp.payPhoneState", client, payPhoneIndex, state);
+}
+
+// ==========================================================================
+
+function sendPayPhoneDialingToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhoneDial", client);
+}
+
+// ==========================================================================
+
+function sendPayPhoneHangupToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhoneHangup", client);
+}
+
+// ==========================================================================
+
+function sendPayPhonePickupToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhonePickup", client);
 }
 
 // ==========================================================================
