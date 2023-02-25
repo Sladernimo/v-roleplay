@@ -393,24 +393,37 @@ function getVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getServerData().vehicles[toInteger(params) - 1] == "undefined") {
+	let vehicleIndex = toInteger(params);
+
+	if (getVehicleData(vehicleIndex)) {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
 	}
 
-	let vehicle = getServerData().vehicles[toInteger(params) - 1].vehicle;
+	destroyGameElement(getVehicleData(vehicleIndex).vehicle);
+	getVehicleData(vehicleIndex).vehicle = null;
 
-	let oldStreamInDistance = getElementStreamInDistance(vehicle);
-	let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+	getVehicleData(vehicleIndex).spawnPosition = getPlayerPosition(client);
+	getVehicleData(vehicleIndex).spawnRotation = getPlayerHeading(client);
 
-	setElementStreamInDistance(vehicle, 9999999);
-	setElementStreamOutDistance(vehicle, 9999999 + 1);
+	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
 
-	setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
-	setElementInterior(vehicle, getPlayerInterior(client));
-	setElementDimension(vehicle, getPlayerDimension(client));
+	//setElementStreamInDistance(vehicle, 9999999);
+	//setElementStreamOutDistance(vehicle, 9999999 + 1);
 
-	setElementStreamInDistance(vehicle, oldStreamInDistance);
-	setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+	//setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
+	//setElementInterior(vehicle, getPlayerInterior(client));
+	//setElementDimension(vehicle, getPlayerDimension(client));
+
+	//setElementStreamInDistance(vehicle, oldStreamInDistance);
+	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+
+	spawnVehicle(getVehicleData(vehicleIndex));
+
+	if (getVehicleData(vehicleIndex).vehicle == null) {
+		messagePlayerError(client, "Vehicle could not be retrieved!");
+		return false;
+	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
 }
