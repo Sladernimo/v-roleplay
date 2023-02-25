@@ -89,6 +89,7 @@ let localLocaleId = 0;
  * @property {Array} localeStrings
  * @property {Array} localeOptions
  * @property {Object} cvars
+ * @property {Array.<PayPhoneData>} payPhones
 */
 let serverData = {
 	houses: [],
@@ -98,6 +99,7 @@ let serverData = {
 	vehicles: [],
 	jobs: [],
 	cvars: {},
+	payPhones: [],
 };
 
 let localPlayerMoney = 0;
