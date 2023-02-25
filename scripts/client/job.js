@@ -56,7 +56,7 @@ function loadJobRouteLocationIndicatorImage() {
 		imageStream.close();
 	}
 
-	return tempImage
+	return tempImage;
 }
 
 // ===========================================================================
@@ -164,7 +164,6 @@ function hideJobRouteLocation() {
 		jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
 		jobRouteLocationIndicatorEnabled = false;
 	}
-
 }
 
 // ===========================================================================
@@ -287,3 +286,23 @@ function processJobLocationIndicatorRendering() {
 	let screenPosition = getScreenFromWorldPosition(jobRouteLocationIndicatorPosition);
 	graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize[0] / 2), screenPosition.y - (jobRouteLocationIndicatorSize[1] / 2)], [jobRouteLocationIndicatorSize[0], jobRouteLocationIndicatorSize[1]]);
 }
+
+// ===========================================================================
+
+function processJobRouteLocationDistance() {
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
+	if (jobRouteLocationIndicatorEnabled == false) {
+		return false;
+	}
+
+	if (getDistance(getLocalPlayerPosition(), jobRouteLocationIndicatorPosition) <= jobRouteLocationRadius) {
+		logToConsole(LOG_DEBUG, `[V.RP.Job] Reached job route location`);
+		hideJobRouteLocation();
+		tellServerPlayerArrivedAtJobRouteLocation();
+	}
+}
+
+// ===========================================================================
