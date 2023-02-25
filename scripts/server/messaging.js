@@ -136,6 +136,12 @@ function messagePlayerTalk(client, talkingClient, messageText) {
 
 // ===========================================================================
 
+function messagePlayerPhone(client, talkingClient, messageText) {
+	messagePlayerNormal(client, `🗣️ ${getPlayerAccentInlineOutput(talkingClient)}${getClientSubAccountName(talkingClient)} says (phone): ${messageText}`, getColourByType("talkMessage"));
+}
+
+// ===========================================================================
+
 function messagePlayerWhisper(client, whisperingClient, messageText) {
 	messagePlayerNormal(client, `🤫 ${getPlayerAccentInlineOutput(whisperingClient)}${getClientSubAccountName(whisperingClient)} whispers: ${messageText}`, getColourByType("whisperMessage"));
 }
@@ -260,6 +266,21 @@ function showPlayerAlert(client, alertMessage, alertTitle = "Alert") {
 	} else {
 		messagePlayerAlert(client, alertMessage);
 	}
+}
+
+// ===========================================================================
+
+function messagePlayerPhoneCall(talkingPlayer, receivingPlayer, messageText) {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerSpawned(clients[i])) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(talkingPlayer), getPlayerPosition(clients[i])) <= getGlobalConfig().talkDistance && getPlayerDimension(talkingPlayer) == getPlayerDimension(clients[i]))) {
+				messagePlayerPhone(clients[i], client, messageText);
+			}
+		}
+	}
+
+	messagePlayerNormal(receivingPlayer, `📞 {ALTCOLOUR}(On Phone): {MAINCOLOUR}${messageText}`);
 }
 
 // ===========================================================================
