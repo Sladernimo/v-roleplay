@@ -493,9 +493,10 @@ function deleteVehicleCommand(command, params, client) {
 	let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
 	let vehicleName = getVehicleName(vehicle);
 
-	quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
+	quickDatabaseQuery(`DELETE FROM veh_main WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
 
 	getServerData().vehicles.splice(dataIndex, 1);
+
 	destroyGameElement(vehicle);
 
 	messagePlayerSuccess(client, `The ${vehicleName} has been deleted!`);
