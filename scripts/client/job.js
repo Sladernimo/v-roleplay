@@ -11,6 +11,7 @@ let localPlayerJobType = -1;
 let localPlayerWorking = false;
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
+let jobRouteLocationRadius = 5.0;
 
 let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
 let jobRouteLocationIndicatorSize = [32, 32];
@@ -272,14 +273,17 @@ function removeJobsFromClient() {
 
 function processJobLocationIndicatorRendering() {
 	if (jobRouteLocationIndicatorImage == null) {
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Image is null.`);
 		return false;
 	}
 
 	if (getGame() != V_GAME_MAFIA_ONE) {
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Unsupported game.`);
 		return false;
 	}
 
 	if (!jobRouteLocationIndicatorEnabled) {
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Disabled`);
 		return false;
 	}
 

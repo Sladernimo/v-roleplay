@@ -13,7 +13,7 @@ let afkStatusFont = null;
 let pingFont = null;
 let nametagDistance = 50.0;
 let nametagWidth = 70;
-let nametagHeight = (getGame() == V_GAME_MAFIA_ONE) ? 2.5 : 0.9;
+let nametagHeight = (getGame() == V_GAME_MAFIA_ONE) ? 2.0 : 0.9;
 
 let playerNames = {};
 let playerColours = {};
