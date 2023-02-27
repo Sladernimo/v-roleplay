@@ -828,7 +828,7 @@ function createItemTypeCommand(command, params, client) {
 	}
 
 	let itemTypeIndex = createItemType(params);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} created new item type: {ALTCOLOUR}${params}. {MAINCOLOUR}ID: ${itemTypeIndex}/${getItemTypeData(itemTypeIndex).databaseId}!`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} created new item type: {ALTCOLOUR}${params}. {MAINCOLOUR}ID: ${itemTypeIndex}/${getItemTypeData(itemTypeIndex).databaseId}!`, true);
 }
 
 // ===========================================================================
@@ -857,9 +857,14 @@ function setItemTypeDropModelCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderPrice)) {
+		messagePlayerError(client, `The model index must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).dropModel = modelIndex;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s{MAINCOLOUR} dropped object model index to ${modelIndex}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s{MAINCOLOUR} dropped object model index to ${modelIndex}`, true);
 }
 
 // ===========================================================================
@@ -888,9 +893,14 @@ function setItemTypeOrderPriceCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderPrice)) {
+		messagePlayerError(client, `The order price must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).orderPrice = orderPrice;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}${getCurrencyString(orderPrice)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}${getCurrencyString(orderPrice)}`, true);
 }
 
 // ===========================================================================
@@ -919,9 +929,14 @@ function setItemTypeOrderValueCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderValue)) {
+		messagePlayerError(client, `The order value must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).orderValue = orderValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} order value to {ALTCOLOUR}${orderValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} order value to {ALTCOLOUR}${orderValue}`, true);
 }
 
 // ===========================================================================
@@ -950,9 +965,14 @@ function setItemTypeRiskMultiplierCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(riskMultiplier)) {
+		messagePlayerError(client, `The risk multiplier must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).riskMultiplier = riskMultiplier / 100;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}${riskMultiplier}%`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}${riskMultiplier}%`, true);
 }
 
 // ===========================================================================
@@ -981,7 +1001,7 @@ function toggleItemTypeEnabledCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).enabled = !getItemTypeData(itemTypeIndex).enabled;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} ${getEnabledDisabledFromBool(getItemTypeData(itemTypeIndex).enabled)} item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getItemTypeData(itemTypeIndex).enabled)} item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}`, true);
 }
 
 // ===========================================================================
@@ -1010,9 +1030,14 @@ function setItemTypeUseTypeCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(useType)) {
+		messagePlayerError(client, `The use type must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).useType = useType;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}${useType}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}${useType}`, true);
 }
 
 // ===========================================================================
@@ -1043,7 +1068,7 @@ function setItemTypeUseValueCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).useValue = useValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}${useValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}${useValue}`, true);
 }
 
 // ===========================================================================
@@ -1073,13 +1098,13 @@ function setItemTypeDropFrontDistanceCommand(command, params, client) {
 	}
 
 	if (isNaN(dropFrontDistance)) {
-		messagePlayerError(client, `The distance must be a number!`);
+		messagePlayerError(client, `The front distance must be a number!`);
 		return false;
 	}
 
 	getItemTypeData(itemTypeIndex).dropFrontDistance = dropFrontDistance;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop front distance to {ALTCOLOUR}${dropFrontDistance.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop front distance to {ALTCOLOUR}${dropFrontDistance.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1119,7 +1144,7 @@ function setItemTypeDropPositionCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropPosition = dropPosition;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop position offset to {ALTCOLOUR}${dropPosition.x.toFixed(2)}, ${dropPosition.y.toFixed(2)}, ${dropPosition.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop position offset to {ALTCOLOUR}${dropPosition.x.toFixed(2)}, ${dropPosition.y.toFixed(2)}, ${dropPosition.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1151,7 +1176,7 @@ function setItemTypeDropRotationCommand(command, params, client) {
 	}
 
 	if (isNaN(x) || isNaN(y) || isNaN(z)) {
-		messagePlayerError(client, `The positions must be numbers!`);
+		messagePlayerError(client, `The rotation values must be numbers!`);
 		return false;
 	}
 
@@ -1159,7 +1184,7 @@ function setItemTypeDropRotationCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropRotation = dropRotation;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop rotation to {ALTCOLOUR}${dropRotation.x.toFixed(2)}, ${dropRotation.y.toFixed(2)}, ${dropRotation.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop rotation to {ALTCOLOUR}${dropRotation.x.toFixed(2)}, ${dropRotation.y.toFixed(2)}, ${dropRotation.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1191,7 +1216,7 @@ function setItemTypeDropScaleCommand(command, params, client) {
 	}
 
 	if (isNaN(x) || isNaN(y) || isNaN(z)) {
-		messagePlayerError(client, `The positions must be numbers!`);
+		messagePlayerError(client, `The scale values must be numbers!`);
 		return false;
 	}
 
@@ -1199,7 +1224,7 @@ function setItemTypeDropScaleCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropScale = dropScale;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop scale to {ALTCOLOUR}${dropScale.x.toFixed(2)}, ${dropScale.y.toFixed(2)}, ${dropScale.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop scale to {ALTCOLOUR}${dropScale.x.toFixed(2)}, ${dropScale.y.toFixed(2)}, ${dropScale.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1235,7 +1260,7 @@ function setItemTypeDemandMultiplierCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).demandMultiplier = demandMultiplier / 100;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} demand multiplier to {ALTCOLOUR}${demandMultiplier}%`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} demand multiplier to {ALTCOLOUR}${demandMultiplier}%`, true);
 }
 
 // ===========================================================================
@@ -1271,7 +1296,7 @@ function setItemTypeMaxValueCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).maxValue = maxValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} max value to {ALTCOLOUR}${maxValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} max value to {ALTCOLOUR}${maxValue}`, true);
 }
 
 // ===========================================================================
@@ -1307,7 +1332,7 @@ function setItemTypeSizeCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).size = size;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} size to {ALTCOLOUR}${size}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} size to {ALTCOLOUR}${size}`, true);
 }
 
 // ===========================================================================
@@ -1343,7 +1368,7 @@ function setItemTypeCapacityCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).capacity = capacity;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} capacity to {ALTCOLOUR}${capacity}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} capacity to {ALTCOLOUR}${capacity}`, true);
 }
 
 // ===========================================================================
