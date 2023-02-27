@@ -144,7 +144,7 @@ function processPayPhonesDistance() {
 	}
 
 	if (tempRingingPhone == -1) {
-		logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: No phones are ringing, stopping all ring sounds");
+		logToConsole(LOG_VERBOSE, "[V.RP.PayPhone]: No phones are ringing, stopping all ring sounds");
 		payPhoneRingingSound.stop();
 	} else {
 		let distance = getDistance(getLocalPlayerPosition(), getServerData().payPhones[tempRingingPhone].position);
@@ -152,7 +152,7 @@ function processPayPhonesDistance() {
 		payPhoneRingingSound.volume = distancePercent / 100;
 
 		if (ringingPayPhone == -1) {
-			logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: No previous phone ringing, starting ring sound");
+			logToConsole(LOG_VERBOSE, "[V.RP.PayPhone]: No previous phone ringing, starting ring sound");
 			payPhoneRingingSound.play();
 		}
 	}
