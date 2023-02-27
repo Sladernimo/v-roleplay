@@ -166,6 +166,13 @@ function loadSubAccountFromId(subAccountId) {
 
 // ===========================================================================
 
+/**
+ * Loads sub accounts (characters) by account ID
+ *
+ * @param {Number} accountId - The database ID of the account
+ * @return {Array.<SubAccountData>} Array of subaccounts that belong to the account ID
+ *
+ */
 function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
@@ -246,6 +253,13 @@ function loadSubAccountsFromAccount(accountId) {
 
 // ===========================================================================
 
+/**
+ * Saves the subaccount data to the database (character)
+ *
+ * @param {SubAccountData} subAccountData - The data of the subaccount
+ * @return {void}
+ *
+ */
 function saveSubAccountToDatabase(subAccountData) {
 	let dbConnection = connectToDatabase();
 
@@ -284,7 +298,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			//["sacct_svr_svr", getServerId()],
 			["sacct_svr_sacct", subAccountData.databaseId],
 			["sacct_svr_job", subAccountData.job],
-			//["sacct_svr_job_rank", getServerId()],
+			["sacct_svr_job_rank", subAccountData.jobRank],
 			["sacct_svr_clan", subAccountData.clan],
 			["sacct_svr_clan_rank", subAccountData.clanRank],
 			["sacct_svr_clan_tag", safeClanTag],
@@ -338,6 +352,13 @@ function saveSubAccountToDatabase(subAccountData) {
 
 // ===========================================================================
 
+/**
+ * Creates a new subaccount (character)
+ *
+ * @param {SubAccountData} subAccountData - The data of the subaccount
+ * @return {SubAccountData} The new sub account data
+ *
+ */
 function createSubAccount(accountId, firstName, lastName) {
 	logToConsole(LOG_DEBUG, `[V.RP.Account] Attempting to create subaccount ${firstName} ${lastName} in database`);
 
@@ -725,7 +746,11 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 
 	getPlayerData(client).switchingCharacter = true;
 
-	showConnectCameraToPlayer(client);
+	despawnPlayer(client);
+
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		showConnectCameraToPlayer(client);
+	}
 
 	showCharacterSelectToClient(client);
 }
