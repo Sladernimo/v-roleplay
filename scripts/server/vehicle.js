@@ -317,7 +317,6 @@ function spawnAllVehicles() {
 		if (getServerData().vehicles[i].vehicle == false) {
 			let vehicle = spawnVehicle(getServerData().vehicles[i]);
 			getServerData().vehicles[i].vehicle = vehicle;
-			setEntityData(vehicle, "v.rp.dataSlot", i, false);
 		}
 	}
 	setAllVehicleIndexes();
@@ -331,9 +330,10 @@ function spawnAllVehicles() {
 	*/
 function getVehicleData(vehicle) {
 	if (isVehicleObject(vehicle)) {
-		let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
-		if (typeof getServerData().vehicles[dataIndex] != "undefined") {
-			return getServerData().vehicles[dataIndex];
+		for (let i in getServerData().vehicles) {
+			if (getServerData().vehicles[i].vehicle == vehicle) {
+				return getServerData().vehicles[i];
+			}
 		}
 	}
 
@@ -490,14 +490,16 @@ function deleteVehicleCommand(command, params, client) {
 		vehicle = getPlayerVehicle(client);
 	}
 
-	let dataIndex = getEntityData(vehicle, "v.rp.dataSlot");
+	let vehicleIndex = getVehicleData(vehicle).index;
 	let vehicleName = getVehicleName(vehicle);
 
 	quickDatabaseQuery(`DELETE FROM veh_main WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
 
-	getServerData().vehicles.splice(dataIndex, 1);
+	getServerData().vehicles.splice(vehicleIndex, 1);
 
 	destroyGameElement(vehicle);
+
+	setAllVehicleIndexes();
 
 	messagePlayerSuccess(client, `The ${vehicleName} has been deleted!`);
 }
@@ -1317,6 +1319,7 @@ function reloadAllVehiclesCommand(command, params, client) {
 	despawnAllVehicles();
 	clearArray(getServerData().vehicles);
 	getServerData().vehicles = loadVehiclesFromDatabase();
+	setAllVehicleIndexes();
 	spawnAllVehicles();
 
 	announceAdminAction(`AllVehiclesReloaded`);
@@ -1349,10 +1352,10 @@ function respawnAllVehiclesCommand(command, params, client) {
 		respawnVehicle(getServerData().vehicles[i].vehicle);
 	}
 
-	let randomVehicles = getElementsByType(ELEMENT_VEHICLE).filter(v => getVehicleData(v) == false);
-	for (let i in randomVehicles) {
-		destroyElement(randomVehicles[i]);
-	}
+	//let randomVehicles = getElementsByType(ELEMENT_VEHICLE).filter(v => getVehicleData(v) == false);
+	//for (let i in randomVehicles) {
+	//	destroyElement(randomVehicles[i]);
+	//}
 
 	setAllVehicleIndexes();
 
@@ -1368,12 +1371,14 @@ function respawnEmptyVehiclesCommand(command, params, client) {
 		}
 	}
 
-	let clientVehicles = getElementsByType(ELEMENT_VEHICLE).filter(v => getVehicleData(v) == false);
-	for (let i in clientVehicles) {
-		if (!isVehicleUnoccupied(clientVehicles[i])) {
-			destroyElement(clientVehicles[i]);
-		}
-	}
+	//let clientVehicles = getElementsByType(ELEMENT_VEHICLE).filter(v => getVehicleData(v) == false);
+	//for (let i in clientVehicles) {
+	//	if (!isVehicleUnoccupied(clientVehicles[i])) {
+	//		destroyElement(clientVehicles[i]);
+	//	}
+	//}
+
+	setAllVehicleIndexes();
 
 	announceAdminAction(`EmptyVehiclesRespawned`);
 }
@@ -1387,6 +1392,8 @@ function respawnJobVehiclesCommand(command, params, client) {
 		}
 	}
 
+	setAllVehicleIndexes();
+
 	announceAdminAction(`JobVehiclesRespawned`);
 }
 
@@ -1398,6 +1405,8 @@ function respawnClanVehiclesCommand(command, params, client) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
+
+	setAllVehicleIndexes();
 
 	announceAdminAction(`ClanVehiclesRespawned`);
 }
@@ -1411,6 +1420,8 @@ function respawnPlayerVehiclesCommand(command, params, client) {
 		}
 	}
 
+	setAllVehicleIndexes();
+
 	announceAdminAction(`PlayerVehiclesRespawned`);
 }
 
@@ -1423,6 +1434,8 @@ function respawnPublicVehiclesCommand(command, params, client) {
 		}
 	}
 
+	setAllVehicleIndexes();
+
 	announceAdminAction(`PublicVehiclesRespawned`);
 }
 
@@ -1434,6 +1447,8 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
+
+	setAllVehicleIndexes();
 
 	announceAdminAction(`BusinessVehiclesRespawned`);
 }
@@ -1469,7 +1484,6 @@ function respawnVehicle(vehicle) {
 
 			let newVehicle = spawnVehicle(getServerData().vehicles[i]);
 			getServerData().vehicles[i].vehicle = newVehicle;
-			setEntityData(newVehicle, "v.rp.dataSlot", i, false);
 		}
 	}
 
@@ -1600,8 +1614,14 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
 
-	let slot = getServerData().vehicles.push(tempVehicleData);
-	setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
+	if (!isGameFeatureSupported("vehicleColour")) {
+		tempVehicleData.colour1 = 0;
+		tempVehicleData.colour2 = 0;
+		tempVehicleData.colour3 = 0;
+		tempVehicleData.colour4 = 0;
+	}
+
+	setAllVehicleIndexes();
 }
 
 // ===========================================================================
@@ -1618,6 +1638,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.databaseId = -1;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
+
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
 		tempVehicleData.colour2 = 0;
@@ -1625,12 +1646,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour4 = 0;
 	}
 
-	let slot = getServerData().vehicles.push(tempVehicleData);
 	setAllVehicleIndexes();
-
-	if (areServerElementsSupported()) {
-		setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
-	}
 
 	return vehicle;
 }
@@ -1648,6 +1664,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.model = modelIndex;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
+
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
 		tempVehicleData.colour2 = 0;
@@ -1655,12 +1672,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour4 = 0;
 	}
 
-	let slot = getServerData().vehicles.push(tempVehicleData);
 	setAllVehicleIndexes();
-
-	if (areServerElementsSupported()) {
-		setEntityData(vehicle, "v.rp.dataSlot", slot - 1, false);
-	}
 
 	return vehicle;
 }
@@ -1914,6 +1926,8 @@ function despawnAllVehicles() {
 			getServerData().vehicles[i].vehicle = false;
 		}
 	}
+
+	setAllVehicleIndexes();
 }
 
 // ===========================================================================
@@ -1925,6 +1939,20 @@ function updateVehicleSavedPositions() {
 			getServerData().vehicles[i].spawnRotation = getVehicleHeading(getServerData().vehicles[i].vehicle);
 		}
 	}
+}
+
+// ===========================================================================
+
+function getVehicleDataIndexFromVehicle(vehicle) {
+	if (isVehicleObject(vehicle)) {
+		for (let i in getServerData().vehicles) {
+			if (getServerData().vehicles[i].vehicle == vehicle) {
+				return i;
+			}
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================

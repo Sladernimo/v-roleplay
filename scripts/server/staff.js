@@ -395,15 +395,15 @@ function getVehicleCommand(command, params, client) {
 
 	let vehicleIndex = toInteger(params);
 
-	if (getVehicleData(vehicleIndex)) {
+	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
 	}
 
-	destroyGameElement(getVehicleData(vehicleIndex).vehicle);
-	getVehicleData(vehicleIndex).vehicle = null;
+	destroyGameElement(getServerData().vehicles[vehicleIndex]);
+	getServerData().vehicles[vehicleIndex].vehicle = null;
 
-	getVehicleData(vehicleIndex).spawnPosition = getPlayerPosition(client);
-	getVehicleData(vehicleIndex).spawnRotation = getPlayerHeading(client);
+	getServerData().vehicles[vehicleIndex].spawnPosition = getPlayerPosition(client);
+	getServerData().vehicles[vehicleIndex].spawnRotation = getPlayerHeading(client);
 
 	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
 	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
@@ -418,9 +418,9 @@ function getVehicleCommand(command, params, client) {
 	//setElementStreamInDistance(vehicle, oldStreamInDistance);
 	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
 
-	spawnVehicle(getVehicleData(vehicleIndex));
+	let vehicle = spawnVehicle(getServerData().vehicles[vehicleIndex]);
 
-	if (getVehicleData(vehicleIndex).vehicle == null) {
+	if (getServerData().vehicles[vehicleIndex].vehicle == null) {
 		messagePlayerError(client, "Vehicle could not be retrieved!");
 		return false;
 	}

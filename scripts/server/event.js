@@ -747,7 +747,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
-			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} exited a ${getVehicleName(vehicle)} (ID: ${getVehicleDataIndexFromVehicle(vehicle)}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 		}
 	}
 }
@@ -782,7 +782,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				return false;
 			}
 
-			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${vehicle.getData("v.rp.dataSlot")}, Database ID: ${getVehicleData(vehicle).databaseId})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${getVehicleDataIndexFromVehicle(vehicle)}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 
 			getPlayerData(client).lastVehicle = vehicle;
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
