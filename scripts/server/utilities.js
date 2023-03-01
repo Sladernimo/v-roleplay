@@ -86,17 +86,17 @@ function updateServerRules() {
 			tempText = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
 			timeWeatherRule.push(tempText);
 		}
-	}// else {
-	//	if (getGame() == V_GAME_MAFIA_ONE) {
-	//		if (isNightTime(getServerConfig().hour)) {
-	//			tempText = "Night";
-	//		} else {
-	//			tempText = "Day";
-	//		}
-	//
-	//		timeWeatherRule.push(tempText);
-	//	}
-	//}
+	} else {
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isNightTime(getServerConfig().hour)) {
+				tempText = "Night";
+			} else {
+				tempText = "Day";
+			}
+
+			timeWeatherRule.push(tempText);
+		}
+	}
 
 	if (isWeatherSupported()) {
 		if (getServerConfig() != false) {
