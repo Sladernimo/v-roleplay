@@ -242,7 +242,6 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
-	/*
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
 			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
@@ -250,19 +249,21 @@ function checkServerGameTime() {
 			}
 
 			if (isNightTime(getServerConfig().hour)) {
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
-				removeAllPlayersFromProperties();
-				removeAllPlayersFromVehicles();
-				saveServerDataToDatabase();
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
 				messageDiscordEventChannel("🌙 Changing server map to night");
-				despawnAllVehicles();
-				despawnAllNPCs();
-				despawnAllGroundItemObjects();
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
+				if (!serverStarting) {
+					removeAllPlayersFromProperties();
+					removeAllPlayersFromVehicles();
+					saveServerDataToDatabase();
+					despawnAllServerElements();
+				}
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				spawnAllVehicles();
-				spawnAllNPCs();
-				spawnAllGroundItemObjects();
+				spawnAllServerElements();
+			} else {
+				if (serverStarting) {
+					spawnAllServerElements();
+				}
 			}
 		} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
 			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
@@ -270,23 +271,24 @@ function checkServerGameTime() {
 			}
 
 			if (!isNightTime(getServerConfig().hour)) {
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
-				removeAllPlayersFromProperties();
-				removeAllPlayersFromVehicles();
-				saveServerDataToDatabase();
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
 				messageDiscordEventChannel("🌞 Changing server map to day");
-				despawnAllVehicles();
-				despawnAllNPCs();
-				despawnAllGroundItemObjects();
+				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
+				if (!serverStarting) {
+					removeAllPlayersFromProperties();
+					removeAllPlayersFromVehicles();
+					saveServerDataToDatabase();
+					despawnAllServerElements();
+				}
 				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				spawnAllVehicles();
-				spawnAllNPCs();
-				spawnAllGroundItemObjects();
+				spawnAllServerElements();
+			} else {
+				if (serverStarting) {
+					spawnAllServerElements();
+				}
 			}
 		}
 	}
-	*/
 
 	if (isGameFeatureSupported("time")) {
 		game.time.hour = getServerConfig().hour;
@@ -320,7 +322,7 @@ function checkPayDays() {
 
 	for (let i in getServerData().businesses) {
 		if (getBusinessData(i).ownerType != V_BIZ_OWNER_NONE && getBusinessData(i).ownerType != V_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != V_BIZ_OWNER_FACTION) {
-			let addToTill = getGlobalConfig().economy.passiveIncomePerPayDay;
+			let addToTill = getServerConfig().economy.passiveIncomePerPayDay;
 			if (isDoubleBonusActive()) {
 				addToTill = addToTill * 2;
 			}
