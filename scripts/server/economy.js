@@ -31,7 +31,7 @@ function playerPayDay(client) {
 	let grossIncome = getPlayerData(client).payDayAmount;
 
 	// Passive income
-	grossIncome = Math.round(grossIncome + getGlobalConfig().economy.passiveIncomePerPayDay);
+	grossIncome = Math.round(grossIncome + getServerConfig().economy.passiveIncomePerPayDay);
 
 	// Job Pay
 	if (getPlayerJob(client) != -1) {
@@ -39,7 +39,7 @@ function playerPayDay(client) {
 	}
 
 	// Payday bonus
-	grossIncome = Math.round(grossIncome * getGlobalConfig().economy.grossIncomeMultiplier);
+	grossIncome = Math.round(grossIncome * getServerConfig().economy.grossIncomeMultiplier);
 
 	// Double bonus
 	if (isDoubleBonusActive()) {
@@ -89,9 +89,9 @@ function calculateWealth(client) {
 	let houses = getAllHousesOwnedByPlayer(client);
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 
-	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle);
-	let houseUpKeep = applyServerInflationMultiplier(houses.length * getGlobalConfig().economy.upKeepCosts.upKeepPerHouse);
-	let businessUpKeep = applyServerInflationMultiplier(businesses.length * getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness);
+	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * getServerConfig().economy.upKeepCosts.upKeepPerVehicle);
+	let houseUpKeep = applyServerInflationMultiplier(houses.length * getServerConfig().economy.upKeepCosts.upKeepPerHouse);
+	let businessUpKeep = applyServerInflationMultiplier(businesses.length * getServerConfig().economy.upKeepCosts.upKeepPerBusiness);
 
 	return vehicleUpKeep + houseUpKeep + businessUpKeep;
 }
@@ -99,7 +99,7 @@ function calculateWealth(client) {
 // ===========================================================================
 
 function calculateIncomeTax(amount) {
-	return amount * getGlobalConfig().economy.incomeTaxRate;
+	return amount * getServerConfig().economy.incomeTaxRate;
 }
 
 // ===========================================================================
@@ -135,7 +135,7 @@ function setPayDayBonusMultiplier(command, params, client) {
 		return false;
 	}
 
-	getGlobalConfig().economy.grossIncomeMultiplier = newMultiplier;
+	getServerConfig().economy.grossIncomeMultiplier = newMultiplier;
 
 	announceAdminAction(`PaydayBonusSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${newMultiplier * 100}%{MAINCOLOUR}`);
 }
@@ -173,19 +173,19 @@ function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
 	if (vehicles.length > 0) {
 		deleteVehicle(vehicles[0]);
-		return getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle;
+		return getServerConfig().economy.upKeepCosts.upKeepPerVehicle;
 	}
 
 	let houses = getAllHousesOwnedByPlayer(client);
 	if (houses.length > 0) {
 		deleteHouse(houses[0].index);
-		return getGlobalConfig().economy.upKeepCosts.upKeepPerHouse;
+		return getServerConfig().economy.upKeepCosts.upKeepPerHouse;
 	}
 
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 	if (businesses.length > 0) {
 		deleteBusiness(businesses[0].index);
-		return getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness;
+		return getServerConfig().economy.upKeepCosts.upKeepPerBusiness;
 	}
 }
 
@@ -220,7 +220,7 @@ function isDoubleBonusActive() {
 // ===========================================================================
 
 function getCurrencyString(amount) {
-	let tempString = getGlobalConfig().economy.currencyString;
+	let tempString = getServerConfig().economy.currencyString;
 	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
 	return tempString;
 }
