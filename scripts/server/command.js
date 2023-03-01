@@ -496,10 +496,17 @@ function loadCommands() {
 		paintball: [],
 		payPhone: [
 			new CommandData("addpayphone", createPayPhoneCommand, "[number]", getStaffFlagValue("ManagePayPhones"), true, false, "Creates an payphone with optional number (random number if not added)"),
+			new CommandData("delpayphone", deletePayPhoneCommand, "[number]", getStaffFlagValue("ManagePayPhones"), true, false, "Deleted a payphone with number (optional, will use closest payphone if no number)"),
 			new CommandData("call", callPayPhoneCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Calls the player (nearest payphone or their cellphone if applicable"),
-			new CommandData("hangup", hangupPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Ends a phone call"),
-			new CommandData("answer", answerPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Answer's a phone"),
+			new CommandData("hangup", hangupPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Ends a payphone call"),
+			new CommandData("answer", answerPayPhoneCommand, "", getStaffFlagValue("None"), true, false, "Answer's a ringing phone"),
 			new CommandData("givephone", givePayPhoneToPlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Gives a phone to another player to talk on the call"),
+			new CommandData("payphone", getPayPhoneNumberCommand, "", getStaffFlagValue("None"), true, false, "Shows a phone's number"),
+			new CommandData("number", getPayPhoneNumberCommand, "", getStaffFlagValue("None"), true, false, "Shows a phone's number"),
+			new CommandData("nearpayphone", getNearbyPayPhonesCommand, "[range]", getStaffFlagValue("None"), true, false, "Shows a list of all nearby phones within certain range"),
+			new CommandData("nearpayphones", getNearbyPayPhonesCommand, "[range]", getStaffFlagValue("None"), true, false, "Shows a list of all nearby phones within certain range"),
+			new CommandData("payphoneinfo", getPayPhoneInfoCommand, "[number]", getStaffFlagValue("None"), true, false, "Shows info of nearest payphone (or of payphone with number)"),
+			new CommandData("phoneinfo", getPayPhoneInfoCommand, "[number]", getStaffFlagValue("None"), true, false, "Shows info of nearest payphone (or of payphone with number)"),
 			//new CommandData("callphone", callPhoneNumberCommand, "<number>", getStaffFlagValue("None"), true, false, "Rings the payphone with number"),
 		],
 		race: [
@@ -607,6 +614,7 @@ function loadCommands() {
 			new CommandData("business", getPlayerCurrentBusinessCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which business a player is at/in"),
 			new CommandData("house", getPlayerCurrentHouseCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Gets which house a player is at/in"),
 			//new CommandData("clearchat", clearChatCommand, "", getStaffFlagValue("None"), true, true, "Clears the chat"),
+			new CommandData("locate", locatePlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, true, "Shows the distance and direction of another player"),
 		],
 		startup: [],
 		subAccount: [
@@ -1111,6 +1119,26 @@ function getCommandFromParams(params) {
 
 function getPlayerAliasForCommand(client, command) {
 	return command;
+}
+
+// ===========================================================================
+
+/**
+ * @return {Array.<CommandData>} Array of commands usable by staff flag
+ */
+function getCommandsUsableByStaffFlag(flagName) {
+	let usableCommands = [];
+
+	let commands = getCommands();
+	for (let i in commands) {
+		for (let j in commands[i]) {
+			if (hasBitFlag(commands[i][j].requiredStaffFlags, getStaffFlagValue(flagName))) {
+				usableCommands.push(commands[i][j]);
+			}
+		}
+	}
+
+	return usableCommands;
 }
 
 // ===========================================================================
