@@ -3344,10 +3344,10 @@ let gameData = {
 			["merced500K01.i3d", "Brown Celeste Marque 500"],
 			["bugatti00.i3d", "Blue Corrozella C-Otto"],
 			["bugatti01.i3d", "Green Corrozella C-Otto"],
-			["pontFor00.i3d", "Blue Crusader Chromium Forder"],
-			["pontFor01.i3d", "Violet Crusader Chromium Forder"],
-			["pontTud00.i3d", "Green Crusader Chromium Forder"],
-			["pontTud01.i3d", "Dark Blue Crusader Chromium Forder"],
+			["pontFor00.i3d", "Blue Crusader Chromium Tudor"],
+			["pontFor01.i3d", "Violet Crusader Chromium Tudor"],
+			["pontTud00.i3d", "Green Crusader Chromium Tudor"],
+			["pontTud01.i3d", "Dark Blue Crusader Chromium Tudor"],
 			["blackha00.i3d", "Blue Falconer"],
 			["blackha01.i3d", "Red Falconer"],
 			["black00.i3d", "Gangster Falconer"],
@@ -4666,6 +4666,14 @@ let gameData = {
 			["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
 			["Palermo Club", [63.31, 3.97, 281.85], 0.0, null],
 			["Pompeii Bar", [346.81, -2.55, 228.43], 0.0, null],
+
+			// Train Stations
+			["Central Hoboken Station", [162.97, 1.25, 207.62], 0.0, null],
+			["Market Avenue Station", [450.86, -4.15, 261.29], 0.0, null],
+			["New Ark Station", [-687.60, 5.20, 309.29], 0.0, null],
+			["Giuliano Street Station", [-1038.06, -1.52, 82.36], 0.0, null],
+			["Little Italy Station", [-1613.12, 0.93, -49.62], 0.0, null],
+			["Winslet Avenue Station", [162.97, 1.25, 207.62], 0.0, null],
 
 			// Misc
 			["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], 0.0, null],
