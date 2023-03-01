@@ -1024,3 +1024,31 @@ function scoreBoardCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function locatePlayerCommand(client) {
+	if (isPlayerSpawned(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeSpawned"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(client);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (isPlayerSpawned(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getDistance(getPlayerPosition(client), getPlayerPosition(targetClient))}{MAINCOLOUR}`, `{ALTCOLOUR}${getLocaleString(client, getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
+}
+
+// ===========================================================================
