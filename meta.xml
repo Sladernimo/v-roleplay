@@ -96,7 +96,12 @@
 	<file type="client" src="files/images/gtac-logo.png" />
 	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/cursor.png" />
-	<file type="client" src="files/images/objective-icon.png" />
+
+	<!-- 3D World Icons -->
+	<file type="client" src="files/images/icons/objective-icon.png" />
+	<file type="client" src="files/images/icons/business-icon.png" />
+	<file type="client" src="files/images/icons/house-icon.png" />
+	<file type="client" src="files/images/icons/job-icon.png" />
 
 	<!-- Sounds -->
 	<file type="client" src="files/sounds/payphone/old-payphone-ring.mp3" />
