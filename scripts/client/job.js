@@ -16,7 +16,7 @@ let jobRouteLocationRadius = 5.0;
 let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
 let jobRouteLocationIndicatorSize = [32, 32];
 let jobRouteLocationIndicatorEnabled = false;
-let jobRouteLocationIndicatorImagePath = "files/images/objective-icon.png";
+let jobRouteLocationIndicatorImagePath = "files/images/icons/objective-icon.png";
 let jobRouteLocationIndicatorImage = null;
 
 let jobBlipBlinkAmount = 0;
