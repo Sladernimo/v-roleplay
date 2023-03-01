@@ -1165,18 +1165,6 @@ function getPlayerStaffFlagsCommand(command, params, client) {
  *
  */
 function getStaffFlagsCommand(command, params, client) {
-	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let targetClient = getParam(params, " ", 1);
-
-	if (!targetClient) {
-		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-		return false;
-	}
-
 	let chunkedList = splitArrayIntoChunks(getServerBitFlagKeys().staffFlagKeys, 8);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderStaffFlagsList")));
