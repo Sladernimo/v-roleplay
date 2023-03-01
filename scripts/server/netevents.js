@@ -1325,7 +1325,7 @@ function showSingleParticleEffect(position, particleEffectId, strength = 1.0, du
 // ==========================================================================
 
 function sendPlayerCurrencyString(client) {
-	sendNetworkEventToPlayer("v.rp.currencyString", client, getGlobalConfig().economy.currencyString);
+	sendNetworkEventToPlayer("v.rp.currencyString", client, getServerConfig().economy.currencyString);
 }
 
 // ==========================================================================
