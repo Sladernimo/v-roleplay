@@ -123,6 +123,63 @@ function getPayPhoneData(payPhoneIndex) {
 
 // ===========================================================================
 
+function getPayPhoneNumberCommand(command, params, client) {
+	let closestPayPhone = getClosestPayPhone(getPlayerPosition(client));
+
+	if (closestPayPhone == -1) {
+		messagePlayerError(client, getLocaleString(client, "NoPayPhoneCloseEnough"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > getGlobalConfig().payPhoneAnswerDistance) {
+		messagePlayerError(client, getLocaleString(client, "NoPayPhoneCloseEnough"));
+		return false;
+	}
+
+	messagePlayerInfo(client, getLocaleString(client, "ThisPayPhoneNumber", getPayPhoneData(closestPayPhone).number));
+}
+
+// ===========================================================================
+
+function deletePayPhoneCommand(command, params, client) {
+	let payPhoneIndex = getClosestPayPhone(getPlayerPosition(client));
+
+	if (!areParamsEmpty(params)) {
+		payPhoneIndex = getPayPhoneFromParams(params);
+	}
+
+	if (payPhoneIndex == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
+		return false;
+	}
+
+	if (getPayPhoneData(payPhoneIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
+		return false;
+	}
+
+	messagePlayerInfo(client, getLocaleString(client, "PayPhoneDeleted", getPayPhoneData(payPhoneIndex).number));
+
+	// Alert player using the phone, if any
+	if (getPayPhoneData(payPhoneIndex).usingPlayer != false) {
+		messagePlayerAlert(client, getLocaleString(client, "UsingPayPhoneDeleted"));
+	}
+
+	// Alert player on the other end of the call, if any
+	if (getPayPhoneData(payPhoneIndex).connectedPlayer != false) {
+		messagePlayerNormal(getPayPhoneData(payPhoneIndex).connectedPlayer, getLocaleString("PayPhoneRecipientHangup", "0"));
+	}
+
+	stopUsingPayPhone(getPayPhoneData(payPhoneIndex).usingPlayer);
+	stopUsingPayPhone(getPayPhoneData(payPhoneIndex).connectedPlayer);
+
+	quickDatabaseQuery(`DELETE FROM payphone_main WHERE payphone_id = ${getPayPhoneData(payPhoneIndex).databaseId}`);
+
+	getServerData().payPhones.splice(payPhoneIndex, 1);
+}
+
+// ===========================================================================
+
 function callPayPhoneCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -456,6 +513,115 @@ function getPayPhoneUsedByPlayer(client) {
 	}
 
 	return -1;
+}
+
+// ===========================================================================
+
+function getNearbyPayPhonesCommand(command, params, client) {
+	let distance = 10.0;
+
+	if (!areParamsEmpty(params)) {
+		distance = getParam(params, " ", 1);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, "The distance must be a number!");
+		return false;
+	}
+
+	distance = toFloat(distance);
+
+	if (distance <= 0) {
+		messagePlayerError(client, "The distance must be more than 0!");
+		return false;
+	}
+
+	let nearbyPayPhones = getPayPhonesInRange(getPlayerPosition(client), distance);
+
+	if (nearbyPayPhones.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoPayPhonesWithinRange", distance));
+		return false;
+	}
+
+	let payPhonesList = nearbyPayPhones.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.number} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.position)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.position))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(payPhonesList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPayPhonesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function getPayPhonesInRange(position, distance) {
+	return getServerData().payPhones.filter((payPhone) => getDistance(position, payPhone.position) <= distance);
+}
+
+// ===========================================================================
+
+function stopUsingPayPhone(client) {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == false) {
+		return false;
+	}
+
+	if (getPlayerData(client).usingPayPhone == -1) {
+		return false;
+	}
+
+	getPayPhoneData(getPlayerData(client).usingPayPhone).state = V_PAYPHONE_STATE_IDLE;
+	sendPayPhoneStateToClient(client, getPlayerData(client).usingPayPhone, V_PAYPHONE_STATE_IDLE);
+
+	getPlayerData(client).payPhoneCallStart = 0
+	getPlayerData(client).payPhoneOtherPlayer = null;
+	getPlayerData(client).usingPayPhone = -1;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getPayPhoneInfoCommand(command, params, client) {
+	let payPhoneIndex = getClosestPayPhone(getPlayerPosition(client));
+
+	if (!areParamsEmpty(params)) {
+		payPhoneIndex = getPayPhoneFromParams(params);
+	}
+
+	if (!getPayPhoneData(payPhoneIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
+		return false;
+	}
+
+	let payPhoneData = getPayPhoneData(payPhoneIndex);
+
+	let tempStats = [
+		[`ID`, `${payPhoneData.index}/${payPhoneData.databaseId}`],
+		[`Number`, `${payPhoneData.number}`],
+		[`State`, `${getPayPhoneStateName(payPhoneData.state)}`],
+		[`Added By`, `${loadAccountFromId(payPhoneData.whoAdded).name} on ${new Date(payPhoneData.whenAdded * 1000).toLocaleString()}`],
+	];
+
+	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPayPhoneInfo", payPhoneData.number)));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
 }
 
 // ===========================================================================
