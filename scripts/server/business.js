@@ -224,7 +224,7 @@ function loadBusinessesFromDatabase() {
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempBusinessData = new BusinessData(dbAssoc[i]);
-				tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
+				//tempBusinessData.locations = loadBusinessLocationsFromDatabase(tempBusinessData.databaseId);
 				//tempBusinessData.gameScripts = loadBusinessGameScriptsFromDatabase(tempBusinessData.databaseId);
 				tempBusinesses.push(tempBusinessData);
 				logToConsole(LOG_VERBOSE, `[V.RP.Business]: Business '${tempBusinessData.name}' (ID ${tempBusinessData.databaseId}) loaded from database successfully!`);
@@ -2021,7 +2021,7 @@ function spawnBusinessEntrancePickup(businessId) {
 	//	return false;
 	//}
 
-	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance pickup for business ${businessData.name}`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Business]: Creating entrance pickup for business ${businessData.name} (${businessData.databaseId})`);
 
 	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
@@ -2648,7 +2648,7 @@ function buyFromBusinessCommand(command, params, client) {
 	}
 
 	takePlayerCash(client, totalCost);
-	createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
+	let itemIndex = createItem(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex, getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, amount);
 	cachePlayerHotBarItems(client);
 	getBusinessData(businessId).till = getBusinessData(businessId).till + totalCost;
 
@@ -2677,7 +2677,7 @@ function buyFromBusinessCommand(command, params, client) {
 		}
 	}
 
-	markPlayerActionTipSeen(client, "ViewInventory");
+	logBusinessItemPurchase(getBusinessData(businessId), getPlayerCurrentSubAccount(client).databaseId, getItemData(itemIndex).databaseId);
 }
 
 // ===========================================================================
@@ -2871,11 +2871,13 @@ function getBusinessIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId) {
+	let businessData = getBusinessData(businessId);
+
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		if (getBusinessData(businessId) == false) {
+		if (businessData == false) {
 			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, false, false);
 		} else {
-			sendBusinessToPlayer(null, businessId, false, getBusinessData(businessId).name, getBusinessData(businessId).entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), getBusinessData(businessId).buyPrice, getBusinessData(businessId).rentPrice, getBusinessData(businessId).hasInterior, getBusinessData(businessId).locked, doesBusinessHaveAnyItemsToBuy(businessId));
+			sendBusinessToPlayer(null, businessId, false, businessData.name, businessData.entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), businessData.buyPrice, businessData.rentPrice, businessData.hasInterior, businessData.locked, doesBusinessHaveAnyItemsToBuy(businessId));
 		}
 		return false;
 	}
@@ -3240,6 +3242,63 @@ function getBusinessEntrancePickupModelForNetworkEvent(businessIndex) {
 	}
 
 	return pickupModelId;
+}
+
+// ===========================================================================
+
+function getBusinessesInRange(position, distance) {
+	return getServerData().businesses.filter((business) => getDistance(position, business.entrancePosition) <= distance);
+}
+
+// ===========================================================================
+
+function getNearbyBusinessesCommand(command, params, client) {
+	let distance = 10.0;
+
+	if (!areParamsEmpty(params)) {
+		distance = getParam(params, " ", 1);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, "The distance must be a number!");
+		return false;
+	}
+
+	distance = toFloat(distance);
+
+	if (distance <= 0) {
+		messagePlayerError(client, "The distance must be more than 0!");
+		return false;
+	}
+
+	let nearbyBusinesses = getBusinessesInRange(getPlayerPosition(client), distance);
+
+	if (nearbyBusinesses.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoBusinessesWithinRange", distance));
+		return false;
+	}
+
+	let businessesList = nearbyBusinesses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(businessesList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function logBusinessItemPurchase(businessId, purchaserId, itemId) {
+	if (getServerConfig().devServer) {
+		return false;
+	}
+
+	quickDatabaseQuery(`INSERT INTO log_biz_buy (log_biz_buy_biz, log_biz_buy_who, log_biz_buy_item, log_biz_buy_when) VALUES (${businessId}, ${purchaserId}, ${itemId}, UNIX_TIMESTAMP())`);
+
+	logItemMove(itemId, V_ITEM_OWNER_BIZFLOOR, businessId, V_ITEM_OWNER_PLAYER, purchaserId)
 }
 
 // ===========================================================================
