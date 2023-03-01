@@ -16,6 +16,7 @@ let playerResourceStarted = new Array(server.maxClients).fill(false);
 let playerInitialized = new Array(server.maxClients).fill(false);
 let playerGUI = new Array(server.maxClients).fill(false);
 let defaultNoAccountId = 1;
+let serverStarting = false;
 
 // ===========================================================================
 
@@ -25,7 +26,7 @@ let defaultNoAccountId = 1;
  * @property {Array.<ClientData>} clients
  * @property {Array.<BusinessData>} businesses
  * @property {Array.<HouseData>} houses
- * @property {Array.<HouseData>} commands
+ * @property {Array} commands
  * @property {Array.<ItemData>} items
  * @property {Array.<ItemTypeData>} itemTypes
  * @property {Array.<ClanData>} clans
