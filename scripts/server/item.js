@@ -347,6 +347,8 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1) {
 	let index = slot - 1;
 	getServerData().items[slot - 1].index = index;
 	getServerData().items[slot - 1].itemTypeIndex = itemTypeId;
+
+	saveItemToDatabase(slot - 1);
 	return index;
 }
 
@@ -1792,14 +1794,18 @@ function playerDropItem(client, hotBarSlot) {
 		updatePlayerHotBar(client);
 		clearPlayerWeapons(client);
 
+		let position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
+
 		getItemData(itemId).ownerType = V_ITEM_OWNER_GROUND;
 		getItemData(itemId).ownerId = 0;
-		getItemData(itemId).position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
+		getItemData(itemId).position = position;
 		getItemData(itemId).dimension = getPlayerDimension(client);
 		//getItemData(itemId).interior = getPlayerInterior(client);
 		spawnGroundItemObject(itemId);
 		getItemData(itemId).needsSaved = true;
 		getServerData().groundItemCache.push(itemId);
+
+		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, V_ITEM_OWNER_GROUND, 0, position);
 	}
 }
 
@@ -1879,6 +1885,8 @@ function playerPickupItem(client, itemId) {
 
 		getPlayerData(client).hotBarItems[firstSlot] = itemId;
 		updatePlayerHotBar(client);
+
+		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_GROUND, 0, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, position);
 	}
 }
 
@@ -3327,6 +3335,12 @@ function despawnAllGroundItemObjects() {
 			getItemData(getServerData().groundItemCache[i]).object = null;
 		}
 	}
+}
+
+// ===========================================================================
+
+function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector3(0.0, 0.0, 0.0)) {
+	quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
 }
 
 // ===========================================================================

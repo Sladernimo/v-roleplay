@@ -1370,7 +1370,20 @@ let placesOfOrigin = [
 	"Blaine County",
 	"Red County",
 	"Bone County",
+	"Lost Heaven",
+	"Empire Bay",
 	"Other",
+];
+
+// ===========================================================================
+
+let payPhoneStateNames = [
+	"None/Unknown",
+	"Idle",
+	"Ringing",
+	"Active Call",
+	"Broken",
+	"Calling"
 ];
 
 // ===========================================================================
@@ -3251,6 +3264,12 @@ function getWeatherData(weatherIndex, gameId = getGame()) {
 	}
 
 	return getGameConfig().weather[gameId][weatherIndex];
+}
+
+// ===========================================================================
+
+function getPayPhoneStateName(state) {
+	return payPhoneStateNames[state];
 }
 
 // ===========================================================================
