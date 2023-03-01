@@ -674,13 +674,6 @@ function resetAllServerAmbienceElementsCommand(command, params, client) {
 
 // ===========================================================================
 
-function reloadEconomyConfigurationCommand(command, params, client) {
-	getGlobalConfig().economy = loadEconomyConfig();
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}has reloaded the economy settings`);
-}
-
-// ===========================================================================
-
 function showLocalePickerTestCommand(command, params, client) {
 	showLocaleChooserForPlayer(client);
 }
