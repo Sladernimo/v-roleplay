@@ -493,7 +493,9 @@ function deleteVehicleCommand(command, params, client) {
 	let vehicleIndex = getVehicleData(vehicle).index;
 	let vehicleName = getVehicleName(vehicle);
 
-	quickDatabaseQuery(`DELETE FROM veh_main WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
+	if (getVehicleData(vehicle).databaseId > 0) {
+		quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
+	}
 
 	getServerData().vehicles.splice(vehicleIndex, 1);
 
@@ -1493,7 +1495,7 @@ function respawnVehicle(vehicle) {
 // ===========================================================================
 
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getVehicleNameFromModel(vehicleData.model)} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
 	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
 
 	if (!vehicle) {
@@ -1593,7 +1595,7 @@ function isVehicleOwnedByJob(vehicle, jobId) {
 
 // ===========================================================================
 
-function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, price, dealershipId, interior = 0, dimension = 0) {
+function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, price, ownerType, dealershipId, interior = 0, dimension = 0) {
 	let vehicle = createGameVehicle(modelIndex, spawnPosition, spawnRotation);
 	if (!vehicle) {
 		return false;
@@ -1608,7 +1610,7 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 	tempVehicleData.spawnLocked = true;
 	tempVehicleData.spawnPosition = spawnPosition;
 	tempVehicleData.spawnRotation = spawnRotation;
-	tempVehicleData.ownerType = V_VEHOWNER_BIZ;
+	tempVehicleData.ownerType = ownerType;
 	tempVehicleData.ownerId = dealershipId;
 	tempVehicleData.needsSaved = true;
 	tempVehicleData.interior = interior;
@@ -1620,6 +1622,8 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 		tempVehicleData.colour3 = 0;
 		tempVehicleData.colour4 = 0;
 	}
+
+	getServerData().vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 }
@@ -1638,6 +1642,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.databaseId = -1;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
+	tempVehicleData.needsSaved = true;
 
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
@@ -1645,6 +1650,8 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour3 = 0;
 		tempVehicleData.colour4 = 0;
 	}
+
+	getServerData().vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 
@@ -1664,6 +1671,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.model = modelIndex;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
+	tempVehicleData.needsSaved = true;
 
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
@@ -1671,6 +1679,8 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour3 = 0;
 		tempVehicleData.colour4 = 0;
 	}
+
+	getServerData().vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 
@@ -1738,7 +1748,7 @@ function checkVehiclePurchasing(client) {
 
 		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_NONE) {
-			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerType = getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
 		}
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
 		updatePlayerCash(client);
