@@ -147,6 +147,10 @@ function helpCommand(command, params, client) {
 			showWealthAndTaxHelpMessage(client);
 			break;
 
+		case "admin":
+			showAdminHelpMessage(client);
+			break;
+
 		default:
 			showMainHelpMessage(client);
 			break;
@@ -326,10 +330,35 @@ function showRadioHelpMessage(client) {
 
 function showWealthAndTaxHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWealthandTaxHelp")));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * getGlobalConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * getServerConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 1));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 3, `{ALTCOLOUR}/wealth{MAINCOLOUR}`, `{ALTCOLOUR}/tax{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function showAdminHelpMessage(client, flagName) {
+	if (getPlayerData(client).accountData.flags.admin == 0) {
+		messagePlayerError(client, getLocaleString(client, "CommandNoPermissions", `{ALTCOLOUR}/info admin`));
+		return false;
+	}
+
+	if (!flagName) {
+		messagePlayerSyntax(client, `${getCommandSyntaxText("help")} admin <flag name>`);
+		messagePlayerInfo(client, `Use /staffflags to see a list of staff flags`);
+		return false;
+	}
+
+	let commandList = getCommandsUsableByStaffFlag(flagName).map(function (x) {
+		return `${x.command}`;
+	});
+	let chunkedList = splitArrayIntoChunks(commandList, 8);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandsForStaffFlagList")));
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, `{clanOrange}${chunkedList[i].join(", ")}{MAINCOLOUR}`);
+	}
 }
 
 // ===========================================================================
