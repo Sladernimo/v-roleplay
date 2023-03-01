@@ -49,7 +49,6 @@ class ServerConfigData {
 		this.guiTextColourPrimary = [0, 0, 0];
 		this.guiTextColourSecondary = [0, 0, 0];
 		this.showLogo = true;
-		this.inflationMultiplier = 1;
 		this.testerOnly = false;
 		this.devServer = false;
 		this.nameTagDistance = 50.0;
@@ -84,6 +83,21 @@ class ServerConfigData {
 			sendEvents: true,
 			sendChat: true,
 			sendAdmin: true,
+		};
+
+		this.economy = {
+			inflationMultiplier: 1.0,
+			passiveIncomePerPayDay: 2000,
+			applyTax: true,
+			applyUpkeep: true,
+			grossIncomeMultiplier: 1.0,
+			incomeTaxRate: 0.7,
+			currencyString: "${AMOUNT}",
+			upKeepCosts: {
+				upKeepPerVehicle: 250,
+				upKeepPerHouse: 350,
+				upKeepPerBusiness: 600
+			}
 		};
 
 		if (dbAssoc) {
@@ -137,8 +151,17 @@ class ServerConfigData {
 			this.economy = {
 				inflationMultiplier: toFloat(dbAssoc["svr_inflation_multiplier"]),
 				incomeTaxRate: toFloat(dbAssoc["svr_income_tax_rate"]),
-				passiveIncome: toFloat(dbAssoc["svr_passive_income"]),
-			}
+				passiveIncomePerPayDay: toFloat(dbAssoc["svr_passive_income"]),
+				applyTax: intToBool(dbAssoc["svr_tax_enabled"]),
+				applyUpkeep: intToBool(dbAssoc["svr_upkeep_enabled"]),
+				grossIncomeMultiplier: toFloat(dbAssoc["svr_gross_income_multiplier"]),
+				currencyString: toString(dbAssoc["svr_currency_string"]),
+				upKeepCosts: {
+					upKeepPerVehicle: toInteger(dbAssoc["svr_upkeep_veh"]),
+					upKeepPerHouse: toInteger(dbAssoc["svr_upkeep_house"]),
+					upKeepPerBusiness: toInteger(dbAssoc["svr_upkeep_biz"]),
+				}
+			};
 
 			this.devServer = intToBool(toInteger(server.getCVar("v_devserver")));
 			this.testerOnly = intToBool(toInteger(server.getCVar("v_testeronly")));
@@ -272,13 +295,6 @@ function loadGlobalConfig() {
 		getGlobalConfig().database = loadDatabaseConfig();
 	} catch (error) {
 		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load global configuration. Error: ${error}`);
-		thisResource.stop();
-	}
-
-	try {
-		getGlobalConfig().economy = loadEconomyConfig();
-	} catch (error) {
-		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load economy configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
@@ -438,7 +454,6 @@ function saveServerConfigToDatabase() {
 				["svr_charselect_ped_rot_z", getServerConfig().characterSelectPedHeading],
 				["svr_charselect_int", getServerConfig().characterSelectInterior],
 				["svr_charselect_vw", getServerConfig().characterSelectDimension],
-				["svr_inflation_multiplier", getServerConfig().inflationMultiplier],
 				["svr_intro_music", getServerConfig().introMusicURL],
 				["svr_gui", getServerConfig().useGUI],
 				["svr_logo", getServerConfig().showLogo],
@@ -453,6 +468,16 @@ function saveServerConfigToDatabase() {
 				["svr_nametag_distance", getServerConfig().nameTagDistance],
 				["svr_real_time", boolToInt(getServerConfig().useRealTime)],
 				["svr_real_time_timezone", getServerConfig().realTimeZone],
+				["svr_inflation_multiplier", getServerConfig().economy.inflationMultiplier],
+				["svr_income_tax_rate", getServerConfig().economy.incomeTaxRate],
+				["svr_passive_income", getServerConfig().economy.passiveIncomePerPayDay],
+				["svr_tax_enabled", boolToInt(getServerConfig().economy.applyTax)],
+				["svr_upkeep_enabled", boolToInt(getServerConfig().economy.applyUpkeep)],
+				["svr_gross_income_multiplier", getServerConfig().economy.grossIncomeMultiplier],
+				["svr_currency_string", getServerConfig().economy.currencyString],
+				["svr_upkeep_veh", getServerConfig().economy.upKeepCosts.upKeepPerVehicle],
+				["svr_upkeep_house", getServerConfig().economy.upKeepCosts.upKeepPerHouse],
+				["svr_upkeep_biz", getServerConfig().economy.upKeepCosts.upKeepPerBusiness],
 			];
 
 			let dbQuery = null;
@@ -991,16 +1016,6 @@ function loadLocaleConfig() {
 	let localeConfig = JSON.parse(loadTextFile(`config/locale.json`));
 	if (localeConfig != null) {
 		return localeConfig;
-	}
-}
-
-// ===========================================================================
-
-function loadEconomyConfig() {
-	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading economy configuration ...");
-	let economyConfig = JSON.parse(loadTextFile(`config/economy.json`));
-	if (economyConfig != null) {
-		return economyConfig;
 	}
 }
 
