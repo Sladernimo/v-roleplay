@@ -225,8 +225,15 @@ function callPayPhoneCommand(command, params, client) {
 
 	sendPayPhonePickupToPlayer(client);
 
+	let nearbyPlayers = getPlayersInRange(getPlayerPosition(client), 3);
+	for (let i in nearbyPlayers) {
+		sendPayPhonePickupToPlayer(nearbyPlayers[i]);
+	}
+
 	setTimeout(function () {
-		sendPayPhoneDialingToPlayer(client);
+		for (let i in nearbyPlayers) {
+			sendPayPhoneDialingToPlayer(nearbyPlayers[i]);
+		}
 		setTimeout(function () {
 			getPayPhoneData(closestPayPhoneTarget).state = V_PAYPHONE_STATE_RINGING;
 			getPayPhoneData(closestPayPhoneTarget).usingPlayer = client;
@@ -247,18 +254,14 @@ function givePayPhoneToPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getClosestPlayer(getPlayerPosition(client), client);
-
-	if (areParamsEmpty(params)) {
-		targetClient = getPlayerFromParams(params);
-	}
+	let targetClient = getPlayerFromParams(params);
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient) <= getGlobalConfig().payPhoneGiveDistance)) {
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) >= getGlobalConfig().payPhoneGiveDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"))
 		return false;
 	}
@@ -278,7 +281,7 @@ function givePayPhoneToPlayerCommand(command, params, client) {
 	getPlayerData(client).usingPayPhone = -1;
 	getPlayerData(client).payPhoneInitiatedCall = false;
 
-	getPlayerData(otherClient).payPhoneCallStart = getCurrentUnixTimeStamp();
+	getPlayerData(otherClient).payPhoneCallStart = getCurrentUnixTimestamp();
 	getPlayerData(otherClient).payPhoneOtherPlayer = targetClient;
 }
 
@@ -311,10 +314,10 @@ function answerPayPhoneCommand(command, params, client) {
 	messagePlayerAlert(otherClient, getLocaleString(client, "PayPhoneRecipientAnswered"));
 	messagePlayerNormal(client, getLocaleString(client, "PayPhoneAnswered"));
 
-	getPlayerData(client).payPhoneCallStart = getCurrentUnixTimeStamp();
+	getPlayerData(client).payPhoneCallStart = getCurrentUnixTimestamp();
 	getPlayerData(client).payPhoneOtherPlayer = otherClient;
 	getPlayerData(client).usingPayPhone = closestPayPhone;
-	getPlayerData(otherClient).payPhoneCallStart = getCurrentUnixTimeStamp();
+	getPlayerData(otherClient).payPhoneCallStart = getCurrentUnixTimestamp();
 	getPlayerData(otherClient).payPhoneOtherPlayer = client;
 
 	getPayPhoneData(closestPayPhone).state = V_PAYPHONE_STATE_ACTIVE_CALL;
@@ -323,6 +326,11 @@ function answerPayPhoneCommand(command, params, client) {
 
 	sendPayPhoneStateToClient(null, closestPayPhone, V_PAYPHONE_STATE_ACTIVE_CALL);
 	sendPayPhoneStateToClient(null, getPlayerData(otherClient).usingPayPhone, V_PAYPHONE_STATE_ACTIVE_CALL);
+
+	let nearbyPlayers = getPlayersInRange(getPlayerPosition(client), 3);
+	for (let i in nearbyPlayers) {
+		sendPayPhonePickupToPlayer(nearbyPlayers[i]);
+	}
 }
 
 // ===========================================================================
@@ -345,7 +353,7 @@ function hangupPayPhoneCommand(command, params, client) {
 	}
 
 	let clientPayPhoneIndex = getPlayerData(client).usingPayPhone;
-	let clientPayPhone = getPayPhoneData(clientPayPhone);
+	let clientPayPhone = getPayPhoneData(clientPayPhoneIndex);
 
 	if (clientPayPhone.state == V_PAYPHONE_STATE_CALLING) {
 		clientPayPhone.state = V_PAYPHONE_STATE_IDLE;
@@ -359,6 +367,11 @@ function hangupPayPhoneCommand(command, params, client) {
 			getPayPhoneData(otherPayPhoneIndex).usingPlayer = null;
 
 			sendPayPhoneStateToClient(null, otherPayPhoneIndex, V_PAYPHONE_STATE_IDLE);
+
+			let nearbyPlayers = getPlayersInRange(getPlayerPosition(client), 3);
+			for (let i in nearbyPlayers) {
+				sendPayPhoneHangupToPlayer(nearbyPlayers[i]);
+			}
 		}
 	} else if (clientPayPhone.state == V_PAYPHONE_STATE_ACTIVE_CALL) {
 		let otherClient = getPlayerData(client).payPhoneOtherPlayer;
@@ -366,12 +379,22 @@ function hangupPayPhoneCommand(command, params, client) {
 		let otherClientPayPhone = getPayPhoneData(otherClientPayPhoneIndex);
 
 		if (getPlayerData(client).payPhoneInitiatedCall == true) {
-			messagePlayerNormal(client, getLocaleString("PayPhoneRecipientHangup", getPayPhoneCallPrice(clientPayPhoneIndex, getCurrentUnixTimeStamp() - getPlayerData(client).payPhoneCallStart)));
-			takePlayerCash(client, getPayPhoneCallPrice(getCurrentUnixTimeStamp() - getPlayerData(client).payPhoneCallStart));
+			messagePlayerNormal(client, getLocaleString(client, "PayPhoneRecipientHangup", getPayPhoneCallPrice(clientPayPhoneIndex, getCurrentUnixTimestamp() - getPlayerData(client).payPhoneCallStart)));
+			takePlayerCash(client, getPayPhoneCallPrice(getCurrentUnixTimestamp() - getPlayerData(client).payPhoneCallStart));
 			messagePlayerAlert(otherClient, getLocaleString(client, "PayPhoneHangup"));
+
+			let nearbyPlayers = getPlayersInRange(getPlayerPosition(client), 3);
+			for (let i in nearbyPlayers) {
+				sendPayPhoneHangupToPlayer(nearbyPlayers[i]);
+			}
+
+			nearbyPlayers = getPlayersInRange(getPlayerPosition(otherClient), 3);
+			for (let i in nearbyPlayers) {
+				sendPayPhoneHangupToPlayer(nearbyPlayers[i]);
+			}
 		} else {
-			messagePlayerNormal(otherClient, getLocaleString("PayPhoneRecipientHangup", getPayPhoneCallPrice(otherClientPayPhoneIndex, getCurrentUnixTimeStamp() - getPlayerData(client).payPhoneCallStart)));
-			takePlayerCash(otherClient, getPayPhoneCallPrice(getCurrentUnixTimeStamp() - getPlayerData(client).payPhoneCallStart));
+			messagePlayerNormal(otherClient, getLocaleString(client, "PayPhoneRecipientHangup", getPayPhoneCallPrice(otherClientPayPhoneIndex, getCurrentUnixTimestamp() - getPlayerData(client).payPhoneCallStart)));
+			takePlayerCash(otherClient, getPayPhoneCallPrice(getCurrentUnixTimestamp() - getPlayerData(client).payPhoneCallStart));
 			messagePlayerAlert(client, getLocaleString(client, "PayPhoneHangup"));
 		}
 
