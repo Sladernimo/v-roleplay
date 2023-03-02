@@ -147,7 +147,8 @@ function loadCommands() {
 			new CommandData("bizdelflooritems", deleteBusinessFloorItemsCommand, "", getStaffFlagValue("ManageItems"), true, true, "Destroys all items on the business floor (for-sale items)"),
 			new CommandData("bizdelstorageitems", deleteBusinessStorageItemsCommand, "", getStaffFlagValue("ManageItems"), true, true, "Destroys all items in the business's storage"),
 			new CommandData("bizdealership", setBusinessDealershipCommand, "", getStaffFlagValue("None"), true, true, "Sets the business's door label to vehicle dealership"),
-			//new CommandData("bizpaintball", setBusinessPaintBallCommand, "", getStaffFlagValue("None"), true, true, "Sets the business to a paintball arena"),
+			new CommandData("bizpaintball", setBusinessPaintBallCommand, "", getStaffFlagValue("None"), true, true, "Sets the business to a paintball arena"),
+			new CommandData("nearbiz", getNearbyBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses within X meters"),
 		],
 		chat: [
 			new CommandData("me", meActionCommand, "<message>", getStaffFlagValue("None"), true, false, "Shows a custom action message in chat"),
@@ -317,6 +318,7 @@ function loadCommands() {
 			new CommandData("houseentrance", moveHouseEntranceCommand, "", getStaffFlagValue("ManageHouses"), true, true, "Moves a house's entrance (outside/exterior location to enter the house)"),
 			new CommandData("houseexit", moveHouseExitCommand, "", getStaffFlagValue("ManageHouses"), true, true, "Moves a house's exit (inside/interior location to exit the house)"),
 			new CommandData("houseinttype", setHouseInteriorTypeCommand, "<interior template name/business id>", getStaffFlagValue("ManageHouses"), true, true, "Sets a house's interior to a pre-defined type"),
+			//new CommandData("nearhouse", getNearbyHousesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all houses within X meters"),
 		],
 		insurance: [],
 		item: [
