@@ -205,7 +205,7 @@ function adminChatCommand(command, params, client) {
 		}
 	}
 
-	messageDiscordAdminChannel(`${getPlayerData(client).accountData.staffTitle} ${getPlayerData(client).accountData.name}: ${messageText}`);
+	messageDiscordAdminChannel(`${getPlayerData(client).accountData.staffTitle} ${getPlayerData(client).accountData.name}: ${params}`);
 }
 
 // ===========================================================================
