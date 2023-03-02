@@ -594,3 +594,19 @@ function setLocalPlayerMoney(amount) {
 }
 
 // ===========================================================================
+
+function fixOffScreenPosition(position, margin = toVector2(0.0, 0.0)) {
+	if (position.x <= 0) {
+		position.x = 0.0 + (margin.x / 2);
+	} else if (position.x > game.width) {
+		position.x = game.width - (margin.x / 2);
+	}
+
+	if (position.y <= 0) {
+		position.y = 0.0 + (margin.y / 2);
+	} else if (position.y > game.height) {
+		position.y = game.height - (margin.y / 2);
+	}
+
+	return position;
+}

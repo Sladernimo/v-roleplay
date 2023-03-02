@@ -14,7 +14,7 @@ let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
 
 let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
-let jobRouteLocationIndicatorSize = [32, 32];
+let jobRouteLocationIndicatorSize = toVector2(32, 32);
 let jobRouteLocationIndicatorEnabled = false;
 let jobRouteLocationIndicatorImagePath = "files/images/icons/objective-icon.png";
 let jobRouteLocationIndicatorImage = null;
@@ -288,7 +288,8 @@ function processJobLocationIndicatorRendering() {
 	}
 
 	let screenPosition = getScreenFromWorldPosition(jobRouteLocationIndicatorPosition);
-	graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize[0] / 2), screenPosition.y - (jobRouteLocationIndicatorSize[1] / 2)], [jobRouteLocationIndicatorSize[0], jobRouteLocationIndicatorSize[1]]);
+	screenPosition = fixOffScreenPosition(screenPosition, jobRouteLocationIndicatorSize);
+	graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize.x / 2), screenPosition.y - (jobRouteLocationIndicatorSize.y / 2)], [jobRouteLocationIndicatorSize.x, jobRouteLocationIndicatorSize.y]);
 }
 
 // ===========================================================================
