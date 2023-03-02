@@ -3674,11 +3674,12 @@ function createJobUniform(jobId, skinIndex) {
 	let tempJobUniformData = new JobUniformData(false);
 	tempJobUniformData.skin = skinIndex;
 	tempJobUniformData.jobIndex = jobId;
-	tempJobUniformData.job = getJobData(jobId);
+	tempJobUniformData.job = getJobData(jobId).databaseId;
 	tempJobUniformData.name = getGameConfig().skins[getGame()][skinIndex][1];
 	tempJobUniformData.needsSaved = true;
 
 	getJobData(jobId).uniforms.push(tempJobUniformData);
+
 	setAllJobDataIndexes();
 }
 
