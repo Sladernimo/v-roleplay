@@ -24,6 +24,7 @@ function initClientScripts() {
 	initCustomHUDScript();
 	initPayPhoneScript();
 	initTimersScript();
+	initJobScript();
 
 	addAllNetworkHandlers();
 
