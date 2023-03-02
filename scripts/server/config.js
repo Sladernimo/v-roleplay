@@ -150,7 +150,7 @@ class ServerConfigData {
 
 			this.economy = {
 				inflationMultiplier: toFloat(dbAssoc["svr_inflation_multiplier"]),
-				incomeTaxRate: toFloat(dbAssoc["svr_income_tax_rate"]),
+				incomeTaxRate: toFloat(dbAssoc["svr_tax_income"]),
 				passiveIncomePerPayDay: toFloat(dbAssoc["svr_passive_income"]),
 				applyTax: intToBool(dbAssoc["svr_tax_enabled"]),
 				applyUpkeep: intToBool(dbAssoc["svr_upkeep_enabled"]),
@@ -469,7 +469,7 @@ function saveServerConfigToDatabase() {
 				["svr_real_time", boolToInt(getServerConfig().useRealTime)],
 				["svr_real_time_timezone", getServerConfig().realTimeZone],
 				["svr_inflation_multiplier", getServerConfig().economy.inflationMultiplier],
-				["svr_income_tax_rate", getServerConfig().economy.incomeTaxRate],
+				["svr_tax_income", getServerConfig().economy.incomeTaxRate],
 				["svr_passive_income", getServerConfig().economy.passiveIncomePerPayDay],
 				["svr_tax_enabled", boolToInt(getServerConfig().economy.applyTax)],
 				["svr_upkeep_enabled", boolToInt(getServerConfig().economy.applyUpkeep)],
