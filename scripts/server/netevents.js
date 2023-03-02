@@ -1399,3 +1399,9 @@ function sendPayPhonePickupToPlayer(client) {
 }
 
 // ==========================================================================
+
+function sendIncomingDamageMultiplierToClient(client, multiplier) {
+	sendNetworkEventToPlayer("v.rp.incomingDamageMultiplier", client, multiplier);
+}
+
+// ==========================================================================
