@@ -1671,6 +1671,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -1682,6 +1683,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -1693,6 +1695,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
