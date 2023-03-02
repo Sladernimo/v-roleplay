@@ -47,6 +47,7 @@ function addAllEventHandlers() {
 		addEventHandler("OnMapLoaded", onMapLoaded);
 		addEventHandler("OnPedEnteringVehicle", onPedEnteredVehicle);
 		addEventHandler("OnPedExitingVehicle", onPedExitedVehicle);
+		addEventHandler("OnPedInflictDamage", onPedHit);
 	}
 }
 
@@ -257,6 +258,16 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 				sendNetworkEventToServer("v.rp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
 			}
 		}
+	}
+}
+
+// ===========================================================================
+
+function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${hitPed.id} (${hitPed.name}) hit using type ${hitType}, causing ${damage} to body part ${bodyPart}`);
+	event.preventDefault();
+	if (hitPed == localPlayer) {
+		localPlayer.health = localPlayer.health - (damage * weaponDamageMultiplier);
 	}
 }
 

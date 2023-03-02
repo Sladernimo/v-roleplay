@@ -176,6 +176,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.profanityFilter", setProfanityFilterState);
 	addNetworkEventHandler("v.rp.currencyString", receiveCurrencyStringFromServer);
 	addNetworkEventHandler("v.rp.token", serverRequestedToken);
+	addNetworkEventHandler("v.rp.incomingDamageMultiplier", setIncomingDamageMultiplier);
 }
 
 // ===========================================================================
@@ -493,6 +494,12 @@ function receiveClientVariablesFromServer(clientVariablesString) {
 function serverRequestedToken() {
 	let token = loadToken();
 	sendNetworkEventToServer("v.rp.token", token);
+}
+
+// ===========================================================================
+
+function setIncomingDamageMultiplier(tempMultiplier) {
+	weaponDamageMultiplier = tempMultiplier;
 }
 
 // ===========================================================================

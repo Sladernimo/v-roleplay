@@ -32,6 +32,7 @@ let logLevel = LOG_INFO | LOG_DEBUG;
 
 let weaponDamageEnabled = {};
 let weaponDamageEvent = {};
+let weaponDamageMultiplier = 1.0;
 
 let forceWeapon = 0;
 let forceWeaponAmmo = 0;
