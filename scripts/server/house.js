@@ -213,7 +213,16 @@ function createHouseCommand(command, params, client) {
 		return false;
 	}
 
-	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorScene);
+	createHouse(
+		params,
+		getPlayerPosition(client),
+		toVector3(0.0, 0.0, 0.0),
+		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].House : -1,
+		-1,
+		getPlayerInterior(client),
+		getPlayerDimension(client),
+		getPlayerData(client).interiorScene
+	);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`, true);
 }
 
@@ -461,7 +470,7 @@ function setHousePickupCommand(command, params, client) {
 		getHouseData(houseId).entrancePickupModel = toInteger(typeParam);
 	}
 
-	deleteHouseEntrancePickup(houseId);
+	despawnHouseEntrancePickup(houseId);
 	spawnHouseEntrancePickup(houseId);
 
 	getHouseData(houseId).needsSaved = true;
@@ -525,8 +534,8 @@ function setHouseInteriorTypeCommand(command, params, client) {
 		getHouseData(houseId).hasInterior = true;
 	}
 
-	deleteHouseEntrancePickup(houseId);
-	deleteHouseExitPickup(houseId);
+	despawnHouseEntrancePickup(houseId);
+	despawnHouseExitPickup(houseId);
 	spawnHouseEntrancePickup(houseId);
 	spawnHouseExitPickup(houseId);
 
@@ -652,8 +661,8 @@ function moveHouseExitCommand(command, params, client) {
 	//createAllHouseBlips(houseId);
 	//createAllHousePickups(houseId);
 
-	deleteHouseExitPickup(houseId);
-	deleteHouseExitBlip(houseId);
+	despawnHouseExitPickup(houseId);
+	despawnHouseExitBlip(houseId);
 	spawnHouseExitPickup(houseId);
 	spawnHouseExitBlip(houseId);
 
@@ -714,11 +723,11 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	deleteHouseEntrancePickup(houseIndex);
-	deleteHouseExitPickup(houseIndex);
+	despawnHouseEntrancePickup(houseIndex);
+	despawnHouseExitPickup(houseIndex);
 
-	deleteHouseEntranceBlip(houseIndex);
-	deleteHouseExitBlip(houseIndex);
+	despawnHouseEntranceBlip(houseIndex);
+	despawnHouseExitBlip(houseIndex);
 
 	removePlayersFromHouse(houseIndex);
 
@@ -1049,35 +1058,45 @@ function spawnHouseEntrancePickup(houseId) {
 	//	return false;
 	//}
 
-	if (houseData.entrancePickupModel == -1) {
-		return false;
-	}
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Creating entrance pickup for house ${houseData.description} (${houseData.databaseId})`);
 
 	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
 
+			if (houseData.entrancePickupModel == -1) {
+				return false;
+			}
+
 			if (getServerData().houses[houseId].entrancePickupModel != 0) {
 				pickupModelId = getHouseData(houseId).entrancePickupModel;
 			}
 
 			entrancePickup = createGamePickup(pickupModelId, houseData.entrancePosition, getGameConfig().pickupTypes[getGame()].house);
-		} else if (isGameFeatureSupported("dummyElement")) {
-			entrancePickup = createGameDummyElement(houseData.exitPosition);
 		}
 
 		if (entrancePickup != null) {
-			setElementOnAllDimensions(entrancePickup, false);
-			setElementDimension(entrancePickup, getHouseData(houseId).entranceDimension);
-			setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
-			setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamOutDistance);
-			setElementTransient(entrancePickup, false);
+			if (houseData.entranceDimension != -1) {
+				setElementDimension(entrancePickup, houseData.entranceDimension);
+				setElementOnAllDimensions(entrancePickup, false);
+			} else {
+				setElementOnAllDimensions(entrancePickup, true);
+			}
 
+			if (getGlobalConfig().housePickupStreamInDistance == -1 || getGlobalConfig().housePickupStreamOutDistance == -1) {
+				entrancePickup.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
+			}
+			setElementTransient(entrancePickup, false);
 			getHouseData(houseId).entrancePickup = entrancePickup;
 			updateHousePickupLabelData(houseId);
 		}
 	}
+
+	updateHousePickupLabelData(houseId);
 }
 
 // ===========================================================================
@@ -1482,7 +1501,7 @@ function doesHouseHaveInterior(houseId) {
 
 // ===========================================================================
 
-function deleteHouseEntrancePickup(houseId) {
+function despawnHouseEntrancePickup(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1496,7 +1515,7 @@ function deleteHouseEntrancePickup(houseId) {
 
 // ===========================================================================
 
-function deleteHouseExitPickup(houseId) {
+function despawnHouseExitPickup(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1510,7 +1529,7 @@ function deleteHouseExitPickup(houseId) {
 
 // ===========================================================================
 
-function deleteHouseEntranceBlip(houseId) {
+function despawnHouseEntranceBlip(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1524,7 +1543,7 @@ function deleteHouseEntranceBlip(houseId) {
 
 // ===========================================================================
 
-function deleteHouseExitBlip(houseId) {
+function despawnHouseExitBlip(houseId) {
 	if (!areServerElementsSupported()) {
 		return false;
 	}
@@ -1556,10 +1575,10 @@ function reloadAllHousesCommand(command, params, client) {
 	}
 
 	for (let i in getServerData().houses) {
-		deleteHouseExitBlip(i);
-		deleteHouseEntranceBlip(i);
-		deleteHouseExitPickup(i);
-		deleteHouseEntrancePickup(i);
+		despawnHouseExitBlip(i);
+		despawnHouseEntranceBlip(i);
+		despawnHouseExitPickup(i);
+		despawnHouseEntrancePickup(i);
 	}
 
 	clearArray(getServerData().houses);
@@ -1700,8 +1719,8 @@ function canPlayerLockUnlockHouse(client, houseId) {
 // ===========================================================================
 
 function resetHousePickups(houseId) {
-	deleteHouseEntrancePickup(houseId);
-	deleteHouseExitPickup(houseId);
+	despawnHouseEntrancePickup(houseId);
+	despawnHouseExitPickup(houseId);
 	spawnHouseEntrancePickup(houseId);
 	spawnHouseExitPickup(houseId);
 }
@@ -1709,8 +1728,8 @@ function resetHousePickups(houseId) {
 // ===========================================================================
 
 function resetHouseBlips(houseId) {
-	deleteHouseEntranceBlip(houseId);
-	deleteHouseExitBlip(houseId);
+	despawnHouseEntranceBlip(houseId);
+	despawnHouseExitBlip(houseId);
 	spawnHouseEntranceBlip(houseId);
 	spawnHouseExitBlip(houseId);
 }
@@ -1778,12 +1797,16 @@ function getHouseFromParams(params) {
 // ===========================================================================
 
 function updateHousePickupLabelData(houseId) {
+	let houseData = getHouseData(houseId);
+
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		sendHouseToPlayer(null, houseId, getHouseData(houseId).description, getHouseData(houseId).entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), getHouseData(houseId).buyPrice, getHouseData(houseId).rentPrice, getHouseData(houseId).hasInterior, getHouseData(houseId).locked);
+		if (houseData == false) {
+			sendHouseToPlayer(null, houseId, true, "", false, -1, -1, 0, 0, false, false, false);
+		} else {
+			sendHouseToPlayer(null, houseId, false, houseData.description, houseData.entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), houseData.buyPrice, houseData.rentPrice, houseData.hasInterior, houseData.locked);
+		}
 		return false;
 	}
-
-	let houseData = getHouseData(houseId);
 
 	if (houseData.entrancePickup != null) {
 		setEntityData(houseData.entrancePickup, "v.rp.owner.type", V_PICKUP_HOUSE_ENTRANCE, false);
@@ -1813,8 +1836,8 @@ function updateHousePickupLabelData(houseId) {
 
 function deleteAllHouseBlips() {
 	for (let i in getServerData().houses) {
-		deleteHouseEntranceBlip(i);
-		deleteHouseExitBlip(i);
+		despawnHouseEntranceBlip(i);
+		despawnHouseExitBlip(i);
 	}
 }
 
@@ -1822,21 +1845,21 @@ function deleteAllHouseBlips() {
 
 function deleteAllHousePickups() {
 	for (let i in getServerData().houses) {
-		deleteHouseEntrancePickup(i);
-		deleteHouseExitPickup(i);
+		despawnHouseEntrancePickup(i);
+		despawnHouseExitPickup(i);
 	}
 }
 
 // ===========================================================================
 
-function createHouseBlips(houseId) {
+function spawnHouseBlips(houseId) {
 	spawnHouseEntranceBlip(houseId);
 	spawnHouseExitBlip(houseId);
 }
 
 // ===========================================================================
 
-function createHousePickups(houseId) {
+function spawnHousePickups(houseId) {
 	spawnHouseEntrancePickup(houseId);
 	spawnHouseExitPickup(houseId);
 }
@@ -1888,6 +1911,51 @@ function getHouseEntrancePickupModelForNetworkEvent(houseIndex) {
 	}
 
 	return pickupModelId;
+}
+
+// ===========================================================================
+
+function getNearbyBusinessesCommand(command, params, client) {
+	let distance = 10.0;
+
+	if (!areParamsEmpty(params)) {
+		distance = getParam(params, " ", 1);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, "The distance must be a number!");
+		return false;
+	}
+
+	distance = toFloat(distance);
+
+	if (distance <= 0) {
+		messagePlayerError(client, "The distance must be more than 0!");
+		return false;
+	}
+
+	let nearbyHouses = getHousesInRange(getPlayerPosition(client), distance);
+
+	if (nearbyHouses.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoHousesWithinRange", distance));
+		return false;
+	}
+
+	let housesList = nearbyHouses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(housesList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHousesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function getHousesInRange(position, distance) {
+	return getServerData().houses.filter((house) => getDistance(position, house.entrancePosition) <= distance);
 }
 
 // ===========================================================================
