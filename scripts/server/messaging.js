@@ -275,7 +275,7 @@ function messagePlayerPhoneCall(talkingPlayer, receivingPlayer, messageText) {
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
 			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(talkingPlayer), getPlayerPosition(clients[i])) <= getGlobalConfig().talkDistance && getPlayerDimension(talkingPlayer) == getPlayerDimension(clients[i]))) {
-				messagePlayerPhone(clients[i], client, messageText);
+				messagePlayerPhone(clients[i], talkingPlayer, messageText);
 			}
 		}
 	}
