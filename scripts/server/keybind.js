@@ -58,7 +58,7 @@ function addKeyBindCommand(command, params, client) {
 	if (!keyId) {
 		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
 		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
-		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExampleList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
+		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExamplesList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
 		return false;
 	}
 
