@@ -265,7 +265,11 @@ function loadCommands() {
 		email: [
 			new CommandData("testemail", testEmailCommand, "<email address>", getStaffFlagValue("Developer"), true, true),
 		],
-		fishing: [],
+		fishing: [
+			//new CommandData("fish", castFishingLineCommand, "", getStaffFlagValue("None"), true, true, "Casts your fishing line into the water"),
+			//new CommandData("castline", castFishingLineCommand, "", getStaffFlagValue("None"), true, true, "Casts your fishing line into the water"),
+			//new CommandData("resetline", resetFishingLineCommand, "", getStaffFlagValue("None"), true, true, "Casts your fishing line into the water"),
+		],
 		forensics: [],
 		gate: [
 			new CommandData("gate", triggerGateCommand, "", getStaffFlagValue("None"), true, true, "Opens/closes the nearest gate"),
@@ -922,9 +926,9 @@ function processPlayerCommand(command, params, client) {
 
 		let possibleCommand = getCommandFromParams(command);
 		if (possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
-			messagePlayerError(client, getLocaleString(client, "InvalidCommandPossibleMatchTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}${toLowerCase(possibleCommand.command)}{MAINCOLOUR}`));
+			messagePlayerError(client, getLocaleString(client, "CommandNotFoundPossibleMatchTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}${toLowerCase(possibleCommand.command)}{MAINCOLOUR}`));
 		} else {
-			messagePlayerError(client, getLocaleString(client, "InvalidCommandHelpTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/help{MAINCOLOUR}`));
+			messagePlayerError(client, getLocaleString(client, "CommandNotFoundHelpTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/help{MAINCOLOUR}`));
 		}
 		return false;
 	}
