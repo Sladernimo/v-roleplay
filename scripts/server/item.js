@@ -1545,13 +1545,13 @@ function playerUseItem(client, hotBarSlot) {
 
 				itemData.value = itemData.value - itemTypeData.useValue;
 				if (itemData.value <= 0) {
-					destroyItem(itemIndex);
+					deleteItem(itemIndex);
 				}
-
-				markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			} else {
 				messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 			}
+
+			markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			break;
 		}
 
@@ -1610,7 +1610,7 @@ function playerUseItem(client, hotBarSlot) {
 
 					itemData.value = itemData.value - itemTypeData.useValue;
 					//if(itemData.value <= 0) {
-					//	destroyItem(itemIndex);
+					//	deleteItem(itemIndex);
 					//}
 				}
 			} else {
@@ -1705,7 +1705,7 @@ function playerUseItem(client, hotBarSlot) {
 			meActionToNearbyPlayers(client, `bends down and plants a ${itemTypeData.name} in the ground`);
 			createGroundPlant(itemIndex);
 			if (itemData.value == 0) {
-				destroyItem(itemIndex);
+				deleteItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
 			break;
