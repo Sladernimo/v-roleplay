@@ -1,4 +1,4 @@
 .vs/
 .git/
 *.code-workspace
-config/
+config
