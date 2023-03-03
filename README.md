@@ -1,7 +1,7 @@
 # Vortrex's Roleplay Resource
 
 ### Description
-This is Vortrex's Roleplay Resource
+This is Vortrex's Roleplay Resource. Originally created for [GTA Connected](https://gtaconnected.com/) but support for other multiplayer mods coming soon!
 
 ### Supported Games and Multiplayer Mods
 * GTA III (on [GTA Connected](https://gtaconnected.com/))
@@ -9,6 +9,29 @@ This is Vortrex's Roleplay Resource
 * GTA SA (on [GTA Connected](https://gtaconnected.com/))
 * GTA IV (on [GTA Connected](https://gtaconnected.com/))
 * Mafia: The City of Lost Heaven (on [Mafia Connected](https://mafiaconnected.com/))
+* **(Coming Soon!)** GTA V (on [RAGEMP](https://rage.mp/))
+* **(Coming Soon!)** Mafia Definitive Edition (on MafiaMP)
+
+### Features
+*Some features may be disabled on specific multiplayer mods depending on functionality*
+* Works on multiple server instances sharing the same database
+* Jobs operate as factions but leader can make ranks "public" so anybody can use those if enabled.
+* Clans with custom ranks, permissions, pay, titles, and more
+* Custom inventory system where everything is an item: food, weapons, devices, etc
+* All items can be dropped, given, used, picked up, or stored in certain places (other items, vehicles, etc)
+* Ownable vehicles, houses, businesses, and more
+* No "hard cap" to how many things you can own, but the more you own the more you pay in tax
+* Stock your business with any items you want, and set custom prices
+* Extra storage for businesses (floor items for sale, stockroom in back for hidden stuff)
+* Security features like two-factor login, email alerts for login attempts, and more
+* Animations and ped speech for extra RP goodness
+* Players can make aliases for commands
+* Choosable levels of GUI: Simple (input, list, message like SA-MP), Full (whole app layouts), or None (commands only)
+* Custom keybinds. Server can set defaults, but players can bind/unbind keys for personalization
+* *Everything* is dynamically changable in the server using commands and/or GUI
+* Community-provided translations for GUI and server messages
+* Automatic translator for chat (players can turn it on/off for themselves)
+* Way too many other things to list here
 
 ## Setup
 * Download the server from the [downloads page](https://gtaconnected.com/downloads) of the GTA Connected website.
