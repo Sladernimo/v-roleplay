@@ -82,6 +82,7 @@ function createPayPhone(position, number, addedBy = defaultNoAccountId) {
 	tempPayPhoneData.whenAdded = getCurrentUnixTimestamp();
 	tempPayPhoneData.whoDeleted = defaultNoAccountId;
 	tempPayPhoneData.whenDeleted = 0;
+	tempPayPhoneData.enabled = true;
 
 	getServerData().payPhones.push(tempPayPhoneData);
 
