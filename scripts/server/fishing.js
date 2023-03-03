@@ -22,6 +22,29 @@ const V_FISHING_LINE_STATE_HOOKED = 5;
 
 // ===========================================================================
 
+class FishingLocationData {
+	constructor(dbAssoc = false) {
+		this.databaseId = 0;
+		this.serverId = 0;
+		this.index = -1;
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.enabled = false;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+
+		if (dbAssoc) {
+			this.databaseId = toInteger(dbAssoc["fish_loc_id"]);
+			this.serverId = toInteger(dbAssoc["fish_loc_server"]);
+			this.enabled = intToBool(dbAssoc["fish_loc_enabled"]);
+			this.position = toVector3(toFloat(dbAssoc["fish_loc_pos_x"]), toFloat(dbAssoc["fish_loc_pos_y"]), toFloat(dbAssoc["fish_loc_pos_z"]));
+			this.whoAdded = toInteger(dbAssoc["fish_loc_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["fish_loc_when_added"]);
+		}
+	}
+};
+
+// ===========================================================================
+
 let fishingCollectables = [
 	// Fish
 	["Salmon", V_FISHING_CATCH_TYPE_FISH],
@@ -63,7 +86,11 @@ let fishingAnimations = {
 	[V_GAME_GTA_SA]: {
 		"fishingLineCasting": "none",
 		"fishingLineReeling": "none",
-	}
+	},
+	//[V_GAME_MAFIA_ONE]: {
+	//	"fishingLineCasting": "none",
+	//	"fishingLineReeling": "none",
+	//}
 };
 
 // ===========================================================================
@@ -203,6 +230,18 @@ function isPlayerFishing(client) {
 
 function isPlayerFishing(client) {
 	return (getPlayerData(client).fishingLineState != V_FISHING_LINE_STATE_NONE);
+}
+
+// ===========================================================================
+
+function getClosestFishingLocation(position) {
+	let closest = 0;
+	for (let i in getServerData().fishingLocations) {
+		if (getDistance(position, getServerData().fishingLocations[i].position) < getDistance(position, getServerData().fishingLocations[closest].position))
+			closest = i;
+	}
+
+	return closest;
 }
 
 // ===========================================================================
