@@ -1,0 +1,114 @@
+{
+    "config": {
+        "shortHoldDuration": 500,
+        "longHoldDuration": 1500,
+        "coolDownBetweenUse": 500
+    },
+    "defaultKeyBinds": [
+        {
+            "keyName": "k",
+            "commandString": "engine",
+            "keyState": 1
+        },
+        {
+            "keyName": "l",
+            "commandString": "lights",
+            "keyState": 1
+        },
+        {
+            "keyName": "j",
+            "commandString": "lock",
+            "keyState": 1
+        },
+        {
+            "keyName": "f",
+            "commandString": "enter",
+            "keyState": 1
+        },
+        {
+            "keyName": "g",
+            "commandString": "passenger",
+            "keyState": 1
+        },
+        {
+            "keyName": "m",
+            "commandString": "cursor",
+            "keyState": 1
+        },
+        {
+            "keyName": "o",
+            "commandString": "drop",
+            "keyState": 1
+        },
+        {
+            "keyName": "p",
+            "commandString": "pickup",
+            "keyState": 1
+        },
+        {
+            "keyName": "u",
+            "commandString": "use",
+            "keyState": 1
+        },
+        {
+            "keyName": "i",
+            "commandString": "inv",
+            "keyState": 1
+        },
+        {
+            "keyName": "0",
+            "commandString": "item 0",
+            "keyState": 1
+        },
+        {
+            "keyName": "1",
+            "commandString": "item 1",
+            "keyState": 1
+        },
+        {
+            "keyName": "2",
+            "commandString": "item 2",
+            "keyState": 1
+        },
+        {
+            "keyName": "3",
+            "commandString": "item 3",
+            "keyState": 1
+        },
+        {
+            "keyName": "4",
+            "commandString": "item 4",
+            "keyState": 1
+        },
+        {
+            "keyName": "5",
+            "commandString": "item 5",
+            "keyState": 1
+        },
+        {
+            "keyName": "6",
+            "commandString": "item 6",
+            "keyState": 1
+        },
+        {
+            "keyName": "7",
+            "commandString": "item 7",
+            "keyState": 1
+        },
+        {
+            "keyName": "8",
+            "commandString": "item 8",
+            "keyState": 1
+        },
+        {
+            "keyName": "9",
+            "commandString": "item 9",
+            "keyState": 1
+        },
+        {
+            "keyName": "f5",
+            "commandString": "scoreboard",
+            "keyState": 1
+        }
+    ]
+}
