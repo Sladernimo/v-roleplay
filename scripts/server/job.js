@@ -2221,7 +2221,7 @@ function setJobRoutePayCommand(command, params, client) {
 	let amount = getParam(params, " ", 1);
 
 	if (isNaN(amount)) {
-		getLocaleString(client, "MustBeNumber", "amount");
+		getLocaleString(client, "MustBeNumber");
 		return false;
 	}
 
@@ -3752,7 +3752,7 @@ function deleteJobUniformCommand(command, params, client) {
 	}
 
 	if (isNaN(uniformIndex)) {
-		messagePlayerError(client, getLocaleString(client, "MustBeNumber", "uniform ID"));
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
 		return false;
 	}
 
