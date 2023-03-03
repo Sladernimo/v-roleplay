@@ -774,5 +774,6 @@
 	"HeaderHousesInRangeList": "Businesses (within {1} meters)",
 	"HeaderPayPhonesInRangeList": "Businesses (within {1} meters)",
 	"HeaderCommandsForStaffFlagList": "Admin Commands ({1})",
-	"PlayerLocateDistanceAndDirection": "{1} is {2} meters {3}"
+	"PlayerLocateDistanceAndDirection": "{1} is {2} meters {3}",
+	"MustBeNumber": "You need to use a number!"
 }
