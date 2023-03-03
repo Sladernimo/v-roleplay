@@ -1,0 +1,15 @@
+{
+	"sendChat": false,
+	"sendEvents": false,
+	"sendConnectEvents": false,
+	"sendVehicleEvents": false,
+	"sendDeathEvents": false,
+	"sendAdmin": false,
+	"sendClan": false,
+	"sendAction": false,
+	"webhook": {
+		"enabled": false,
+		"webhookBaseURL": "",
+		"pass": ""
+	}
+}
