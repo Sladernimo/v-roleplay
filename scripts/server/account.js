@@ -48,6 +48,7 @@ class AccountData {
 		this.databaseId = 0;
 		this.name = "";
 		this.password = "";
+		this.passwordRevision = 0;
 		this.registerDate = 0;
 		this.flags = {
 			moderation: 0,
@@ -78,6 +79,7 @@ class AccountData {
 			this.databaseId = toInteger(dbAssoc["acct_id"]);
 			this.name = toString(dbAssoc["acct_name"]);
 			this.password = toString(dbAssoc["acct_pass"]);
+			this.password = toString(dbAssoc["acct_pass_revision"]);
 			this.registerDate = toInteger(dbAssoc["acct_when_registered"]);
 			this.flags = {
 				moderation: toInteger(dbAssoc["acct_svr_mod_flags"]),
@@ -821,8 +823,13 @@ function hashAccountPassword(name, password) {
 
 // ===========================================================================
 
-function saltAccountInfo(name, password) {
-	return `ag.gaming.${accountSaltHash}.${name}.${password}`;
+function saltAccountInfo(name, password, revision = 0) {
+	let tempString = getSecurityConfig().accountPasswordSaltAlgorithm[revision];
+
+	tempString.replace("{NAME}", name);
+	tempString.replace("{PASSWORD}", password);
+	tempString.replace("{SALTHASH}", getSecurityConfig().accountSaltHash[revision])
+	return tempString;
 }
 
 // ===========================================================================
@@ -1078,7 +1085,7 @@ function createAccount(name, password, email = "") {
 		let safeName = escapeDatabaseString(dbConnection, name);
 		let safeEmail = escapeDatabaseString(dbConnection, email);
 
-		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', CURRENT_TIMESTAMP())`);
+		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP())`);
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let insertId = getDatabaseInsertId(dbConnection);
 			createDefaultAccountServerData(insertId);
