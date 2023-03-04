@@ -23,10 +23,14 @@ class ClanData {
 		this.colour = COLOUR_WHITE;
 		this.colours = [];
 		this.initialRank = 0;
-		this.members = [];
-		this.ranks = [];
 		this.needsSaved = false;
 		this.motd = false;
+
+		/** @type {Array.<ClanMemberData>} */
+		this.members = [];
+
+		/** @type {Array.<ClanRankData>} */
+		this.ranks = [];
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_id"]);

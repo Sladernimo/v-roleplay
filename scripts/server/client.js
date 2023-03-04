@@ -16,12 +16,13 @@ const V_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin 
 
 /**
  * @class Representing extra data for a client
- * @property {AccountData} accountData
- * @property {Array.<SubAccountData>} subAccounts
  */
 class ClientData {
 	constructor(client, accountData, subAccounts) {
+		/** @type {AccountData} */
 		this.accountData = accountData;
+
+		/** @type {Array.<SubAccountData>} */
 		this.subAccounts = subAccounts; // Characters
 
 		// General Info
