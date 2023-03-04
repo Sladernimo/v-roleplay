@@ -178,12 +178,12 @@ let gameConfig = false;
 
 let globalConfig = {
 	keyBind: [],
-	economy: {},
 	database: {},
 	locale: {},
 	accents: {},
 	discord: {},
 	email: {},
+	security: {},
 	accountPasswordHash: "SHA512",
 	npcFarProximity: 100,
 	npcMediumProximity: 40,
@@ -330,6 +330,13 @@ function loadGlobalConfig() {
 		getGlobalConfig().email = loadEmailConfig();
 	} catch (error) {
 		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load email configuration. Error: ${error}`);
+		thisResource.stop();
+	}
+
+	try {
+		getGlobalConfig().security = loadSecurityConfig();
+	} catch (error) {
+		logToConsole(LOG_ERROR, `[V.RP.Config] Failed to load security configuration. Error: ${error}`);
 		thisResource.stop();
 	}
 
@@ -1069,6 +1076,17 @@ function loadEmailConfig() {
 	let emailConfig = JSON.parse(loadTextFile("config/email.json"));
 	if (emailConfig != null) {
 		return emailConfig;
+	}
+	return false;
+}
+
+// ===========================================================================
+
+function loadSecurityConfig() {
+	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading security configuration ...");
+	let securityConfig = JSON.parse(loadTextFile("config/security.json"));
+	if (securityConfig != null) {
+		return securityConfig;
 	}
 	return false;
 }
