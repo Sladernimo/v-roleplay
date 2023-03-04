@@ -35,7 +35,11 @@ function playerPayDay(client) {
 
 	// Job Pay
 	if (getPlayerJob(client) != -1) {
-		grossIncome = Math.round(grossIncome + getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).pay);
+		if (!getJobRankData(getPlayerJob(client), getPlayerJobRank(client))) {
+			grossIncome = grossIncome + 0;
+		} else {
+			grossIncome = Math.round(grossIncome + getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).pay);
+		}
 	}
 
 	// Payday bonus
