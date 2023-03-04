@@ -44,13 +44,6 @@ const V_JOB_ROUTE_LOC_TYPE_FIRE = 5;         		// Scripted fire, placed on build
 
 /**
  * @class Representing a job's data. Loaded and saved in the database
- * @property {Array.<JobEquipmentData>} equipment
- * @property {Array.<JobUniformData>} uniforms
- * @property {Array.<JobLocationData>} locations
- * @property {Array.<JobRouteData>} routes
- * @property {Array.<JobWhiteListData>} whiteList
- * @property {Array.<JobBlackListData>} blackList
- * @property {Array.<JobRankData>} ranks
  */
 class JobData {
 	constructor(dbAssoc = false) {
@@ -70,12 +63,25 @@ class JobData {
 		this.whoCreated = 0;
 		this.whenCreated = 0;
 
+		/** @type {Array.<JobEquipmentData>} */
 		this.equipment = [];
+
+		/** @type {Array.<JobUniformData>} */
 		this.uniforms = [];
+
+		/** @type {Array.<JobLocationData>} */
 		this.locations = [];
+
+		/** @type {Array.<JobWhiteListData>} */
 		this.whiteList = [];
+
+		/** @type {Array.<JobBlackListData>} */
 		this.blackList = [];
+
+		/** @type {Array.<JobRouteData>} */
 		this.routes = [];
+
+		/** @type {Array.<JobRankData>} */
 		this.ranks = [];
 
 		if (dbAssoc) {
@@ -130,10 +136,12 @@ class JobRouteData {
 		//this.failedMessage = "";
 		this.locationArriveMessage = "";
 		this.locationGotoMessage = "";
-		this.locations = [];
 		this.whoCreated = 0;
 		this.whenCreated = 0;
 		this.sphere = null;
+
+		/** @type {Array.<JobRouteLocationData>} */
+		this.locations = [];
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_id"]);
@@ -213,9 +221,11 @@ class JobEquipmentData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.items = [];
 		this.whoCreated = 0;
 		this.whenCreated = 0;
+
+		/** @type {Array.<JobEquipmentItemData>} */
+		this.items = [];
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_id"];
@@ -458,7 +468,7 @@ class JobBlackListData {
 
 // ===========================================================================
 
-class JobRouteLocationType {
+class JobRouteLocationTypeData {
 	constructor(jobRouteLocationTypeId, name, animStart = "", animStop = "", inVehicle = false, nearVehicle = false, nearVehicleDistance = 5.0) {
 
 	}
@@ -469,59 +479,59 @@ class JobRouteLocationType {
 // For use with the /jobrouteloctype command
 let jobRouteLocationTypes = {
 	[V_GAME_GTA_III]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_GTA_VC]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_GTA_SA]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_GTA_IV]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_MAFIA_ONE]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_MAFIA_TWO]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 
 	[V_GAME_MAFIA_ONE_DE]: [
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
-		new JobRouteLocationType(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_CHECKPOINT, "Checkpoint"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE, "GroundGarbage"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
 	],
 }
 
@@ -4240,6 +4250,83 @@ function getJobRankFromParams(jobIndex, params) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function getJobRoutesCommand(command, params, client) {
+	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
+
+	if (!closestJobLocation) {
+		messagePlayerAlert(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let jobData = getJobData(closestJobLocation.jobIndex);
+
+	let jobRoutesList = jobData.routes.map(function (r) {
+		return `{chatBoxListIndex}${r.index}: ${(r.enabled) ? "{softGreen}" : "{softRed}"}${r.name} {ALTCOLOUR}(${r.locations.length} stops, added ${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), r.whenCreated)} ago))`;
+	});
+	let chunkedList = splitArrayIntoChunks(jobRoutesList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "	", `${jobData.name}, Location ${closestJobLocation.index}`)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function getJobRouteInfoCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!areThereEnoughParams(params, 2, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobIndex = getJobFromParams(getParam(params, " ", 1));
+	if (jobIndex == -1) {
+		messagePlayerSyntax(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let routeIndex = getJobRouteFromParams(getParam(params, " ", 2), jobIndex);
+	if (routeIndex == -1) {
+		messagePlayerSyntax(client, getLocaleString(client, "InvalidJobRoute"));
+		return false;
+	}
+
+	let jobRouteData = getJobRouteData(jobIndex, routeIndex);
+	let jobData = getJobData(jobRouteData.jobIndex);
+
+	let tempStats = [
+		[`ID`, `${jobRouteData.index}/${jobRouteData.databaseId}`],
+		[`Job`, `${jobData.name}`],
+		[`Name`, `${jobRouteData.name}`],
+		[`Added By`, `${loadAccountFromId(jobRouteData.whoCreated).name}`],
+		[`Added On`, `${new Date(jobRouteData.whenCreated).toLocaleDateString("en-GB")}`],
+		[`Enabled`, `${getYesNoFromBool(jobRouteData.enabled)}`],
+		[`Stops`, `${jobRouteData.locations.length}`],
+		[`Pay`, `${jobRouteData.pay}`],
+		[`Start Message`, `${jobRouteData.startMessage}`],
+		[`Finish Message`, `${jobRouteData.finishMessage}`],
+		[`Location Goto Message`, `${jobRouteData.locationGotoMessage}`],
+		[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
+		[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
+		[`Vehicle Colour`, `${getVehicleColourInfoString(jobRouteData.vehicleColour1, false)}, ${getVehicleColourInfoString(jobRouteData.vehicleColour2, false)}`],
+	];
+
+	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobRouteInfo", `${jobData.name}, Location ${jobRouteData.index}`)));
+	let chunkedList = splitArrayIntoChunks(stats, 3);
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
 }
 
 // ===========================================================================
