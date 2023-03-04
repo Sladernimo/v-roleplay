@@ -361,7 +361,7 @@ function createVehicleCommand(command, params, client) {
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
-	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client));
+	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -382,7 +382,7 @@ function createTemporaryVehicleCommand(command, params, client) {
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
-	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client));
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -1226,6 +1226,8 @@ function getVehicleInfoCommand(command, params, client) {
 		[`License Plate`, `${vehicleData.licensePlate}`],
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
 		[`Last Driver`, `${vehicleData.lastDriverName}`],
+		[`Added By`, `${loadAccountFromId(vehicleData.whoAdded).name}`],
+		[`Added On`, `${new Date(vehicleData.whenAdded).toLocaleDateString("en-GB")}}`],
 	];
 
 	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
@@ -1615,6 +1617,8 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 	tempVehicleData.needsSaved = true;
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
+	tempVehicleData.whoAdded = defaultNoAccountId;
+	tempVehicleData.whenAdded = getCurrentUnixTimestamp();
 
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
@@ -1630,7 +1634,7 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 
 // ===========================================================================
 
-function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dimension = 0) {
+function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
 	let vehicle = createGameVehicle(modelIndex, position, heading);
 	setVehicleHeading(vehicle, heading);
 	setElementInterior(vehicle, interior);
@@ -1643,6 +1647,8 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
 	tempVehicleData.needsSaved = true;
+	tempVehicleData.whoAdded = whoAdded;
+	tempVehicleData.whenAdded = getCurrentUnixTimestamp();
 
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
@@ -1660,7 +1666,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 
 // ===========================================================================
 
-function createPermanentVehicle(modelIndex, position, heading, interior = 0, dimension = 0) {
+function createPermanentVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
 	let vehicle = createGameVehicle(modelIndex, position, heading);
 	setVehicleHeading(vehicle, heading);
 	setElementInterior(vehicle, interior);
@@ -1672,6 +1678,8 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 	tempVehicleData.interior = interior;
 	tempVehicleData.dimension = dimension;
 	tempVehicleData.needsSaved = true;
+	tempVehicleData.whoAdded = whoAdded;
+	tempVehicleData.whenAdded = getCurrentUnixTimestamp();
 
 	if (!isGameFeatureSupported("vehicleColour")) {
 		tempVehicleData.colour1 = 0;
