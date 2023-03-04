@@ -382,7 +382,7 @@ function loadCommands() {
 			new CommandData("quitjob", quitJobCommand, "", getStaffFlagValue("None"), true, false, "Leave your job and be unemployed"),
 			new CommandData("uniform", jobUniformCommand, "[uniform]", getStaffFlagValue("None"), true, false, "Use a job uniform"),
 			new CommandData("equip", jobEquipmentCommand, "[equipment]", getStaffFlagValue("None"), true, false, "Get equipment for your job"),
-
+			new CommandData("jobrank", setPlayerJobRankCommand, "", getStaffFlagValue("None"), true, true, "Sets a player's job rank"),
 			new CommandData("jobs", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
 			new CommandData("joblist", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
 			new CommandData("alljobs", jobListCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all jobs"),
@@ -449,7 +449,8 @@ function loadCommands() {
 			new CommandData("jobreloadall", reloadAllJobsCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobinfo", getJobInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job"),
 			new CommandData("joblocinfo", getJobLocationInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job location"),
-			new CommandData("jobrank", setPlayerJobRankCommand, "", getStaffFlagValue("None"), true, true, "Sets a player's job rank"),
+			new CommandData("jobroutes", getJobRoutesCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of job routes for the nearest job location"),
+			new CommandData("jobrouteinfo", getJobRouteInfoCommand, "", getStaffFlagValue("None"), true, false, "Shows info about a job route"),
 		],
 		keybind: [
 			new CommandData("bindkey", addKeyBindCommand, "<key id/name> <command> [params]", getStaffFlagValue("None"), true, false, "Binds a key to a command and optional parameters"),
