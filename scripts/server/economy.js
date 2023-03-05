@@ -84,6 +84,7 @@ function playerPayDay(client) {
 	}
 
 	givePlayerCash(client, netIncome);
+	getPlayerData(client).payDayAmount = 0;
 }
 
 // ===========================================================================
