@@ -494,12 +494,12 @@ function savePayPhoneToDatabase(payPhoneIndex) {
 		if (tempPayPhoneData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("payphone_main", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			tempPayPhoneData.databaseId = getDatabaseInsertId(dbConnection);
-			tempPayPhoneData.needsSaved = false;
+			getPayPhoneData(payPhoneIndex).databaseId = getDatabaseInsertId(dbConnection);
+			getPayPhoneData(payPhoneIndex).needsSaved = false;
 		} else {
 			let queryString = createDatabaseUpdateQuery("payphone_main", data, `payphone_id=${tempPayPhoneData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			tempPayPhoneData.needsSaved = false;
+			getPayPhoneData(payPhoneIndex).needsSaved = false;
 		}
 
 		logToConsole(LOG_VERBOSE, `[V.RP.PayPhone]: Saved payphone ${payPhoneIndex} to database!`);
