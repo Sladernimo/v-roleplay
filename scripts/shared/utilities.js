@@ -2316,8 +2316,10 @@ function removeHexColoursFromString(str) {
 // ===========================================================================
 
 function removeSlashesFromString(str) {
-	let matchRegex = /\//gi;
-	str.replace(matchRegex, ``);
+	if (str == "") {
+		let matchRegex = /\//gi;
+		str.replace(matchRegex, ``);
+	}
 
 	return str;
 }
