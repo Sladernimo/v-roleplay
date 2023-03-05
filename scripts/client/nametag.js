@@ -215,6 +215,12 @@ function processNameTagRendering(event) {
 	//	return false;
 	//}
 
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		if (localPlayer.vehicle != null) {
+			return false;
+		}
+	}
+
 	getElementsByType(ELEMENT_PED).forEach(function (ped) {
 		if (ped != localPlayer) {
 			updateNametag(ped);
