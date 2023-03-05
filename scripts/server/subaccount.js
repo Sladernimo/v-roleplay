@@ -46,6 +46,7 @@ class SubAccountData {
 		this.inHouse = 0;
 		this.inBusiness = 0;
 		this.accent = "";
+		this.payDayAmount = 0;
 
 		this.bodyParts = {
 			hair: [0, 0],
@@ -338,6 +339,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
 			["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
 			["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
+			["sacct_svr_payday", subAccountData.payDayAmount],
 		];
 
 		dbQuery = null;
