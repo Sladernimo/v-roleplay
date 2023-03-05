@@ -2677,7 +2677,7 @@ function buyFromBusinessCommand(command, params, client) {
 		}
 	}
 
-	logBusinessItemPurchase(getBusinessData(businessId), getPlayerCurrentSubAccount(client).databaseId, getItemData(itemIndex).databaseId);
+	logBusinessItemPurchase(getBusinessData(businessId).databaseId, getPlayerCurrentSubAccount(client).databaseId, getItemData(itemIndex).databaseId);
 }
 
 // ===========================================================================
