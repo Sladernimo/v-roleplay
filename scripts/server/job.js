@@ -4265,11 +4265,11 @@ function getJobRoutesCommand(command, params, client) {
 	let jobData = getJobData(closestJobLocation.jobIndex);
 
 	let jobRoutesList = jobData.routes.map(function (r) {
-		return `{chatBoxListIndex}${r.index}: ${(r.enabled) ? "{softGreen}" : "{softRed}"}${r.name} {ALTCOLOUR}(${r.locations.length} stops, added ${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), r.whenCreated)} ago))`;
+		return `{chatBoxListIndex}${r.index}: ${(r.enabled) ? "{softGreen}" : "{softRed}"}${r.name} {ALTCOLOUR}(${r.locations.length} stops, added ${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), r.whenCreated)} ago)`;
 	});
-	let chunkedList = splitArrayIntoChunks(jobRoutesList, 4);
+	let chunkedList = splitArrayIntoChunks(jobRoutesList, 2);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "	", `${jobData.name}, Location ${closestJobLocation.index}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobRoutesList", `${jobData.name}, Location ${closestJobLocation.index}`)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -4308,22 +4308,22 @@ function getJobRouteInfoCommand(command, params, client) {
 		[`Job`, `${jobData.name}`],
 		[`Name`, `${jobRouteData.name}`],
 		[`Added By`, `${loadAccountFromId(jobRouteData.whoCreated).name}`],
-		[`Added On`, `${new Date(jobRouteData.whenCreated).toLocaleDateString("en-GB")}`],
+		[`Added On`, `${new Date(jobRouteData.whenCreated * 1000).toLocaleDateString("en-GB")}`],
 		[`Enabled`, `${getYesNoFromBool(jobRouteData.enabled)}`],
 		[`Stops`, `${jobRouteData.locations.length}`],
-		[`Pay`, `${jobRouteData.pay}`],
-		[`Start Message`, `${jobRouteData.startMessage}`],
-		[`Finish Message`, `${jobRouteData.finishMessage}`],
-		[`Location Goto Message`, `${jobRouteData.locationGotoMessage}`],
-		[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
-		[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
+		[`Pay`, `${getCurrencyString(jobRouteData.pay)}`],
+		//[`Start Message`, `${jobRouteData.startMessage}`],
+		//[`Finish Message`, `${jobRouteData.finishMessage}`],
+		//[`Location Goto Message`, `${jobRouteData.locationGotoMessage}`],
+		//[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
+		//[`Location Arrive Message`, `${jobRouteData.locationArriveMessage}`],
 		[`Vehicle Colour`, `${getVehicleColourInfoString(jobRouteData.vehicleColour1, false)}, ${getVehicleColourInfoString(jobRouteData.vehicleColour2, false)}`],
 	];
 
 	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobRouteInfo", `${jobData.name}, Location ${jobRouteData.index}`)));
-	let chunkedList = splitArrayIntoChunks(stats, 3);
+	let chunkedList = splitArrayIntoChunks(stats, 4);
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
