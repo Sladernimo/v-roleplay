@@ -134,6 +134,12 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		return false;
 	}
 
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		if (localPlayer.vehicle != null) {
+			return false;
+		}
+	}
+
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
 			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
@@ -275,6 +281,12 @@ function renderPropertyExitLabel(position) {
 		return false;
 	}
 
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		if (localPlayer.vehicle != null) {
+			return false;
+		}
+	}
+
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
 			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
@@ -313,6 +325,12 @@ function renderJobLabel(name, position, jobType) {
 
 	if (jobHelpLabelFont == null) {
 		return false;
+	}
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		if (localPlayer.vehicle != null) {
+			return false;
+		}
 	}
 
 	if (getGame() == V_GAME_GTA_IV) {
@@ -369,6 +387,12 @@ function renderJobLabel(name, position, jobType) {
 // -------------------------------------------------------------------------
 
 function processLabelRendering() {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		if (localPlayer.vehicle != null) {
+			return false;
+		}
+	}
+
 	if (renderLabels) {
 		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
@@ -383,7 +407,7 @@ function processLabelRendering() {
 					}
 
 					if (distance <= businessWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE) {
+						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
 							renderBusinessWorldIcon(getPosAbovePos(business.entrancePosition, 1.0));
 						}
 					}
@@ -400,7 +424,7 @@ function processLabelRendering() {
 					}
 
 					if (distance <= houseWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE) {
+						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
 							renderHouseWorldIcon(getPosAbovePos(house.entrancePosition, 1.0));
 						}
 					}
@@ -417,7 +441,7 @@ function processLabelRendering() {
 					}
 
 					if (distance <= jobWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE) {
+						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
 							renderJobWorldIcon(getPosAbovePos(job.position, 1.0));
 						}
 					}
