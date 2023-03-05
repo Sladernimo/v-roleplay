@@ -79,7 +79,7 @@ class AccountData {
 			this.databaseId = toInteger(dbAssoc["acct_id"]);
 			this.name = toString(dbAssoc["acct_name"]);
 			this.password = toString(dbAssoc["acct_pass"]);
-			this.password = toString(dbAssoc["acct_pass_revision"]);
+			this.passwordRevision = toString(dbAssoc["acct_pass_revision"]);
 			this.registerDate = toInteger(dbAssoc["acct_when_registered"]);
 			this.flags = {
 				moderation: toInteger(dbAssoc["acct_svr_mod_flags"]),
@@ -815,9 +815,9 @@ function isNameRegistered(name) {
 
 // ===========================================================================
 
-function hashAccountPassword(name, password) {
+function hashAccountPassword(name, password, revision = 0) {
 	let hashFunction = getAccountHashingFunction();
-	let saltedInfo = saltAccountInfo(name, password);
+	let saltedInfo = saltAccountInfo(name, password, revision);
 	return hashFunction(saltedInfo);
 }
 
@@ -826,9 +826,9 @@ function hashAccountPassword(name, password) {
 function saltAccountInfo(name, password, revision = 0) {
 	let tempString = getSecurityConfig().accountPasswordSaltAlgorithm[revision];
 
-	tempString.replace("{NAME}", name);
-	tempString.replace("{PASSWORD}", password);
-	tempString.replace("{SALTHASH}", getSecurityConfig().accountSaltHash[revision])
+	tempString = tempString.replace("{NAME}", name);
+	tempString = tempString.replace("{PASSWORD}", password);
+	tempString = tempString.replace("{SALTHASH}", getSecurityConfig().accountSaltHash[revision]);
 	return tempString;
 }
 
@@ -922,6 +922,7 @@ function saveAccountToDatabase(accountData) {
 			["acct_streaming_radio_volume", accountData.streamingRadioVolume],
 			["acct_ip", accountData.ipAddress],
 			["acct_locale", accountData.locale],
+			["acct_pass_revision", accountData.passwordRevision],
 		];
 
 		let data2 = [
@@ -1077,15 +1078,15 @@ function saveAccountContactsToDatabase(accountContactData) {
 
 // ===========================================================================
 
-function createAccount(name, password, email = "") {
+function createAccount(name, password, email = "", passwordRevision = 0) {
 	let dbConnection = connectToDatabase();
 
 	if (dbConnection) {
-		let hashedPassword = hashAccountPassword(name, password);
+		let hashedPassword = hashAccountPassword(name, password, passwordRevision);
 		let safeName = escapeDatabaseString(dbConnection, name);
 		let safeEmail = escapeDatabaseString(dbConnection, email);
 
-		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP())`);
+		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered, acct_pass_revision) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP(), ${passwordRevision})`);
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let insertId = getDatabaseInsertId(dbConnection);
 			createDefaultAccountServerData(insertId);
@@ -1484,6 +1485,8 @@ function savePlayerToDatabase(client) {
 				getPlayerCurrentSubAccount(client).dimension = getPlayerDimension(client);
 			}
 		}
+
+		getPlayerCurrentSubAccount(client).payDayAmount = getPlayerData(client).payDayAmount;
 
 		saveSubAccountToDatabase(getPlayerCurrentSubAccount(client));
 	}
