@@ -1227,7 +1227,7 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
 		[`Last Driver`, `${vehicleData.lastDriverName}`],
 		[`Added By`, `${loadAccountFromId(vehicleData.whoAdded).name}`],
-		[`Added On`, `${new Date(vehicleData.whenAdded).toLocaleDateString("en-GB")}}`],
+		[`Added On`, `${new Date(vehicleData.whenAdded * 1000).toLocaleDateString("en-GB")}}`],
 	];
 
 	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
@@ -1756,7 +1756,7 @@ function checkVehiclePurchasing(client) {
 
 		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_NONE) {
-			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerType = getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerType, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
 		}
 		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
 		updatePlayerCash(client);
