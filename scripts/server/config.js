@@ -1165,6 +1165,13 @@ function getDatabaseConfig() {
 
 // ===========================================================================
 
+function getSecurityConfig() {
+	return getGlobalConfig().security;
+}
+
+
+// ===========================================================================
+
 function loadServerConfig() {
 	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading server configuration ...");
 
