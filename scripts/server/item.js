@@ -2414,6 +2414,8 @@ function listPlayerInventoryCommand(command, params, client) {
 	//showPlayerInventoryToPlayer(client, targetClient);
 
 	showPlayerInventoryToPlayer(client, client);
+
+	markPlayerActionTipSeen(client, "ViewInventory");
 }
 
 // ===========================================================================
