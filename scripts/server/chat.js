@@ -55,14 +55,30 @@ function processPlayerChat(client, messageText) {
 			return true;
 		}
 
-		switch (getGlobalConfig().mainChatType) {
+		switch (getServerConfig().normalChatType) {
 			case V_CHAT_TYPE_TALK:
 				talkToNearbyPlayers(client, messageText);
 				break;
 
+			case V_CHAT_TYPE_SHOUT:
+				shoutToNearbyPlayers(client, messageText);
+				break;
+
+			case V_CHAT_TYPE_WHISPER:
+				whisperToNearbyPlayers(client, messageText);
+				break;
+
+			case V_CHAT_TYPE_LOCAL:
+				oocToNearbyPlayers(client, messageText);
+				break;
+
+			case V_CHAT_TYPE_NONE:
+				messagePlayerError(client, getLocaleString(client, "NormalChatDisabled"));
+				break;
+
 			case V_CHAT_TYPE_GLOBAL:
 			default:
-				chatToAllPlayers(client, messageText);
+				oocToAllPlayers(client, messageText);
 				break;
 		}
 	} else {
@@ -85,7 +101,34 @@ function processPlayerChat(client, messageText) {
 
 // ===========================================================================
 
+function globalOOCCommand(command, params, client) {
+	if (isPlayerMuted(client)) {
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getServerConfig().globalChatEnabled) {
+		messagePlayerError(client, getLocaleString(client, "GlobalChatDisabled"));
+		return false;
+	}
+
+	oocToAllPlayers(client, params);
+	return true;
+}
+
+// ===========================================================================
+
 function meActionCommand(command, params, client) {
+	if (isPlayerMuted(client)) {
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+		return false;
+	}
+
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -452,9 +495,24 @@ function canPlayerUseMegaphone(client) {
 
 // ===========================================================================
 
-function chatToAllPlayers(client, messageText) {
-	messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}${messageText}`, getPlayerColour(client));
-	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: ${messageText}`);
+function oocToAllPlayers(client, messageText) {
+	messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}(( ${messageText} ))`, getPlayerColour(client));
+	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: (( ${messageText} ))`);
+}
+
+// ===========================================================================
+
+function oocToNearbyPlayers(client, messageText) {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerSpawned(clients[i])) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+				messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {lightGrey}(( ${messageText} ))`, getPlayerColour(client));
+			}
+		}
+	}
+
+	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: (( ${messageText} ))`);
 }
 
 // ===========================================================================
