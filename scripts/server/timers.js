@@ -122,6 +122,7 @@ function oneMinuteTimerFunction() {
 	}
 
 	updateVehicleSavedPositions();
+	fixDesyncedPayPhones();
 }
 
 // ===========================================================================
