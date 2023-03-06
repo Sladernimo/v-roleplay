@@ -262,8 +262,9 @@ let serverBitFlagKeys = {
 		"EnterJobVehicleForRoute",
 		"JobLocations",
 		"JobRouteStart",
+		"PayPhoneFirstUse",
 	],
-	jobRankKeys: [
+	jobFlagKeys: [
 		"None",
 		"PublicAccess",
 		"WhiteList",
@@ -294,7 +295,7 @@ function initBitFlagScript() {
 	serverBitFlags.npcTriggerConditionTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerConditionTypeKeys);
 	serverBitFlags.npcTriggerResponseTypes = createBitFlagTable(serverBitFlagKeys.npcTriggerResponseTypeKeys);
 	serverBitFlags.seenActionTips = createBitFlagTable(serverBitFlagKeys.seenActionTipsKeys);
-	serverBitFlags.jobRankFlags = createBitFlagTable(serverBitFlagKeys.jobRankKeys);
+	serverBitFlags.jobFlags = createBitFlagTable(serverBitFlagKeys.jobFlagKeys);
 	logToConsole(LOG_INFO, "[V.RP.BitFlag]: Bit flag script initialized successfully!");
 	return true;
 }
@@ -417,6 +418,20 @@ function getClanFlagValue(flagName) {
 	}
 
 	return getServerBitFlags().clanFlags[flagName];
+}
+
+// ===========================================================================
+
+function getJobFlagValue(flagName) {
+	if (flagName == "All") {
+		return -1;
+	}
+
+	if (typeof getServerBitFlags().jobFlags[flagName] == "undefined") {
+		return false;
+	}
+
+	return getServerBitFlags().jobFlags[flagName];
 }
 
 // ===========================================================================
