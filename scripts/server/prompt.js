@@ -44,7 +44,7 @@ function playerPromptAnswerNo(client) {
 			break;
 
 		case V_PROMPT_BIZORDER:
-			showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarning"));
+			showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarningTitle"));
 			break;
 
 		default:
