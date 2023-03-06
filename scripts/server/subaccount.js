@@ -47,6 +47,7 @@ class SubAccountData {
 		this.inBusiness = 0;
 		this.accent = "";
 		this.payDayAmount = 0;
+		this.scene = "";
 
 		this.bodyParts = {
 			hair: [0, 0],
@@ -96,6 +97,7 @@ class SubAccountData {
 			this.inHouse = toInteger(dbAssoc["sacct_inhouse"]);
 			this.inBusiness = toInteger(dbAssoc["sacct_inbusiness"]);
 			this.accent = toString(dbAssoc["sacct_accent"]);
+			this.scene = toString(dbAssoc["sacct_svr_scene"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["sacct_svr_hd_part_hair_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_part_hair_texture"]) || 0],
@@ -537,6 +539,8 @@ function selectCharacter(client, characterId = -1) {
 	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = V_PEDSTATE_SPAWNING;
+
+	getPlayerData(client).scene = getPlayerCurrentSubAccount(client).scene;
 
 	if (getGame() <= V_GAME_GTA_IV_EFLC) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);

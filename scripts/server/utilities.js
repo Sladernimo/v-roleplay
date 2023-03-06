@@ -542,33 +542,31 @@ function processPlayerEnteringExitingProperty(client) {
 	}
 
 	if (pedState == V_PEDSTATE_ENTERINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
-			logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene}). Spawning ...`);
 			spawnPlayer(client, propertyData.exitPosition, propertyData.exitRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-			onPlayerSpawn(client);
+			getPlayerData(client).scene = propertyData.exitScene;
+			//onPlayerSpawn(client);
+			setPlayerControlState(client, false);
 		} else {
 			setPlayerPosition(client, propertyData.exitPosition);
 			setPlayerHeading(client, propertyData.exitRotation);
 		}
 
-		if (isGameFeatureSupported("dimension")) {
-			setPlayerDimension(client, propertyData.exitDimension);
-		}
-
-		if (isGameFeatureSupported("interior")) {
-			setPlayerInterior(client, propertyData.exitInterior);
-		}
-
 		setTimeout(function () {
 			if (isFadeCameraSupported()) {
+				logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera OUT for player ${getPlayerDisplayForConsole(client)}`);
 				fadePlayerCamera(client, true, 1000);
 			}
+
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior lights ${getOnOffFromBool(propertyData.interiorLights)} for player ${getPlayerDisplayForConsole(client)}`);
 			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
 
 			let radioStationIndex = propertyData.streamingRadioStationIndex;
 			if (radioStationIndex != -1) {
 				if (getRadioStationData(radioStationIndex)) {
+					logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} entered a property with a radio station set, changing their stream`);
 					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
 					getPlayerData(client).streamingRadioStation = radioStationIndex;
 				}
@@ -577,74 +575,110 @@ function processPlayerEnteringExitingProperty(client) {
 
 		if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
 			if (propertyData.type == V_BIZ_TYPE_PAINTBALL) {
+				logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Starting paintball for player ${getOnOffFromBool(inProperty.interiorLights)}`);
 				startPaintBall(client);
 			}
+		}
+
+		if (isGameFeatureSupported("dimension")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting dimension for player ${getPlayerDisplayForConsole(client)} to ${propertyData.exitDimension}`);
+			setPlayerDimension(client, propertyData.exitDimension);
+		}
+
+		if (isGameFeatureSupported("interior")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior for player ${getPlayerDisplayForConsole(client)} to ${propertyData.exitInterior}`);
+			setPlayerInterior(client, propertyData.exitInterior);
 		}
 
 		getPlayerData(client).inProperty = [getPlayerData(client).enteringExitingProperty[0], getPlayerData(client).enteringExitingProperty[1]];
 		getPlayerData(client).enteringExitingProperty = null;
 		getPlayerData(client).pedState = V_PEDSTATE_READY;
+
+		setTimeout(function () {
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for player ${getPlayerDisplayForConsole(client)} since map switch finished`);
+			setPlayer2DRendering(client, true, true, true, true, true, true);
+
+			setPlayerControlState(client, true);
+		}, 2500);
 	} else if (pedState == V_PEDSTATE_EXITINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
 		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
-			logToConsole(LOG_VERBOSE, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
 			spawnPlayer(client, propertyData.entrancePosition, propertyData.entranceRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-			onPlayerSpawn(client);
+			getPlayerData(client).scene = propertyData.entranceScene;
+			//onPlayerSpawn(client);
+			setPlayerControlState(client, false);
 		} else {
 			setPlayerPosition(client, propertyData.entrancePosition);
 			setPlayerHeading(client, propertyData.entranceRotation);
-		}
-
-		if (isGameFeatureSupported("dimension")) {
-			setPlayerDimension(client, propertyData.entranceDimension);
-		}
-
-		if (isGameFeatureSupported("interior")) {
-			setPlayerInterior(client, propertyData.entranceInterior);
 		}
 
 		// Check if exiting property was into another house/business
 		let inProperty = false;
 		let inPropertyType = V_PROPERTY_TYPE_NONE;
 
-		let inBusiness = getPlayerBusiness(client);
-		if (inBusiness != -1) {
-			inProperty = getBusinessData(inBusiness);
-			inPropertyType = V_PROPERTY_TYPE_BUSINESS;
-		} else {
-			let inHouse = getPlayerHouse(client);
-			if (inHouse != -1) {
-				inProperty = getHouseData(inHouse);
-				inPropertyType = V_PROPERTY_TYPE_HOUSE;
+		if (getPlayerDimension(client) != getGameConfig().mainWorldDimension[getGame()]) {
+			let inBusiness = getPlayerBusiness(client);
+			if (inBusiness != -1) {
+				inProperty = getBusinessData(inBusiness);
+				inPropertyType = V_PROPERTY_TYPE_BUSINESS;
+			} else {
+				let inHouse = getPlayerHouse(client);
+				if (inHouse != -1) {
+					inProperty = getHouseData(inHouse);
+					inPropertyType = V_PROPERTY_TYPE_HOUSE;
+				}
 			}
 		}
 
 		setTimeout(function () {
 			if (getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 				if (isFadeCameraSupported()) {
+					logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
 					fadePlayerCamera(client, true, 1000);
 				}
 			}
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior lights ${getOnOffFromBool(inProperty.interiorLights)} for player ${getPlayerDisplayForConsole(client)}`);
 			updateInteriorLightsForPlayer(client, (inProperty != false) ? inProperty.interiorLights : true);
 		}, 1000);
 
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Attempting to stop paintball for player ${getOnOffFromBool(inProperty.interiorLights)}`);
 		stopPaintBall(client);
 
 		if (inProperty != false) {
-			if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
-				if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
-					playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
-					getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} exited property into another property, changing radio station`);
+			if (inProperty.streamingRadioStationIndex != -1) {
+				if (getRadioStationData(inProperty.streamingRadioStationIndex)) {
+					playRadioStreamForPlayer(client, getRadioStationData(inProperty.streamingRadioStationIndex).url);
+					getPlayerData(client).streamingRadioStation = inProperty.streamingRadioStationIndex;
 				}
 			}
 		} else {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} exited property into main world, stopping radio station`);
 			stopRadioStreamForPlayer(client);
 			getPlayerData(client).streamingRadioStation = -1;
+		}
+
+		if (isGameFeatureSupported("dimension")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting dimension for player ${getPlayerDisplayForConsole(client)} to ${propertyData.entranceDimension}`);
+			setPlayerDimension(client, propertyData.entranceDimension);
+		}
+
+		if (isGameFeatureSupported("interior")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior for player ${getPlayerDisplayForConsole(client)} to ${propertyData.entranceInterior}`);
+			setPlayerInterior(client, propertyData.entranceInterior);
 		}
 
 		getPlayerData(client).inProperty = [inPropertyType, inProperty.index];
 		getPlayerData(client).enteringExitingProperty = null;
 		getPlayerData(client).pedState = V_PEDSTATE_READY;
+
+		setTimeout(function () {
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for player ${getPlayerDisplayForConsole(client)} since map switch finished`);
+			setPlayer2DRendering(client, true, true, true, true, true, true);
+
+			setPlayerControlState(client, true);
+		}, 2500);
 	}
 }
 
