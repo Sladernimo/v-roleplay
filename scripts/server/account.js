@@ -616,6 +616,13 @@ function verifyAccountEmailCommand(command, params, client) {
 
 // ===========================================================================
 
+function resetActionTipsCommand(command, params, client) {
+	getPlayerData(client).promptType = V_PROMPT_RESETACTIONTIPS;
+	showPlayerPrompt(client, getLocaleString(client, "ResetActionTipsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+}
+
+// ===========================================================================
+
 /*
 function resetAccountPasswordCommand(command, params, client) {
 	if(areParamsEmpty(params)) {
