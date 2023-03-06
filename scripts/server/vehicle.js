@@ -90,6 +90,8 @@ class VehicleData {
 
 		this.lastActiveTime = false;
 
+		this.rank = 0;
+
 		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
@@ -154,6 +156,7 @@ class VehicleData {
 			this.whoAdded = toInteger(dbAssoc["veh_who_added"]);
 			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
+			this.rank = toInteger(dbAssoc["veh_rank"]);
 		}
 	}
 };
@@ -286,6 +289,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_int", toInteger(tempVehicleData.interior)],
 			["veh_vw", toInteger(tempVehicleData.dimension)],
 			["veh_livery", toInteger(tempVehicleData.livery)],
+			["veh_rank", toInteger(tempVehicleData.rank)],
 			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
 		];
 
@@ -817,23 +821,30 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 	if (vehicleData.ownerType == V_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (vehicleData.clanRank <= getPlayerCurrentSubAccount(client).clanRank) {
+			let clanIndex = getClanIndexFromDatabaseId(vehicleData.ownerId);
+			let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, vehicleData.rank);
+			if (getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level >= getClanRankData(clanIndex, clanRankIndex).level) {
 				return true;
 			}
 		}
 	}
 
-	if (vehicleData.ownerType == V_VEHOWNER_FACTION) {
-		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).faction) {
-			if (vehicleData.factionRank <= getPlayerCurrentSubAccount(client).factionRank) {
-				return true;
-			}
-		}
-	}
+	//if (vehicleData.ownerType == V_VEHOWNER_FACTION) {
+	//	if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).faction) {
+	//		if (vehicleData.factionRank <= getPlayerCurrentSubAccount(client).factionRank) {
+	//			return true;
+	//		}
+	//	}
+	//}
 
 	if (vehicleData.ownerType == V_VEHOWNER_JOB) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).job) {
-			return true;
+			let jobIndex = getJobIndexFromDatabaseId(vehicleData.ownerId);
+			let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, vehicleData.rank);
+
+			if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level >= getJobRankData(jobIndex, jobRankIndex).level) {
+				return true;
+			}
 		}
 	}
 
