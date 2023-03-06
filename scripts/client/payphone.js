@@ -189,11 +189,17 @@ function receivePayPhoneFromServer(payPhoneId, isDeleted, state, position) {
 function receivePayPhoneStateFromServer(payPhoneId, state) {
 	logToConsole(LOG_DEBUG, `[V.RP.PayPhone] Received payphone ${payPhoneId} state (${state}) from server`);
 
-	if (getPayPhoneData(payPhoneId) == false) {
-		return false;
-	}
+	if (payPhoneId != -1) {
+		if (getPayPhoneData(payPhoneId) == false) {
+			return false;
+		}
 
-	getPayPhoneData(payPhoneId).state = state;
+		getPayPhoneData(payPhoneId).state = state;
+	} else {
+		for (let i in getServerData().payPhones) {
+			getServerData().payPhones[i].state = state;
+		}
+	}
 }
 
 // ===========================================================================
