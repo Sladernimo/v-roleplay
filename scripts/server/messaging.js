@@ -250,22 +250,32 @@ function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
 
 // ===========================================================================
 
+function showPlayerInfo(client, infoMessage, infoTitle = "Info") {
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerErrorGUI(client, errorMessage, errorTitle, getLocaleString(client, "GUIOkButton"));
+	//} else {
+	messagePlayerInfo(client, infoMessage);
+	//}
+}
+
+// ===========================================================================
+
 function showPlayerError(client, errorMessage, errorTitle = "Error") {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerErrorGUI(client, errorMessage, errorTitle);
-	} else {
-		messagePlayerError(client, errorMessage);
-	}
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerErrorGUI(client, errorMessage, errorTitle, getLocaleString(client, "GUIOkButton"));
+	//} else {
+	messagePlayerError(client, errorMessage);
+	//}
 }
 
 // ===========================================================================
 
 function showPlayerAlert(client, alertMessage, alertTitle = "Alert") {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerInfoGUI(client, alertMessage, alertTitle);
-	} else {
-		messagePlayerAlert(client, alertMessage);
-	}
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerInfoGUI(client, alertMessage, alertTitle);
+	//} else {
+	messagePlayerAlert(client, alertMessage);
+	//}
 }
 
 // ===========================================================================
