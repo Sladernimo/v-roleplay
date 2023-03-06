@@ -1153,7 +1153,19 @@ function sendAllBusinessesToPlayer(client) {
 
 	let businesses = getServerData().businesses;
 	for (let i in businesses) {
-		sendBusinessToPlayer(client, businesses[i].index, false, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].buyPrice, businesses[i].rentPrice, businesses[i].hasInterior, doesBusinessHaveAnyItemsToBuy(i));
+		sendBusinessToPlayer(client,
+			businesses[i].index,
+			false,
+			businesses[i].name,
+			businesses[i].entrancePosition,
+			businesses[i].entranceBlipModel,
+			businesses[i].entrancePickupModel,
+			businesses[i].buyPrice,
+			businesses[i].rentPrice,
+			businesses[i].hasInterior,
+			businesses[i].locked,
+			doesBusinessHaveAnyItemsToBuy(i)
+		);
 	}
 }
 
