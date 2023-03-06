@@ -378,7 +378,7 @@ function enterExitPropertyCommand(command, params, client) {
 					} else {
 						setPlayerScene(client, closestProperty.exitScene);
 					}
-				}, 1000);
+				}, 2000);
 
 				return false;
 			}
@@ -401,21 +401,22 @@ function enterExitPropertyCommand(command, params, client) {
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
 
-			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
-				getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
-				if (isMainWorldScene(closestProperty.entranceScene)) {
-					destroyGameElement(client.player);
-					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-				} else {
-					destroyGameElement(client.player);
-					setPlayerScene(client, closestProperty.entranceScene);
-				}
-
-				return false;
+			if (isFadeCameraSupported()) {
+				fadePlayerCamera(client, false, 2000);
 			}
 
-			if (isFadeCameraSupported()) {
-				fadePlayerCamera(client, false, 1000);
+			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
+				setTimeout(function () {
+					getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
+					if (isMainWorldScene(closestProperty.entranceScene)) {
+						destroyGameElement(client.player);
+						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+					} else {
+						destroyGameElement(client.player);
+						setPlayerScene(client, closestProperty.entranceScene);
+					}
+				}, 2000);
+				return false;
 			}
 
 			setTimeout(function () {
@@ -525,12 +526,12 @@ function checkPlayerSpawning() {
 // ===========================================================================
 
 function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
-	} else {
-		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
-		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
-	}
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
+	//} else {
+	messagePlayerNormal(client, `🛎️ ${promptMessage} `);
+	messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
+	//}
 }
 
 // ===========================================================================

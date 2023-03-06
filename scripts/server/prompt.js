@@ -17,6 +17,7 @@ const V_PROMPT_GIVEHOUSETOCLAN = 5;
 const V_PROMPT_BUYBIZ = 6;
 const V_PROMPT_BUYHOUSE = 7;
 const V_PROMPT_RESETKEYBINDS = 8;
+const V_PROMPT_RESETACTIONTIPS = 9;
 
 // ===========================================================================
 
@@ -43,16 +44,7 @@ function playerPromptAnswerNo(client) {
 			break;
 
 		case V_PROMPT_BIZORDER:
-			if (getPlayerData(client).businessOrderAmount > 0) {
-				if (doesPlayerUseGUI(client)) {
-					showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarning"));
-				} else {
-					logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} canceled the order of ${getPlayerData(client).businessOrderAmount} ${getPlayerData(client).businessOrderItem} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness)}`);
-					messagePlayerError(client, getLocaleString(client, "BusinessOrderCanceled"));
-				}
-			} else {
-				showPlayerErrorGUI(client, getLocaleString(client, "NotOrderingAnyBusinessItems"), getLocaleString(client, getLocaleString(client, "GUIWarningTitle")));
-			}
+			showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarning"));
 			break;
 
 		default:
@@ -83,19 +75,14 @@ function playerPromptAnswerYes(client) {
 			if (getPlayerData(client).businessOrderAmount > 0) {
 				if (getBusinessData(getPlayerData(client).businessOrderBusiness).till < getPlayerData(client).businessOrderCost) {
 					logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} failed to order ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name} (Reason: Not enough money in business till)`);
-					if (doesPlayerHaveGUIEnabled(client)) {
-						showPlayerErrorGUI(client, getLocaleString(client, "BusinessOrderNotEnoughMoney", `{ALTCOLOUR}/bizdeposit{MAINCOLOUR}`), getLocaleString(client, "BusinessOrderCanceled"));
-					} else {
-						messagePlayerError(client, getLocaleString(client, "BusinessOrderNotEnoughMoney", `{ALTCOLOUR}/bizdeposit{MAINCOLOUR}`));
-					}
+					showPlayerError(client, getLocaleString(client, "BusinessOrderNotEnoughMoney", `{ALTCOLOUR}/bizdeposit{MAINCOLOUR}`), getLocaleString(client, "BusinessOrderCanceled"));
 					getPlayerData(client).businessOrderAmount = 0;
 					getPlayerData(client).businessOrderBusiness = false;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
 				} else {
 					logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
-
-					showPlayerInfoGUI(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
+					showPlayerInfo(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
 					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);
 					getBusinessData(getPlayerData(client).businessOrderBusiness).till -= getPlayerData(client).businessOrderCost;
@@ -106,7 +93,7 @@ function playerPromptAnswerYes(client) {
 					getPlayerData(client).businessOrderValue = -1;
 				}
 			} else {
-				showPlayerErrorGUI(client, ``, `Business Order Canceled`);
+				showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarningTitle"));
 			}
 			break;
 		}
@@ -232,12 +219,13 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
+			takePlayerCash(client, getBusinessData(businessId).buyPrice);
 			getBusinessData(businessId).ownerType = V_BIZ_OWNER_PLAYER;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getBusinessData(businessId).buyPrice = 0;
 			getBusinessData(businessId).needsSaved = true;
+
 			updateBusinessPickupLabelData(businessId);
-			takePlayerCash(client, getBusinessData(businessId).buyPrice);
 
 			messageDiscordEventChannel(`🏢 ${getCharacterFullName(client)} is now the owner of *${getBusinessData(businessId).name}*!`);
 			messagePlayerSuccess(client, getLocaleString(client, "BusinessPurchased", `{businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}`));
@@ -266,6 +254,12 @@ function playerPromptAnswerYes(client) {
 
 		case V_PROMPT_COPYKEYBINDSTOSERVER: {
 			//messagePlayerSuccess(client, getLocaleString(client, "KeyBindsCopiedToServer", serverName));
+			break;
+		}
+
+		case V_PROMPT_RESETACTIONTIPS: {
+			getPlayerData(client).accountData.seenActionTips = 0;
+			messagePlayerSuccess(client, getLocaleString(client, "ActionTipsReset"));
 			break;
 		}
 
