@@ -15,6 +15,7 @@ function initHelpScript() {
 // ===========================================================================
 
 let randomTips = [
+	/*
 	`{MAINCOLOUR}Look for yellow dots on your map for job locations.`,
 	`{MAINCOLOUR}You can set custom key binds. Use {ALTCOLOUR}/info keys {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Use /notips if you don't want to see tips and extra information`,
@@ -43,6 +44,7 @@ let randomTips = [
 	//`{MAINCOLOUR}Banks can provide loans. Use {ALTCOLOUR}/info loans {MAINCOLOUR} for more details.`,
 	`{MAINCOLOUR}Want to make a clan? Use {ALTCOLOUR}/info clans {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Legal weapons can be purchased at any ammunation.`,
+	*/
 ];
 
 // ===========================================================================
@@ -148,8 +150,12 @@ function helpCommand(command, params, client) {
 			break;
 
 		case "admin":
-			showAdminHelpMessage(client);
+			showAdminHelpMessage(client, getParam(params, " ", 2));
 			break;
+
+		//case "items":
+		//	showItemsHelpMessage(client);
+		//	break;
 
 		default:
 			showMainHelpMessage(client);
@@ -351,13 +357,13 @@ function showAdminHelpMessage(client, flagName) {
 	}
 
 	let commandList = getCommandsUsableByStaffFlag(flagName).map(function (x) {
-		return `${x.command}`;
+		return `/${x.command}`;
 	});
 	let chunkedList = splitArrayIntoChunks(commandList, 8);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandsForStaffFlagList")));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandsForStaffFlagList", flagName)));
 	for (let i in chunkedList) {
-		messagePlayerNormal(client, `{clanOrange}${chunkedList[i].join(", ")}{MAINCOLOUR}`);
+		messagePlayerNormal(client, `{ALTCOLOUR}${chunkedList[i].join(", ")}{MAINCOLOUR}`);
 	}
 }
 
