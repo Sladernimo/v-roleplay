@@ -768,7 +768,7 @@
 		"EnterJobVehicleForRoute": "Enter a job vehicle nearby to start a job route",
 		"JobLocations": "Visit a job location to get a job. Use {1} to find a job location",
 		"JobRouteStart": "Use {1} to start a job route with this vehicle",
-		"PayPhoneFirstUse": "Use {1} to end the call, and {2} to hand the phone to somebody nearby"
+		"PayPhoneFirstUse": "Use {1} to end the call, and {2} to give the phone to somebody nearby"
 	},
 	"NoBusinessesWithinRange": "There are no businesses within {1} meters",
 	"NoHousesWithinRange": "There are no houses within {1} meters",
