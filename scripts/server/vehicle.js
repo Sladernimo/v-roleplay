@@ -1370,7 +1370,7 @@ function respawnAllVehiclesCommand(command, params, client) {
 
 function respawnEmptyVehiclesCommand(command, params, client) {
 	for (let i in getServerData().vehicles) {
-		if (!isVehicleUnoccupied(getServerData().vehicles[i].vehicle)) {
+		if (isVehicleUnoccupied(getServerData().vehicles[i].vehicle)) {
 			respawnVehicle(getServerData().vehicles[i].vehicle);
 		}
 	}
@@ -1858,13 +1858,18 @@ function getVehicleFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function isVehicleUnoccupied(vehicle) {
-	for (let i = 0; i <= 8; i++) {
-		if (vehicle.getOccupant(i) != null) {
-			return true;
+	let clients = getClients();
+	for (let i in clients) {
+		if (clients[i].player != null) {
+			if (clients[i].player.vehicle != false) {
+				if (clients[i].player.vehicle == vehicle) {
+					return false;
+				}
+			}
 		}
 	}
 
-	return false;
+	return true;
 }
 
 // ===========================================================================
