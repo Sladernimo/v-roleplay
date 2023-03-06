@@ -1313,7 +1313,7 @@ function jobUniformCommand(command, params, client) {
 		let uniformList = jobData.uniforms.map(function (x) { return `{MAINCOLOUR}${toInteger(x.index) + 1}: {ALTCOLOUR}${x.name}` });
 		let chunkedList = splitArrayIntoChunks(uniformList, 4);
 
-		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobUniformList")));
+		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobUniformList", jobData.name)));
 		for (let i in chunkedList) {
 			messagePlayerInfo(client, chunkedList[i].join(", "));
 		}
