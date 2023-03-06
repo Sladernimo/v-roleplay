@@ -1114,6 +1114,8 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			getBusinessData(businessId).exitScene = "";
 			getBusinessData(businessId).exitPickupModel = -1;
 			getBusinessData(businessId).customInterior = false;
+			getBusinessData(businessId).exitScene = "";
+			getBusinessData(businessId).entranceScene = "";
 			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} interior`, true);
 			return false;
 		}
@@ -1138,11 +1140,8 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
 
 		if (isGameFeatureSupported("interiorScene")) {
-			if (isMainWorldScene(getPlayerData(client).scene)) {
-				getBusinessData(businessId).exitScene = getGameConfig().mainWorldScene[getGame()];
-			} else {
-				getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
-			}
+			getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
+			getBusinessData(businessId).entranceScene = getPlayerData(client).scene;
 		}
 	}
 
@@ -1286,6 +1285,8 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
+
+	saveBusinessToDatabase(businessId);
 
 	if (isNull(getGameConfig().defaultBusinessItems[getGame()][typeParam])) {
 		messagePlayerError(client, "Invalid business items type! Use a business items type name");
@@ -2271,9 +2272,8 @@ function deleteBusiness(businessId, whoDeleted = 0) {
 	}
 
 	removePlayersFromBusiness(businessId);
-
 	getServerData().businesses.splice(businessId, 1);
-	updateBusinessPickupLabelData(businessId);
+	updateBusinessPickupLabelData(businessId, true);
 
 	return true;
 }
@@ -2720,7 +2720,7 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
 
-	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newprice)}`);
+	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newPrice)}`);
 }
 
 // ===========================================================================
@@ -2870,8 +2870,12 @@ function getBusinessIdFromDatabaseId(databaseId) {
 // ===========================================================================
 
 // Updates all pickup data for a business by businessId
-function updateBusinessPickupLabelData(businessId) {
-	let businessData = getBusinessData(businessId);
+function updateBusinessPickupLabelData(businessId, deleted = false) {
+	let businessData = false;
+
+	if (deleted == false) {
+		businessData = getBusinessData(businessId);
+	}
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (businessData == false) {
