@@ -1342,11 +1342,6 @@ function playerMapLoaded(client, mapName) {
 
 	setTimeout(function () {
 		processPlayerEnteringExitingProperty(client);
-
-		setTimeout(function () {
-			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for ${getPlayerDisplayForConsole(client)} since map switch finished`);
-			setPlayer2DRendering(client, true, true, true, true, true, true);
-		}, 500);
 	}, 500);
 }
 
@@ -1376,7 +1371,7 @@ function requestPlayerToken(client) {
 
 // ==========================================================================
 
-function sendPayPhoneStateToClient(client, payPhoneIndex, state) {
+function sendPayPhoneStateToPlayer(client, payPhoneIndex, state) {
 	sendNetworkEventToPlayer("v.rp.payPhoneState", client, payPhoneIndex, state);
 }
 
