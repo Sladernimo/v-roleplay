@@ -1387,7 +1387,7 @@ function setPlayerStaffTitleCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(client).accountData.staffTitle = newTitle;
+	getPlayerData(targetClient).accountData.staffTitle = newTitle;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} staff title to {ALTCOLOUR}${newTitle}`);
 }
@@ -1648,6 +1648,10 @@ function forceAccountPasswordResetCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
+
+	getPlayerData(targetClient).passwordResetState = V_RESETPASS_STATE_SETPASS;
+	hideAllPlayerGUI(targetClient);
+	showPlayerChangePasswordGUI(targetClient);
 }
 
 // ===========================================================================
@@ -1909,6 +1913,79 @@ function showAccountStaffNotesCommand(command, params, client) {
 		messagePlayerInfo(client, staffNoteList[i]);
 	}
 	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setServerDefaultChatTypeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	switch (toLowerCase(params)) {
+		case "global":
+			getServerConfig().normalChatType = V_CHAT_TYPE_GLOBAL;
+			break;
+
+		case "local":
+			getServerConfig().normalChatType = V_CHAT_TYPE_LOCAL;
+			break;
+
+		case "talk":
+			getServerConfig().normalChatType = V_CHAT_TYPE_TALK;
+			break;
+
+		case "shout":
+			getServerConfig().normalChatType = V_CHAT_TYPE_SHOUT;
+			break;
+
+		case "whisper":
+			getServerConfig().normalChatType = V_CHAT_TYPE_WHISPER;
+			break;
+
+		case "none":
+			getServerConfig().normalChatType = V_CHAT_TYPE_NONE;
+			break;
+
+		default:
+			messagePlayerError(client, "That chat type is invalid!")
+			messagePlayerInfo(client, "Available chat types: global, local, talk, shout, whisper, none");
+			messagePlayerInfo(client, "Global and local are out-of-character, the rest is in-character");
+			break;
+	}
+
+	messagePlayerSuccess(client, `You set the server's normal chat type to ${toLowerCase(params)}`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function clearChatCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	clearChatBox(null);
 }
 
 // ===========================================================================
