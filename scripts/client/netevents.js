@@ -110,7 +110,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.changePassword", showChangePasswordGUI);
 	addNetworkEventHandler("v.rp.showLocaleChooser", showLocaleChooserGUI);
 	addNetworkEventHandler("v.rp.guiColour", setGUIColours);
-	addNetworkEventHandler("v.rp.mapChangeWarning", setMapChangeWarningState);
+	addNetworkEventHandler("v.rp.mapChangingSoon", setMapChangeWarningState);
 
 	// 2D Rendering
 	addNetworkEventHandler("v.rp.set2DRendering", set2DRendering);
@@ -473,8 +473,9 @@ function receiveCurrencyStringFromServer(newCurrencyString) {
 
 // ===========================================================================
 
-function setMapChangeWarningState(state) {
+function setMapChangeWarningState(state, changeToNight) {
 	mapChangeWarning = state;
+	mapChangeToNight = changeToNight;
 }
 
 // ===========================================================================

@@ -7,6 +7,14 @@
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
+let dayHourStart = 6;
+let dayMinuteStart = 0;
+let dayMinuteWarningStart = 5;
+
+let nightHourStart = 18;
+let nightMinuteStart = 0;
+let nightMinuteWarningStart = 5;
+
 let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"];
 //let emojiNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"];
 //let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
@@ -3244,11 +3252,11 @@ function isNightTime(hour) {
 
 function isServerGoingToChangeMapsSoon(hour, minute) {
 	if (server.mapName == "FREERIDENOC") {
-		if (hour == 6 && minute >= 30) {
-			return true
+		if (hour == dayHourStart && minute < (dayMinuteStart - dayMinuteWarningStart)) {
+			return true;
 		}
 	} else if (server.mapName == "FREERIDE") {
-		if (hour == 18 && minute >= 30) {
+		if (hour == dayHourStart && minute < (nightMinuteStart - nightMinuteWarningStart)) {
 			return true;
 		}
 	}

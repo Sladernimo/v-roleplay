@@ -610,3 +610,15 @@ function fixOffScreenPosition(position, margin = toVector2(0.0, 0.0)) {
 
 	return position;
 }
+
+// ===========================================================================
+
+function processMapChangeWarning() {
+	if (mapChangeWarning == false) {
+		return false;
+	}
+
+	smallGameMessageFonts["AuroraBdCnBT"].render(`Map is changing to ${(mapChangeToNight) ? "night" : "day"} soon!`, [0, game.height - 90], game.width, 0.5, 0.0, smallGameMessageFonts["AuroraBdCnBT"].size, getColourByName("yellow"), true, true, false, true);
+}
+
+// ===========================================================================

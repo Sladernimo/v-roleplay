@@ -109,6 +109,7 @@ let localPlayerMoneyInterval = null;
 let currencyString = "${AMOUNT}";
 
 let mapChangeWarning = false;
+let mapChangeToNight = false;
 
 let cruiseControlEnabled = false;
 let cruiseControlSpeed = 0.0;

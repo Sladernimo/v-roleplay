@@ -245,17 +245,16 @@ function checkServerGameTime() {
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
-			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
-				sendMapChangeWarningToPlayer(null, true);
-			}
+			//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+			//	sendMapChangeWarningToPlayer(null, true);
+			//}
 
 			if (isNightTime(getServerConfig().hour)) {
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
 				messageDiscordEventChannel("🌙 Changing server map to night");
 				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
 				if (!serverStarting) {
-					removeAllPlayersFromProperties();
-					removeAllPlayersFromVehicles();
+					kickAllClients();
 					saveServerDataToDatabase();
 					despawnAllServerElements();
 				}
@@ -267,17 +266,16 @@ function checkServerGameTime() {
 				}
 			}
 		} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
-			if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
-				sendMapChangeWarningToPlayer(null, true);
-			}
+			//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+			//	sendMapChangeWarningToPlayer(null, true);
+			//}
 
 			if (!isNightTime(getServerConfig().hour)) {
 				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
 				messageDiscordEventChannel("🌞 Changing server map to day");
 				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
 				if (!serverStarting) {
-					removeAllPlayersFromProperties();
-					removeAllPlayersFromVehicles();
+					kickAllClients();
 					saveServerDataToDatabase();
 					despawnAllServerElements();
 				}

@@ -162,6 +162,7 @@ function onDrawnHUD(event) {
 	processCustomHUDRendering();
 	processCameraFadeRendering();
 	processJobLocationIndicatorRendering();
+	processMapChangeWarning();
 }
 
 // ===========================================================================
