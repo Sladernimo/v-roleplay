@@ -79,6 +79,8 @@ class ServerConfigData {
 		this.useRealTime = false;
 		this.realTimeZone = 0;
 
+		this.normalChatType = V_CHAT_TYPE_GLOBAL;
+
 		this.discordConfig = {
 			sendEvents: true,
 			sendChat: true,
@@ -165,6 +167,9 @@ class ServerConfigData {
 
 			this.devServer = intToBool(toInteger(server.getCVar("v_devserver")));
 			this.testerOnly = intToBool(toInteger(server.getCVar("v_testeronly")));
+
+			this.normalChatType = toInteger(dbAssoc["svr_chat_type"]);
+			this.globalChatEnabled = intToBool(dbAssoc["svr_chat_global_enabled"]);
 		}
 	}
 };
@@ -233,7 +238,7 @@ let globalConfig = {
 		V_ITEM_USE_TYPE_VEHLIVERY,
 		V_ITEM_USE_TYPE_VEHTIRE,
 	],
-	vehicleInactiveRespawnDelay: 1800000, // 20 minutes
+	vehicleInactiveRespawnDelay: 1000 * 60 * 60, // 60 minutes
 	chatSectionHeaderLength: 96,
 	useServerSideVehiclePurchaseCheck: true,
 	useServerSideVehicleBurnCheck: false,
@@ -273,7 +278,6 @@ let globalConfig = {
 		"ChatBoxTimestamps",
 		"ChatEmoji",
 	],
-	mainChatType: V_CHAT_TYPE_GLOBAL,
 	nightMapStartHour: 19,
 	nightMapEndHour: 7,
 	payPhoneGiveDistance: 2.5,
@@ -1168,7 +1172,6 @@ function getDatabaseConfig() {
 function getSecurityConfig() {
 	return getGlobalConfig().security;
 }
-
 
 // ===========================================================================
 
