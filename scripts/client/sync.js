@@ -49,15 +49,9 @@ function processSync(event, deltaTime) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
-	//if (getGame() == V_GAME_GTA_IV) {
-	//	if (!state) {
-	//		natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 0));
-	//	} else {
-	//		natives.forceCarLights(natives.getVehicleFromNetworkId(vehicleId, 1));
-	//	}
-	//} else {
-	getElementFromId(vehicleId).lights = state;
-	//}
+	if (getElementFromId(vehicleId) != null) {
+		getElementFromId(vehicleId).lights = state;
+	}
 }
 
 // ===========================================================================
