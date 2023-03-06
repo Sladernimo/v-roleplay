@@ -519,7 +519,7 @@ function deleteNPCCommand(command, params, client) {
 // ===========================================================================
 
 function deleteNPC(npcId) {
-	quickDatabaseQuery(`DELETE FROM npc_main WHERE npc_id=${getNPCData(npcId).databaseId}`);
+	quickDatabaseQuery(`UPDATE npc_main SET npc_deleted = 1 WHERE npc_id=${getNPCData(npcId).databaseId}`);
 
 	if (getNPCData(npcId)) {
 		if (getNPCData(npcId).ped != false) {
