@@ -1628,7 +1628,7 @@ function createJobLocationCommand(command, params, client) {
 function deleteJobLocationCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
-	deleteJobLocation(closestJobLocation.jobIndex, closestJobLocation.index);
+	deleteJobLocation(closestJobLocation.jobIndex, closestJobLocation.index, getPlayerData(client).accountData.databaseId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted location {ALTCOLOUR}${closestJobLocation.index} (DB ID ${closestJobLocation.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
 }
 
@@ -1810,8 +1810,8 @@ function setPlayerJobRankCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getPlayerFromParams(getParam(params, " ", 0));
-	let rankIndex = getJobRankFromParams(jobIndex, params.split(" ").slice(1).join(" "));
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let rankIndex = getJobRankFromParams(jobIndex, params.split(" ").slice(2).join(" "));
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
@@ -2659,9 +2659,9 @@ function canPlayerUseJob(client, jobId) {
 
 // ===========================================================================
 
-function deleteJobLocation(jobIndex, jobLocationIndex) {
+function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAccountId) {
 	if (jobLocationData.databaseId > 0) {
-		quickDatabaseQuery(`DELETE FROM job_loc WHERE job_loc_id = ${getJobLocationData(jobIndex, jobLocationIndex).databaseId}`);
+		quickDatabaseQuery(`UPDATE job_loc SET job_loc_deleted = 1, job_loc_who_deleted = ${whoDeleted}, job_loc_when_deleted = UNIX_TIMESTAMP() WHERE job_loc_id = ${getJobLocationData(jobIndex, jobLocationIndex).databaseId}`);
 	}
 
 	deleteJobLocationBlip(jobIndex, jobLocationIndex);
@@ -3701,7 +3701,7 @@ function deleteJobRouteLocationCommand(command, params, client) {
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted route location {ALTCOLOUR}${closestJobRouteLocation.index} (DB ID ${closestJobRouteLocation.databaseId}){MAINCOLOUR} for the {ALTCOLOUR}${closestJobRouteLocation.name}{jobYellow} route of the {jobYellow}${getJobData(closestJobLocation.jobIndex).name}{MAINCOLOUR} job`);
 
 	if (closestJobRouteLocation.databaseId > 0) {
-		quickDatabaseQuery(`DELETE FROM job_route_loc WHERE job_route_loc_id = ${closestJobRouteLocation.databaseId}`);
+		quickDatabaseQuery(`UPDATE job_route_loc SET job_route_loc_deleted = 1, job_route_loc_who_deleted = ${getPlayerData(client).accountData.databaseId}, job_route_loc_when_deleted = UNIX_TIMESTAMP() WHERE job_route_loc_id = ${closestJobRouteLocation.databaseId}`);
 	}
 
 	let tempIndex = closestJobRouteLocation.index;
@@ -3739,8 +3739,8 @@ function deleteJobRouteCommand(command, params, client) {
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted route {ALTCOLOUR}${jobRouteData.name} (DB ID ${jobRouteData.databaseId}){MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 
 	if (jobRouteData.databaseId > 0) {
-		quickDatabaseQuery(`DELETE FROM job_route WHERE job_route_id = ${jobRouteData.databaseId}`);
-		quickDatabaseQuery(`DELETE FROM job_route_loc WHERE job_route_loc_route = ${jobRouteData.databaseId}`);
+		quickDatabaseQuery(`UPDATE job_route SET job_route_deleted = 1, job_route_who_deleted = ${getPlayerData(client).accountData.databaseId}, job_route_when_deleted = UNIX_TIMESTAMP() WHERE job_route_id = ${jobRouteData.databaseId}`);
+		quickDatabaseQuery(`UPDATE job_route_loc SET job_route_loc_deleted = 1, job_route_loc_who_deleted = ${getPlayerData(client).accountData.databaseId}, job_route_loc_when_deleted = UNIX_TIMESTAMP() WHERE job_route_loc_route = ${jobRouteData.databaseId}`);
 	}
 
 	clearArray(getServerData().jobs[jobId].routes[jobRoute].locations);
@@ -3771,7 +3771,7 @@ function deleteJobUniformCommand(command, params, client) {
 		return false;
 	}
 
-	quickDatabaseQuery(`DELETE FROM job_uniform WHERE job_uniform_id = ${getJobData(jobId).uniforms[uniformIndex].databaseId}`);
+	quickDatabaseQuery(`UPDATE job_uniform SET job_uniform_deleted = 1, job_uniform_who_deleted = ${getPlayerData(client).accountData.databaseId}, job_uniform_when_deleted = UNIX_TIMESTAMP() WHERE job_uniform_id = ${getJobData(jobId).uniforms[uniformIndex].databaseId}`);
 	getJobData(jobId).uniforms.splice(uniformIndex, 1);
 
 	setAllJobDataIndexes();
