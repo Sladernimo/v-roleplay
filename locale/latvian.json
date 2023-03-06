@@ -777,5 +777,11 @@
 	"MustBeNumber": "You need to use a number!",
 	"HeaderJobRoutesList": "Job Routes ({1})",
 	"HeaderJobRouteInfo": "Job Route Information (${1})",
-	"InvalidJobRoute": "Job route not found!"
+	"InvalidJobRoute": "Job route not found!",
+	"PayPhoneDeleted": "The payphone was deleted",
+	"PayPhoneAnswer": "Use {1} to answer the payphone",
+	"ResetActionTipsConfirm": "Are you sure you want to reset all seen action tips?",
+	"ActionTipsReset": "All seen action tips have been reset.",
+	"NormalChatDisabled": "Normal chat is disabled by server admin. Use chat commands instead.",
+	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin"
 }
