@@ -97,6 +97,7 @@ class SubAccountData {
 			this.inHouse = toInteger(dbAssoc["sacct_inhouse"]);
 			this.inBusiness = toInteger(dbAssoc["sacct_inbusiness"]);
 			this.accent = toString(dbAssoc["sacct_accent"]);
+			this.payDayAmount = toInteger(dbAssoc["sacct_svr_payday"]);
 			this.scene = toString(dbAssoc["sacct_svr_scene"]);
 
 			this.bodyParts = {
