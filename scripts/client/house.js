@@ -8,7 +8,7 @@
 // ===========================================================================
 
 class HouseData {
-	constructor(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior) {
+	constructor(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked) {
 		this.index = -1;
 		this.houseId = houseId;
 		this.description = description;
@@ -19,14 +19,14 @@ class HouseData {
 		this.rentPrice = 0;
 		this.buyPrice = 0;
 		this.blipId = -1;
-		this.locked = false;
+		this.locked = locked;
 	}
 }
 
 // ===========================================================================
 
 function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
-	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${name}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${description}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (isDeleted == true) {
@@ -96,7 +96,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} doesn't exist. Adding ...`);
-			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior);
+			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked);
 			if (blipModel != -1) {
 				let blipId = createGameBlip(tempHouseData.blipModel, tempHouseData.entrancePosition, "House");
 				if (blipId != -1) {
