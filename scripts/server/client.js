@@ -130,6 +130,7 @@ class ClientData {
 		this.alcoholLevel = 0;
 		this.pedState = V_PEDSTATE_NONE;
 		this.promptType = V_PROMPT_NONE;
+		this.promptValue = 0;
 		this.privateMessageReplyTo = null;
 		this.enteringExitingProperty = null;
 		this.inProperty = null;
