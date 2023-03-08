@@ -92,6 +92,9 @@ class VehicleData {
 
 		this.rank = 0;
 
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+
 		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
@@ -821,9 +824,7 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 	if (vehicleData.ownerType == V_VEHOWNER_CLAN) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			let clanIndex = getClanIndexFromDatabaseId(vehicleData.ownerId);
-			let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, vehicleData.rank);
-			if (getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level >= getClanRankData(clanIndex, clanRankIndex).level) {
+			if (getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level >= vehicleData.rank) {
 				return true;
 			}
 		}
@@ -839,10 +840,7 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 	if (vehicleData.ownerType == V_VEHOWNER_JOB) {
 		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).job) {
-			let jobIndex = getJobIndexFromDatabaseId(vehicleData.ownerId);
-			let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, vehicleData.rank);
-
-			if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level >= getJobRankData(jobIndex, jobRankIndex).level) {
+			if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level >= vehicleData.rank) {
 				return true;
 			}
 		}
@@ -938,8 +936,13 @@ function setVehicleRankCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(params)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
 	let vehicle = getPlayerVehicle(client);
-	let rankId = params;
+	let level = toInteger(params);
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -947,16 +950,11 @@ function setVehicleRankCommand(command, params, client) {
 	}
 
 	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_CLAN) {
-		rankId = getClanRankFromParams(getVehicleData(vehicle).ownerId, params);
-		if (!getClanRankData(getVehicleData(vehicle).ownerId, rankId)) {
-			messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
-			return false;
-		}
-		getVehicleData(vehicle).rank = getClanRankData(getVehicleData(vehicle).ownerId, rankId).databaseId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${getClanRankData(getVehicleData(vehicle).ownerId, rankId).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`, true);
+		getVehicleData(vehicle).rank = level
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${level}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}{MAINCOLOUR} clan!`, true);
 	} else if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
-		getVehicleData(vehicle).rank = rankId;
-		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${rankId}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`, true);
+		getVehicleData(vehicle).rank = level;
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} minimum rank to {ALTCOLOUR}${level}{MAINCOLOUR} of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name}{MAINCOLOUR} job!`, true);
 	}
 
 	getVehicleData(vehicle).needsSaved = true;
@@ -1238,7 +1236,8 @@ function getVehicleInfoCommand(command, params, client) {
 		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
 		[`Last Driver`, `${vehicleData.lastDriverName}`],
 		[`Added By`, `${loadAccountFromId(vehicleData.whoAdded).name}`],
-		[`Added On`, `${new Date(vehicleData.whenAdded * 1000).toLocaleDateString("en-GB")}}`],
+		[`Added On`, `${new Date(vehicleData.whenAdded).toLocaleDateString("en-GB")}`],
+		[`Rank Level`, `${vehicleData.rank}`],
 	];
 
 	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
