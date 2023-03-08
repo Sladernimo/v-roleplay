@@ -401,6 +401,7 @@ class JobRankData {
 		this.whenCreated = 0;
 		this.flags = 0;
 		this.needsSaved = false;
+		this.public = false;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_rank_id"]);
@@ -412,6 +413,7 @@ class JobRankData {
 			this.whoCreated = toInteger(dbAssoc["job_rank_who_added"]);
 			this.whenCreated = toInteger(dbAssoc["job_rank_when_added"]);
 			this.flags = toInteger(dbAssoc["job_rank_flags"]);
+			this.public = intToBool(dbAssoc["job_rank_public"]);
 		}
 	}
 };
@@ -1810,6 +1812,11 @@ function setPlayerJobRankCommand(command, params, client) {
 		return false;
 	}
 
+	if (!doesPlayerHaveJobPermission(client, getJobFlagValue("SetRank"))) {
+		messagePlayerError(client, getLocaleString(client, "JobRankTooLow"));
+		return false;
+	}
+
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let rankIndex = getJobRankFromParams(jobIndex, params.split(" ").slice(2).join(" "));
 
@@ -1826,7 +1833,8 @@ function setPlayerJobRankCommand(command, params, client) {
 	getPlayerCurrentSubAccount(targetClient).jobRankIndex = rankIndex;
 	getPlayerCurrentSubAccount(targetClient).jobRank = getJobRankData(jobIndex, rankIndex).databaseId;
 
-	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`)
+	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`);
+	messagePlayerAlert(client, `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set your job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -2604,6 +2612,7 @@ function getPlayerJobRouteVehicle(client) {
 // ===========================================================================
 
 function startReturnToJobVehicleCountdown(client) {
+	/*
 	getPlayerData(client).returnToJobVehicleTick = getGlobalConfig().returnToJobVehicleTime;
 	getPlayerData(client).returnToJobVehicleTimer = setInterval(function () {
 		//logToConsole(LOG_DEBUG, getPlayerData(client).returnToJobVehicleTick);
@@ -2618,6 +2627,7 @@ function startReturnToJobVehicleCountdown(client) {
 			stopJobRoute(client, false, true);
 		}
 	}, 1000);
+	*/
 }
 
 // ===========================================================================
@@ -2652,6 +2662,12 @@ function canPlayerUseJob(client, jobId) {
 		if (isPlayerOnJobBlackList(client, jobId)) {
 			return false;
 		}
+	}
+
+	// Check if lowest rank is public rank
+	let lowestRank = getLowestJobRank(jobId);
+	if (getJobRankData(jobId, lowestRank).public == false) {
+		return false;
 	}
 
 	return true;
@@ -2734,8 +2750,8 @@ function setAllJobDataIndexes() {
 		}
 
 		for (let v in getServerData().jobs[i].whiteList) {
-			getServerData().jobs[i].blackList[v].index = v;
-			getServerData().jobs[i].blackList[v].jobIndex = i;
+			getServerData().jobs[i].whiteList[v].index = v;
+			getServerData().jobs[i].whiteList[v].jobIndex = i;
 		}
 
 		for (let t in getServerData().jobs[i].routes) {
@@ -2849,6 +2865,7 @@ function saveJobRankToDatabase(jobRankData) {
 			["job_rank_level", jobRankData.level],
 			["job_rank_who_added", jobRankData.whoCreated],
 			["job_rank_when_added", jobRankData.whenCreated],
+			["job_rank_public", boolToInt(jobRankData.public)],
 		];
 
 		let dbQuery = null;
@@ -2873,6 +2890,13 @@ function saveJobRankToDatabase(jobRankData) {
 
 // ===========================================================================
 
+/**
+ * Saves a job route to database
+ *
+ * @param {JobRouteData} jobRouteData - The data of the job route
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobRouteToDatabase(jobRouteData) {
 	if (!jobRouteData) {
 		// Invalid job route data
@@ -2932,6 +2956,13 @@ function saveJobRouteToDatabase(jobRouteData) {
 
 // ===========================================================================
 
+/**
+ * Saves a job route location to database
+ *
+ * @param {JobRouteLocationData} jobRouteLocationData - The data of the job route location
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 	if (!jobRouteLocationData) {
 		// Invalid job route position data
@@ -2939,7 +2970,7 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 	}
 
 	if (jobRouteLocationData.needsSaved == false) {
-		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job route location ${jobRouteLocationData.name} (DB ID ${jobRouteLocationData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job route location ${jobRouteLocationData.name} (DB ID ${jobRouteLocationData.index}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
@@ -2975,13 +3006,20 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job route location ${jobRoutePositionData.name} (${jobRouteLocationData.databaseId}) to database!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job route location ${jobRouteLocationData.name} (${jobRouteLocationData.index}) to database!`);
 
 	return false;
 }
 
 // ===========================================================================
 
+/**
+ * Saves a job location to database
+ *
+ * @param {JobLocationData} jobLocationData - The data of the job location
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobLocationToDatabase(jobLocationData) {
 	if (jobLocationData == null) {
 		// Invalid job location data
@@ -3031,18 +3069,26 @@ function saveJobLocationToDatabase(jobLocationData) {
 
 // ===========================================================================
 
+/**
+ * Saves a job equipment to database
+ *
+ * @param {JobEquipmentData} jobEquipmentData - The data of the job equipment
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobEquipmentToDatabase(jobEquipmentData) {
 	if (jobEquipmentData == null) {
 		// Invalid job equipment data
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment ${jobEquipmentData.index} is invalid. Skipping ...`);
 		return false;
 	}
 
 	if (!jobEquipmentData.needsSaved) {
-		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment ${jobEquipmentData.name} (${jobEquipmentData.databaseId}) doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment ${jobEquipmentData.name} (${jobEquipmentData.index}) doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment ${jobEquipmentData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment ${jobEquipmentData.index} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobEquipmentData.name);
@@ -3070,25 +3116,33 @@ function saveJobEquipmentToDatabase(jobEquipmentData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment ${jobEquipmentData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment ${jobEquipmentData.index} to database`);
 
 	return false;
 }
 
 // ===========================================================================
 
+/**
+ * Saves a job equipment item to database
+ *
+ * @param {JobEquipmentItemData} jobEquipmentItemData - The data of the job equipment item
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 	if (jobEquipmentItemData == null) {
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment item ${jobEquipmentItemData.index} is invalid. Skipping ...`);
 		// Invalid job equipment weapon data
 		return false;
 	}
 
 	if (!jobEquipmentItemData.needsSaved) {
-		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment item ${jobEquipmentItemData.databaseId} doesn't need saved. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment item ${jobEquipmentItemData.index} doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment weapon ${jobEquipmentItemData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job equipment weapon ${jobEquipmentItemData.index} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -3115,25 +3169,32 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment weapon ${jobEquipmentItemData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job equipment weapon ${jobEquipmentItemData.index} to database`);
 
 	return false;
 }
 
 // ===========================================================================
 
+/**
+ * Saves a job uniform to database
+ *
+ * @param {JobUniformData} jobUniformData - The data of the job uniform
+ * @return {boolean} Whether the data saved (true) or not (false)
+ *
+ */
 function saveJobUniformToDatabase(jobUniformData) {
 	if (jobUniformData == null) {
-		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData} is invalid. Skipping ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData.index} is invalid. Skipping ...`);
 		return false;
 	}
 
-	if (!jobUniformData.needSaved) {
-		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData.databaseId} doesn't need saved. Skipping ...`);
+	if (jobUniformData.needSaved == false) {
+		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData.index} doesn't need saved. Skipping ...`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job uniform ${jobUniformData.databaseId} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saving job uniform ${jobUniformData.index} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobUniformData.name);
@@ -3162,7 +3223,7 @@ function saveJobUniformToDatabase(jobUniformData) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job uniform ${jobUniformData.databaseId} to database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job]: Saved job uniform ${jobUniformData.index} to database`);
 
 	return false;
 }
@@ -4327,6 +4388,78 @@ function getJobRouteInfoCommand(command, params, client) {
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
+}
+
+// ===========================================================================
+
+function jobInviteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerJob(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if (!doesPlayerHaveJobPermission(client, getJobFlagValue("AddMember"))) {
+		messagePlayerError(client, getLocaleString(client, "CantAddJobMembers"));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (getPlayerJob(targetClient) != -1) {
+		messagePlayerError(client, getLocaleString(client, "JobInviteAlreadyHasJob"));
+		return false;
+	}
+
+	messagePlayerSuccess(client, getLocaleString(client, "JobInviteSent", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	showPlayerPrompt(targetClient, getLocaleString(targetClient, "JobInviteRequest", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{jobYellow}${getJobData(getPlayerJob(client)).name}{MAINCOLOUR}`, getLocaleString(targetClient, "GUIAlertTitle"), getLocaleString(targetClient, "Yes"), getLocaleString(targetClient, "No")));
+	getPlayerData(targetClient).promptType = V_PROMPT_JOBINVITE;
+	getPlayerData(targetClient).promptValue = getPlayerJob(client);
+}
+
+// ===========================================================================
+
+function jobUninviteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerJob(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	if (!doesPlayerHaveJobPermission(client, getJobFlagValue("RemoveMember"))) {
+		messagePlayerError(client, getLocaleString(client, "CantRemoveJobMembers"));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (getPlayerJob(targetClient) != getPlayerJob(client)) {
+		messagePlayerError(client, getLocaleString(client, "JobUnInviteNotInJob"));
+		return false;
+	}
+
+	if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level <= getJobRankData(getPlayerJob(targetClient), getPlayerJobRank(targetClient)).level) {
+		messagePlayerError(client, getLocaleString(client, "JobUnInviteTooLow"));
+		return false;
+	}
+
+	messagePlayerSuccess(client, getLocaleString(client, "PlayerRemovedFromJob", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	messagePlayerAlert(targetClient, getLocaleString(client, "RemovedFromJob", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`));
+
+	stopWorking(targetClient);
+
+	getPlayerCurrentSubAccount(targetClient).job = 0;
+	getPlayerCurrentSubAccount(targetClient).jobIndex = -1;
+	getPlayerCurrentSubAccount(targetClient).jobRank = 0;
+	getPlayerCurrentSubAccount(targetClient).jobRankIndex = -1;
 }
 
 // ===========================================================================
