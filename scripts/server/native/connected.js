@@ -1424,7 +1424,7 @@ function setServerName(name) {
 // ===========================================================================
 
 function setServerPassword(password) {
-	server.setPassword(password);
+	//server.setPassword(password);
 }
 
 // ===========================================================================
