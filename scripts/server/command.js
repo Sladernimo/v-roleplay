@@ -168,6 +168,8 @@ function loadCommands() {
 			new CommandData("dm", privateMessageCommand, "<player name/id> <message>", getStaffFlagValue("None"), true, true, "Sends a private message to a player"),
 			new CommandData("msg", privateMessageCommand, "<player name/id> <message>", getStaffFlagValue("None"), true, true, "Sends a private message to a player"),
 			new CommandData("reply", replyToLastPrivateMessageCommand, "<message>", getStaffFlagValue("None"), true, true, "Replies to the last private message you received"),
+			new CommandData("b", localOOCCommand, "<message>", getStaffFlagValue("None"), true, true, "Local OOC (out of character) chat, shows to players in proximity"),
+			new CommandData("o", globalOOCCommand, "<message>", getStaffFlagValue("None"), true, true, "Global OOC (out of character) chat, shows to all players"),
 		],
 		clan: [
 			new CommandData("clans", listClansCommand, "[search text]", getStaffFlagValue("None"), true, true, "List clans (search by partial name, if provided)"),
@@ -196,10 +198,10 @@ function loadCommands() {
 		client: [],
 		colour: [],
 		command: [
-			new CommandData("cmdenabletype", enableAllCommandsByType, "<type>", getStaffFlagValue("Developer"), true, true, "Enables all commands by type."),
-			new CommandData("cmddisabletype", disableAllCommandsByType, "<type>", getStaffFlagValue("Developer"), true, true, "Disables all commands by type."),
-			new CommandData("cmdenable", enableCommand, "<command>", getStaffFlagValue("Developer"), true, true, "Enable a specific command"),
-			new CommandData("cmddisable", disableCommand, "<command>", getStaffFlagValue("Developer"), true, true, "Disables a specific command"),
+			new CommandData("cmdenabletype", enableAllCommandsByType, "<type>", getStaffFlagValue("ManageServer"), true, true, "Enables all commands by type."),
+			new CommandData("cmddisabletype", disableAllCommandsByType, "<type>", getStaffFlagValue("ManageServer"), true, true, "Disables all commands by type."),
+			new CommandData("cmdenable", enableCommand, "<command>", getStaffFlagValue("ManageServer"), true, true, "Enable a specific command"),
+			new CommandData("cmddisable", disableCommand, "<command>", getStaffFlagValue("ManageServer"), true, true, "Disables a specific command"),
 		],
 		config: [
 			new CommandData("settime", setTimeCommand, "<hour> [minute]", getStaffFlagValue("ManageWorld"), true, true, "Sets the time. Hours are required, minute is optional and will default to 0"),
@@ -260,6 +262,15 @@ function loadCommands() {
 			new CommandData("tax", taxInfoCommand, "", getStaffFlagValue("None"), true, true),
 			new CommandData("wealth", wealthInfoCommand, "", getStaffFlagValue("None"), true, true),
 			new CommandData("forcepayday", forcePlayerPayDayCommand, "<player name/id>", getStaffFlagValue("ManageServer"), true, true, "Gives a player an instant payday."),
+
+			new CommandData("setincomemultiplier", setGrossIncomeMultiplierCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Multiplies pay by this amount. 100% adds nothing extra"),
+			new CommandData("setinflation", setInflationMultiplierCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the server inflation (in percent). 100% is no inflation"),
+			new CommandData("setincometax", setIncomeTaxCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the server income tax (in percent). Players will be taxed this much when getting pay"),
+			new CommandData("sethouseupkeep", setHouseUpkeepCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a house"),
+			new CommandData("setbizupkeep", setBusinessUpkeepCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a business"),
+			new CommandData("setvehupkeep", setVehicleUpkeepCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a vehicle"),
+			new CommandData("setcurrencystring", setCurrencyStringCommand, "<string> MUST INCLUDE {AMOUNT}", getStaffFlagValue("ManageServer"), true, true, "Sets the currency string"),
+			new CommandData("setpassiveincome", setPassiveIncomeCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a vehicle"),
 		],
 		email: [
 			new CommandData("testemail", testEmailCommand, "<email address>", getStaffFlagValue("Developer"), true, true),
@@ -338,7 +349,8 @@ function loadCommands() {
 			new CommandData("inv", listPlayerInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in your inventory"),
 			new CommandData("inventory", listPlayerInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in your inventory"),
 
-			new CommandData("items", listItemInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in your inventory"),
+			new CommandData("items", listItemInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items stored in a container item"),
+			new CommandData("vehtrunk", listVehicleTrunkInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in a vehicle's trunk"),
 			new CommandData("houseitems", listHouseInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in the house's storage"),
 			new CommandData("bizstorage", listBusinessStorageInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in the business's extra storage (not buyable)"),
 			new CommandData("bizfloor", listBusinessFloorInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items that can be bought from the business"),
@@ -450,6 +462,11 @@ function loadCommands() {
 			new CommandData("joblocinfo", getJobLocationInfoCommand, "", getStaffFlagValue("None"), true, true, "Get info for nearest or specified job location"),
 			new CommandData("jobroutes", getJobRoutesCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of job routes for the nearest job location"),
 			new CommandData("jobrouteinfo", getJobRouteInfoCommand, "", getStaffFlagValue("None"), true, false, "Shows info about a job route"),
+
+			new CommandData("jobinvite", jobInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a job"),
+			new CommandData("jobhire", jobInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a job"),
+			new CommandData("jobuninvite", jobUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their job"),
+			new CommandData("jobfire", jobUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their job"),
 		],
 		keybind: [
 			new CommandData("bindkey", addKeyBindCommand, "<key id/name> <command> [params]", getStaffFlagValue("None"), true, false, "Binds a key to a command and optional parameters"),
@@ -587,7 +604,7 @@ function loadCommands() {
 			new CommandData("plrstafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
 			new CommandData("playerstafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
 			new CommandData("stafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
-			new CommandData("givemoney", givePlayerMoneyCommand, "<player name/id> <amount>", getStaffFlagValue("serverManager"), true, true),
+			new CommandData("givemoney", givePlayerMoneyCommand, "<player name/id> <amount>", getStaffFlagValue("ServerManager"), true, true),
 			new CommandData("nonrpname", forceCharacterNameChangeCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Forces a player to change their current character's name."),
 			new CommandData("setname", forceCharacterNameCommand, "<player name/id> <first name> <last name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's name directly."),
 			new CommandData("setskin", forcePlayerSkinCommand, "<player name/id> <skin id/name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's skin."),
