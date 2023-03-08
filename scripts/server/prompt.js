@@ -18,6 +18,8 @@ const V_PROMPT_BUYBIZ = 6;
 const V_PROMPT_BUYHOUSE = 7;
 const V_PROMPT_RESETKEYBINDS = 8;
 const V_PROMPT_RESETACTIONTIPS = 9;
+const V_PROMPT_JOBINVITE = 10;
+const V_PROMPT_CLANINVITE = 11;
 
 // ===========================================================================
 
@@ -260,6 +262,14 @@ function playerPromptAnswerYes(client) {
 		case V_PROMPT_RESETACTIONTIPS: {
 			getPlayerData(client).accountData.seenActionTips = 0;
 			messagePlayerSuccess(client, getLocaleString(client, "ActionTipsReset"));
+			break;
+		}
+
+		case V_PROMPT_CLANINVITE: {
+			break;
+		}
+
+		case V_PROMPT_JOBINVITE: {
 			break;
 		}
 
