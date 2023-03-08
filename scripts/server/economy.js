@@ -59,7 +59,7 @@ function playerPayDay(client) {
 	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}`);
 	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
 	if (netIncome < incomeTaxAmount) {
-		let totalCash = getPlayerCash(client);
+		let totalCash = getPlayerCurrentSubAccount(client);
 		let canPayNow = totalCash + netIncome;
 		if (incomeTaxAmount <= canPayNow) {
 			takePlayerCash(client, canPayNow);
@@ -123,26 +123,6 @@ function forcePlayerPayDayCommand(command, params, client) {
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} gave {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} an instant payday`);
 	playerPayDay(targetClient);
-}
-
-// ===========================================================================
-
-function setPayDayBonusMultiplier(command, params, client) {
-	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let newMultiplier = params;
-
-	if (isNaN(newMultiplier)) {
-		messagePlayerError(client, getLocaleString(client, "AmountNotNumber"));
-		return false;
-	}
-
-	getServerConfig().economy.grossIncomeMultiplier = newMultiplier;
-
-	announceAdminAction(`PaydayBonusSet`, `{adminOrange}${getPlayerName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${newMultiplier * 100}%{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -228,6 +208,199 @@ function getCurrencyString(amount) {
 	let tempString = getServerConfig().economy.currencyString;
 	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
 	return tempString;
+}
+
+// ===========================================================================
+
+function setPassiveIncomeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.passiveIncomePerPayDay = amount;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the passive income to {ALTCOLOUR}${getCurrencyString(amount)}`);
+}
+
+// ===========================================================================
+
+function setCurrencyStringCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (params.indexOf("{AMOUNT}") == -1) {
+		messagePlayerError(client, "The currency text must include {AMOUNT}");
+		return false;
+	}
+
+	getServerConfig().economy.currencyString = params;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the to currency string to {ALTCOLOUR}${params}. Example: ${getCurrencyString(1000)}`);
+}
+
+// ===========================================================================
+
+function setVehicleUpkeepCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.upKeepCosts.upKeepPerVehicle = amount;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per vehicle to {ALTCOLOUR}${getCurrencyString(amount)}`);
+}
+
+// ===========================================================================
+
+function setBusinessUpkeepCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.upKeepCosts.upKeepPerBusiness = amount;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per business to {ALTCOLOUR}${getCurrencyString(amount)}`);
+}
+
+// ===========================================================================
+
+function setHouseUpkeepCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.upKeepCosts.upKeepPerHouse = amount;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per house to {ALTCOLOUR}${getCurrencyString(amount)}`);
+}
+
+// ===========================================================================
+
+function setIncomeTaxCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.incomeTaxRate = amount / 100;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the income tax rate to {ALTCOLOUR}${amount}%`);
+}
+
+// ===========================================================================
+
+function setGrossIncomeMultiplierCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.grossIncomeMultiplier = amount / 100;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the gross income multiplier to {ALTCOLOUR}${amount}%`);
+}
+
+// ===========================================================================
+
+function setInflationMultiplierCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.inflationMultiplier = amount / 100;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the server inflation {ALTCOLOUR}${amount}%`);
 }
 
 // ===========================================================================
