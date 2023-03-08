@@ -16,9 +16,7 @@
 	"InvalidAnimationDistance": "The distance must be between 0 and 3",
 	"CantBanClient": "You cannot ban this person",
 	"PlayerAccountBanned": "{1} has been account banned",
-	"ClanNotFound": "Clan not found",
 	"ClanNameTaken": "A clan with that name already exists",
-	"PlayerNotFound": "Player not found",
 	"ClanCantRemoveRanks": "You can't remove clan ranks",
 	"ClanCantAddRanks": "You can't add clan ranks",
 	"ClanRankNotFound": "Clan rank not found",
@@ -785,5 +783,11 @@
 	"ResetActionTipsConfirm": "Are you sure you want to reset all seen action tips?",
 	"ActionTipsReset": "All seen action tips have been reset.",
 	"NormalChatDisabled": "Normal chat is disabled by server admin. Use chat commands instead.",
-	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin"
+	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin",
+	"GUIAlertTitle": "Alert!",
+	"JobInviteSent": "You sent a job invite to {1}",
+	"JobInviteAlreadyHasJob": "That player already has a job!",
+	"JobInviteRequest": "{1} invited you to the {2} job.",
+	"CantAddJobMembers": "You can't invite new members to the job!",
+	"CantRemoveJobMembers": "You can't remove members from the job!"
 }
