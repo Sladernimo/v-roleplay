@@ -110,17 +110,27 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} doesn't exist. Adding ...`);
-			let tempBusinessData = new BusinessData(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems);
+			let businessData = new BusinessData(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, locked, hasItems, entranceFee);
+			businessData.name = name;
+			businessData.entrancePosition = entrancePosition;
+			businessData.blipModel = blipModel;
+			businessData.pickupModel = pickupModel;
+			businessData.hasInterior = hasInterior;
+			businessData.buyPrice = buyPrice;
+			businessData.rentPrice = rentPrice;
+			businessData.hasItems = hasItems;
+			businessData.locked = locked;
+			businessData.entranceFee = entranceFee;
 			if (blipModel != -1) {
-				let blipId = createGameBlip(tempBusinessData.blipModel, tempBusinessData.entrancePosition, tempBusinessData.name);
+				let blipId = createGameBlip(businessData.blipModel, businessData.entrancePosition, businessData.name);
 				if (blipId != -1) {
-					tempBusinessData.blipId = blipId;
+					businessData.blipId = blipId;
 				}
 				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 			} else {
 				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} has no blip.`);
 			}
-			getServerData().businesses.push(tempBusinessData);
+			getServerData().businesses.push(businessData);
 			setAllBusinessDataIndexes();
 		}
 	}
