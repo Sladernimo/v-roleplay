@@ -219,6 +219,7 @@ let globalConfig = {
 	vehicleRepairDistance: 5,
 	itemActionStateReset: 5000,
 	subAccountNameAllowedCharacters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+	alphaNumericCharacters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 	emailValidationRegex: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
 	itemActionDelayExtraTimeout: 1000,
 	geoIPCountryDatabaseFilePath: "modules/geoip/geoip-country.mmdb",
@@ -489,6 +490,7 @@ function saveServerConfigToDatabase() {
 				["svr_upkeep_veh", getServerConfig().economy.upKeepCosts.upKeepPerVehicle],
 				["svr_upkeep_house", getServerConfig().economy.upKeepCosts.upKeepPerHouse],
 				["svr_upkeep_biz", getServerConfig().economy.upKeepCosts.upKeepPerBusiness],
+				["svr_chat_type", getServerConfig().normalChatType],
 			];
 
 			let dbQuery = null;
