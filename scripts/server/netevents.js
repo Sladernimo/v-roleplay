@@ -1118,8 +1118,8 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
-	sendNetworkEventToPlayer("v.rp.business", client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems);
+function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
+	sendNetworkEventToPlayer("v.rp.business", client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee);
 }
 
 // ==========================================================================
@@ -1164,7 +1164,8 @@ function sendAllBusinessesToPlayer(client) {
 			businesses[i].rentPrice,
 			businesses[i].hasInterior,
 			businesses[i].locked,
-			doesBusinessHaveAnyItemsToBuy(i)
+			doesBusinessHaveAnyItemsToBuy(i),
+			businesses[i].entranceFee
 		);
 	}
 }
