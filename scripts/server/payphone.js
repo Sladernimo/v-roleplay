@@ -691,12 +691,17 @@ function fixDesyncedPayPhones() {
 	for (let i in getServerData().payPhones) {
 		switch (getServerData().payPhones[i].state) {
 			case V_PAYPHONE_STATE_RINGING:
-				if (getPayPhoneData(getPayPhoneData(i).otherPayPhone).state != V_PAYPHONE_STATE_CALLING) {
-					getPlayerData(getServerData().payPhones[i].usingPlayer).usingPayPhone = -1;
-					getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneCallStart = 0;
-					getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-					getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
-					setPayPhoneState(i, V_PAYPHONE_STATE_IDLE);
+				if (getPayPhoneData(i).otherPayPhone != -1) {
+					if (getPayPhoneData(getPayPhoneData(i).otherPayPhone).state != V_PAYPHONE_STATE_CALLING) {
+						if (getServerData().payPhones[i].usingPlayer != null) {
+							getPlayerData(getServerData().payPhones[i].usingPlayer).usingPayPhone = -1;
+							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneCallStart = 0;
+							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
+							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
+						}
+						getPayPhoneData(i).otherPayPhone = -1;
+						setPayPhoneState(i, V_PAYPHONE_STATE_IDLE);
+					}
 				}
 				break;
 
@@ -704,8 +709,6 @@ function fixDesyncedPayPhones() {
 				break;
 		}
 	}
-
-	sendPayPhoneStateToPlayer(null, -1, V_PAYPHONE_STATE_IDLE);
 }
 
 // ===========================================================================
@@ -714,3 +717,5 @@ function setPayPhoneState(payPhoneIndex, state) {
 	getPayPhoneData(payPhoneIndex).state = state;
 	sendPayPhoneStateToPlayer(null, payPhoneIndex, state);
 }
+
+// ===========================================================================
