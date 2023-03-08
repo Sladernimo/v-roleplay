@@ -2619,6 +2619,14 @@ function buyFromBusinessCommand(command, params, client) {
 		return false;
 	}
 
+	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
+	if (useType == V_ITEM_USE_TYPE_WEAPON || V_ITEM_USE_TYPE_TAZER || useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
+		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
+			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
+			return false;
+		}
+	}
+
 	let amount = 1;
 	if (areThereEnoughParams(params, 2, " ")) {
 		amount = toInteger(getParam(params, " ", 2)) || 1;
@@ -2643,7 +2651,7 @@ function buyFromBusinessCommand(command, params, client) {
 	let itemName = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name;
 
 	if (getPlayerCurrentSubAccount(client).cash < totalCost) {
-		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getBusinessData(businessId).floorItemCache[itemSlot - 1].buyPrice * amount - getPlayerCurrentSubAccount(client).cash}{MAINCOLOUR}`));
+		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${totalCost - getPlayerCurrentSubAccount(client).cash}{MAINCOLOUR}`));
 		return false;
 	}
 
@@ -2655,14 +2663,6 @@ function buyFromBusinessCommand(command, params, client) {
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount - amount;
 	if (getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).amount == 0) {
 		deleteItem(getBusinessData(businessId).floorItemCache[itemSlot - 1]);
-	}
-
-	let useType = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).useType;
-	if (useType == V_ITEM_USE_TYPE_WEAPON || V_ITEM_USE_TYPE_TAZER || useType == V_ITEM_USE_TYPE_AMMO_CLIP) {
-		if (isPlayerWeaponBanned(client) && !isPlayerExemptFromAntiCheat(client)) {
-			messagePlayerError(client, getLocaleString(client, "WeaponBanned"));
-			return false;
-		}
 	}
 
 	//messagePlayerSuccess(client, `You bought ${amount} {ALTCOLOUR}${itemName} {MAINCOLOUR}for ${totalCost} ${priceEach}`);
@@ -2879,9 +2879,9 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (businessData == false) {
-			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, false, false);
+			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, false, false, 0);
 		} else {
-			sendBusinessToPlayer(null, businessId, false, businessData.name, businessData.entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), businessData.buyPrice, businessData.rentPrice, businessData.hasInterior, businessData.locked, doesBusinessHaveAnyItemsToBuy(businessId));
+			sendBusinessToPlayer(null, businessId, false, businessData.name, businessData.entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), businessData.buyPrice, businessData.rentPrice, businessData.hasInterior, businessData.locked, doesBusinessHaveAnyItemsToBuy(businessId), businessData.entranceFee);
 		}
 		return false;
 	}
