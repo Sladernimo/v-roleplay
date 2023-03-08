@@ -89,13 +89,13 @@ function helpCommand(command, params, client) {
 			showRulesHelpMessage(client);
 			break;
 
-		case "website":
-			showWebsiteHelpMessage(client);
-			break;
+		//case "website":
+		//	showWebsiteHelpMessage(client);
+		//	break;
 
-		case "discord":
-			showDiscordHelpMessage(client);
-			break;
+		//case "discord":
+		//	showDiscordHelpMessage(client);
+		//	break;
 
 		case "anim":
 		case "anims":
@@ -194,8 +194,8 @@ function helpCommand(command, params, client) {
 function showMainHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HelpMainListHeader")));
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Use /info <category> for commands and info. Example: {ALTCOLOUR}/info vehicle`);
-	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, website, animation`);
-	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, discord, colour, keybind`);
+	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, animation`);
+	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, colour, keybind`);
 }
 
 // ===========================================================================
@@ -262,6 +262,7 @@ function showRulesHelpMessage(client) {
 
 // ===========================================================================
 
+/*
 function showWebsiteHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWebsiteInfo")));
 	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Website")}`);
@@ -273,6 +274,7 @@ function showDiscordHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDiscordInfo")));
 	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Discord")}`);
 }
+*/
 
 // ===========================================================================
 
