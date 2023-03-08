@@ -112,12 +112,29 @@ function globalOOCCommand(command, params, client) {
 		return false;
 	}
 
-	if (getServerConfig().globalChatEnabled) {
+	if (!getServerConfig().globalChatEnabled) {
 		messagePlayerError(client, getLocaleString(client, "GlobalChatDisabled"));
 		return false;
 	}
 
 	oocToAllPlayers(client, params);
+	return true;
+}
+
+// ===========================================================================
+
+function localOOCCommand(command, params, client) {
+	if (isPlayerMuted(client)) {
+		messagePlayerError(client, getLocaleString(client, "MutedCantChat"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	oocToNearbyPlayers(client, params);
 	return true;
 }
 
@@ -507,7 +524,7 @@ function oocToNearbyPlayers(client, messageText) {
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
 			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
-				messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {lightGrey}(( ${messageText} ))`, getPlayerColour(client));
+				messagePlayerNormal(clients[i], `💬 ${getCharacterFullName(client)}: {lightGrey}(( ${messageText} ))`, getPlayerColour(client));
 			}
 		}
 	}
