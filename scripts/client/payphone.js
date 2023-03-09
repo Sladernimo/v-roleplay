@@ -164,6 +164,10 @@ function loadPayPhoneHangupSound() {
 // ===========================================================================
 
 function processPayPhonesDistance() {
+	if (payPhoneRingingSound == null) {
+		return false;
+	}
+
 	let tempRingingPhone = -1;
 	for (let i in getServerData().payPhones) {
 		if (getServerData().payPhones[i].state == V_PAYPHONE_STATE_RINGING) {
@@ -267,6 +271,11 @@ function removePayPhonesFromClient() {
 // ===========================================================================
 
 function payPhoneDial() {
+	if (payPhoneDialingSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone dial sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone dial sound");
 	payPhoneDialingSound.play();
 }
@@ -274,6 +283,11 @@ function payPhoneDial() {
 // ===========================================================================
 
 function payPhoneHangup() {
+	if (payPhoneHangupSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone hangup sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone hangup sound");
 	payPhoneHangupSound.play();
 }
@@ -281,6 +295,11 @@ function payPhoneHangup() {
 // ===========================================================================
 
 function payPhonePickup() {
+	if (payPhonePickupSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone pickup sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone pickup sound");
 	payPhonePickupSound.play();
 }
