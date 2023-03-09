@@ -377,15 +377,13 @@ function radioTransmitCommand(command, params, client) {
 
 function sendRadioTransmission(frequency, messageText, sentFromClient) {
 	let seenClients = [];
-	seenClients.push(sentFromClient);
-
 	let clients = getClients();
 
 	for (let i in clients) {
 		if (seenClients.indexOf(clients[i]) == -1) {
 			if (getDistance(getPlayerPosition(clients[i]), getPlayerPosition(sentFromClient)) <= getGlobalConfig().talkDistance) {
 				seenClients.push(clients[i]);
-				messagePlayerNormal(`[#CCCCCC]${getCharacterFullName(client)} {ALTCOLOUR}(to radio): {MAINCOLOUR}${messageText}`);
+				messagePlayerNormal(clients[i], `[#CCCCCC]${getCharacterFullName(sentFromClient)} {ALTCOLOUR}(to radio): {MAINCOLOUR}${messageText}`);
 			}
 		}
 	}
