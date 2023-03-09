@@ -636,7 +636,10 @@ function setVehicleEngine(vehicle, engine) {
 function setVehicleLocked(vehicle, locked) {
 	setEntityData(vehicle, "v.rp.locked", locked, true);
 	sendNetworkEventToPlayer("v.rp.veh.locked", null, vehicle.id, locked);
-	vehicle.locked = locked;
+
+	if (isGameFeatureSupported("vehicleLock")) {
+		vehicle.locked = locked;
+	}
 }
 
 // ===========================================================================
@@ -830,6 +833,9 @@ function getVehicleName(vehicle) {
 // ===========================================================================
 
 function getElementModel(element) {
+	if (element == null) {
+		return -1;
+	}
 	return element.modelIndex;
 }
 
@@ -1096,7 +1102,7 @@ function getVehiclesInRange(position, range) {
 // ===========================================================================
 
 function getClosestVehicle(position) {
-	return getClosestElementByType(ELEMENT_VEHICLE, position);
+	return getClosestElementByType(ELEMENT_VEHICLE, position) || false;
 }
 
 // ===========================================================================
