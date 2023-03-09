@@ -60,8 +60,8 @@ class JobData {
 		this.walkieTalkieFrequency = 0;
 		this.index = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		/** @type {Array.<JobEquipmentData>} */
 		this.equipment = [];
@@ -96,8 +96,8 @@ class JobData {
 			this.whiteListEnabled = dbAssoc["job_wl"];
 			this.blackListEnabled = dbAssoc["job_bl"];
 			this.walkieTalkieFrequency = dbAssoc["job_walkietalkiefreq"];
-			this.whoCreated = dbAssoc["job_who_added"];
-			this.whenCreated = dbAssoc["job_when_added"];
+			this.whoAdded = dbAssoc["job_who_added"];
+			this.whenAdded = dbAssoc["job_when_added"];
 
 			this.equipment = [];
 			this.uniforms = [];
@@ -136,8 +136,8 @@ class JobRouteData {
 		//this.failedMessage = "";
 		this.locationArriveMessage = "";
 		this.locationGotoMessage = "";
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 		this.sphere = null;
 
 		/** @type {Array.<JobRouteLocationData>} */
@@ -158,8 +158,8 @@ class JobRouteData {
 			this.vehicleColour1 = toInteger(dbAssoc["job_route_veh_colour1"]);
 			this.vehicleColour2 = toInteger(dbAssoc["job_route_veh_colour2"]);
 			this.detail = toInteger(dbAssoc["job_route_detail"]);
-			this.whoCreated = dbAssoc["job_route_who_added"];
-			this.whenCreated = dbAssoc["job_route_when_added"];
+			this.whoAdded = dbAssoc["job_route_who_added"];
+			this.whenAdded = dbAssoc["job_route_when_added"];
 			this.sphere = null;
 		}
 	}
@@ -186,8 +186,8 @@ class JobRouteLocationData {
 		this.type = V_JOB_ROUTE_LOC_TYPE_NONE;
 		this.gotoMessage = "";
 		this.departMessage = "";
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_loc_id"]);
@@ -199,8 +199,8 @@ class JobRouteLocationData {
 			this.pay = toInteger(dbAssoc["job_route_loc_pay"]);
 			this.arriveMessage = toInteger(dbAssoc["job_route_loc_arrive_msg"]);
 			this.gotoMessage = toInteger(dbAssoc["job_route_loc_goto_msg"]);
-			this.whoCreated = dbAssoc["job_route_loc_who_added"];
-			this.whenCreated = dbAssoc["job_route_loc_when_added"];
+			this.whoAdded = dbAssoc["job_route_loc_who_added"];
+			this.whenAdded = dbAssoc["job_route_loc_when_added"];
 		}
 	}
 };
@@ -221,8 +221,8 @@ class JobEquipmentData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		/** @type {Array.<JobEquipmentItemData>} */
 		this.items = [];
@@ -233,8 +233,8 @@ class JobEquipmentData {
 			this.name = dbAssoc["job_equip_name"];
 			this.requiredRank = dbAssoc["job_equip_minrank"];
 			this.enabled = dbAssoc["job_equip_enabled"];
-			this.whoCreated = dbAssoc["job_equip_who_added"];
-			this.whenCreated = dbAssoc["job_equip_when_added"];
+			this.whoAdded = dbAssoc["job_equip_who_added"];
+			this.whenAdded = dbAssoc["job_equip_when_added"];
 		}
 	}
 };
@@ -254,8 +254,8 @@ class JobEquipmentItemData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_equip_item_id"];
@@ -263,8 +263,8 @@ class JobEquipmentItemData {
 			this.itemType = dbAssoc["job_equip_item_type"];
 			this.value = dbAssoc["job_equip_item_value"];
 			this.enabled = dbAssoc["job_equip_item_enabled"];
-			this.whoCreated = dbAssoc["job_equip_item_who_added"];
-			this.whenCreated = dbAssoc["job_equip_item_when_added"];
+			this.whoAdded = dbAssoc["job_equip_item_who_added"];
+			this.whenAdded = dbAssoc["job_equip_item_when_added"];
 		}
 	}
 };
@@ -285,8 +285,8 @@ class JobUniformData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		/*
 		this.bodyParts = {
@@ -317,8 +317,8 @@ class JobUniformData {
 			this.requiredRank = dbAssoc["job_uniform_minrank"];
 			this.skin = dbAssoc["job_uniform_skin"];
 			this.enabled = intToBool(dbAssoc["job_uniform_enabled"]);
-			this.whoCreated = dbAssoc["job_uniform_who_added"];
-			this.whenCreated = dbAssoc["job_uniform_when_added"];
+			this.whoAdded = dbAssoc["job_uniform_who_added"];
+			this.whenAdded = dbAssoc["job_uniform_when_added"];
 
 			/*
 			this.bodyParts = {
@@ -364,8 +364,8 @@ class JobLocationData {
 		this.jobIndex = -1;
 		this.needsSaved = false;
 		this.routeCache = [];
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_loc_id"];
@@ -376,8 +376,8 @@ class JobLocationData {
 			this.enabled = intToBool(dbAssoc["job_loc_enabled"]);
 			this.interior = dbAssoc["job_loc_int"];
 			this.dimension = dbAssoc["job_loc_vw"];
-			this.whoCreated = dbAssoc["job_loc_who_added"];
-			this.whenCreated = dbAssoc["job_loc_when_added"];
+			this.whoAdded = dbAssoc["job_loc_who_added"];
+			this.whenAdded = dbAssoc["job_loc_when_added"];
 		}
 	}
 };
@@ -397,8 +397,8 @@ class JobRankData {
 		this.level = 0;
 		this.enabled = false;
 		this.pay = 0;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 		this.flags = 0;
 		this.needsSaved = false;
 		this.public = false;
@@ -410,8 +410,8 @@ class JobRankData {
 			this.level = toInteger(dbAssoc["job_rank_level"]);
 			this.enabled = intToBool(dbAssoc["job_rank_enabled"]);
 			this.pay = toInteger(dbAssoc["job_rank_pay"]);
-			this.whoCreated = toInteger(dbAssoc["job_rank_who_added"]);
-			this.whenCreated = toInteger(dbAssoc["job_rank_when_added"]);
+			this.whoAdded = toInteger(dbAssoc["job_rank_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["job_rank_when_added"]);
 			this.flags = toInteger(dbAssoc["job_rank_flags"]);
 			this.public = intToBool(dbAssoc["job_rank_public"]);
 		}
@@ -429,16 +429,16 @@ class JobWhiteListData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_wl_id"];
 			this.job = dbAssoc["job_wl_job"];
 			this.subAccount = dbAssoc["job_wl_sacct"]
 			this.enabled = dbAssoc["job_wl_enabled"];
-			this.whoCreated = dbAssoc["job_wl_who_added"];
-			this.whenCreated = dbAssoc["job_wl_when_added"];
+			this.whoAdded = dbAssoc["job_wl_who_added"];
+			this.whenAdded = dbAssoc["job_wl_when_added"];
 		}
 	}
 };
@@ -454,16 +454,16 @@ class JobBlackListData {
 		this.index = -1;
 		this.jobIndex = -1;
 		this.needsSaved = false;
-		this.whoCreated = 0;
-		this.whenCreated = 0;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
 
 		if (dbAssoc) {
 			this.databaseId = dbAssoc["job_bl_id"];
 			this.job = dbAssoc["job_bl_job"];
 			this.subAccount = dbAssoc["job_bl_sacct"]
 			this.enabled = dbAssoc["job_bl_enabled"];
-			this.whoCreated = dbAssoc["job_bl_who_added"];
-			this.whenCreated = dbAssoc["job_bl_when_added"];
+			this.whoAdded = dbAssoc["job_bl_who_added"];
+			this.whenAdded = dbAssoc["job_bl_when_added"];
 		}
 	}
 };
@@ -1818,7 +1818,9 @@ function setPlayerJobRankCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let rankIndex = getJobRankFromParams(jobIndex, params.split(" ").slice(2).join(" "));
+	let rankParam = getJobRankFromParams(jobIndex, params.split(" ").slice(2).join(" "));
+
+	let rankIndex = getJobRankFromParams(jobIndex, rankParam);
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
@@ -2763,7 +2765,7 @@ function setAllJobDataIndexes() {
 
 // ===========================================================================
 
-function createJobLocation(jobId, position, interior, dimension, whoCreated) {
+function createJobLocation(jobId, position, interior, dimension, whoAdded) {
 	let jobLocationData = new JobLocationData(false);
 	jobLocationData.position = position;
 	jobLocationData.jobId = getJobData(jobId).databaseId;
@@ -2772,8 +2774,8 @@ function createJobLocation(jobId, position, interior, dimension, whoCreated) {
 	jobLocationData.enabled = true;
 	jobLocationData.jobIndex = jobId;
 	jobLocationData.needsSaved = true;
-	jobLocationData.whoCreated = whoCreated;
-	jobLocationData.whenCreated = getCurrentUnixTimestamp();
+	jobLocationData.whoAdded = whoAdded;
+	jobLocationData.whenAdded = getCurrentUnixTimestamp();
 
 	getServerData().jobs[jobId].locations.push(jobLocationData);
 	let newSlot = getServerData().jobs[jobId].locations.length - 1;
@@ -2814,8 +2816,8 @@ function saveJobToDatabase(jobData) {
 			["job_walkietalkiefreq", jobData.walkieTalkieFrequency],
 			["job_wl", jobData.whiteListEnabled],
 			["job_bl", jobData.blackListEnabled],
-			["job_who_added", jobData.whoCreated],
-			["job_when_added", jobData.whenCreated],
+			["job_who_added", jobData.whoAdded],
+			["job_when_added", jobData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -2863,8 +2865,8 @@ function saveJobRankToDatabase(jobRankData) {
 			["job_rank_flags", jobRankData.flags],
 			["job_rank_pay", jobRankData.pay],
 			["job_rank_level", jobRankData.level],
-			["job_rank_who_added", jobRankData.whoCreated],
-			["job_rank_when_added", jobRankData.whenCreated],
+			["job_rank_who_added", jobRankData.whoAdded],
+			["job_rank_when_added", jobRankData.whenAdded],
 			["job_rank_public", boolToInt(jobRankData.public)],
 		];
 
@@ -2930,8 +2932,8 @@ function saveJobRouteToDatabase(jobRouteData) {
 			["job_route_loc_goto_msg", safeLocationNextMessage],
 			["job_route_pay", jobRouteData.pay],
 			["job_route_detail", jobRouteData.detail],
-			["job_route_who_added", jobRouteData.whoCreated],
-			["job_route_when_added", jobRouteData.whenCreated],
+			["job_route_who_added", jobRouteData.whoAdded],
+			["job_route_when_added", jobRouteData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -2987,8 +2989,8 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 			["job_route_loc_z", jobRouteLocationData.position.z],
 			["job_route_loc_pay", jobRouteLocationData.pay],
 			["job_route_loc_delay", jobRouteLocationData.stopDelay],
-			["job_route_loc_who_added", jobRouteLocationData.whoCreated],
-			["job_route_loc_when_added", jobRouteLocationData.whenCreated],
+			["job_route_loc_who_added", jobRouteLocationData.whoAdded],
+			["job_route_loc_when_added", jobRouteLocationData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -3042,8 +3044,8 @@ function saveJobLocationToDatabase(jobLocationData) {
 			["job_loc_pos_z", jobLocationData.position.z],
 			["job_loc_int", jobLocationData.interior],
 			["job_loc_vw", jobLocationData.dimension],
-			["job_loc_who_added", jobLocationData.whoCreated],
-			["job_loc_when_added", jobLocationData.whenCreated],
+			["job_loc_who_added", jobLocationData.whoAdded],
+			["job_loc_when_added", jobLocationData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -3097,12 +3099,12 @@ function saveJobEquipmentToDatabase(jobEquipmentData) {
 			["job_equip_enabled", boolToInt(jobEquipmentData.enabled)],
 			["job_equip_minrank", jobLocationData.requiredRank],
 			["job_equip_name", safeName],
-			["job_equip_who_added", jobEquipmentData.whoCreated],
-			["job_equip_when_added", jobEquipmentData.whenCreated],
+			["job_equip_who_added", jobEquipmentData.whoAdded],
+			["job_equip_when_added", jobEquipmentData.whenAdded],
 		];
 
 		let dbQuery = null;
-		if (tempJobRouteData.databaseId == 0) {
+		if (jobEquipmentData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("job_equip", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
 			jobEquipmentData.databaseId = getDatabaseInsertId(dbConnection);
@@ -3150,12 +3152,12 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
 			["job_equip_item_enabled", boolToInt(jobEquipmentItemData.enabled)],
 			["job_equip_item_type", jobEquipmentItemData.itemType],
 			["job_equip_item_value", jobEquipmentItemData.value],
-			["job_equip_item_who_added", jobEquipmentItemData.whoCreated],
-			["job_equip_item_when_added", jobEquipmentItemData.whenCreated],
+			["job_equip_item_who_added", jobEquipmentItemData.whoAdded],
+			["job_equip_item_when_added", jobEquipmentItemData.whenAdded],
 		];
 
 		let dbQuery = null;
-		if (tempJobRouteData.databaseId == 0) {
+		if (jobEquipmentItemData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("job_equip_item", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
 			jobEquipmentItemData.databaseId = getDatabaseInsertId(dbConnection);
@@ -3199,17 +3201,17 @@ function saveJobUniformToDatabase(jobUniformData) {
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobUniformData.name);
 		let data = [
-			["job_uniform_job", jobUniformData.jobId],
+			["job_uniform_job", jobUniformData.job],
 			["job_uniform_enabled", boolToInt(jobUniformData.enabled)],
 			["job_uniform_minrank", jobUniformData.requiredRank],
 			["job_uniform_name", safeName],
-			["job_uniform_model", jobUniformData.skin],
-			["job_uniform_who_added", jobUniformData.whoCreated],
-			["job_uniform_when_added", jobUniformData.whenCreated],
+			["job_uniform_skin", jobUniformData.skin],
+			["job_uniform_who_added", jobUniformData.whoAdded],
+			["job_uniform_when_added", jobUniformData.whenAdded],
 		];
 
 		let dbQuery = null;
-		if (tempJobRouteData.databaseId == 0) {
+		if (jobUniformData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("job_uniform", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
 			jobUniformData.databaseId = getDatabaseInsertId(dbConnection);
@@ -3686,14 +3688,14 @@ function createJobUniformCommand(command, params, client) {
 		return false;
 	}
 
-	createJobUniform(jobId, skinIndex);
+	createJobUniform(jobId, skinIndex, getPlayerData(client).accountData.databaseId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)} (${getGameConfig().skins[getGame()][skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
 	return true;
 }
 
 // ===========================================================================
 
-function createJobRoute(routeName, closestJobLocation, whoCreated = defaultNoAccountId) {
+function createJobRoute(routeName, closestJobLocation, whoAdded = defaultNoAccountId) {
 	let tempJobRouteData = new JobRouteData(false);
 	tempJobRouteData.name = routeName;
 	tempJobRouteData.jobId = closestJobLocation.jobId;
@@ -3708,8 +3710,8 @@ function createJobRoute(routeName, closestJobLocation, whoCreated = defaultNoAcc
 	tempJobRouteData.finishMessage = `You have finished the {ALTCOLOUR}{JOBROUTENAME}{MAINCOLOUR} route and {ALTCOLOUR}{JOBROUTEPAY}{MAINCOLOUR} has been added to your next paycheck!`;
 	tempJobRouteData.locationArriveMessage = `You arrived at a stop.`;
 	tempJobRouteData.locationGotoMessage = `Drive to the next stop.`;
-	tempJobRouteData.whoCreated = whoCreated;
-	tempJobRouteData.whenCreated = getCurrentUnixTimestamp();
+	tempJobRouteData.whoAdded = whoAdded;
+	tempJobRouteData.whenAdded = getCurrentUnixTimestamp();
 
 	let routeId = getJobData(closestJobLocation.jobIndex).routes.push(tempJobRouteData);
 	saveJobRouteToDatabase(tempJobRouteData);
@@ -3719,7 +3721,7 @@ function createJobRoute(routeName, closestJobLocation, whoCreated = defaultNoAcc
 
 // ===========================================================================
 
-function createJobRouteLocation(routeLocationName, position, jobRouteData, whoCreated = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", type = V_JOB_ROUTE_LOC_TYPE_NONE) {
+function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAdded = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", type = V_JOB_ROUTE_LOC_TYPE_NONE) {
 	let tempJobRouteLocationData = new JobRouteLocationData(false);
 	tempJobRouteLocationData.name = routeLocationName;
 	tempJobRouteLocationData.routeId = jobRouteData.databaseId;
@@ -3731,8 +3733,8 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData, whoCr
 	tempJobRouteLocationData.arriveMessage = arriveMessage;
 	tempJobRouteLocationData.gotoMessage = gotoMessage;
 	tempJobRouteLocationData.type = type;
-	tempJobRouteLocationData.whoCreated = whoCreated;
-	tempJobRouteLocationData.whenCreated = getCurrentUnixTimestamp();
+	tempJobRouteLocationData.whoAdded = whoAdded;
+	tempJobRouteLocationData.whenAdded = getCurrentUnixTimestamp();
 
 	getJobData(jobRouteData.jobIndex).routes[jobRouteData.index].locations.push(tempJobRouteLocationData);
 	//saveJobRouteLocationToDatabase(tempJobRouteLocationData);
@@ -3741,13 +3743,16 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData, whoCr
 
 // ===========================================================================
 
-function createJobUniform(jobId, skinIndex) {
+function createJobUniform(jobId, skinIndex, whoAdded = defaultNoAccountId) {
 	let tempJobUniformData = new JobUniformData(false);
 	tempJobUniformData.skin = skinIndex;
 	tempJobUniformData.jobIndex = jobId;
 	tempJobUniformData.job = getJobData(jobId).databaseId;
 	tempJobUniformData.name = getGameConfig().skins[getGame()][skinIndex][1];
+	tempJobUniformData.whoAdded = whoAdded;
+	tempJobUniformData.whenAdded = getCurrentUnixTimestamp();
 	tempJobUniformData.needsSaved = true;
+	tempJobUniformData.enabled = true;
 
 	getJobData(jobId).uniforms.push(tempJobUniformData);
 
@@ -3822,6 +3827,11 @@ function deleteJobUniformCommand(command, params, client) {
 		return false;
 	}
 
+	if (doesPlayerHaveJobPermission(client, getJobFlagValue("ManageUniforms"))) {
+		messagePlayerError(client, "You can't edit job uniforms!");
+		return false;
+	}
+
 	if (isNaN(uniformIndex)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
 		return false;
@@ -3837,6 +3847,82 @@ function deleteJobUniformCommand(command, params, client) {
 
 	setAllJobDataIndexes();
 	//collectAllGarbage();
+}
+
+// ===========================================================================
+
+function setJobUniformMinimumRankCommand(command, params, client) {
+	let uniformIndex = getParam(params, " ", 1);
+	let newRankLevel = getParam(params, " ", 2);
+
+	if (!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let jobIndex = getPlayerJob(client);
+
+	if (doesPlayerHaveJobPermission(client, getJobFlagValue("ManageUniforms"))) {
+		messagePlayerError(client, "You can't edit job uniforms!");
+		return false;
+	}
+
+	if (isNaN(uniformIndex)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	if (isNaN(newRankLevel)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	if (typeof getJobData(jobId).uniforms[uniformIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
+		return false;
+	}
+
+	if (newRankLevel < 0) {
+		messagePlayerError(client, "The rank can't be negative!");
+		return false;
+	}
+
+	getJobData(jobIndex).uniforms[uniformIndex].requiredRank = newRankLevel;
+	getJobData(jobIndex).uniforms[uniformIndex].needsSaved = true;
+	messagePlayerSuccess(client, `You set job uniform ${getJobUniformData(jobIndex, uniformIndex).name}'s minimum rank to ${newRankLevel}`);
+}
+
+// ===========================================================================
+
+function setJobUniformNameCommand(command, params, client) {
+	let uniformIndex = getParam(params, " ", 1);
+	let newName = params.slice(1).join(" ");
+
+	if (!getJobData(jobId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let jobIndex = getPlayerJob(client);
+
+	if (doesPlayerHaveJobPermission(client, getJobFlagValue("ManageUniforms"))) {
+		messagePlayerError(client, "You can't edit job uniforms!");
+		return false;
+	}
+
+	if (isNaN(uniformIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
+		return false;
+	}
+
+	if (typeof getJobData(jobId).uniforms[uniformIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobUniform"));
+		return false;
+	}
+
+	getJobData(jobIndex).uniforms[uniformIndex].name = newName;
+	getJobData(jobIndex).uniforms[uniformIndex].needsSaved = true;
+	messagePlayerSuccess(client, `You set job uniform ${getJobUniformData(jobIndex, uniformIndex).name}'s name to ${newName}`);
 }
 
 // ===========================================================================
@@ -4315,6 +4401,31 @@ function getJobRankFromParams(jobIndex, params) {
 
 // ===========================================================================
 
+/**
+ * @param {Number} jobIndex - The job index to search uniforms for
+ * @param {String} params - The params to search for
+ * @return {Number} The data index of a matching job
+ */
+function getJobUniformFromParams(jobIndex, params) {
+	if (isNaN(params)) {
+		for (let i in getJobData(jobIndex).uniforms) {
+			if ((toLowerCase(getJobData(jobIndex).uniforms[i].name).indexOf(toLowerCase(params)) != -1)) {
+				return i;
+			}
+		}
+	} else {
+		for (let i in getJobData(jobIndex).uniforms) {
+			if (getJobData(jobIndex).uniforms[i].level == toInteger(params)) {
+				return i;
+			}
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
 function getJobRoutesCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client));
 
@@ -4326,7 +4437,7 @@ function getJobRoutesCommand(command, params, client) {
 	let jobData = getJobData(closestJobLocation.jobIndex);
 
 	let jobRoutesList = jobData.routes.map(function (r) {
-		return `{chatBoxListIndex}${r.index}: ${(r.enabled) ? "{softGreen}" : "{softRed}"}${r.name} {ALTCOLOUR}(${r.locations.length} stops, added ${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), r.whenCreated)} ago)`;
+		return `{chatBoxListIndex}${r.index}: ${(r.enabled) ? "{softGreen}" : "{softRed}"}${r.name} {ALTCOLOUR}(${r.locations.length} stops, added ${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), r.whenAdded)} ago)`;
 	});
 	let chunkedList = splitArrayIntoChunks(jobRoutesList, 2);
 
@@ -4368,8 +4479,8 @@ function getJobRouteInfoCommand(command, params, client) {
 		[`ID`, `${jobRouteData.index}/${jobRouteData.databaseId}`],
 		[`Job`, `${jobData.name}`],
 		[`Name`, `${jobRouteData.name}`],
-		[`Added By`, `${loadAccountFromId(jobRouteData.whoCreated).name}`],
-		[`Added On`, `${new Date(jobRouteData.whenCreated * 1000).toLocaleDateString("en-GB")}`],
+		[`Added By`, `${loadAccountFromId(jobRouteData.whoAdded).name}`],
+		[`Added On`, `${new Date(jobRouteData.whenAdded * 1000).toLocaleDateString("en-GB")}`],
 		[`Enabled`, `${getYesNoFromBool(jobRouteData.enabled)}`],
 		[`Stops`, `${jobRouteData.locations.length}`],
 		[`Pay`, `${getCurrencyString(jobRouteData.pay)}`],
@@ -4460,6 +4571,64 @@ function jobUninviteCommand(command, params, client) {
 	getPlayerCurrentSubAccount(targetClient).jobIndex = -1;
 	getPlayerCurrentSubAccount(targetClient).jobRank = 0;
 	getPlayerCurrentSubAccount(targetClient).jobRankIndex = -1;
+}
+
+// ===========================================================================
+
+function addPlayerToJobBlackList(client, jobIndex, whoAdded = defaultNoAccountId) {
+	let tempJobBlackListData = new JobBlackListData(false);
+	tempJobBlackListData.subAccount = getPlayerCurrentSubAccount(client).databaseId;
+	tempJobBlackListData.jobIndex = jobIndex;
+	tempJobBlackListData.job = getJobData(jobIndex).databaseId;
+	tempJobBlackListData.whoAdded = whoAdded;
+	tempJobBlackListData.whenAdded = getCurrentUnixTimestamp();
+	tempJobBlackListData.needsSaved = true;
+
+	getJobData(jobIndex).blackList.push(tempJobBlackListData);
+	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function addPlayerToJobWhiteList(client, jobIndex, whoAdded = defaultNoAccountId) {
+	let tempJobWhiteListData = new JobWhiteListData(false);
+	tempJobWhiteListData.subAccount = getPlayerCurrentSubAccount(client).databaseId;
+	tempJobWhiteListData.jobIndex = jobIndex;
+	tempJobWhiteListData.job = getJobData(jobIndex).databaseId;
+	tempJobWhiteListData.whoAdded = whoAdded;
+	tempJobWhiteListData.whenAdded = getCurrentUnixTimestamp();
+	tempJobWhiteListData.needsSaved = true;
+
+	getJobData(jobIndex).whiteList.push(tempJobWhiteListData);
+	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function removePlayerFromJobBlackList(client, jobIndex, whoDeleted = defaultNoAccountId) {
+	quickDatabaseQuery(`UPDATE job_bl SET job_bl_deleted = 1, job_bl_who_deleted = ${whoDeleted}, job_bl_when_deleted = UNIX_TIMESTAMP() WHERE job_bl_sacct = ${getPlayerCurrentSubAccount(client).databaseId}`)
+
+	for (let i in getServerData().jobs[jobIndex].blackList) {
+		if (getServerData().jobs[jobIndex].blackList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
+			getServerData().jobs[jobIndex].splice(i, 1);
+		}
+	}
+
+	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function removePlayerFromJobWhiteList(client, jobIndex, whoDeleted = defaultNoAccountId) {
+	quickDatabaseQuery(`UPDATE job_wl SET job_wl_deleted = 1, job_wl_who_deleted = ${whoDeleted}, job_wl_when_deleted = UNIX_TIMESTAMP() WHERE job_wl_sacct = ${getPlayerCurrentSubAccount(client).databaseId}`)
+
+	for (let i in getServerData().jobs[jobIndex].whiteList) {
+		if (getServerData().jobs[jobIndex].whiteList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
+			getServerData().jobs[jobIndex].splice(i, 1);
+		}
+	}
+
+	setAllJobDataIndexes();
 }
 
 // ===========================================================================
