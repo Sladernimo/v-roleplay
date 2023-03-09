@@ -789,5 +789,10 @@
 	"JobInviteAlreadyHasJob": "That player already has a job!",
 	"JobInviteRequest": "{1} invited you to the {2} job.",
 	"CantAddJobMembers": "You can't invite new members to the job!",
-	"CantRemoveJobMembers": "You can't remove members from the job!"
+	"CantRemoveJobMembers": "You can't remove members from the job!",
+	"CantEditJobUniforms": "You can't edit job uniforms!",
+	"PlayerNotSurrendered": "The player must be surrendered (hands up, be knocked out, or tazed)!",
+	"PlayerRemovedFromJob": "You removed {1} from the job",
+	"RemovedFromJob": "You were removed from the job by {1}",
+	"UnableToCallPlayer": "{1} can't be called right now"
 }

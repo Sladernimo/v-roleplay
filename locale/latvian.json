@@ -780,5 +780,10 @@
 	"ResetActionTipsConfirm": "Are you sure you want to reset all seen action tips?",
 	"ActionTipsReset": "All seen action tips have been reset.",
 	"NormalChatDisabled": "Normal chat is disabled by server admin. Use chat commands instead.",
-	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin"
+	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin",
+	"CantEditJobUniforms": "You can't edit job uniforms!",
+	"PlayerNotSurrendered": "The player must be surrendered (hands up, be knocked out, or tazed)!",
+	"PlayerRemovedFromJob": "You removed {1} from the job",
+	"RemovedFromJob": "You were removed from the job by {1}",
+	"UnableToCallPlayer": "{1} can't be called right now"
 }
