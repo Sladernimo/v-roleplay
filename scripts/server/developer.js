@@ -593,12 +593,65 @@ function togglePauseSavingToDatabaseCommand(command, params, client) {
 
 function createAccountDataForNewServer(serverId) {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM acct_main`);
-		if (dbQuery) {
-			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serverId})`;
+		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main`);
+		for (let i in accounts) {
+			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accounts[i]["acct_id"]}, ${serverId})`;
 			quickDatabaseQuery(dbQueryString);
+		}
+	}
+}
+
+// ===========================================================================
+
+function fixMissingAccountServerData() {
+	let dbConnection = connectToDatabase();
+	console.log(`Connection: ${dbConnection}`);
+	if (dbConnection != false) {
+		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main WHERE acct_id > 12`);
+		console.log(`Accounts: ${accounts.length}`);
+		let servers = fetchQueryAssoc(dbConnection, `SELECT * FROM svr_main`);
+		console.log(`Servers: ${servers.length}`);
+
+		for (let i in accounts) {
+			let serverAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_svr WHERE acct_svr_acct = ${accounts[i]["acct_id"]}`)
+			console.log(`Server accounts for ${accounts[i]["acct_id"]}: ${serverAccounts.length}`);
+			for (let k in servers) {
+				let check = serverAccounts.find((sa) => sa["acct_svr_svr"] == servers[k]["svr_id"]);
+				console.log(`Check server: ${servers[k]["svr_id"]}. Amount ${check}`);
+				if (typeof check == "undefined") {
+					let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accounts[i]["acct_id"]}, ${servers[k]["svr_id"]})`;
+					//console.log(dbQueryString);
+					quickDatabaseQuery(dbQueryString);
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function fixMissingSubAccountServerData() {
+	let dbConnection = connectToDatabase();
+	console.log(`Connection: ${dbConnection}`);
+	if (dbConnection != false) {
+		let subAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main`);
+		console.log(`SubAccounts: ${subAccounts.length}`);
+		let servers = fetchQueryAssoc(dbConnection, `SELECT * FROM svr_main`);
+		console.log(`Servers: ${servers.length}`);
+
+		for (let i in subAccounts) {
+			let serverAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_svr WHERE sacct_svr_sacct = ${subAccounts[i]["sacct_id"]}`)
+			console.log(`Server accounts for ${subAccounts[i]["sacct_id"]}: ${serverAccounts.length}`);
+			for (let k in servers) {
+				let check = serverAccounts.find((sa) => sa["sacct_svr_server"] == servers[k]["svr_id"]);
+				console.log(`Check server: ${servers[k]["svr_id"]}. Amount ${check}`);
+				if (typeof check == "undefined") {
+					let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server) VALUES (${subAccounts[i]["sacct_id"]}, ${servers[k]["svr_id"]})`;
+					//console.log(dbQueryString);
+					quickDatabaseQuery(dbQueryString);
+				}
+			}
 		}
 	}
 }
