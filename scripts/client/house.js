@@ -25,6 +25,13 @@ class HouseData {
 
 // ===========================================================================
 
+function initHouseScript() {
+	logToConsole(LOG_DEBUG, "[V.RP.House]: Initializing house script ...");
+	logToConsole(LOG_DEBUG, "[V.RP.House]: House script initialized!");
+}
+
+// ===========================================================================
+
 function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
 	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${description}) from server`);
 
