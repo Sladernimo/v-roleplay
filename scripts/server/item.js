@@ -2400,22 +2400,42 @@ function getBestItemToTake(client, slot) {
  *
  */
 function listPlayerInventoryCommand(command, params, client) {
-	//let targetClient = client;
-	//if(!areParamsEmpty(client)) {
-	//	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
-	//		if(targetClient == false) {
-	//			sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
-	//			return false;
-	//		}
-	//
-	//		targetClient = getPlayerFromParams(params);
-	//	}
-	//}
-	//showPlayerInventoryToPlayer(client, targetClient);
-
 	showPlayerInventoryToPlayer(client, client);
-
 	markPlayerActionTipSeen(client, "ViewInventory");
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listOtherPlayerInventoryCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(client, command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageItems"))) {
+		if (!isPlayerSurrendered(targetClient)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeSurrendered"));
+			return false;
+		}
+	}
+
+	showPlayerInventoryToPlayer(client, targetClient);
 }
 
 // ===========================================================================
