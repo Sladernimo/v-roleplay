@@ -57,7 +57,7 @@ class JobData {
 		this.colour = toColour(0, 0, 0, 255);
 		this.whiteListEnabled = false;
 		this.blackListEnabled = false;
-		this.walkieTalkieFrequency = 0;
+		this.radioFrequency = 0;
 		this.index = -1;
 		this.needsSaved = false;
 		this.whoAdded = 0;
@@ -95,7 +95,7 @@ class JobData {
 			this.colour = toColour(dbAssoc["job_colour_r"], dbAssoc["job_colour_g"], dbAssoc["job_colour_b"], 255);
 			this.whiteListEnabled = dbAssoc["job_wl"];
 			this.blackListEnabled = dbAssoc["job_bl"];
-			this.walkieTalkieFrequency = dbAssoc["job_walkietalkiefreq"];
+			this.radioFrequency = dbAssoc["job_radio_freq"];
 			this.whoAdded = dbAssoc["job_who_added"];
 			this.whenAdded = dbAssoc["job_when_added"];
 
@@ -1148,7 +1148,7 @@ function givePlayerJobEquipment(client, equipmentId) {
 	for (let i in getJobData(jobId).equipment[equipmentId].items) {
 		let value = getJobData(jobId).equipment[equipmentId].items[i].value
 		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
-			value = getJobData(jobId).walkieTalkieFrequency;
+			value = getJobData(jobId).radioFrequency;
 		}
 		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
 		getItemData(itemId).needsSaved = false;
@@ -2813,7 +2813,7 @@ function saveJobToDatabase(jobData) {
 			["job_colour_r", colour[0]],
 			["job_colour_g", colour[1]],
 			["job_colour_b", colour[2]],
-			["job_walkietalkiefreq", jobData.walkieTalkieFrequency],
+			["job_radio_freq", jobData.radioFrequency],
 			["job_wl", jobData.whiteListEnabled],
 			["job_bl", jobData.blackListEnabled],
 			["job_who_added", jobData.whoAdded],

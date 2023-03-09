@@ -87,6 +87,7 @@ class VehicleData {
 		this.whoAdded = 0;
 		this.whenAdded = 0;
 		this.licensePlate = "";
+		this.radioFrequency = -1;
 
 		this.lastActiveTime = false;
 
@@ -160,6 +161,9 @@ class VehicleData {
 			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 			this.rank = toInteger(dbAssoc["veh_rank"]);
+			this.radioFrequency = toInteger(dbAssoc["veh_radio_freq"]);
+			this.whoAdded = toInteger(dbAssoc["veh_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
 		}
 	}
 };
@@ -2006,6 +2010,18 @@ function doesVehicleHaveTransmitRadio(vehicle) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function setAllVehicleRadioTransmitFrequencies() {
+	for (let i in getServerData().vehicles) {
+		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
+			if (getJobData(getJobIdFromDatabaseId(getServerData().vehicles[i].ownerId)) != false) {
+				getServerData().vehicles[i].radioFrequency = getJobData(getJobIdFromDatabaseId(getServerData().vehicles[i].ownerId)).radioFrequency;
+			}
+		}
+	}
 }
 
 // ===========================================================================
