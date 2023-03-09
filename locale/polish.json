@@ -777,7 +777,7 @@
 	"ResetActionTipsConfirm": "Czy na pewno chcesz zresetować wszystkie zobaczone wskazówki dotyczące akcji?",
 	"ActionTipsReset": "Wszystkie zobaczone wskazówki dotyczące akcji zostały zresetowane.",
 	"NormalChatDisabled": "Normalny czat jest wyłączony przez administratora serwera. Zamiast tego należy użyć komend czatu.",
-	"GlobalChatDisabled": "Globalny czat poza postacią jest wyłączony przez administratora serwera"
+	"GlobalChatDisabled": "Globalny czat poza postacią jest wyłączony przez administratora serwera",
 	"CantEditJobUniforms": "You can't edit job uniforms!",
 	"PlayerNotSurrendered": "The player must be surrendered (hands up, be knocked out, or tazed)!",
 	"PlayerRemovedFromJob": "You removed {1} from the job",
@@ -785,5 +785,7 @@
 	"UnableToCallPlayer": "{1} can't be called right now",
 	"NoRadioToUse": "You must have a radio, or be in a vehicle with a radio!",
 	"FrequencyMustBeNumber": "The radio channel must be a number!",
-	"FrequencyMustBeBetween": "The radio channel must be between {1} and {2}!"
+	"FrequencyMustBeBetween": "The radio channel must be between {1} and {2}!",
+	"HeaderVehicleTrunkItemList": "Vehicle Inventory (Trunk)",
+	"HeaderVehicleDashItemList": "Vehicle Inventory (Inside)"
 }
