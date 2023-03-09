@@ -330,3 +330,145 @@ function getRadioStationData(radioStationIndex) {
 }
 
 // ===========================================================================
+
+function radioTransmitCommand(command, params, client) {
+	let possibleRadio = getPlayerFirstItemSlotByUseType(client, V_ITEM_USE_TYPE_WALKIETALKIE);
+
+	let frequency = -1;
+
+	if (possibleRadio != -1) {
+		if (getItemData(possibleRadio).enabled) {
+			frequency = getItemData(possibleRadio).value;
+		}
+	} else {
+		let vehicle = null;
+
+		if (isPlayerInAnyVehicle(client)) {
+			vehicle = getPlayerVehicle(client);
+		} else {
+			let tempVehicle = getClosestVehicle(getPlayerPosition(client));
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(tempVehicle)) <= getGlobalConfig().vehicleTrunkDistance) {
+				vehicle = tempVehicle;
+			}
+		}
+
+		if (vehicle == null) {
+			messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
+			return false;
+		}
+
+		if (!doesVehicleHaveTransmitRadio(vehicle)) {
+			messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
+			return false;
+		}
+
+		frequency = getVehicleData(vehicle).radioFrequency;
+	}
+
+	if (frequency == -1) {
+		messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
+		return false;
+	}
+
+	sendRadioTransmission(frequency, params, client);
+}
+
+// ===========================================================================
+
+function sendRadioTransmission(frequency, messageText, sentFromClient) {
+	let seenClients = [];
+	seenClients.push(sentFromClient);
+
+	let clients = getClients();
+
+	for (let i in clients) {
+		if (seenClients.indexOf(clients[i]) == -1) {
+			if (getDistance(getPlayerPosition(clients[i]), getPlayerPosition(sentFromClient)) <= getGlobalConfig().talkDistance) {
+				seenClients.push(clients[i]);
+				messagePlayerNormal(`[#CCCCCC]${getCharacterFullName(client)} {ALTCOLOUR}(to radio): {MAINCOLOUR}${messageText}`);
+			}
+		}
+	}
+
+	let vehicles = getServerData().vehicles;
+	for (let i in vehicles) {
+		if (getVehicleData(vehicles[i]).radioFrequency == frequency) {
+			for (let j in clients) {
+				if (seenClients.indexOf(clients[j]) == -1) {
+					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[j].vehicle)) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+						seenClients.push(clients[j]);
+						messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
+					}
+				}
+			}
+		}
+	}
+
+	let items = getServerData().items;
+	for (let i in items) {
+		if (items[i].enabled) {
+			if (getItemTypeData(items[i].itemTypeIndex).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
+				if (items[i].value == frequency) {
+					for (let j in clients) {
+						if (seenClients.indexOf(clients[j]) == -1) {
+							if (getDistance(getPlayerPosition(clients[j], getItemPosition(i))) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+								seenClients.push(clients[j]);
+								messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function setRadioFrequencyCommand(command, params, client) {
+	// Needs finished
+	return false;
+
+	/*
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, ``);
+		return false;
+	}
+
+	params = toInteger(params);
+
+	if (params < 100 || params > 500) {
+		messagePlayerError(client, `The frequency channel must be between 100 and 500!`);
+		return false;
+	}
+
+	if (!getPlayerActiveItem(client)) {
+		messagePlayerError(client, `You aren't holding a walkie talkie!`);
+		return false;
+	}
+
+	if (!getItemData(getPlayerActiveItem(client))) {
+		messagePlayerError(client, `You aren't holding a walkie talkie!`);
+		return false;
+	}
+
+	if (getItemData(getPlayerActiveItem(client)).enabled) {
+		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "use")) {
+			messagePlayerError(client, `Your walkie talkie is turned off. Press ${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "use")).key)} to turn it on`);
+		} else {
+			messagePlayerError(client, `Your walkie talkie is turned off. Type {ALTCOLOUR}/use {MAINCOLOUR}to turn it on`);
+		}
+		return false;
+	}
+
+	getItemData(getPlayerActiveItem(client)).value = params * 100;
+	messagePlayerSuccess(client, getLocaleString(client, "FrequencyChannelChanged", `Walkie Talkie`, `${getPlayerData(client).activeHotBarSlot + 1}`, `${getItemValueDisplayForItem(getPlayerActiveItem(client))}`));
+	*/
+}
+
+// ===========================================================================

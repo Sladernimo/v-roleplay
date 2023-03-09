@@ -360,11 +360,11 @@ function loadCommands() {
 			new CommandData("buylist", listBusinessFloorInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items that can be bought from the business"),
 
 			new CommandData("power", toggleItemEnabledCommand, "", getStaffFlagValue("None"), true, false, "Turns on or off an item"),
-			new CommandData("freq", setWalkieTalkieFrequencyCommand, "[frequncy number]", getStaffFlagValue("None"), true, false, "Sets a radio item's frequency"),
+			//new CommandData("freq", setRadioFrequencyCommand, "[frequency number]", getStaffFlagValue("None"), true, false, "Sets a vehicle or item radio frequency"),
 			//new CommandData("call", callWithPhoneCommand, "[number]", getStaffFlagValue("None"), true, false),
 			//new CommandData("speakerphone", togglePhoneSpeakerCommand, "", getStaffFlagValue("None"), true, false),
-			new CommandData("radio", walkieTalkieChatCommand, "", getStaffFlagValue("None"), true, false, "Chat over a radio item (item must be able to transmit)"),
-			new CommandData("r", walkieTalkieChatCommand, "", getStaffFlagValue("None"), true, false, "Chat over a radio item (item must be able to transmit)"),
+			new CommandData("radio", radioTransmitCommand, "", getStaffFlagValue("None"), true, false, "Chat over a radio (vehicle radio or item)"),
+			new CommandData("r", radioTransmitCommand, "", getStaffFlagValue("None"), true, false, "Chat over a radio (vehicle radio or item)"),
 
 			new CommandData("additemtype", createItemTypeCommand, "<name>", getStaffFlagValue("ManageItems"), true, false, "Adds a new item type"),
 			new CommandData("itemtypeusetype", setItemTypeUseTypeCommand, "<item type> <use type>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's use-type (what kind of action is performed when using it)"),
