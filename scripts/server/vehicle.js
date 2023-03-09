@@ -1989,3 +1989,23 @@ function getVehicleDataIndexFromVehicle(vehicle) {
 }
 
 // ===========================================================================
+
+function doesVehicleHaveTransmitRadio(vehicle) {
+	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_POLICE) {
+			return true;
+		}
+
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_FIRE) {
+			return true;
+		}
+
+		if (getJobType(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)) == V_JOB_MEDICAL) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
