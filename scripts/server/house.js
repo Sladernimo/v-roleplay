@@ -1801,9 +1801,21 @@ function updateHousePickupLabelData(houseId) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (houseData == false) {
-			sendHouseToPlayer(null, houseId, true, "", false, -1, -1, 0, 0, false, false, false);
+			sendHouseToPlayer(null, houseId, true, "", false, -1, -1, 0, 0, false, false);
 		} else {
-			sendHouseToPlayer(null, houseId, false, houseData.description, houseData.entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), houseData.buyPrice, houseData.rentPrice, houseData.hasInterior, houseData.locked);
+			sendHouseToPlayer(
+				null,
+				houseId,
+				false,
+				houseData.description,
+				houseData.entrancePosition,
+				getHouseEntranceBlipModelForNetworkEvent(houseId),
+				getHouseEntrancePickupModelForNetworkEvent(houseId),
+				houseData.buyPrice,
+				houseData.rentPrice,
+				houseData.hasInterior,
+				houseData.locked
+			);
 		}
 		return false;
 	}

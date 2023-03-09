@@ -25,6 +25,11 @@ function initClientScripts() {
 	initPayPhoneScript();
 	initTimersScript();
 	initJobScript();
+	initItemScript();
+	initBusinessScript();
+	initHouseScript();
+
+	loadLocaleConfig();
 
 	addAllNetworkHandlers();
 
@@ -203,6 +208,8 @@ function setUpInitialGame() {
 
 // ===========================================================================
 
-initClientScripts();
+addEventHandler("OnResourceStart", onResourceStart);
+addEventHandler("OnResourceReady", onResourceReady);
+addEventHandler("OnResourceStop", onResourceStop);
 
 // ===========================================================================

@@ -62,8 +62,19 @@ function getPlayerPosition(client) {
 	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncPosition;
 	} else {
-		if (getPlayerPed(client) != null) {
-			return getPlayerPed(client).position;
+		// Check if Mafia 1, player position is bugged when in a vehicle
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isPlayerInAnyVehicle(client)) {
+				return getPlayerVehicle(client).position;
+			} else {
+				return getPlayerPed(client).position;
+			}
+		} else {
+			if (getPlayerPed(client) != null) {
+				return getPlayerPed(client).position;
+			} else {
+				return toVector3(0.0, 0.0, 0.0);
+			}
 		}
 	}
 }
@@ -166,6 +177,10 @@ function isPlayerInAnyVehicle(client) {
 	if (!areServerElementsSupported()) {
 		return (getPlayerData().syncVehicle != null);
 	} else {
+		if (getPlayerPed(client) == null) {
+			return false;
+		}
+
 		return (getPlayerPed(client).vehicle != null);
 	}
 }

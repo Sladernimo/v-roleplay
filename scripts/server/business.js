@@ -95,6 +95,9 @@ class BusinessData {
 
 		this.labelHelpType = V_PROPLABEL_INFO_NONE;
 
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_id"]);
 			this.name = toString(dbAssoc["biz_name"]);
@@ -124,9 +127,10 @@ class BusinessData {
 
 			this.entranceFee = toInteger(dbAssoc["biz_entrance_fee"]);
 			this.till = toInteger(dbAssoc["biz_till"]);
-
 			this.labelHelpType = toInteger(dbAssoc["biz_label_help_type"]);
 			this.streamingRadioStation = toInteger(dbAssoc["biz_radio_station"]);
+			this.whoAdded = toInteger(dbAssoc["biz_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["biz_when_added"]);
 		}
 	};
 };
@@ -315,7 +319,9 @@ function createBusinessCommand(command, params, client) {
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
-		getPlayerData(client).interiorScene);
+		getPlayerData(client).interiorScene,
+		getPlayerData(client).accountData.databaseId
+	);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created business: {businessBlue}${params}`, true);
 }
@@ -357,7 +363,7 @@ function createBusinessLocationCommand(command, params, client) {
 
 // ===========================================================================
 
-function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1) {
+function createBusiness(name, entrancePosition, exitPosition, entrancePickupModel = -1, entranceBlipModel = -1, entranceInterior = 0, entranceDimension = 0, entranceScene = -1, whoAdded = defaultNoAccountId) {
 	let tempBusinessData = new BusinessData(false);
 	tempBusinessData.name = name;
 
@@ -376,6 +382,9 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.exitInterior = 0;
 	tempBusinessData.exitDimension = 0;
 	tempBusinessData.exitScene = -1;
+
+	tempBusinessData.whoAdded = whoAdded;
+	tempBusinessData.whenAdded = getCurrentUnixTimestamp();
 
 	tempBusinessData.needsSaved = true;
 	let businessId = getServerData().businesses.push(tempBusinessData);
@@ -1933,6 +1942,8 @@ function saveBusinessToDatabase(businessId) {
 			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 			["biz_buy_price", tempBusinessData.buyPrice],
+			["biz_who_added", tempBusinessData.whoAdded],
+			["biz_when_added", tempBusinessData.whenAdded],
 			//["biz_rent_price", tempBusinessData.rentPrice],
 		];
 

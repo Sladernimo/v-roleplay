@@ -211,8 +211,8 @@ let globalConfig = {
 	houseDimensionStart: 100,
 	buyVehicleDriveAwayDistance: 25.0,
 	returnToJobVehicleTime: 30,
-	walkieTalkieSpeakerDistance: 15,
-	walkieTalkieTalkDistance: 15,
+	radioTransmitSpeakerDistance: 15,
+	radioTransmitTalkDistance: 15,
 	phoneSpeakerDistance: 15,
 	phoneTalkDistance: 15,
 	tazerEffectDuration: 15000,
@@ -283,6 +283,7 @@ let globalConfig = {
 	nightMapEndHour: 7,
 	payPhoneGiveDistance: 2.5,
 	payPhoneAnswerDistance: 2.5,
+	vehicleTransmitRadioUseDistance: 2.5,
 };
 
 // ===========================================================================

@@ -104,7 +104,6 @@ let serverData = {
 };
 
 let localPlayerMoney = 0;
-let localPlayerMoneyInterval = null;
 
 let currencyString = "${AMOUNT}";
 

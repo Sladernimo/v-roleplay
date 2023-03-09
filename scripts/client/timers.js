@@ -7,6 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let localPlayerMoneyInterval = null;
+
+// ===========================================================================
+
 function initTimersScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.Timers]: Initializing timer script ...");
 	logToConsole(LOG_DEBUG, "[V.RP.Timers]: Timers script initialized!");
@@ -15,6 +19,7 @@ function initTimersScript() {
 // ===========================================================================
 
 function initTimers() {
+	localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 }
 
 // ===========================================================================

@@ -208,8 +208,20 @@ function loadSubAccountsFromAccount(accountId) {
 							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
 							if (!getClanRankData(clanIndex, clanRankIndex)) {
 								let newClanRankIndex = getLowestClanRank(clanIndex);
-								tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId
-								tempSubAccount.clanRankIndex = newClanRankIndex;
+								if (getClanRankData(clanIndex, newClanRankIndex) != false) {
+									console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}! Using lowest rank ${newClanRankIndex} instead.`);
+									tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId;
+									tempSubAccount.clanRankIndex = newClanRankIndex;
+								} else {
+									// Somethings fucked. Clan rank invalid, and no other rank to use. Removing from clan.
+									logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}, and no other rank to use. Removing from clan ...`);
+									tempSubAccount.clan = 0;
+									tempSubAccount.clanRank = 0;
+									tempSubAccount.clanIndex = -1;
+									tempSubAccount.clanRankIndex = -1;
+									tempSubAccount.clanTitle = "";
+									tempSubAccount.clanFlags = 0;
+								}
 							} else {
 								tempSubAccount.clanRankIndex = clanRankIndex;
 							}
@@ -231,7 +243,19 @@ function loadSubAccountsFromAccount(accountId) {
 								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
 								if (!getJobRankData(jobIndex, jobRankIndex)) {
 									let newJobRankIndex = getLowestJobRank(jobIndex);
-									console.log(`[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+									if (getJobRankData(jobIndex, newJobRankIndex) != false) {
+										console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+										tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+										tempSubAccount.jobRankIndex = newJobRankIndex;
+									} else {
+										// Somethings fucked. Job rank invalid, and no other rank to use. Removing from Job.
+										logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}, and no other rank to use. Removing from job ...`);
+										tempSubAccount.job = 0;
+										tempSubAccount.jobRank = 0;
+										tempSubAccount.jobIndex = -1;
+										tempSubAccount.jobRankIndex = -1;
+									}
+
 									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
 									tempSubAccount.jobRankIndex = newJobRankIndex;
 								} else {

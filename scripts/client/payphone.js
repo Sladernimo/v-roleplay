@@ -18,10 +18,11 @@ let payPhoneRingingSound = null;
 let payPhoneDialingSound = null;
 let payPhonePickupSound = null;
 let payPhoneHangupSound = null;
-let payPhoneRingingSoundFilePath = "files/sounds/payphone/old-payphone-ring.mp3";
-let payPhoneDialingSoundFilePath = "files/sounds/payphone/old-payphone-dial.mp3";
-let payPhonePickupSoundFilePath = "files/sounds/payphone/old-payphone-pickup.mp3";
-let payPhoneHangupSoundFilePath = "files/sounds/payphone/old-payphone-hangup.mp3";
+
+let payPhoneRingingSoundFilePath = "";
+let payPhoneDialingSoundFilePath = "";
+let payPhonePickupSoundFilePath = "";
+let payPhoneHangupSoundFilePath = "";
 
 let ringingPayPhone = -1;
 
@@ -40,6 +41,21 @@ class PayPhoneData {
 
 function initPayPhoneScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Initializing payphone script ...");
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		payPhoneRingingSoundFilePath = "files/sounds/payphone/old-payphone-ring.mp3";
+		payPhoneDialingSoundFilePath = "files/sounds/payphone/old-payphone-dial.mp3";
+		payPhonePickupSoundFilePath = "files/sounds/payphone/old-payphone-pickup.mp3";
+		payPhoneHangupSoundFilePath = "files/sounds/payphone/old-payphone-hangup.mp3";
+	} else {
+		if (getGame() != V_GAME_GTA_SA) {
+			payPhoneRingingSoundFilePath = "files/sounds/payphone/old-payphone-ring.mp3";
+			payPhoneDialingSoundFilePath = "files/sounds/payphone/old-payphone-dial.mp3";
+			payPhonePickupSoundFilePath = "files/sounds/payphone/old-payphone-pickup.mp3";
+			payPhoneHangupSoundFilePath = "files/sounds/payphone/old-payphone-hangup.mp3";
+		}
+	}
+
 	//payPhoneRingingIndicatorImage = loadPayPhoneRingingIndicatorImage();
 	payPhoneRingingSound = loadPayPhoneRingingSound();
 	payPhoneDialingSound = loadPayPhoneDialingSound();
@@ -51,6 +67,10 @@ function initPayPhoneScript() {
 // ===========================================================================
 
 function loadPayPhoneRingingIndicatorImage() {
+	if (payPhoneRingingIndicatorImagePath == "") {
+		return null;
+	}
+
 	let imageStream = openFile(payPhoneRingingIndicatorImagePath);
 	let tempImage = null;
 	if (imageStream != null) {
@@ -64,6 +84,10 @@ function loadPayPhoneRingingIndicatorImage() {
 // ===========================================================================
 
 function loadPayPhoneRingingSound() {
+	if (payPhoneRingingSoundFilePath == "") {
+		return null;
+	}
+
 	let soundStream = openFile(payPhoneRingingSoundFilePath);
 	let tempSound = null;
 	if (soundStream != null) {
@@ -77,6 +101,10 @@ function loadPayPhoneRingingSound() {
 // ===========================================================================
 
 function loadPayPhoneDialingSound() {
+	if (payPhoneDialingSoundFilePath == "") {
+		return null;
+	}
+
 	let soundStream = openFile(payPhoneDialingSoundFilePath);
 	let tempSound = null;
 	if (soundStream != null) {
@@ -94,6 +122,10 @@ function loadPayPhoneDialingSound() {
 // ===========================================================================
 
 function loadPayPhonePickupSound() {
+	if (payPhonePickupSoundFilePath == "") {
+		return null;
+	}
+
 	let soundStream = openFile(payPhonePickupSoundFilePath);
 	let tempSound = null;
 	if (soundStream != null) {
@@ -111,6 +143,10 @@ function loadPayPhonePickupSound() {
 // ===========================================================================
 
 function loadPayPhoneHangupSound() {
+	if (payPhoneHangupSoundFilePath == "") {
+		return null;
+	}
+
 	let soundStream = openFile(payPhoneHangupSoundFilePath);
 	let tempSound = null;
 	if (soundStream != null) {
@@ -128,6 +164,10 @@ function loadPayPhoneHangupSound() {
 // ===========================================================================
 
 function processPayPhonesDistance() {
+	if (payPhoneRingingSound == null) {
+		return false;
+	}
+
 	let tempRingingPhone = -1;
 	for (let i in getServerData().payPhones) {
 		if (getServerData().payPhones[i].state == V_PAYPHONE_STATE_RINGING) {
@@ -231,6 +271,11 @@ function removePayPhonesFromClient() {
 // ===========================================================================
 
 function payPhoneDial() {
+	if (payPhoneDialingSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone dial sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone dial sound");
 	payPhoneDialingSound.play();
 }
@@ -238,6 +283,11 @@ function payPhoneDial() {
 // ===========================================================================
 
 function payPhoneHangup() {
+	if (payPhoneHangupSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone hangup sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone hangup sound");
 	payPhoneHangupSound.play();
 }
@@ -245,6 +295,11 @@ function payPhoneHangup() {
 // ===========================================================================
 
 function payPhonePickup() {
+	if (payPhonePickupSound == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, "[V.RP.PayPhone]: Attempted to play payphone pickup sound, but sound object is null");
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, "[V.RP.PayPhone]: Playing payphone pickup sound");
 	payPhonePickupSound.play();
 }

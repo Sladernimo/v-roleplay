@@ -172,6 +172,7 @@ function setAllServerDataIndexes() {
 	setAllRaceDataIndexes();
 	setAllRadioStationIndexes();
 	setAllPayPhoneIndexes();
+	setAllVehicleRadioTransmitFrequencies();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();

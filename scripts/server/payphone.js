@@ -219,14 +219,14 @@ function callPayPhoneCommand(command, params, client) {
 	}
 
 	if (getPlayerData(targetClient).usingPayPhone != -1 || isPlayerRestrained(targetClient) || isPlayerSurrendered(targetClient) || isPlayerMuted(targetClient) || !isPlayerSpawned(targetClient)) {
-		messagePlayerError(client, getLocaleString(client, "UnableToCallPlayer"));
+		messagePlayerError(client, getLocaleString(client, "UnableToCallPlayer", getCharacterFullName(targetClient)));
 		return false;
 	}
 
 	let closestPayPhoneTarget = getClosestPayPhone(getPlayerPosition(targetClient));
 
 	if (closestPayPhoneTarget == closestPayPhone) {
-		messagePlayerError(client, getLocaleString(client, "UnableToCallPlayer"));
+		messagePlayerError(client, getLocaleString(client, "UnableToCallPlayer", getCharacterFullName(targetClient)));
 		return false;
 	}
 
