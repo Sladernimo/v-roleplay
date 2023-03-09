@@ -207,9 +207,11 @@ function resetClientStuff(client) {
 
 function kickAllClients() {
 	getClients().forEach((client) => {
-		getPlayerData(client).customDisconnectReason = "ServerRestarting";
+		if (getPlayerData(client) != false) {
+			getPlayerData(client).customDisconnectReason = "ServerRestarting";
+		}
 		disconnectPlayer(client);
-	})
+	});
 }
 
 // ===========================================================================
