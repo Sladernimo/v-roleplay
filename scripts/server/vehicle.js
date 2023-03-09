@@ -1807,6 +1807,8 @@ function processVehicleBurning() {
 
 function cacheAllVehicleItems() {
 	for (let i in getServerData().vehicles) {
+		clearArray(getServerData().vehicles[i].trunkItemCache);
+		clearArray(getServerData().vehicles[i].dashItemCache);
 		for (let j in getServerData().items) {
 			if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
 				getServerData().vehicles[i].trunkItemCache.push(j);
@@ -1897,7 +1899,7 @@ function getClosestTaxi(position) {
 // ===========================================================================
 
 function getVehicleTrunkPosition(vehicle) {
-	return getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), getGlobalConfig().vehicleTrunkRearDistance);
+	return getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), getGlobalConfig().vehicleTrunkDistance);
 }
 
 // ===========================================================================
