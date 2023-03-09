@@ -16,9 +16,6 @@ function initEventScript() {
 // ===========================================================================
 
 function addAllEventHandlers() {
-	addEventHandler("OnResourceStart", onResourceStart);
-	addEventHandler("OnResourceReady", onResourceReady);
-	addEventHandler("OnResourceStop", onResourceStop);
 	addEventHandler("OnProcess", onProcess);
 	addEventHandler("OnKeyUp", onKeyUp);
 	addEventHandler("OnDrawnHUD", onDrawnHUD);
@@ -94,8 +91,11 @@ function onResourceStop(event, resource) {
 function onResourceReady(event, resource) {
 	if (resource == thisResource) {
 		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceReady called - Sending signal to server`);
-		loadLocaleConfig();
-		sendResourceReadySignalToServer();
+
+		setTimeout(function () {
+			initClientScripts();
+			sendResourceReadySignalToServer();
+		}, 500);
 	}
 }
 
