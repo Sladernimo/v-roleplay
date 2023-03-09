@@ -283,6 +283,7 @@ let globalConfig = {
 	nightMapEndHour: 7,
 	payPhoneGiveDistance: 2.5,
 	payPhoneAnswerDistance: 2.5,
+	vehicleTransmitRadioUseDistance: 2.5,
 };
 
 // ===========================================================================
