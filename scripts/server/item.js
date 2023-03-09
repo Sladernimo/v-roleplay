@@ -1902,37 +1902,43 @@ function playerTakeItem(client, itemId) {
 		return false;
 	}
 
-	let ownerId = getItemIdFromDatabaseId(getItemData(itemId).ownerId);
+	let ownerId = getItemIndexFromDatabaseId(getItemData(itemId).ownerId);
+	let ownerType = getItemData(itemId).ownerType;
 
 	getItemData(itemId).ownerType = V_ITEM_OWNER_PLAYER;
 	getItemData(itemId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-
 	getPlayerData(client).hotBarItems[firstSlot] = itemId;
 	updatePlayerHotBar(client);
 
-	switch (bestOwner[1]) {
+	switch (ownerType) {
 		case V_ITEM_OWNER_HOUSE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromHouse", getItemName(itemId)));
+			cacheAllHouseItems();
 			break;
 
 		case V_ITEM_OWNER_BIZFLOOR:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusiness", getItemName(itemId)));
+			cacheAllBusinessItems();
 			break;
 
 		case V_ITEM_OWNER_BIZSTORAGE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusinessStorage", getItemName(itemId)));
+			cacheAllBusinessItems();
 			break;
 
 		case V_ITEM_OWNER_VEHTRUNK:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleTrunk", getItemName(itemId)));
+			cacheAllVehicleItems();
 			break;
 
 		case V_ITEM_OWNER_VEHDASH:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleDash", getItemName(itemId)));
+			cacheAllVehicleItems();
 			break;
 
 		case V_ITEM_OWNER_ITEM:
-			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(ownerId));
+			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(getItemIdFromDatabaseId(ownerId)));
+			cacheAllItemItems();
 			break;
 	}
 }
@@ -2307,6 +2313,13 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 function getBestNewOwnerToPutItem(client) {
 	let position = getPlayerPosition(client);
 
+	if (isPlayerInAnyVehicle(client)) {
+		let vehicle = getClosestVehicle(position);
+		if (getVehicleData(vehicle) != false && isPlayerInFrontVehicleSeat(client)) {
+			return [V_ITEM_OWNER_VEHDASH, vehicle];
+		}
+	}
+
 	let possibleItem = getClosestItemOnGround(position);
 	if (possibleItem != -1) {
 		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
@@ -2347,12 +2360,36 @@ function getBestItemToTake(client, slot) {
 	let ownerType = V_ITEM_OWNER_NONE;
 	let ownerId = 0;
 
+	if (isPlayerInAnyVehicle(client)) {
+		let possibleVehicle = getPlayerVehicle(client);
+		if (getVehicleData(possibleVehicle)) {
+			if (isPlayerInFrontVehicleSeat(client)) {
+				if (typeof getVehicleData(possibleVehicle).dashItemCache[slot] != "undefined") {
+					itemId = getVehicleData(possibleVehicle).dashItemCache[slot];
+					ownerType = V_ITEM_OWNER_VEHDASH;
+					ownerId = possibleVehicle;
+				}
+			}
+		}
+	}
+
 	let possibleItem = getClosestItemOnGround(position);
 	if (getItemData(possibleItem)) {
 		if (typeof getItemData(possibleItem).itemCache[slot] != "undefined") {
 			itemId = getItemData(possibleItem).itemCache[slot]
 			ownerType = V_ITEM_OWNER_ITEM;
 			ownerId = possibleItem;
+		}
+	}
+
+	let possibleVehicle = getClosestVehicle(position);
+	if (getVehicleData(possibleVehicle) != false) {
+		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
+				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
+				ownerType = V_ITEM_OWNER_VEHTRUNK;
+				ownerId = possibleVehicle;
+			}
 		}
 	}
 
@@ -2371,17 +2408,6 @@ function getBestItemToTake(client, slot) {
 			itemId = getBusinessData(possibleBusiness).floorItemCache[slot];
 			ownerType = V_ITEM_OWNER_BIZFLOOR;
 			ownerId = possibleBusiness;
-		}
-	}
-
-	let possibleVehicle = getClosestVehicle(position);
-	if (getVehicleData(possibleVehicle)) {
-		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= closestDistance) {
-			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
-				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
-				ownerType = V_ITEM_OWNER_VEHTRUNK;
-				ownerId = possibleVehicle;
-			}
 		}
 	}
 
@@ -2429,13 +2455,90 @@ function listOtherPlayerInventoryCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageItems"))) {
-		if (!isPlayerSurrendered(targetClient)) {
+		if (!isPlayerSurrendered(targetClient) || isPlayerRestrained(targetClient)) {
 			messagePlayerError(client, getLocaleString(client, "MustBeSurrendered"));
+			return false;
+		}
+
+		if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().searchPlayerDistance) {
+			messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 			return false;
 		}
 	}
 
 	showPlayerInventoryToPlayer(client, targetClient);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listVehicleTrunkInventoryCommand(command, params, client) {
+	let vehicle = getClosestVehicle(getPlayerPosition(client));
+
+	if (!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getVehicleTrunkPosition(vehicle)) > getGlobalConfig().vehicleTrunkDistance) {
+		messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
+		return false;
+	}
+
+	if (getVehicleData(vehicle).locked) {
+		if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+			if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
+				messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
+			} else {
+				messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
+			}
+		} else {
+			messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
+		}
+		return false;
+	}
+
+	showVehicleTrunkInventoryToPlayer(client, vehicle);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listVehicleDashInventoryCommand(command, params, client) {
+	if (!getPlayerVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	if (!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (getPlayerVehicleSeat(client) > 1) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
+		return false;
+	}
+
+	showVehicleDashInventoryToPlayer(client, vehicle);
 }
 
 // ===========================================================================
@@ -3123,11 +3226,51 @@ function clearPlayerItemActionStateAfterDelay(client, delay) {
 
 // ===========================================================================
 
+function showVehicleTrunkInventoryToPlayer(client, vehicle) {
+	let itemDisplay = [];
+
+	for (let i in getVehicleData(vehicle).trunkItemCache) {
+		if (getVehicleData(vehicle).trunkItemCache[i] == -1) {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
+		} else {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getVehicleData(vehicle).trunkItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getVehicleData(vehicle).trunkItemCache[i])}`);
+		}
+	}
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleTrunkItemList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
+}
+
+// ===========================================================================
+
+function showVehicleDashInventoryToPlayer(client, vehicle) {
+	let itemDisplay = [];
+
+	for (let i in getVehicleData(vehicle).dashItemCache) {
+		if (getVehicleData(vehicle).dashItemCache[i] == -1) {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
+		} else {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getVehicleData(vehicle).dashItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getVehicleData(vehicle).dashItemCache[i])}`);
+		}
+	}
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleDashItemList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
+}
+
+// ===========================================================================
+
 function showBusinessFloorInventoryToPlayer(client, businessId) {
 	let itemDisplay = [];
 
 	for (let i in getBusinessData(businessId).floorItemCache) {
-		if (getBusinessData(businessId).floorItemCache == -1) {
+		if (getBusinessData(businessId).floorItemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[i]).itemTypeIndex).name} - ${(getPlayerCurrentSubAccount(client).cash > getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice) ? "{softGreen}" : "{softRed}"}${getCurrencyString(getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice)}`);
@@ -3146,7 +3289,7 @@ function showBusinessFloorInventoryToPlayer(client, businessId) {
 function showBusinessStorageInventoryToPlayer(client, businessId) {
 	let itemDisplay = [];
 	for (let i in getBusinessData(businessId).storageItemCache) {
-		if (getBusinessData(businessId).storageItemCache == -1) {
+		if (getBusinessData(businessId).storageItemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getBusinessData(businessId).storageItemCache[i])}`);
@@ -3166,7 +3309,7 @@ function showBusinessStorageInventoryToPlayer(client, businessId) {
 function showItemInventoryToPlayer(client, itemId) {
 	let itemDisplay = [];
 	for (let i in getItemData(itemId).itemCache) {
-		if (getItemData(itemId).itemCache == -1) {
+		if (getItemData(itemId).itemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getItemData(itemId).itemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getItemData(itemId).itemCache[i])}`);
@@ -3220,7 +3363,7 @@ function showPlayerInventoryToPlayer(showToClient, targetClient) {
 function showHouseInventoryToPlayer(client, houseId) {
 	let itemDisplay = [];
 	for (let i in getHouseData(houseId).itemCache) {
-		if (getHouseData(houseId).itemCache == -1) {
+		if (getHouseData(houseId).itemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getHouseData(houseId).itemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getHouseData(houseId).itemCache[i])}`);
@@ -3343,6 +3486,8 @@ function cacheAllItemItems() {
 // ===========================================================================
 
 function cacheItemItems(itemId) {
+	clearArray(getItemData(itemId).itemCache);
+
 	let items = getServerData().items;
 	for (let i in items) {
 		if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {

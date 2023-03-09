@@ -351,7 +351,8 @@ function loadCommands() {
 			new CommandData("search", listOtherPlayerInventoryCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Shows the items in a player's inventory"),
 
 			new CommandData("items", listItemInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items stored in a container item"),
-			//new CommandData("vehtrunk", listVehicleTrunkInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in a vehicle's trunk"),
+			new CommandData("vehtrunk", listVehicleTrunkInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in a vehicle's trunk"),
+			new CommandData("vehdash", listVehicleDashInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in a vehicle's dash compartment (inside)"),
 			new CommandData("houseitems", listHouseInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in the house's storage"),
 			new CommandData("bizstorage", listBusinessStorageInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items in the business's extra storage (not buyable)"),
 			new CommandData("bizfloor", listBusinessFloorInventoryCommand, "", getStaffFlagValue("None"), true, false, "Shows the items that can be bought from the business"),
