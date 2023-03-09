@@ -1629,7 +1629,7 @@ function cacheAllHouseItems() {
 // ===========================================================================
 
 function cacheHouseItems(houseId) {
-	getHouseData(houseId).itemCache = [];
+	clearArray(getHouseData(houseId).itemCache);
 
 	for (let i in getServerData().items) {
 		if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
