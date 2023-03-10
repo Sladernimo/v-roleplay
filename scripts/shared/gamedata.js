@@ -3372,7 +3372,7 @@ let gameData = {
 			["hudtu01.i3d", "Beige Guardian Terraplane Tudor"],
 			["hudtu02.i3d", "Black Guardian Terraplane Tudor"],
 			["cad_ford00.i3d", "Lassiter Fordor"],
-			["cad_phaeton00", "Lassiter Phaeton"],
+			["cad_phaeton00.i3d", "Lassiter Phaeton"],
 			["cad_road00.i3d", "Lassiter Roadster"],
 			["hartmann00.i3d", "Lassiter Appolyon"],
 			["hearseCa00.i3d", "Lassiter Charon"],
@@ -3416,7 +3416,8 @@ let gameData = {
 			["truckB00.i3d", "Bolt Truck Covered"],
 			["TruckBxx00.i3d", "Bolt Truck (Atlantic Import)"],
 			["truckBx00.i3d", "Bolt Truck"],
-			["bus00.4ds", "Bus"],
+			["bus00.i3d", "Bus"],
+			["phantom00.i3d", "Manta Prototype"],
 		],
 		[V_GAME_GTA_V]: [
 			["adder", 3078201489],
