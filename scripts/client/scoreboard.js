@@ -12,7 +12,7 @@ let scoreBoardListFont = null;
 
 let pausedColour = COLOUR_RED;
 
-let scoreBoardKey = null;
+let scoreBoardKey = getKeyIdFromParams("F5");
 
 // ===========================================================================
 
