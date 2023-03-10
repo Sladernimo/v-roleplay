@@ -193,6 +193,11 @@ function loadCommands() {
 			new CommandData("clandelrankflag", removeClanRankFlagCommand, "<rank name/id> <flag name>", getStaffFlagValue("None"), true, true, "Takes a clan permission from a clan rank"),
 			new CommandData("clanaddmemberflag", addClanMemberFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("None"), true, true, "Gives a clan member a clan permission"),
 			new CommandData("clandelmemberflag", removeClanMemberFlagCommand, "<player name/id> <flag name>", getStaffFlagValue("None"), true, true, "Takes a clan permission from a clan member"),
+
+			new CommandData("claninvite", clanInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a clan"),
+			new CommandData("clanhire", clanInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a clan"),
+			new CommandData("clanuninvite", clanUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their clan"),
+			new CommandData("clanfire", clanUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their clan"),
 		],
 		class: [],
 		client: [],
