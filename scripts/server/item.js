@@ -335,7 +335,7 @@ function loadItemTypesFromDatabase() {
 
 // ===========================================================================
 
-function createItem(itemTypeId, value, ownerType, ownerId, amount = 1) {
+function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary = false) {
 	let tempItemData = new ItemData(false);
 	tempItemData.itemType = getItemTypeData(itemTypeId).databaseId;
 	tempItemData.ownerType = ownerType;
@@ -343,6 +343,11 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1) {
 	tempItemData.amount = amount;
 	tempItemData.value = value;
 	tempItemData.needsSaved = true;
+
+	if (temporary == true) {
+		tempItemData.databaseId = -1;
+	}
+
 	let slot = getServerData().items.push(tempItemData);
 	let index = slot - 1;
 	getServerData().items[slot - 1].index = index;
@@ -2215,14 +2220,15 @@ function cachePlayerHotBarItems(client) {
 	}
 
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER) {
-			if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
-				let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
-				if (firstSlot != -1) {
-					getPlayerData(client).hotBarItems[firstSlot] = i;
+		if (getItemData(i) != false)
+			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER) {
+				if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+					let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
+					if (firstSlot != -1) {
+						getPlayerData(client).hotBarItems[firstSlot] = i;
+					}
 				}
 			}
-		}
 	}
 }
 
@@ -2301,7 +2307,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 	if (getItemData(itemId).databaseId > 0) {
 		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP() WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
-	getServerData().items[itemId] = false;
+	getServerData().items[itemId] = null;
 
 	if (resetAllItemIndexes) {
 		setAllItemDataIndexes();
@@ -2443,7 +2449,7 @@ function listPlayerInventoryCommand(command, params, client) {
  */
 function listOtherPlayerInventoryCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(client, command));
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
@@ -2657,6 +2663,10 @@ function listItemInventoryCommand(command, params, client) {
  */
 function getItemData(itemId) {
 	if (itemId == -1) {
+		return false;
+	}
+
+	if (getServerData().items[itemId] == null) {
 		return false;
 	}
 
@@ -2893,9 +2903,12 @@ function restorePlayerTempLockerItems(client) {
 
 function getItemIndexFromDatabaseId(databaseId) {
 	for (let i in getServerData().items) {
-		if (getServerData().items[i].databaseId == databaseId) {
-			return i;
+		if (getServerData().items[i] != null) {
+			if (getServerData().items[i].databaseId == databaseId) {
+				return i;
+			}
 		}
+
 	}
 	return false;
 }
@@ -3510,11 +3523,11 @@ function despawnAllGroundItemObjects() {
 // ===========================================================================
 
 function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector3(0.0, 0.0, 0.0)) {
-	if (getServerConfig().devServer) {
-		return false;
-	}
-
-	quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+	//if (getServerConfig().devServer) {
+	//	return false;
+	//}
+	//
+	//quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
 }
 
 // ===========================================================================
