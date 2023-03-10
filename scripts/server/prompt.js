@@ -20,6 +20,7 @@ const V_PROMPT_RESETKEYBINDS = 8;
 const V_PROMPT_RESETACTIONTIPS = 9;
 const V_PROMPT_JOBINVITE = 10;
 const V_PROMPT_CLANINVITE = 11;
+const V_PROMPT_COPYKEYBINDSTOSERVER = 12;
 
 // ===========================================================================
 
@@ -48,6 +49,34 @@ function playerPromptAnswerNo(client) {
 		case V_PROMPT_BIZORDER:
 			showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarningTitle"));
 			break;
+
+		case V_PROMPT_CLANINVITE: {
+			if (getPlayerData(client).promptValue == false) {
+				return false;
+			}
+
+			let invitingPlayer = getPlayerData(client).promptValue;
+
+			messagePlayerSuccess(client, getLocaleString(client, "DeclinedClanInvite", getCharacterFullName(invitingPlayer)));
+			messagePlayerAlert(invitingPlayer, getLocaleString(client, "PlayerDeclinedClanInvite", getCharacterFullName(client)));
+
+			getPlayerData(client).promptValue = false;
+			break;
+		}
+
+		case V_PROMPT_JOBINVITE: {
+			if (getPlayerData(client).promptValue == false) {
+				return false;
+			}
+
+			let invitingPlayer = getPlayerData(client).promptValue;
+
+			messagePlayerSuccess(client, getLocaleString(client, "DeclinedJobInvite", getCharacterFullName(invitingPlayer)));
+			messagePlayerAlert(invitingPlayer, getLocaleString(client, "PlayerDeclinedJobInvite", getCharacterFullName(client)));
+
+			getPlayerData(client).promptValue = false;
+			break;
+		}
 
 		default:
 			messagePlayerError(client, getLocaleString(client, "NoPromptReject"));
@@ -266,10 +295,54 @@ function playerPromptAnswerYes(client) {
 		}
 
 		case V_PROMPT_CLANINVITE: {
+			if (getPlayerData(client).promptValue == false) {
+				return false;
+			}
+
+			let invitingPlayer = getPlayerData(client).promptValue;
+
+			if (getPlayerClan(invitingPlayer) == -1) {
+				return false;
+			}
+
+			let clanIndex = getPlayerClan(invitingPlayer);
+			let lowestClanRankIndex = getLowestClanRank(clanIndex);
+
+			getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
+			getPlayerCurrentSubAccount(client).clanIndex = clanIndex;
+			getPlayerCurrentSubAccount(client).clanRank = getClanRankData(clanIndex, lowestClanRankIndex).databaseId;
+			getPlayerCurrentSubAccount(client).clanRankIndex = lowestClanRankIndex;
+
+			messagePlayerSuccess(client, getLocaleString(client, "AcceptedJobClanInvite", getCharacterFullName(invitingPlayer)));
+			messagePlayerAlert(invitingPlayer, getLocaleString(client, "PlayerAcceptedClanInvite", getCharacterFullName(client)));
+
+			getPlayerData(client).promptValue = false;
 			break;
 		}
 
 		case V_PROMPT_JOBINVITE: {
+			if (getPlayerData(client).promptValue == false) {
+				return false;
+			}
+
+			let invitingPlayer = getPlayerData(client).promptValue;
+
+			if (getPlayerJob(invitingPlayer) == -1) {
+				return false;
+			}
+
+			let jobIndex = getPlayerJob(invitingPlayer);
+			let lowestRankIndex = getLowestJobRank(jobIndex);
+
+			getPlayerCurrentSubAccount(client).job = getJobData(jobIndex).databaseId;
+			getPlayerCurrentSubAccount(client).jobIndex = jobIndex;
+			getPlayerCurrentSubAccount(client).jobRank = getJobRankData(jobIndex, lowestRankIndex).databaseId;
+			getPlayerCurrentSubAccount(client).jobRankIndex = lowestRankIndex;
+
+			messagePlayerSuccess(client, getLocaleString(client, "AcceptedJobInvite", getCharacterFullName(invitingPlayer)));
+			messagePlayerAlert(invitingPlayer, getLocaleString(client, "PlayerAcceptedJobInvite", getCharacterFullName(client)));
+
+			getPlayerData(client).promptValue = false;
 			break;
 		}
 
