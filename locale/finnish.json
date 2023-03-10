@@ -787,5 +787,18 @@
 	"FrequencyMustBeNumber": "The radio channel must be a number!",
 	"FrequencyMustBeBetween": "The radio channel must be between {1} and {2}!",
 	"HeaderVehicleTrunkItemList": "Vehicle Inventory (Trunk)",
-	"HeaderVehicleDashItemList": "Vehicle Inventory (Inside)"
+	"HeaderVehicleDashItemList": "Vehicle Inventory (Inside)",
+	"AcceptedJobInvite": "You accepted the job invite from {1}",
+	"PlayerAcceptedJobInvite": "{1} accepted your job invite",
+	"AcceptedClanInvite": "You accepted the clan invite from {1}",
+	"PlayerAcceptedClanInvite": "{1} accepted your clan invite",
+	"DeclinedJobInvite": "You declined the job invite from {1}",
+	"PlayerDeclinedJobInvite": "{1} declined your job invite",
+	"DeclinedClanInvite": "You declined the clan invite from {1}",
+	"PlayerDeclinedClanInvite": "{1} declined your clan invite",
+	"ClanInviteSent": "You sent a clan invite to {1}",
+	"ClanInviteAlreadyHasClan": "That player is already in a clan!",
+	"ClanInviteRequest": "{1} invited you to the {2} clan.",
+	"CantAddClanMembers": "You can't invite new members to the clan!",
+	"CantRemoveClanMembers": "You can't remove members from the clan!"
 }
