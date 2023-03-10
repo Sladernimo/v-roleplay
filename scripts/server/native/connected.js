@@ -896,16 +896,19 @@ function disconnectFromDatabase(dbConnection, force = false) {
 
 // ===========================================================================
 
-function queryDatabase(dbConnection, queryString, useThread = false) {
+function queryDatabase(dbConnection, queryString) {
 	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
-	if (useThread == true) {
-		//Promise.resolve().then(() => {
+	return dbConnection.query(queryString);
+}
+
+// ===========================================================================
+
+async function asyncQueryDatabase(dbConnection, queryString) {
+	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
+	return new Promise(resolve => {
 		let queryResult = dbConnection.query(queryString);
-		return queryResult;
-		//});
-	} else {
-		return dbConnection.query(queryString);
-	}
+		resolve(queryResult);
+	});
 }
 
 // ===========================================================================
