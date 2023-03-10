@@ -93,9 +93,6 @@ class VehicleData {
 
 		this.rank = 0;
 
-		this.whoAdded = 0;
-		this.whenAdded = 0;
-
 		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
@@ -162,8 +159,6 @@ class VehicleData {
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 			this.rank = toInteger(dbAssoc["veh_rank"]);
 			this.radioFrequency = toInteger(dbAssoc["veh_radio_freq"]);
-			this.whoAdded = toInteger(dbAssoc["veh_who_added"]);
-			this.whenAdded = toInteger(dbAssoc["veh_when_added"]);
 		}
 	}
 };
@@ -298,6 +293,8 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_livery", toInteger(tempVehicleData.livery)],
 			["veh_rank", toInteger(tempVehicleData.rank)],
 			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
+			["veh_who_added", toInteger(tempVehicleData.whoAdded)],
+			["veh_when_added", toInteger(tempVehicleData.whoAdded)],
 		];
 
 		let dbQuery = null;
@@ -2016,7 +2013,7 @@ function doesVehicleHaveTransmitRadio(vehicle) {
 
 // ===========================================================================
 
-function setAllVehicleRadioTransmitFrequencies() {
+function setAllVehicleRadioFrequencies() {
 	for (let i in getServerData().vehicles) {
 		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
 			if (getJobData(getJobIdFromDatabaseId(getServerData().vehicles[i].ownerId)) != false) {
