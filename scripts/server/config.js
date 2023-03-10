@@ -267,7 +267,7 @@ let globalConfig = {
 	passwordRequiredSymbols: 0,
 	minChatLines: 1,
 	maxChatLines: 6,
-	vehicleTrunkDistance: 2.0,
+	vehicleTrunkDistance: 3.5,
 	fishingSpotDistance: 10.0,
 	atmDistance: 1.5,
 	loginTimeout: 60000,
@@ -284,6 +284,7 @@ let globalConfig = {
 	payPhoneGiveDistance: 2.5,
 	payPhoneAnswerDistance: 2.5,
 	vehicleTransmitRadioUseDistance: 1.5,
+	transmitRadioSpeakerDistance: 15.0,
 	searchPlayerDistance: 2.0,
 };
 
