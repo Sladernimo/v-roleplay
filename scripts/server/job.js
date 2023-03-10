@@ -1150,7 +1150,7 @@ function givePlayerJobEquipment(client, equipmentId) {
 		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
 			value = getJobData(jobId).radioFrequency;
 		}
-		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId);
+		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, 1, true);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);
@@ -1818,9 +1818,7 @@ function setPlayerJobRankCommand(command, params, client) {
 	}
 
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let rankParam = getJobRankFromParams(jobIndex, params.split(" ").slice(2).join(" "));
-
-	let rankIndex = getJobRankFromParams(jobIndex, rankParam);
+	let rankIndex = getJobRankFromParams(jobIndex, getParam(params, " ", 2));
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
@@ -1832,11 +1830,16 @@ function setPlayerJobRankCommand(command, params, client) {
 		return false;
 	}
 
+	if (getJobRankData(jobIndex, rankIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobRank"));
+		return false;
+	}
+
 	getPlayerCurrentSubAccount(targetClient).jobRankIndex = rankIndex;
 	getPlayerCurrentSubAccount(targetClient).jobRank = getJobRankData(jobIndex, rankIndex).databaseId;
 
 	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getCharacterFullName(targetClient)}'s{MAINCOLOUR} job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`);
-	messagePlayerAlert(client, `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set your job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`);
+	messagePlayerAlert(targetClient, `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set your job rank to {ALTCOLOUR}${getJobRankData(jobIndex, rankIndex).name} (level ${getJobRankData(jobIndex, rankIndex).level}){MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -3516,6 +3519,8 @@ function deleteJobItems(client) {
 		deleteItem(getPlayerData(client).jobEquipmentCache[i]);
 	}
 
+	clearArray(getPlayerData(client).jobEquipmentCache);
+
 	cachePlayerHotBarItems(client);
 	updatePlayerHotBar(client);
 }
@@ -4529,7 +4534,7 @@ function jobInviteCommand(command, params, client) {
 	messagePlayerSuccess(client, getLocaleString(client, "JobInviteSent", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
 	showPlayerPrompt(targetClient, getLocaleString(targetClient, "JobInviteRequest", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{jobYellow}${getJobData(getPlayerJob(client)).name}{MAINCOLOUR}`, getLocaleString(targetClient, "GUIAlertTitle"), getLocaleString(targetClient, "Yes"), getLocaleString(targetClient, "No")));
 	getPlayerData(targetClient).promptType = V_PROMPT_JOBINVITE;
-	getPlayerData(targetClient).promptValue = getPlayerJob(client);
+	getPlayerData(targetClient).promptValue = client;
 }
 
 // ===========================================================================
