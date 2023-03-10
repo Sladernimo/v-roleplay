@@ -390,10 +390,10 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 
 	let vehicles = getServerData().vehicles;
 	for (let i in vehicles) {
-		if (getVehicleData(vehicles[i]).radioFrequency == frequency) {
+		if (getServerData().vehicles[i].radioFrequency == frequency) {
 			for (let j in clients) {
 				if (seenClients.indexOf(clients[j]) == -1) {
-					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[j].vehicle)) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[i].vehicle)) <= getGlobalConfig().transmitRadioSpeakerDistance) {
 						seenClients.push(clients[j]);
 						messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
 					}
