@@ -38,6 +38,10 @@ function getLocaleString(client, stringName, ...args) {
 		return "";
 	}
 
+	if (getPlayerData(client) == false) {
+		return "";
+	}
+
 	let tempString = getRawLocaleString(getPlayerData(client).locale, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
 		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
