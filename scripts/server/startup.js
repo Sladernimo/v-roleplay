@@ -52,6 +52,12 @@ function initServerScripts() {
 
 	checkServerGameTime();
 
+	// In Mafia 1, server elements are spawned after possible map switch
+	// Other games can spawn elements immediately
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		spawnAllServerElements();
+	}
+
 	addAllNetworkEventHandlers();
 	addAllCommandHandlers();
 	initAllClients();
@@ -172,7 +178,7 @@ function setAllServerDataIndexes() {
 	setAllRaceDataIndexes();
 	setAllRadioStationIndexes();
 	setAllPayPhoneIndexes();
-	setAllVehicleRadioTransmitFrequencies();
+	setAllVehicleRadioFrequencies();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();
