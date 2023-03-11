@@ -1503,10 +1503,10 @@ function playerUseItem(client, hotBarSlot) {
 				ropeUnTiePlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `unties the rope from ${getCharacterFullName(closestPlayer)}'s hands and feet`);
 			} else {
-				if (!isPlayerSurrendered(closestPlayer)) {
-					messagePlayerError(client, `${getCharacterFullName(closestPlayer)} can't be tied up! They either need to have their hands up, be knocked out, or tazed`);
-					return false;
-				}
+				//if (!isPlayerSurrendered(closestPlayer)) {
+				//	messagePlayerError(client, `${getCharacterFullName(closestPlayer)} can't be tied up! They either need to have their hands up, be knocked out, or tazed`);
+				//	return false;
+				//}
 
 				ropeTiePlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their rope and ties ${getCharacterFullName(closestPlayer)}'s hands and feet together.`);
@@ -1531,10 +1531,10 @@ function playerUseItem(client, hotBarSlot) {
 				unHandCuffPlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their key and removes the handcuffs from ${getCharacterFullName(closestPlayer)}`);
 			} else {
-				if (!isPlayerSurrendered(closestPlayer)) {
-					messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedHandcuff", getCharacterFullName(closestPlayer)));
-					return false;
-				}
+				//if (!isPlayerSurrendered(closestPlayer)) {
+				//	messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedHandcuff", getCharacterFullName(closestPlayer)));
+				//	return false;
+				//}
 
 				handCuffPlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their cuffs and places them on ${getCharacterFullName(closestPlayer)}`);
