@@ -175,17 +175,17 @@ function setUpInitialGame() {
 		natives.setPlayersDropMoneyInNetworkGame(false);
 
 		// Population
-		//natives.dontSuppressAnyCarModels(5.0);
-		//natives.dontSuppressAnyPedModels(5.0);
-		//natives.forceGenerateParkedCarsTooCloseToOthers(true);
-		//natives.setParkedCarDensityMultiplier(5.0);
-		//natives.setRandomCarDensityMultiplier(5.0);
-		//natives.setPedDensityMultiplier(5.0);
-		//natives.setCarDensityMultiplier(5.0);
-		//natives.setScenarioPedDensityMultiplier(5.0, 5.0);
-		natives.switchRandomTrains(true);
-		natives.switchRandomBoats(true);
-		natives.switchAmbientPlanes(true);
+		natives.dontSuppressAnyCarModels();
+		natives.dontSuppressAnyPedModels();
+		natives.forceGenerateParkedCarsTooCloseToOthers(false);
+		natives.setParkedCarDensityMultiplier(0.0);
+		natives.setRandomCarDensityMultiplier(0.0);
+		natives.setPedDensityMultiplier(0.0);
+		natives.setCarDensityMultiplier(0.0);
+		natives.setScenarioPedDensityMultiplier(0.0, 0.0);
+		natives.switchRandomTrains(false);
+		natives.switchRandomBoats(false);
+		natives.switchAmbientPlanes(false);
 		natives.switchMadDrivers(false);
 
 		// Singleplayer Cellphone
