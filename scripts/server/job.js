@@ -2681,7 +2681,7 @@ function canPlayerUseJob(client, jobId) {
 // ===========================================================================
 
 function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAccountId) {
-	if (jobLocationData.databaseId > 0) {
+	if (getJobLocationData(jobIndex, jobLocationIndex).databaseId > 0) {
 		quickDatabaseQuery(`UPDATE job_loc SET job_loc_deleted = 1, job_loc_who_deleted = ${whoDeleted}, job_loc_when_deleted = UNIX_TIMESTAMP() WHERE job_loc_id = ${getJobLocationData(jobIndex, jobLocationIndex).databaseId}`);
 	}
 
@@ -2689,6 +2689,8 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 	deleteJobLocationPickup(jobIndex, jobLocationIndex);
 	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
+
+	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1);
 }
 
 // ===========================================================================
@@ -2783,8 +2785,8 @@ function createJobLocation(jobId, position, interior, dimension, whoAdded) {
 	getServerData().jobs[jobId].locations.push(jobLocationData);
 	let newSlot = getServerData().jobs[jobId].locations.length - 1;
 	getServerData().jobs[jobId].locations[newSlot].index = newSlot;
-	createJobLocationPickup(jobId, newSlot);
-	createJobLocationBlip(jobId, newSlot);
+	spawnJobLocationPickup(jobId, newSlot);
+	spawnJobLocationBlip(jobId, newSlot);
 	saveJobLocationToDatabase(jobLocationData);
 }
 
@@ -3289,7 +3291,7 @@ function deleteJobLocationPickup(jobId, locationId) {
 
 // ===========================================================================
 
-function createJobLocationPickup(jobId, locationId) {
+function spawnJobLocationPickup(jobId, locationId) {
 	if (!getServerConfig().createJobPickups) {
 		return false;
 	}
@@ -3308,7 +3310,7 @@ function createJobLocationPickup(jobId, locationId) {
 			}
 		}
 
-		if (areServerElementsSupported()) {
+		if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 			if (isGameFeatureSupported("pickup")) {
 				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
 				if (pickup != false) {
@@ -3324,16 +3326,18 @@ function createJobLocationPickup(jobId, locationId) {
 				}
 			}
 		} else {
-			let blipModelId = -1;
-			if (isGameFeatureSupported("blip")) {
-				blipModelId = getGameConfig().blipSprites[getGame()].Job;
+			/*
+			let pickupModelId = -1;
+			if (isGameFeatureSupported("pickup")) {
+				pickupModelId = getGameConfig().pickupModels[getGame()].Job;
 
-				if (getJobData(jobId).blipModel != 0) {
-					blipModelId = getJobData(jobId).blipModel;
+				if (getJobData(jobId).pickupModel != 0) {
+					pickupModelId = getJobData(jobId).pickupModel;
 				}
 			}
+			*/
 
-			sendJobToPlayer(null, jobId, tempJobData.name, tempJobData.locations[locationId].position, blipModelId, pickupModelId);
+			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobData.locations[locationId].position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index));
 		}
 	}
 }
@@ -3361,7 +3365,7 @@ function spawnJobLocationBlip(jobId, locationId) {
 		blipModelId = getJobData(jobId).blipModel;
 	}
 
-	if (areServerElementsSupported()) {
+	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 2, getColourByName("yellow"));
 		if (blip != false) {
 			tempJobData.locations[locationId].blip = blip;
@@ -3528,7 +3532,7 @@ function deleteJobItems(client) {
 // ===========================================================================
 
 function getJobRankName(jobId, rankId) {
-	return jobRankNames[jobId][rankId];
+	return getJobRankData(jobId, rankId).name;
 }
 
 // ===========================================================================
@@ -4203,7 +4207,7 @@ function finishSuccessfulJobRoute(client) {
 	let jobRouteId = getPlayerJobRoute(client);
 	let jobRouteData = getJobRouteData(jobId, jobRouteId);
 	let payout = toInteger(applyServerInflationMultiplier(jobRouteData.pay));
-	getPlayerData(client).payDayAmount = getPlayerData(client).payDayAmount + payout;
+	getPlayerCurrentSubAccount(client).payDayAmount = getPlayerCurrentSubAccount(client).payDayAmount + payout;
 
 	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} finished the ${jobRouteData.name} route for the ${getJobData(jobId).name} job and earned ${getCurrencyString(jobRouteData.pay)}!`);
 	messagePlayerSuccess(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, jobRouteData.index));
@@ -4634,6 +4638,98 @@ function removePlayerFromJobWhiteList(client, jobIndex, whoDeleted = defaultNoAc
 	}
 
 	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function getJobLocationPickupModelForNetworkEvent(jobIndex) {
+	let pickupModelId = -1;
+	if (isGameFeatureSupported("pickup")) {
+		pickupModelId = getGameConfig().pickupModels[getGame()].Job;
+
+		if (getJobData(jobIndex).pickupModel != 0) {
+			pickupModelId = getJobData(jobIndex).pickupModel;
+		}
+	}
+
+	return pickupModelId;
+}
+
+// ===========================================================================
+
+function getJobLocationBlipModelForNetworkEvent(jobIndex) {
+	let blipModelId = -1;
+	if (isGameFeatureSupported("blip")) {
+		blipModelId = getGameConfig().blipSprites[getGame()].Job;
+
+		if (getJobData(jobIndex).blipModel != 0) {
+			blipModelId = getJobData(jobIndex).blipModel;
+		}
+	}
+
+	return blipModelId;
+}
+
+// ===========================================================================
+
+function finePlayerCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerJob(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "CantFinePlayer"));
+		return;
+	}
+
+	if (getJobData(getPlayerJob(client)).type != V_JOB_POLICE) {
+		//if (doesPlayerHaveJobPermission(client, getJobFlagValue("FinePlayer"))) {
+		messagePlayerError(client, getLocaleString(client, "CantFinePlayer"));
+		return;
+		//}
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let amount = toInteger(getParam(params, " ", 2));
+
+	if (isNaN(amount)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	if (amount < 0) {
+		messagePlayerError(client, getLocaleString(client, "CantUseNegativeNumber"));
+		return false;
+	}
+
+	if (amount > getGameConfig().maximumFineAmount[getGame()]) {
+		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(getGameConfig().maximumFineAmount[getGame()])}{MAINCOLOUR}`));
+		return false;
+	}
+
+	if (getPlayerCurrentSubAccount(targetClient).fineAmount > getGameConfig().maximumFineAmount[getGame()]) {
+		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(getGameConfig().maximumFineAmount[getGame()])}{MAINCOLOUR}`));
+		return false;
+	}
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().finePlayerDistance) {
+		messagePlayerError(client, getLocaleString(client, "PlayerTooFar", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+		return false;
+	}
+
+	getPlayerCurrentSubAccount(targetClient).fineAmount = getPlayerCurrentSubAccount(targetClient).fineAmount + amount;
+
+	let commission = Math.round(getPlayerCurrentSubAccount(targetClient).fineAmount * getGlobalConfig().fineCommission);
+	getPlayerCurrentSubAccount(client).payDayAmount = getPlayerCurrentSubAccount(client).payDayAmount + commission;
+
+	messagePlayerSuccess(client, getLocaleString(client, "FinedPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+	messagePlayerAlert(targetClient, getLocaleString(targetClient, "FinedByPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
 }
 
 // ===========================================================================
