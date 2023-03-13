@@ -484,7 +484,9 @@ function vehicleLightsCommand(command, params, client) {
 
 	getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
 	getVehicleData(vehicle).needsSaved = true;
-	setVehicleLightsState(vehicle, getVehicleData(vehicle).lights);
+	setVehicleLights(vehicle, getVehicleData(vehicle).lights);
+	//getVehicleData(vehicle).needsSaved = true;
+	//setVehicleLightsState(vehicle, getVehicleData(vehicle).lights);
 
 	meActionToNearbyPlayers(client, `turned the ${getVehicleName(vehicle)}'s lights ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).lights))}`);
 }
@@ -540,8 +542,10 @@ function vehicleEngineCommand(command, params, client) {
 	}
 
 	getVehicleData(vehicle).engine = !getVehicleData(vehicle).engine;
-	vehicle.engine = getVehicleData(vehicle).engine;
-	setEntityData(vehicle, "v.rp.engine", getVehicleData(vehicle).engine, true);
+	getVehicleData(vehicle).needsSaved = true;
+	setVehicleEngine(vehicle, getVehicleData(vehicle).engine);
+	//vehicle.engine = getVehicleData(vehicle).engine;
+	//setEntityData(vehicle, "v.rp.engine", getVehicleData(vehicle).engine, true);
 
 	getVehicleData(vehicle).needsSaved = true;
 
@@ -574,7 +578,8 @@ function vehicleSirenCommand(command, params, client) {
 	}
 
 	getVehicleData(vehicle).siren = !getVehicleData(vehicle).siren;
-	vehicle.siren = getVehicleData(vehicle).siren;
+	getVehicleData(vehicle).needsSaved = true;
+	setVehicleSiren(vehicle, getVehicleData(vehicle).siren);
 
 	getVehicleData(vehicle).needsSaved = true;
 
@@ -1507,6 +1512,10 @@ function respawnVehicle(vehicle) {
 
 // ===========================================================================
 
+/**
+	* @param {VehicleData} vehicleData - The vehicle's server data
+	* @return {Vehicle} The vehicle game object
+	*/
 function spawnVehicle(vehicleData) {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
 	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
@@ -1534,16 +1543,9 @@ function spawnVehicle(vehicleData) {
 	}
 
 	if (vehicleData.spawnLocked == true) {
-		setVehicleEngine(vehicle, false);
-		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to OFF`);
-	} else {
-		setVehicleEngine(vehicle, intToBool(vehicleData.engine));
-		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s engine to ${toUpperCase(getOnOffFromBool(getVehicleEngine(vehicle)))}`);
-	}
-
-	if (typeof vehicle.locked != "undefined") {
-		setVehicleLocked(vehicle, intToBool(vehicleData.locked));
-		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting vehicle ${vehicle.id}'s lock state to ${toUpperCase(getOnOffFromBool(getVehicleLocked(vehicle)))}`);
+		vehicleData.engine = false;
+		vehicleData.locked = true;
+		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s engine to OFF`);
 	}
 
 	//setVehicleHealth(vehicle, 1000);
@@ -1552,9 +1554,11 @@ function spawnVehicle(vehicleData) {
 	setEntityData(vehicle, "v.rp.livery", vehicleData.livery, true);
 	setEntityData(vehicle, "v.rp.upgrades", vehicleData.extras, true);
 	setEntityData(vehicle, "v.rp.interior", vehicleData.interior, true);
-	setEntityData(vehicle, "v.rp.engine", vehicleData.engine, true);
-
 	setEntityData(vehicle, "v.rp.server", true, true);
+
+	setVehicleLights(vehicle, vehicleData.lights);
+	setVehicleEngine(vehicle, vehicleData.engine);
+	setVehicleLocked(vehicle, vehicleData.locked);
 
 	forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
