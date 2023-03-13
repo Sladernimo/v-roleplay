@@ -72,7 +72,7 @@ function onResourceStart(event, resource) {
 
 	if (resource == thisResource) {
 		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceStart called - Sending signal to server`);
-		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
+		//localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 		sendResourceStartedSignalToServer();
 	}
 }
