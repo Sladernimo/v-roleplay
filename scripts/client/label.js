@@ -134,20 +134,18 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		return false;
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (localPlayer.vehicle != null) {
-			return false;
-		}
+	if (getGame() == V_GAME_GTA_IV) {
+		return false;
 	}
 
 	if (getGame() == V_GAME_GTA_IV) {
 		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
+			logToConsole(LOG_VERBOSE, "[V.RP.Label]: Game viewport does not exist!");
 			return false;
 		}
 
 		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
+			logToConsole(LOG_VERBOSE, "[V.RP.Label]: Game viewport is not active!");
 			return false;
 		}
 	}
@@ -155,7 +153,8 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 	position = getPosAbovePos(position, propertyLabelHeight);
 	let screenPosition = new Vec3(0.0, 0.0, 0.0);
 	if (getGame() == V_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
+		return false;
+		//screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
 	} else {
 		screenPosition = getScreenFromWorldPosition(position);
 	}
@@ -236,6 +235,11 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 				break;
 			}
 
+			case V_PROPLABEL_INFO_BANK: {
+				infoText = getLocaleString("BusinessBankInfoLabel");
+				break;
+			}
+
 			default: {
 				if (enterPropertyKey != null) {
 					infoText = getLocaleString("PropertyEnterKeyPressLabel", toUpperCase(getKeyNameFromId(enterPropertyKey)));
@@ -245,7 +249,7 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 				break;
 			}
 		}
-		if (getDistance(localPlayer.position, position) <= propertyLabelRenderDistance - 2) {
+		if (getDistance(getLocalPlayerPosition(), position) <= propertyLabelRenderDistance - 2) {
 			let size = propertyLabelLockedFont.measure(infoText, game.width, 0.0, 0.0, propertyLabelLockedFont.size, true, true);
 			propertyLabelLockedFont.render(infoText, [screenPosition.x - size[0] / 2, screenPosition.y - size[1] / 2], game.width, 0.0, 0.0, propertyLabelLockedFont.size, toColour(234, 198, 126, 255), false, true, false, true);
 			screenPosition.y -= propertyLabelLockedOffset;
@@ -387,62 +391,60 @@ function renderJobLabel(name, position, jobType) {
 // -------------------------------------------------------------------------
 
 function processLabelRendering() {
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (localPlayer.vehicle != null) {
-			return false;
-		}
-	}
+	//if (!isGameFeatureSupported("worldLabel")) {
+	//	return false;
+	//}
 
 	if (renderLabels) {
 		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
 				getServerData().businesses.forEach((business) => {
-					let distance = getDistance(localPlayer.position, business.entrancePosition);
+					let distance = getDistance(getLocalPlayerPosition(), business.entrancePosition);
 					if (distance <= propertyLabelRenderDistance) {
-						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
-							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
-						}
-
 						renderPropertyEntranceLabel(business.name, business.entrancePosition, business.locked, true, business.buyPrice, business.rentPrice, business.labelInfoType, business.entranceFee);
 					}
 
 					if (distance <= businessWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
+						if (getGame() == V_GAME_MAFIA_ONE) {
 							renderBusinessWorldIcon(getPosAbovePos(business.entrancePosition, 1.0));
+						}
+
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(business.entrancePosition, 1.0), 0.0, 0.0, 0, 153, 255, 255);
 						}
 					}
 				});
 
 				getServerData().houses.forEach((house) => {
-					let distance = getDistance(localPlayer.position, house.entrancePosition);
+					let distance = getDistance(getLocalPlayerPosition(), house.entrancePosition);
 					if (distance <= propertyLabelRenderDistance) {
-						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
-							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
-						}
-
 						renderPropertyEntranceLabel(house.description, house.entrancePosition, house.locked, true, house.buyPrice, house.rentPrice, house.labelInfoType);
 					}
 
 					if (distance <= houseWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
+						if (getGame() == V_GAME_MAFIA_ONE) {
 							renderHouseWorldIcon(getPosAbovePos(house.entrancePosition, 1.0));
+						}
+
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(house.entrancePosition, 1.0), 0.0, 0.0, 0, 200, 0, 255);
 						}
 					}
 				});
 
 				getServerData().jobs.forEach((job) => {
-					let distance = getDistance(localPlayer.position, job.position);
+					let distance = getDistance(getLocalPlayerPosition(), job.position);
 					if (distance <= propertyLabelRenderDistance) {
-						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
-							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
-						}
-
 						renderJobLabel(job.name, job.position, job.jobId);
 					}
 
 					if (distance <= jobWorldIconRenderDistance) {
-						if (getGame() == V_GAME_MAFIA_ONE && localPlayer.vehicle == null) {
+						if (getGame() == V_GAME_MAFIA_ONE) {
 							renderJobWorldIcon(getPosAbovePos(job.position, 1.0));
+						}
+
+						if (getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
+							natives.drawColouredCylinder(getPosBelowPos(job.position, 1.0), 0.0, 0.0, 255, 255, 0, 255);
 						}
 					}
 				});
@@ -454,7 +456,7 @@ function processLabelRendering() {
 				let pickups = getElementsByType(ELEMENT_PICKUP);
 				for (let i in pickups) {
 					if (pickups[i].getData("v.rp.label.type") != null) {
-						if (getDistance(localPlayer.position, pickups[i].position) <= propertyLabelRenderDistance) {
+						if (getDistance(getLocalPlayerPosition(), pickups[i].position) <= propertyLabelRenderDistance) {
 							if (!pickups[i].isOnScreen) {
 								let price = "0";
 								let rentPrice = "0";
