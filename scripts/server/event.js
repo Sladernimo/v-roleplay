@@ -617,10 +617,8 @@ function onPlayerSpawn(client) {
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
 		sendAllPayPhonesToPlayer(client);
-		if (getGame() != V_GAME_GTA_IV) {
-			sendAllJobsToPlayer(client);
-		}
-		requestPlayerPedNetworkId(client);
+		sendAllJobsToPlayer(client);
+		//requestPlayerPedNetworkId(client);
 	}
 
 	if (!areServerElementsSupported()) {
