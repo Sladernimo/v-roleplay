@@ -1,194 +1,211 @@
 ## Player Commands
 
-### Account  
-	* /login
-	* /register
-	* /changepass
-	* /setemail
-	* /verifyemail
+### Account
+* /login
+* /register
+* /changepass
+* /setemail
+* /verifyemail
 
-### Character  
-	* /newchar /usechar /switchchar
-	* /autolastchar
+### Character
+* /newchar
+* /usechar
+* /switchchar
+* /autolastchar
 
-### Settings  
-	* /logo
-	* /gui
-	* /lang
-	* /notips
-	* /loginalert
-	* /scrolllines
-	* /chatautohide
-	* /chatfilter
-	* /chatemoji
-	* /chattime
+### Settings
+* /logo
+* /gui
+* /lang */language* */setlang* */locale*
+* /notips
+* /loginalert
+* /scrolllines
+* /chatautohide
+* /chatfilter
+* /chatemoji
+* /chattime
 
-### Chat  
-	* /me
-	* /do
-	* /s
-	* /shout
-	* /talk
-	* /local
-	* /l
-	* /w
-	* /whisper
-	* /clanchat
-	* /clan
-	* /c
-	* /m
-	* /dm
-	* /reply
+### Chat
+* /o
+* /b
+* /me
+* /do
+* /shout */s*
+* /local */talk* */l*
+* /whisper */w*
+* /clan */clanchat* */c*
+* /msg */dm* */pm*
+* /reply
+* /radio */r*
+* /megaphone */m*
 
-### Items  
-	* /i
-	* /item
-	* /pickup
-	* /=--drop
-	* /put
-	* /take
-	* /use
-	* /inv
-	* /inventory
-	* /items
-	* /houseitems
-	* /bizstorage
-	* /bizfloor
-	* /buylist
-	* /power
-	* /freq
-	* /radio
-	* /r
+### Items
+* /item */i*
+* /pickup
+* /drop
+* /put
+* /take
+* /use
+* /inventory */inv*
+* /itemstorage
+* /houseitems
+* /bizstorage
+* /bizfloor
+* /vehtrunk
+* /vehdash
+* /power
 
-### Vehicle  
-	* /nearveh
-	* /oldveh
-	* /lastveh
-	* /oldcar
-	* /lastcar
-	* /engine
-	* /siren
-	* /lights
-	* /vehclan
-	* /vehbiz
-	* /vehrank
-	* /vehinfo
-	* /vehrent
-	* /vehrentprice
-	* /vehbuyprice
-	* /vehstoprent
-	* /vehbuy
-	* /vehcolour
-	* /vehlivery
-	* /vehrepair
-	* /passenger
+### Vehicle
+* /lock */doorlock* */locks* */lockdoor*
+* /lights */light*
+* /engine
+* /siren
+* /nearveh
+* /lastveh */oldcar* */lastcar* */oldveh*
+* /vehclan
+* /vehbiz
+* /vehrank
+* /vehrent */rentvehicle* */rentveh* */rentvehicle*
+* /vehrentprice
+* /vehbuyprice
+* /vehstoprent */stoprentveh*
+* /vehbuy */buyveh* */vehiclebuy* */buyvehicle*
+* /vehcolour
+* /vehlivery
+* /vehrepair
+* /passenger
 
-### Business  
-	* /bizbuy
-	* /bizfee
-	* /biztill
-	* /bizbalance
-	* /bizwithdraw
-	* /bizdeposit
-	* /buy
-	* /bizstock
-	* /bizstore
-	* /bizorder
-	* /bizitemprice
-	* /bizname
-	* /bizowner
-	* /bizrank
-	* /bizclan
-	* /bizbuyprice
-	* /bizinfo
-	* /bizflooritems
-	* /bizstorageitems
-	* /bizdealership
-	* /bizpaintball
+### Business
+* /lock */doorlock* */locks* */lockdoor*
+* /lights */light*
+* /bizbuy
+* /bizfee
+* /biztill
+* /bizbalance
+* /bizwithdraw
+* /bizdeposit
+* /buy
+* /bizstock
+* /bizstore
+* /bizorder
+* /bizitemprice
+* /bizname
+* /bizowner
+* /bizrank
+* /bizclan
+* /bizbuyprice
+* /bizflooritems */bizfloor*
+* /bizstorageitems */bizstorage*
+* /bizdealership
+* /bizpaintball
+* /bizbank
 
-### Clan  
-	* /clans
-	* /clanchat 
-	* /c 
-	* /clanranks
-	* /clanflags
-	* /clanaddrank
-	* /clandelrank
-	* /clansetrank
-	* /clanowner
-	* /clantag
-	* /clanranktag
-	* /clanmembertag
-	* /clanrankname
-	* /clanranklevel
-	* /clanmembertitle
-	* /clanaddrankflag
-	* /clanrankflags
-	* /clandelrankflag
-	* /clanaddmemberflag
-	* /clandelmemberflag
+### Clan
+* /clans
+* /clan */c*
+* /clanranks
+* /clanflags
+* /clanaddrank
+* /clandelrank
+* /clansetrank
+* /clanowner
+* /clantag
+* /clanranktag
+* /clanmembertag
+* /clanrankname
+* /clanranklevel
+* /clanmembertitle
+* /clanaddrankflag
+* /clanrankflags
+* /clandelrankflag
+* /clanaddmemberflag
+* /clandelmemberflag
+* /claninvite */clanhire*
+* /clanuninvite */clanfire*
+* /clansetrank */clanrank*
 
-### House  
-	* /houseinfo
-	* /housebuy
-	* /houseclan
-	* /houseowner
-	* /housebuyprice
-	* /houserentprice
+### House
+* /lock */doorlock* */locks* */lockdoor*
+* /lights */light*
+* /houseinfo
+* /housebuy
+* /houseclan
+* /houseowner
+* /housebuyprice
+* /houserentprice
+* /houseitems
 
-### Keybinds  
-	* /bindkey
-	* /unbindkey
-	* /keybinds
+### Keybinds
+* /bindkey
+* /unbindkey
+* /keybinds
 
-### Misc  
-	* /idea
-	* /bug 
-	* /pos 
-	* /enter 
-	* /cursor 
-	* /yes 
-	* /no 
-	* /help
-	* /suicide
-	* /lights
-	* /lock
-	* /admins
-	* /mousecam
-	* /cursor
-	* /speak
-	* /gps
-	* /stuck
+### Misc
+* /idea
+* /bug
+* /pos
+* /enter
+* /cursor
+* /yes
+* /no
+* /info */help*
+* /suicide */kill*
+* /lock */doorlock* */locks* */lockdoor*
+* /lights */light*
+* /admins
+* /mousecam
+* /cursor
+* /speak
+* /gps
+* /stuck
+* /languages */locales*
+* /scoreboard
+* /pay
+* /speak
+* /tax
+* /wealth
 
-### Job  
-	* /takejob
-	* /startwork
-	* /stopwork
-	* /startjob
-	* /stopjob
-	* /quitjob
-	* /uniform
-	* /equip
-	* /department
-	* /d
-	* /fare
-	* /detain
-	* /drag
-	* /search
-	* /startroute
-	* /stoproute
-	* /jobinfo
-	* /joblocinfo
+### Job
+* /takejob
+* /startwork
+* /stopwork
+* /startjob
+* /stopjob
+* /quitjob
+* /uniform
+* /equips
+* /fare
+* /detain
+* /drag
+* /search
+* /startroute
+* /stoproute
+* /jobinfo
+* /joblocinfo
+* /fine
+* /jobinvite */jobhire*
+* /jobuninvite */jobfire*
+* /jobsetrank */jobrank*
 
-### Animation  
-	* /anim 
-	* /an 
-	* /e 
-	* /anims 
-	* /animlist 
-	* /stopanim
+### Animation
+* /anim */an* */e*
+* /animlist */anims*
+* /stopanim
 
-### Radio  
-	* /radiostation
-	* /radiostations
-	* /radiovolume
+### Internet Radio
+* /radiostation
+* /radiostations
+* /radiovolume */radiovol*
+
+### Bank
+* /bankbalance
+* /bankwithdraw
+* /bankdeposit
+
+### Payphone
+* /call
+* /hangup
+* /answer
+* /givephone
+* /payphone */number*
+* /nearpayphone */nearpayphones*
