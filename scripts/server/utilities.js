@@ -307,7 +307,7 @@ function getClosestPlayer(position, exemptPlayer) {
 // ===========================================================================
 
 function isPlayerMuted(client) {
-	return getPlayerData(client).muted;
+	return hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("Muted"));
 }
 
 // ===========================================================================
