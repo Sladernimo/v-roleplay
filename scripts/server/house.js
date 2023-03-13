@@ -1796,8 +1796,12 @@ function getHouseFromParams(params) {
 
 // ===========================================================================
 
-function updateHousePickupLabelData(houseId) {
-	let houseData = getHouseData(houseId);
+function updateHousePickupLabelData(houseId, deleted = false) {
+	let houseData = false;
+
+	if (deleted == false) {
+		houseData = getHouseData(houseId);
+	}
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (houseData == false) {
