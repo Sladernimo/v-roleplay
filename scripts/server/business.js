@@ -913,6 +913,38 @@ function setBusinessPaintBallCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
+function setBusinessBankCommand(command, params, client) {
+	let businessId = getPlayerBusiness(client);
+
+	if (!getBusinessData(businessId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	if (!canPlayerManageBusiness(client, businessId)) {
+		messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+		return false;
+	}
+
+	getBusinessData(businessId).type = V_BIZ_TYPE_BANK;
+	getBusinessData(businessId).labelHelpType == V_PROPLABEL_INFO_BANK;
+	getBusinessData(businessId).needsSaved = true;
+	updateBusinessPickupLabelData(businessId);
+
+	messagePlayerSuccess(client, getLocaleString(client, "BusinessIsNowBank"));
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function getBusinessInfoCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
@@ -2952,6 +2984,8 @@ function resetBusinessPickups(businessId) {
 	deleteBusinessPickups(businessId);
 	spawnBusinessEntrancePickup(businessId);
 	spawnBusinessExitPickup(businessId);
+
+	updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -2960,6 +2994,8 @@ function resetBusinessBlips(businessId) {
 	deleteBusinessBlips(businessId);
 	spawnBusinessEntranceBlip(businessId);
 	spawnBusinessExitBlip(businessId);
+
+	updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -2968,6 +3004,8 @@ function resetAllBusinessPickups(businessId) {
 	deleteBusinessPickups(businessId);
 	spawnBusinessEntrancePickup(businessId);
 	spawnBusinessExitPickup(businessId);
+
+	updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -2976,6 +3014,8 @@ function resetAllBusinessBlips() {
 	for (let i in getServerData().businesses) {
 		deleteBusinessBlips(i);
 		spawnBusinessBlips(i);
+
+		updateBusinessPickupLabelData(i, false);
 	}
 }
 

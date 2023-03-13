@@ -609,7 +609,7 @@ function stuckPlayerCommand(command, params, client) {
 
 	messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
 
-	if (getGameConfig().skinChangePosition[getGame()].length > 0) {
+	if (typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
 		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
 			messagePlayerAlert(client, "You canceled the skin change.");
 			restorePlayerCamera(client);
@@ -1050,6 +1050,51 @@ function locatePlayerCommand(client) {
 	}
 
 	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getDistance(getPlayerPosition(client), getPlayerPosition(targetClient))}{MAINCOLOUR}`, `{ALTCOLOUR}${getLocaleString(client, getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function givePlayerMoneyCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let amount = toInteger(getParam(params, " ", 2));
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().givePlayerMoneyDistance) {
+		messagePlayerError(client, getLocaleString(client, "PlayerTooFar", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+		return false;
+	}
+
+	if (getPlayerCurrentSubAccount(client).cash < amount) {
+		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${amount - getPlayerCurrentSubAccount(client).cash}{MAINCOLOUR}`));
+		return false;
+	}
+
+	takePlayerCash(client, toInteger(amount));
+	givePlayerCash(targetClient, toInteger(amount));
+
+	updatePlayerCash(client);
+	updatePlayerCash(targetClient);
+
+	messagePlayerAlert(targetClient, getLocaleString(targetClient, "GaveMoneyToPlayer", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	messagePlayerAlert(targetClient, getLocaleString(targetClient, "ReceivedMoneyFromPlayer", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
 }
 
 // ===========================================================================

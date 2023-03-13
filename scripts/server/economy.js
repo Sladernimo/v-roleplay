@@ -28,7 +28,7 @@ function applyServerInflationMultiplier(value) {
 
 function playerPayDay(client) {
 	let wealth = calculateWealth(client);
-	let grossIncome = getPlayerData(client).payDayAmount;
+	let grossIncome = getPlayerCurrentSubAccount(client).payDayAmount;
 
 	// Passive income
 	grossIncome = Math.round(grossIncome + getServerConfig().economy.passiveIncomePerPayDay);
@@ -51,12 +51,18 @@ function playerPayDay(client) {
 	}
 
 	let incomeTaxAmount = Math.round(calculateIncomeTax(wealth));
+	let fineAmount = Math.round(getPlayerCurrentSubAccount(client).fineAmount) || 0;
 
-	let netIncome = Math.round(grossIncome - incomeTaxAmount);
+	let netIncome = Math.round(grossIncome - incomeTaxAmount - fineAmount);
 
 	messagePlayerAlert(client, "== Payday! =============================");
 	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}${getCurrencyString(grossIncome)}`);
 	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}`);
+
+	if (fineAmount > 0) {
+		messagePlayerInfo(client, `Fines: {ALTCOLOUR}${getCurrencyString(fineAmount)}`);
+	}
+
 	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
 	if (netIncome < incomeTaxAmount) {
 		let totalCash = getPlayerCurrentSubAccount(client);
@@ -84,7 +90,8 @@ function playerPayDay(client) {
 	}
 
 	givePlayerCash(client, netIncome);
-	getPlayerData(client).payDayAmount = 0;
+	getPlayerCurrentSubAccount(client).payDayAmount = 0;
+	getPlayerCurrentSubAccount(client).fineAmount = 0;
 }
 
 // ===========================================================================
@@ -195,9 +202,9 @@ function getAllHousesOwnedByPlayer(client) {
 // ===========================================================================
 
 function isDoubleBonusActive() {
-	if (isWeekend()) {
-		return true;
-	}
+	//if (isWeekend()) {
+	//	return true;
+	//}
 
 	return false;
 }

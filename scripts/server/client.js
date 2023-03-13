@@ -85,10 +85,6 @@ class ClientData {
 		this.syncVehicle = null;
 		this.syncVehicleSeat = null;
 
-		// Payday
-		this.payDayAmount = 0;
-		this.payDayTickStart = 0;
-
 		// Creating Character
 		//this.creatingCharacter = false;
 		//this.creatingCharacterSkin = -1;

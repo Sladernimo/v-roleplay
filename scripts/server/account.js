@@ -1493,8 +1493,6 @@ function savePlayerToDatabase(client) {
 			}
 		}
 
-		getPlayerCurrentSubAccount(client).payDayAmount = getPlayerData(client).payDayAmount;
-
 		saveSubAccountToDatabase(getPlayerCurrentSubAccount(client));
 	}
 	logToConsole(LOG_DEBUG, `[V.RP.Account]: Saved client ${getPlayerDisplayForConsole(client)} to database successfully!`);

@@ -48,6 +48,8 @@ class SubAccountData {
 		this.accent = "";
 		this.payDayAmount = 0;
 		this.scene = "";
+		this.bank = 0;
+		this.fineAmount = 0;
 
 		this.bodyParts = {
 			hair: [0, 0],
@@ -99,6 +101,8 @@ class SubAccountData {
 			this.accent = toString(dbAssoc["sacct_accent"]);
 			this.payDayAmount = toInteger(dbAssoc["sacct_svr_payday"]);
 			this.scene = toString(dbAssoc["sacct_svr_scene"]);
+			this.bank = toInteger(dbAssoc["sacct_bank"]);
+			this.fineAmount = toInteger(dbAssoc["sacct_svr_fine"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["sacct_svr_hd_part_hair_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_part_hair_texture"]) || 0],
@@ -305,6 +309,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_name_last", safeLastName],
 			["sacct_name_middle", safeMiddleName],
 			["sacct_cash", subAccountData.cash],
+			["sacct_bank", subAccountData.bank],
 			["sacct_when_lastlogin", subAccountData.lastLogin],
 			["sacct_pos_x", subAccountData.spawnPosition.x],
 			["sacct_pos_y", subAccountData.spawnPosition.y],
@@ -367,6 +372,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
 			["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
 			["sacct_svr_payday", subAccountData.payDayAmount],
+			["sacct_svr_fine", subAccountData.fineAmount],
 		];
 
 		dbQuery = null;

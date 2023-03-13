@@ -286,6 +286,9 @@ let globalConfig = {
 	vehicleTransmitRadioUseDistance: 1.5,
 	transmitRadioSpeakerDistance: 15.0,
 	searchPlayerDistance: 2.0,
+	givePlayerMoneyDistance: 2.0,
+	finePlayerDistance: 10.0,
+	fineCommissionPercentage: 0.05,
 };
 
 // ===========================================================================
