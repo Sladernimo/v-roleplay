@@ -1184,7 +1184,7 @@ function getStaffFlagsCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function givePlayerMoneyCommand(command, params, client) {
+function givePlayerMoneyStaffCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
