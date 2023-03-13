@@ -68,6 +68,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.removeVehicles", removeVehiclesFromClient);
 	addNetworkEventHandler("v.rp.veh.lights", setVehicleLights);
 	addNetworkEventHandler("v.rp.veh.engine", setVehicleEngine);
+	addNetworkEventHandler("v.rp.veh.locked", setVehicleLock);
 	addNetworkEventHandler("v.rp.veh.repair", repairVehicle);
 	addNetworkEventHandler("v.rp.cruiseControl", toggleLocalVehicleCruiseControl);
 	addNetworkEventHandler("v.rp.passenger", enterVehicleAsPassenger);
