@@ -1402,22 +1402,15 @@ function getGameConfig() {
 
 // ===========================================================================
 
-function makeLargeNumberReadable(num) {
-	return new Number(num).toLocaleString("en-US");
+function makeLargeNumberReadable(num, localeCode = "en-US") {
+	return new Number(num).toLocaleString(localeCode);
 }
 
 // ===========================================================================
 
 function getKeyIdFromParams(params) {
-	let tempParams = toLowerCase(toString(params));
-
-	//let sdlName = sdl.getKeyFromName(tempParams);
-	//if(sdlName != null) {
-	//    return sdlName;
-	//}
-
 	for (let i in bindableKeys) {
-		if (toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
+		if (toLowerCase(bindableKeys[i]) == toLowerCase(params)) {
 			return i;
 		}
 	}
@@ -3241,7 +3234,7 @@ function isMainWorldScene(sceneName) {
 // ===========================================================================
 
 function isNightTime(hour) {
-	if (hour >= 7 && hour <= 19) {
+	if (hour >= dayHourStart && hour <= nightHourStart) {
 		return false;
 	} else {
 		return true;
