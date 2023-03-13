@@ -35,7 +35,7 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
+function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee, labelInfoType) {
 	logToConsole(LOG_DEBUG, `[V.RP.Business] Received business ${businessId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -60,6 +60,7 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			businessData.hasItems = hasItems;
 			businessData.locked = locked;
 			businessData.entranceFee = entranceFee;
+			businessData.labelInfoType = labelInfoType;
 
 			if (businessData.buyPrice > 0) {
 				businessData.labelInfoType = V_PROPLABEL_INFO_BUYBIZ;
@@ -97,13 +98,21 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 						natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
 						natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
 						natives.setBlipMarkerLongDistance(businessData.blipId, false);
-						natives.setBlipAsShortRange(tempBusinessData.blipId, true);
+						natives.setBlipAsShortRange(businessData.blipId, true);
 						natives.changeBlipNameFromAscii(businessData.blipId, `${businessData.name.substr(0, 24)}${(businessData.name.length > 24) ? " ..." : ""}`);
 					}
 				} else {
-					let blipId = createGameBlip(tempBusinessData.blipModel, tempBusinessData.entrancePosition, tempBusinessData.name);
+					let blipId = createGameBlip(businessData.blipModel, businessData.entrancePosition, businessData.name);
 					if (blipId != -1) {
-						tempBusinessData.blipId = blipId;
+						businessData.blipId = blipId;
+
+						if (getGame() == V_GAME_GTA_IV) {
+							natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
+							natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
+							natives.setBlipMarkerLongDistance(businessData.blipId, false);
+							natives.setBlipAsShortRange(businessData.blipId, true);
+							natives.changeBlipNameFromAscii(businessData.blipId, `${businessData.name.substr(0, 24)}${(businessData.name.length > 24) ? " ..." : ""}`);
+						}
 					}
 					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 				}
@@ -121,15 +130,26 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			businessData.hasItems = hasItems;
 			businessData.locked = locked;
 			businessData.entranceFee = entranceFee;
-			if (blipModel != -1) {
-				let blipId = createGameBlip(businessData.blipModel, businessData.entrancePosition, businessData.name);
-				if (blipId != -1) {
-					businessData.blipId = blipId;
+
+			if (isGameFeatureSupported("blip")) {
+				if (blipModel != -1) {
+					let blipId = createGameBlip(businessData.blipModel, businessData.entrancePosition, businessData.name);
+					if (blipId != -1) {
+						businessData.blipId = blipId;
+						if (getGame() == V_GAME_GTA_IV) {
+							natives.setBlipCoordinates(businessData.blipId, businessData.entrancePosition);
+							natives.changeBlipSprite(businessData.blipId, businessData.blipModel);
+							natives.setBlipMarkerLongDistance(businessData.blipId, false);
+							natives.setBlipAsShortRange(businessData.blipId, true);
+							natives.changeBlipNameFromAscii(businessData.blipId, `${businessData.name.substr(0, 24)}${(businessData.name.length > 24) ? " ..." : ""}`);
+						}
+					}
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+				} else {
+					logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} has no blip.`);
 				}
-				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
-			} else {
-				logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} has no blip.`);
 			}
+
 			getServerData().businesses.push(businessData);
 			setAllBusinessDataIndexes();
 		}
