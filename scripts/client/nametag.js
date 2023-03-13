@@ -143,7 +143,7 @@ function updateNametag(element) {
 	}
 
 	if (localPlayer != null) {
-		let playerPosition = localPlayer.position;
+		let playerPosition = getLocalPlayerPosition();
 		let elementPosition = element.position;
 
 		elementPosition = getPosAbovePos(elementPosition, nametagHeight);

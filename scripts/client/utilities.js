@@ -30,8 +30,8 @@ function setLocalPlayerControlState(controlState, cursorState = false) {
 
 function removeLocalPlayerFromVehicle() {
 	if (getGame() == V_GAME_MAFIA_ONE) {
-		localPlayer.removeFromVehicle(localPlayer.vehicle, 0);
-		localPlayer.position = getPosAbovePos(localPlayer.position, 5);
+		localPlayer.removeFromVehicle();
+		localPlayer.position = getPosAbovePos(getLocalPlayerPosition(), 5);
 	}
 
 	localPlayer.removeFromVehicle();
@@ -105,7 +105,7 @@ function runClientCode(code, returnTo) {
 
 function enterVehicleAsPassenger() {
 	if (localPlayer.vehicle == null) {
-		let tempVehicle = getClosestVehicle(localPlayer.position);
+		let tempVehicle = getClosestVehicle(getLocalPlayerPosition());
 		if (getGame() != V_GAME_GTA_IV) {
 			if (tempVehicle != null) {
 				localPlayer.enterVehicle(tempVehicle, false);
@@ -160,28 +160,6 @@ function clearLocalPlayerWeapons(clearData) {
 
 function getClosestVehicle(pos) {
 	return getElementsByType(ELEMENT_VEHICLE).reduce((i, j) => (i.position.distance(pos) < j.position.distance(pos)) ? i : j);
-}
-
-// ===========================================================================
-
-function setLocalPlayerPosition(position) {
-	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
-	if (typeof localPlayer.velocity != "undefined") {
-		localPlayer.velocity = toVector3(0.0, 0.0, 0.0);
-	}
-
-	if (typeof localPlayer.position != "undefined") {
-		localPlayer.position = position;
-	}
-}
-
-// ===========================================================================
-
-function setLocalPlayerHeading(heading) {
-	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting heading to ${heading}`);
-	if (typeof localPlayer.heading != "undefined") {
-		localPlayer.heading = heading;
-	}
 }
 
 // ===========================================================================
@@ -422,17 +400,6 @@ function forceLocalPlayerEquippedWeaponItem() {
 
 // ===========================================================================
 
-function getLocalPlayerPosition() {
-	let position = localPlayer.position;
-	if (localPlayer.vehicle) {
-		position = localPlayer.vehicle.position;
-	}
-
-	return position;
-}
-
-// ===========================================================================
-
 function getVehicleForNetworkEvent(vehicle) {
 	if (getGame() == V_GAME_GTA_IV) {
 		return natives.getNetworkIdFromVehicle(vehicle);
@@ -502,7 +469,7 @@ function processNearbyPickups() {
 	if (typeof ELEMENT_PICKUP != "undefined") {
 		let pickups = getElementsByType(ELEMENT_PICKUP);
 		for (let i in pickups) {
-			if (getDistance(pickups[i].position, localPlayer.position) < 5) {
+			if (getDistance(pickups[i].position, getLocalPlayerPosition()) < 5) {
 				//if(pickups[i].interior == localPlayer.interior && pickups[i].dimension == localPlayer.dimension) {
 				if (currentPickup != pickups[i]) {
 					currentPickup = pickups[i];

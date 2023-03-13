@@ -218,6 +218,13 @@ function setVehicleEngine(vehicleId, state) {
 
 // ===========================================================================
 
+function setVehicleLock(vehicleId, state) {
+	//getElementFromId(vehicleId).netFlags.sendSync = state;
+	getElementFromId(vehicleId).lockedStatus = (state == false) ? 0 : 2;
+}
+
+// ===========================================================================
+
 function setVehicleLights(vehicleId, state) {
 	getElementFromId(vehicleId).lights = state;
 }
@@ -728,6 +735,38 @@ function getElementCollisionsEnabled(elementId, state) {
 	}
 
 	return getElementFromId(elementId).collisionsEnabled;
+}
+
+// ===========================================================================
+
+function getLocalPlayerPosition() {
+	if (localPlayer.vehicle != null) {
+		return localPlayer.vehicle.position;
+	}
+
+	return localPlayer.position;
+}
+
+// ===========================================================================
+
+function setLocalPlayerPosition(position) {
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting position to ${position.x}, ${position.y}, ${position.z}`);
+	if (typeof localPlayer.velocity != "undefined") {
+		localPlayer.velocity = toVector3(0.0, 0.0, 0.0);
+	}
+
+	if (typeof localPlayer.position != "undefined") {
+		localPlayer.position = position;
+	}
+}
+
+// ===========================================================================
+
+function setLocalPlayerHeading(heading) {
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting heading to ${heading}`);
+	if (typeof localPlayer.heading != "undefined") {
+		localPlayer.heading = heading;
+	}
 }
 
 // ===========================================================================
