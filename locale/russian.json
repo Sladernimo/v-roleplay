@@ -1,5 +1,5 @@
 {
-	"TranslationProvidedBy": "VNDTTS(Vende)",
+	"TranslationProvidedBy": "VNDTTS and SerzhMelhior",
 	"LocaleEnglishName": "Russian",
 
 	"LocaleNativeName": "Русский",
@@ -801,5 +801,20 @@
 	"ClanInviteAlreadyHasClan": "That player is already in a clan!",
 	"ClanInviteRequest": "{1} invited you to the {2} clan.",
 	"CantAddClanMembers": "You can't invite new members to the clan!",
-	"CantRemoveClanMembers": "You can't remove members from the clan!"
+	"CantRemoveClanMembers": "You can't remove members from the clan!",
+	"PlayerRemovedFromClan": "You removed {1} from the clan!",
+	"RemovedFromClan": "You were removed from the clan by {1}",
+	"PlayerTooFar": "{1} is too far away!",
+	"CantUseNegativeNumber": "You can't use a negative number!",
+	"BankBalance": "Your bank balance is: {1}",
+	"BankMoneyDeposited": "You put {1} into your bank account",
+	"BankMoneyWithdrawn": "You took {1} from your bank account",
+	"NotAtBank": "You are not at a bank or ATM!",
+	"BusinessIsNowBank": "This business is now a bank",
+	"BusinessBankInfoLabel": "Use {1} to take money, {2} to put money, or {3} to see your balance",
+	"MaximumFine": "The maximum amount you can fine a player is {1}",
+	"FinedPlayer": "You gave {1} a fine for {2}",
+	"FinedByPlayer": "{1} gave you a fine for {2}",
+	"CantFinePlayer": "You can't give a player a fine",
+	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}"
 }
