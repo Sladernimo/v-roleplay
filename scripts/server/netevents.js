@@ -1131,7 +1131,7 @@ function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosi
 // ==========================================================================
 
 function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel) {
-	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position);
+	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel);
 }
 
 // ==========================================================================
@@ -1158,8 +1158,8 @@ function sendAllBusinessesToPlayer(client) {
 			false,
 			businesses[i].name,
 			businesses[i].entrancePosition,
-			businesses[i].entranceBlipModel,
-			businesses[i].entrancePickupModel,
+			getBusinessEntranceBlipModelForNetworkEvent(i),
+			getBusinessEntrancePickupModelForNetworkEvent(i),
 			businesses[i].buyPrice,
 			businesses[i].rentPrice,
 			businesses[i].hasInterior,
@@ -1177,7 +1177,7 @@ function sendAllHousesToPlayer(client) {
 
 	let houses = getServerData().houses;
 	for (let i in houses) {
-		sendHouseToPlayer(client, houses[i].index, false, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
+		sendHouseToPlayer(client, houses[i].index, false, houses[i].entrancePosition, getHouseEntranceBlipModelForNetworkEvent(i), getHouseEntrancePickupModelForNetworkEvent(i), houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
 	}
 }
 
@@ -1189,7 +1189,7 @@ function sendAllJobsToPlayer(client) {
 	let jobs = getServerData().jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(client, jobs[i].index, false, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].pickupModel, jobs[i].blipModel);
+			sendJobToPlayer(client, jobs[i].index, false, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, getJobLocationBlipModelForNetworkEvent(i), getJobLocationPickupModelForNetworkEvent(i));
 		}
 	}
 }
