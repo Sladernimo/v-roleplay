@@ -98,14 +98,19 @@ function createPayPhone(position, number, addedBy = defaultNoAccountId) {
 // ===========================================================================
 
 function getClosestPayPhone(position) {
-	let closest = 0;
-	for (let i in getServerData().payPhones) {
-		if (getDistance(position, getServerData().payPhones[i].position) < getDistance(position, getServerData().payPhones[closest].position)) {
-			closest = i;
+	if (getServerData().payPhones.length > 0) {
+
+		let closest = 0;
+		for (let i in getServerData().payPhones) {
+			if (getDistance(position, getServerData().payPhones[i].position) < getDistance(position, getServerData().payPhones[closest].position)) {
+				closest = i;
+			}
 		}
+
+		return closest;
 	}
 
-	return closest;
+	return -1;
 }
 
 // ===========================================================================
@@ -218,7 +223,7 @@ function callPayPhoneCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(targetClient).usingPayPhone != -1 || isPlayerRestrained(targetClient) || isPlayerSurrendered(targetClient) || isPlayerMuted(targetClient) || !isPlayerSpawned(targetClient)) {
+	if (!canPlayerBeCalledOnPayPhone(targetClient)) {
 		messagePlayerError(client, getLocaleString(client, "UnableToCallPlayer", getCharacterFullName(targetClient)));
 		return false;
 	}
@@ -716,6 +721,32 @@ function fixDesyncedPayPhones() {
 function setPayPhoneState(payPhoneIndex, state) {
 	getPayPhoneData(payPhoneIndex).state = state;
 	sendPayPhoneStateToPlayer(null, payPhoneIndex, state);
+}
+
+// ===========================================================================
+
+function canPlayerBeCalledOnPayPhone(client) {
+	if (getPlayerData(client).usingPayPhone != -1) {
+		return false;
+	}
+
+	if (isPlayerRestrained(client)) {
+		return false;
+	}
+
+	if (isPlayerSurrendered(client)) {
+		return false;
+	}
+
+	if (isPlayerMuted(client)) {
+		return false;
+	}
+
+	if (!isPlayerSpawned(client)) {
+		return false;
+	}
+
+	return true;
 }
 
 // ===========================================================================
