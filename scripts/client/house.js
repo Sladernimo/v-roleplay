@@ -91,7 +91,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 						natives.changeBlipSprite(houseData.blipId, houseData.blipModel);
 						natives.setBlipMarkerLongDistance(houseData.blipId, false);
 						natives.setBlipAsShortRange(houseData.blipId, true);
-						natives.changeBlipNameFromAscii(houseData.blipId, `${houseData.name.substr(0, 24)}${(houseData.name.length > 24) ? " ..." : ""}`);
+						natives.changeBlipNameFromAscii(houseData.blipId, `${houseData.name.substr(0, 24)}${(houseData.description.length > 24) ? " ..." : ""}`);
 					}
 				} else {
 					let blipId = createGameBlip(houseData.blipModel, houseData.entrancePosition, houseData.name);
@@ -103,17 +103,37 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} doesn't exist. Adding ...`);
-			let tempHouseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked);
-			if (blipModel != -1) {
-				let blipId = createGameBlip(tempHouseData.blipModel, tempHouseData.entrancePosition, "House");
-				if (blipId != -1) {
-					tempHouseData.blipId = blipId;
+			let houseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked);
+			houseData.description = description;
+			houseData.entrancePosition = entrancePosition;
+			houseData.blipModel = blipModel;
+			houseData.pickupModel = pickupModel;
+			houseData.hasInterior = hasInterior;
+			houseData.buyPrice = buyPrice;
+			houseData.rentPrice = rentPrice;
+			houseData.locked = locked;
+
+			if (isGameFeatureSupported("blip")) {
+				if (blipModel != -1) {
+					let blipId = createGameBlip(houseData.blipModel, houseData.entrancePosition, "House");
+					if (blipId != -1) {
+						houseData.blipId = blipId;
+
+						if (getGame() == V_GAME_GTA_IV) {
+							natives.setBlipCoordinates(houseData.blipId, houseData.entrancePosition);
+							natives.changeBlipSprite(houseData.blipId, houseData.blipModel);
+							natives.setBlipMarkerLongDistance(houseData.blipId, false);
+							natives.setBlipAsShortRange(houseData.blipId, true);
+							natives.changeBlipNameFromAscii(houseData.blipId, `${houseData.name.substr(0, 24)}${(houseData.description.length > 24) ? " ..." : ""}`);
+						}
+					}
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+				} else {
+					logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} has no blip.`);
 				}
-				logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
-			} else {
-				logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} has no blip.`);
 			}
-			getServerData().houses.push(tempHouseData);
+
+			getServerData().houses.push(houseData);
 			setAllHouseDataIndexes();
 		}
 	}
