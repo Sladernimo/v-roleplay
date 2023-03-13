@@ -1721,10 +1721,10 @@ function playerUseItem(client, hotBarSlot) {
 			let clients = getClients();
 			for (let i in clients) {
 				if (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= 7) {
-					messagePlayerNormal(client, `{clanOrange}${makeChatBoxSectionHeader(getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)))}`);
-					messagePlayerNormal(client, `{clanOrange}Type:{MAINCOLOUR} ${getJobData(getPlayerJob(client)).name}`);
-					messagePlayerNormal(client, `{clanOrange}ID:{MAINCOLOUR} ${addPrefixNumberFill(getPlayerCurrentSubAccount(client).databaseId, 5)}`);
-					messagePlayerNormal(client, `{clanOrange}Rank:{MAINCOLOUR} ${getJobRankName(getPlayerJob(client), getPlayerJobRank(client))}`);
+					messagePlayerNormal(clients[i], `{clanOrange}${makeChatBoxSectionHeader(getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)))}`);
+					messagePlayerNormal(clients[i], `{clanOrange}Type:{MAINCOLOUR} ${getJobData(getPlayerJob(client)).name}`);
+					messagePlayerNormal(clients[i], `{clanOrange}ID:{MAINCOLOUR} ${addPrefixNumberFill(getPlayerCurrentSubAccount(client).databaseId, 5)}`);
+					messagePlayerNormal(clients[i], `{clanOrange}Rank:{MAINCOLOUR} ${getJobRankName(getPlayerJob(client), getPlayerJobRank(client))}`);
 				}
 			}
 			break;
