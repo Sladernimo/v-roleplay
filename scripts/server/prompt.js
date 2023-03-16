@@ -153,6 +153,7 @@ function playerPromptAnswerYes(client) {
 			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_CLAN;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
+			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
@@ -177,6 +178,7 @@ function playerPromptAnswerYes(client) {
 			getHouseData(houseId).ownerType = V_HOUSE_OWNER_CLAN;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
+			getHouseData(houseId).needsSaved = true;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
@@ -201,6 +203,49 @@ function playerPromptAnswerYes(client) {
 			getBusinessData(businessId).ownerType = V_BIZ_OWNER_CLAN;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
+			getBusinessData(businessId).needsSaved = true;
+			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
+			break;
+		}
+
+		case V_PROMPT_GIVEVEHTOBIZ: {
+			if (!isPlayerInAnyVehicle(client)) {
+				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
+				return false;
+			}
+
+			if (!getVehicleData(getPlayerVehicle(client))) {
+				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+				return false;
+			}
+
+			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEHOWNER_PLAYER) {
+				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				return false;
+			}
+
+			if (getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				return false;
+			}
+
+			let businessIndex = getClosestBusinessEntrance(client);
+
+			if (!getBusinessData(businessIndex)) {
+				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+				return false;
+			}
+
+			if (!canPlayerManageBusiness(client, businessIndex)) {
+				messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+				return false;
+			}
+
+			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_BIZ;
+			getVehicleData(getPlayerVehicle(client)).ownerId = getClosestBusinessEntrance(client);
+			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(getPlayerVehicle(client))}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}`));
+
+			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}

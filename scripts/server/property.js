@@ -2024,8 +2024,7 @@ function addToPropertyInventory(propertyIndex, itemType, amount, buyPrice) {
 	saveItemToDatabase(tempItemData);
 	getServerData().items.push(tempItemData);
 
-	let index = getServerData().items.length - 1;
-	getServerData().items[index].index = index;
+	setAllItemDataIndexes();
 }
 
 // ===========================================================================
@@ -2276,10 +2275,12 @@ function cachePropertyItems(propertyIndex) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
-			getPropertyData(propertyIndex).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
-			getPropertyData(propertyIndex).storageItemCache.push(i);
+		if (getServerData().items[i] != null) {
+			if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+				getPropertyData(propertyIndex).floorItemCache.push(i);
+			} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
+				getPropertyData(propertyIndex).storageItemCache.push(i);
+			}
 		}
 	}
 

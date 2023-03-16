@@ -273,7 +273,7 @@ function renderPropertyExitLabel(position) {
 
 // -------------------------------------------------------------------------
 
-function renderJobLabel(name, position, jobType) {
+function renderJobLabel(name, position, jobType, hasPublicRank) {
 	if (localPlayer == null) {
 		return false;
 	}
@@ -303,10 +303,14 @@ function renderJobLabel(name, position, jobType) {
 			text = getLocaleString("StartWorkLabel", "/startwork");
 		}
 	} else {
-		if (localPlayerJobType == -1) {
-			text = getLocaleString("TakeJobLabel", "/takejob");
+		if (!hasPublicRank) {
+			text = getLocaleString("CantUseThisJob");
 		} else {
-			text = getLocaleString("NotYourJobLabel", "/quitjob");
+			if (localPlayerJobType == -1) {
+				text = getLocaleString("TakeJobLabel", "/takejob");
+			} else {
+				text = getLocaleString("NotYourJobLabel", "/quitjob");
+			}
 		}
 	}
 
@@ -367,7 +371,7 @@ function processLabelRendering() {
 				getServerData().jobs.forEach((job) => {
 					let distance = getDistance(getLocalPlayerPosition(), job.position);
 					if (distance <= propertyLabelRenderDistance) {
-						renderJobLabel(job.name, job.position, job.jobId);
+						renderJobLabel(job.name, job.position, job.jobId, job.hasPublicRank);
 					}
 
 					if (distance <= jobWorldIconRenderDistance) {
@@ -423,7 +427,7 @@ function processLabelRendering() {
 									}
 
 									case V_LABEL_JOB: {
-										renderJobLabel(pickups[i].getData("v.rp.label.name"), pickups[i].position, pickups[i].getData("v.rp.label.jobType"));
+										renderJobLabel(pickups[i].getData("v.rp.label.name"), pickups[i].position, pickups[i].getData("v.rp.label.jobType"), pickups[i].getData("v.rp.label.publicRank"));
 										break;
 									}
 

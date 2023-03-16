@@ -99,7 +99,8 @@ class ServerConfigData {
 				upKeepPerVehicle: 250,
 				upKeepPerHouse: 350,
 				upKeepPerBusiness: 600
-			}
+			},
+			incomeInflationMultiplier: 1.0
 		};
 
 		if (dbAssoc) {
@@ -162,7 +163,8 @@ class ServerConfigData {
 					upKeepPerVehicle: toInteger(dbAssoc["svr_upkeep_veh"]),
 					upKeepPerHouse: toInteger(dbAssoc["svr_upkeep_house"]),
 					upKeepPerBusiness: toInteger(dbAssoc["svr_upkeep_biz"]),
-				}
+				},
+				incomeInflationMultiplier: 1.0
 			};
 
 			this.devServer = intToBool(toInteger(server.getCVar("v_devserver")));

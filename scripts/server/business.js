@@ -995,7 +995,7 @@ function getBusinessInfoCommand(command, params, client) {
 		[`ID`, `${businessData.index}/${businessData.databaseId}`],
 		[`Owner`, `${ownerName} (${getBusinessOwnerTypeText(businessData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(businessData.locked)}`],
-		[`BuyPrice`, `${getCurrencyString(businessData.buyPrice)}`],
+		[`BuyPrice`, `${getCurrencyString(businessData.buyPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(businessData.buyPrice))})`],
 		//[`RentPrice`, `${businessData.rentPrice}`],
 		[`HasInterior`, `${getYesNoFromBool(businessData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(businessData.customInterior)}`],
@@ -1524,7 +1524,7 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	getBusinessData(businessId).needsSaved = true;
 	updateBusinessPickupLabelData(businessId);
 
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`);
 }
 
 // ===========================================================================
@@ -1701,7 +1701,7 @@ function buyBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
+	if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getBusinessData(businessId).buyPrice)) {
 		messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
 		return false;
 	}
@@ -2602,11 +2602,10 @@ function addToBusinessInventory(businessId, itemType, amount, buyPrice) {
 	tempItemData.ownerType = V_ITEMOWNER_BIZ;
 	tempItemData.ownerIndex = businessId;
 	tempItemData.itemTypeIndex = itemType;
-	saveItemToDatabase(tempItemData);
 	getServerData().items.push(tempItemData);
 
-	let index = getServerData().items.length - 1;
-	getServerData().items[index].index = index;
+	setAllItemDataIndexes();
+	cacheAllBusinessItems();
 }
 
 // ===========================================================================
@@ -2690,7 +2689,7 @@ function buyFromBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	let totalCost = getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice * amount;
+	let totalCost = applyServerInflationMultiplier(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice) * amount;
 	let itemName = getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name;
 
 	if (getPlayerCurrentSubAccount(client).cash < totalCost) {
@@ -2763,7 +2762,7 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 
 	getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).buyPrice = newPrice;
 
-	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newPrice)}`);
+	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(newPrice))})`);
 }
 
 // ===========================================================================
@@ -2893,10 +2892,12 @@ function cacheBusinessItems(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).floorItemCache.push(i);
-		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-			getBusinessData(businessId).storageItemCache.push(i);
+		if (getItemData(i) != false) {
+			if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+				getBusinessData(businessId).floorItemCache.push(i);
+			} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+				getBusinessData(businessId).storageItemCache.push(i);
+			}
 		}
 	}
 
@@ -2973,8 +2974,8 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 			}
 		}
 
-		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", getBusinessData(businessId).buyPrice, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.fee", getBusinessData(businessId).entranceFee, true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", applyServerInflationMultiplier(getBusinessData(businessId).buyPrice), true);
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.fee", applyServerInflationMultiplier(getBusinessData(businessId).entranceFee), true);
 	}
 }
 

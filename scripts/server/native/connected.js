@@ -598,7 +598,7 @@ function isMeleeWeapon(weaponId, gameId = getGame()) {
 // ===========================================================================
 
 function getPlayerLastVehicle(client) {
-	return getPlayerData(client).lastVehicle;
+	return (getPlayerData(client).lastVehicle != null) ? getPlayerData(client).lastVehicle : false;
 }
 
 // ===========================================================================

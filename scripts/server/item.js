@@ -348,12 +348,8 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary
 		tempItemData.databaseId = -1;
 	}
 
-	let slot = getServerData().items.push(tempItemData);
-	let index = slot - 1;
-	getServerData().items[slot - 1].index = index;
-	getServerData().items[slot - 1].itemTypeIndex = itemTypeId;
-
-	saveItemToDatabase(slot - 1);
+	getServerData().items.push(tempItemData);
+	setAllItemDataIndexes();
 	return index;
 }
 
@@ -1485,17 +1481,17 @@ function playerUseItem(client, hotBarSlot) {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToTie"));
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
 			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToTie"));
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
 			if (!isPlayerSurrendered(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedTie", getCharacterFullName(closestPlayer)));
+				messagePlayerError(client, getLocaleString(client, "MustBeSurrendered", getCharacterFullName(closestPlayer)));
 				return false;
 			}
 
@@ -1518,12 +1514,12 @@ function playerUseItem(client, hotBarSlot) {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
 			if (!getPlayerData(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToHandcuff"));
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
 			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToHandcuff"));
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
@@ -2147,7 +2143,7 @@ function getClosestItemOnGround(position) {
 
 function setAllItemDataIndexes() {
 	for (let i in getServerData().items) {
-		if (getServerData().items[i]) {
+		if (getServerData().items[i] != null) {
 			getServerData().items[i].index = i;
 			getServerData().items[i].itemTypeIndex = getItemTypeIndexFromDatabaseId(getServerData().items[i].itemType);
 		}
@@ -2176,8 +2172,10 @@ function setAllItemTypeDataIndexes() {
 function cacheAllGroundItems() {
 	clearArray(getServerData().groundItemCache);
 	for (let i in getServerData().items) {
-		if (getServerData().items[i].ownerType == V_ITEM_OWNER_GROUND) {
-			getServerData().groundItemCache.push(i);
+		if (getServerData().items[i] != null) {
+			if (getServerData().items[i].ownerType == V_ITEM_OWNER_GROUND) {
+				getServerData().groundItemCache.push(i);
+			}
 		}
 	}
 }
@@ -2703,7 +2701,9 @@ function saveAllItemsToDatabase() {
 	}
 
 	for (let i in getServerData().items) {
-		saveItemToDatabase(i);
+		if (getServerData().items[i] != null) {
+			saveItemToDatabase(i);
+		}
 	}
 }
 
@@ -3492,7 +3492,9 @@ function getItemPosition(itemId) {
 function cacheAllItemItems() {
 	let items = getServerData().items;
 	for (let i in items) {
-		cacheItemItems(i);
+		if (items[i] != null) {
+			cacheItemItems(i);
+		}
 	}
 }
 
@@ -3503,8 +3505,10 @@ function cacheItemItems(itemId) {
 
 	let items = getServerData().items;
 	for (let i in items) {
-		if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
-			getItemData(itemId).itemCache.push(i);
+		if (items[i] != null) {
+			if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
+				getItemData(itemId).itemCache.push(i);
+			}
 		}
 	}
 }

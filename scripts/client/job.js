@@ -169,7 +169,7 @@ function hideJobRouteLocation() {
 
 // ===========================================================================
 
-function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel) {
+function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank) {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -189,6 +189,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 			jobData.position = position;
 			jobData.blipModel = blipModel;
 			jobData.pickupModel = pickupModel;
+			jobData.hasPublicRank = hasPublicRank;
 
 			if (isGameFeatureSupported("blip")) {
 				logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} already exists. Checking blip ...`);
@@ -227,6 +228,13 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} doesn't exist. Adding ...`);
 			let jobData = new JobData(jobId, jobLocationId, name, position, blipModel, pickupModel);
+			jobData.jobLocationId = jobLocationId;
+			jobData.name = name;
+			jobData.position = position;
+			jobData.blipModel = blipModel;
+			jobData.pickupModel = pickupModel;
+			jobData.hasPublicRank = hasPublicRank;
+
 			if (isGameFeatureSupported("blip")) {
 				if (blipModel != -1) {
 					let blipId = createGameBlip(blipModel, jobData.position, jobData.name);

@@ -1130,8 +1130,8 @@ function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosi
 
 // ==========================================================================
 
-function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel) {
-	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel);
+function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank = true) {
+	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank);
 }
 
 // ==========================================================================

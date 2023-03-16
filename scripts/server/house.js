@@ -1349,8 +1349,8 @@ function getHouseInfoCommand(command, params, client) {
 		[`ID`, `${houseData.index}/${houseData.databaseId}`],
 		[`Owner`, `${ownerName} (${getHouseOwnerTypeText(houseData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(houseData.locked)}`],
-		[`BuyPrice`, `${houseData.buyPrice}`],
-		[`RentPrice`, `${houseData.rentPrice}`],
+		[`BuyPrice`, `${getCurrencyString(houseData.buyPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(houseData.buyPrice))})`],
+		[`RentPrice`, `${getCurrencyString(houseData.rentPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(houseData.rentPrice))})`],
 		[`HasInterior`, `${getYesNoFromBool(houseData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(houseData.customInterior)}`],
 		[`InteriorLights`, `${getOnOffFromBool(houseData.interiorLights)}`],
@@ -1403,7 +1403,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	getHouseData(houseId).buyPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`);
 }
 
 // ===========================================================================
@@ -1441,7 +1441,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	getHouseData(houseId).rentPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`);
 }
 
 // ===========================================================================
@@ -1468,7 +1468,7 @@ function buyHouseCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
+	if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getHouseData(houseId).buyPrice)) {
 		messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
 		return false;
 	}
@@ -1632,8 +1632,10 @@ function cacheHouseItems(houseId) {
 	clearArray(getHouseData(houseId).itemCache);
 
 	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
-			getHouseData(houseId).itemCache.push(i);
+		if (getItemData(i) != false) {
+			if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
+				getHouseData(houseId).itemCache.push(i);
+			}
 		}
 	}
 }
@@ -1815,8 +1817,8 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 				houseData.entrancePosition,
 				getHouseEntranceBlipModelForNetworkEvent(houseId),
 				getHouseEntrancePickupModelForNetworkEvent(houseId),
-				houseData.buyPrice,
-				houseData.rentPrice,
+				applyServerInflationMultiplier(houseData.buyPrice),
+				applyServerInflationMultiplier(houseData.rentPrice),
 				houseData.hasInterior,
 				houseData.locked
 			);
@@ -1830,8 +1832,8 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 		setEntityData(houseData.entrancePickup, "v.rp.label.type", V_LABEL_HOUSE, true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.name", houseData.description, true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.locked", houseData.locked, true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.price", houseData.buyPrice, true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", houseData.rentPrice, true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.price", applyServerInflationMultiplier(houseData.buyPrice), true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", applyServerInflationMultiplier(houseData.rentPrice), true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
 
 		if (houseData.buyPrice > 0) {

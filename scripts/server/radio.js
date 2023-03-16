@@ -404,14 +404,16 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 
 	let items = getServerData().items;
 	for (let i in items) {
-		if (items[i].enabled) {
-			if (getItemTypeData(items[i].itemTypeIndex).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
-				if (items[i].value == frequency) {
-					for (let j in clients) {
-						if (seenClients.indexOf(clients[j]) == -1) {
-							if (getDistance(getPlayerPosition(clients[j], getItemPosition(i))) <= getGlobalConfig().transmitRadioSpeakerDistance) {
-								seenClients.push(clients[j]);
-								messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
+		if (items[i] != null) {
+			if (items[i].enabled) {
+				if (getItemTypeData(items[i].itemTypeIndex).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
+					if (items[i].value == frequency) {
+						for (let j in clients) {
+							if (seenClients.indexOf(clients[j]) == -1) {
+								if (getDistance(getPlayerPosition(clients[j], getItemPosition(i))) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+									seenClients.push(clients[j]);
+									messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
+								}
 							}
 						}
 					}

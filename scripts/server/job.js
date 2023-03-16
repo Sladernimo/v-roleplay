@@ -2690,7 +2690,7 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
 
-	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1);
+	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex));
 }
 
 // ===========================================================================
@@ -3322,6 +3322,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 					setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
 					setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
 					setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
+					setEntityData(pickup, "v.rp.label.publicRank", doesJobHavePublicRank(tempJobData.index), true);
 					addToWorld(pickup);
 				}
 			}
@@ -4567,7 +4568,7 @@ function jobUninviteCommand(command, params, client) {
 	}
 
 	if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level <= getJobRankData(getPlayerJob(targetClient), getPlayerJobRank(targetClient)).level) {
-		messagePlayerError(client, getLocaleString(client, "JobUnInviteTooLow"));
+		messagePlayerError(client, getLocaleString(client, "JobRankTooLow"));
 		return false;
 	}
 
@@ -4730,6 +4731,18 @@ function finePlayerCommand(command, params, client) {
 
 	messagePlayerSuccess(client, getLocaleString(client, "FinedPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
 	messagePlayerAlert(targetClient, getLocaleString(targetClient, "FinedByPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function doesJobHavePublicRank(jobIndex) {
+	for (let i in getServerData().jobs[jobIndex].ranks) {
+		if (getServerData().jobs[jobIndex].ranks[i].public) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // ===========================================================================

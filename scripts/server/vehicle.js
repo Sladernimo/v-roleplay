@@ -708,7 +708,7 @@ function buyVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getVehicleData(vehicle).buyPrice) {
+	if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getVehicleData(vehicle).buyPrice)) {
 		messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 		return false;
 	}
@@ -999,8 +999,6 @@ function setVehicleClanCommand(command, params, client) {
 
 	showPlayerPrompt(client, getLocaleString(client, "SetVehicleClanConfirmMessage"), getLocaleString(client, "SetVehicleClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = V_PROMPT_GIVEVEHTOCLAN;
-
-	getVehicleData(vehicle).needsSaved = true;
 }
 
 // ===========================================================================
@@ -1012,28 +1010,30 @@ function setVehicleBusinessCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessId = getClosestBusinessEntrance(client);
-
-	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses")) && !isNull(params)) {
-		businessId = getBusinessFromParams(params);
-	}
+	let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client));
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (!getBusinessData(businessIndex)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
 
-	getVehicleData(vehicle).ownerType = V_VEHOWNER_BIZ;
-	getVehicleData(vehicle).ownerId = getBusinessData(businessId).databaseId;
+	if (getVehicleData(vehicle).ownerType != V_VEHOWNER_PLAYER) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+		return false;
+	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}business`, true);
+	if (getVehicleData(vehicle).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+		return false;
+	}
 
-	getVehicleData(vehicle).needsSaved = true;
+	showPlayerPrompt(client, getLocaleString(client, "SetVehicleBusinessConfirmMessage"), getLocaleString(client, "SetVehicleBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	getPlayerData(client).promptType = V_PROMPT_GIVEVEHTOBIZ;
 }
 
 // ===========================================================================
@@ -1145,7 +1145,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 	getVehicleData(vehicle).buyPrice = amount;
 	getVehicleData(vehicle).needsSaved = true;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)}`, true);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}'s{MAINCOLOUR} buy price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`, true);
 }
 
 // ===========================================================================
@@ -1183,6 +1183,11 @@ function removeVehicleOwnerCommand(command, params, client) {
 function getVehicleInfoCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
+	if (!vehicle) {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
 	if (getPlayerVehicle(client)) {
 		vehicle = getPlayerVehicle(client);
 	}
@@ -1192,67 +1197,7 @@ function getVehicleInfoCommand(command, params, client) {
 		return false;
 	}
 
-	let vehicleData = getVehicleData(vehicle);
-
-	let ownerName = "Nobody";
-	let ownerType = "None";
-	switch (vehicleData.ownerType) {
-		case V_VEHOWNER_CLAN:
-			ownerName = getClanData(getClanIndexFromDatabaseId(vehicleData.ownerId)).name;
-			ownerType = "clan";
-			break;
-
-		case V_VEHOWNER_JOB:
-			ownerName = getJobData(getJobIdFromDatabaseId(vehicleData.ownerId)).name;
-			ownerType = "job";
-			break;
-
-		case V_VEHOWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
-			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
-			ownerType = "player";
-			break;
-
-		case V_VEHOWNER_BIZ:
-			ownerName = getBusinessData(getBusinessIdFromDatabaseId(vehicleData.ownerId)).name;
-			ownerType = "business";
-			break;
-
-		case V_VEHOWNER_PUBLIC:
-			ownerName = "Nobody";
-			ownerType = "public";
-			break;
-
-		default:
-			break;
-	}
-
-	let tempStats = [
-		[`Type`, `${getGameConfig().vehicles[getGame()][vehicleData.model][1]} (${getGameConfig().vehicles[getGame()][vehicleData.model][0]})`],
-		[`ID`, `${vehicleData.index}/${vehicleData.databaseId}`],
-		[`Owner`, `${ownerName} (${getVehicleOwnerTypeText(vehicleData.ownerType)})`],
-		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
-		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
-		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
-		[`Buy Price`, `${getCurrencyString(vehicleData.buyPrice)}`],
-		[`Rent Price`, `${getCurrencyString(vehicleData.rentPrice)}`],
-		[`Radio Station`, `${(vehicleData.streamingRadioStationIndex == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStationIndex).name}`],
-		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
-		[`License Plate`, `${vehicleData.licensePlate}`],
-		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
-		[`Last Driver`, `${vehicleData.lastDriverName}`],
-		[`Added By`, `${loadAccountFromId(vehicleData.whoAdded).name}`],
-		[`Added On`, `${new Date(vehicleData.whenAdded).toLocaleDateString("en-GB")}`],
-		[`Rank Level`, `${vehicleData.rank}`],
-	];
-
-	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
-
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleInfo")));
-	let chunkedList = splitArrayIntoChunks(stats, 6);
-	for (let i in chunkedList) {
-		messagePlayerInfo(client, chunkedList[i].join(", "));
-	}
+	showVehicleInfoToPlayer(client, getVehicleData(vehicle));
 
 	//messagePlayerNormal(client, `🚗 {vehiclePurple}[Vehicle Info] {MAINCOLOUR}ID: {ALTCOLOUR}${getElementId(vehicle)}, {MAINCOLOUR}Index: {ALTCOLOUR}${vehicleData.index}, {MAINCOLOUR}DatabaseID: {ALTCOLOUR}${vehicleData.databaseId}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName}[ID ${vehicleData.ownerId}] (${ownerType}), {MAINCOLOUR}Type: {ALTCOLOUR}${getVehicleName(vehicle)}[ID: ${vehicle.modelIndex}, Index: ${getVehicleModelIndexFromModel(vehicle.modelIndex)}], {MAINCOLOUR}BuyPrice: {ALTCOLOUR}${vehicleData.buyPrice}, {MAINCOLOUR}RentPrice: {ALTCOLOUR}${vehicleData.rentPrice}`);
 }
@@ -1260,56 +1205,19 @@ function getVehicleInfoCommand(command, params, client) {
 // ===========================================================================
 
 function getLastVehicleInfoCommand(command, params, client) {
-	//if(!isPlayerInAnyVehicle(client)) {
-	//	messagePlayerError(client, "You need to be in a vehicle!");
-	//	return false;
-	//}
-
 	let vehicle = getPlayerLastVehicle(client);
+
+	if (!vehicle) {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
 
-	let vehicleData = getVehicleData(vehicle);
-
-	let ownerName = "Nobody";
-	let ownerType = "None";
-	switch (vehicleData.ownerType) {
-		case V_VEHOWNER_CLAN:
-			ownerName = getClanData(vehicleData.ownerId).name;
-			ownerType = "clan";
-			break;
-
-		case V_VEHOWNER_JOB:
-			ownerName = getJobData(vehicleData.ownerId).name;
-			ownerType = "job";
-			break;
-
-		case V_VEHOWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
-			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
-			ownerType = "player";
-			break;
-
-		case V_VEHOWNER_BIZ:
-			ownerName = getBusinessData(vehicleData.ownerId).name;
-			ownerType = "business";
-			break;
-
-		case V_VEHOWNER_PUBLIC:
-			ownerName = "None";
-			ownerType = "public";
-			break;
-
-		default:
-			ownerName = "None";
-			ownerType = "unowned";
-			break;
-	}
-
-	messagePlayerNormal(client, `🚗 {vehiclePurple}[Vehicle Info] {MAINCOLOUR}ID: {ALTCOLOUR}${vehicle.id}, {MAINCOLOUR}DatabaseID: {ALTCOLOUR}${vehicleData.databaseId}, {MAINCOLOUR}Owner: {ALTCOLOUR}${ownerName}[ID ${vehicleData.ownerId}] (${ownerType}), {MAINCOLOUR}Type: {ALTCOLOUR}${getVehicleName(vehicle)}[${vehicle.modelIndex}], {MAINCOLOUR}BuyPrice: {ALTCOLOUR}${vehicleData.buyPrice}, {MAINCOLOUR}RentPrice: {ALTCOLOUR}${vehicleData.rentPrice}`);
+	showVehicleInfoToPlayer(client, getVehicleData(vehicle));
 }
 
 // ===========================================================================
@@ -1811,10 +1719,12 @@ function cacheAllVehicleItems() {
 		clearArray(getServerData().vehicles[i].trunkItemCache);
 		clearArray(getServerData().vehicles[i].dashItemCache);
 		for (let j in getServerData().items) {
-			if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
-				getServerData().vehicles[i].trunkItemCache.push(j);
-			} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
-				getServerData().vehicles[i].dashItemCache.push(j);
+			if (getServerData().items[j] != null) {
+				if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
+					getServerData().vehicles[i].trunkItemCache.push(j);
+				} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
+					getServerData().vehicles[i].dashItemCache.push(j);
+				}
 			}
 		}
 	}
@@ -2028,3 +1938,65 @@ function setAllVehicleRadioFrequencies() {
 }
 
 // ===========================================================================
+
+function showVehicleInfoToPlayer(client, vehicleData) {
+	let ownerName = "Nobody";
+	let ownerType = "None";
+	switch (vehicleData.ownerType) {
+		case V_VEHOWNER_CLAN:
+			ownerName = getClanData(getClanIndexFromDatabaseId(vehicleData.ownerId)).name;
+			ownerType = "clan";
+			break;
+
+		case V_VEHOWNER_JOB:
+			ownerName = getJobData(getJobIdFromDatabaseId(vehicleData.ownerId)).name;
+			ownerType = "job";
+			break;
+
+		case V_VEHOWNER_PLAYER:
+			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
+			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
+			ownerType = "player";
+			break;
+
+		case V_VEHOWNER_BIZ:
+			ownerName = getBusinessData(getBusinessIdFromDatabaseId(vehicleData.ownerId)).name;
+			ownerType = "business";
+			break;
+
+		case V_VEHOWNER_PUBLIC:
+			ownerName = "Nobody";
+			ownerType = "public";
+			break;
+
+		default:
+			break;
+	}
+
+	let tempStats = [
+		[`Type`, `${getGameConfig().vehicles[getGame()][vehicleData.model][1]} (${getGameConfig().vehicles[getGame()][vehicleData.model][0]})`],
+		[`ID`, `${vehicleData.index}/${vehicleData.databaseId}`],
+		[`Owner`, `${ownerName} (${getVehicleOwnerTypeText(vehicleData.ownerType)})`],
+		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
+		[`Engine`, `${getOnOffFromBool(vehicleData.engine)}`],
+		[`Lights`, `${getOnOffFromBool(vehicleData.lights)}`],
+		[`Buy Price`, `${getCurrencyString(vehicleData.buyPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(vehicleData.buyPrice))})`],
+		[`Rent Price`, `${getCurrencyString(vehicleData.rentPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(vehicleData.rentPrice))})`],
+		[`Radio Station`, `${(vehicleData.streamingRadioStationIndex == -1) ? "None" : getRadioStationData(vehicleData.streamingRadioStationIndex).name}`],
+		[`Parked`, `${getYesNoFromBool(vehicleData.spawnLocked)}`],
+		[`License Plate`, `${vehicleData.licensePlate}`],
+		[`Colour`, `${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}, ${getVehicleColourInfoString(vehicleData.colour1, vehicleData.colour1IsRGBA)}`],
+		[`Last Driver`, `${vehicleData.lastDriverName}`],
+		[`Added By`, `${loadAccountFromId(vehicleData.whoAdded).name}`],
+		[`Added On`, `${new Date(vehicleData.whenAdded).toLocaleDateString("en-GB")}`],
+		[`Rank Level`, `${vehicleData.rank}`],
+	];
+
+	let stats = tempStats.map(stat => `{chatBoxListIndex}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleInfo")));
+	let chunkedList = splitArrayIntoChunks(stats, 6);
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
