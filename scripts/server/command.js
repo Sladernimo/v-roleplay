@@ -771,9 +771,6 @@ function addAllCommandHandlers() {
 		}
 	}
 
-	removeCommandHandler("help");
-	addCommandHandler("help", helpCommand);
-
 	logToConsole(LOG_INFO, `[V.RP.Command] ${commandCount} command handlers added!`);
 }
 
@@ -929,12 +926,6 @@ function enableAllCommandsByType(command, params, client) {
 
 // ===========================================================================
 
-//function onPlayerCommand(event, client, command, params) {
-//	processPlayerCommand(command, params, client)
-//}
-
-// ===========================================================================
-
 function processPlayerCommand(command, params, client) {
 	if (builtInCommands.indexOf(toLowerCase(command)) != -1) {
 		return true;
@@ -960,7 +951,7 @@ function processPlayerCommand(command, params, client) {
 		if (possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
 			messagePlayerError(client, getLocaleString(client, "CommandNotFoundPossibleMatchTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}${toLowerCase(possibleCommand.command)}{MAINCOLOUR}`));
 		} else {
-			messagePlayerError(client, getLocaleString(client, "CommandNotFoundHelpTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/help{MAINCOLOUR}`));
+			messagePlayerError(client, getLocaleString(client, "CommandNotFoundHelpTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/info{MAINCOLOUR}`));
 		}
 		return false;
 	}
