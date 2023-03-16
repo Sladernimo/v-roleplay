@@ -59,7 +59,7 @@ function initServerScripts() {
 	}
 
 	addAllNetworkEventHandlers();
-	addAllCommandHandlers();
+	//addAllCommandHandlers();
 	initAllClients();
 	initTimers();
 
