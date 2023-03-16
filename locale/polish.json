@@ -573,10 +573,6 @@
 	"NoAmmoToLoadIntoWeapon": "Nie masz żadnej amunicji do {1}",
 	"LoadAmmoIntoWeaponHelpCommand": "Aby wprowadzić ten pocisk do broni, weź broń i wpisz {1}",
 	"LoadAmmoIntoWeaponHelpKeyPress": "Aby wprowadzić ten pocisk do broni, weź broń i wciśnij {1}",
-	"NobodyCloseEnoughToHandcuff": "Nie ma nikogo w pobliżu do zakucia",
-	"NobodyCloseEnoughToTie": "Nie ma nikogo w pobliżu do związania",
-	"PlayerNotSurrenderedHandcuff": "{1} nie może być zakuty! Muszą się poddać, być nieprzytomni albo dostać z paralizatora",
-	"PlayerNotSurrenderedTie": "{1} nie może być związany! Muszą się poddać, być nieprzytomni albo dostać z paralizatora",
 	"HeaderCharactersListSelf": "Twoje postacie",
 	"HeaderCharactersListOther": "Postacie {1}",
 	"CharacterSelectHelpText": "Użyj {1} aby wybrać postać albo {2} aby stworzyć nową postać",
@@ -815,5 +811,6 @@
 	"FinedPlayer": "You gave {1} a fine for {2}",
 	"FinedByPlayer": "{1} gave you a fine for {2}",
 	"CantFinePlayer": "You can't give a player a fine",
-	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}"
+	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
+	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)"
 }

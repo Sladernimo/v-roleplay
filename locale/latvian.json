@@ -575,10 +575,6 @@
 	"NoAmmoToLoadIntoWeapon": "You don't have any ammo to load into the {1}",
 	"LoadAmmoIntoWeaponHelpCommand": "To load this ammo into a weapon, equip the weapon and type {1}",
 	"LoadAmmoIntoWeaponHelpKeyPress": "To load this ammo into a weapon, equip the weapon and press {1}",
-	"NobodyCloseEnoughToHandcuff": "Nobody is close enough to handcuff",
-	"NobodyCloseEnoughToTie": "Nobody is close enough to tie up",
-	"PlayerNotSurrenderedHandcuff": "{1} can't be handcuffed! They either need to have their hands up, be knocked out, or tazed",
-	"PlayerNotSurrenderedTie": "{1} can't be tied! They either need to have their hands up, be knocked out, or tazed",
 	"HeaderCharactersListSelf": "Your Characters",
 	"HeaderCharactersListOther": "{1}'s Characters",
 	"CharacterSelectHelpText": "Use {1} to select a character, or {2} to create a new character",
@@ -818,5 +814,6 @@
 	"FinedPlayer": "You gave {1} a fine for {2}",
 	"FinedByPlayer": "{1} gave you a fine for {2}",
 	"CantFinePlayer": "You can't give a player a fine",
-	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}"
+	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
+	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)"
 }

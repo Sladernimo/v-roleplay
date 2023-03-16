@@ -573,10 +573,6 @@
 	"NoAmmoToLoadIntoWeapon": "Sinulla ei ole ammuksia ladattavaksi {1}",
 	"LoadAmmoIntoWeaponHelpCommand": "Lataa ase aseeseen varustamalla ase ja ota se käyttöön {1}",
 	"LoadAmmoIntoWeaponHelpKeyPress": "Lataa ase aseeseen varustamalla ase ja painamalla {1}",
-	"NobodyCloseEnoughToHandcuff": "Kukaan ei ole lähelläsi käsirautojasi",
-	"NobodyCloseEnoughToTie": "Kukaan ei ole lähelläsi sitoakseen",
-	"PlayerNotSurrenderedHandcuff": "{1} ei saa laittaa vielä käsirautoja! Heidän on joko nostettava kätensä ylhäällä, tyrmätty tai sähköistetty",
-	"PlayerNotSurrenderedTie": "{1} et voi sitoa häntä! Heidän on joko nostettava kätensä ylhäällä, tyrmätty tai sähköistetty",
 	"HeaderCharactersListSelf": "Sinun Hahmot",
 	"HeaderCharactersListOther": "{1} Hahmot",
 	"CharacterSelectHelpText": "Käytä {1} Valitaaksesi hahmon, tai {2} tekeäksesi uuden hahmon",
@@ -815,5 +811,6 @@
 	"FinedPlayer": "You gave {1} a fine for {2}",
 	"FinedByPlayer": "{1} gave you a fine for {2}",
 	"CantFinePlayer": "You can't give a player a fine",
-	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}"
+	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
+	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)"
 }
