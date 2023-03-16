@@ -853,9 +853,11 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				if (isPlayerWorking(client)) {
 					if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
 						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
-							getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
-							if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
-								messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobRouteStart", `{ALTCOLOUR}/startroute{MAINCOLOUR}`));
+							if (doesJobLocationHaveAnyRoutes(getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)))) {
+								getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
+								if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
+									messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobRouteStart", `{ALTCOLOUR}/startroute{MAINCOLOUR}`));
+								}
 							}
 						}
 					}
