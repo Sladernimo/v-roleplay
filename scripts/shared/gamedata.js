@@ -125,8 +125,8 @@ let supportedFeatures = {
 		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
 		[V_GAME_MAFIA_ONE]: true,
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false
