@@ -134,30 +134,8 @@ function renderPropertyEntranceLabel(name, position, locked, isBusiness, price, 
 		return false;
 	}
 
-	if (getGame() == V_GAME_GTA_IV) {
-		return false;
-	}
-
-	if (getGame() == V_GAME_GTA_IV) {
-		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_VERBOSE, "[V.RP.Label]: Game viewport does not exist!");
-			return false;
-		}
-
-		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_VERBOSE, "[V.RP.Label]: Game viewport is not active!");
-			return false;
-		}
-	}
-
 	position = getPosAbovePos(position, propertyLabelHeight);
-	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == V_GAME_GTA_IV) {
-		return false;
-		//screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
-	} else {
-		screenPosition = getScreenFromWorldPosition(position);
-	}
+	let screenPosition = getScreenFromWorldPosition(position);
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
 
@@ -285,31 +263,8 @@ function renderPropertyExitLabel(position) {
 		return false;
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (localPlayer.vehicle != null) {
-			return false;
-		}
-	}
-
-	if (getGame() == V_GAME_GTA_IV) {
-		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
-			return false;
-		}
-
-		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
-			return false;
-		}
-	}
-
 	position = getPosAbovePos(position, propertyLabelHeight);
-	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == V_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
-	} else {
-		screenPosition = getScreenFromWorldPosition(position);
-	}
+	let screenPosition = getScreenFromWorldPosition(position);
 
 	let text = "EXIT";
 	let size = propertyLabelNameFont.measure(text, game.width, 0.0, 0.0, propertyLabelNameFont.size, true, true);
@@ -331,31 +286,8 @@ function renderJobLabel(name, position, jobType) {
 		return false;
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (localPlayer.vehicle != null) {
-			return false;
-		}
-	}
-
-	if (getGame() == V_GAME_GTA_IV) {
-		if (!natives.doesViewportExist(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport does not exist!");
-			return false;
-		}
-
-		if (!natives.isViewportActive(natives.getGameViewportId())) {
-			logToConsole(LOG_INFO, "[V.RP.Label]: Game viewport is not active!");
-			return false;
-		}
-	}
-
 	position = getPosAbovePos(position, propertyLabelHeight);
-	let screenPosition = new Vec3(0.0, 0.0, 0.0);
-	if (getGame() == V_GAME_GTA_IV) {
-		screenPosition = natives.getViewportPositionOfCoord(position, natives.getGameViewportId());
-	} else {
-		screenPosition = getScreenFromWorldPosition(position);
-	}
+	let screenPosition = getScreenFromWorldPosition(position);
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Label] World [${position.x}, ${position.y}, ${position.z}] to screen [${screenPosition.x}, ${screenPosition.y}, ${screenPosition.z}]`);
 
