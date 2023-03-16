@@ -1478,6 +1478,10 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 	addEventHandler("onPedSpawn", onPedSpawn);
 
+	addEventHandler("onPlayerCommand", function (event, command, params, client) {
+		processPlayerCommand(command, params, client);
+	});
+
 	if (getGame() <= V_GAME_GTA_IV) {
 		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
 		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
