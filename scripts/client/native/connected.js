@@ -770,3 +770,9 @@ function setLocalPlayerHeading(heading) {
 }
 
 // ===========================================================================
+
+function getLocalPlayerDimension() {
+	return localPlayer.dimension;
+}
+
+// ===========================================================================
