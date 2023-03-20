@@ -41,7 +41,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.freeze", setLocalPlayerFrozenState);
 	addNetworkEventHandler("v.rp.control", setLocalPlayerControlState);
 	addNetworkEventHandler("v.rp.fadeCamera", fadeLocalCamera);
-	addNetworkEventHandler("v.rp.removeFromVehicle", removeLocalPlayerFromVehicle);
+	addNetworkEventHandler("v.rp.removeFromVehicle", removePedFromVehicle);
 	addNetworkEventHandler("v.rp.clearWeapons", clearLocalPlayerWeapons);
 	addNetworkEventHandler("v.rp.giveWeapon", giveLocalPlayerWeapon);
 	addNetworkEventHandler("v.rp.position", setLocalPlayerPosition);
@@ -178,6 +178,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.currencyString", receiveCurrencyStringFromServer);
 	addNetworkEventHandler("v.rp.token", serverRequestedToken);
 	addNetworkEventHandler("v.rp.incomingDamageMultiplier", setIncomingDamageMultiplier);
+	addNetworkEventHandler("v.rp.warpIntoVehicle", warpPedIntoVehicle);
 }
 
 // ===========================================================================
@@ -502,6 +503,38 @@ function serverRequestedToken() {
 
 function setIncomingDamageMultiplier(tempMultiplier) {
 	weaponDamageMultiplier = tempMultiplier;
+}
+
+// ===========================================================================
+
+function warpPedIntoVehicle(pedId, vehicleId, seatId) {
+	if (getElementFromId(pedId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Ped does not exist`);
+		return false;
+	}
+
+	if (getElementFromId(vehicleId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Vehicle does not exist`);
+		return false;
+	}
+
+	if (!getElementFromId(pedId).isSyncer) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Is not syncer of ped`);
+		return false;
+	}
+
+	getElementFromId(pedId).warpIntoVehicle(getElementFromId(vehicleId), seatId);
+}
+
+// ===========================================================================
+
+function removePedFromVehicle(pedId) {
+	if (getElementFromId(pedId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Ped does not exist`);
+		return false;
+	}
+
+	getElementFromId(pedId).removeFromVehicle();
 }
 
 // ===========================================================================

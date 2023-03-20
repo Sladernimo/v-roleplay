@@ -92,8 +92,16 @@ function getPlayerHeading(client) {
 	if (!areServerElementsSupported()) {
 		return getPlayerData(client).syncHeading;
 	} else {
-		if (getPlayerPed(client) != null) {
-			return getPlayerPed(client).heading;
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isPlayerInAnyVehicle(client)) {
+				return getPlayerVehicle(client).heading;
+			} else {
+				return getPlayerPed(client).heading;
+			}
+		} else {
+			if (getPlayerPed(client) != null) {
+				return getPlayerPed(client).heading;
+			}
 		}
 	}
 }
@@ -119,7 +127,7 @@ function getPlayerVehicle(client) {
 			return getPlayerPed(client).vehicle;
 		}
 	}
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -189,7 +197,11 @@ function isPlayerInAnyVehicle(client) {
 
 function getPlayerVehicleSeat(client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		return false;
+		return -1;
+	}
+
+	if (getPlayerData(client).vehicleSeat != -1) {
+		return getPlayerData(client).vehicleSeat;
 	}
 
 	if (!areServerElementsSupported()) {
@@ -202,7 +214,7 @@ function getPlayerVehicleSeat(client) {
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================
@@ -290,9 +302,9 @@ function isPlayerInFrontVehicleSeat(client) {
 
 // ===========================================================================
 
-function removePlayerFromVehicle(client) {
-	logToConsole(LOG_DEBUG, `Removing ${getPlayerDisplayForConsole(client)} from their vehicle`);
-	sendPlayerRemoveFromVehicle(client);
+function removePedFromVehicle(pedId) {
+	logToConsole(LOG_DEBUG, `Removing ped ${pedId} from their vehicle`);
+	sendPedRemoveFromVehicle(null, pedId);
 	return true;
 }
 
@@ -1141,6 +1153,11 @@ function isVehicleTrain(vehicle) {
 // ===========================================================================
 
 function warpPedIntoVehicle(ped, vehicle, seatId) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		sendWarpPedIntoVehicle(null, ped.id, vehicle.id, seatId);
+		return true;
+	}
+
 	ped.warpIntoVehicle(vehicle, seatId);
 }
 
@@ -1158,9 +1175,9 @@ function setVehicleHealth(vehicle, health) {
 
 // ===========================================================================
 
-function givePlayerWeapon(client, weaponId, ammo, active = true) {
+function givePlayerWeapon(client, weaponId, clipAmmo, ammo, active = true) {
 	logToConsole(LOG_DEBUG, `[V.RP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, ammo, active);
+	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, clipAmmo, ammo, active);
 }
 
 // ===========================================================================
@@ -1478,7 +1495,7 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 	addEventHandler("onPedSpawn", onPedSpawn);
 
-	addEventHandler("onPlayerCommand", function (event, command, params, client) {
+	addEventHandler("onPlayerCommand", function (event, client, command, params) {
 		processPlayerCommand(command, params, client);
 	});
 
