@@ -63,7 +63,7 @@ function initServerScripts() {
 	initAllClients();
 	initTimers();
 
-	exportFunction("forceAllVehicleEngines", forceAllVehicleEngines)
+	exportAllFunctions();
 
 	serverStartTime = getCurrentUnixTimestamp();
 	serverStarting = false;

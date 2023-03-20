@@ -7,10 +7,6 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-
-
-// ===========================================================================
-
 function getPositionArea(position) {
 	if (typeof position == "Vec3") {
 		position = vec3ToVec2(position);
@@ -615,6 +611,14 @@ function getPlayerCountryISOCode(client) {
 	}
 
 	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
+}
+
+// ===========================================================================
+
+function exportAllFunctions() {
+	exportFunction("forceAllVehicleEngines", forceAllVehicleEngines);
+	exportFunction("doesPlayerHaveStaffPermission", doesPlayerHaveStaffPermission);
+	exportFunction("getStaffFlagValue", getStaffFlagValue);
 }
 
 // ===========================================================================
