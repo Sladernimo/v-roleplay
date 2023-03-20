@@ -1201,12 +1201,6 @@ function checkLogin(client, password) {
 function checkRegistration(client, password, confirmPassword = "", emailAddress = "") {
 	logToConsole(LOG_DEBUG, `[V.RP.Account]: Checking registration for ${getPlayerName(client)}`);
 
-	if (getPlayerData(client).guiWait == true) {
-		return false;
-	}
-
-	getPlayerData(client).guiWait = true;
-
 	if (isPlayerRegistered(client)) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerLoginGUI(client);
@@ -1214,7 +1208,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerError(client, getLocaleString(client, "AlreadyRegistered"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (already registered)`);
 		}
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -1225,7 +1218,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerError(client, getLocaleString(client, "AlreadyLoggedIn"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (already logged in)`);
 		}
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -1237,7 +1229,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerError(client, getLocaleString(client, "RegistrationFailedNoPassword"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password is blank)`);
 		}
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -1245,7 +1236,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		if (areParamsEmpty(confirmPassword)) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedNoPasswordConfirm"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password confirm is blank)`);
-			getPlayerData(client).guiWait = false;
 			return false;
 		}
 	}
@@ -1254,7 +1244,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		if (areParamsEmpty(emailAddress)) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedNoEmail"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (email address is blank)`);
-			getPlayerData(client).guiWait = false;
 			return false;
 		}
 	}
@@ -1263,7 +1252,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		if (password != confirmPassword) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedPasswordMismatch"));
 			logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} failed to create an account (password and confirm don't match)`);
-			getPlayerData(client).guiWait = false;
 			return false;
 		}
 	}
@@ -1289,14 +1277,12 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			}
 			messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirements.join(", ")));
 		}
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
 	if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 		if (!isValidEmailAddress(emailAddress)) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedInvalidEmail"));
-			getPlayerData(client).guiWait = false;
 			return false;
 		}
 	}
@@ -1310,7 +1296,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		}
 
 		messagePlayerAlert(client, getLocaleString(client, "DevelopersNotified"));
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -1336,7 +1321,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 
 		showPlayerError(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
-		getPlayerData(client).guiWait = false;
 		return false;
 	} else {
 		messagePlayerAlert(client, getLocaleString(client, "RegistrationCreateCharReminder"));
@@ -1349,8 +1333,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
 		}
 	}
-
-	getPlayerData(client).guiWait = false;
 };
 
 // ===========================================================================
