@@ -169,7 +169,7 @@ function hideJobRouteLocation() {
 
 // ===========================================================================
 
-function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank) {
+function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension) {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -227,13 +227,14 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} doesn't exist. Adding ...`);
-			let jobData = new JobData(jobId, jobLocationId, name, position, blipModel, pickupModel);
+			let jobData = new JobData();
 			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
 			jobData.position = position;
 			jobData.blipModel = blipModel;
 			jobData.pickupModel = pickupModel;
 			jobData.hasPublicRank = hasPublicRank;
+			jobData.dimension = dimension;
 
 			if (isGameFeatureSupported("blip")) {
 				if (blipModel != -1) {
