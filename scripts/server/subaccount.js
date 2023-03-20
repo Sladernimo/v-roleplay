@@ -466,22 +466,14 @@ function showCharacterSelectToClient(client) {
 // ===========================================================================
 
 function checkNewCharacter(client, firstName, lastName) {
-	if (getPlayerData(client).guiWait == true) {
-		return false;
-	}
-
-	getPlayerData(client).guiWait = true;
-
 	if (areParamsEmpty(firstName)) {
 		showPlayerNewCharacterFailedGUI(client, "First name cannot be blank!");
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 	firstName = firstName.trim();
 
 	if (areParamsEmpty(lastName)) {
 		showPlayerNewCharacterFailedGUI(client, "Last name cannot be blank!");
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 	lastName = lastName.trim();
@@ -489,7 +481,6 @@ function checkNewCharacter(client, firstName, lastName) {
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -498,7 +489,6 @@ function checkNewCharacter(client, firstName, lastName) {
 		getPlayerCurrentSubAccount(client).lastName = fixCharacterName(lastName);
 		updateAllPlayerNameTags(client);
 		hideAllPlayerGUI(client);
-		getPlayerData(client).guiWait = false;
 		return true;
 	}
 
@@ -510,7 +500,6 @@ function checkNewCharacter(client, firstName, lastName) {
 			messagePlayerError(client, "Your character could not be created!");
 		}
 		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it soon.`);
-		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -518,7 +507,6 @@ function checkNewCharacter(client, firstName, lastName) {
 	getPlayerData(client).currentSubAccount = 0;
 	getPlayerData(client).creatingCharacter = false;
 	showCharacterSelectToClient(client);
-	getPlayerData(client).guiWait = false;
 }
 
 // ===========================================================================

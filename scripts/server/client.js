@@ -131,7 +131,6 @@ class ClientData {
 		this.inProperty = null;
 		this.interiorLights = true;
 		this.spawnInit = false;
-		this.guiWait = false;
 
 		// Paintball
 		this.inPaintBall = false;
