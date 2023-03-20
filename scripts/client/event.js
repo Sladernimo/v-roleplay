@@ -163,6 +163,7 @@ function onDrawnHUD(event) {
 	processCameraFadeRendering();
 	processJobLocationIndicatorRendering();
 	processMapChangeWarning();
+	processCameraLookFromEyesForAnimation();
 }
 
 // ===========================================================================
