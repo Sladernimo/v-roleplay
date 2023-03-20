@@ -8,18 +8,21 @@
 // ===========================================================================
 
 class HouseData {
-	constructor(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked) {
+	constructor() {
 		this.index = -1;
-		this.houseId = houseId;
-		this.description = description;
-		this.entrancePosition = entrancePosition;
-		this.blipModel = blipModel;
-		this.pickupModel = pickupModel;
-		this.hasInterior = hasInterior;
+		this.houseId = -1;
+		this.description = "";
+		this.entrancePosition = toVector3(0.0, 0.0, 0.0);
+		this.exitPosition = toVector3(0.0, 0.0, 0.0);
+		this.blipModel = -1;
+		this.pickupModel = -1;
 		this.rentPrice = 0;
 		this.buyPrice = 0;
 		this.blipId = -1;
-		this.locked = locked;
+		this.locked = false;
+		this.labelInfoType = V_PROPLABEL_INFO_NONE;
+		this.entranceDimension = 0;
+		this.exitDimension = 0;
 	}
 }
 
@@ -32,7 +35,7 @@ function initHouseScript() {
 
 // ===========================================================================
 
-function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
+function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension) {
 	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${description}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -47,28 +50,17 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 
 		if (getHouseData(houseId) != false) {
 			let houseData = getHouseData(houseId);
+			houseData.houseId = houseId;
 			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
 			houseData.blipModel = blipModel;
 			houseData.pickupModel = pickupModel;
-			houseData.hasInterior = hasInterior;
 			houseData.buyPrice = buyPrice;
 			houseData.rentPrice = rentPrice;
 			houseData.locked = locked;
-
-			if (houseData.buyPrice > 0) {
-				houseData.labelInfoType = V_PROPLABEL_INFO_BUYHOUSE;
-			} else {
-				if (houseData.rentPrice > 0) {
-					houseData.labelInfoType = V_PROPLABEL_INFO_RENTHOUSE;
-				} else {
-					if (houseData.hasInterior) {
-						houseData.labelInfoType = V_PROPLABEL_INFO_ENTER;
-					} else {
-						houseData.labelInfoType = V_PROPLABEL_INFO_NONE;
-					}
-				}
-			}
+			houseData.labelInfoType = labelInfoType;
+			houseData.entranceDimension = entranceDimension;
+			houseData.exitDimension = exitDimension;
 
 			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} already exists. Checking blip ...`);
 			if (blipModel == -1) {
@@ -103,15 +95,18 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.House] House ${houseId} doesn't exist. Adding ...`);
-			let houseData = new HouseData(houseId, description, entrancePosition, blipModel, pickupModel, hasInterior, locked);
+			let houseData = new HouseData();
+			houseData.houseId = houseId;
 			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
 			houseData.blipModel = blipModel;
 			houseData.pickupModel = pickupModel;
-			houseData.hasInterior = hasInterior;
 			houseData.buyPrice = buyPrice;
 			houseData.rentPrice = rentPrice;
 			houseData.locked = locked;
+			houseData.labelInfoType = labelInfoType;
+			houseData.entranceDimension = entranceDimension;
+			houseData.exitDimension = exitDimension;
 
 			if (isGameFeatureSupported("blip")) {
 				if (blipModel != -1) {
