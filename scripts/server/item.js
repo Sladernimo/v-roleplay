@@ -348,9 +348,9 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary
 		tempItemData.databaseId = -1;
 	}
 
-	getServerData().items.push(tempItemData);
+	let index = getServerData().items.push(tempItemData);
 	setAllItemDataIndexes();
-	return index;
+	return index - 1;
 }
 
 // ===========================================================================
@@ -1987,15 +1987,18 @@ function playerSwitchItem(client, newHotBarSlot) {
 	if (newHotBarItem != -1) {
 		if (getItemData(newHotBarItem)) {
 			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_WEAPON) {
+
+				let clipAmmo = getClipAmmoSizeForWeapon(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+				let ammo = getItemData(newHotBarItem).value - clipAmmo;
 				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
-					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 					setPlayerWeaponDamageEnabled(client, true);
 					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 				} else {
 					let ammoItemSlot = getPlayerFirstAmmoItemForWeapon(client, getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
 					if (ammoItemSlot != false) {
 						getItemData(newHotBarItem).value = getItemData(getPlayerData(client).hotBarItems[ammoItemSlot]).value;
-						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 						setPlayerWeaponDamageEnabled(client, true);
 						setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 						deleteItem(getPlayerData(client).hotBarItems[ammoItemSlot]);

@@ -125,12 +125,12 @@ function enterVehicleAsPassenger() {
 
 // ===========================================================================
 
-function giveLocalPlayerWeapon(weaponId, ammo, active) {
+function giveLocalPlayerWeapon(weaponId, clipAmmo, ammo, active) {
 	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Giving weapon ${weaponId} with ${ammo} ammo`);
 	forceWeapon = weaponId;
 	if (getGame() == V_GAME_MAFIA_ONE) {
-		localPlayer.giveWeapon(weaponId, 0, ammo);
-		forceWeaponAmmo = 0;
+		localPlayer.giveWeapon(weaponId, clipAmmo, ammo);
+		forceWeaponAmmo = clipAmmo;
 		forceWeaponClipAmmo = ammo;
 	} else {
 		localPlayer.giveWeapon(weaponId, ammo, active);
