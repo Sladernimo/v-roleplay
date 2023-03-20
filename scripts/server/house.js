@@ -805,7 +805,7 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 	let houseId = getServerData().houses.push(tempHouseData);
 
 	saveHouseToDatabase(houseId - 1);
-	setHouseDataIndexes();
+	setAllHouseDataIndexes();
 
 	spawnHousePickups(houseId - 1);
 	spawnHouseBlips(houseId - 1);
@@ -1354,7 +1354,7 @@ function getHouseInfoCommand(command, params, client) {
 		[`HasInterior`, `${getYesNoFromBool(houseData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(houseData.customInterior)}`],
 		[`InteriorLights`, `${getOnOffFromBool(houseData.interiorLights)}`],
-		[`RadioStation`, `${houseData.streamingRadioStation}`],
+		[`RadioStation`, `${(getRadioStationData(houseData.streamingRadioStationIndex) != false) ? getRadioStationData(houseData.streamingRadioStationIndex).name : "none"}`],
 	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
@@ -1602,7 +1602,7 @@ function exitHouse(client) {
 
 // ===========================================================================
 
-function setHouseDataIndexes() {
+function setAllHouseDataIndexes() {
 	for (let i in getServerData().houses) {
 		getServerData().houses[i].index = i;
 
@@ -1799,6 +1799,7 @@ function getHouseFromParams(params) {
 // ===========================================================================
 
 function updateHousePickupLabelData(houseId, deleted = false) {
+	/** @type {HouseData} */
 	let houseData = false;
 
 	if (deleted == false) {
@@ -1807,7 +1808,22 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (houseData == false) {
-			sendHouseToPlayer(null, houseId, true, "", false, -1, -1, 0, 0, false, false);
+			sendHouseToPlayer(
+				null,
+				houseId,
+				true,
+				"",
+				toVector3(0.0, 0.0, 0.0),
+				toVector3(0.0, 0.0, 0.0),
+				-1,
+				-1,
+				0,
+				0,
+				false,
+				V_PROPLABEL_INFO_NONE,
+				0,
+				0
+			);
 		} else {
 			sendHouseToPlayer(
 				null,
@@ -1815,12 +1831,15 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 				false,
 				houseData.description,
 				houseData.entrancePosition,
+				houseData.exitPosition,
 				getHouseEntranceBlipModelForNetworkEvent(houseId),
 				getHouseEntrancePickupModelForNetworkEvent(houseId),
 				applyServerInflationMultiplier(houseData.buyPrice),
 				applyServerInflationMultiplier(houseData.rentPrice),
-				houseData.hasInterior,
-				houseData.locked
+				houseData.locked,
+				getHousePropertyInfoLabelType(houseId),
+				houseData.entranceDimension,
+				houseData.exitDimension,
 			);
 		}
 		return false;
@@ -1834,13 +1853,7 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 		setEntityData(houseData.entrancePickup, "v.rp.label.locked", houseData.locked, true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.price", applyServerInflationMultiplier(houseData.buyPrice), true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", applyServerInflationMultiplier(houseData.rentPrice), true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
-
-		if (houseData.buyPrice > 0) {
-			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUYHOUSE, true);
-		} else if (houseData.rentPrice > 0) {
-			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_RENTHOUSE, true);
-		}
+		setEntityData(houseData.entrancePickup, "v.rp.label.help", getHousePropertyInfoLabelType(houseId), true);
 	}
 
 	if (houseData.exitPickup != null) {
@@ -1974,6 +1987,31 @@ function getNearbyBusinessesCommand(command, params, client) {
 
 function getHousesInRange(position, distance) {
 	return getServerData().houses.filter((house) => getDistance(position, house.entrancePosition) <= distance);
+}
+
+// ===========================================================================
+
+function getHousePropertyInfoLabelType(houseIndex) {
+	switch (getHouseData(houseIndex).labelHelpType) {
+		case V_PROPLABEL_INFO_ENTER:
+			return V_PROPLABEL_INFO_ENTER;
+
+		default:
+			if (getHouseData(houseIndex).buyPrice > 0) {
+				return V_PROPLABEL_INFO_BUYHOUSE;
+			}
+
+			if (getHouseData(houseIndex).rentPrice > 0) {
+				return V_PROPLABEL_INFO_RENTHOUSE;
+			}
+
+			if (getHouseData(houseIndex).hasInterior) {
+				return V_PROPLABEL_INFO_ENTER;
+			}
+			break;
+	}
+
+	return V_PROPLABEL_INFO_NONE;
 }
 
 // ===========================================================================
