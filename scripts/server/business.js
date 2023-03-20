@@ -65,7 +65,7 @@ class BusinessData {
 		this.locations = [];
 		//this.gameScripts = [];
 
-		this.entrancePosition = false;
+		this.entrancePosition = toVector3(0.0, 0.0, 0.0);
 		this.entranceRotation = 0.0;
 		this.entranceInterior = 0;
 		this.entranceDimension = 0;
@@ -75,7 +75,7 @@ class BusinessData {
 		this.entranceBlip = null;
 		this.entranceScene = "";
 
-		this.exitPosition = false;
+		this.exitPosition = toVector3(0.0, 0.0, 0.0);
 		this.exitRotation = 0.0;
 		this.exitInterior = 0;
 		this.exitDimension = 0;
@@ -89,7 +89,7 @@ class BusinessData {
 		this.till = 0;
 
 		this.streamingRadioStation = 0;
-		//this.streamingRadioStationIndex = -1;
+		this.streamingRadioStationIndex = -1;
 
 		this.paintBallPlayers = [];
 
@@ -381,14 +381,14 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	tempBusinessData.exitBlipModel = -1;
 	tempBusinessData.exitInterior = 0;
 	tempBusinessData.exitDimension = 0;
-	tempBusinessData.exitScene = -1;
+	tempBusinessData.exitScene = "";
 
 	tempBusinessData.whoAdded = whoAdded;
 	tempBusinessData.whenAdded = getCurrentUnixTimestamp();
 
 	tempBusinessData.needsSaved = true;
 	let businessId = getServerData().businesses.push(tempBusinessData);
-	setBusinessDataIndexes();
+	setAllBusinessDataIndexes();
 	saveAllBusinessesToDatabase();
 
 	spawnBusinessPickups(businessId - 1);
@@ -1003,7 +1003,7 @@ function getBusinessInfoCommand(command, params, client) {
 		[`EntranceFee`, `${getCurrencyString(businessData.entranceFee)}`],
 		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
 		[`Balance`, `${getCurrencyString(businessData.till)}`],
-		[`RadioStation`, `${businessData.streamingRadioStation}`],
+		[`RadioStation`, `${(getRadioStationData(businessData.streamingRadioStationIndex) != false) ? getRadioStationData(businessData.streamingRadioStationIndex).name : "none"}`],
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
 
@@ -1181,8 +1181,9 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
 
 		if (isGameFeatureSupported("interiorScene")) {
-			getBusinessData(businessId).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
-			getBusinessData(businessId).entranceScene = getPlayerData(client).scene;
+			getBusinessData(businessId).exitScene = typeParam;
+
+			getBusinessData(businessId).entranceScene = getInteriorForScene(getPlayerData(client).scene);
 		}
 	}
 
@@ -1734,6 +1735,7 @@ function moveBusinessEntranceCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).entrancePosition = getPlayerPosition(client);
+	getBusinessData(businessId).entranceRotation = getPlayerHeading(client);
 	getBusinessData(businessId).entranceDimension = getPlayerDimension(client);
 	getBusinessData(businessId).entranceInterior = getPlayerInterior(client);
 
@@ -1774,6 +1776,7 @@ function moveBusinessExitCommand(command, params, client) {
 	}
 
 	getBusinessData(businessId).exitPosition = getPlayerPosition(client);
+	getBusinessData(businessId).exitRotation = getPlayerHeading(client);
 	getBusinessData(businessId).exitDimension = getPlayerDimension(client);
 	getBusinessData(businessId).exitInterior = getPlayerInterior(client);
 
@@ -2558,7 +2561,7 @@ function reloadAllBusinessesCommand(command, params, client) {
 	getServerData().businesses = loadBusinessesFromDatabase();
 	spawnAllBusinessPickups();
 	spawnAllBusinessBlips();
-	setBusinessDataIndexes();
+	setAllBusinessDataIndexes();
 	cacheAllBusinessItems();
 
 	announceAdminAction(`AllBusinessesReloaded`);
@@ -2571,7 +2574,7 @@ function reloadAllBusinessesCommand(command, params, client) {
  *
  * @returns {Boolean} Whether or not the exit blip of the business was deleted
  */
-function setBusinessDataIndexes() {
+function setAllBusinessDataIndexes() {
 	for (let i in getServerData().businesses) {
 		getServerData().businesses[i].index = i;
 
@@ -2915,6 +2918,7 @@ function getBusinessIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by businessId
 function updateBusinessPickupLabelData(businessId, deleted = false) {
+	/** @type {BusinessData} */
 	let businessData = false;
 
 	if (deleted == false) {
@@ -2923,9 +2927,27 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (businessData == false) {
-			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, false, false, 0);
+			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, 0, V_PROPLABEL_INFO_NONE, 0, 0);
 		} else {
-			sendBusinessToPlayer(null, businessId, false, businessData.name, businessData.entrancePosition, getBusinessEntranceBlipModelForNetworkEvent(businessId), getBusinessEntrancePickupModelForNetworkEvent(businessId), businessData.buyPrice, businessData.rentPrice, businessData.hasInterior, businessData.locked, doesBusinessHaveAnyItemsToBuy(businessId), businessData.entranceFee);
+			logToConsole(LOG_DEBUG, `[V.RP.Business] Sending business ${businessId} (${businessData.name}) to player ${getPlayerDisplayForConsole(null)} (entrance dimension: ${businessData.entranceDimension})`);
+
+			sendBusinessToPlayer(
+				null,
+				businessId,
+				false,
+				businessData.name,
+				businessData.entrancePosition,
+				businessData.exitPosition,
+				getBusinessEntranceBlipModelForNetworkEvent(businessId),
+				getBusinessEntrancePickupModelForNetworkEvent(businessId),
+				businessData.buyPrice,
+				businessData.rentPrice,
+				businessData.locked,
+				businessData.entranceFee,
+				getBusinessPropertyInfoLabelType(businessId),
+				businessData.entranceDimension,
+				businessData.exitDimension
+			);
 		}
 		return false;
 	}
@@ -2942,37 +2964,7 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.type", V_LABEL_BUSINESS, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.name", getBusinessData(businessId).name, true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.locked", getBusinessData(businessId).locked, true);
-		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_NONE, true);
-
-		switch (getBusinessData(businessId).labelHelpType) {
-			case V_PROPLABEL_INFO_ENTERVEHICLE: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTERVEHICLE, true);
-				break;
-			}
-
-			case V_PROPLABEL_INFO_ENTER: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
-				break;
-			}
-
-			case V_PROPLABEL_INFO_REPAIR: {
-				setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_REPAIR, true);
-				break;
-			}
-
-			default: {
-				if (getBusinessData(businessId).hasInterior) {
-					setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
-				} else {
-					if (doesBusinessHaveAnyItemsToBuy(businessId)) {
-						setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUY, true);
-					} else {
-						removeEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help");
-					}
-				}
-				break;
-			}
-		}
+		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.help", getBusinessPropertyInfoLabelType(businessId), true);
 
 		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.price", applyServerInflationMultiplier(getBusinessData(businessId).buyPrice), true);
 		setEntityData(getBusinessData(businessId).entrancePickup, "v.rp.label.fee", applyServerInflationMultiplier(getBusinessData(businessId).entranceFee), true);
@@ -3355,6 +3347,35 @@ function logBusinessItemPurchase(businessId, purchaserId, itemId) {
 	//quickDatabaseQuery(`INSERT INTO log_biz_buy (log_biz_buy_biz, log_biz_buy_who, log_biz_buy_item, log_biz_buy_when) VALUES (${businessId}, ${purchaserId}, ${itemId}, UNIX_TIMESTAMP())`);
 	//
 	//logItemMove(itemId, V_ITEM_OWNER_BIZFLOOR, businessId, V_ITEM_OWNER_PLAYER, purchaserId)
+}
+
+// ===========================================================================
+
+function getBusinessPropertyInfoLabelType(businessId) {
+	switch (getBusinessData(businessId).labelHelpType) {
+		case V_PROPLABEL_INFO_ENTERVEHICLE:
+			return V_PROPLABEL_INFO_ENTERVEHICLE;
+
+		case V_PROPLABEL_INFO_ENTER:
+			return V_PROPLABEL_INFO_ENTER;
+
+		case V_PROPLABEL_INFO_REPAIR:
+			return V_PROPLABEL_INFO_REPAIR;
+
+		default:
+			if (getBusinessData(businessId).hasInterior) {
+				return V_PROPLABEL_INFO_ENTER;
+			} else {
+				if (doesBusinessHaveAnyItemsToBuy(businessId)) {
+					return V_PROPLABEL_INFO_BUY;
+				} else {
+					return V_PROPLABEL_INFO_NONE;
+				}
+			}
+			break;
+	}
+
+	return V_PROPLABEL_INFO_NONE;
 }
 
 // ===========================================================================
