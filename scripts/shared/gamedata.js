@@ -48,7 +48,6 @@ class InteriorData {
 		this.nightScene = (typeof data.nightScene != "undefined") ? data.nightScene : "";
 		this.hasCustomMapping = (typeof data.hasCustomMapping != "undefined") ? data.hasCustomMapping : false;
 		this.freezeOnEnter = (typeof data.freezeOnEnter != "undefined") ? data.freezeOnEnter : false;
-		this.freezeOnEnter = (typeof data.freezeOnEnter != "undefined") ? data.freezeOnEnter : false;
 	}
 }
 
@@ -5017,7 +5016,31 @@ let gameData = {
 			new AnimationData("dance1", { groupId: "DAN_LOOP_A", animId: "DANCING", animSpeed: 16.0, infiniteLoop: true, infiniteLoopNoMovement: false, dontReturnToStartCoords: true, freezeLastFrame: false }),
 		],
 		[V_GAME_MAFIA_ONE]: [ // Mafia: The City of Lost Heaven
-			//new AnimationData("wave", { animId: "", infiniteLoop: true }),
+			new AnimationData("sit1", { animId: "x sed1.i3d", infiniteLoop: true }),
+			new AnimationData("sit2", { animId: "x sed2.i3d", infiniteLoop: true }),
+			new AnimationData("sit3", { animId: "x sed3.i3d", infiniteLoop: true }),
+			new AnimationData("sit4", { animId: "x sed4.i3d", infiniteLoop: true }),
+			new AnimationData("sit5", { animId: "ZidleSed01.i3d", infiniteLoop: true }),
+			new AnimationData("sit6", { animId: "ZidleSed02.i3d", infiniteLoop: true }),
+			new AnimationData("sit7", { animId: "ZidleSed03.i3d", infiniteLoop: true }),
+			new AnimationData("sit8", { animId: "ZidleSed04.i3d", infiniteLoop: true }),
+			new AnimationData("sit9", { animId: "ZidleSed05.i3d", infiniteLoop: true }),
+			new AnimationData("tablesit1", { animId: "x sed za stolem_A.i3d", infiniteLoop: true }),
+			new AnimationData("tablesit2", { animId: "x sed za stolem_B.i3d", infiniteLoop: true }),
+			new AnimationData("stand1", { animId: "x bar ozrala stativ.i3d", infiniteLoop: true }),
+			new AnimationData("drink1", { animId: "x bar stojak piti01.i3d", infiniteLoop: true }),
+			new AnimationData("smoke1", { animId: "KourTlust01.i3d", infiniteLoop: true }),
+			new AnimationData("smoke2", { animId: "KourTlust02.i3d", infiniteLoop: true }),
+			new AnimationData("smoke3", { animId: "KourTlust03.i3d", infiniteLoop: true }),
+			new AnimationData("smoke4", { animId: "KourTlust04.i3d", infiniteLoop: true }),
+			new AnimationData("talk1", { animId: "GestikulaceNew01.i3d", infiniteLoop: true }),
+			new AnimationData("talk2", { animId: "GestikulaceNew02.i3d", infiniteLoop: true }),
+			new AnimationData("talk3", { animId: "GestikulaceNew03.i3d", infiniteLoop: true }),
+			new AnimationData("talk4", { animId: "GestikulaceNew04.i3d", infiniteLoop: true }),
+			new AnimationData("talk5", { animId: "GestikulaceNew05.i3d", infiniteLoop: true }),
+			new AnimationData("talk6", { animId: "GestikulaceNew06.i3d", infiniteLoop: true }),
+			new AnimationData("talk7", { animId: "GestikulaceNew07.i3d", infiniteLoop: true }),
+			new AnimationData("crossarms", { animId: "VyhlizeniStativ.i3d", infiniteLoop: true }),
 		],
 	},
 	meleeWeapons: {
@@ -6177,7 +6200,7 @@ let gameData = {
 			SaraApartment: [toVector3(-1752.85, -5.16, 168.84), 0, false, "MISE07-SARA", "", false],
 			PaulieApartment: [toVector3(3.63, 4.34, 2.87), 0, false, "MISE19-PAULI", "", false],
 			CarloApartment: [toVector3(-26.953, 8.02, 27.1925), 0, false, "MISE19-ZRADCE", "", false],
-			CarloApartment: [toVector3(-26.953, 8.02, 27.1925), 0, false, "MISE19-ZRADCE", "", false],
+			CorleoneHotelRoom: [toVector3(-522.98, 9.91, -430.61), 0, false, "MISE08-HOTEL", "", false],
 		},
 		[V_GAME_MAFIA_TWO]: { // Mafia 2
 		},

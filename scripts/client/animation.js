@@ -85,9 +85,16 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 			ped.position = ped.position;
 			ped.blendAnimation(animationData.groupId, animationData.animId, animationData.animSpeed);
 		}
-	} else {
+	} else if (getGame() == V_GAME_GTA_IV) {
 		natives.requestAnims(animationData.groupId);
 		natives.taskPlayAnimNonInterruptable(ped, animationData.groupId, animationData.animId, animationData.animSpeed, boolToInt(animationData.infiniteLoop), boolToInt(animationData.infiniteLoopNoMovement), boolToInt(animationData.dontReturnToStartCoords), boolToInt(animationData.freezeLastFrame), -1);
+	} else if (getGame() == V_GAME_MAFIA_ONE) {
+		if (ped == localPlayer) {
+			inAnimation = true;
+			setLocalPlayerControlState(false, false);
+			//localPlayer.collisionsEnabled = false;
+		}
+		ped.addAnimation(animationData.animId);
 	}
 }
 
@@ -139,6 +146,22 @@ function makePedStopAnimation(pedId) {
 			localPlayer.collisionsEnabled = true;
 		}
 		setLocalPlayerControlState(true, false);
+	}
+}
+
+// ===========================================================================
+
+function processCameraLookFromEyesForAnimation() {
+	if (!inAnimation) {
+		return false;
+	}
+
+	if (localPlayer == null) {
+		return false;
+	}
+
+	if (typeof game.camera.lookFromEyes != "undefined") {
+		game.camera.lookFromEyes();
 	}
 }
 
