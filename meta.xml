@@ -103,6 +103,7 @@
 	<file type="client" src="files/images/icons/business-icon.png" />
 	<file type="client" src="files/images/icons/house-icon.png" />
 	<file type="client" src="files/images/icons/job-icon.png" />
+	<file type="client" src="files/images/icons/exit-icon.png" />
 
 	<!-- Sounds -->
 	<file type="client" src="files/sounds/payphone/old-payphone-ring.mp3" />
