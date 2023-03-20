@@ -214,6 +214,8 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 		if (ped == localPlayer) {
 			cruiseControlEnabled = false;
 			cruiseControlSpeed = 0.0;
+
+			sendNetworkEventToServer("v.rp.vehicleSeat", -1);
 		}
 	}
 }
@@ -230,7 +232,10 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
-				if (inVehicleSeat == 0) {
+				inVehicle = vehicle;
+				inVehicleSeat = seat;
+				sendNetworkEventToServer("v.rp.vehicleSeat", seat);
+				if (seat == 0) {
 					//parkedVehiclePosition = inVehicle.position;
 					//parkedVehicleHeading = inVehicle.heading;
 					if (doesEntityDataExist(vehicle, "v.rp.server") == true) {
