@@ -8,21 +8,22 @@
 // ===========================================================================
 
 class BusinessData {
-	constructor(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, hasItems) {
+	constructor() {
 		this.index = -1;
-		this.businessId = businessId;
-		this.name = name;
-		this.entrancePosition = entrancePosition;
-		this.blipModel = blipModel;
-		this.pickupModel = pickupModel;
-		this.hasInterior = hasInterior;
+		this.businessId = -1;
+		this.name = "";
+		this.entrancePosition = toVector3(0.0, 0.0, 0.0);
+		this.exitPosition = toVector3(0.0, 0.0, 0.0);
+		this.blipModel = -1;
+		this.pickupModel = -1;
 		this.rentPrice = 0;
 		this.buyPrice = 0;
-		this.hasItems = hasItems;
 		this.blipId = -1;
 		this.labelInfoType = 0;
 		this.locked = false;
 		this.entranceFee = 0;
+		this.entranceDimension = 0;
+		this.exitDimension = 0;
 	}
 }
 
@@ -35,7 +36,7 @@ function initBusinessScript() {
 
 // ===========================================================================
 
-function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee, labelInfoType) {
+function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, entranceFee, labelInfoType, entranceDimension, exitDimension) {
 	logToConsole(LOG_DEBUG, `[V.RP.Business] Received business ${businessId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -50,31 +51,19 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 
 		if (getBusinessData(businessId) != false) {
 			let businessData = getBusinessData(businessId);
+			businessData.businessId = businessId;
 			businessData.name = name;
 			businessData.entrancePosition = entrancePosition;
+			businessData.exitPosition = exitPosition;
 			businessData.blipModel = blipModel;
 			businessData.pickupModel = pickupModel;
-			businessData.hasInterior = hasInterior;
 			businessData.buyPrice = buyPrice;
 			businessData.rentPrice = rentPrice;
-			businessData.hasItems = hasItems;
 			businessData.locked = locked;
 			businessData.entranceFee = entranceFee;
+			businessData.entranceDimension = entranceDimension;
+			businessData.exitDimension = exitDimension;
 			businessData.labelInfoType = labelInfoType;
-
-			if (businessData.buyPrice > 0) {
-				businessData.labelInfoType = V_PROPLABEL_INFO_BUYBIZ;
-			} else {
-				if (hasInterior) {
-					businessData.labelInfoType = V_PROPLABEL_INFO_ENTER;
-				} else {
-					if (hasItems) {
-						businessData.labelInfoType = V_PROPLABEL_INFO_BUY;
-					} else {
-						businessData.labelInfoType = V_PROPLABEL_INFO_NONE;
-					}
-				}
-			}
 
 			logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} already exists. Checking blip ...`);
 			if (blipModel == -1) {
@@ -119,17 +108,20 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			}
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Business] Business ${businessId} doesn't exist. Adding ...`);
-			let businessData = new BusinessData(businessId, name, entrancePosition, blipModel, pickupModel, hasInterior, locked, hasItems, entranceFee);
+			let businessData = new BusinessData();
+			businessData.businessId = businessId;
 			businessData.name = name;
 			businessData.entrancePosition = entrancePosition;
+			businessData.exitPosition = exitPosition;
 			businessData.blipModel = blipModel;
 			businessData.pickupModel = pickupModel;
-			businessData.hasInterior = hasInterior;
 			businessData.buyPrice = buyPrice;
 			businessData.rentPrice = rentPrice;
-			businessData.hasItems = hasItems;
 			businessData.locked = locked;
 			businessData.entranceFee = entranceFee;
+			businessData.entranceDimension = entranceDimension;
+			businessData.exitDimension = exitDimension;
+			businessData.labelInfoType = labelInfoType;
 
 			if (isGameFeatureSupported("blip")) {
 				if (blipModel != -1) {
