@@ -330,6 +330,7 @@ function resetGUIStrings() {
 	newCharacter.firstNameInput.placeholder = getLocaleString("GUINewCharacterFirstNamePlaceholder");
 	newCharacter.lastNameInput.placeholder = getLocaleString("GUINewCharacterLastNamePlaceholder");
 	newCharacter.createCharacterButton.text = toUpperCase(getLocaleString("GUINewCharacterSubmitButton"));
+	newCharacter.randomNameButton.text = toUpperCase(getLocaleString("GUINewCharacterRandomNameButton"));
 }
 
 // ===========================================================================

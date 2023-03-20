@@ -155,6 +155,7 @@
 	<script src="scripts/client/logo.js" type="client" language="javascript" />
 	<script src="scripts/client/messaging.js" type="client" language="javascript" />
 	<script src="scripts/client/mousecam.js" type="client" language="javascript" />
+	<script src="scripts/client/names.js" type="client" language="javascript" />
 	<script src="scripts/client/nametag.js" type="client" language="javascript" />
 	<script src="scripts/client/npc.js" type="client" language="javascript" />
 	<script src="scripts/client/payphone.js" type="client" language="javascript" />

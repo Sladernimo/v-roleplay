@@ -826,5 +826,7 @@
 	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
 	"GaveMoneyToPlayer": "You gave {1} to {2}",
 	"ReceivedMoneyFromPlayer": "{1} gave you {2}",
-	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)"
+	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)",
+	"GUINewCharacterRandomNameButton": "Random Name"
+
 }

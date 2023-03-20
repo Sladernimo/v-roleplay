@@ -13,6 +13,7 @@ let newCharacter = {
 	firstNameInput: null,
 	lastNameInput: null,
 	createCharacterButton: null,
+	randomNameButton: null,
 	mainLogoImage: null,
 };
 
@@ -20,7 +21,7 @@ let newCharacter = {
 
 function initNewCharacterGUI() {
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
+	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 125, 300, 250, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -111,6 +112,20 @@ function initNewCharacterGUI() {
 		},
 	}, checkNewCharacter);
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
+
+	newCharacter.randomNameButton = newCharacter.window.button(20, 210, 260, 20, 'RANDOM NAME', {
+		main: {
+			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
+			textColour: toColour(255, 255, 255, 255),
+			textSize: 10.0,
+			textFont: mainFont,
+			textAlign: 0.5,
+		},
+		focused: {
+			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
+		},
+	}, useRandomName);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
 }
 
 // ===========================================================================
@@ -126,7 +141,9 @@ function newCharacterFailed(errorMessage) {
 		closeAllWindows();
 		setChatWindowEnabled(false);
 		mexui.setInput(true);
-		setHUDEnabled(false);
+		if (typeof setHUDEnabled != "undefined") {
+			setHUDEnabled(hudState);
+		}
 		newCharacter.window.shown = true;
 	}
 }
@@ -161,6 +178,14 @@ function showNewCharacterGUI() {
 	guiSubmitKey = checkNewCharacter;
 
 	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), newCharacter.window.position.y + newCharacter.window.size.y + 20));
+}
+
+// ===========================================================================
+
+function tryRandomName() {
+	let name = getRandomName();
+	newCharacter.firstNameInput.text = name[0];
+	newCharacter.lastNameInput.text = name[1];
 }
 
 // ===========================================================================
