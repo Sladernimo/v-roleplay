@@ -98,8 +98,7 @@ class ClientData {
 		this.returnToHeading = null;
 		this.returnToInterior = null;
 		this.returnToDimension = null;
-		this.returnToHouse = null;
-		this.returnToBusiness = null;
+		this.returnToScene = "";
 		this.returnToType = V_RETURNTO_TYPE_NONE;
 
 		// Animation
@@ -121,7 +120,7 @@ class ClientData {
 		this.locale = 0;
 		this.enteringVehicle = null;
 		this.customDisconnectReason = "";
-		this.scene = "";
+		this.scene = "V.RP.MAINWORLD";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
 		this.pedState = V_PEDSTATE_NONE;
@@ -130,6 +129,9 @@ class ClientData {
 		this.privateMessageReplyTo = null;
 		this.enteringExitingProperty = null;
 		this.inProperty = null;
+		this.interiorLights = true;
+		this.spawnInit = false;
+		this.guiWait = false;
 
 		// Paintball
 		this.inPaintBall = false;
@@ -153,6 +155,13 @@ class ClientData {
 		this.payPhoneOtherPlayer = null;
 		this.payPhoneCallStart = 0;
 		this.payPhoneInitiatedCall = false;
+
+		// Scene Switch
+		// Position, rotation, scene, etc are in current character data
+		this.sceneSwitchRadioStation = -1;
+		this.sceneSwitchInteriorLights = true;
+
+		this.vehicleSeat = -1;
 	}
 };
 

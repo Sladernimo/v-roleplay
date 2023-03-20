@@ -452,7 +452,7 @@ function saveNPCToDatabase(npcDataId) {
 
 // ===========================================================================
 
-function setNPCDataIndexes() {
+function setAllNPCDataIndexes() {
 	for (let i in getServerData().npcs) {
 		getServerData().npcs[i].index = i;
 
@@ -528,7 +528,7 @@ function deleteNPC(npcId) {
 		getServerData().npcs.splice(npcId, 1);
 	}
 
-	setNPCDataIndexes();
+	setAllNPCDataIndexes();
 }
 
 // ===========================================================================
@@ -749,7 +749,7 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 	tempNPCData.needsSaved = true;
 
 	let npcIndex = getServerData().npcs.push(tempNPCData);
-	setNPCDataIndexes();
+	setAllNPCDataIndexes();
 
 	spawnNPC(npcIndex - 1);
 

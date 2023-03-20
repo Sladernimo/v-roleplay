@@ -23,6 +23,8 @@ class SubAccountData {
 		this.cash = 0;
 		this.spawnPosition = toVector3(0.0, 0.0, 0.0);
 		this.spawnHeading = 0.0;
+		this.spawnVehicle = -1;
+		this.spawnVehicleSeat = -1;
 		this.lastLogin = 0;
 		this.clan = 0;
 		this.clanFlags = 0;
@@ -373,6 +375,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
 			["sacct_svr_payday", subAccountData.payDayAmount],
 			["sacct_svr_fine", subAccountData.fineAmount],
+			["sacct_svr_scene", subAccountData.scene],
 		];
 
 		dbQuery = null;
@@ -463,14 +466,22 @@ function showCharacterSelectToClient(client) {
 // ===========================================================================
 
 function checkNewCharacter(client, firstName, lastName) {
+	if (getPlayerData(client).guiWait == true) {
+		return false;
+	}
+
+	getPlayerData(client).guiWait = true;
+
 	if (areParamsEmpty(firstName)) {
 		showPlayerNewCharacterFailedGUI(client, "First name cannot be blank!");
+		getPlayerData(client).guiWait = false;
 		return false;
 	}
 	firstName = firstName.trim();
 
 	if (areParamsEmpty(lastName)) {
 		showPlayerNewCharacterFailedGUI(client, "Last name cannot be blank!");
+		getPlayerData(client).guiWait = false;
 		return false;
 	}
 	lastName = lastName.trim();
@@ -478,6 +489,7 @@ function checkNewCharacter(client, firstName, lastName) {
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
+		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -486,6 +498,7 @@ function checkNewCharacter(client, firstName, lastName) {
 		getPlayerCurrentSubAccount(client).lastName = fixCharacterName(lastName);
 		updateAllPlayerNameTags(client);
 		hideAllPlayerGUI(client);
+		getPlayerData(client).guiWait = false;
 		return true;
 	}
 
@@ -497,6 +510,7 @@ function checkNewCharacter(client, firstName, lastName) {
 			messagePlayerError(client, "Your character could not be created!");
 		}
 		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it soon.`);
+		getPlayerData(client).guiWait = false;
 		return false;
 	}
 
@@ -504,6 +518,7 @@ function checkNewCharacter(client, firstName, lastName) {
 	getPlayerData(client).currentSubAccount = 0;
 	getPlayerData(client).creatingCharacter = false;
 	showCharacterSelectToClient(client);
+	getPlayerData(client).guiWait = false;
 }
 
 // ===========================================================================
@@ -563,6 +578,7 @@ function selectCharacter(client, characterId = -1) {
 	let spawnHeading = getPlayerCurrentSubAccount(client).spawnHeading;
 	let spawnInterior = getPlayerCurrentSubAccount(client).interior;
 	let spawnDimension = getPlayerCurrentSubAccount(client).dimension;
+	let spawnScene = getPlayerCurrentSubAccount(client).scene;
 	let skin = getPlayerCurrentSubAccount(client).skin;
 
 	getPlayerData(client).switchingCharacter = false;
@@ -571,16 +587,20 @@ function selectCharacter(client, characterId = -1) {
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = V_PEDSTATE_SPAWNING;
 
-	getPlayerData(client).scene = getPlayerCurrentSubAccount(client).scene;
-
 	if (getGame() <= V_GAME_GTA_IV_EFLC) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		onPlayerSpawn(client);
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		//logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
-		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		onPlayerSpawn(client);
+		if (!isMainWorldScene(spawnScene)) {
+			setPlayerScene(client, getSceneForInterior(spawnScene));
+		} else {
+			//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
+			//logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
+			spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
+			getPlayerData(client).scene = getPlayerCurrentSubAccount(client).scene;
+
+			onPlayerSpawn(client);
+		}
 	}
 
 	//removePlayerKeyBind(client, getKeyIdFromParams("insert"));

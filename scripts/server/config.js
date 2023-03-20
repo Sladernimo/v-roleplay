@@ -164,7 +164,7 @@ class ServerConfigData {
 					upKeepPerHouse: toInteger(dbAssoc["svr_upkeep_house"]),
 					upKeepPerBusiness: toInteger(dbAssoc["svr_upkeep_biz"]),
 				},
-				incomeInflationMultiplier: 1.0
+				incomeInflationMultiplier: toInteger(dbAssoc["svr_income_inflation_multiplier"]),
 			};
 
 			this.devServer = intToBool(toInteger(server.getCVar("v_devserver")));
@@ -291,6 +291,7 @@ let globalConfig = {
 	givePlayerMoneyDistance: 2.0,
 	finePlayerDistance: 10.0,
 	fineCommissionPercentage: 0.05,
+	forceAllVehicleEngines: 0,
 };
 
 // ===========================================================================

@@ -608,7 +608,7 @@ function fixMissingAccountServerData() {
 	let dbConnection = connectToDatabase();
 	console.log(`Connection: ${dbConnection}`);
 	if (dbConnection != false) {
-		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main WHERE acct_id > 12`);
+		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main`);
 		console.log(`Accounts: ${accounts.length}`);
 		let servers = fetchQueryAssoc(dbConnection, `SELECT * FROM svr_main`);
 		console.log(`Servers: ${servers.length}`);

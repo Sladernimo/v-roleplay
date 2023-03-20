@@ -277,6 +277,7 @@ function loadCommands() {
 
 			new CommandData("setincomemultiplier", setGrossIncomeMultiplierCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Multiplies pay by this amount. 100% adds nothing extra"),
 			new CommandData("setinflation", setInflationMultiplierCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the server inflation (in percent). 100% is no inflation"),
+			new CommandData("setincomeinflation", setIncomeInflationMultiplierCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the server's income inflation (in percent). 100% is no inflation"),
 			new CommandData("setincometax", setIncomeTaxCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the server income tax (in percent). Players will be taxed this much when getting pay"),
 			new CommandData("sethouseupkeep", setHouseUpkeepCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a house"),
 			new CommandData("setbizupkeep", setBusinessUpkeepCommand, "<amount>", getStaffFlagValue("ManageServer"), true, true, "Sets the base upkeep cost of a business"),
@@ -621,7 +622,7 @@ function loadCommands() {
 			new CommandData("plrstafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
 			new CommandData("playerstafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
 			new CommandData("stafftitle", setPlayerStaffTitleCommand, "", getStaffFlagValue("ManageAdmins"), true, true, "Sets a player's staff title."),
-			new CommandData("givemoney", givePlayerMoneyStaffCommand, "<player name/id> <amount>", getStaffFlagValue("ManageServer"), true, true),
+			new CommandData("givemoney", givePlayerMoneyStaffCommand, "<player name/id> <amount>", getStaffFlagValue("BasicModeration"), true, true),
 			new CommandData("nonrpname", forceCharacterNameChangeCommand, "<player name/id>", getStaffFlagValue("BasicModeration"), true, true, "Forces a player to change their current character's name."),
 			new CommandData("setname", forceCharacterNameCommand, "<player name/id> <first name> <last name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's name directly."),
 			new CommandData("setskin", forcePlayerSkinCommand, "<player name/id> <skin id/name>", getStaffFlagValue("BasicModeration"), true, true, "Changes a character's skin."),
@@ -659,6 +660,7 @@ function loadCommands() {
 			new CommandData("clearchat", clearChatCommand, "", getStaffFlagValue("BasicModeration"), true, true, "Clears the chat"),
 			new CommandData("forceresetpass", forceAccountPasswordResetCommand, "<player name/id>", getStaffFlagValue("ManageServer"), true, true),
 			new CommandData("chattype", setServerDefaultChatTypeCommand, "<chat type name>", getStaffFlagValue("ManageServer"), true, true, "Sets the normal chat type for the server"),
+			new CommandData("vehengineall", forceAllVehicleEnginesCommand, "<state 0/1/2>", getStaffFlagValue("BasicModeration"), true, true, "Sets the normal chat type for the server"),
 		],
 		startup: [],
 		subAccount: [
@@ -949,7 +951,7 @@ function processPlayerCommand(command, params, client) {
 
 		let possibleCommand = getCommandFromParams(command);
 		if (possibleCommand != false && doesPlayerHaveStaffPermission(client, getCommandRequiredPermissions(toLowerCase(possibleCommand.command)))) {
-			messagePlayerError(client, getLocaleString(client, "CommandNotFoundPossibleMatchTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}${toLowerCase(possibleCommand.command)}{MAINCOLOUR}`));
+			messagePlayerError(client, getLocaleString(client, "CommandNotFoundPossibleMatchTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/${toLowerCase(possibleCommand.command)}{MAINCOLOUR}`));
 		} else {
 			messagePlayerError(client, getLocaleString(client, "CommandNotFoundHelpTip", `{ALTCOLOUR}/${command}{MAINCOLOUR}`, `{ALTCOLOUR}/info{MAINCOLOUR}`));
 		}

@@ -3227,8 +3227,8 @@ function fillLeadingZeros(number, length) {
 
 // ===========================================================================
 
-function isMainWorldScene(sceneName) {
-	return (sceneName == "V.RP.MAINWORLD" || sceneName == "");
+function isMainWorldScene(sceneName, gameId = getGame()) {
+	return (sceneName == "V.RP.MAINWORLD" || sceneName == "" || sceneName == getGameConfig().mainWorldScene[gameId]);
 }
 
 // ===========================================================================
@@ -3277,6 +3277,80 @@ function getWeatherData(weatherIndex, gameId = getGame()) {
 
 function getPayPhoneStateName(state) {
 	return payPhoneStateNames[state];
+}
+
+// ===========================================================================
+
+function getSceneForInterior(interiorName, gameId = getGame()) {
+	if (interiorName == "") {
+		return getGameConfig().mainWorldScene[getGame()];
+	}
+
+	if (typeof getGameConfig().interiors[gameId][interiorName] == "undefined") {
+		return getGameConfig().mainWorldScene[getGame()];
+	}
+
+	if (isNightTime(getServerConfig().hour)) {
+		// Check if night map exists, and return if does
+		if (getGameConfig().interiors[gameId][interiorName][4] != "") {
+			return getGameConfig().interiors[gameId][interiorName][4];
+		}
+	}
+
+	// Return day scene if night check fails
+	return getGameConfig().interiors[gameId][interiorName][3];
+}
+
+// ===========================================================================
+
+function getInteriorForScene(sceneName, gameId = getGame()) {
+	if (sceneName == "") {
+		return "V.RP.MAINWORLD";
+	}
+
+	for (let i in getGameConfig().interiors[gameId]) {
+		if (getGameConfig().interiors[gameId][i][3] == sceneName) {
+			return i;
+		}
+
+		if (getGameConfig().interiors[gameId][i][4] == sceneName) {
+			return i;
+		}
+	}
+
+	return "V.RP.MAINWORLD";
+}
+
+// ===========================================================================
+
+function getClipAmmoSizeForWeapon(weaponId, gameId = getGame()) {
+	if (typeof getGameConfig().maximumClipAmmo[gameId] == "undefined") {
+		return 0;
+	}
+
+	if (typeof getGameConfig().maximumClipAmmo[gameId][weaponId] == "undefined") {
+		return 0;
+	}
+
+	return getGameConfig().maximumClipAmmo[gameId][weaponId];
+}
+
+// ===========================================================================
+
+function canVehicleEnterInterior(interiorName) {
+	if (interiorName == "") {
+		return true;
+	}
+
+	if (typeof getGameConfig().interiors[gameId][interiorName] == "undefined") {
+		return true;
+	}
+
+	if (typeof getGameConfig().interiors[gameId][interiorName][5] == true) {
+		return true;
+	}
+
+	return false;
 }
 
 // ===========================================================================

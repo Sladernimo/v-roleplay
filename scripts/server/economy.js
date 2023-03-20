@@ -21,13 +21,13 @@ function getTimeDisplayUntilPlayerPayDay(client) {
 // ===========================================================================
 
 function applyServerInflationMultiplier(value) {
-	return toInteger(Math.round(value * getServerConfig().inflationMultiplier))
+	return toInteger(Math.round(value * getServerConfig().economy.inflationMultiplier))
 }
 
 // ===========================================================================
 
 function applyIncomeInflationMultiplier(value) {
-	return toInteger(Math.round(value * getServerConfig().incomeInflationMultiplier))
+	return toInteger(Math.round(value * getServerConfig().economy.incomeInflationMultiplier))
 }
 
 // ===========================================================================
@@ -415,7 +415,35 @@ function setInflationMultiplierCommand(command, params, client) {
 
 	getServerConfig().economy.inflationMultiplier = amount / 100;
 	getServerConfig().needsSaved = true;
-	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the server inflation {ALTCOLOUR}${amount}%`);
+	sendAllJobsToPlayer(null);
+	sendAllVehiclesToPlayer(null);
+	sendAllBusinessesToPlayer(null);
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the server inflation to {ALTCOLOUR}${amount}%`);
+}
+
+// ===========================================================================
+
+function setIncomeInflationMultiplierCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, "The amount needs to be a number!");
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount <= 0) {
+		messagePlayerError(client, "The amount can't be negative!");
+		return false;
+	}
+
+	getServerConfig().economy.incomeInflationMultiplier = amount / 100;
+	getServerConfig().needsSaved = true;
+	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the income inflation to {ALTCOLOUR}${amount}%`);
 }
 
 // ===========================================================================

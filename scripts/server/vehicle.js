@@ -88,6 +88,7 @@ class VehicleData {
 		this.whenAdded = 0;
 		this.licensePlate = "";
 		this.radioFrequency = -1;
+		this.switchingScenes = false;
 
 		this.lastActiveTime = false;
 
@@ -538,6 +539,11 @@ function vehicleEngineCommand(command, params, client) {
 
 	if (!getVehicleData(vehicle)) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (getGlobalConfig().forceAllVehicleEngines != 0) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -1450,10 +1456,16 @@ function spawnVehicle(vehicleData) {
 		}
 	}
 
-	if (vehicleData.spawnLocked == true) {
+	if (vehicleData.spawnLocked == true && vehicleData.switchingScenes == false) {
 		vehicleData.engine = false;
 		vehicleData.locked = true;
 		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s engine to OFF`);
+	}
+
+	if (getGlobalConfig().forceAllVehicleEngines == 1) {
+		vehicleData.engine = false;
+	} else if (getGlobalConfig().forceAllVehicleEngines == 1) {
+		vehicleData.engine = true;
 	}
 
 	//setVehicleHealth(vehicle, 1000);
@@ -1821,7 +1833,7 @@ function removeAllOccupantsFromVehicle(vehicle) {
 		if (clients[i].player != null) {
 			if (clients[i].player.vehicle != false) {
 				if (clients[i].player.vehicle == vehicle) {
-					removePlayerFromVehicle(clients[i]);
+					removePedFromVehicle(getPlayerPed(clients[i]));
 				}
 			}
 		}
@@ -1860,8 +1872,8 @@ function isPlayerInVehicleDriverSeat(client) {
 		return false;
 	}
 
-	if (getPlayerVehicleSeat(client) != 0) {
-		return false;
+	if (getPlayerVehicleSeat(client) == 0) {
+		return true;
 	}
 
 	return false;
@@ -1998,5 +2010,27 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 	let chunkedList = splitArrayIntoChunks(stats, 6);
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function despawnVehicle(vehicleData) {
+	if (vehicleData.vehicle != null) {
+		destroyGameElement(vehicleData.vehicle);
+		vehicleData.vehicle = null;
+	}
+}
+
+// ===========================================================================
+
+function forceAllVehicleEngines(state) {
+	getGlobalConfig().forceAllVehicleEngines = state;
+
+	if (state != 0) {
+		for (let i in getServerData().vehicles) {
+			getServerData().vehicles[i].engine = (state == 1) ? false : true;
+			setVehicleEngine(getServerData().vehicles[i].vehicle, getServerData().vehicles[i].engine);
+		}
 	}
 }

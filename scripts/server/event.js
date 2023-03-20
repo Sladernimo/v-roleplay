@@ -301,88 +301,7 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 // ===========================================================================
 
 function onPlayerDeath(client, killer, weapon = 0, pedPiece = 0) {
-	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} died!`);
-
-	// Death is already being processed
-	if (getPlayerData(client).pedState == V_PEDSTATE_DEAD) {
-		return false;
-	}
-
-	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
-	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
-	updatePlayerSpawnedState(client, false);
-	setPlayerControlState(client, false);
-	setTimeout(function () {
-		if (isFadeCameraSupported()) {
-			fadePlayerCamera(client, false, 1000);
-		}
-		setTimeout(function () {
-			if (isPlayerInPaintBall(client)) {
-				getPlayerData(killer).paintBallKills++;
-				getPlayerData(client).paintBallDeaths++;
-
-				if (getPlayerData(killer).paintBallDeaths >= getGlobalConfig().paintBallMaxKills) {
-					let paintBallPlayers = getAllPlayersInBusiness(getPlayerData(client).paintBallBusiness);
-					let winner = paintBallPlayers[i];
-					for (let i in paintBallPlayers) {
-						if (getPlayerData(paintBallPlayers[i]).paintBallKills > getPlayerData(winner).paintBallKills) {
-							winner = paintBallPlayers[i];
-						}
-					}
-
-					for (let i in paintBallPlayers) {
-						showSmallGameMessage(paintBallPlayers[i], `${getLocaleString(paintBallPlayers[i], "PaintBallEnded")} ${getLocaleString(paintBallPlayers[i], "Winners", `${getCharacterFullName(winner)}`)}`);
-						stopPaintBall(paintBallPlayers[i]);
-					}
-				} else {
-					respawnPlayerForPaintBall(client);
-					getPlayerData(client).pedState = V_PEDSTATE_READY;
-				}
-			} else {
-				if (getPlayerCurrentSubAccount(client).inJail) {
-					let closestJail = getClosestPoliceStation(getPlayerPosition(client));
-					despawnPlayer(client);
-					getPlayerCurrentSubAccount(client).interior = closestJail.interior;
-					getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
-
-					if (isPlayerWorking(client)) {
-						stopWorking(client);
-					}
-
-					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					if (isFadeCameraSupported()) {
-						fadePlayerCamera(client, true, 1000);
-					}
-					updatePlayerSpawnedState(client, true);
-					makePlayerStopAnimation(client);
-					setPlayerControlState(client, true);
-					resetPlayerBlip(client);
-					getPlayerData(client).pedState = V_PEDSTATE_READY;
-				} else {
-					let closestHospital = getClosestHospital(getPlayerPosition(client));
-					despawnPlayer(client);
-					getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
-					getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
-
-					if (isPlayerWorking(client)) {
-						stopWorking(client);
-					}
-
-					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-
-					if (isFadeCameraSupported()) {
-						fadePlayerCamera(client, true, 1000);
-					}
-
-					updatePlayerSpawnedState(client, true);
-					makePlayerStopAnimation(client);
-					setPlayerControlState(client, true);
-					resetPlayerBlip(client);
-					getPlayerData(client).pedState = V_PEDSTATE_READY;
-				}
-			}
-		}, 2000);
-	}, 1000);
+	processPlayerDeath(client);
 
 	/*
 	let queryData = [
@@ -456,6 +375,12 @@ function onPlayerSpawn(client) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
+		return false;
+	}
+
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
+	if (getPlayerData(client).spawnInit == true) {
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Aborting spawn processing ...`);
 		return false;
 	}
 
@@ -684,6 +609,8 @@ function onPlayerSpawn(client) {
 		}
 	}
 
+	getPlayerData(client).spawnInit = true;
+
 	messageDiscordEventChannel(`🧍 ${getPlayerName(client)} spawned as ${getCharacterFullName(client)}`);
 }
 
@@ -783,6 +710,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 			logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered a ${getVehicleName(vehicle)} (ID: ${getVehicleDataIndexFromVehicle(vehicle)}, Database ID: ${getVehicleData(vehicle).databaseId})`);
 
 			getPlayerData(client).lastVehicle = vehicle;
+			getPlayerData(client).vehicleSeat = seat;
 			getVehicleData(vehicle).lastActiveTime = getCurrentUnixTimestamp();
 
 			if (seat == V_VEHSEAT_DRIVER) {
@@ -926,6 +854,10 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
+			if (getPlayerData(client) != false) {
+				getPlayerData(client).vehicleSeat = -1;
+			}
+
 			if (seat == V_VEHSEAT_DRIVER) {
 				//vehicle.netFlags.sendSync = getVehicleData(vehicle).engine;
 			}

@@ -255,7 +255,7 @@ function showRadioStationListCommand(command, params, client) {
 
 // ===========================================================================
 
-function setAllRadioStationIndexes() {
+function setAllRadioStationDataIndexes() {
 	for (let i in getServerData().radioStations) {
 		getServerData().radioStations[i].index = i;
 	}

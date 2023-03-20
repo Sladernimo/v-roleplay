@@ -1184,7 +1184,7 @@ function stopWorking(client) {
 	let jobVehicle = getPlayerData(client).lastJobVehicle;
 	if (jobVehicle) {
 		if (getPlayerVehicle(client) == jobVehicle) {
-			removePlayerFromVehicle(client);
+			removePedFromVehicle(getPlayerPed(client));
 			//getPlayerPed(client).removeFromVehicle();
 		}
 
@@ -1348,6 +1348,7 @@ function jobUniformCommand(command, params, client) {
 	}
 
 	setPlayerSkin(client, uniformData.skin);
+	getPlayerData(client).jobUniform = uniformData.skin;
 	meActionToNearbyPlayers(client, `puts on ${getProperDeterminerForName(uniformData.name)} ${uniformData.name} uniform`);
 }
 
@@ -1602,6 +1603,24 @@ function createJob(name) {
 
 	getServerData().jobs.push(tempJobData);
 	saveJobToDatabase(tempJobData);
+	setAllJobDataIndexes();
+}
+
+// ===========================================================================
+
+function createJobRank(name, level) {
+	let tempJobData = new JobRankData(false);
+	tempJobRankData.serverId = getServerId();
+	tempJobRankData.name = name;
+	tempJobRankData.jobIndex = jobIndex;
+	tempJobRankData.jobId = getJobData(jobIndex).databaseId;
+	tempJobRankData.enabled = true;
+	tempJobRankData.level = 1;
+	tempJobRankData.public = false;
+	tempJobRankData.needsSaved = true;
+
+	getServerData().jobs[jobIndex].push(tempJobRankData);
+	saveJobRankToDatabase(tempJobRankData);
 	setAllJobDataIndexes();
 }
 
@@ -2690,7 +2709,7 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
 
-	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex));
+	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex), 0);
 }
 
 // ===========================================================================
@@ -3322,7 +3341,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 					setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
 					setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
 					setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
-					setEntityData(pickup, "v.rp.label.publicRank", doesJobHavePublicRank(tempJobData.index), true);
+					setEntityData(pickup, "v.rp.label.publicRank", doesJobHavePublicRank(jobId), true);
 					addToWorld(pickup);
 				}
 			}
@@ -3338,7 +3357,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 			}
 			*/
 
-			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobData.locations[locationId].position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index));
+			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobData.locations[locationId].position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index), tempJobData.locations[locationId].dimension);
 		}
 	}
 }
@@ -3589,6 +3608,26 @@ function deleteJobPickups(jobId) {
 	for (let j in getServerData().jobs[jobId].locations) {
 		deleteJobLocationPickup(jobId, j);
 	}
+}
+
+// ===========================================================================
+
+function createJobRankCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getPlayerJob(client);
+
+	if (!getJobData(jobId)) {
+		messagePlayerError(client, `You need to take the job that you want to make a rank for.`);
+		return false;
+	}
+
+	createJobRank()
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created rank {ALTCOLOUR}${params}{MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	return true;
 }
 
 // ===========================================================================

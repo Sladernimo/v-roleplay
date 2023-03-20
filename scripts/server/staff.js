@@ -906,18 +906,38 @@ function getPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	removePlayerFromVehicle(targetClient);
+	removePedFromVehicle(getPlayerPed(targetClient));
 
 	getPlayerData(targetClient).returnToPosition = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToDimension = getPlayerDimension(targetClient);
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
+	getPlayerData(targetClient).returnToScene = getPlayerData(targetClient).scene;
 	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
 
-	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
-	setPlayerHeading(targetClient, getPlayerHeading(client));
-	setPlayerInterior(targetClient, getPlayerInterior(client));
-	setPlayerDimension(targetClient, getPlayerDimension(client));
+	if (getPlayerData(targetClient).scene != getPlayerData(client).scene) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
+		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
+		initPlayerPropertySwitch(
+			targetClient,
+			getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2),
+			getPlayerHeading(client),
+			getPlayerInterior(client),
+			getPlayerDimension(client),
+			-1,
+			-1,
+			getPlayerData(client).scene,
+		);
+	} else {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
+		setPlayerHeading(targetClient, getPlayerHeading(client));
+		setPlayerInterior(targetClient, getPlayerInterior(client));
+		setPlayerDimension(targetClient, getPlayerDimension(client));
+		getPlayerData(targetClient).pedState = V_PEDSTATE_READY;
+	}
+
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their position.`, true);
 	messagePlayerAlert(targetClient, `An admin has teleported you to their location`);
@@ -946,25 +966,41 @@ function returnPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	removePlayerFromVehicle(targetClient);
+	removePedFromVehicle(getPlayerPed(targetClient));
 
 	if (getPlayerData(targetClient).returnToPosition == null) {
 		messagePlayerError(client, "There is nowhere to return that player to!");
 		return false;
 	}
 
-	setPlayerPosition(targetClient, getPlayerData(targetClient).returnToPosition);
-	setPlayerHeading(targetClient, getPlayerData(targetClient).returnToHeading);
-	setPlayerInterior(targetClient, getPlayerData(targetClient).returnToInterior);
-	setPlayerDimension(targetClient, getPlayerData(targetClient).returnToDimension);
+	if (getPlayerData(targetClient).returnToScene != getPlayerData(targetClient).scene) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		initPlayerPropertySwitch(
+			targetClient,
+			getPlayerData(targetClient).returnToPosition,
+			getPlayerData(targetClient).returnToHeading,
+			getPlayerData(targetClient).returnToInterior,
+			getPlayerData(targetClient).returnToDimension,
+			-1,
+			-1,
+			getPlayerData(targetClient).returnToScene,
+		);
+	} else {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		setPlayerPosition(targetClient, getPlayerData(targetClient).returnToPosition);
+		setPlayerHeading(targetClient, getPlayerData(targetClient).returnToHeading);
+		setPlayerInterior(targetClient, getPlayerData(targetClient).returnToInterior);
+		setPlayerDimension(targetClient, getPlayerData(targetClient).returnToDimension);
 
-	getPlayerData(targetClient).returnToPosition = null;
-	getPlayerData(targetClient).returnToHeading = null;
-	getPlayerData(targetClient).returnToDimension = null;
-	getPlayerData(targetClient).returnToInterior = null;
-	getPlayerData(targetClient).returnToHouse = null;
-	getPlayerData(targetClient).returnToBusiness = null;
-	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
+		getPlayerData(targetClient).returnToPosition = null;
+		getPlayerData(targetClient).returnToHeading = null;
+		getPlayerData(targetClient).returnToDimension = null;
+		getPlayerData(targetClient).returnToInterior = null;
+		getPlayerData(targetClient).returnToScene = "";
+		getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
+
+		getPlayerData(targetClient).pedState = V_PEDSTATE_READY;
+	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`, true);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);
@@ -1986,6 +2022,26 @@ function clearChatCommand(command, params, client) {
 	}
 
 	clearChatBox(null);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function forceAllVehicleEnginesCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	forceAllVehicleEngines(toInteger(params));
 }
 
 // ===========================================================================

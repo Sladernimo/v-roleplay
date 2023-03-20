@@ -87,7 +87,7 @@ function createPayPhone(position, number, addedBy = defaultNoAccountId) {
 
 	getServerData().payPhones.push(tempPayPhoneData);
 
-	setAllPayPhoneIndexes();
+	setAllPayPhoneDataIndexes();
 	saveAllPayPhonesToDatabase();
 
 	sendPayPhoneToPlayer(null, getServerData().payPhones.length - 1, false, tempPayPhoneData.state, tempPayPhoneData.position);
@@ -534,7 +534,7 @@ function savePayPhoneToDatabase(payPhoneIndex) {
 
 // ===========================================================================
 
-function setAllPayPhoneIndexes() {
+function setAllPayPhoneDataIndexes() {
 	for (let i in getServerData().payPhones) {
 		getServerData().payPhones[i].index = i;
 	}

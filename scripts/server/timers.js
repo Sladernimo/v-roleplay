@@ -243,51 +243,53 @@ function checkServerGameTime() {
 		getServerConfig().minute = dateTime.getMinutes();
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
-			//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
-			//	sendMapChangeWarningToPlayer(null, true);
-			//}
+	if (!getServerConfig().devServer) {
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
+				//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+				//	sendMapChangeWarningToPlayer(null, true);
+				//}
 
-			if (isNightTime(getServerConfig().hour)) {
-				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
-				messageDiscordEventChannel("🌙 Changing server map to night");
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
-				setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
-				if (!serverStarting) {
-					kickAllClients();
-					saveServerDataToDatabase();
-					despawnAllServerElements();
-				}
-				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				spawnAllServerElements();
-				setServerPassword("");
-			} else {
-				if (serverStarting) {
+				if (isNightTime(getServerConfig().hour)) {
+					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
+					messageDiscordEventChannel("🌙 Changing server map to night");
+					getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
+					setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
+					if (!serverStarting) {
+						kickAllClients();
+						saveServerDataToDatabase();
+						despawnAllServerElements();
+					}
+					game.changeMap(getGameConfig().mainWorldScene[getGame()]);
 					spawnAllServerElements();
+					setServerPassword("");
+				} else {
+					if (serverStarting) {
+						spawnAllServerElements();
+					}
 				}
-			}
-		} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
-			//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
-			//	sendMapChangeWarningToPlayer(null, true);
-			//}
+			} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
+				//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+				//	sendMapChangeWarningToPlayer(null, true);
+				//}
 
-			if (!isNightTime(getServerConfig().hour)) {
-				logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
-				messageDiscordEventChannel("🌞 Changing server map to day");
-				getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
-				setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
-				if (!serverStarting) {
-					kickAllClients();
-					saveServerDataToDatabase();
-					despawnAllServerElements();
-				}
-				game.changeMap(getGameConfig().mainWorldScene[getGame()]);
-				spawnAllServerElements();
-				setServerPassword("");
-			} else {
-				if (serverStarting) {
+				if (!isNightTime(getServerConfig().hour)) {
+					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
+					messageDiscordEventChannel("🌞 Changing server map to day");
+					getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
+					setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
+					if (!serverStarting) {
+						kickAllClients();
+						saveServerDataToDatabase();
+						despawnAllServerElements();
+					}
+					game.changeMap(getGameConfig().mainWorldScene[getGame()]);
 					spawnAllServerElements();
+					setServerPassword("");
+				} else {
+					if (serverStarting) {
+						spawnAllServerElements();
+					}
 				}
 			}
 		}

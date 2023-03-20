@@ -45,6 +45,7 @@ const V_PEDSTATE_INTRUNK = 11;                 // In vehicle trunk
 const V_PEDSTATE_INITEM = 12;                  // In item (crate, box, etc)
 const V_PEDSTATE_HANDSUP = 13;                 // Has hands up (surrendering)
 const V_PEDSTATE_SPAWNING = 14;                // Spawning
+const V_PEDSTATE_TELEPORTING = 15;                // Spawning
 
 // Property Types
 const V_PROPERTY_TYPE_NONE = 0;				  // None
@@ -105,7 +106,7 @@ function suicideCommand(command, params, client) {
 	}
 
 	if (isPlayerInAnyVehicle(client)) {
-		removePlayerFromVehicle(client);
+		removePedFromVehicle(getPlayerPed(client));
 	}
 
 	processPlayerDeath(client);
@@ -347,6 +348,15 @@ function enterExitPropertyCommand(command, params, client) {
 	let typeString = (isBusiness) ? getLanguageLocaleString(englishId, "Business") : getLanguageLocaleString(englishId, "House");
 	let nameString = (isBusiness) ? closestProperty.name : closestProperty.description;
 
+	let vehicle = getPlayerVehicle(client);
+	let vehicleIndex = -1;
+
+	if (vehicle != null) {
+		if (getVehicleData(vehicle) != false) {
+			vehicleIndex = getVehicleDataIndexFromVehicle(vehicle);
+		}
+	}
+
 	if (isEntrance) {
 		if (getDistance(closestProperty.entrancePosition, getPlayerPosition(client)) <= getGlobalConfig().enterPropertyDistance) {
 			if (closestProperty.locked) {
@@ -359,33 +369,75 @@ function enterExitPropertyCommand(command, params, client) {
 				return false;
 			}
 
-			clearPlayerStateToEnterExitProperty(client);
-			getPlayerData(client).pedState = V_PEDSTATE_ENTERINGPROPERTY;
-			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? V_PROPERTY_TYPE_BUSINESS : V_PROPERTY_TYPE_HOUSE, closestProperty.index];
+			if (closestProperty.exitScene != "" && closestProperty.exitScene != "V.RP.MAINWORLD") {
+				if (getGameConfig().interiors[getGame()][closestProperty.exitScene][5] == false) {
+					if (isPlayerInAnyVehicle(client)) {
+						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+						return false;
+					}
+				}
+			}
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "EntersProperty", typeString, nameString));
-			setPlayerDimension(client, 50000 + getPlayerId(client));
 
-			if (isFadeCameraSupported()) {
-				fadePlayerCamera(client, false, 2000);
-			}
+			if (vehicleIndex != -1) {
+				if (isPlayerInVehicleDriverSeat(client)) {
+					let vehicleData = getVehicleData(vehicle);
+					getClients().filter(c1 => getPlayerVehicle(c1) == vehicle).forEach(c => {
+						let seat = getPlayerVehicleSeat(c);
+						removePedFromVehicle(getPlayerPed(c));
+						stopRadioStreamForPlayer(c);
+						updateInteriorLightsForPlayer(c, true);
+						getPlayerData(c).pedState = V_PEDSTATE_ENTERINGPROPERTY;
+						getPlayerData(c).streamingRadioStation = closestProperty.streamingRadioStationIndex;
+						getPlayerData(c).interiorLights = closestProperty.interiorLights;
+						setTimeout(function () {
+							initPlayerPropertySwitch(
+								c,
+								closestProperty.exitPosition,
+								closestProperty.exitRotation,
+								closestProperty.exitInterior,
+								closestProperty.exitDimension,
+								vehicleIndex,
+								seat,
+								closestProperty.exitScene,
+							);
+						}, 500);
+					});
 
-			if (closestProperty.exitScene != "" && isGameFeatureSupported("interiorScene")) {
+					setTimeout(function () {
+						despawnVehicle(vehicleData);
+
+						// Spawn vehicle in the other side
+						vehicleData.spawnPosition = closestProperty.exitPosition;
+						vehicleData.spawnRotation = closestProperty.exitRotation;
+						vehicleData.interior = closestProperty.exitInterior;
+						vehicleData.dimension = closestProperty.exitDimension;
+						vehicleData.switchingScenes = true;
+						spawnVehicle(vehicleData);
+						vehicleData.switchingScenes = false;
+					}, 1000);
+				}
+			} else {
+				stopRadioStreamForPlayer(client);
+				updateInteriorLightsForPlayer(client, true);
+				getPlayerData(client).pedState = V_PEDSTATE_ENTERINGPROPERTY;
+				getPlayerData(client).streamingRadioStation = closestProperty.streamingRadioStationIndex;
+				getPlayerData(client).interiorLights = closestProperty.interiorLights;
 				setTimeout(function () {
-					getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.exitPosition;
-					if (isMainWorldScene(closestProperty.exitScene)) {
-						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-					} else {
-						setPlayerScene(client, closestProperty.exitScene);
-					}
-				}, 2000);
-
-				return false;
+					initPlayerPropertySwitch(
+						client,
+						closestProperty.exitPosition,
+						closestProperty.exitRotation,
+						closestProperty.exitInterior,
+						closestProperty.exitDimension,
+						-1,
+						-1,
+						closestProperty.exitScene,
+					);
+				}, 500);
 			}
 
-			setTimeout(function () {
-				processPlayerEnteringExitingProperty(client);
-			}, 1100);
 			return true;
 		}
 	} else {
@@ -395,33 +447,74 @@ function enterExitPropertyCommand(command, params, client) {
 				return false;
 			}
 
-			clearPlayerStateToEnterExitProperty(client);
-			getPlayerData(client).pedState = V_PEDSTATE_EXITINGPROPERTY;
-			getPlayerData(client).enteringExitingProperty = [(isBusiness) ? V_PROPERTY_TYPE_BUSINESS : V_PROPERTY_TYPE_HOUSE, closestProperty.index];
+			if (closestProperty.entranceScene != "" && closestProperty.entranceScene != "V.RP.MAINWORLD") {
+				if (getGameConfig().interiors[getGame()][closestProperty.entranceScene][5] == false) {
+					if (isPlayerInAnyVehicle(client)) {
+						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+						return false;
+					}
+				}
+			}
 
 			meActionToNearbyPlayers(client, getLanguageLocaleString(englishId, "ExitsProperty", typeString, nameString));
 
-			if (isFadeCameraSupported()) {
-				fadePlayerCamera(client, false, 2000);
-			}
+			if (vehicleIndex != -1) {
+				if (isPlayerInVehicleDriverSeat(client)) {
+					let vehicleData = getVehicleData(vehicle);
+					getClients().filter(c1 => getPlayerVehicle(c1) == vehicle).forEach(c => {
+						let seat = getPlayerVehicleSeat(c);
+						removePedFromVehicle(getPlayerPed(c));
+						stopRadioStreamForPlayer(c);
+						updateInteriorLightsForPlayer(c, true);
+						getPlayerData(c).streamingRadioStation = closestProperty.streamingRadioStationIndex;
+						getPlayerData(c).interiorLights = closestProperty.interiorLights;
+						getPlayerData(c).pedState = V_PEDSTATE_EXITINGPROPERTY;
+						setTimeout(function () {
+							initPlayerPropertySwitch(
+								c,
+								closestProperty.entrancePosition,
+								closestProperty.entranceRotation,
+								closestProperty.entranceInterior,
+								closestProperty.entranceDimension,
+								vehicleIndex,
+								seat,
+								closestProperty.entranceScene
+							);
+						}, 500);
+					});
 
-			if (closestProperty.entranceScene != "" && isGameFeatureSupported("interiorScene")) {
+					setTimeout(function () {
+						despawnVehicle(vehicleData);
+
+						// Spawn vehicle in the other side
+						vehicleData.spawnPosition = closestProperty.entrancePosition;
+						vehicleData.spawnRotation = closestProperty.entranceRotation;
+						vehicleData.interior = closestProperty.entranceInterior;
+						vehicleData.dimension = closestProperty.entranceDimension;
+						vehicleData.switchingScenes = true;
+						spawnVehicle(vehicleData);
+						vehicleData.switchingScenes = false;
+					}, 1000);
+				}
+			} else {
+				stopRadioStreamForPlayer(client);
+				updateInteriorLightsForPlayer(client, true);
+				getPlayerData(client).pedState = V_PEDSTATE_EXITINGPROPERTY;
+				getPlayerData(client).streamingRadioStation = closestProperty.streamingRadioStationIndex;
+				getPlayerData(client).interiorLights = closestProperty.interiorLights;
 				setTimeout(function () {
-					getPlayerCurrentSubAccount(client).spawnPosition = closestProperty.entrancePosition;
-					if (isMainWorldScene(closestProperty.entranceScene)) {
-						destroyGameElement(client.player);
-						setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-					} else {
-						destroyGameElement(client.player);
-						setPlayerScene(client, closestProperty.entranceScene);
-					}
-				}, 2000);
-				return false;
+					initPlayerPropertySwitch(
+						client,
+						closestProperty.entrancePosition,
+						closestProperty.entranceRotation,
+						closestProperty.entranceInterior,
+						closestProperty.entranceDimension,
+						-1,
+						-1,
+						closestProperty.entranceScene,
+					);
+				}, 500);
 			}
-
-			setTimeout(function () {
-				processPlayerEnteringExitingProperty(client);
-			}, 1100);
 		}
 	}
 	//logToConsole(LOG_DEBUG, `[V.RP.Misc] ${getPlayerDisplayForConsole(client)} exited business ${inBusiness.name}[${inBusiness.index}/${inBusiness.databaseId}]`);
@@ -928,63 +1021,196 @@ function deletePlayerBlip(client) {
 // ===========================================================================
 
 function processPlayerDeath(client) {
+	// Death is already being processed
+	if (getPlayerData(client).pedState == V_PEDSTATE_DEAD) {
+		return false;
+	}
+
+	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
 	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
-	setTimeout(function () {
-		fadePlayerCamera(client, false, 2000);
-		setTimeout(function () {
-			if (isPlayerInPaintBall(client)) {
-				respawnPlayerForPaintBall(client);
-			} else {
-				if (getPlayerCurrentSubAccount(client).inJail) {
-					let closestJail = getClosestPoliceStation(getPlayerPosition(client));
-					despawnPlayer(client);
-					getPlayerCurrentSubAccount(client).interior = closestJail.interior;
-					getPlayerCurrentSubAccount(client).dimension = closestJail.dimension;
 
-					if (isPlayerWorking(client)) {
-						stopWorking(client);
-					}
+	if (isPlayerWorking(client)) {
+		stopWorking(client);
+	}
 
-					spawnPlayer(client, closestJail.position, closestJail.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+	removePedFromVehicle(getPlayerPed(client));
 
-					fadePlayerCamera(client, true, 2000);
-					updatePlayerSpawnedState(client, true);
-					makePlayerStopAnimation(client);
-					setPlayerControlState(client, true);
-					resetPlayerBlip(client);
-				} else {
-					let closestHospital = getClosestHospital(getPlayerPosition(client));
-					despawnPlayer(client);
-					getPlayerCurrentSubAccount(client).interior = closestHospital.interior;
-					getPlayerCurrentSubAccount(client).dimension = closestHospital.dimension;
+	if (isPlayerInPaintBall(client)) {
+		getPlayerData(killer).paintBallKills++;
+		getPlayerData(client).paintBallDeaths++;
 
-					if (isPlayerWorking(client)) {
-						stopWorking(client);
-					}
-
-					spawnPlayer(client, closestHospital.position, closestHospital.heading, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-					fadePlayerCamera(client, true, 2000);
-					updatePlayerSpawnedState(client, true);
-					makePlayerStopAnimation(client);
-					setPlayerControlState(client, true);
-					resetPlayerBlip(client);
+		if (getPlayerData(killer).paintBallDeaths >= getGlobalConfig().paintBallMaxKills) {
+			let paintBallPlayers = getAllPlayersInBusiness(getPlayerData(client).paintBallBusiness);
+			let winner = paintBallPlayers[i];
+			for (let i in paintBallPlayers) {
+				if (getPlayerData(paintBallPlayers[i]).paintBallKills > getPlayerData(winner).paintBallKills) {
+					winner = paintBallPlayers[i];
 				}
 			}
-		}, 2000);
-	}, 1000);
 
-	//let queryData = [
-	//	["log_death_server", getServerId()]
-	//	["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
-	//	["log_death_when_died", getCurrentUnixTimestamp()],
-	//	["log_death_pos_x", position.x],
-	//	["log_death_pos_y", position.y],
-	//	["log_death_pos_z", position.x],
-	//];
-	//let queryString = createDatabaseInsertQuery("log_death", queryData);
-	//queryDatabase(queryString);
+			for (let i in paintBallPlayers) {
+				showSmallGameMessage(paintBallPlayers[i], `${getLocaleString(paintBallPlayers[i], "PaintBallEnded")} ${getLocaleString(paintBallPlayers[i], "Winners", `${getCharacterFullName(winner)}`)}`);
+				stopPaintBall(paintBallPlayers[i]);
+			}
+		} else {
+			respawnPlayerForPaintBall(client);
+			getPlayerData(client).pedState = V_PEDSTATE_READY;
+		}
+	} else {
+		if (getPlayerCurrentSubAccount(client).inJail) {
+			getPlayerData(client).pedState = V_PEDSTATE_INJAIL;
+
+			let prisonCell = getFirstAvailablePrisonCell();
+
+			getPlayerData(client).streamingRadioStation = -1;
+			getPlayerData(client).interiorLights = true;
+
+			let interior = 0;
+			let dimension = 0;
+			let scene = "";
+			let businessData = false;
+
+			if (prisonCell.businessId != 0) {
+				businessData = getBusinessData(getBusinessIdFromDatabaseId(prisonCell.businessId));
+				interior = businessData.exitInterior;
+				dimension = businessData.exitDimension;
+				scene = businessData.exitScene;
+
+				getPlayerData(client).streamingRadioStation = businessData.streamingRadioStationIndex;
+				getPlayerData(client).interiorLights = businessData.interiorLights
+			}
+
+			scene = getSceneForInterior(scene);
+
+			if (getPlayerData(client).scene != scene) {
+				initPlayerPropertySwitch(
+					client,
+					prisonCell.position,
+					prisonCell.rotation,
+					interior,
+					dimension,
+					-1,
+					-1,
+					scene
+				);
+
+				return false;
+			}
+
+			setTimeout(function () {
+				if (isFadeCameraSupported()) {
+					fadePlayerCamera(client, false, 1000);
+				}
+
+				setTimeout(function () {
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = interior;
+					getPlayerCurrentSubAccount(client).dimension = dimension;
+
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
+
+					spawnPlayer(client, prisonCell.position, prisonCell.rotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+
+					if (isFadeCameraSupported()) {
+						fadePlayerCamera(client, true, 1000);
+					}
+
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
+					getPlayerData(client).pedState = V_PEDSTATE_READY;
+				}, 1000);
+			}, 1000);
+		} else {
+			getPlayerData(client).pedState = V_PEDSTATE_DEAD;
+			let closestHospital = getClosestHospital(getPlayerPosition(client));
+
+			getPlayerData(client).streamingRadioStation = -1;
+			getPlayerData(client).interiorLights = true;
+
+			let interior = 0;
+			let dimension = 0;
+			let scene = "";
+			let businessData = false;
+
+			if (closestHospital.businessId != 0) {
+				businessData = getBusinessData(getBusinessIdFromDatabaseId(closestHospital.businessId));
+				interior = businessData.exitInterior;
+				dimension = businessData.exitDimension;
+				scene = businessData.exitScene;
+
+				getPlayerData(client).streamingRadioStation = businessData.streamingRadioStationIndex;
+				getPlayerData(client).interiorLights = businessData.interiorLights
+			}
+
+			scene = getSceneForInterior(scene);
+
+			let playersScene = getPlayerData(client).scene;
+			if (isMainWorldScene(playersScene)) {
+				playersScene = getGameConfig().mainWorldScene[getGame()];
+			}
+
+			if (playersScene != scene) {
+				removePedFromVehicle(getPlayerPed(client));
+				initPlayerPropertySwitch(
+					client,
+					closestHospital.position,
+					closestHospital.rotation,
+					interior,
+					dimension,
+					-1,
+					-1,
+					scene
+				);
+
+				return false;
+			}
+
+			setTimeout(function () {
+				if (isFadeCameraSupported()) {
+					fadePlayerCamera(client, false, 1000);
+				}
+
+				setTimeout(function () {
+					despawnPlayer(client);
+					getPlayerCurrentSubAccount(client).interior = interior;
+					getPlayerCurrentSubAccount(client).dimension = dimension;
+
+					if (isPlayerWorking(client)) {
+						stopWorking(client);
+					}
+
+					spawnPlayer(client, closestHospital.position, closestHospital.rotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+
+					if (isFadeCameraSupported()) {
+						fadePlayerCamera(client, true, 1000);
+					}
+
+					updatePlayerSpawnedState(client, true);
+					makePlayerStopAnimation(client);
+					setPlayerControlState(client, true);
+					resetPlayerBlip(client);
+					getPlayerData(client).pedState = V_PEDSTATE_READY;
+				}, 1000);
+			}, 1000);
+		}
+
+		//let queryData = [
+		//	["log_death_server", getServerId()]
+		//	["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
+		//	["log_death_when_died", getCurrentUnixTimestamp()],
+		//	["log_death_pos_x", position.x],
+		//	["log_death_pos_y", position.y],
+		//	["log_death_pos_z", position.x],
+		//];
+		//let queryString = createDatabaseInsertQuery("log_death", queryData);
+		//queryDatabase(queryString);
+	}
 }
 
 // ===========================================================================
@@ -1093,8 +1319,61 @@ function givePlayerMoneyCommand(command, params, client) {
 	updatePlayerCash(client);
 	updatePlayerCash(targetClient);
 
-	messagePlayerAlert(targetClient, getLocaleString(targetClient, "GaveMoneyToPlayer", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	messagePlayerAlert(client, getLocaleString(client, "GaveMoneyToPlayer", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
 	messagePlayerAlert(targetClient, getLocaleString(targetClient, "ReceivedMoneyFromPlayer", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == false) {
+		return false;
+	}
+
+	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
+	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
+	getPlayerCurrentSubAccount(client).interior = spawnInterior;
+	getPlayerCurrentSubAccount(client).dimension = spawnDimension;
+	getPlayerCurrentSubAccount(client).scene = sceneName;
+	getPlayerCurrentSubAccount(client).spawnVehicle = spawnVehicle;
+	getPlayerCurrentSubAccount(client).spawnVehicleSeat = vehicleSeat;
+
+	clearPlayerStateToEnterExitProperty(client);
+	setPlayerDimension(client, 50000 + getPlayerId(client));
+
+	if (isFadeCameraSupported()) {
+		fadePlayerCamera(client, false, 2000);
+	}
+
+	if (isGameFeatureSupported("interiorScene")) {
+		if (getSceneForInterior(sceneName) != getPlayerData(client).scene) {
+			setTimeout(function () {
+				if (getPlayerPed(client) != null) {
+					despawnPlayer(client);
+				}
+
+				if (isMainWorldScene(sceneName)) {
+					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
+				} else {
+					setPlayerScene(client, getSceneForInterior(sceneName));
+				}
+
+				//setTimeout(function () {
+				//	processPlayerSceneSwitch(client);
+				//}, 1100);
+			}, 2000);
+
+			return false;
+		}
+	}
+
+	setTimeout(function () {
+		processPlayerSceneSwitch(client);
+	}, 2000);
 }
 
 // ===========================================================================

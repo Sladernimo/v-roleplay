@@ -74,6 +74,7 @@ function addAllNetworkEventHandlers() {
 	addNetworkEventHandler("v.rp.playerPedId", receivePlayerPedNetworkId);
 	addNetworkEventHandler("v.rp.playerCop", setPlayerAsCopState);
 	addNetworkEventHandler("v.rp.mapLoaded", playerMapLoaded);
+	addNetworkEventHandler("v.rp.vehicleSeat", receiveVehicleSeatFromPlayer);
 }
 
 // ===========================================================================
@@ -1118,26 +1119,45 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee) {
-	sendNetworkEventToPlayer("v.rp.business", client, businessId, isDeleted, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems, entranceFee);
+function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, entranceFee, labelInfoType, entranceDimension, exitDimension) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending business ${businessId} (${name}) to player ${getPlayerDisplayForConsole(client)} (entrance dimension: ${entranceDimension})`);
+
+	sendNetworkEventToPlayer(
+		"v.rp.business",
+		client,
+		businessId,
+		isDeleted,
+		name,
+		entrancePosition,
+		exitPosition,
+		blipModel,
+		pickupModel,
+		buyPrice,
+		rentPrice,
+		locked,
+		entranceFee,
+		labelInfoType,
+		entranceDimension,
+		exitDimension
+	);
 }
 
 // ==========================================================================
 
-function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
-	sendNetworkEventToPlayer("v.rp.house", client, houseId, isDeleted, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked);
+function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension) {
+	sendNetworkEventToPlayer("v.rp.house", client, houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension);
 }
 
 // ==========================================================================
 
-function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank = true) {
-	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank);
+function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension) {
+	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension);
 }
 
 // ==========================================================================
 
-function sendVehicleToPlayer(client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4) {
-	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4);
+function sendVehicleToPlayer(client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4, dimension) {
+	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4, dimension);
 }
 
 // ==========================================================================
@@ -1153,19 +1173,21 @@ function sendAllBusinessesToPlayer(client) {
 
 	let businesses = getServerData().businesses;
 	for (let i in businesses) {
-		sendBusinessToPlayer(client,
+		sendBusinessToPlayer(null,
 			businesses[i].index,
 			false,
 			businesses[i].name,
 			businesses[i].entrancePosition,
-			getBusinessEntranceBlipModelForNetworkEvent(i),
-			getBusinessEntrancePickupModelForNetworkEvent(i),
+			businesses[i].exitPosition,
+			getBusinessEntranceBlipModelForNetworkEvent(businesses[i].index),
+			getBusinessEntrancePickupModelForNetworkEvent(businesses[i].index),
 			businesses[i].buyPrice,
 			businesses[i].rentPrice,
-			businesses[i].hasInterior,
 			businesses[i].locked,
-			doesBusinessHaveAnyItemsToBuy(i),
-			businesses[i].entranceFee
+			businesses[i].entranceFee,
+			getBusinessPropertyInfoLabelType(i),
+			businesses[i].entranceDimension,
+			businesses[i].exitDimension
 		);
 	}
 }
@@ -1177,7 +1199,22 @@ function sendAllHousesToPlayer(client) {
 
 	let houses = getServerData().houses;
 	for (let i in houses) {
-		sendHouseToPlayer(client, houses[i].index, false, houses[i].entrancePosition, getHouseEntranceBlipModelForNetworkEvent(i), getHouseEntrancePickupModelForNetworkEvent(i), houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
+		sendHouseToPlayer(
+			null,
+			houses[i].index,
+			false,
+			houses[i].description,
+			houses[i].entrancePosition,
+			houses[i].exitPosition,
+			getHouseEntranceBlipModelForNetworkEvent(houses[i].index),
+			getHouseEntrancePickupModelForNetworkEvent(houses[i].index),
+			applyServerInflationMultiplier(houses[i].buyPrice),
+			applyServerInflationMultiplier(houses[i].rentPrice),
+			houses[i].locked,
+			getHousePropertyInfoLabelType(houses[i].index),
+			houses[i].entranceDimension,
+			houses[i].exitDimension,
+		);
 	}
 }
 
@@ -1189,7 +1226,18 @@ function sendAllJobsToPlayer(client) {
 	let jobs = getServerData().jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(client, jobs[i].index, false, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, getJobLocationBlipModelForNetworkEvent(i), getJobLocationPickupModelForNetworkEvent(i));
+			sendJobToPlayer(
+				client,
+				jobs[i].index,
+				false,
+				jobs[i].locations[j].index,
+				jobs[i].name,
+				jobs[i].locations[j].position,
+				getJobLocationBlipModelForNetworkEvent(i),
+				getJobLocationPickupModelForNetworkEvent(i),
+				doesJobHavePublicRank(i),
+				0
+			);
 		}
 	}
 }
@@ -1351,11 +1399,9 @@ function sendMapChangeWarningToPlayer(client, changingToNight) {
 
 function playerMapLoaded(client, mapName) {
 	//updateAllInteriorVehiclesForPlayer(client, propertyData.exitInterior, propertyData.exitDimension);
-	getPlayerData(client).scene = mapName;
-
-	setTimeout(function () {
-		processPlayerEnteringExitingProperty(client);
-	}, 500);
+	if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_SPAWNING) {
+		processPlayerSceneSwitch(client, true);
+	}
 }
 
 // ==========================================================================
@@ -1410,6 +1456,24 @@ function sendPayPhonePickupToPlayer(client) {
 
 function sendIncomingDamageMultiplierToClient(client, multiplier) {
 	sendNetworkEventToPlayer("v.rp.incomingDamageMultiplier", client, multiplier);
+}
+
+// ==========================================================================
+
+function receiveVehicleSeatFromPlayer(client, seat) {
+	getPlayerData(client).seat = seat;
+}
+
+// ==========================================================================
+
+function sendWarpPedIntoVehicle(client, pedId, vehicleId, seatId) {
+	sendNetworkEventToPlayer("v.rp.warpIntoVehicle", client, pedId, vehicleId, seatId);
+}
+
+// ==========================================================================
+
+function sendPedRemoveFromVehicle(client, pedId) {
+	sendNetworkEventToPlayer("v.rp.removeFromVehicle", client, pedId);
 }
 
 // ==========================================================================

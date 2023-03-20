@@ -63,6 +63,8 @@ function initServerScripts() {
 	initAllClients();
 	initTimers();
 
+	exportFunction("forceAllVehicleEngines", forceAllVehicleEngines)
+
 	serverStartTime = getCurrentUnixTimestamp();
 	serverStarting = false;
 }
@@ -170,14 +172,14 @@ function loadServerDataFromDatabase() {
 function setAllServerDataIndexes() {
 	setAllItemTypeDataIndexes();
 	setAllItemDataIndexes();
-	setBusinessDataIndexes();
-	setHouseDataIndexes();
+	setAllBusinessDataIndexes();
+	setAllHouseDataIndexes();
 	setAllClanDataIndexes();
 	setAllJobDataIndexes();
-	setNPCDataIndexes();
+	setAllNPCDataIndexes();
 	setAllRaceDataIndexes();
-	setAllRadioStationIndexes();
-	setAllPayPhoneIndexes();
+	setAllRadioStationDataIndexes();
+	setAllPayPhoneDataIndexes();
 	setAllVehicleRadioFrequencies();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
