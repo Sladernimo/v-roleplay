@@ -42,6 +42,12 @@ function setAccentCommand(command, params, client) {
 		return false;
 	}
 
+	if (toLowerCase(params).indexOf("none") != -1) {
+		getPlayerCurrentSubAccount(client).accent = "";
+		messagePlayerSuccess(client, `Your accent is removed`);
+		return false;
+	}
+
 	let accentId = getAccentFromParams(params);
 
 	if (!accentId) {

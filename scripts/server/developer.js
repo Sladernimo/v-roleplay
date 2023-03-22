@@ -465,17 +465,31 @@ function restartGameModeCommand(command, params, client) {
 // ===========================================================================
 
 function clientRunCodeFail(client, returnTo, error) {
+	let messageText = `(${getPlayerName(client)}). Error: ${error}`;
+
+	if (returnTo == null) {
+		console.warn(`[V.RP.Developer] ${messageText}`);
+		return false;
+	}
+
 	let returnClient = getClientFromIndex(returnTo);
 	if (!returnClient) {
 		return false;
 	}
 
-	messagePlayerError(returnClient, `(${getPlayerName(client)}). Error: ${error}`);
+	messagePlayerError(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================
 
 function clientRunCodeSuccess(client, returnTo, returnVal) {
+	let messageText = `(${getPlayerName(client)}) Code returns: ${returnVal}`;
+
+	if (returnTo == null) {
+		console.log(`[V.RP.Developer] ${messageText}`);
+		return false;
+	}
+
 	let returnClient = getClientFromIndex(returnTo);
 	if (!returnClient) {
 		return false;
@@ -483,7 +497,7 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 
 	//messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
 	//messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
-	messagePlayerNormal(returnClient, `(${getPlayerName(client)}) Code returns: ${returnVal}`, getColourByName("yellow"));
+	messagePlayerNormal(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================

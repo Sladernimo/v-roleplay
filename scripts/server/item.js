@@ -19,7 +19,8 @@ const V_ITEM_OWNER_SAFE = 7;                   // Item is in a safe (safes can b
 const V_ITEM_OWNER_ITEM = 8;                   // Item is in another item (trashbag, briefcase, wallet, suitcase, crate/box, barrel, etc)
 const V_ITEM_OWNER_GROUND = 9;                 // Item is on the ground
 const V_ITEM_OWNER_TEMPLOCKER = 10;            // Item is in player's temp locker (used for paintball, jobs, etc)
-const V_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
+const V_ITEM_OWNER_LOCKER = 11;                // Item is in player's locker
+const V_ITEM_OWNER_JOB = 12;                   // Item is in player's locker
 
 // ===========================================================================
 
@@ -372,6 +373,10 @@ function spawnGroundItemObject(itemId) {
 
 	if (getItemData(itemId).object != null) {
 		deleteGroundItemObject(itemId);
+	}
+
+	if (!isGameFeatureSupported("object")) {
+		return false;
 	}
 
 	let object = createGameObject(getItemTypeData(getItemData(itemId).itemTypeIndex).dropModel, applyOffsetToPos(getItemData(itemId).position, getItemTypeData(getItemData(itemId).itemTypeIndex).dropPosition));
@@ -1860,6 +1865,9 @@ function playerPutItem(client, hotBarSlot) {
 			getBusinessData(bestNewOwner[1]).storageItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
 			break;
+
+		default:
+			return false;
 	}
 
 	getItemData(itemId).ownerType = bestNewOwner[0];
@@ -2221,8 +2229,8 @@ function cachePlayerHotBarItems(client) {
 	}
 
 	for (let i in getServerData().items) {
-		if (getItemData(i) != false)
-			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER) {
+		if (getItemData(i) != false) {
+			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER || (isPlayerWorking(client) && getItemData(i).ownerType == V_ITEM_OWNER_JOB)) {
 				if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 					let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
 					if (firstSlot != -1) {
@@ -2230,6 +2238,7 @@ function cachePlayerHotBarItems(client) {
 					}
 				}
 			}
+		}
 	}
 }
 
@@ -2247,11 +2256,23 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 
 		case V_ITEM_OWNER_PLAYER:
 			ownerTypeString = "Player";
-			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
+			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
 			if (getPlayerData(owner) != false) {
 				switchPlayerActiveHotBarSlot(owner, -1);
 				getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
 				updatePlayerHotBar(owner);
+			}
+			break;
+
+		case V_ITEM_OWNER_JOB:
+			ownerTypeString = "Player (Job Item)";
+			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
+			if (getPlayerData(owner) != false) {
+				if (isPlayerWorking(client)) {
+					switchPlayerActiveHotBarSlot(owner, -1);
+					getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
+					updatePlayerHotBar(owner);
+				}
 			}
 			break;
 

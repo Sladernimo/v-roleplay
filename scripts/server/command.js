@@ -155,6 +155,13 @@ function loadCommands() {
 			new CommandData("bizpaintball", setBusinessPaintBallCommand, "", getStaffFlagValue("None"), true, true, "Sets the business to a paintball arena"),
 			new CommandData("bizbank", setBusinessBankCommand, "", getStaffFlagValue("None"), true, true, "Sets the business to a bank"),
 			new CommandData("nearbiz", getNearbyBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses within X meters"),
+			new CommandData("nearbizs", getNearbyBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses within X meters"),
+			new CommandData("nearbusiness", getNearbyBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses within X meters"),
+			new CommandData("nearbusinesses", getNearbyBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses within X meters"),
+			new CommandData("mybizs", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
+			new CommandData("mybiz", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
+			new CommandData("mybusinesses", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
+			new CommandData("mybusiness", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
 		],
 		chat: [
 			new CommandData("me", meActionCommand, "<message>", getStaffFlagValue("None"), true, false, "Shows a custom action message in chat"),
@@ -346,6 +353,8 @@ function loadCommands() {
 			new CommandData("houseexit", moveHouseExitCommand, "", getStaffFlagValue("ManageHouses"), true, true, "Moves a house's exit (inside/interior location to exit the house)"),
 			new CommandData("houseinttype", setHouseInteriorTypeCommand, "<interior template name/business id>", getStaffFlagValue("ManageHouses"), true, true, "Sets a house's interior to a pre-defined type"),
 			//new CommandData("nearhouse", getNearbyHousesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all houses within X meters"),
+			new CommandData("myhouses", listPersonalHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses you own"),
+			new CommandData("myhouse", listPersonalHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses you own"),
 		],
 		insurance: [],
 		item: [
@@ -754,6 +763,9 @@ function loadCommands() {
 			new CommandData("repairveh", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
 			new CommandData("repairvehicle", vehicleAdminRepairCommand, "", getStaffFlagValue("None"), true, true, "Repairs your vehicle"),
 			new CommandData("passenger", enterVehicleAsPassengerCommand, "", getStaffFlagValue("None"), true, true, "Enters a vehicle as passenger"),
+			new CommandData("myvehicles", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("myveh", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("myvehicle", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
 		],
 	};
 

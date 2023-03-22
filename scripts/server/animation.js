@@ -35,7 +35,7 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
+	if (toInteger(animationPositionOffset) < getGlobalConfig().minAnimationMoveDistance || toInteger(animationPositionOffset) > getGlobalConfig().maxAnimationMoveDistance) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
 	}

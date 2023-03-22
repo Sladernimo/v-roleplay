@@ -273,8 +273,17 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${hitPed.id} (${hitPed.name}) hit using type ${hitType}, causing ${damage} to body part ${bodyPart}`);
 	event.preventDefault();
-	if (hitPed == localPlayer) {
-		localPlayer.health = localPlayer.health - (damage * weaponDamageMultiplier);
+
+	if (!isInRace) {
+		let newHealth = localPlayer.health;
+		if (hitPed == localPlayer) {
+			newHealth = localPlayer.health - (damage * weaponDamageMultiplier);
+			if (newHealth < 5) {
+				sendNetworkEventToServer("v.rp.death");
+			} else {
+				localPlayer.health = newHealth;
+			}
+		}
 	}
 }
 

@@ -814,5 +814,6 @@
 	"CantFinePlayer": "You can't give a player a fine",
 	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
 	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)",
-	"GUINewCharacterRandomNameButton": "Random Name"
+	"GUINewCharacterRandomNameButton": "Random Name",
+	"AccentsHelpTip": "Use {1} to see a list of available accents"
 }

@@ -129,8 +129,8 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// AFK Status
 	if (afkStatusFont != null) {
 		if (afk) {
-			let size = afkStatusFont.measure(getLocaleString(client, "Paused"), game.width, 0.0, 0.0, afkStatusFont.size, false, false);
-			afkStatusFont.render(getLocaleString(client, "Paused"), [x - size[0] / 2, y - size[1] / 2], game.width, 0.0, 0.0, afkStatusFont.size, toColour(255, 0, 0, 255), false, false, false, true);
+			let size = afkStatusFont.measure(getLocaleString("Paused"), game.width, 0.0, 0.0, afkStatusFont.size, false, false);
+			afkStatusFont.render(getLocaleString("Paused"), [x - size[0] / 2, y - size[1] / 2], game.width, 0.0, 0.0, afkStatusFont.size, toColour(255, 0, 0, 255), false, false, false, true);
 		}
 	}
 }

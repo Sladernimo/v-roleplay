@@ -1965,19 +1965,19 @@ function getNearbyBusinessesCommand(command, params, client) {
 		return false;
 	}
 
-	let nearbyHouses = getHousesInRange(getPlayerPosition(client), distance);
+	let nearbyBusinesses = getBusinessesInRange(getPlayerPosition(client), distance);
 
-	if (nearbyHouses.length == 0) {
-		messagePlayerAlert(client, getLocaleString(client, "NoHousesWithinRange", distance));
+	if (nearbyBusinesses.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoBusinessesWithinRange", distance));
 		return false;
 	}
 
-	let housesList = nearbyHouses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	let businessList = nearbyBusinesses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
-	let chunkedList = splitArrayIntoChunks(housesList, 4);
+	let chunkedList = splitArrayIntoChunks(businessList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHousesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -2012,6 +2012,22 @@ function getHousePropertyInfoLabelType(houseIndex) {
 	}
 
 	return V_PROPLABEL_INFO_NONE;
+}
+
+// ===========================================================================
+
+function listPersonalHousesCommand(command, params, client) {
+	let houses = getAllHousesOwnedByPlayer(client);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerHousesList", getCharacterFullName(targetClient))));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
 }
 
 // ===========================================================================

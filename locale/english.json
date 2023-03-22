@@ -7,7 +7,6 @@
 	"LocaleChanged1": "Your language is now set to {1}",
 	"LocaleChanged2": "The server will now display messages in {1}",
 	"LocaleChangedNote": "This does not change messages from other players",
-	"AccentsListHeader": "Accents",
 	"HelpMainListHeader": "Help Categories",
 	"AccentNotFound": "Accent not found",
 	"AccentSet": "You set your accent to {1}",
@@ -827,6 +826,6 @@
 	"GaveMoneyToPlayer": "You gave {1} to {2}",
 	"ReceivedMoneyFromPlayer": "{1} gave you {2}",
 	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)",
-	"GUINewCharacterRandomNameButton": "Random Name"
-
+	"GUINewCharacterRandomNameButton": "Random Name",
+	"AccentsHelpTip": "Use {1} to see a list of available accents"
 }

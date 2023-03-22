@@ -195,7 +195,7 @@ function showMainHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HelpMainListHeader")));
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Use /info <category> for commands and info. Example: {ALTCOLOUR}/info vehicle`);
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, animation`);
-	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, colour, keybind`);
+	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, colour, keybind, business`);
 }
 
 // ===========================================================================

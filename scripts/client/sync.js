@@ -19,14 +19,15 @@ function processSync(event, deltaTime) {
 			//}
 		}
 
-
-		if (calledDeathEvent == false) {
-			if (localPlayer.health <= 0) {
-				if (!calledDeathEvent) {
-					logToConsole(LOG_DEBUG, `Local player died`);
-					localPlayer.clearWeapons();
-					calledDeathEvent = true;
-					sendNetworkEventToServer("v.rp.playerDeath");
+		if (getGame() != V_GAME_MAFIA_ONE) {
+			if (calledDeathEvent == false) {
+				if (localPlayer.health <= 0) {
+					if (!calledDeathEvent) {
+						logToConsole(LOG_DEBUG, `Local player died`);
+						localPlayer.clearWeapons();
+						calledDeathEvent = true;
+						sendNetworkEventToServer("v.rp.playerDeath");
+					}
 				}
 			}
 		}

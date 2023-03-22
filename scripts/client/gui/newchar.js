@@ -21,7 +21,7 @@ let newCharacter = {
 
 function initNewCharacterGUI() {
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 125, 300, 250, 'NEW CHARACTER', {
+	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 130, 300, 260, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -99,7 +99,7 @@ function initNewCharacterGUI() {
 	});
 	newCharacter.lastNameInput.placeholder = "Last Name";
 
-	newCharacter.createCharacterButton = newCharacter.window.button(20, 185, 260, 25, 'CREATE CHARACTER', {
+	newCharacter.createCharacterButton = newCharacter.window.button(20, 185, 260, 30, 'CREATE CHARACTER', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(255, 255, 255, 255),
@@ -113,7 +113,7 @@ function initNewCharacterGUI() {
 	}, checkNewCharacter);
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
 
-	newCharacter.randomNameButton = newCharacter.window.button(20, 210, 260, 20, 'RANDOM NAME', {
+	newCharacter.randomNameButton = newCharacter.window.button(20, 220, 260, 20, 'RANDOM NAME', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(255, 255, 255, 255),
@@ -182,10 +182,10 @@ function showNewCharacterGUI() {
 
 // ===========================================================================
 
-function tryRandomName() {
+function useRandomName() {
 	let name = getRandomName();
-	newCharacter.firstNameInput.text = name[0];
-	newCharacter.lastNameInput.text = name[1];
+	newCharacter.firstNameInput.lines[0] = name[0];
+	newCharacter.lastNameInput.lines[0] = name[1];
 }
 
 // ===========================================================================

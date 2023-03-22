@@ -65,11 +65,12 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 	//closeAllWindows();
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
-	localeChooser.window.shown = true;
 
 	for (let i in localeChooser.flagImages) {
 		localeChooser.flagImages[i].shown = true;
 	}
+
+	localeChooser.window.shown = true;
 }
 
 // ===========================================================================

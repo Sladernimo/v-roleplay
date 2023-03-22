@@ -2429,9 +2429,14 @@ function getCardinalDirection(pos1, pos2) {
 	let b = pos1.y - pos2.y;
 	let c = pos1.z - pos2.z;
 
-	let x = Math.abs(a);
-	let y = Math.abs(b);
-	let z = Math.abs(c);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		b = pos1.z - pos2.z;
+		c = pos1.y - pos2.y;
+	}
+
+	x = Math.abs(a);
+	y = Math.abs(b);
+	z = Math.abs(c);
 
 	let no = 0;
 	let ne = 1;

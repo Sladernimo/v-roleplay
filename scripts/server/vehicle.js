@@ -2036,3 +2036,19 @@ function forceAllVehicleEngines(state) {
 }
 
 // ===========================================================================
+
+function listPersonalVehiclesCommand(command, params, client) {
+	let vehicles = getAllVehiclesOwnedByPlayer(client);
+
+	let vehiclesList = vehicles.map(function (x) {
+		return `{chatBoxListIndex}${getVehicleData(x).index}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x)))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerVehiclesList", getCharacterFullName(targetClient))));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================

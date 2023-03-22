@@ -75,6 +75,8 @@ function addAllNetworkEventHandlers() {
 	addNetworkEventHandler("v.rp.playerCop", setPlayerAsCopState);
 	addNetworkEventHandler("v.rp.mapLoaded", playerMapLoaded);
 	addNetworkEventHandler("v.rp.vehicleSeat", receiveVehicleSeatFromPlayer);
+	addNetworkEventHandler("v.rp.death", processPlayerDeath);
+
 }
 
 // ===========================================================================

@@ -1150,7 +1150,7 @@ function givePlayerJobEquipment(client, equipmentId) {
 		if (getItemTypeData(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType)).useType == V_ITEM_USE_TYPE_WALKIETALKIE) {
 			value = getJobData(jobId).radioFrequency;
 		}
-		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, 1, true);
+		let itemId = createItem(getItemTypeIndexFromDatabaseId(getJobData(jobId).equipment[equipmentId].items[i].itemType), value, V_ITEM_OWNER_JOB, getPlayerCurrentSubAccount(client).databaseId, 1, true);
 		getItemData(itemId).needsSaved = false;
 		getItemData(itemId).databaseId = -1; // Make sure it doesnt save
 		let freeSlot = getPlayerFirstEmptyHotBarSlot(client);

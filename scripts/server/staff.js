@@ -253,6 +253,24 @@ function gotoPlayerCommand(command, params, client) {
 		return false;
 	}
 
+	if (getPlayerData(client).scene != getPlayerData(targetClient).scene) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
+		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
+		initPlayerPropertySwitch(
+			client,
+			getPosBehindPos(getPlayerPosition(targetClient), getPlayerHeading(targetClient), 2),
+			getPlayerHeading(targetClient),
+			getPlayerInterior(targetClient),
+			getPlayerDimension(targetClient),
+			-1,
+			-1,
+			getPlayerData(targetClient).scene,
+		);
+		messagePlayerSuccess(client, `You teleported to {ALTCOLOUR}${getPlayerName(targetClient)}`);
+		return false;
+	}
+
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getPosBehindPos(getPlayerPosition(targetClient), getPlayerHeading(targetClient), 2));
 	setPlayerHeading(client, getPlayerHeading(targetClient));

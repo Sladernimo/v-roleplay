@@ -22,9 +22,11 @@ function getRandomName() {
 		return ["", ""];
 	}
 
+	logToConsole(LOG_DEBUG, `[V.RP.Names] Getting random name from ${randomNames[0].length} first names and ${randomNames[1].length} last names`);
+
 	let randomName = [
-		randomNames[getRandom(0, randomNames[0].length - 1)],
-		randomNames[getRandom(0, randomNames[1].length - 1)]
+		randomNames[0][getRandom(0, randomNames[0].length - 1)],
+		randomNames[1][getRandom(0, randomNames[1].length - 1)]
 	];
 
 	return randomName;
