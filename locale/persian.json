@@ -816,5 +816,8 @@
 	"PlayerAlreadyFinedMax": "That player has already been fined the maximum amount: {1}",
 	"MustBeSurrendered": "The player needs to be surrendered (have their hands up, knocked out, or tazed)",
 	"GUINewCharacterRandomNameButton": "Random Name",
-	"AccentsHelpTip": "Use {1} to see a list of available accents"
+	"AccentsHelpTip": "Use {1} to see a list of available accents",
+
+	"COMMENT1-22MAR2022": "DO NOT TRANSLATE. Example of line below: Somebody is calling you. Go to the payphone at 50 meters north-west and use /answer to answer it",
+	"PayPhoneIncomingCall": "Somebody is calling you. Go to the payphone at {1} {2} {3} and use {4} to answer it."
 }
