@@ -27,14 +27,15 @@ let jobBlipBlinkTimer = null;
 // ===========================================================================
 
 class JobData {
-	constructor(jobId, jobLocationId, name, position, blipModel, pickupModel) {
+	constructor() {
 		this.index = -1;
-		this.jobId = jobId;
-		this.jobLocationId = jobLocationId;
-		this.name = name;
-		this.position = position;
-		this.blipModel = blipModel;
-		this.pickupModel = pickupModel;
+		this.jobId = -1;
+		this.jobLocationId = -1;
+		this.name = "";
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.blipModel = -1;
+		this.pickupModel = -1;
+		this.dimension = -1;
 		this.blipId = -1;
 	}
 }
@@ -184,12 +185,14 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 
 		if (getJobData(jobId) != false) {
 			let jobData = getJobData(jobId);
+			jobData.jobId = jobId;
 			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
 			jobData.position = position;
 			jobData.blipModel = blipModel;
 			jobData.pickupModel = pickupModel;
 			jobData.hasPublicRank = hasPublicRank;
+			jobData.dimension = dimension;
 
 			if (isGameFeatureSupported("blip")) {
 				logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} already exists. Checking blip ...`);
@@ -228,6 +231,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} doesn't exist. Adding ...`);
 			let jobData = new JobData();
+			jobData.jobId = jobId;
 			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
 			jobData.position = position;
