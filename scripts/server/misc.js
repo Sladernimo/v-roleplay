@@ -1041,7 +1041,9 @@ function processPlayerDeath(client) {
 		stopWorking(client);
 	}
 
-	removePedFromVehicle(getPlayerPed(client));
+	if (isPlayerInAnyVehicle(client)) {
+		removePedFromVehicle(getPlayerPed(client));
+	}
 
 	if (isPlayerInPaintBall(client)) {
 		getPlayerData(killer).paintBallKills++;
@@ -1088,9 +1090,7 @@ function processPlayerDeath(client) {
 				getPlayerData(client).interiorLights = businessData.interiorLights
 			}
 
-			scene = getSceneForInterior(scene);
-
-			if (getPlayerData(client).scene != scene) {
+			if (!isSameScene(getPlayerCurrentSubAccount(client).scene, scene)) {
 				initPlayerPropertySwitch(
 					client,
 					prisonCell.position,
@@ -1154,14 +1154,7 @@ function processPlayerDeath(client) {
 				getPlayerData(client).interiorLights = businessData.interiorLights
 			}
 
-			scene = getSceneForInterior(scene);
-
-			let playersScene = getPlayerData(client).scene;
-			if (isMainWorldScene(playersScene)) {
-				playersScene = getGameConfig().mainWorldScene[getGame()];
-			}
-
-			if (playersScene != scene) {
+			if (!isSameScene(getPlayerCurrentSubAccount(client).scene, scene)) {
 				removePedFromVehicle(getPlayerPed(client));
 				initPlayerPropertySwitch(
 					client,
@@ -1332,6 +1325,7 @@ function givePlayerMoneyCommand(command, params, client) {
 // ===========================================================================
 
 function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
+	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
 	if (client == null) {
 		return false;
 	}
@@ -1339,6 +1333,8 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	if (getPlayerData(client) == false) {
 		return false;
 	}
+
+	let currentScene = getPlayerCurrentSubAccount(client).scene;
 
 	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
 	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
@@ -1356,17 +1352,13 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {
-		if (getSceneForInterior(sceneName) != getPlayerData(client).scene) {
+		if (!isSameScene(sceneName, currentScene)) {
 			setTimeout(function () {
 				if (getPlayerPed(client) != null) {
 					despawnPlayer(client);
 				}
 
-				if (isMainWorldScene(sceneName)) {
-					setPlayerScene(client, getGameConfig().mainWorldScene[getGame()]);
-				} else {
-					setPlayerScene(client, getSceneForInterior(sceneName));
-				}
+				setPlayerScene(client, sceneName);
 
 				//setTimeout(function () {
 				//	processPlayerSceneSwitch(client);

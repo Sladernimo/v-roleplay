@@ -253,7 +253,7 @@ function gotoPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).scene != getPlayerData(targetClient).scene) {
+	if (isSameScene(getPlayerCurrentSubAccount(client).scene, getPlayerCurrentSubAccount(targetClient).scene)) {
 		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
 		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
 		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
@@ -265,7 +265,7 @@ function gotoPlayerCommand(command, params, client) {
 			getPlayerDimension(targetClient),
 			-1,
 			-1,
-			getPlayerData(targetClient).scene,
+			getPlayerCurrentSubAccount(targetClient).scene,
 		);
 		messagePlayerSuccess(client, `You teleported to {ALTCOLOUR}${getPlayerName(targetClient)}`);
 		return false;
@@ -933,7 +933,9 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToScene = getPlayerData(targetClient).scene;
 	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
 
-	if (getPlayerData(targetClient).scene != getPlayerData(client).scene) {
+	setPlayerControlState(targetClient, false);
+
+	if (isSameScene(getPlayerCurrentSubAccount(targetClient).scene, getPlayerCurrentSubAccount(client).scene)) {
 		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
 		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
 		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
@@ -945,7 +947,7 @@ function getPlayerCommand(command, params, client) {
 			getPlayerDimension(client),
 			-1,
 			-1,
-			getPlayerData(client).scene,
+			getPlayerCurrentSubAccount(client).scene,
 		);
 	} else {
 		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
@@ -991,7 +993,7 @@ function returnPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(targetClient).returnToScene != getPlayerData(targetClient).scene) {
+	if (isSameScene(getPlayerData(targetClient).returnToScene, getPlayerCurrentSubAccount(targetClient).scene)) {
 		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
 		initPlayerPropertySwitch(
 			targetClient,

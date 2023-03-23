@@ -579,14 +579,13 @@ function selectCharacter(client, characterId = -1) {
 		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		onPlayerSpawn(client);
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Checking saved scene for player ${getPlayerDisplayForConsole(client)} spawn (${spawnScene}, IsMainWorld: ${isMainWorldScene(spawnScene)})`);
 		if (!isMainWorldScene(spawnScene)) {
-			setPlayerScene(client, getSceneForInterior(spawnScene));
+			setPlayerScene(client, spawnScene);
 		} else {
 			//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
 			//logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
 			spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-			getPlayerData(client).scene = getPlayerCurrentSubAccount(client).scene;
-
 			onPlayerSpawn(client);
 		}
 	}
