@@ -302,9 +302,14 @@ function isPlayerInFrontVehicleSeat(client) {
 
 // ===========================================================================
 
-function removePedFromVehicle(pedId) {
-	logToConsole(LOG_DEBUG, `Removing ped ${pedId} from their vehicle`);
-	sendPedRemoveFromVehicle(null, pedId);
+function removePedFromVehicle(ped) {
+	logToConsole(LOG_DEBUG, `Removing ped ${ped.id} from their vehicle`);
+
+	if (ped.vehicle == null) {
+		return false;
+	}
+
+	sendPedRemoveFromVehicle(null, ped.id);
 	return true;
 }
 
@@ -915,16 +920,6 @@ function queryDatabase(dbConnection, queryString) {
 
 // ===========================================================================
 
-async function asyncQueryDatabase(dbConnection, queryString) {
-	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
-	return new Promise(resolve => {
-		let queryResult = dbConnection.query(queryString);
-		resolve(queryResult);
-	});
-}
-
-// ===========================================================================
-
 function escapeDatabaseString(dbConnection, unsafeString = "") {
 	if (!dbConnection) {
 		dbConnection = connectToDatabase();
@@ -983,6 +978,7 @@ function fetchQueryAssoc(dbConnection, queryString) {
 // ===========================================================================
 
 function quickDatabaseQuery(queryString) {
+	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
 	let dbConnection = connectToDatabase();
 	let insertId = 0;
 	if (dbConnection) {
@@ -1010,7 +1006,6 @@ function quickDatabaseQuery(queryString) {
 
 		return true;
 	}
-	return false;
 }
 
 // ===========================================================================
