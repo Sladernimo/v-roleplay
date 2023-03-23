@@ -300,25 +300,6 @@ function onPedWasted(event, ped, killerPed, weapon, pedPiece) {
 
 // ===========================================================================
 
-function onPlayerDeath(client, killer, weapon = 0, pedPiece = 0) {
-	processPlayerDeath(client);
-
-	/*
-	let queryData = [
-		["log_death_server", getServerId()]
-		["log_death_who_died", getPlayerCurrentSubAccount(client).databaseId],
-		["log_death_when_died", "{UNIXTIMESTAMP}"],
-		["log_death_pos_x", position.x],
-		["log_death_pos_y", position.y],
-		["log_death_pos_z", position.x],
-	];
-	let queryString = createDatabaseInsertQuery("log_death", queryData);
-	addToQueryQueue(queryString);
-	*/
-}
-
-// ===========================================================================
-
 function onPedSpawn(ped) {
 	logToConsole(LOG_WARN | LOG_VERBOSE, `[V.RP.Event] OnPedSpawn event called`);
 

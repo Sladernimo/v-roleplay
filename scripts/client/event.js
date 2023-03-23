@@ -275,13 +275,22 @@ function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
 	event.preventDefault();
 
 	if (!isInRace) {
-		let newHealth = localPlayer.health;
 		if (hitPed == localPlayer) {
-			newHealth = localPlayer.health - (damage * weaponDamageMultiplier);
+			let newHealth = localPlayer.health;
 			if (newHealth < 5) {
-				sendNetworkEventToServer("v.rp.death");
+				if (calledDeathEvent == false) {
+					calledDeathEvent = true;
+					sendNetworkEventToServer("v.rp.playerDeath");
+				}
 			} else {
 				localPlayer.health = newHealth;
+			}
+		}
+
+		if (localPlayer.health == 0) {
+			if (calledDeathEvent == false) {
+				calledDeathEvent = true;
+				sendNetworkEventToServer("v.rp.playerDeath");
 			}
 		}
 	}
