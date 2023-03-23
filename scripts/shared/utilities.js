@@ -2025,8 +2025,11 @@ function getObjectModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x + ((Math.cos((angle - 1.57) + (Math.PI / 2))) * distance));
-	let y = (pos.y + ((Math.sin((angle - 1.57) + (Math.PI / 2))) * distance));
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle - 1.57)) * distance));
+		y = pos.y
+		z = (pos.z + ((Math.sin(angle - 1.57)) * distance));
+	}
 
 	let rightPos = toVector3(x, y, pos.z);
 
@@ -2038,8 +2041,15 @@ function getPosToRightOfPos(pos, angle, distance) {
 function getPosToLeftOfPos(pos, angle, distance) {
 	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
 	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
+	let z = pos.z;
 
-	let leftPos = toVector3(x, y, pos.z);
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle + 1.57)) * distance));
+		y = pos.y
+		z = (pos.z + ((Math.sin(angle + 1.57)) * distance));
+	}
+
+	let leftPos = toVector3(x, y, z);
 
 	return leftPos;
 }
@@ -2434,9 +2444,9 @@ function getCardinalDirection(pos1, pos2) {
 		c = pos1.y - pos2.y;
 	}
 
-	x = Math.abs(a);
-	y = Math.abs(b);
-	z = Math.abs(c);
+	let x = Math.abs(a);
+	let y = Math.abs(b);
+	let z = Math.abs(c);
 
 	let no = 0;
 	let ne = 1;
@@ -3291,6 +3301,10 @@ function getSceneForInterior(interiorName, gameId = getGame()) {
 		return getGameConfig().mainWorldScene[getGame()];
 	}
 
+	if (interiorName == "V.RP.MAINWORLD") {
+		return getGameConfig().mainWorldScene[getGame()];
+	}
+
 	if (typeof getGameConfig().interiors[gameId][interiorName] == "undefined") {
 		return getGameConfig().mainWorldScene[getGame()];
 	}
@@ -3352,6 +3366,24 @@ function canVehicleEnterInterior(interiorName) {
 	}
 
 	if (typeof getGameConfig().interiors[gameId][interiorName][5] == true) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function isSameScene(scene1, scene2) {
+	if (scene1 == scene2) {
+		return true;
+	}
+
+	if (isMainWorldScene(scene1) && isMainWorldScene(scene2)) {
+		return true;
+	}
+
+	if (getSceneForInterior(scene1) == getSceneForInterior(scene2)) {
 		return true;
 	}
 
