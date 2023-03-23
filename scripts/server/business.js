@@ -1182,8 +1182,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 
 		if (isGameFeatureSupported("interiorScene")) {
 			getBusinessData(businessId).exitScene = typeParam;
-
-			getBusinessData(businessId).entranceScene = getInteriorForScene(getPlayerData(client).scene);
+			getBusinessData(businessId).entranceScene = getPlayerCurrentSubAccount(client).scene;
 		}
 	}
 
