@@ -120,7 +120,6 @@ class ClientData {
 		this.locale = 0;
 		this.enteringVehicle = null;
 		this.customDisconnectReason = "";
-		this.scene = "V.RP.MAINWORLD";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
 		this.pedState = V_PEDSTATE_NONE;
