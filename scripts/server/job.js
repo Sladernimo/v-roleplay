@@ -1035,7 +1035,7 @@ function startWorkingCommand(command, params, client) {
 	startWorking(client);
 
 	if (doesJobLocationHaveAnyRoutes(closestJobLocation)) {
-		if (hasPlayerSeenActionTip(client, "EnterJobVehicleForRoute")) {
+		if (!hasPlayerSeenActionTip(client, "EnterJobVehicleForRoute")) {
 			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "EnterJobVehicleForRoute"));
 		}
 	}
@@ -1394,9 +1394,9 @@ function jobEquipmentCommand(command, params, client) {
 		if (getPlayerCurrentSubAccount(client).job == V_JOB_NONE) {
 			messagePlayerError(client, getLocaleString(client, "NotYourJob"));
 
-			if (hasPlayerSeenActionTip(client, "JobLocations")) {
-				messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobPoints", "{ALTCOLOUR}/gps{MAINCOLOUR}"));
-			}
+			//if (!hasPlayerSeenActionTip(client, "JobLocations")) {
+			//	messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobPoints", "{ALTCOLOUR}/gps{MAINCOLOUR}"));
+			//}
 			return false;
 		}
 
@@ -2715,6 +2715,10 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 // ===========================================================================
 
 function freezePlayerJobVehicleForRouteLocation(client) {
+	if (getPlayerVehicle(client) == null) {
+		return false;
+	}
+
 	getVehicleData(getPlayerVehicle(client)).engine = false;
 	setVehicleEngine(getPlayerVehicle(client), getVehicleData(getPlayerVehicle(client)).engine);
 	//setPlayerControlState(client, false);
@@ -2723,6 +2727,10 @@ function freezePlayerJobVehicleForRouteLocation(client) {
 // ===========================================================================
 
 function unFreezePlayerJobVehicleForRouteLocation(client) {
+	if (getPlayerVehicle(client) == null) {
+		return false;
+	}
+
 	getVehicleData(getPlayerVehicle(client)).engine = true;
 	setVehicleEngine(getPlayerVehicle(client), getVehicleData(getPlayerVehicle(client)).engine);
 	//setPlayerControlState(client, true);
@@ -4769,7 +4777,7 @@ function finePlayerCommand(command, params, client) {
 	getPlayerCurrentSubAccount(client).payDayAmount = getPlayerCurrentSubAccount(client).payDayAmount + commission;
 
 	messagePlayerSuccess(client, getLocaleString(client, "FinedPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
-	messagePlayerAlert(targetClient, getLocaleString(targetClient, "FinedByPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+	messagePlayerAlert(targetClient, getLocaleString(targetClient, "FinedByPlayer", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
 }
 
 // ===========================================================================
