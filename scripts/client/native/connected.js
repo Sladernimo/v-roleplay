@@ -724,6 +724,10 @@ function setElementCollisionsEnabled(elementId, state) {
 		return false;
 	}
 
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	getElementFromId(elementId).collisionsEnabled = state;
 }
 
