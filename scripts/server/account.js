@@ -37,6 +37,7 @@ const V_2FA_STATE_SETUP_CODEFROMAPP = 3;       // Waiting on player to enter cod
 const V_RESETPASS_STATE_NONE = 0;             // None
 const V_RESETPASS_STATE_CODEINPUT = 1;        // Waiting on player to enter code sent via email
 const V_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter new password
+const V_RESETPASS_STATE_EMAILCONFIRM = 3;	  // Waiting on player to enter email to verify it's correct
 
 // ===========================================================================
 
@@ -574,7 +575,7 @@ function setAccountEmailCommand(command, params, client) {
 	setAccountEmail(getPlayerData(client).accountData, emailAddress);
 
 	let emailVerificationCode = generateEmailVerificationCode();
-	setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
+	getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
 	sendEmailVerificationEmail(client, emailVerificationCode);
 
 	messagePlayerSuccess(client, getLocaleString(client, "EmailSet"));
@@ -587,6 +588,14 @@ function setAccountEmailCommand(command, params, client) {
 
 function verifyAccountEmailCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
+		if (getPlayerData(client).accountData.emailVerificationCode == "") {
+			messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
+			let emailVerificationCode = generateEmailVerificationCode();
+			getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
+			sendEmailVerificationEmail(client, emailVerificationCode);
+			return false;
+		}
+
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
@@ -600,8 +609,9 @@ function verifyAccountEmailCommand(command, params, client) {
 
 	if (module.hashing.sha512(verificationCode) != getPlayerData(client).accountData.emailVerificationCode) {
 		messagePlayerError(client, getLocaleString(client, "InvalidEmailVerificationCode"));
+		messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
 		let emailVerificationCode = generateEmailVerificationCode();
-		setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
+		getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
 		sendEmailVerificationEmail(client, emailVerificationCode);
 		return false;
 	}
@@ -1306,11 +1316,13 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 
 	messagePlayerSuccess(client, getLocaleString(client, "RegistrationSuccess"));
 	if (checkForSMTPModule() && getEmailConfig().enabled) {
-		messagePlayerAlert(client, getLocaleString(client, "RegistrationEmailVerifyReminder"));
-		let emailVerificationCode = generateEmailVerificationCode();
-		setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
-		sendEmailVerificationEmail(client, emailVerificationCode);
-		logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
+		//	messagePlayerAlert(client, getLocaleString(client, "RegistrationEmailVerifyReminder"));
+		//	let emailVerificationCode = generateEmailVerificationCode();
+		//	getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
+		//	sendEmailVerificationEmail(client, emailVerificationCode);
+		//
+		messagePlayerAlert(client, getLocaleString(client, "VerifyEmailHelpTip", `{ALTCOLOUR}/verifyemail{MAINCOLOUR}`));
+		//	logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
 	}
 
 	if (doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
@@ -1318,7 +1330,6 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			getPlayerData(client).customDisconnectReason = "NotATester";
 			disconnectPlayer(client);
 		}, 5000);
-
 
 		showPlayerError(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
 		return false;
@@ -1482,8 +1493,6 @@ function savePlayerToDatabase(client) {
 
 				if (isMainWorldScene(getPlayerData(client).returnToScene)) {
 					getPlayerCurrentSubAccount(client).scene = "V.RP.MAINWORLD";
-				} else {
-					getPlayerCurrentSubAccount(client).scene = getInteriorForScene(getPlayerData(client).scene);
 				}
 			} else {
 				getPlayerCurrentSubAccount(client).spawnPosition = getPlayerPosition(client);
@@ -1491,10 +1500,8 @@ function savePlayerToDatabase(client) {
 				getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
 				getPlayerCurrentSubAccount(client).dimension = getPlayerDimension(client);
 
-				if (isMainWorldScene(getPlayerData(client).scene)) {
+				if (isMainWorldScene(getPlayerCurrentSubAccount(client).scene)) {
 					getPlayerCurrentSubAccount(client).scene = "V.RP.MAINWORLD";
-				} else {
-					getPlayerCurrentSubAccount(client).scene = getInteriorForScene(getPlayerData(client).scene);
 				}
 			}
 		}
@@ -1740,12 +1747,6 @@ function setAccountEmail(accountData, emailAddress) {
 
 // ===========================================================================
 
-function setAccountEmailVerificationCode(accountData, emailVerificationCode) {
-	accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
-}
-
-// ===========================================================================
-
 function generateEmailVerificationCode() {
 	//return toUpperCase(generateRandomString(6));
 	return getRandom(100000, 999999);
@@ -1878,7 +1879,7 @@ function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 
 function startLoginTimeoutForPlayer(client) {
 	getPlayerData(client).loginTimeout = setTimeout(function () {
-		if (isPlayerLoggedIn(client) == false) {
+		if (isPlayerLoggedIn(client) == false && getPlayerData(client).passwordResetState == V_RESETPASS_STATE_NONE) {
 			getPlayerData(client).customDisconnectReason = "FailedToLogin";
 			disconnectPlayer(client);
 		}
