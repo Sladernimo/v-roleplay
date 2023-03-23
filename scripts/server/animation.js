@@ -50,7 +50,7 @@ function playPlayerAnimationCommand(command, params, client) {
 	}
 
 	if (getAnimationData(animationSlot).loop == true) {
-		if (hasPlayerSeenActionTip(client, "AnimationStop")) {
+		if (!hasPlayerSeenActionTip(client, "AnimationStop")) {
 			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
 		}
 	}
