@@ -611,8 +611,12 @@ function createAccountDataForNewServer(serverId) {
 		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main`);
 		for (let i in accounts) {
 			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accounts[i]["acct_id"]}, ${serverId})`;
-			quickDatabaseQuery(dbQueryString);
+			let dbQuery = queryDatabase(dbConnection, dbQueryString);
+			if (dbQuery) {
+				freeDatabaseQuery(dbQuery);
+			}
 		}
+		disconnectFromDatabase(dbConnection);
 	}
 }
 
