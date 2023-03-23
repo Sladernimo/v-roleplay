@@ -235,6 +235,8 @@ function callPayPhoneCommand(command, params, client) {
 		return false;
 	}
 
+	messagePlayerAlert(targetClient, getLocaleString(targetClient, "PayPhoneIncomingCall", getDistance(getPlayerPosition(targetClient), getPayPhoneData(closestPayPhoneTarget).position), getLocaleString(targetClient, "Meters"), getIndexedLocaleString(targetClient, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(targetClient), getPayPhoneData(closestPayPhoneTarget).position)))));
+
 	getPayPhoneData(closestPayPhone).state = V_PAYPHONE_STATE_CALLING;
 	getPayPhoneData(closestPayPhone).usingPlayer = client;
 
