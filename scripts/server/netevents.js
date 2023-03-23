@@ -75,8 +75,6 @@ function addAllNetworkEventHandlers() {
 	addNetworkEventHandler("v.rp.playerCop", setPlayerAsCopState);
 	addNetworkEventHandler("v.rp.mapLoaded", playerMapLoaded);
 	addNetworkEventHandler("v.rp.vehicleSeat", receiveVehicleSeatFromPlayer);
-	addNetworkEventHandler("v.rp.death", processPlayerDeath);
-
 }
 
 // ===========================================================================
@@ -1286,9 +1284,9 @@ function requestPlayerPedNetworkId(client) {
 
 // ==========================================================================
 
-function setPlayerScene(client, sceneName) {
-	getPlayerData(client).scene = sceneName;
-	sendNetworkEventToPlayer("v.rp.scene", client, sceneName);
+function setPlayerScene(client, interiorName) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Changing player ${getPlayerDisplayForConsole(client)}'s scene to ${interiorName} (Game: ${getSceneForInterior(interiorName)})`);
+	sendNetworkEventToPlayer("v.rp.scene", client, getSceneForInterior(interiorName));
 }
 
 // ==========================================================================
@@ -1400,10 +1398,12 @@ function sendMapChangeWarningToPlayer(client, changingToNight) {
 // ==========================================================================
 
 function playerMapLoaded(client, mapName) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Map changed to ${mapName} for player ${getPlayerDisplayForConsole(client)}`);
 	//updateAllInteriorVehiclesForPlayer(client, propertyData.exitInterior, propertyData.exitDimension);
-	if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_SPAWNING) {
-		processPlayerSceneSwitch(client, true);
-	}
+	//if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_SPAWNING) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Attempting processing of scene switch to ${mapName} for player ${getPlayerDisplayForConsole(client)} ...`);
+	processPlayerSceneSwitch(client, true);
+	//}
 }
 
 // ==========================================================================
