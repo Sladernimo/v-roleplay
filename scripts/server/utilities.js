@@ -537,9 +537,8 @@ function processPlayerSceneSwitch(client, spawn = false) {
 			skin = getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
 		}
 
-		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${getSceneForInterior(getPlayerCurrentSubAccount(client).scene)}). Spawning ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Spawning ped after scene switch for player ${getPlayerDisplayForConsole(client)} (Interior: ${getPlayerCurrentSubAccount(client).scene}, Game: ${getSceneForInterior(getPlayerCurrentSubAccount(client).scene)}). ...`);
 		spawnPlayer(client, getPlayerCurrentSubAccount(client).spawnPosition, getPlayerCurrentSubAccount(client).spawnHeading, skin);
-		getPlayerData(client).scene = getSceneForInterior(getPlayerCurrentSubAccount(client).scene);
 		setPlayerControlState(client, false);
 	} else {
 		setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
@@ -580,25 +579,14 @@ function processPlayerSceneSwitch(client, spawn = false) {
 				}
 			}
 
-			if (!getPlayerData(client).spawnInit) {
-				onPlayerSpawn(client);
-			} else {
-				setPlayer2DRendering(client, true, true, true, true, true, true);
-				setPlayerControlState(client, true);
+			onPlayerSpawn(client);
+			setPlayerControlState(client, true);
 
-				if (getPlayerData(client).streamingRadioStationIndex != -1) {
-					if (getRadioStationData(getPlayerData(client).streamingRadioStationIndex)) {
-						logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Player ${getPlayerDisplayForConsole(client)} entered a property with a radio station set, changing their stream`);
-						playRadioStreamForPlayer(client, getRadioStationData(getPlayerData(client).streamingRadioStationIndex).url);
-					}
-				}
+			// Clear some scene switching states
+			getPlayerCurrentSubAccount(client).spawnVehicle = -1;
+			getPlayerCurrentSubAccount(client).spawnVehicleSeat = -1;
 
-				// Clear some scene switching states
-				getPlayerCurrentSubAccount(client).spawnVehicle = -1;
-				getPlayerCurrentSubAccount(client).spawnVehicleSeat = -1;
-
-				getPlayerData(client).pedState = V_PEDSTATE_READY;
-			}
+			getPlayerData(client).pedState = V_PEDSTATE_READY;
 		}, 500);
 	}, 1000);
 }
