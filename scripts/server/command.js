@@ -80,6 +80,7 @@ function loadCommands() {
 			new CommandData("chatfilter", toggleAccountProfanityFilterCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off profanity filter"),
 			new CommandData("chatemoji", toggleAccountReplaceEmojiCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off automatic emoji"),
 			new CommandData("emoji", toggleAccountReplaceEmojiCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off automatic emoji"),
+			new CommandData("resetactiontips", resetActionTipsCommand, "", getStaffFlagValue("None"), true, false, "Resets all your action tips (messages that show when needed"),
 			//new CommandData("resetkeybinds", resetKeyBindsCommand, "", getStaffFlagValue("None"), true, false, "Resets all your keybinds to default"),
 			//new CommandData("copykeybinds", copyKeyBindsToServerCommand, "<server id>", getStaffFlagValue("None"), true, false, "Copies all your current keybinds to another server"),
 			//new CommandData("noblood", toggleAccountHideBloodCommand, "", getStaffFlagValue("None"), true, false, "Turns on/off blood in-game"),
