@@ -1892,6 +1892,11 @@ function getPlayerBusiness(client) {
 			return getBusinessData(closestEntrance).index;
 		}
 
+		let closestExit = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
+		if (getDistance(getPlayerPosition(client), getBusinessData(closestExit).exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+			return getBusinessData(closestExit).index;
+		}
+
 		for (let i in getServerData().businesses) {
 			if (getServerData().businesses[i].hasInterior && getServerData().businesses[i].exitDimension == getPlayerDimension(client)) {
 				return i;
