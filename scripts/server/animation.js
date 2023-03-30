@@ -40,7 +40,7 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (getAnimationData(animationSlot)[3] == V_ANIMTYPE_SURRENDER) {
+	if (getAnimationData(animationSlot).animType == V_ANIMTYPE_SURRENDER) {
 		getPlayerData(client).pedState = V_PEDSTATE_HANDSUP;
 	}
 
@@ -102,7 +102,7 @@ function isPlayerInForcedAnimation(client) {
 // ===========================================================================
 
 function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	if (getAnimationData(animationSlot).loop == true) {
+	if (getAnimationData(animationSlot).infiniteLoop == true) {
 		getPlayerData(client).currentAnimation = animationSlot;
 		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
 		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
