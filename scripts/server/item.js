@@ -1457,7 +1457,7 @@ function playerUseItem(client, hotBarSlot) {
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
 			if (getItemData(itemIndex).value <= 0) {
-				deleteItem(itemIndex);
+				deleteItem(itemIndex, getPlayerData(client).accountData.databaseId);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
 			break;
@@ -1495,10 +1495,10 @@ function playerUseItem(client, hotBarSlot) {
 				return false;
 			}
 
-			if (!isPlayerSurrendered(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "MustBeSurrendered", getCharacterFullName(closestPlayer)));
-				return false;
-			}
+			//if (!isPlayerSurrendered(closestPlayer)) {
+			//	messagePlayerError(client, getLocaleString(client, "MustBeSurrendered", getCharacterFullName(closestPlayer)));
+			//	return false;
+			//}
 
 			if (isPlayerHandCuffed(closestPlayer)) {
 				ropeUnTiePlayer(closestPlayer);
@@ -2244,7 +2244,7 @@ function cachePlayerHotBarItems(client) {
 
 // ===========================================================================
 
-function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
+function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes = true) {
 	let owner = -1;
 	let ownerTypeString = "Unknown";
 	switch (getItemData(itemId).ownerType) {
@@ -2268,7 +2268,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 			ownerTypeString = "Player (Job Item)";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
 			if (getPlayerData(owner) != false) {
-				if (isPlayerWorking(client)) {
+				if (isPlayerWorking(owner)) {
 					switchPlayerActiveHotBarSlot(owner, -1);
 					getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
 					updatePlayerHotBar(owner);
@@ -2327,7 +2327,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 	logToConsole(LOG_DEBUG, `Deleted item ${itemId} (DBID: ${getItemData(itemId).databaseId}, Owner Type: ${ownerTypeString}, Owner ID: ${getItemData(itemId).ownerId})`);
 
 	if (getItemData(itemId).databaseId > 0) {
-		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP() WHERE item_id = ${getItemData(itemId).databaseId}`);
+		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP(), item_who_deleted = ${whoDeleted} WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
 	getServerData().items[itemId] = null;
 
