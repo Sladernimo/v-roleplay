@@ -73,9 +73,11 @@ class VehicleData {
 		this.visualDamage = 0;
 		this.dirtLevel = 0;
 
+		// Inventory
 		this.trunkItemCache = [];
 		this.dashItemCache = [];
 
+		// Radio Station
 		this.streamingRadioStation = 0;
 		this.streamingRadioStationIndex = -1;
 
@@ -88,11 +90,16 @@ class VehicleData {
 		this.whenAdded = 0;
 		this.licensePlate = "";
 		this.radioFrequency = -1;
-		this.switchingScenes = false;
-
 		this.lastActiveTime = false;
-
 		this.rank = 0;
+		this.taxExempt = false;
+
+		// Scene Switching
+		this.switchingScenes = false;
+		this.sceneSwitchPosition = toVector3(0.0, 0.0, 0.0);
+		this.sceneSwitchRotation = 0.0;
+		this.sceneSwitchInterior = 0;
+		this.sceneSwitchDimension = 0;
 
 		if (dbAssoc) {
 			// General Info
@@ -160,6 +167,7 @@ class VehicleData {
 			this.licensePlate = toInteger(dbAssoc["veh_license_plate"]);
 			this.rank = toInteger(dbAssoc["veh_rank"]);
 			this.radioFrequency = toInteger(dbAssoc["veh_radio_freq"]);
+			this.taxExempt = toInteger(dbAssoc["veh_tax_exempt"]);
 		}
 	}
 };
@@ -296,6 +304,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
 			["veh_who_added", toInteger(tempVehicleData.whoAdded)],
 			["veh_when_added", toInteger(tempVehicleData.whoAdded)],
+			["veh_tax_exempt", toInteger(tempVehicleData.taxExempt)],
 		];
 
 		let dbQuery = null;
@@ -1038,7 +1047,7 @@ function setVehicleBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "SetVehicleBusinessConfirmMessage"), getLocaleString(client, "SetVehicleBusinessConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	showPlayerPrompt(client, getLocaleString(client, "SetVehicleBusinessConfirmMessage", `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = V_PROMPT_GIVEVEHTOBIZ;
 }
 
@@ -1240,6 +1249,7 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 	if (getVehicleData(vehicle).spawnLocked) {
 		getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
 		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
+		getVehicleData(vehicle).dimension = getElementDimension(vehicle);
 	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} to spawn {ALTCOLOUR}${(getVehicleData(vehicle).spawnLocked) ? "at it's current location" : "wherever a player leaves it."}`, true);
@@ -1258,7 +1268,7 @@ function reloadAllVehiclesCommand(command, params, client) {
 
 	announceAdminAction(`AllVehiclesReloaded`);
 
-	getVehicleData(vehicle).needsSaved = true;
+	//getVehicleData(vehicle).needsSaved = true;
 }
 
 // ===========================================================================
@@ -1405,6 +1415,8 @@ function stopRentingVehicle(client) {
 function respawnVehicle(vehicle) {
 	for (let i in getServerData().vehicles) {
 		if (vehicle == getServerData().vehicles[i].vehicle) {
+			updateVehicleSavedPosition(i);
+
 			if (getServerData().vehicles[i].spawnLocked == true) {
 				getServerData().vehicles[i].engine = false;
 			}
@@ -1432,14 +1444,27 @@ function respawnVehicle(vehicle) {
 	*/
 function spawnVehicle(vehicleData) {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
-	let vehicle = createGameVehicle(vehicleData.model, vehicleData.spawnPosition, vehicleData.spawnRotation);
+
+	let position = vehicleData.spawnPosition;
+	let rotation = vehicleData.spawnRotation;
+	let interior = vehicleData.interior;
+	let dimension = vehicleData.dimension;
+
+	if (vehicleData.switchingScenes == true) {
+		position = vehicleData.sceneSwitchPosition;
+		rotation = vehicleData.sceneSwitchRotation;
+		interior = vehicleData.sceneSwitchInterior;
+		dimension = vehicleData.sceneSwitchDimension;
+	}
+
+	let vehicle = createGameVehicle(vehicleData.model, position, rotation);
 
 	if (!vehicle) {
 		return false;
 	}
 
-	setVehicleHeading(vehicle, vehicleData.spawnRotation);
-	setElementDimension(vehicle, vehicleData.dimension);
+	setVehicleHeading(vehicle, rotation);
+	setElementDimension(vehicle, dimension);
 
 	vehicleData.vehicle = vehicle;
 
@@ -1473,7 +1498,7 @@ function spawnVehicle(vehicleData) {
 
 	setEntityData(vehicle, "v.rp.livery", vehicleData.livery, true);
 	setEntityData(vehicle, "v.rp.upgrades", vehicleData.extras, true);
-	setEntityData(vehicle, "v.rp.interior", vehicleData.interior, true);
+	setEntityData(vehicle, "v.rp.interior", interior, true);
 	setEntityData(vehicle, "v.rp.server", true, true);
 
 	setVehicleLights(vehicle, vehicleData.lights);
@@ -1896,10 +1921,17 @@ function despawnAllVehicles() {
 
 function updateVehicleSavedPositions() {
 	for (let i in getServerData().vehicles) {
-		if (!getServerData().vehicles[i].spawnLocked) {
-			getServerData().vehicles[i].spawnPosition = getVehiclePosition(getServerData().vehicles[i].vehicle);
-			getServerData().vehicles[i].spawnRotation = getVehicleHeading(getServerData().vehicles[i].vehicle);
-		}
+		updateVehicleSavedPosition(i);
+	}
+}
+
+// ===========================================================================
+
+function updateVehicleSavedPosition(vehicleId) {
+	if (!getServerData().vehicles[vehicleId].spawnLocked) {
+		getServerData().vehicles[vehicleId].spawnPosition = getVehiclePosition(getServerData().vehicles[vehicleId].vehicle);
+		getServerData().vehicles[vehicleId].spawnRotation = getVehicleHeading(getServerData().vehicles[vehicleId].vehicle);
+		getServerData().vehicles[vehicleId].dimension = getElementDimension(getServerData().vehicles[vehicleId].vehicle);
 	}
 }
 
