@@ -52,7 +52,7 @@ function addAllEventHandlers() {
 
 function onResourceStart(event, resource) {
 	if (resource == findResourceByName("v-events")) {
-		// Remove and re-add events, in case v-events was loaded after agrp_main
+		// Remove and re-add events, in case v-events was loaded after v-roleplay
 		removeEventHandler("OnPedEnteredVehicleEx");
 		removeEventHandler("OnPedExitedVehicleEx");
 		removeEventHandler("OnPedEnteredSphereEx");
@@ -112,7 +112,15 @@ function onProcess(event, deltaTime) {
 		return false;
 	}
 
-	processSync();
+	if (localPlayer.health <= 0) {
+		if (calledDeathEvent == false) {
+			calledDeathEvent = true;
+			sendNetworkEventToServer("v.rp.playerDeath");
+			return false;
+		}
+	}
+
+	//processSync();
 	processLocalPlayerControlState();
 	processLocalPlayerVehicleControlState();
 	forceLocalPlayerEquippedWeaponItem();
@@ -124,6 +132,7 @@ function onProcess(event, deltaTime) {
 	processVehicleCruiseControl();
 	processPayPhonesDistance();
 	processJobRouteLocationDistance();
+
 	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
 	//processVehicleFires();
 }
@@ -188,10 +197,10 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 	cruiseControlEnabled = false;
 	cruiseControlSpeed = 0.0;
 
-	/*
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
+				sendNetworkEventToServer("v.rp.exitedVehicle", localPlayer.id, vehicle.id, seat);
 				if (inVehicleSeat == 0) {
 					//setVehicleEngine(vehicle.id, false);
 					//if (!inVehicle.engine) {
@@ -202,7 +211,6 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 			}
 		}
 	}
-	*/
 }
 
 // ===========================================================================
@@ -233,6 +241,8 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			if (areServerElementsSupported()) {
+				sendNetworkEventToServer("v.rp.enteredVehicle", localPlayer.id, vehicle.id, seat);
+
 				inVehicle = vehicle;
 				inVehicleSeat = seat;
 				sendNetworkEventToServer("v.rp.vehicleSeat", seat);
@@ -274,24 +284,37 @@ function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${hitPed.id} (${hitPed.name}) hit using type ${hitType}, causing ${damage} to body part ${bodyPart}`);
 	event.preventDefault();
 
-	if (!isInRace) {
-		if (hitPed == localPlayer) {
-			let newHealth = localPlayer.health;
-			if (newHealth < 5) {
-				if (calledDeathEvent == false) {
-					calledDeathEvent = true;
-					sendNetworkEventToServer("v.rp.playerDeath");
-				}
-			} else {
-				localPlayer.health = newHealth;
-			}
-		}
+	// Only handle this for our ped
+	if (hitPed != localPlayer) {
+		return false;
+	}
 
-		if (localPlayer.health == 0) {
-			if (calledDeathEvent == false) {
-				calledDeathEvent = true;
-				sendNetworkEventToServer("v.rp.playerDeath");
-			}
+	// Dont handle if already told the server we're dead
+	if (calledDeathEvent == true) {
+		return false;
+	}
+
+	// Obviously don't need to take health if in god mode
+	// May need to be fixed to ensure falling still kills (calculate new health first to see if it's < 0 maybe?)
+	// Otherwise set full health
+	//if (godMode == true) {
+	//	localPlayer.health = 100;
+	//	return false;
+	//}
+
+	let newHealth = localPlayer.health - (damage * weaponDamageMultiplier);
+
+	if (newHealth <= 0) {
+		if (calledDeathEvent == false) {
+			calledDeathEvent = true;
+			sendNetworkEventToServer("v.rp.playerDeath");
+			return false;
+		}
+	} else {
+		if (godMode == true) {
+			localPlayer.health = 100;
+		} else {
+			localPlayer.health = newHealth;
 		}
 	}
 }
