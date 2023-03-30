@@ -485,10 +485,17 @@ function checkNewCharacter(client, firstName, lastName) {
 	}
 
 	if (getPlayerData(client).changingCharacterName) {
+		if ((fixCharacterName(firstName) == getPlayerCurrentSubAccount(client).firstName) && (fixCharacterName(lastName) == getPlayerCurrentSubAccount(client).lastName)) {
+			messageAdmins(`${getPlayerName(client)} tried to change their name to ${fixCharacterName(firstName)} ${fixCharacterName(lastName)} but failed because it's the same name.`);
+			showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "NonRPName"));
+			return false;
+		}
+
 		getPlayerCurrentSubAccount(client).firstName = fixCharacterName(firstName);
 		getPlayerCurrentSubAccount(client).lastName = fixCharacterName(lastName);
 		updateAllPlayerNameTags(client);
 		hideAllPlayerGUI(client);
+		messageAdmins(`${getPlayerName(client)} changed their name to ${getCharacterFullName(client)}`);
 		return true;
 	}
 
