@@ -164,6 +164,11 @@ function checkNewCharacter() {
 		newCharacter.firstNameInput.lines[0],
 		newCharacter.lastNameInput.lines[0],
 	);
+
+	newCharacter.firstNameInput.lines[0] = "";
+	newCharacter.lastNameInput.lines[0] = "";
+
+	hideAllGUI();
 }
 
 // ===========================================================================
