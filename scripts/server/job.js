@@ -35,10 +35,12 @@ const V_JOB_ROUTE_STATE_ATSTOP = 4;              // For bus/trash stops that fre
 const V_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
 const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
 const V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
-const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped (used for paramedic job)
-const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground (used for street sweeper job)
+const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped that gets into the vehicle when near.
+const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground, "cleans up" when driving over (used for street sweeper job)
 const V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
-const V_JOB_ROUTE_LOC_TYPE_FIRE = 5;         		// Scripted fire, placed on buildings and such
+const V_JOB_ROUTE_LOC_TYPE_FIRE = 6;         		// Scripted fire, placed on buildings and such
+const V_JOB_ROUTE_LOC_TYPE_PASSENGER = 7;           // Similar to 3, a ped is spawned and enters the car when you get close
+const V_JOB_ROUTE_LOC_TYPE_ITEM = 8;                // Similar to 5 but only one item, need to exit the vehicle to pick it up
 
 // ===========================================================================
 
@@ -188,6 +190,8 @@ class JobRouteLocationData {
 		this.departMessage = "";
 		this.whoAdded = 0;
 		this.whenAdded = 0;
+		this.dimension = 0;
+		this.interior = 0;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["job_route_loc_id"]);
@@ -197,10 +201,12 @@ class JobRouteLocationData {
 			this.position = toVector3(toFloat(dbAssoc["job_route_loc_x"]), toFloat(dbAssoc["job_route_loc_y"]), toFloat(dbAssoc["job_route_loc_z"]));
 			this.stopDelay = toInteger(dbAssoc["job_route_loc_delay"]);
 			this.pay = toInteger(dbAssoc["job_route_loc_pay"]);
-			this.arriveMessage = toInteger(dbAssoc["job_route_loc_arrive_msg"]);
-			this.gotoMessage = toInteger(dbAssoc["job_route_loc_goto_msg"]);
-			this.whoAdded = dbAssoc["job_route_loc_who_added"];
-			this.whenAdded = dbAssoc["job_route_loc_when_added"];
+			this.arriveMessage = toString(dbAssoc["job_route_loc_arrive_msg"]);
+			this.gotoMessage = toString(dbAssoc["job_route_loc_goto_msg"]);
+			this.whoAdded = toInteger(dbAssoc["job_route_loc_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["job_route_loc_when_added"]);
+			this.dimension = toInteger(dbAssoc["job_route_loc_vw"]);
+			this.interior = toInteger(dbAssoc["job_route_loc_int"]);
 		}
 	}
 };
@@ -1198,6 +1204,7 @@ function stopWorking(client) {
 	restorePlayerTempLockerItems(client);
 	//respawnJobVehicle(client);
 	sendPlayerStopJobRoute(client);
+	getPlayerData(client).jobUniform = -1;
 
 	let jobId = getPlayerJob(client);
 	messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} has stopped working as a ${getJobData(jobId).name}`);
@@ -2463,6 +2470,11 @@ function jobStartRouteCommand(command, params, client) {
 		return false;
 	}
 
+	if (getCurrentUnixTimestamp() - getPlayerData(client).lastJobRouteStart < getGlobalConfig().jobRouteStartCooldown) {
+		messagePlayerError(client, getLocaleString(client, "WaitForJobRouteStart", `{ALTCOLOUR}${getGroupedLocaleString(client, "TimeMeasurements", "Seconds", getCurrentUnixTimestamp() - getPlayerData(client).lastJobRouteStart)}{MAINCOLOUR}`));
+		return false;
+	}
+
 	let forceRoute = -1;
 	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
 		if (!areParamsEmpty(params)) {
@@ -2475,6 +2487,7 @@ function jobStartRouteCommand(command, params, client) {
 
 	markPlayerActionTipSeen(client, "JobRouteStart");
 
+	getPlayerData(client).jobRouteStartCooldown = getCurrentUnixTimestamp();
 	startJobRoute(client, forceRoute);
 	return true;
 }
@@ -3012,6 +3025,9 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, jobRouteLocationData.name);
+		let safeArriveMessage = escapeDatabaseString(dbConnection, jobRouteLocationData.arriveMessage);
+		let safeGotoMessage = escapeDatabaseString(dbConnection, jobRouteLocationData.gotoMessage);
+
 		let data = [
 			["job_route_loc_route", jobRouteLocationData.routeId],
 			["job_route_loc_enabled", boolToInt(jobRouteLocationData.enabled)],
@@ -3023,6 +3039,10 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 			["job_route_loc_delay", jobRouteLocationData.stopDelay],
 			["job_route_loc_who_added", jobRouteLocationData.whoAdded],
 			["job_route_loc_when_added", jobRouteLocationData.whenAdded],
+			["job_route_loc_vw", jobRouteLocationData.dimension],
+			["job_route_loc_int", jobRouteLocationData.interior],
+			["job_route_loc_goto_msg", safeGotoMessage],
+			["job_route_loc_arrive_msg", safeArriveMessage],
 		];
 
 		let dbQuery = null;
@@ -3706,7 +3726,7 @@ function createJobRouteLocationCommand(command, params, client) {
 		getPlayerData(client).accountData.databaseId,
 		getPlayerData(client).jobRouteEditNextLocationDelay,
 		getPlayerData(client).jobRouteEditNextLocationArriveMessage,
-		getPlayerData(client).jobRouteEditNextLocationDepartMessage,
+		getPlayerData(client).jobRouteEditNextLocationGotoMessage,
 		getPlayerData(client).jobRouteEditNextLocationType
 	);
 
@@ -4244,7 +4264,8 @@ function getPlayerJobRouteLocation(client) {
 // ===========================================================================
 
 function showCurrentJobLocation(client) {
-	sendJobRouteLocationToPlayer(client, getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).position, getJobData(getPlayerJob(client)).colour);
+	let jobRouteData = getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client));
+	sendJobRouteLocationToPlayer(client, jobRouteData.position, jobRouteData.dimension, getJobData(getPlayerJob(client)).colour);
 	//showElementForPlayer(getJobRouteLocationData(getPlayerJob(client), getPlayerJobRoute(client), getPlayerJobRouteLocation(client)).marker, client);
 }
 
@@ -4741,6 +4762,11 @@ function finePlayerCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let amount = toInteger(getParam(params, " ", 2));
 
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
 	if (isNaN(amount)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
 		return false;
@@ -4758,11 +4784,6 @@ function finePlayerCommand(command, params, client) {
 
 	if (getPlayerCurrentSubAccount(targetClient).fineAmount > getGameConfig().maximumFineAmount[getGame()]) {
 		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(getGameConfig().maximumFineAmount[getGame()])}{MAINCOLOUR}`));
-		return false;
-	}
-
-	if (!targetClient) {
-		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
