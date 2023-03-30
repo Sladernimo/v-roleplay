@@ -143,6 +143,7 @@ let serverBitFlagKeys = {
 		"ChatAutoHide",
 		"NoPlayerContent",
 		"ChatEmoji",
+		"NoPrivateMessages"
 		//"NoBlood",
 	],
 
