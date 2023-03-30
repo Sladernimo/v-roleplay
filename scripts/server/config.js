@@ -290,10 +290,14 @@ let globalConfig = {
 	searchPlayerDistance: 2.0,
 	givePlayerMoneyDistance: 2.0,
 	finePlayerDistance: 10.0,
-	fineCommissionPercentage: 0.05,
+	fineCommission: 0.05,
 	forceAllVehicleEngines: 0,
 	maxAnimationMoveDistance: 3,
 	minAnimationMoveDistance: 0,
+	jobRouteStartCooldown: 60 * 2, // 2 minutes
+	payPhonePickupToTalkAnimationDelay: 2000,
+	payPhonePickupToDialAnimationDelay: 2000,
+	payPhoneDialToTalkAnimationDelay: 7000,
 };
 
 // ===========================================================================
