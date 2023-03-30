@@ -19,6 +19,7 @@ function processSync(event, deltaTime) {
 			//}
 		}
 
+		/*
 		if (getGame() != V_GAME_MAFIA_ONE) {
 			if (calledDeathEvent == false) {
 				if (localPlayer.health <= 0) {
@@ -31,6 +32,7 @@ function processSync(event, deltaTime) {
 				}
 			}
 		}
+		*/
 	}
 
 	//if (localPlayer.health <= 0) {
@@ -42,9 +44,9 @@ function processSync(event, deltaTime) {
 	//	}
 	//}
 
-	if (streamingRadioElement) {
-		//streamingRadio.volume = getStreamingRadioVolumeForPosition(streamingRadio.position);
-	}
+	//if (streamingRadioElement) {
+	//streamingRadio.volume = getStreamingRadioVolumeForPosition(streamingRadio.position);
+	//}
 }
 
 // ===========================================================================
