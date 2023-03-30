@@ -1506,8 +1506,9 @@ function addAllEventHandlers() {
 	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
-		addEventHandler("onPedEnteringVehicleEx", onPedEnteredVehicle);
-		addEventHandler("onPedExitingVehicleEx", onPedExitedVehicle);
+		//addEventHandler("onPedEnteringVehicle", onPedEnteredVehicle);
+		//addEventHandler("onPedExitingVehicle", onPedExitedVehicle);
+		addEventHandler("onPedDeathEx", onPlayerDeath);
 	}
 }
 
