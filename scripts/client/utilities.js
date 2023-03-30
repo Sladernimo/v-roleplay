@@ -84,12 +84,14 @@ function setCityAmbienceState(state, clearElements = false) {
 
 // ===========================================================================
 
-function runClientCode(code, returnTo) {
+function runClientCode(code, returnTo, shouldReturn) {
 	let returnValue = "Nothing";
 	try {
 		returnValue = eval("(" + code + ")");
 	} catch (error) {
-		sendNetworkEventToServer("v.rp.runCodeFail", returnTo, error.toString());
+		if (shouldReturn) {
+			sendNetworkEventToServer("v.rp.runCodeFail", returnTo, error.toString());
+		}
 		return false;
 	}
 	let returnValueString = returnValue;
@@ -98,7 +100,9 @@ function runClientCode(code, returnTo) {
 	} else {
 		returnValueString = "null/undefined";
 	}
-	sendNetworkEventToServer("v.rp.runCodeSuccess", returnTo, returnValueString);
+	if (shouldReturn) {
+		sendNetworkEventToServer("v.rp.runCodeSuccess", returnTo, returnValueString);
+	}
 }
 
 // ===========================================================================
