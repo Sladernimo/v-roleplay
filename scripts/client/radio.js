@@ -40,7 +40,7 @@ function setStreamingRadioVolume(volume) {
 // ===========================================================================
 
 function playAudioFile(audioName, loop, volume) {
-	findResourceByName("connectedrp-extra").exports.playCustomAudio(audioName, volume / 100, loop);
+	findResourceByName(extraContentResource[getGame()]).exports.playCustomAudio(audioName, volume / 100, loop);
 }
 
 // ===========================================================================
@@ -48,3 +48,5 @@ function playAudioFile(audioName, loop, volume) {
 function getStreamingRadioVolumeForPosition(position1, position2) {
 	return false;
 }
+
+// ===========================================================================
