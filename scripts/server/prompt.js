@@ -21,6 +21,7 @@ const V_PROMPT_RESETACTIONTIPS = 9;
 const V_PROMPT_JOBINVITE = 10;
 const V_PROMPT_CLANINVITE = 11;
 const V_PROMPT_COPYKEYBINDSTOSERVER = 12;
+const V_PROMPT_GIVEVEHTOBIZ = 13;
 
 // ===========================================================================
 
@@ -229,7 +230,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			let businessIndex = getClosestBusinessEntrance(client);
+			let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
 
 			if (!getBusinessData(businessIndex)) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -242,11 +243,10 @@ function playerPromptAnswerYes(client) {
 			}
 
 			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_BIZ;
-			getVehicleData(getPlayerVehicle(client)).ownerId = getClosestBusinessEntrance(client);
-			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(getPlayerVehicle(client))}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}`));
+			getVehicleData(getPlayerVehicle(client)).ownerId = getBusinessData(businessIndex).databaseId;
+			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(getPlayerVehicle(client))}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`));
 
 			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
-			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
 
