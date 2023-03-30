@@ -7,30 +7,33 @@
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
-class QueueData {
-	constructor(func, duration) {
-		this.duration = duration;
-		this.func = func;
-		this.nextUp = null;
+class Queue {
+	constructor(maxSimultaneously = 1) {
+		this.maxSimultaneously = maxSimultaneously;
+		this.__active = 0;
+		this.__queue = [];
+	}
 
-		if (this.nextUp != null) {
-			if (duration <= 0) {
-				this.nextUp.func();
-			} else {
-				delayedFunction(this.nextUp.func, this.duration);
+	/** @param { () => Promise<T> } func
+	 * @template T
+	 * @returns {Promise<T>}
+	*/
+	async enqueue(func) {
+		if (++this.__active > this.maxSimultaneously) {
+			await new Promise(resolve => this.__queue.push(resolve));
+		}
+
+		try {
+			return await func();
+		} catch (err) {
+			throw err;
+		} finally {
+			this.__active--;
+			if (this.__queue.length) {
+				this.__queue.shift()();
 			}
 		}
 	}
-
-	next(func, duration) {
-		this.nextUp = createQueue(func, duration);
-	}
-}
-
-// ===========================================================================
-
-function createQueue(func, duration) {
-	return new QueueData(func, duration);
 }
 
 // ===========================================================================
