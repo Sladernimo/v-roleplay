@@ -457,6 +457,87 @@ function getVehicleCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
+function setVehicleDimensionCommand(command, params, client) {
+	if (!isGameFeatureSupported("dimension")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let vehicleIndex = toInteger(getParam(params, " ", 1));
+	let dimension = toInteger(getParam(params, " ", 2));
+
+	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
+	if (getServerData().vehicles[vehicleIndex].vehicle != false) {
+		messagePlayerError(client, "That vehicle is not spawned!");
+		return false;
+	}
+
+	getServerData().vehicles[vehicleIndex].vehicle.dimension = dimension;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setVehicleInteriorCommand(command, params, client) {
+	if (!isGameFeatureSupported("interior")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let vehicleIndex = toInteger(getParam(params, " ", 1));
+	let dimension = toInteger(getParam(params, " ", 2));
+
+	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
+	if (getServerData().vehicles[vehicleIndex].vehicle != false) {
+		messagePlayerError(client, "That vehicle is not spawned!");
+		return false;
+	}
+
+	getServerData().vehicles[vehicleIndex].interior = interior;
+	setElementInterior(getServerData().vehicles[vehicleIndex].interior, interior);
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function warpIntoVehicleCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
@@ -502,7 +583,7 @@ function gotoBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	let businessId = getBusinessFromParams(params)
+	let businessId = getBusinessFromParams(params);
 
 	if (!getBusinessData(businessId)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -513,6 +594,45 @@ function gotoBusinessCommand(command, params, client) {
 	setPlayerPosition(client, getBusinessData(businessId).entrancePosition);
 	setPlayerInterior(client, getBusinessData(businessId).entranceInterior);
 	setPlayerDimension(client, getBusinessData(businessId).entranceDimension);
+	updateInteriorLightsForPlayer(client, true);
+
+	//setTimeout(function() {
+	//	setPlayerPosition(client, getBusinessData(businessId).entrancePosition);
+	//	setPlayerInterior(client, getBusinessData(businessId).entranceInterior);
+	//	setPlayerDimension(client, getBusinessData(businessId).entranceDimension);
+	//	updateInteriorLightsForPlayer(client, true);
+	//}, 500);
+
+	messagePlayerSuccess(client, `You teleported to business {businessBlue}${getBusinessData(businessId).name} {ALTCOLOUR}(ID ${businessId})`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function gotoPayPhoneCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let payPhoneIndex = getPayPhoneFromParams(params);
+
+	if (!getPayPhoneData(payPhoneIndex)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
+	setPlayerPosition(client, getPayPhoneData(payPhoneIndex).position);
+	setPlayerDimension(client, getPayPhoneData(payPhoneIndex).dimension);
 	updateInteriorLightsForPlayer(client, true);
 
 	//setTimeout(function() {
@@ -925,6 +1045,7 @@ function getPlayerCommand(command, params, client) {
 	}
 
 	removePedFromVehicle(getPlayerPed(targetClient));
+	setPlayerControlState(targetClient, false);
 
 	getPlayerData(targetClient).returnToPosition = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
@@ -932,8 +1053,6 @@ function getPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
 	getPlayerData(targetClient).returnToScene = getPlayerData(targetClient).scene;
 	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
-
-	setPlayerControlState(targetClient, false);
 
 	if (isSameScene(getPlayerCurrentSubAccount(targetClient).scene, getPlayerCurrentSubAccount(client).scene)) {
 		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
@@ -2062,6 +2181,36 @@ function forceAllVehicleEnginesCommand(command, params, client) {
 	}
 
 	forceAllVehicleEngines(toInteger(params));
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setPlayerGodModeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "Player not found"));
+		return false;
+	}
+
+	getPlayerData(targetClient).godMode = !getPlayerData(targetClient).godMode;
+	sendPlayerGodMode(targetClient, getPlayerData(targetClient).godMode);
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} god mode ${toUpperCase(getOnOffFromBool(getPlayerData(client).godMode))}!`);
 }
 
 // ===========================================================================
