@@ -149,6 +149,7 @@ function registrationFailed(errorMessage) {
 function checkRegistration() {
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Checking registration with server ...`);
 	sendNetworkEventToServer("v.rp.checkRegistration", register.passwordInput.lines[0], register.confirmPasswordInput.lines[0], register.emailInput.lines[0]);
+	hideAllGUI();
 }
 
 // ===========================================================================
