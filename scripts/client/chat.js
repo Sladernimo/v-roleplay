@@ -57,8 +57,6 @@ function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, se
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
 
-	//let timeStamp = findResourceByName("agrp_time").exports.getCurrentUnixTimeStampSquirrel();
-
 	hour = fillLeadingZeros(hour, 2);
 	minute = fillLeadingZeros(minute, 2);
 	second = fillLeadingZeros(second, 2);
