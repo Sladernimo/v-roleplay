@@ -115,6 +115,6 @@ let cruiseControlSpeed = 0.0;
 
 let myToken = "";
 
-let isInRace = false;
+let godMode = false;
 
 // ===========================================================================
