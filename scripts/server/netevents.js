@@ -75,6 +75,8 @@ function addAllNetworkEventHandlers() {
 	addNetworkEventHandler("v.rp.playerCop", setPlayerAsCopState);
 	addNetworkEventHandler("v.rp.mapLoaded", playerMapLoaded);
 	addNetworkEventHandler("v.rp.vehicleSeat", receiveVehicleSeatFromPlayer);
+	addNetworkEventHandler("v.rp.enteredVehicle", receiveEnteredVehicleFromPlayer);
+	addNetworkEventHandler("v.rp.exitedVehicle", receiveExitedVehicleFromPlayer);
 }
 
 // ===========================================================================
@@ -277,9 +279,9 @@ function setPlayerWeaponDamageEvent(client, eventType) {
 
 // ===========================================================================
 
-function sendJobRouteLocationToPlayer(client, position, colour) {
+function sendJobRouteLocationToPlayer(client, position, dimension, colour) {
 	logToConsole(LOG_DEBUG, `[V.RP.Client] Sending job route location data to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("v.rp.showJobRouteLocation", client, position, colour);
+	sendNetworkEventToPlayer("v.rp.showJobRouteLocation", client, position, dimension, colour);
 }
 
 // ===========================================================================
@@ -417,9 +419,9 @@ function showPlayerErrorGUI(client, errorMessage, errorTitle, buttonText = "OK")
 
 // ===========================================================================
 
-function sendRunCodeToClient(client, code, returnTo) {
+function sendRunCodeToClient(client, code, returnTo, shouldReturn = true) {
 	logToConsole(LOG_DEBUG, `[V.RP.Client] Sending runcode to ${getPlayerDisplayForConsole(client)} (returnTo: ${getPlayerDisplayForConsole(getClientFromIndex(returnTo))}, Code: ${code})`);
-	sendNetworkEventToPlayer("v.rp.runCode", client, code, getPlayerId(returnTo));
+	sendNetworkEventToPlayer("v.rp.runCode", client, code, getPlayerId(returnTo), shouldReturn);
 }
 
 // ===========================================================================
@@ -1145,7 +1147,21 @@ function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosit
 // ==========================================================================
 
 function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension) {
-	sendNetworkEventToPlayer("v.rp.house", client, houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension);
+	sendNetworkEventToPlayer("v.rp.house", client,
+		houseId,
+		isDeleted,
+		description,
+		entrancePosition,
+		exitPosition,
+		blipModel,
+		pickupModel,
+		buyPrice,
+		rentPrice,
+		locked,
+		labelInfoType,
+		entranceDimension,
+		exitDimension
+	);
 }
 
 // ==========================================================================
@@ -1173,7 +1189,7 @@ function sendAllBusinessesToPlayer(client) {
 
 	let businesses = getServerData().businesses;
 	for (let i in businesses) {
-		sendBusinessToPlayer(null,
+		sendBusinessToPlayer(client,
 			businesses[i].index,
 			false,
 			businesses[i].name,
@@ -1199,8 +1215,7 @@ function sendAllHousesToPlayer(client) {
 
 	let houses = getServerData().houses;
 	for (let i in houses) {
-		sendHouseToPlayer(
-			null,
+		sendHouseToPlayer(client,
 			houses[i].index,
 			false,
 			houses[i].description,
@@ -1476,6 +1491,24 @@ function sendWarpPedIntoVehicle(client, pedId, vehicleId, seatId) {
 
 function sendPedRemoveFromVehicle(client, pedId) {
 	sendNetworkEventToPlayer("v.rp.removeFromVehicle", client, pedId);
+}
+
+// ==========================================================================
+
+function receiveEnteredVehicleFromPlayer(client, pedId, vehicleId, seat) {
+	onPedEnteredVehicle(null, getElementFromId(pedId), getElementFromId(vehicleId), seat);
+}
+
+// ==========================================================================
+
+function receiveExitedVehicleFromPlayer(client, pedId, vehicleId, seat) {
+	onPedExitedVehicle(null, getElementFromId(pedId), getElementFromId(vehicleId), seat);
+}
+
+// ==========================================================================
+
+function sendPlayerGodMode(client, state) {
+	sendNetworkEventToPlayer("v.rp.godmode", client, state);
 }
 
 // ==========================================================================
