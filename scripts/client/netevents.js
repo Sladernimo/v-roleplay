@@ -179,6 +179,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.token", serverRequestedToken);
 	addNetworkEventHandler("v.rp.incomingDamageMultiplier", setIncomingDamageMultiplier);
 	addNetworkEventHandler("v.rp.warpIntoVehicle", warpPedIntoVehicle);
+	addNetworkEventHandler("v.rp.godMode", setGodModeState);
 }
 
 // ===========================================================================
@@ -234,10 +235,6 @@ function onServerSpawnedLocalPlayer(state) {
 	setUpInitialGame();
 	calledDeathEvent = false;
 	if (state) {
-		setTimeout(function () {
-			calledDeathEvent = false;
-		}, 1000);
-
 		getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
 			syncCivilianProperties(ped);
 		});
@@ -535,6 +532,14 @@ function removePedFromVehicle(pedId) {
 	}
 
 	getElementFromId(pedId).removeFromVehicle();
+}
+
+// ===========================================================================
+
+function setGodModeState(state) {
+	godMode = state;
+
+	return true;
 }
 
 // ===========================================================================
