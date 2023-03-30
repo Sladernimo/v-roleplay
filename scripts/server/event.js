@@ -360,10 +360,35 @@ function onPlayerSpawn(client) {
 	}
 
 	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
+	//if (getPlayerData(client).spawnInit == true) {
+	//	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Aborting spawn processing ...`);
+	//	return false;
+	//}
+
+	/*
 	if (getPlayerData(client).spawnInit == true) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Aborting spawn processing ...`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Only setting basic rendering/audio states ...`);
+		if (isGameFeatureSupported("rendering2D")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
+			setPlayer2DRendering(client, true, true, true, true, true, true);
+		}
+
+		if (areServerElementsSupported()) {
+			if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
+				//getPlayerPed(client).netFlags.distanceStreaming = false;
+				setElementStreamInDistance(getPlayerPed(client), 99999);
+				setElementStreamOutDistance(getPlayerPed(client), 99999);
+			} else {
+				setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
+				setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
+			}
+
+			resetPlayerBlip(client);
+		}
+
 		return false;
 	}
+	*/
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
@@ -387,8 +412,10 @@ function onPlayerSpawn(client) {
 		getPlayerData(client).ped = getPlayerPed(client);
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)} the 'now playing as' message`);
-	messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
+	if (getPlayerData(client).spawnInit == true) {
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)} the 'now playing as' message`);
+		messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
+	}
 	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
 
@@ -427,6 +454,7 @@ function onPlayerSpawn(client) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
 		setPlayer2DRendering(client, true, true, true, true, true, true);
 	}
+
 
 	//if (isGameFeatureSupported("snow")) {
 	//	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
@@ -531,9 +559,6 @@ function onPlayerSpawn(client) {
 		sendAllVehiclesToPlayer(client);
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
-	updatePlayerSpawnedState(client, true);
-
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
 	// Locales are handled via resource files now. No need to send anymore, but kept in case revert is needed.
@@ -589,6 +614,9 @@ function onPlayerSpawn(client) {
 			stopRadioStreamForPlayer(client);
 		}
 	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
+	updatePlayerSpawnedState(client, true);
 
 	getPlayerData(client).spawnInit = true;
 
@@ -868,6 +896,12 @@ function onPedFall(ped) {
 	//		processPlayerDeath(client);
 	//	}
 	//}
+}
+
+// ===========================================================================
+
+function onPlayerDeath(event, client) {
+	processPlayerDeath(client);
 }
 
 // ===========================================================================
