@@ -532,9 +532,9 @@ function processPlayerSceneSwitch(client, spawn = false) {
 	if (spawn == true) {
 		let skin = getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
 		if (isPlayerWorking(client)) {
-			skin = getGameConfig().skins[getGame()][getPlayerData(client).jobUniform][0];
-		} else {
-			skin = getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
+			if (getPlayerData(client).jobUniform != -1) {
+				skin = getGameConfig().skins[getGame()][getPlayerData(client).jobUniform][0];
+			}
 		}
 
 		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Spawning ped after scene switch for player ${getPlayerDisplayForConsole(client)} (Interior: ${getPlayerCurrentSubAccount(client).scene}, Game: ${getSceneForInterior(getPlayerCurrentSubAccount(client).scene)}). ...`);
