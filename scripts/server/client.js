@@ -46,7 +46,7 @@ class ClientData {
 
 		// Job Stuff
 		this.jobEquipmentCache = [];
-		this.jobUniform = 0;
+		this.jobUniform = -1;
 		this.jobRoute = -1;
 		this.jobRouteLocation = -1;
 		this.jobRouteVehicle = false;
@@ -130,6 +130,7 @@ class ClientData {
 		this.inProperty = null;
 		this.interiorLights = true;
 		this.spawnInit = false;
+		this.godMode = false;
 
 		// Paintball
 		this.inPaintBall = false;
@@ -150,7 +151,7 @@ class ClientData {
 
 		// PayPhone
 		this.usingPayPhone = -1;
-		this.payPhoneOtherPlayer = null;
+		this.payPhoneOtherPlayer = false;
 		this.payPhoneCallStart = 0;
 		this.payPhoneInitiatedCall = false;
 
@@ -160,6 +161,8 @@ class ClientData {
 		this.sceneSwitchInteriorLights = true;
 
 		this.vehicleSeat = -1;
+
+		this.lastJobRouteStart = 0;
 	}
 };
 
