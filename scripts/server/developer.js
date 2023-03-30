@@ -317,10 +317,10 @@ function executeServerCodeCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, "Server code executed!");
-	messagePlayerNormal(client, `Code: ${params}`, getColourByName("yellow"));
-	messagePlayerNormal(client, `Returns: ${returnValue} (${typeof returnValue})`, getColourByName("yellow"));
+	messageAdmins(`{adminOrange}${getPlayerName(client)} executed server code: {yellow}${params}`);
+	messageAdmins(`{yellow}Returns: ${returnValue} (${typeof returnValue})`);
 	logToConsole(LOG_INFO, `Server code executed by ${getPlayerDisplayForConsole(client)}: ${params}`);
+	logToConsole(LOG_INFO, `Returns ${returnValue} (${typeof returnValue})`);
 	return true;
 }
 
@@ -348,8 +348,8 @@ function executeClientCodeCommand(command, params, client) {
 
 	sendRunCodeToClient(targetClient, targetCode, client);
 
-	messagePlayerSuccess(client, `Executing client code for ${getPlayerName(targetClient)}`);
-	messagePlayerNormal(client, `Code: ${targetCode}`, getColourByName("yellow"));
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}executed client code for {ALTCOLOUR}${getPlayerName(targetClient)}: {yellow}${params}`);
+	//messageAdmins(`{yellow}Returns: ${returnValue} (${typeof returnValue})`);
 	return true;
 }
 
@@ -477,7 +477,8 @@ function clientRunCodeFail(client, returnTo, error) {
 		return false;
 	}
 
-	messagePlayerError(returnClient, messageText, getColourByName("yellow"));
+	messageAdmins(`{softRed}${messageText}`);
+	//messagePlayerError(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================
@@ -497,7 +498,8 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 
 	//messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
 	//messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
-	messagePlayerNormal(returnClient, messageText, getColourByName("yellow"));
+	messageAdmins(`{yellow}${messageText}`);
+	//messagePlayerNormal(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================
