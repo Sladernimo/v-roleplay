@@ -298,40 +298,38 @@ function enterExitPropertyCommand(command, params, client) {
 
 	// Check businesses first
 	if (closestProperty == null) {
-		for (let i in getServerData().businesses) {
-			if (getServerData().businesses[i].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().businesses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		let businessId = getPlayerBusiness(client);
+		if (businessId != -1) {
+			if (getServerData().businesses[businessId].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().businesses[businessId].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
 					isBusiness = true;
 					isEntrance = true;
-					closestProperty = getServerData().businesses[i];
+					closestProperty = getServerData().businesses[businessId];
 				}
-			} else {
-				if (getServerData().businesses[i].exitDimension == dimension) {
-					if (getDistance(position, getServerData().businesses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
-						isBusiness = true;
-						isEntrance = false;
-						closestProperty = getServerData().businesses[i];
-					}
+			} else if (getServerData().businesses[businessId].exitDimension == dimension) {
+				if (getDistance(position, getServerData().businesses[businessId].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+					isBusiness = true;
+					isEntrance = false;
+					closestProperty = getServerData().businesses[businessId];
 				}
 			}
 		}
 	}
 
 	if (closestProperty == null) {
-		for (let i in getServerData().houses) {
-			if (getServerData().houses[i].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().houses[i].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		let houseId = getPlayerHouse(client);
+		if (houseId != -1) {
+			if (getServerData().houses[houseId].entranceDimension == dimension) {
+				if (getDistance(position, getServerData().houses[houseId].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
 					isBusiness = false;
 					isEntrance = true;
-					closestProperty = getServerData().houses[i];
+					closestProperty = getServerData().houses[houseId];
 				}
-			} else {
-				if (getServerData().houses[i].exitDimension == dimension) {
-					if (getDistance(position, getServerData().houses[i].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
-						isBusiness = false;
-						isEntrance = false;
-						closestProperty = getServerData().houses[i];
-					}
+			} else if (getServerData().houses[houseId].exitDimension == dimension) {
+				if (getDistance(position, getServerData().houses[houseId].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+					isBusiness = false;
+					isEntrance = false;
+					closestProperty = getServerData().houses[houseId];
 				}
 			}
 		}
@@ -409,10 +407,10 @@ function enterExitPropertyCommand(command, params, client) {
 						despawnVehicle(vehicleData);
 
 						// Spawn vehicle in the other side
-						vehicleData.spawnPosition = closestProperty.exitPosition;
-						vehicleData.spawnRotation = closestProperty.exitRotation;
-						vehicleData.interior = closestProperty.exitInterior;
-						vehicleData.dimension = closestProperty.exitDimension;
+						vehicleData.sceneSwitchPosition = closestProperty.exitPosition;
+						vehicleData.sceneSwitchRotation = closestProperty.exitRotation;
+						vehicleData.sceneSwitchInterior = closestProperty.exitInterior;
+						vehicleData.sceneSwitchDimension = closestProperty.exitDimension;
 						vehicleData.switchingScenes = true;
 						spawnVehicle(vehicleData);
 						vehicleData.switchingScenes = false;
@@ -487,10 +485,10 @@ function enterExitPropertyCommand(command, params, client) {
 						despawnVehicle(vehicleData);
 
 						// Spawn vehicle in the other side
-						vehicleData.spawnPosition = closestProperty.entrancePosition;
-						vehicleData.spawnRotation = closestProperty.entranceRotation;
-						vehicleData.interior = closestProperty.entranceInterior;
-						vehicleData.dimension = closestProperty.entranceDimension;
+						vehicleData.sceneSwitchPosition = closestProperty.entrancePosition;
+						vehicleData.sceneSwitchRotation = closestProperty.entranceRotation;
+						vehicleData.sceneSwitchInterior = closestProperty.entranceInterior;
+						vehicleData.sceneSwitchDimension = closestProperty.entranceDimension;
 						vehicleData.switchingScenes = true;
 						spawnVehicle(vehicleData);
 						vehicleData.switchingScenes = false;
@@ -560,6 +558,7 @@ function getPlayerInfoCommand(command, params, client) {
 	let skinModel = getGameConfig().skins[getGame()][skinIndex][0];
 	let skinName = getSkinNameFromModel(skinModel);
 	let registerDate = new Date(getPlayerData(targetClient).accountData.registerDate * 1000);
+	let currentDate = new Date();
 	let localeInfo = `${getLocaleData(getPlayerData(targetClient).accountData.locale).englishName}[${getPlayerData(targetClient).accountData.locale}]`;
 
 	let tempStats = [
@@ -1027,25 +1026,31 @@ function deletePlayerBlip(client) {
 // ===========================================================================
 
 function processPlayerDeath(client) {
+	logToConsole(LOG_INFO, `Player ${getPlayerDisplayForConsole(client)} died.`);
+
 	// Death is already being processed
 	if (getPlayerData(client).pedState == V_PEDSTATE_DEAD) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} already in death ped state. Aborting death processing ...`);
 		return false;
 	}
 
-	logToConsole(LOG_INFO, `${getPlayerDisplayForConsole(client)} died.`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} ped state set to death and removing control`);
 	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
 
 	if (isPlayerWorking(client)) {
+		logToConsole(LOG_DEBUG, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} died while working, forcing them to stop work ...`);
 		stopWorking(client);
 	}
 
 	if (isPlayerInAnyVehicle(client)) {
+		logToConsole(LOG_DEBUG, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} died in a vehicle, forcing them out ...`);
 		removePedFromVehicle(getPlayerPed(client));
 	}
 
 	if (isPlayerInPaintBall(client)) {
+		logToConsole(LOG_DEBUG, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} died in paintball ...`);
 		getPlayerData(killer).paintBallKills++;
 		getPlayerData(client).paintBallDeaths++;
 
@@ -1251,7 +1256,7 @@ function scoreBoardCommand(command, params, client) {
 
 // ===========================================================================
 
-function locatePlayerCommand(client) {
+function locatePlayerCommand(command, params, client) {
 	if (isPlayerSpawned(client)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeSpawned"));
 		return false;
@@ -1274,7 +1279,7 @@ function locatePlayerCommand(client) {
 		return false;
 	}
 
-	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getDistance(getPlayerPosition(client), getPlayerPosition(targetClient))}{MAINCOLOUR}`, `{ALTCOLOUR}${getLocaleString(client, getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
+	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${Math.round(getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)))} ${getLocalString(client, "Meters")}{MAINCOLOUR}`, `{ALTCOLOUR}${getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
 }
 
 // ===========================================================================
