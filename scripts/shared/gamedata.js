@@ -353,16 +353,16 @@ let supportedFeatures = {
 
 // Connected MP mods only
 let extraContentResource = {
-	[V_GAME_GTA_III]: "agrp-gta3",
-	[V_GAME_GTA_VC]: "agrp-gtavc",
-	[V_GAME_GTA_SA]: "agrp-gtasa",
-	[V_GAME_GTA_IV]: "agrp-gtaiv",
-	[V_GAME_GTA_IV_EFLC]: "agrp-gtaiv",
-	[V_GAME_MAFIA_ONE]: "agrp-mafia1",
-	[V_GAME_MAFIA_TWO]: "agrp-mafia2",
-	[V_GAME_MAFIA_TWO]: "agrp-mafia3",
-	[V_GAME_MAFIA_ONE_DE]: "agrp-mafia1de",
-	[V_GAME_GTA_V]: "agrp-gtav",
+	[V_GAME_GTA_III]: "crp-gta3",
+	[V_GAME_GTA_VC]: "crp-gtavc",
+	[V_GAME_GTA_SA]: "crp-gtasa",
+	[V_GAME_GTA_IV]: "crp-gtaiv",
+	[V_GAME_GTA_IV_EFLC]: "crp-gtaiv",
+	[V_GAME_MAFIA_ONE]: "crp-mafia1",
+	[V_GAME_MAFIA_TWO]: "crp-mafia2",
+	[V_GAME_MAFIA_TWO]: "crp-mafia3",
+	[V_GAME_MAFIA_ONE_DE]: "crp-mafia1de",
+	[V_GAME_GTA_V]: "crp-gtav",
 };
 
 // ===========================================================================
@@ -2018,6 +2018,7 @@ let gameData = {
 			["Sarah2HIGHnaha.i3d", "Sarah Naked", false],
 			["Sarah2LOW.i3d", "Sarah", true],
 			["Serv01.i3d", "Maid", true],
+			["UfoPanak.i3d", "Alien", false]
 		],
 		[V_GAME_GTA_V]: [
 			["a_f_m_beach_01", 0x303638A7, true],
@@ -5051,6 +5052,12 @@ let gameData = {
 			new AnimationData("tablesit2front", { animId: "x sed za stolem_B.i3d", infiniteLoop: true, moveType: V_ANIMMOVE_FORWARD }),
 			new AnimationData("tablesit1back", { animId: "x sed za stolem_A.i3d", infiniteLoop: true, moveType: V_ANIMMOVE_BACK }),
 			new AnimationData("tablesit2back", { animId: "x sed za stolem_B.i3d", infiniteLoop: true, moveType: V_ANIMMOVE_BACK }),
+			new AnimationData("handsup", { animId: "RuceVzhuru01Loop.i3d", infiniteLoop: true, animType: V_ANIMTYPE_SURRENDER }),
+			new AnimationData("givefine", { animId: "PolicajtPokutujici.i3d", infiniteLoop: true }),
+			new AnimationData("getfine", { animId: "PolicajtPokutovany.i3d", infiniteLoop: true }),
+			new AnimationData("phonepickup", { animId: "TelVytoceni.i3d", infiniteLoop: true }),
+			new AnimationData("phonehangup", { animId: "TelZaveseni.i3d", infiniteLoop: true }),
+			new AnimationData("phonetalk", { animId: "TelStativ.i3d", infiniteLoop: true }),
 		],
 	},
 	meleeWeapons: {
@@ -6204,13 +6211,21 @@ let gameData = {
 			ClarksMotel: [toVector3(70.14, 0.91, -21.39), 0, false, "MISE04-MOTOREST", "", true],
 			CountryFarmNightStorm: [toVector3(-21.09, 0.35, -7.39), 0, false, "MISE09-PREJIMKA", "", true],
 			Airport: [toVector3(111.95, -2.42, -402.17), 0, false, "MISE10-LETISTE", "", false],
-			ArtGallery: [toVector3(3.36, 18.55, 29.30), 0, false, "MISE20-GALERY", "", false],
+			ArtGallery: [toVector3(19.53, -1.79, 34.91), 0, false, "MISE20-GALERY", "", false],
 			Prison: [toVector3(-5.3984, 0.00103426, -5.59193), 0, false, "MISE17-VEZENI", "", false],
-			Autodrome: [toVector3(475.899, -0.239552, -109.722), 0, false, "MISE06-AUTODROM", "", false],
+			Autodrome: [toVector3(185.69, 0.01, -118.57), 0, false, "MISE06-AUTODROM", "", false],
 			SaraApartment: [toVector3(-1752.85, -5.16, 168.84), 0, false, "MISE07-SARA", "", false],
 			PaulieApartment: [toVector3(3.63, 4.34, 2.87), 0, false, "MISE19-PAULI", "", false],
 			CarloApartment: [toVector3(-26.953, 8.02, 27.1925), 0, false, "MISE19-ZRADCE", "", false],
 			CorleoneHotelRoom: [toVector3(-522.98, 9.91, -430.61), 0, false, "MISE08-HOTEL", "", false],
+			MorelloBar: [toVector3(-407.92, 17.32, 456.01), 0, false, "MISE03-MORELLO", "", false],
+			Port: [toVector3(-2016.05, -5.57, -750.69), 0, false, "MISE15-PRISTAV", "", true],
+			NormanBar: [toVector3(-1038.68, -3.10, 88.24), 0, false, "02NORMANCELA", "", false],
+			PepeRestaurant: [toVector3(-707.86, 4.52, 352.81), 0, false, "MISE13-RESTAURACE", "", false],
+			Boat: [toVector3(-19.77, 6.40, -0.00), 0, false, "MISE14-PARNIK", "", false],
+			Warehouse1: [toVector3(-1772.94, -5.33, -640.66), 0, false, "MISE15-PRISTAV", "", false],
+			ParkingGarage: [toVector3(-7.78, 0.01, -116.82), 0, false, "mise12-garage", "", false],
+			LucasBertoneGarage: [toVector3(688.98, 1.05, 103.23), 0, false, "MISE06-MESTO", "", false],
 		},
 		[V_GAME_MAFIA_TWO]: { // Mafia 2
 		},
