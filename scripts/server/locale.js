@@ -116,15 +116,6 @@ function getRawLocaleString(localeId, stringName) {
 	}
 
 	return getLocaleStrings()[localeId][stringName];
-
-	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
-	//	return "";
-	//}
-
-	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
-	//if(tempString == "" || tempString == null || tempString == undefined) {
-	//	return "";
-	//}
 }
 
 // ===========================================================================
@@ -137,15 +128,6 @@ function getRawGroupedLocaleString(localeId, stringName, index) {
 	}
 
 	return getLocaleStrings()[localeId][stringName][index];
-
-	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
-	//	return "";
-	//}
-
-	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
-	//if(tempString == "" || tempString == null || tempString == undefined) {
-	//	return "";
-	//}
 }
 
 // ===========================================================================
