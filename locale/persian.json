@@ -819,5 +819,19 @@
 	"AccentsHelpTip": "Use {1} to see a list of available accents",
 
 	"COMMENT1-22MAR2022": "DO NOT TRANSLATE. Example of line below: Somebody is calling you. Go to the payphone at 50 meters north-west and use /answer to answer it",
-	"PayPhoneIncomingCall": "Somebody is calling you. Go to the payphone at {1} {2} {3} and use {4} to answer it."
+	"PayPhoneIncomingCall": "Somebody is calling you. Go to the payphone at {1} {2} {3} and use {4} to answer it.",
+
+	"TimeMeasurements": {
+		"Seconds": "{1} seconds",
+		"Minutes": "{1} minutes",
+		"Hours": "{1} hours",
+		"Days": "{1} days",
+		"Weeks": "{1} weeks",
+		"Months": "{1} months",
+		"Years": "{1} years"
+	},
+	"WaitForJobStart": "You must wait {1} before starting another job route",
+	"InvalidPayPhone": "Payphone not found!",
+	"GameFeatureNotSupported": "Not supported on this game!",
+	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to your business ({1})?"
 }
