@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Script
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: messaging.js
 // DESC: Provides messaging functions and usage
