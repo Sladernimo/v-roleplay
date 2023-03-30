@@ -53,6 +53,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			houseData.houseId = houseId;
 			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
+			houseData.exitPosition = exitPosition;
 			houseData.blipModel = blipModel;
 			houseData.pickupModel = pickupModel;
 			houseData.buyPrice = buyPrice;
@@ -99,6 +100,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			houseData.houseId = houseId;
 			houseData.description = description;
 			houseData.entrancePosition = entrancePosition;
+			houseData.exitPosition = exitPosition;
 			houseData.blipModel = blipModel;
 			houseData.pickupModel = pickupModel;
 			houseData.buyPrice = buyPrice;
