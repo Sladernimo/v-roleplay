@@ -9,10 +9,11 @@
 
 let localPlayerJobType = -1;
 let localPlayerWorking = false;
+
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
-
+let jobRouteLocationDimension = 0;
 let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
 let jobRouteLocationIndicatorSize = toVector2(32, 32);
 let jobRouteLocationIndicatorEnabled = false;
@@ -316,6 +317,10 @@ function processJobLocationIndicatorRendering() {
 
 	if (!jobRouteLocationIndicatorEnabled) {
 		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Disabled`);
+		return false;
+	}
+
+	if (jobRouteLocationDimension != getLocalPlayerDimension()) {
 		return false;
 	}
 
