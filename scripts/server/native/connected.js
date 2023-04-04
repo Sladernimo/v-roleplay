@@ -692,16 +692,22 @@ function getVehicleSiren(vehicle) {
 // ===========================================================================
 
 function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1) {
-	vehicle.colour1 = colour1;
-	vehicle.colour2 = colour2;
+	if (getGame() == V_GAME_GTA_IV) {
+		setEntityData(vehicle, "v.rp.colour", [colour1, colour2, colour3, colour4], true);
+		sendNetworkEventToPlayer("v.rp.veh.colour", null, vehicle.id, colour1, colour2, colour3, colour4);
+	} else {
+		vehicle.colour1 = colour1;
+		vehicle.colour2 = colour2;
 
-	if (colour3 != -1) {
-		vehicle.colour3 = colour3;
+		if (colour3 != -1) {
+			vehicle.colour3 = colour3;
+		}
+
+		if (colour4 != -1) {
+			vehicle.colour4 = colour4;
+		}
 	}
 
-	if (colour4 != -1) {
-		vehicle.colour4 = colour4;
-	}
 }
 
 // ===========================================================================
