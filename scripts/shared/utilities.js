@@ -2025,15 +2025,17 @@ function getObjectModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getPosToRightOfPos(pos, angle, distance) {
-	if (getGame() != V_GAME_MAFIA_ONE) {
+	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
+	let z = pos.z;
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		x = (pos.x + ((Math.cos(angle - 1.57)) * distance));
-		y = pos.y
-		z = (pos.z + ((Math.sin(angle - 1.57)) * distance));
+		y = (pos.y + ((Math.sin(angle - 1.57)) * distance));
+		z = pos.z;
 	}
 
-	let rightPos = toVector3(x, y, pos.z);
-
-	return rightPos;
+	return toVector3(x, y, z);
 }
 
 // ===========================================================================
@@ -2043,15 +2045,13 @@ function getPosToLeftOfPos(pos, angle, distance) {
 	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
 	let z = pos.z;
 
-	if (getGame() != V_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
 		x = (pos.x + ((Math.cos(angle + 1.57)) * distance));
 		y = pos.y
 		z = (pos.z + ((Math.sin(angle + 1.57)) * distance));
 	}
 
-	let leftPos = toVector3(x, y, z);
-
-	return leftPos;
+	return toVector3(x, y, z);
 }
 
 // ===========================================================================
@@ -2085,14 +2085,19 @@ function getPosBehindPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() < V_GAME_MAFIA_ONE) {
-		y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	} else {
-		angle = radToDeg(angle);
-		z = (pos.z + ((Math.sin(angle - (Math.PI / 2))) * distance));
-	}
+		while (angle < 0.0)
+			angle += 360.0;
 
-	x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		while (angle > 360.0)
+			angle -= 360.0;
+
+		x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		z = (pos.z + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	}
 
 	return toVector3(x, y, z);
 }
