@@ -604,7 +604,7 @@ function vehicleSirenCommand(command, params, client) {
 // ===========================================================================
 
 function vehicleAdminColourCommand(command, params, client) {
-	if (isGameFeatureSupported("vehicleColour")) {
+	if (!isGameFeatureSupported("vehicleColour")) {
 		messagePlayerError(client, "Vehicle colours are not supported in this game!");
 		return false;
 	}
@@ -628,13 +628,14 @@ function vehicleAdminColourCommand(command, params, client) {
 
 	let colour1 = toInteger(getParam(params, " ", 1)) || 0;
 	let colour2 = toInteger(getParam(params, " ", 2)) || 0;
+	let colour3 = toInteger(getParam(params, " ", 3)) || 0;
+	let colour4 = toInteger(getParam(params, " ", 4)) || 0;
 
-	//takePlayerCash(client, getGlobalConfig().resprayVehicleCost);
-	//updatePlayerCash(client);
-	vehicle.colour1 = colour1;
-	vehicle.colour2 = colour2;
+	setVehicleColours(vehicle, colour1, colour2, colour3, colour4);
 	getVehicleData(vehicle).colour1 = colour1;
 	getVehicleData(vehicle).colour2 = colour2;
+	getVehicleData(vehicle).colour3 = colour3;
+	getVehicleData(vehicle).colour4 = colour4;
 
 	getVehicleData(vehicle).needsSaved = true;
 
@@ -1443,7 +1444,7 @@ function respawnVehicle(vehicle) {
 	* @return {Vehicle} The vehicle game object
 	*/
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x}, ${vehicleData.spawnPosition.y}, ${vehicleData.spawnPosition.z} with heading ${vehicleData.spawnRotation}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)} with heading ${vehicleData.spawnRotation.toFixed(2)}`);
 
 	let position = vehicleData.spawnPosition;
 	let rotation = vehicleData.spawnRotation;
