@@ -163,6 +163,8 @@ class ClientData {
 		this.vehicleSeat = -1;
 
 		this.lastJobRouteStart = 0;
+
+		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
 	}
 };
 
