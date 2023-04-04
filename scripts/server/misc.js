@@ -562,24 +562,23 @@ function getPlayerInfoCommand(command, params, client) {
 	let localeInfo = `${getLocaleData(getPlayerData(targetClient).accountData.locale).englishName}[${getPlayerData(targetClient).accountData.locale}]`;
 
 	let tempStats = [
+		["ID", `${getPlayerId(targetClient)}`],
 		["Account", `${getPlayerData(targetClient).accountData.name}{mediumGrey}[${getPlayerData(targetClient).accountData.databaseId}]{ALTCOLOUR}`],
 		["Character", `${getCharacterFullName(targetClient)}{mediumGrey}[${getPlayerCurrentSubAccount(targetClient).databaseId}]{ALTCOLOUR}`],
-		["ID", `${getPlayerId(targetClient)}]`],
 		["Account", `${getPlayerData(targetClient).accountData.name}{mediumGrey}[${getPlayerData(targetClient).accountData.databaseId}]`],
 		["Character", `${getCharacterFullName(targetClient)}{mediumGrey}[${getPlayerCurrentSubAccount(targetClient).databaseId}]`],
 		["Connected", `${getTimeDifferenceDisplay(getCurrentUnixTimestamp(), getPlayerData(targetClient).connectTime)} ago`],
 		["Registered", `${registerDate.toLocaleDateString("en-GB")}`],
 		["Game Version", `${targetClient.gameVersion}`],
-		["Script Version", `${scriptVersion}`],
 		["Client Version", `${getPlayerData(targetClient).clientVersion}`],
 		["Cash", `${getCurrencyString(getPlayerCurrentSubAccount(targetClient).cash)}`],
-		["Skin", `${skinName}{mediumGrey}[Model: ${skinModel}/Index: ${skinIndex}]{ALTCOLOUR}`],
 		["Bank", `${getCurrencyString(getPlayerCurrentSubAccount(targetClient).bank)}`],
-		["Skin", `${skinName}{mediumGrey}[${skinModel}/${skinIndex}]`],
+		["Skin", `${skinName}{mediumGrey}[${skinModel}/${skinIndex}]{ALTCOLOUR}`],
 		["Clan", `${clan}`],
 		["Job", `${job}`],
-		["Current Date", `${currentDate.toLocaleDateString("en-GB")}`],
 		["Language", localeInfo],
+		["Current Date", `${currentDate.toLocaleDateString("en-GB")}`],
+		["Script Version", `${scriptVersion}`],
 	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]} {MAINCOLOUR}`);
@@ -1350,7 +1349,11 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	getPlayerCurrentSubAccount(client).spawnVehicleSeat = vehicleSeat;
 
 	clearPlayerStateToEnterExitProperty(client);
-	setPlayerDimension(client, 50000 + getPlayerId(client));
+
+	// In Mafia 1, set virtual world to some really high unused number first so everything is removed (otherwise crashes)
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		setPlayerDimension(client, getGlobalConfig().playerSceneSwitchVirtualWorldStart + getPlayerId(client));
+	}
 
 	if (isFadeCameraSupported()) {
 		fadePlayerCamera(client, false, 2000);
@@ -1375,7 +1378,7 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	}
 
 	setTimeout(function () {
-		processPlayerSceneSwitch(client);
+		processPlayerSceneSwitch(client, false);
 	}, 2000);
 }
 
