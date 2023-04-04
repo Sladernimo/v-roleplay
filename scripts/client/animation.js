@@ -29,7 +29,7 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 		case V_ANIMMOVE_FORWARD: {
 			setElementCollisionsEnabled(pedId, false);
 			if (ped.isSyncer) {
-				setElementPosition(ped, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
+				setElementPosition(pedId, getPosInFrontOfPos(getElementPosition(pedId), fixAngle(getElementHeading(pedId)), positionOffset));
 			}
 			freezePlayer = true;
 			break;
@@ -133,7 +133,7 @@ function makePedStopAnimation(pedId) {
 		return false;
 	}
 
-	if (getGame() != V_GAME_GTA_IV) {
+	if (getGame() != V_GAME_GTA_IV && getGame() != V_GAME_MAFIA_ONE) {
 		if (getGame() == V_GAME_GTA_VC || getGame() == V_GAME_GTA_SA) {
 			ped.clearAnimations();
 		} else {
