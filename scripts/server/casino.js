@@ -7,6 +7,7 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+// Casino Games
 const V_CASINO_GAME_NONE = 0;
 const V_CASINO_GAME_BLACKJACK = 1;
 const V_CASINO_GAME_POKER = 2;
@@ -14,14 +15,24 @@ const V_CASINO_GAME_BACCARAT = 3;
 const V_CASINO_GAME_ROULETTE = 4;
 const V_CASINO_GAME_CRAPS = 5;
 const V_CASINO_GAME_HOLDEM = 6;
+const V_CASINO_GAME_SLOTS = 7;
 
 // ===========================================================================
 
+// Casino Card Suits
 const V_CASINO_DECK_SUIT_NONE = 1;
 const V_CASINO_DECK_SUIT_CLUBS = 1;
 const V_CASINO_DECK_SUIT_DIAMONDS = 2;
 const V_CASINO_DECK_SUIT_HEARTS = 3;
 const V_CASINO_DECK_SUIT_SPADES = 4;
+
+// ===========================================================================
+
+// Blackjack Play States
+const V_CASINO_BLACKJACK_PLAYSTATE_NONE = 0;	// None (not playing)
+const V_CASINO_BLACKJACK_PLAYSTATE_BETTING = 1; // Placing their bet
+const V_CASINO_BLACKJACK_PLAYSTATE_DEALING = 2; // Waiting on cards to be dealt
+const V_CASINO_BLACKJACK_PLAYSTATE_WAITING = 3;	// Waiting for other players to finish
 
 // ===========================================================================
 
@@ -35,6 +46,7 @@ class DeckCard {
 
 // ===========================================================================
 
+/** @type {Array.<DeckCard>} The default deck of cards */
 let cardDeck = [
 	new DeckCard(V_CASINO_DECK_SUIT_CLUBS, 1, "deckCardClubAce"),
 	new DeckCard(V_CASINO_DECK_SUIT_CLUBS, 2, "deckCardClubTwo"),
@@ -79,11 +91,17 @@ let cardDeck = [
 
 // ===========================================================================
 
+/**
+ * @return {Array.<DeckCard>} deck - The deck of cards
+ */
 function createBlackJackDeck() {
+	/** @type {Array.<DeckCard>} */
 	let deck = [];
+
 	for (let i in cardDeck) {
 		deck.push(cardDeck[i]);
 	}
+
 	return deck;
 }
 
@@ -119,7 +137,7 @@ function blackJackHitCommand(command, params, client) {
 
 	let tempHandValue = getValueOfBlackJackHand(hand);
 
-	if (handValue > 21) {
+	if (tempHandValue > 21) {
 		playerBustBlackJack(client);
 		return false;
 	}
@@ -141,34 +159,68 @@ function blackJackStandCommand(command, params, client) {
 
 // ===========================================================================
 
+/**
+ * @param {Array.<DeckCard>} deck - The card deck being used
+ * @param {Array.<Client>} players - The players in the game
+ */
 function dealPlayerBlackJackHand(deck, players) {
 	// Alternate handing cards to each player, 2 cards each
-	for (var i = 0; i < 2; i++) {
-		for (var x = 0; x < players.length; x++) {
-			var card = deck.pop();
-			getPlayerData(players[i]).casinoCardHand.push(card);
-			updateCasinoCardHand(players[i]);
+	for (let i = 0; i < 2; i++) {
+		for (let j in players) {
+			let player = players[j];
+			let hand = getPlayerData(player).casinoCardHand;
+
+			hand.push(deck.pop());
 		}
 	}
 }
 
 // ===========================================================================
 
-function calculateValueOfBlackJackHand(hand) {
-	let tempHandValue = 0;
+/* Get value of blackjack hand */
+/**
+ * @param {Array.<DeckCard>} hand - The hand of cards being played
+ */
+function getValueOfBlackJackHand(hand) {
+	let value = 0;
+	let hasAce = false;
 
 	for (let i in hand) {
-		if (hand[i].value == 1) {
+		let card = hand[i];
 
-			if ((tempHandValue + 11) > 21) {
-				tempHandValue += 1;
-			} else {
-				tempHandValue += 11;
-			}
-		} else {
-			tempHandValue += hand[i].value;
+		if (card.value == 1) {
+			hasAce = true;
 		}
+
+		value += card.value;
 	}
+
+	if (hasAce && value + 10 <= 21) {
+		value += 10;
+	}
+
+	return value;
+}
+
+// ===========================================================================
+
+function playerBustBlackJack(client) {
+	let playerData = getPlayerData(client);
+
+	playerData.casinoCardHand = [];
+	playerData.casinoBlackJackState = V_CASINO_BLACKJACK_PLAYSTATE_WAITING;
+	playerData.casinoBet = 0;
+}
+
+// ===========================================================================
+
+function playerWinBlackJack(client, isBlackJack) {
+	let playerData = getPlayerData(client);
+
+	playerData.casinoChips = (!isBlackJack) ? playerData.casinoChips + playerData.casinoBet : playerData.casinoChips + (playerData.casinoBet * getGlobalConfig().blackJackPayoutMultiplier);
+	playerData.casinoCardHand = [];
+	playerData.casinoBlackJackState = V_CASINO_BLACKJACK_PLAYSTATE_WAITING;
+
 }
 
 // ===========================================================================
