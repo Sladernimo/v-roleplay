@@ -298,6 +298,8 @@ let globalConfig = {
 	payPhonePickupToTalkAnimationDelay: 2000,
 	payPhonePickupToDialAnimationDelay: 2000,
 	payPhoneDialToTalkAnimationDelay: 7000,
+	blackJackPayoutMultiplier: 1.5,
+	playerSceneSwitchVirtualWorldStart: 50000,
 };
 
 // ===========================================================================
