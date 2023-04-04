@@ -579,7 +579,10 @@ function processPlayerSceneSwitch(client, spawn = false) {
 				}
 			}
 
-			onPlayerSpawn(client);
+			if (spawn == true) {
+				onPlayerSpawn(client);
+			}
+
 			setPlayerControlState(client, true);
 
 			// Clear some scene switching states
