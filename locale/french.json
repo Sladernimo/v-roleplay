@@ -691,7 +691,7 @@
 	"DidNotCreateCharacter": "You do not have a character to play. Goodbye!",
 	"BusinessOrderNotEnoughMoney": "This business doesn't have enough money to order that! Deposit some using {1}",
 
-	"ADDED-12OCT2022": "DO NOT TRANSLATE. Example of line below: You ordered 50 Colt 45 for $5000!",
+	"ADDED-12OCT2022": "DO NOT TRANSLATE. Example of line below: You ordered 50 Pistol for $5000!",
 	"BusinessOrderSuccessInfo": "You ordered {1} {2} for {4}!",
 
 	"AccountSettings": {
@@ -776,7 +776,6 @@
 	"NormalChatDisabled": "Normal chat is disabled by server admin. Use chat commands instead.",
 	"GlobalChatDisabled": "Global out-of-character chat is disabled by server admin",
 	"CantEditJobUniforms": "You can't edit job uniforms!",
-	"PlayerNotSurrendered": "The player must be surrendered (hands up, be knocked out, or tazed)!",
 	"PlayerRemovedFromJob": "You removed {1} from the job",
 	"RemovedFromJob": "You were removed from the job by {1}",
 	"UnableToCallPlayer": "{1} can't be called right now",
