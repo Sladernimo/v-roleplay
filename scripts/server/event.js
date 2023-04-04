@@ -392,6 +392,11 @@ function onPlayerSpawn(client) {
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
+	if (getGame != V_GAME_MAFIA_ONE && (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY)) {
+		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize spawn (entering/exiting property). Aborting spawn processing ...`);
+		return false;
+	}
+
 	if (isGameFeatureSupported("pedScale")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 		setEntityData(getPlayerPed(client), "v.rp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
