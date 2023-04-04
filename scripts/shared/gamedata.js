@@ -200,9 +200,8 @@ let supportedFeatures = {
 		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
 		[V_GAME_MAFIA_ONE]: false,
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false
@@ -281,11 +280,11 @@ let supportedFeatures = {
 		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false, // World pos to screen native crashes game
-		[V_GAME_GTA_IV_EFLC]: false, // World pos to screen native crashes game
-		[V_GAME_MAFIA_ONE]: true, // Needs world pos to screen implemented
-		[V_GAME_MAFIA_TWO]: false, // Needs world pos to screen implemented
-		[V_GAME_MAFIA_THREE]: false, // Needs world pos to screen implemented
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: true,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
 	},
 	dimension: {
 		[V_GAME_GTA_III]: true,
@@ -302,10 +301,10 @@ let supportedFeatures = {
 		[V_GAME_GTA_VC]: false,
 		[V_GAME_GTA_SA]: false,
 		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: true,
-		[V_GAME_MAFIA_ONE]: true,
-		[V_GAME_MAFIA_TWO]: true,
-		[V_GAME_MAFIA_THREE]: true,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
 	},
 	mouseCursor: {
 		[V_GAME_GTA_III]: true,
@@ -3429,7 +3428,7 @@ let gameData = {
 			["truckA00.i3d", "Bolt Truck Flatbed"],
 			["truckB00.i3d", "Bolt Truck Covered"],
 			["TruckBxx00.i3d", "Bolt Truck (Atlantic Import)"],
-			["truckBx00.i3d", "Bolt Truck"],
+			["truckBx00.i3d", "Bolt Truck (Atlantic Export)"],
 			["bus00.i3d", "Bus"],
 			["phantom00.i3d", "Manta Prototype"],
 		],
