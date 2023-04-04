@@ -212,13 +212,40 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 // ===========================================================================
 
 function setVehicleEngine(vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return false;
+	}
+
 	//getElementFromId(vehicleId).netFlags.sendSync = state;
 	getElementFromId(vehicleId).engine = state;
 }
 
 // ===========================================================================
 
+function setVehicleColours(vehicleId, colour1, colour2, colour3, colour4) {
+	if (getElementFromId(vehicleId) == null) {
+		return false;
+	}
+
+	getElementFromId(vehicleId).colour1 = colour1;
+	getElementFromId(vehicleId).colour2 = colour2;
+
+	if (colour3 != -1) {
+		getElementFromId(vehicleId).colour3 = colour3;
+	}
+
+	if (colour4 != -1) {
+		getElementFromId(vehicleId).colour4 = colour4;
+	}
+}
+
+// ===========================================================================
+
 function setVehicleLock(vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return false;
+	}
+
 	//getElementFromId(vehicleId).netFlags.sendSync = state;
 	getElementFromId(vehicleId).lockedStatus = (state == false) ? 0 : 2;
 }
@@ -226,18 +253,30 @@ function setVehicleLock(vehicleId, state) {
 // ===========================================================================
 
 function setVehicleLights(vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return false;
+	}
+
 	getElementFromId(vehicleId).lights = state;
 }
 
 // ===========================================================================
 
-function repairVehicle(syncId) {
-	getVehicleFromSyncId(syncId).fix();
+function repairVehicle(vehicleId) {
+	if (getElementFromId(vehicleId) == null) {
+		return false;
+	}
+
+	getVehicleFromSyncId(vehicleId).fix();
 }
 
 // ===========================================================================
 
 function syncVehicleProperties(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
 	if (doesEntityDataExist(vehicle, "v.rp.lights")) {
 		let lightStatus = getEntityData(vehicle, "v.rp.lights");
 		vehicle.lights = lightStatus;
@@ -724,7 +763,7 @@ function setElementCollisionsEnabled(elementId, state) {
 		return false;
 	}
 
-	if (getGame() != V_GAME_MAFIA_ONE) {
+	if (!isGameFeatureSupported("toggleCollision")) {
 		return false;
 	}
 
@@ -735,6 +774,10 @@ function setElementCollisionsEnabled(elementId, state) {
 
 function getElementCollisionsEnabled(elementId, state) {
 	if (getElementFromId(elementId) == null) {
+		return false;
+	}
+
+	if (!isGameFeatureSupported("toggleCollision")) {
 		return false;
 	}
 
