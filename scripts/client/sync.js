@@ -59,6 +59,17 @@ function setVehicleLights(vehicleId, state) {
 
 // ===========================================================================
 
+function setVehicleColours(vehicleId, colour1, colour2, colour3, colour4) {
+	if (getElementFromId(vehicleId) != null) {
+		getElementFromId(vehicleId).colour1 = colour1;
+		getElementFromId(vehicleId).colour2 = colour2;
+		getElementFromId(vehicleId).colour3 = colour3;
+		getElementFromId(vehicleId).colour4 = colour4;
+	}
+}
+
+// ===========================================================================
+
 function repairVehicle(syncId) {
 	getVehicleFromSyncId(syncId).fix();
 }
@@ -68,6 +79,14 @@ function repairVehicle(syncId) {
 function syncVehicleProperties(vehicle) {
 	if (!areServerElementsSupported()) {
 		return false;
+	}
+
+	if (doesEntityDataExist(vehicle, "v.rp.colour")) {
+		let colours = getEntityData(vehicle, "v.rp.colour");
+		vehicle.colour1 = colours[0];
+		vehicle.colour2 = colours[1];
+		vehicle.colour3 = colours[2];
+		vehicle.colour4 = colours[3];
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.lights")) {
