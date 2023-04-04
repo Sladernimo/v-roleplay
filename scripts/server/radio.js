@@ -347,7 +347,7 @@ function radioTransmitCommand(command, params, client) {
 			vehicle = getPlayerVehicle(client);
 		} else {
 			let tempVehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(tempVehicle)) <= getGlobalConfig().vehicleTrunkDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(tempVehicle)) <= globalConfig.vehicleTrunkDistance) {
 				vehicle = tempVehicle;
 			}
 		}
@@ -381,7 +381,7 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 
 	for (let i in clients) {
 		if (seenClients.indexOf(clients[i]) == -1) {
-			if (getDistance(getPlayerPosition(clients[i]), getPlayerPosition(sentFromClient)) <= getGlobalConfig().talkDistance) {
+			if (getDistance(getPlayerPosition(clients[i]), getPlayerPosition(sentFromClient)) <= globalConfig.talkDistance) {
 				seenClients.push(clients[i]);
 				messagePlayerNormal(clients[i], `[#CCCCCC]${getCharacterFullName(sentFromClient)} {ALTCOLOUR}(to radio): {MAINCOLOUR}${messageText}`);
 			}
@@ -393,7 +393,7 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 		if (getServerData().vehicles[i].radioFrequency == frequency) {
 			for (let j in clients) {
 				if (seenClients.indexOf(clients[j]) == -1) {
-					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[i].vehicle)) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[i].vehicle)) <= globalConfig.transmitRadioSpeakerDistance) {
 						seenClients.push(clients[j]);
 						messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
 					}
@@ -410,7 +410,7 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 					if (items[i].value == frequency) {
 						for (let j in clients) {
 							if (seenClients.indexOf(clients[j]) == -1) {
-								if (getDistance(getPlayerPosition(clients[j], getItemPosition(i))) <= getGlobalConfig().transmitRadioSpeakerDistance) {
+								if (getDistance(getPlayerPosition(clients[j], getItemPosition(i))) <= globalConfig.transmitRadioSpeakerDistance) {
 									seenClients.push(clients[j]);
 									messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
 								}

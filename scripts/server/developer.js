@@ -602,7 +602,7 @@ function resetAllAccountsHotkeysToDefault() {
 // ===========================================================================
 
 function togglePauseSavingToDatabaseCommand(command, params, client) {
-	getServerConfig().pauseSavingToDatabase = !getServerConfig().pauseSavingToDatabase;
+	serverConfig.pauseSavingToDatabase = !serverConfig.pauseSavingToDatabase;
 }
 
 // ===========================================================================

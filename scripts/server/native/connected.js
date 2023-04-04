@@ -316,16 +316,16 @@ function removePedFromVehicle(ped) {
 // ===========================================================================
 
 function setPlayerSkin(client, skinIndex) {
-	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
+	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${gameData.skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${gameData.skins[getGame()][skinIndex][1]})`);
 	if (getGame() == V_GAME_GTA_IV) {
 		let position = getPlayerPosition(client);
 		let heading = getPlayerHeading(client);
 		let interior = getPlayerInterior(client);
 		let dimension = getPlayerDimension(client);
-		//triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
-		spawnPlayer(client, position, heading, getGameConfig().skins[getGame()][skinIndex][0], interior, dimension);
+		//triggerNetworkEvent("v.rp.localPlayerSkin", client, gameData.skins[getGame()][skinIndex][0]);
+		spawnPlayer(client, position, heading, gameData.skins[getGame()][skinIndex][0], interior, dimension);
 	} else {
-		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
+		getPlayerPed(client).modelIndex = gameData.skins[getGame()][skinIndex][0];
 	}
 }
 
@@ -579,7 +579,7 @@ function createGameObject(modelIndex, position) {
 	if (!isGameFeatureSupported("object")) {
 		return false;
 	}
-	return game.createObject(getGameConfig().objects[getGame()][modelIndex][0], position);
+	return game.createObject(gameData.objects[getGame()][modelIndex][0], position);
 }
 
 // ===========================================================================
@@ -609,7 +609,7 @@ function destroyGameElement(element) {
 // ===========================================================================
 
 function isMeleeWeapon(weaponId, gameId = getGame()) {
-	return (getGameConfig().meleeWeapons[gameId].indexOf(weaponId) != -1);
+	return (gameData.meleeWeapons[gameId].indexOf(weaponId) != -1);
 }
 
 // ===========================================================================
@@ -714,7 +714,7 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 
 function createGameVehicle(modelIndex, position, heading, toClient = null) {
 	if (areServerElementsSupported()) {
-		return game.createVehicle(getGameConfig().vehicles[getGame()][modelIndex][0], position, heading);
+		return game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, heading);
 	}
 }
 
@@ -722,7 +722,7 @@ function createGameVehicle(modelIndex, position, heading, toClient = null) {
 
 function createGamePed(modelIndex, position, heading, toClient = null) {
 	if (areServerElementsSupported()) {
-		let ped = game.createPed(getGameConfig().skins[getGame()][modelIndex][0], position);
+		let ped = game.createPed(gameData.skins[getGame()][modelIndex][0], position);
 		if (ped) {
 			//ped.position = position;
 			ped.heading = heading;
@@ -789,7 +789,7 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
+	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [gameData.fightStyles[getGame()][fightStyleId][1][0], gameData.fightStyles[getGame()][fightStyleId][1][1]]);
 	forcePlayerToSyncElementProperties(null, getPlayerElement(client));
 }
 

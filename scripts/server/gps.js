@@ -117,7 +117,7 @@ function gpsCommand(command, params, client) {
 				if (gameLocationId != false) {
 					locationType = V_GPS_TYPE_GAMELOC;
 					blipColour = "white";
-					position = getGameConfig().locations[getGame()][gameLocationId][1];
+					position = gameData.locations[getGame()][gameLocationId][1];
 				} else {
 					let jobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 					locationType = V_GPS_TYPE_JOB;

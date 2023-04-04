@@ -21,13 +21,13 @@ function getTimeDisplayUntilPlayerPayDay(client) {
 // ===========================================================================
 
 function applyServerInflationMultiplier(value) {
-	return toInteger(Math.round(value * getServerConfig().economy.inflationMultiplier))
+	return toInteger(Math.round(value * serverConfig.economy.inflationMultiplier))
 }
 
 // ===========================================================================
 
 function applyIncomeInflationMultiplier(value) {
-	return toInteger(Math.round(value * getServerConfig().economy.incomeInflationMultiplier))
+	return toInteger(Math.round(value * serverConfig.economy.incomeInflationMultiplier))
 }
 
 // ===========================================================================
@@ -37,7 +37,7 @@ function playerPayDay(client) {
 	let grossIncome = getPlayerCurrentSubAccount(client).payDayAmount;
 
 	// Passive income
-	grossIncome = Math.round(grossIncome + getServerConfig().economy.passiveIncomePerPayDay);
+	grossIncome = Math.round(grossIncome + serverConfig.economy.passiveIncomePerPayDay);
 
 	// Job Pay
 	if (getPlayerJob(client) != -1) {
@@ -49,7 +49,7 @@ function playerPayDay(client) {
 	}
 
 	// Payday bonus
-	grossIncome = Math.round(grossIncome * getServerConfig().economy.grossIncomeMultiplier);
+	grossIncome = Math.round(grossIncome * serverConfig.economy.grossIncomeMultiplier);
 
 	// Double bonus
 	if (isDoubleBonusActive()) {
@@ -109,9 +109,9 @@ function calculateWealth(client) {
 	let houses = getAllHousesOwnedByPlayer(client);
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 
-	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * getServerConfig().economy.upKeepCosts.upKeepPerVehicle);
-	let houseUpKeep = applyServerInflationMultiplier(houses.length * getServerConfig().economy.upKeepCosts.upKeepPerHouse);
-	let businessUpKeep = applyServerInflationMultiplier(businesses.length * getServerConfig().economy.upKeepCosts.upKeepPerBusiness);
+	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * serverConfig.economy.upKeepCosts.upKeepPerVehicle);
+	let houseUpKeep = applyServerInflationMultiplier(houses.length * serverConfig.economy.upKeepCosts.upKeepPerHouse);
+	let businessUpKeep = applyServerInflationMultiplier(businesses.length * serverConfig.economy.upKeepCosts.upKeepPerBusiness);
 
 	return vehicleUpKeep + houseUpKeep + businessUpKeep;
 }
@@ -119,7 +119,7 @@ function calculateWealth(client) {
 // ===========================================================================
 
 function calculateIncomeTax(amount) {
-	return amount * getServerConfig().economy.incomeTaxRate;
+	return amount * serverConfig.economy.incomeTaxRate;
 }
 
 // ===========================================================================
@@ -173,19 +173,19 @@ function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
 	if (vehicles.length > 0) {
 		deleteVehicle(vehicles[0]);
-		return getServerConfig().economy.upKeepCosts.upKeepPerVehicle;
+		return serverConfig.economy.upKeepCosts.upKeepPerVehicle;
 	}
 
 	let houses = getAllHousesOwnedByPlayer(client);
 	if (houses.length > 0) {
 		deleteHouse(houses[0].index);
-		return getServerConfig().economy.upKeepCosts.upKeepPerHouse;
+		return serverConfig.economy.upKeepCosts.upKeepPerHouse;
 	}
 
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 	if (businesses.length > 0) {
 		deleteBusiness(businesses[0].index);
-		return getServerConfig().economy.upKeepCosts.upKeepPerBusiness;
+		return serverConfig.economy.upKeepCosts.upKeepPerBusiness;
 	}
 }
 
@@ -220,7 +220,7 @@ function isDoubleBonusActive() {
 // ===========================================================================
 
 function getCurrencyString(amount) {
-	let tempString = getServerConfig().economy.currencyString;
+	let tempString = serverConfig.economy.currencyString;
 	tempString = tempString.replace("{AMOUNT}", toString(makeLargeNumberReadable(amount)));
 	return tempString;
 }
@@ -245,8 +245,8 @@ function setPassiveIncomeCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.passiveIncomePerPayDay = amount;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.passiveIncomePerPayDay = amount;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the passive income to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
@@ -263,8 +263,8 @@ function setCurrencyStringCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.currencyString = params;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.currencyString = params;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the to currency string to {ALTCOLOUR}${params}. Example: ${getCurrencyString(1000)}`);
 }
 
@@ -288,8 +288,8 @@ function setVehicleUpkeepCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.upKeepCosts.upKeepPerVehicle = amount;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.upKeepCosts.upKeepPerVehicle = amount;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per vehicle to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
@@ -313,8 +313,8 @@ function setBusinessUpkeepCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.upKeepCosts.upKeepPerBusiness = amount;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.upKeepCosts.upKeepPerBusiness = amount;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per business to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
@@ -338,8 +338,8 @@ function setHouseUpkeepCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.upKeepCosts.upKeepPerHouse = amount;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.upKeepCosts.upKeepPerHouse = amount;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the base upkeep per house to {ALTCOLOUR}${getCurrencyString(amount)}`);
 }
 
@@ -363,8 +363,8 @@ function setIncomeTaxCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.incomeTaxRate = amount / 100;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.incomeTaxRate = amount / 100;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the income tax rate to {ALTCOLOUR}${amount}%`);
 }
 
@@ -388,8 +388,8 @@ function setGrossIncomeMultiplierCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.grossIncomeMultiplier = amount / 100;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.grossIncomeMultiplier = amount / 100;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the gross income multiplier to {ALTCOLOUR}${amount}%`);
 }
 
@@ -413,8 +413,8 @@ function setInflationMultiplierCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.inflationMultiplier = amount / 100;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.inflationMultiplier = amount / 100;
+	serverConfig.needsSaved = true;
 	sendAllJobsToPlayer(null);
 	sendAllVehiclesToPlayer(null);
 	sendAllBusinessesToPlayer(null);
@@ -441,8 +441,8 @@ function setIncomeInflationMultiplierCommand(command, params, client) {
 		return false;
 	}
 
-	getServerConfig().economy.incomeInflationMultiplier = amount / 100;
-	getServerConfig().needsSaved = true;
+	serverConfig.economy.incomeInflationMultiplier = amount / 100;
+	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the income inflation to {ALTCOLOUR}${amount}%`);
 }
 

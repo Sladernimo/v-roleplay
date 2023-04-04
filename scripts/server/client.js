@@ -245,7 +245,7 @@ function initClient(client) {
 	sendPlayerCurrencyString(client);
 	sendPlayerGUIColours(client);
 	sendPlayerGUIInit(client);
-	updatePlayerSnowState(client, getServerConfig().groundSnow);
+	updatePlayerSnowState(client, serverConfig.groundSnow);
 
 	//logToConsole(LOG_DEBUG, `[V.RP.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
 	//showConnectCameraToPlayer(client);
@@ -283,7 +283,7 @@ function initClient(client) {
 						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
 
 						if (checkForGeoIPModule()) {
-							let iso = module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
+							let iso = module.geoip.getCountryISO(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(client));
 							let localeId = getLocaleFromCountryISO(iso);
 
 							if (localeId != 0) {

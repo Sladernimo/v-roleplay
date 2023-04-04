@@ -528,7 +528,7 @@ function useItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemUseDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -592,7 +592,7 @@ function pickupItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > getGlobalConfig().droppedItemPickupRange) {
+	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > globalConfig.droppedItemPickupRange) {
 		messagePlayerError(client, getLocaleString(client, "NoItemCloseEnough"));
 		return false;
 	}
@@ -621,7 +621,7 @@ function pickupItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = itemId;
 	showPlayerItemPickupDelay(client, itemId);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -691,7 +691,7 @@ function dropItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemDropDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -759,7 +759,7 @@ function putItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemPutDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -815,7 +815,7 @@ function takeItemCommand(command, params, client) {
 	getPlayerData(client).itemActionState = V_ITEM_ACTION_TAKE;
 	showPlayerItemTakeDelay(client, itemId);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -1490,7 +1490,7 @@ function playerUseItem(client, hotBarSlot) {
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.handcuffPlayerDistance) {
 				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
@@ -1523,7 +1523,7 @@ function playerUseItem(client, hotBarSlot) {
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.handcuffPlayerDistance) {
 				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
@@ -1545,7 +1545,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHREPAIR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their repair kit and fixes the vehicle`);
 				repairVehicle(vehicle);
 
@@ -1563,7 +1563,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHUPGRADE_PART: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
 				addVehicleUpgrade(vehicle, itemTypeData.useId);
 				markPlayerActionTipSeen(client, "VehiclePartItemUsage");
@@ -1575,7 +1575,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHLIVERY: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their decal kit and adds some decals to the vehicle.`);
 				setVehicleLivery(vehicle, itemData.value);
 			}
@@ -1584,7 +1584,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHCOLOUR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				if (itemData.useId == 1) {
 					meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
 					setVehicleColours(vehicle, getVehicleData(vehicle).colour1, itemData.value);
@@ -1606,7 +1606,7 @@ function playerUseItem(client, hotBarSlot) {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			let fuelPump = getClosestFuelPump(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position)) {
-				if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+				if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 					meActionToNearbyPlayers(client, `takes their fuel can and refills the vehicle`);
 					if (itemData.value < itemTypeData.useValue) {
 						getVehicleData(vehicle).fuel += itemData.value;
@@ -1620,7 +1620,7 @@ function playerUseItem(client, hotBarSlot) {
 					//}
 				}
 			} else {
-				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= getGlobalConfig().fuelPumpUseDistance) {
+				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= globalConfig.fuelPumpUseDistance) {
 
 					if (itemData.amount < 100) {
 						let amountToFull = 100 - itemData.amount;
@@ -1744,7 +1744,7 @@ function playerUseItem(client, hotBarSlot) {
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().firstAidKitPlayerDistance) {
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.firstAidKitPlayerDistance) {
 				messagePlayerError(client, "There isn't anyone close enough to heal!");
 				return false;
 			}
@@ -1986,7 +1986,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 
 	//if(currentHotBarItem != -1) {
 	//	if(getItemData(currentHotBarItem)) {
-	//		if(getGlobalConfig().weaponEquippableTypes.indexOf(getItemTypeData(getItemData(currentHotBarItem).itemTypeIndex).useType) != -1) {
+	//		if(globalConfig.weaponEquippableTypes.indexOf(getItemTypeData(getItemData(currentHotBarItem).itemTypeIndex).useType) != -1) {
 	//			clearPlayerWeapons(client);
 	//		}
 	//	}
@@ -2350,14 +2350,14 @@ function getBestNewOwnerToPutItem(client) {
 
 	let possibleItem = getClosestItemOnGround(position);
 	if (possibleItem != -1) {
-		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
+		if (getDistance(getItemPosition(possibleItem), position) <= globalConfig.itemContainerDistance) {
 			return [V_ITEM_OWNER_ITEM, possibleItem];
 		}
 	}
 
 	let possibleVehicle = getClosestVehicle(position);
 	if (possibleVehicle != false) {
-		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
 			return [V_ITEM_OWNER_VEHTRUNK, possibleVehicle];
 		}
 	}
@@ -2412,7 +2412,7 @@ function getBestItemToTake(client, slot) {
 
 	let possibleVehicle = getClosestVehicle(position);
 	if (getVehicleData(possibleVehicle) != false) {
-		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
 			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
 				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
 				ownerType = V_ITEM_OWNER_VEHTRUNK;
@@ -2488,7 +2488,7 @@ function listOtherPlayerInventoryCommand(command, params, client) {
 			return false;
 		}
 
-		if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().searchPlayerDistance) {
+		if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.searchPlayerDistance) {
 			messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 			return false;
 		}
@@ -2516,7 +2516,7 @@ function listVehicleTrunkInventoryCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getVehicleTrunkPosition(vehicle)) > getGlobalConfig().vehicleTrunkDistance) {
+	if (getDistance(getPlayerPosition(client), getVehicleTrunkPosition(vehicle)) > globalConfig.vehicleTrunkDistance) {
 		messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 		return false;
 	}
@@ -2664,7 +2664,7 @@ function listHouseInventoryCommand(command, params, client) {
 function listItemInventoryCommand(command, params, client) {
 	let itemId = getClosestItemOnGround(getPlayerPosition(client));
 
-	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > getGlobalConfig().droppedItemPickupRange) {
+	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > globalConfig.droppedItemPickupRange) {
 		messagePlayerError(client, `You're too far away!`);
 		return false;
 	}
@@ -2720,7 +2720,7 @@ function getItemTypeData(itemTypeId) {
 // ===========================================================================
 
 function saveAllItemsToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -2734,7 +2734,7 @@ function saveAllItemsToDatabase() {
 // ===========================================================================
 
 function saveAllItemTypesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -3017,7 +3017,7 @@ function getItemValueDisplay(itemType, value) {
 	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_BADGE) {
 		return `#${value}`;
 		//} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_VEHCOLOUR) {
-		//	return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
+		//	return `[${gameData.vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
 	} else {
 		return value;
 	}
@@ -3182,7 +3182,7 @@ function resyncWeaponItemAmmo(client) {
 	if (getPlayerData(client).currentHotBarItem != -1) {
 		if (getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem] != -1) {
 			if (getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem])) {
-				if (getGlobalConfig().weaponEquippableTypes.indexOf(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).itemTypeIndex).useType)) {
+				if (globalConfig.weaponEquippableTypes.indexOf(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).itemTypeIndex).useType)) {
 					if (getPlayerWeaponAmmo(client) <= getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).value) {
 						getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).value = getPlayerWeaponAmmo(client);
 					} else {
@@ -3197,7 +3197,7 @@ function resyncWeaponItemAmmo(client) {
 // ===========================================================================
 
 function getOrderPriceForItemType(itemType) {
-	return getItemTypeData(itemType).orderPrice * getServerConfig().inflationMultiplier * getItemTypeData(itemType).demandMultiplier * getItemTypeData(itemType).supplyMultiplier * getItemTypeData(itemType).riskMultiplier;
+	return getItemTypeData(itemType).orderPrice * serverConfig.inflationMultiplier * getItemTypeData(itemType).demandMultiplier * getItemTypeData(itemType).supplyMultiplier * getItemTypeData(itemType).riskMultiplier;
 }
 
 // ===========================================================================
@@ -3423,7 +3423,7 @@ function switchPlayerActiveHotBarSlot(client, slotId) {
 	if (slotId != -1) {
 		showPlayerItemSwitchDelay(client, slotId);
 	}
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -3551,7 +3551,7 @@ function despawnAllGroundItemObjects() {
 // ===========================================================================
 
 function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector3(0.0, 0.0, 0.0)) {
-	//if (getServerConfig().devServer) {
+	//if (serverConfig.devServer) {
 	//	return false;
 	//}
 	//

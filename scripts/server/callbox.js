@@ -40,7 +40,7 @@ function initCallBoxScript() {
 function createCallBoxCommand(command, params, client) {
 	let closestCallBox = getClosestCallBox(getPlayerPosition(client));
 	if (closestCallBox != -1) {
-		if (getDistance(getPlayerPosition(client), getCallBoxData(closestCallBox).position) <= getGlobalConfig().callBoxUseDistance) {
+		if (getDistance(getPlayerPosition(client), getCallBoxData(closestCallBox).position) <= globalConfig.callBoxUseDistance) {
 			messagePlayerError(client, "There is already a callbox at this location!");
 			return false;
 		}
@@ -157,7 +157,7 @@ function loadCallBoxesFromDatabase() {
 // ===========================================================================
 
 function saveAllCallBoxesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -169,7 +169,7 @@ function saveAllCallBoxesToDatabase() {
 // ===========================================================================
 
 function saveCallBoxToDatabase(callBoxIndex) {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		logToConsole(LOG_VERBOSE, `[V.RP.CallBox]: Call box ${callBoxIndex} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}

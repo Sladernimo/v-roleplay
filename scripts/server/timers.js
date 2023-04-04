@@ -12,7 +12,7 @@ let serverTimers = {};
 // ===========================================================================
 
 function saveServerDataToDatabase() {
-	if (getServerConfig().pauseSavingToDatabase) {
+	if (serverConfig.pauseSavingToDatabase) {
 		return false;
 	}
 
@@ -226,41 +226,41 @@ function checkServerGameTime() {
 	//	return false;
 	//}
 
-	if (!getServerConfig().useRealTime) {
-		if (getServerConfig().minute >= 59) {
-			getServerConfig().minute = 0;
-			if (getServerConfig().hour >= 23) {
-				getServerConfig().hour = 0;
+	if (!serverConfig.useRealTime) {
+		if (serverConfig.minute >= 59) {
+			serverConfig.minute = 0;
+			if (serverConfig.hour >= 23) {
+				serverConfig.hour = 0;
 			} else {
-				getServerConfig().hour = getServerConfig().hour + 1;
+				serverConfig.hour = serverConfig.hour + 1;
 			}
 		} else {
-			getServerConfig().minute = getServerConfig().minute + 1;
+			serverConfig.minute = serverConfig.minute + 1;
 		}
 	} else {
-		let dateTime = getCurrentTimeStampWithTimeZone(getServerConfig().realTimeZone);
-		getServerConfig().hour = dateTime.getHours();
-		getServerConfig().minute = dateTime.getMinutes();
+		let dateTime = getCurrentTimeStampWithTimeZone(serverConfig.realTimeZone);
+		serverConfig.hour = dateTime.getHours();
+		serverConfig.minute = dateTime.getMinutes();
 	}
 
-	if (!getServerConfig().devServer) {
+	if (!serverConfig.devServer) {
 		if (getGame() == V_GAME_MAFIA_ONE) {
-			if (getGameConfig().mainWorldScene[getGame()] == "FREERIDE") {
-				//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+			if (gameData.mainWorldScene[getGame()] == "FREERIDE") {
+				//if (isServerGoingToChangeMapsSoon(serverConfig.hour, serverConfig.minute)) {
 				//	sendMapChangeWarningToPlayer(null, true);
 				//}
 
-				if (isNightTime(getServerConfig().hour)) {
+				if (isNightTime(serverConfig.hour)) {
 					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
 					messageDiscordEventChannel("🌙 Changing server map to night");
-					getGameConfig().mainWorldScene[getGame()] = "FREERIDENOC";
-					setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
+					gameData.mainWorldScene[getGame()] = "FREERIDENOC";
+					setServerPassword(generateRandomString(10, globalConfig.alphaNumericCharacters));
 					if (!serverStarting) {
 						kickAllClients();
 						saveServerDataToDatabase();
 						despawnAllServerElements();
 					}
-					game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+					game.changeMap(gameData.mainWorldScene[getGame()]);
 					spawnAllServerElements();
 					setServerPassword("");
 				} else {
@@ -268,22 +268,22 @@ function checkServerGameTime() {
 						spawnAllServerElements();
 					}
 				}
-			} else if (getGameConfig().mainWorldScene[getGame()] == "FREERIDENOC") {
-				//if (isServerGoingToChangeMapsSoon(getServerConfig().hour, getServerConfig().minute)) {
+			} else if (gameData.mainWorldScene[getGame()] == "FREERIDENOC") {
+				//if (isServerGoingToChangeMapsSoon(serverConfig.hour, serverConfig.minute)) {
 				//	sendMapChangeWarningToPlayer(null, true);
 				//}
 
-				if (!isNightTime(getServerConfig().hour)) {
+				if (!isNightTime(serverConfig.hour)) {
 					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
 					messageDiscordEventChannel("🌞 Changing server map to day");
-					getGameConfig().mainWorldScene[getGame()] = "FREERIDE";
-					setServerPassword(generateRandomString(10, getGlobalConfig().alphaNumericCharacters));
+					gameData.mainWorldScene[getGame()] = "FREERIDE";
+					setServerPassword(generateRandomString(10, globalConfig.alphaNumericCharacters));
 					if (!serverStarting) {
 						kickAllClients();
 						saveServerDataToDatabase();
 						despawnAllServerElements();
 					}
-					game.changeMap(getGameConfig().mainWorldScene[getGame()]);
+					game.changeMap(gameData.mainWorldScene[getGame()]);
 					spawnAllServerElements();
 					setServerPassword("");
 				} else {
@@ -296,8 +296,8 @@ function checkServerGameTime() {
 	}
 
 	if (isGameFeatureSupported("time")) {
-		game.time.hour = getServerConfig().hour;
-		game.time.minute = getServerConfig().minute;
+		game.time.hour = serverConfig.hour;
+		game.time.minute = serverConfig.minute;
 	}
 
 	updateServerRules();
@@ -317,7 +317,7 @@ function checkPayDays() {
 				getPlayerData(clients[i]).payDayStart = sdl.ticks;
 				playerPayDay(clients[i]);
 
-				//if(sdl.ticks-getPlayerData(clients[i]).payDayTickStart >= getGlobalConfig().payDayTickCount) {
+				//if(sdl.ticks-getPlayerData(clients[i]).payDayTickStart >= globalConfig.payDayTickCount) {
 				//	getPlayerData(clients[i]).payDayStart = sdl.ticks;
 				//	playerPayDay(clients[i]);
 				//}
@@ -327,7 +327,7 @@ function checkPayDays() {
 
 	for (let i in getServerData().businesses) {
 		if (getBusinessData(i).ownerType != V_BIZ_OWNER_NONE && getBusinessData(i).ownerType != V_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != V_BIZ_OWNER_FACTION) {
-			let addToTill = getServerConfig().economy.passiveIncomePerPayDay;
+			let addToTill = serverConfig.economy.passiveIncomePerPayDay;
 			if (isDoubleBonusActive()) {
 				addToTill = addToTill * 2;
 			}
@@ -366,7 +366,7 @@ function checkInactiveVehicleRespawns() {
 		if (getVehicleData(vehicles[i] != false)) {
 			if (isVehicleUnoccupied(vehicles[i])) {
 				if (getVehicleData(vehicles[i]).lastActiveTime != false) {
-					if (getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= getGlobalConfig().vehicleInactiveRespawnDelay) {
+					if (getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= globalConfig.vehicleInactiveRespawnDelay) {
 						respawnVehicle(vehicles[i]);
 						//getVehicleData(vehicles[i]).lastActiveTime = false;
 					}
@@ -383,9 +383,9 @@ function checkInactiveVehicleRespawns() {
 function setSnowWithChance() {
 	let date = new Date();
 
-	let shouldBeSnowing = getRandomBoolWithProbability(getGlobalConfig().monthlyChanceOfSnow[date.getMonth()]);
-	getServerConfig().groundSnow = shouldBeSnowing;
-	getServerConfig().fallingSnow = shouldBeSnowing;
+	let shouldBeSnowing = getRandomBoolWithProbability(globalConfig.monthlyChanceOfSnow[date.getMonth()]);
+	serverConfig.groundSnow = shouldBeSnowing;
+	serverConfig.fallingSnow = shouldBeSnowing;
 
 	updatePlayerSnowState(null, false);
 }
@@ -393,18 +393,18 @@ function setSnowWithChance() {
 // ===========================================================================
 
 function setRandomWeather() {
-	let randomWeatherIndex = getRandom(0, getGameConfig().weather[getGame()].length - 1);
+	let randomWeatherIndex = getRandom(0, gameData.weather[getGame()].length - 1);
 
-	if (getServerConfig().fallingSnow == true) {
+	if (serverConfig.fallingSnow == true) {
 		while (getWeatherData(randomWeatherIndex).allowWithSnow == false) {
-			randomWeatherIndex = getRandom(0, getGameConfig().weather[getGame()].length - 1);
+			randomWeatherIndex = getRandom(0, gameData.weather[getGame()].length - 1);
 		}
 	}
 
 	game.forceWeather(getWeatherData(randomWeatherIndex).weatherId);
-	getServerConfig().weather = randomWeatherIndex;
+	serverConfig.weather = randomWeatherIndex;
 
-	getServerConfig().needsSaved = true;
+	serverConfig.needsSaved = true;
 }
 
 // ===========================================================================

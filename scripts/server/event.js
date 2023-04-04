@@ -374,13 +374,13 @@ function onPlayerSpawn(client) {
 		}
 
 		if (areServerElementsSupported()) {
-			if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
+			if (globalConfig.playerStreamInDistance == -1 || globalConfig.playerStreamOutDistance == -1) {
 				//getPlayerPed(client).netFlags.distanceStreaming = false;
 				setElementStreamInDistance(getPlayerPed(client), 99999);
 				setElementStreamOutDistance(getPlayerPed(client), 99999);
 			} else {
-				setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
-				setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
+				setElementStreamInDistance(getPlayerPed(client), serverConfig.playerStreamInDistance);
+				setElementStreamOutDistance(getPlayerPed(client), serverConfig.playerStreamOutDistance);
 			}
 
 			resetPlayerBlip(client);
@@ -478,7 +478,7 @@ function onPlayerSpawn(client) {
 
 	if (isGameFeatureSupported("rendering2D")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
-		updatePlayerShowLogoState(client, (getServerConfig().showLogo && doesPlayerHaveLogoEnabled(client)));
+		updatePlayerShowLogoState(client, (serverConfig.showLogo && doesPlayerHaveLogoEnabled(client)));
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items`);
@@ -548,7 +548,7 @@ function onPlayerSpawn(client) {
 
 	if (isGameFeatureSupported("customNametag")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
-		sendNameTagDistanceToClient(client, getServerConfig().nameTagDistance);
+		sendNameTagDistanceToClient(client, serverConfig.nameTagDistance);
 	}
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
@@ -574,7 +574,7 @@ function onPlayerSpawn(client) {
 
 	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 
-	if (doesPlayerHaveGUIEnabled(client) && getServerConfig().useGUI == true) {
+	if (doesPlayerHaveGUIEnabled(client) && serverConfig.useGUI == true) {
 		if (checkForGeoIPModule()) {
 			let iso = getPlayerCountryISOCode(client);
 			let localeId = getLocaleFromCountryISO(iso);
@@ -588,13 +588,13 @@ function onPlayerSpawn(client) {
 	}
 
 	if (areServerElementsSupported()) {
-		if (getGlobalConfig().playerStreamInDistance == -1 || getGlobalConfig().playerStreamOutDistance == -1) {
+		if (globalConfig.playerStreamInDistance == -1 || globalConfig.playerStreamOutDistance == -1) {
 			//getPlayerPed(client).netFlags.distanceStreaming = false;
 			setElementStreamInDistance(getPlayerPed(client), 99999);
 			setElementStreamOutDistance(getPlayerPed(client), 99999);
 		} else {
-			setElementStreamInDistance(getPlayerPed(client), getServerConfig().playerStreamInDistance);
-			setElementStreamOutDistance(getPlayerPed(client), getServerConfig().playerStreamOutDistance);
+			setElementStreamInDistance(getPlayerPed(client), serverConfig.playerStreamInDistance);
+			setElementStreamOutDistance(getPlayerPed(client), serverConfig.playerStreamOutDistance);
 		}
 
 		resetPlayerBlip(client);
@@ -604,7 +604,7 @@ function onPlayerSpawn(client) {
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
-	if (getPlayerDimension(client) != getGameConfig().mainWorldDimension[getGame()]) {
+	if (getPlayerDimension(client) != gameData.mainWorldDimension[getGame()]) {
 		let businessId = getPlayerBusiness(client);
 		let houseId = getPlayerHouse(client);
 		if (businessId != -1) {

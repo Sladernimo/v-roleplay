@@ -367,7 +367,7 @@ let extraContentResource = {
 // ===========================================================================
 
 /**
- * @typedef {Object} GameConfig
+ * @typedef {Object} gameData
  */
 let gameData = {
 	weaponNames: {

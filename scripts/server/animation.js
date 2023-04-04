@@ -35,7 +35,7 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (toInteger(animationPositionOffset) < getGlobalConfig().minAnimationMoveDistance || toInteger(animationPositionOffset) > getGlobalConfig().maxAnimationMoveDistance) {
+	if (toInteger(animationPositionOffset) < globalConfig.minAnimationMoveDistance || toInteger(animationPositionOffset) > globalConfig.maxAnimationMoveDistance) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
 	}
@@ -82,7 +82,7 @@ function stopPlayerAnimationCommand(command, params, client) {
 // ===========================================================================
 
 function showAnimationListCommand(command, params, client) {
-	let animList = getGameConfig().animations[getGame()].map(function (x) { return x.name; });
+	let animList = gameData.animations[getGame()].map(function (x) { return x.name; });
 
 	let chunkedList = splitArrayIntoChunks(animList, 10);
 

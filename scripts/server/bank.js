@@ -39,7 +39,7 @@ function isPositionAtATM(position) {
 
 	let atmData = getServerData().atmLocationCache[atmId];
 
-	if (getDistance(position, atmData[2]) <= getGlobalConfig().atmDistance) {
+	if (getDistance(position, atmData[2]) <= globalConfig.atmDistance) {
 		return true;
 	}
 
@@ -68,7 +68,7 @@ function isPositionAtATM(position) {
 
 	let atmData = getServerData().atmLocationCache[atmId];
 
-	if (getDistance(position, atmData[2]) <= getGlobalConfig().atmDistance) {
+	if (getDistance(position, atmData[2]) <= globalConfig.atmDistance) {
 		return true;
 	}
 

@@ -373,7 +373,7 @@ function setLocalPlayerSkin(skinId) {
 
 function makePedHoldObject(pedId, modelIndex) {
 	if (getGame() == V_GAME_GTA_IV) {
-		natives.givePedAmbientObject(natives.getPedFromNetworkId(pedId), getGameConfig().objects[getGame()][modelIndex][1])
+		natives.givePedAmbientObject(natives.getPedFromNetworkId(pedId), gameData.objects[getGame()][modelIndex][1])
 	}
 }
 

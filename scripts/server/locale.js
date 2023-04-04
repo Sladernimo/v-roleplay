@@ -146,7 +146,7 @@ function getPlayerLocaleName(client) {
 function loadAllLocaleStrings() {
 	let tempLocaleStrings = {};
 
-	let locales = getGlobalConfig().locale.locales;
+	let locales = globalConfig.locale.locales;
 	for (let i in locales) {
 		let localeData = locales[i];
 		let localeFile = JSON.parse(loadTextFile(`locale/${localeData.stringsFile}`));
@@ -184,7 +184,7 @@ function getLocaleFromParams(params) {
 // ===========================================================================
 
 function getLocales() {
-	return getGlobalConfig().locale.locales;
+	return globalConfig.locale.locales;
 }
 
 // ===========================================================================
@@ -234,23 +234,23 @@ function getLocaleData(localeId) {
 // ===========================================================================
 
 function reloadLocaleConfigurationCommand(command, params, client) {
-	getGlobalConfig().locale = loadLocaleConfig();
+	globalConfig.locale = loadLocaleConfig();
 	getServerData().localeStrings = loadAllLocaleStrings();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
+	getServerData().cachedTranslations = new Array(globalConfig.locale.locales.length);
+	getServerData().cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
 	getServerData().cachedTranslationFrom.fill([]);
 	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
 
-	getGlobalConfig().locale.defaultLanguageId = getLocaleFromParams(getGlobalConfig().locale.defaultLanguage);
+	globalConfig.locale.defaultLanguageId = getLocaleFromParams(globalConfig.locale.defaultLanguage);
 
 	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} has reloaded the locale settings and texts`);
 }
 
 // ===========================================================================
 
-function translateMessage(messageText, translateFrom = getGlobalConfig().locale.defaultLanguageId, translateTo = getGlobalConfig().locale.defaultLanguageId) {
+function translateMessage(messageText, translateFrom = globalConfig.locale.defaultLanguageId, translateTo = globalConfig.locale.defaultLanguageId) {
 	//return new Promise(resolve => {
 	if (translateFrom == translateTo) {
 		resolve(messageText);
@@ -258,13 +258,13 @@ function translateMessage(messageText, translateFrom = getGlobalConfig().locale.
 
 	for (let i in cachedTranslations[translateFrom][translateTo]) {
 		if (cachedTranslations[translateFrom][translateTo][i][0] == messageText) {
-			logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${getGlobalConfig().locale.locales[translateFrom].englishName} to ${getGlobalConfig().locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
+			logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${globalConfig.locale.locales[translateFrom].englishName} to ${globalConfig.locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
 			resolve(cachedTranslations[translateFrom][translateTo][i][1]);
 			return true;
 		}
 	}
 
-	let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
+	let thisTranslationURL = globalConfig.locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(globalConfig.locale.locales[translateFrom].isoCode), toUpperCase(globalConfig.locale.locales[translateTo].isoCode), globalConfig.locale.apiEmail);
 	httpGet(
 		thisTranslationURL,
 		"",

@@ -164,7 +164,7 @@ function triggerGateCommand(command, params, client) {
 // ===========================================================================
 
 function saveAllGatesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 

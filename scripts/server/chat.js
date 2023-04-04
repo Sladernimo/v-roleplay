@@ -55,7 +55,7 @@ function processPlayerChat(client, messageText) {
 			return true;
 		}
 
-		switch (getServerConfig().normalChatType) {
+		switch (serverConfig.normalChatType) {
 			case V_CHAT_TYPE_TALK:
 				talkToNearbyPlayers(client, messageText);
 				break;
@@ -112,7 +112,7 @@ function globalOOCCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getServerConfig().globalChatEnabled) {
+	if (!serverConfig.globalChatEnabled) {
 		messagePlayerError(client, getLocaleString(client, "GlobalChatDisabled"));
 		return false;
 	}
@@ -353,13 +353,13 @@ function talkToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().talkDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.talkDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerTalk(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendLocalChat) {
+	if (globalConfig.discord.sendLocalChat) {
 		messageDiscordChatChannel(`🗣️ ${getPlayerAccentInlineOutput(talkingClient)}${getClientSubAccountName(talkingClient)} says: ${messageText}`);
 	}
 }
@@ -370,7 +370,7 @@ function phoneOutgoingToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().talkDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.talkDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerNormal(`[#CCCCCC]${getCharacterFullName(client)} {ALTCOLOUR}(to phone): {MAINCOLOUR}${messageText}`);
 			}
 		}
@@ -383,7 +383,7 @@ function phoneIncomingToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().phoneSpeakerDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.phoneSpeakerDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerNormal(`[#CCCCCC]${getCharacterFullName(client)} {ALTCOLOUR}(from phone): {MAINCOLOUR}${messageText}`);
 			}
 		}
@@ -396,13 +396,13 @@ function whisperToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().whisperDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.whisperDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerWhisper(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendLocalChat) {
+	if (globalConfig.discord.sendLocalChat) {
 		messageDiscordChatChannel(`🤫 ${getPlayerAccentInlineOutput(whisperingClient)}${getClientSubAccountName(whisperingClient)} whispers: ${messageText}`);
 	}
 }
@@ -413,13 +413,13 @@ function shoutToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().shoutDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.shoutDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerShout(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendLocalChat) {
+	if (globalConfig.discord.sendLocalChat) {
 		messageDiscordChatChannel(`🗣️ ${getPlayerAccentInlineOutput(shoutingClient)}${getClientSubAccountName(shoutingClient)} shouts: ${messageText}!`);
 	}
 }
@@ -430,13 +430,13 @@ function megaPhoneToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().megaphoneDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.megaphoneDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerMegaPhone(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendLocalChat) {
+	if (globalConfig.discord.sendLocalChat) {
 		messageDiscordChatChannel(`📢 ${getPlayerAccentInlineOutput(shoutingClient)}${getClientSubAccountName(shoutingClient)} (megaphone): ${messageText}!`);
 	}
 }
@@ -447,13 +447,13 @@ function doActionToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerDoAction(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendAction) {
+	if (globalConfig.discord.sendAction) {
 		messageDiscordChatChannel(`🙋 *${messageText} (${getCharacterFullName(client)})*`);
 	}
 }
@@ -464,13 +464,13 @@ function meActionToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().meActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.meActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerMeAction(clients[i], client, messageText);
 			}
 		}
 	}
 
-	if (getGlobalConfig().discord.sendAction) {
+	if (globalConfig.discord.sendAction) {
 		messageDiscordChatChannel(`🙋 *${getCharacterFullName(client)} ${messageText}*`);
 	}
 }
@@ -487,7 +487,7 @@ function clanChat(client, messageText) {
 		}
 	}
 
-	//if (getGlobalConfig().discord.sendClan) {
+	//if (globalConfig.discord.sendClan) {
 	//	messageDiscordClanWebhook(getPlayerClan(client), getClanDiscordWebhookFlagValue("ClanChat"), fullString);
 	//}
 }
@@ -523,7 +523,7 @@ function oocToNearbyPlayers(client, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= getGlobalConfig().doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
 				messagePlayerNormal(clients[i], `💬 ${getCharacterFullName(client)}: {lightGrey}(( ${messageText} ))`, getPlayerColour(client));
 			}
 		}

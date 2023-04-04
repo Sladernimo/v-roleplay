@@ -8,7 +8,7 @@
 // ===========================================================================
 
 function getCustomImage(imageName) {
-	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
+	let contentResource = findResourceByName(extraContentResource[getGame()]);
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			let image = contentResource.exports.getCustomImage(imageName);
@@ -23,7 +23,7 @@ function getCustomImage(imageName) {
 // ===========================================================================
 
 function getCustomFont(fontName) {
-	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
+	let contentResource = findResourceByName(extraContentResource[getGame()]);
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			let font = contentResource.exports.getCustomFont(fontName);
@@ -38,7 +38,7 @@ function getCustomFont(fontName) {
 // ===========================================================================
 
 function getCustomAudio(audioName) {
-	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
+	let contentResource = findResourceByName(extraContentResource[getGame()]);
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			let audioFile = contentResource.exports.getCustomAudio(audioName);
@@ -53,7 +53,7 @@ function getCustomAudio(audioName) {
 // ===========================================================================
 
 function playCustomAudio(audioName, volume = 0.5, loop = false) {
-	let contentResource = findResourceByName(getGameConfig().extraContentResource[getGame()]);
+	let contentResource = findResourceByName(extraContentResource[getGame()]);
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			contentResource.exports.playCustomAudio(audioName, volume, loop);

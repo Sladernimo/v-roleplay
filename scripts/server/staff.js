@@ -317,9 +317,9 @@ function getPlayerGeoIPInformationCommand(command, params, client) {
 	let cityName = "Unknown";
 
 	try {
-		countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
-		subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
-		cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
+		subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
 	} catch (err) {
 		messagePlayerError(client, `There was an error getting the geoip information for ${getPlayerName(targetClient)}`);
 		submitBugReport(client, `[AUTOMATED REPORT] Getting geoip information for ${getPlayerName(targetClient)} (${getPlayerIP(targetClient)} failed: ${err}`);
@@ -542,7 +542,7 @@ function warpIntoVehicleCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
 	if (areParamsEmpty(params)) {
-		if (!getPlayerVehicle(client) && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > getGlobalConfig().vehicleLockDistance) {
+		if (!getPlayerVehicle(client) && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > globalConfig.vehicleLockDistance) {
 			messagePlayerError(client, getLocaleString(client, "MustBeInOrNearVehicle"));
 			return false;
 		}
@@ -670,20 +670,20 @@ function gotoGameLocationCommand(command, params, client) {
 	}
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
-	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
-	setPlayerHeading(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	setPlayerPosition(client, gameData.locations[getGame()][gameLocationId][1]);
+	setPlayerHeading(client, gameData.locations[getGame()][gameLocationId][1]);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
 
 	//setTimeout(function() {
-	//	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	//	setPlayerPosition(client, gameData.locations[getGame()][gameLocationId][1]);
 	//	setPlayerInterior(client, 0);
 	//	setPlayerDimension(client, 0);
 	//	updateInteriorLightsForPlayer(client, true);
 	//}, 500);
 
-	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${getGameConfig().locations[getGame()][gameLocationId][0]}`);
+	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${gameData.locations[getGame()][gameLocationId][0]}`);
 }
 
 // ===========================================================================
@@ -779,7 +779,7 @@ function gotoJobLocationCommand(command, params, client) {
  */
 function gotoNewPlayerSpawnCommand(command, params, client) {
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
-	setPlayerPosition(client, getServerConfig().newCharacter.spawnPosition);
+	setPlayerPosition(client, serverConfig.newCharacter.spawnPosition);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
@@ -1535,7 +1535,7 @@ function forcePlayerSkinCommand(command, params, client) {
 	getPlayerCurrentSubAccount(targetClient).skin = skinIndex;
 	setPlayerSkin(targetClient, skinIndex);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${gameData.skins[getGame()][skinIndex][1]}`);
 }
 
 /**
@@ -1938,13 +1938,13 @@ function forcePlayerFightStyleCommand(command, params, client) {
 
 	if (!fightStyleId) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
-		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
+		messagePlayerError(client, `Fight styles: ${gameData.fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
 		return false;
 	}
 
 	getPlayerCurrentSubAccount(client).fightStyle = fightStyleId;
 	setPlayerFightStyle(client, fightStyleId);
-	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${getGameConfig().fightStyles[getGame()][fightStyleId][0]}`)
+	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${gameData.fightStyles[getGame()][fightStyleId][0]}`)
 
 	return true;
 }
@@ -2109,27 +2109,27 @@ function setServerDefaultChatTypeCommand(command, params, client) {
 
 	switch (toLowerCase(params)) {
 		case "global":
-			getServerConfig().normalChatType = V_CHAT_TYPE_GLOBAL;
+			serverConfig.normalChatType = V_CHAT_TYPE_GLOBAL;
 			break;
 
 		case "local":
-			getServerConfig().normalChatType = V_CHAT_TYPE_LOCAL;
+			serverConfig.normalChatType = V_CHAT_TYPE_LOCAL;
 			break;
 
 		case "talk":
-			getServerConfig().normalChatType = V_CHAT_TYPE_TALK;
+			serverConfig.normalChatType = V_CHAT_TYPE_TALK;
 			break;
 
 		case "shout":
-			getServerConfig().normalChatType = V_CHAT_TYPE_SHOUT;
+			serverConfig.normalChatType = V_CHAT_TYPE_SHOUT;
 			break;
 
 		case "whisper":
-			getServerConfig().normalChatType = V_CHAT_TYPE_WHISPER;
+			serverConfig.normalChatType = V_CHAT_TYPE_WHISPER;
 			break;
 
 		case "none":
-			getServerConfig().normalChatType = V_CHAT_TYPE_NONE;
+			serverConfig.normalChatType = V_CHAT_TYPE_NONE;
 			break;
 
 		default:

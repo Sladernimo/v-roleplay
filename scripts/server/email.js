@@ -74,7 +74,7 @@ function sendEmail(toEmail, toName, subject, body) {
 // ===========================================================================
 
 function getEmailConfig() {
-	return getGlobalConfig().email;
+	return globalConfig.email;
 }
 
 // ===========================================================================

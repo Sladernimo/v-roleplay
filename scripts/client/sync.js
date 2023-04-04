@@ -131,7 +131,7 @@ function syncVehicleProperties(vehicle) {
 	}
 
 	if (isGameFeatureSupported("vehicleUpgrades")) {
-		//let allUpgrades = getGameConfig().vehicleUpgrades[getGame()];
+		//let allUpgrades = gameData.vehicleUpgrades[getGame()];
 		//for(let i in allUpgrades) {
 		//	vehicle.removeUpgrade(i);
 		//}

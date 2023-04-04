@@ -1775,7 +1775,7 @@ function isGameFeatureSupported(featureName) {
 // ===========================================================================
 
 function getAllowedSkins(gameId = getGame()) {
-	return getGameConfig().skins[gameId].filter(skin => skin[2] == true);
+	return gameData.skins[gameId].filter(skin => skin[2] == true);
 }
 
 // ===========================================================================
@@ -1794,7 +1794,7 @@ function getAllowedSkinIndexFromSkin(skin) {
 // ===========================================================================
 
 function getSkinIndexFromModel(model, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1807,7 +1807,7 @@ function getSkinIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinIndexFromName(name, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
@@ -1820,7 +1820,7 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelIndexFromName(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1833,7 +1833,7 @@ function getObjectModelIndexFromName(model, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelIndexFromModel(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1846,7 +1846,7 @@ function getObjectModelIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getGameName(gameId = getGame()) {
-	return getGameConfig().gameNames[gameId];
+	return gameData.gameNames[gameId];
 }
 
 // ===========================================================================
@@ -1869,7 +1869,7 @@ function getVehicleModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelIndexFromName(name, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
@@ -1882,7 +1882,7 @@ function getVehicleModelIndexFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelIndexFromModel(model, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (isNaN(model)) {
 			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
@@ -1901,7 +1901,7 @@ function getVehicleModelIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelFromName(name, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return vehicles[i][0];
@@ -1914,7 +1914,7 @@ function getVehicleModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleNameFromModel(model, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (isNaN(model)) {
 			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
@@ -1950,7 +1950,7 @@ function getSkinModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinNameFromModel(model, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return skins[i][1];
@@ -1963,8 +1963,8 @@ function getSkinNameFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinNameFromIndex(index, gameId = getGame()) {
-	if (typeof getGameConfig().skins[gameId][index] != "undefined") {
-		return getGameConfig().skins[gameId][index][1];
+	if (typeof gameData.skins[gameId][index] != "undefined") {
+		return gameData.skins[gameId][index][1];
 	}
 
 	return "Unknown";
@@ -1973,7 +1973,7 @@ function getSkinNameFromIndex(index, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinModelFromName(name, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return skins[i][0];
@@ -2001,7 +2001,7 @@ function getObjectModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectNameFromModel(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return objects[i][1];
@@ -2014,7 +2014,7 @@ function getObjectNameFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelFromName(name, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return objects[i][0];
@@ -2363,14 +2363,14 @@ function waitUntil(condition) {
 
 function getGameLocationFromParams(params) {
 	if (isNaN(params)) {
-		let locations = getGameConfig().locations[getGame()];
+		let locations = gameData.locations[getGame()];
 		for (let i in locations) {
 			if (toLowerCase(locations[i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().locations[getGame()][params] != "undefined") {
+		if (typeof gameData.locations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -3125,7 +3125,7 @@ function getPlayerLocationName(client) {
 	if(getHouseData(closestHouse)) {
 		let areaId = getGameAreaFromPos(getPlayerPosition(client));
 		if(getDistance(getHouseData(closestHouse).entrancePosition) > 7) {
-			return `near ${getHouseData(closestHouse).description} in ${getGameConfig().areas[getGame()][areaId][1]}`;
+			return `near ${getHouseData(closestHouse).description} in ${gameData.areas[getGame()][areaId][1]}`;
 		}
 	}
 }
@@ -3134,7 +3134,7 @@ function getPlayerLocationName(client) {
 // ===========================================================================
 
 function getGameAreaFromPos(position) {
-	let areas = getGameConfig().areas[getGame()];
+	let areas = gameData.areas[getGame()];
 	for (let i in areas) {
 		if (isPointInPoly(areas[i].borders, position)) {
 			return i;
@@ -3201,7 +3201,7 @@ function removeBitFlag(allFlags, flagValue) {
 // ===========================================================================
 
 function getAnimationFromParams(params) {
-	let animations = getGameConfig().animations[getGame()];
+	let animations = gameData.animations[getGame()];
 	if (isNaN(params)) {
 		for (let i in animations) {
 			if (toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
@@ -3209,7 +3209,7 @@ function getAnimationFromParams(params) {
 			}
 		}
 	} else {
-		if (typeof getGameConfig().animations[getGame()][params] != "undefined") {
+		if (typeof gameData.animations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -3228,8 +3228,8 @@ function getAnimationData(animationSlot, gameId = getGame()) {
 		return false;
 	}
 
-	if (typeof getGameConfig().animations[gameId][animationSlot] != "undefined") {
-		return getGameConfig().animations[gameId][animationSlot];
+	if (typeof gameData.animations[gameId][animationSlot] != "undefined") {
+		return gameData.animations[gameId][animationSlot];
 	}
 
 	return false;
@@ -3248,7 +3248,7 @@ function fillLeadingZeros(number, length) {
 // ===========================================================================
 
 function isMainWorldScene(sceneName, gameId = getGame()) {
-	return (sceneName == "V.RP.MAINWORLD" || sceneName == "" || sceneName == getGameConfig().mainWorldScene[gameId]);
+	return (sceneName == "V.RP.MAINWORLD" || sceneName == "" || sceneName == gameData.mainWorldScene[gameId]);
 }
 
 // ===========================================================================
@@ -3286,11 +3286,11 @@ function getRandomBoolWithProbability(percentChance) {
 // ===========================================================================
 
 function getWeatherData(weatherIndex, gameId = getGame()) {
-	if (typeof getGameConfig().weather[gameId][weatherIndex] == "undefined") {
+	if (typeof gameData.weather[gameId][weatherIndex] == "undefined") {
 		return false;
 	}
 
-	return getGameConfig().weather[gameId][weatherIndex];
+	return gameData.weather[gameId][weatherIndex];
 }
 
 // ===========================================================================
@@ -3303,26 +3303,26 @@ function getPayPhoneStateName(state) {
 
 function getSceneForInterior(interiorName, gameId = getGame()) {
 	if (interiorName == "") {
-		return getGameConfig().mainWorldScene[getGame()];
+		return gameData.mainWorldScene[getGame()];
 	}
 
 	if (interiorName == "V.RP.MAINWORLD") {
-		return getGameConfig().mainWorldScene[getGame()];
+		return gameData.mainWorldScene[getGame()];
 	}
 
-	if (typeof getGameConfig().interiors[gameId][interiorName] == "undefined") {
-		return getGameConfig().mainWorldScene[getGame()];
+	if (typeof gameData.interiors[gameId][interiorName] == "undefined") {
+		return gameData.mainWorldScene[getGame()];
 	}
 
-	if (isNightTime(getServerConfig().hour)) {
+	if (isNightTime(serverConfig.hour)) {
 		// Check if night map exists, and return if does
-		if (getGameConfig().interiors[gameId][interiorName][4] != "") {
-			return getGameConfig().interiors[gameId][interiorName][4];
+		if (gameData.interiors[gameId][interiorName][4] != "") {
+			return gameData.interiors[gameId][interiorName][4];
 		}
 	}
 
 	// Return day scene if night check fails
-	return getGameConfig().interiors[gameId][interiorName][3];
+	return gameData.interiors[gameId][interiorName][3];
 }
 
 // ===========================================================================
@@ -3332,12 +3332,12 @@ function getInteriorForScene(sceneName, gameId = getGame()) {
 		return "V.RP.MAINWORLD";
 	}
 
-	for (let i in getGameConfig().interiors[gameId]) {
-		if (getGameConfig().interiors[gameId][i][3] == sceneName) {
+	for (let i in gameData.interiors[gameId]) {
+		if (gameData.interiors[gameId][i][3] == sceneName) {
 			return i;
 		}
 
-		if (getGameConfig().interiors[gameId][i][4] == sceneName) {
+		if (gameData.interiors[gameId][i][4] == sceneName) {
 			return i;
 		}
 	}
@@ -3348,15 +3348,15 @@ function getInteriorForScene(sceneName, gameId = getGame()) {
 // ===========================================================================
 
 function getClipAmmoSizeForWeapon(weaponId, gameId = getGame()) {
-	if (typeof getGameConfig().maximumClipAmmo[gameId] == "undefined") {
+	if (typeof gameData.maximumClipAmmo[gameId] == "undefined") {
 		return 0;
 	}
 
-	if (typeof getGameConfig().maximumClipAmmo[gameId][weaponId] == "undefined") {
+	if (typeof gameData.maximumClipAmmo[gameId][weaponId] == "undefined") {
 		return 0;
 	}
 
-	return getGameConfig().maximumClipAmmo[gameId][weaponId];
+	return gameData.maximumClipAmmo[gameId][weaponId];
 }
 
 // ===========================================================================
@@ -3366,11 +3366,11 @@ function canVehicleEnterInterior(interiorName) {
 		return true;
 	}
 
-	if (typeof getGameConfig().interiors[gameId][interiorName] == "undefined") {
+	if (typeof gameData.interiors[gameId][interiorName] == "undefined") {
 		return true;
 	}
 
-	if (typeof getGameConfig().interiors[gameId][interiorName][5] == true) {
+	if (typeof gameData.interiors[gameId][interiorName][5] == true) {
 		return true;
 	}
 

@@ -128,9 +128,9 @@ function setNewCharacterSpawnPositionCommand(command, params, client) {
 	let position = getPlayerPosition(client);
 	let heading = getPlayerHeading(client);
 
-	getServerConfig().newCharacter.spawnPosition = position;
-	getServerConfig().newCharacter.spawnHeading = heading;
-	getServerConfig().needsSaved = true;
+	serverConfig.newCharacter.spawnPosition = position;
+	serverConfig.newCharacter.spawnHeading = heading;
+	serverConfig.needsSaved = true;
 
 	messagePlayerNormal(client, `The new character spawn position has been set to ${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)}`)
 	return true;
@@ -146,8 +146,8 @@ function setNewCharacterMoneyCommand(command, params, client) {
 
 	let amount = toInteger(getParam(params, " ", 1)) || 1000;
 
-	getServerConfig().newCharacter.cash = amount;
-	getServerConfig().needsSaved = true;
+	serverConfig.newCharacter.cash = amount;
+	serverConfig.needsSaved = true;
 
 	messagePlayerNormal(client, `The new character money has been set to ${getCurrencyString(amount)}`);
 	return true;
@@ -163,8 +163,8 @@ function setNewCharacterSkinCommand(command, params, client) {
 
 	let skinId = getSkinModelIndexFromParams(params);
 
-	getServerConfig().newCharacter.skin = skinId;
-	getServerConfig().needsSaved = true;
+	serverConfig.newCharacter.skin = skinId;
+	serverConfig.needsSaved = true;
 
 	messagePlayerNormal(client, `The new character skin has been set to ${getSkinNameFromModel(skinId)} (Index ${skinId})`);
 	return true;
@@ -301,13 +301,13 @@ function enterExitPropertyCommand(command, params, client) {
 		let businessId = getPlayerBusiness(client);
 		if (businessId != -1) {
 			if (getServerData().businesses[businessId].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().businesses[businessId].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+				if (getDistance(position, getServerData().businesses[businessId].entrancePosition) <= globalConfig.enterPropertyDistance) {
 					isBusiness = true;
 					isEntrance = true;
 					closestProperty = getServerData().businesses[businessId];
 				}
 			} else if (getServerData().businesses[businessId].exitDimension == dimension) {
-				if (getDistance(position, getServerData().businesses[businessId].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+				if (getDistance(position, getServerData().businesses[businessId].exitPosition) <= globalConfig.exitPropertyDistance) {
 					isBusiness = true;
 					isEntrance = false;
 					closestProperty = getServerData().businesses[businessId];
@@ -320,13 +320,13 @@ function enterExitPropertyCommand(command, params, client) {
 		let houseId = getPlayerHouse(client);
 		if (houseId != -1) {
 			if (getServerData().houses[houseId].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().houses[houseId].entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+				if (getDistance(position, getServerData().houses[houseId].entrancePosition) <= globalConfig.enterPropertyDistance) {
 					isBusiness = false;
 					isEntrance = true;
 					closestProperty = getServerData().houses[houseId];
 				}
 			} else if (getServerData().houses[houseId].exitDimension == dimension) {
-				if (getDistance(position, getServerData().houses[houseId].exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+				if (getDistance(position, getServerData().houses[houseId].exitPosition) <= globalConfig.exitPropertyDistance) {
 					isBusiness = false;
 					isEntrance = false;
 					closestProperty = getServerData().houses[houseId];
@@ -356,7 +356,7 @@ function enterExitPropertyCommand(command, params, client) {
 	}
 
 	if (isEntrance) {
-		if (getDistance(closestProperty.entrancePosition, getPlayerPosition(client)) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(closestProperty.entrancePosition, getPlayerPosition(client)) <= globalConfig.enterPropertyDistance) {
 			if (closestProperty.locked) {
 				meActionToNearbyPlayers(client, getLocaleString(client, "EnterExitPropertyDoorLocked", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 				return false;
@@ -368,7 +368,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			if (closestProperty.exitScene != "" && closestProperty.exitScene != "V.RP.MAINWORLD") {
-				if (getGameConfig().interiors[getGame()][closestProperty.exitScene][5] == false) {
+				if (gameData.interiors[getGame()][closestProperty.exitScene][5] == false) {
 					if (isPlayerInAnyVehicle(client)) {
 						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 						return false;
@@ -439,14 +439,14 @@ function enterExitPropertyCommand(command, params, client) {
 			return true;
 		}
 	} else {
-		if (getDistance(closestProperty.exitPosition, getPlayerPosition(client)) <= getGlobalConfig().exitPropertyDistance) {
+		if (getDistance(closestProperty.exitPosition, getPlayerPosition(client)) <= globalConfig.exitPropertyDistance) {
 			if (closestProperty.locked) {
 				meActionToNearbyPlayers(client, getLocaleString(client, "EnterExitPropertyDoorLocked", (isBusiness) ? getLocaleString(client, "Business") : getLocaleString(client, "House")));
 				return false;
 			}
 
 			if (closestProperty.entranceScene != "" && closestProperty.entranceScene != "V.RP.MAINWORLD") {
-				if (getGameConfig().interiors[getGame()][closestProperty.entranceScene][5] == false) {
+				if (gameData.interiors[getGame()][closestProperty.entranceScene][5] == false) {
 					if (isPlayerInAnyVehicle(client)) {
 						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 						return false;
@@ -555,7 +555,7 @@ function getPlayerInfoCommand(command, params, client) {
 	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${clanData.name}{mediumGrey}[${clanData.databaseId}]{ALTCOLOUR} (Rank ${clanRankData.level}: ${clanRankData.name}{mediumGrey}[${clanRankData.databaseId}]{ALTCOLOUR})` : `None`;
 	let job = (getPlayerCurrentSubAccount(targetClient).jobIndex != -1) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} ${jobRankText}` : `None`;
 	let skinIndex = getPlayerCurrentSubAccount(targetClient).skin;
-	let skinModel = getGameConfig().skins[getGame()][skinIndex][0];
+	let skinModel = gameData.skins[getGame()][skinIndex][0];
 	let skinName = getSkinNameFromModel(skinModel);
 	let registerDate = new Date(getPlayerData(targetClient).accountData.registerDate * 1000);
 	let currentDate = new Date();
@@ -644,8 +644,8 @@ function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noB
  */
 function updateServerGameTime() {
 	if (isTimeSupported()) {
-		game.time.hour = getServerConfig().hour;
-		game.time.minute = getServerConfig().minute;
+		game.time.hour = serverConfig.hour;
+		game.time.minute = serverConfig.minute;
 	}
 }
 
@@ -696,7 +696,7 @@ function listOnlineAdminsCommand(command, params, client) {
  *
  */
 function stuckPlayerCommand(command, params, client) {
-	if ((getCurrentUnixTimestamp() - getPlayerData(client).lastStuckCommand) < getGlobalConfig().stuckCommandInterval) {
+	if ((getCurrentUnixTimestamp() - getPlayerData(client).lastStuckCommand) < globalConfig.stuckCommandInterval) {
 		messagePlayerError(client, "CantUseCommandYet");
 		return false;
 	}
@@ -706,7 +706,7 @@ function stuckPlayerCommand(command, params, client) {
 
 	messagePlayerAlert(client, getLocaleString(client, "FixingStuck"));
 
-	if (typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
+	if (typeof gameData.skinChangePosition[getGame()] != "undefined") {
 		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
 			messagePlayerAlert(client, "You canceled the skin change.");
 			restorePlayerCamera(client);
@@ -754,8 +754,8 @@ function stuckPlayerCommand(command, params, client) {
 		}
 	} else {
 		setPlayerDimension(client, 1);
-		setPlayerDimension(client, getGameConfig().mainWorldDimension[getGame()]);
-		setPlayerInterior(client, getGameConfig().mainWorldInterior[getGame()]);
+		setPlayerDimension(client, gameData.mainWorldDimension[getGame()]);
+		setPlayerInterior(client, gameData.mainWorldInterior[getGame()]);
 		setPlayerPosition(client, getPosAbovePos(getPlayerPosition(client), 2.0));
 	}
 
@@ -816,7 +816,7 @@ function lockCommand(command, params, client) {
 		return true;
 	} else {
 		let vehicle = getClosestVehicle(getPlayerPosition(client));
-		if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleLockDistance) {
+		if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleLockDistance) {
 			if (!getVehicleData(vehicle)) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				return false;
@@ -902,7 +902,7 @@ function lightsCommand(command, params, client) {
 		/*
 		let vehicle = getClosestVehicle(getPlayerPosition(client));
 		if(vehicle != false) {
-			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleLockDistance) {
+			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleLockDistance) {
 				return false;
 			}
 
@@ -987,20 +987,20 @@ function createPlayerBlip(client) {
 		return false;
 	}
 
-	if (getServerConfig().createPlayerBlips) {
+	if (serverConfig.createPlayerBlips) {
 		return false;
 	}
 
 	let blip = createAttachedGameBlip(getPlayerPed(client), 0, 1, getPlayerColour(client));
 	if (blip) {
-		if (getGlobalConfig().playerBlipStreamInDistance == -1 || getGlobalConfig().playerBlipStreamOutDistance == -1) {
+		if (globalConfig.playerBlipStreamInDistance == -1 || globalConfig.playerBlipStreamOutDistance == -1) {
 			//getPlayerPed(client).netFlags.distanceStreaming = false;
 			getPlayerPed(client).streamInDistance = 999998;
 			getPlayerPed(client).streamOutDistance = 999999;
 		} else {
 			//getPlayerPed(client).netFlags.distanceStreaming = true;
-			setElementStreamInDistance(getPlayerPed(client), getGlobalConfig().playerBlipStreamInDistance);
-			setElementStreamOutDistance(getPlayerPed(client), getGlobalConfig().playerBlipStreamOutDistance);
+			setElementStreamInDistance(getPlayerPed(client), globalConfig.playerBlipStreamInDistance);
+			setElementStreamOutDistance(getPlayerPed(client), globalConfig.playerBlipStreamOutDistance);
 		}
 		//getPlayerPed(client).netFlags.defaultExistance = true;
 		blip.netFlags.defaultExistance = true;
@@ -1053,7 +1053,7 @@ function processPlayerDeath(client) {
 		getPlayerData(killer).paintBallKills++;
 		getPlayerData(client).paintBallDeaths++;
 
-		if (getPlayerData(killer).paintBallDeaths >= getGlobalConfig().paintBallMaxKills) {
+		if (getPlayerData(killer).paintBallDeaths >= globalConfig.paintBallMaxKills) {
 			let paintBallPlayers = getAllPlayersInBusiness(getPlayerData(client).paintBallBusiness);
 			let winner = paintBallPlayers[i];
 			for (let i in paintBallPlayers) {
@@ -1123,7 +1123,7 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					spawnPlayer(client, prisonCell.position, prisonCell.rotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					spawnPlayer(client, prisonCell.position, prisonCell.rotation, gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
 					if (isFadeCameraSupported()) {
 						fadePlayerCamera(client, true, 1000);
@@ -1188,7 +1188,7 @@ function processPlayerDeath(client) {
 						stopWorking(client);
 					}
 
-					spawnPlayer(client, closestHospital.position, closestHospital.rotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
+					spawnPlayer(client, closestHospital.position, closestHospital.rotation, gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
 					if (isFadeCameraSupported()) {
 						fadePlayerCamera(client, true, 1000);
@@ -1306,7 +1306,7 @@ function givePlayerMoneyCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().givePlayerMoneyDistance) {
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.givePlayerMoneyDistance) {
 		messagePlayerError(client, getLocaleString(client, "PlayerTooFar", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
 		return false;
 	}
@@ -1352,7 +1352,7 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 
 	// In Mafia 1, set virtual world to some really high unused number first so everything is removed (otherwise crashes)
 	if (getGame() == V_GAME_MAFIA_ONE) {
-		setPlayerDimension(client, getGlobalConfig().playerSceneSwitchVirtualWorldStart + getPlayerId(client));
+		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
 	}
 
 	if (isFadeCameraSupported()) {

@@ -345,7 +345,7 @@ function toggleAccountServerLogoCommand(command, params, client) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "AccountServerLogoSet", `${getBoolRedGreenInlineColour(true)}${getLocaleString(client, "On")}{MAINCOLOUR}`));
 		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo ON for their account`);
-		if (getServerConfig().showLogo) {
+		if (serverConfig.showLogo) {
 			updatePlayerShowLogoState(client, true);
 		}
 	} else {
@@ -494,7 +494,7 @@ function changeAccountPasswordCommand(command, params, client) {
 
 	if (!doesPasswordMeetRequirements(newPassword)) {
 		messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
-		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", `${getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals)}, ${getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols)}`));
+		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", `${getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals)}, ${getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols)}`));
 		return false;
 	}
 
@@ -516,7 +516,7 @@ function setAccountChatScrollLinesCommand(command, params, client) {
 	}
 
 	if (toInteger(params) < 1 || toInteger(params) > 6) {
-		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesMustBeBetween", getGlobalConfig().minChatLines, getGlobalConfig().maxChatLines));
+		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesMustBeBetween", globalConfig.minChatLines, globalConfig.maxChatLines));
 		return false;
 	}
 
@@ -783,7 +783,7 @@ function loadAccountFromId(accountId, fullLoad = false) {
 // ===========================================================================
 
 function getAccountHashingFunction() {
-	switch (toLowerCase(getGlobalConfig().accountPasswordHash)) {
+	switch (toLowerCase(globalConfig.accountPasswordHash)) {
 		case "md5":
 			return module.hashing.md5;
 
@@ -1274,16 +1274,16 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		} else {
 			messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
 			let passwordRequirements = []
-			if (getGlobalConfig().passwordRequiredCapitals > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals))
+			if (globalConfig.passwordRequiredCapitals > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals))
 			}
 
-			if (getGlobalConfig().passwordRequiredNumbers > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers))
+			if (globalConfig.passwordRequiredNumbers > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsNumbers", globalConfig.passwordRequiredNumbers))
 			}
 
-			if (getGlobalConfig().passwordRequiredSymbols > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols))
+			if (globalConfig.passwordRequiredSymbols > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols))
 			}
 			messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirements.join(", ")));
 		}
@@ -1421,9 +1421,9 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 
 	if (!doesPasswordMeetRequirements(newPassword)) {
 		let passwordRequirementsString = `${needsCapitals}, ${needsNumbers}, ${needsSymbols}`;
-		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals);
-		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers);
-		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols);
+		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals);
+		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", globalConfig.passwordRequiredNumbers);
+		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols);
 
 		messagePlayerError(client, getLocaleString(client, "AccountPasswordNeedsImproved"));
 		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirementsString));
@@ -1518,7 +1518,7 @@ function saveConnectionToDatabase(client) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, getPlayerName(client));
-		let dbQueryString = `INSERT INTO conn_main (conn_when_connect, conn_server, conn_script_version, conn_game_version, conn_client_version, conn_name, conn_ip) VALUES (NOW(), ${getServerConfig().databaseId}, '${scriptVersion}', '${getPlayerGameVersion(client)}', '0.0.0', '${safeName}', '${getPlayerIP(client)}')`;
+		let dbQueryString = `INSERT INTO conn_main (conn_when_connect, conn_server, conn_script_version, conn_game_version, conn_client_version, conn_name, conn_ip) VALUES (NOW(), ${serverConfig.databaseId}, '${scriptVersion}', '${getPlayerGameVersion(client)}', '0.0.0', '${safeName}', '${getPlayerIP(client)}')`;
 		queryDatabase(dbConnection, dbQueryString);
 		return getDatabaseInsertId(dbConnection);
 	}
@@ -1532,8 +1532,8 @@ function createDefaultAccountServerData(accountDatabaseId) {
 	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
 
 	let defaultSettings = 0;
-	for (let i in getGlobalConfig().defaultEnabledAccountSettings) {
-		defaultSettings = addBitFlag(defaultSettings, getAccountSettingsFlagValue(getGlobalConfig().defaultEnabledAccountSettings[i]));
+	for (let i in globalConfig.defaultEnabledAccountSettings) {
+		defaultSettings = addBitFlag(defaultSettings, getAccountSettingsFlagValue(globalConfig.defaultEnabledAccountSettings[i]));
 	}
 
 	for (let i in serversAssoc) {
@@ -1553,12 +1553,12 @@ function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
-	for (let i in getGlobalConfig().keyBind.defaultKeyBinds) {
+	for (let i in globalConfig.keyBind.defaultKeyBinds) {
 		let tempKeyBindData = new KeyBindData(false);
 		tempKeyBindData.databaseId = -1;
-		tempKeyBindData.key = getKeyIdFromParams(getGlobalConfig().keyBind.defaultKeyBinds[i].keyName);
-		tempKeyBindData.commandString = getGlobalConfig().keyBind.defaultKeyBinds[i].commandString;
-		tempKeyBindData.keyState = getGlobalConfig().keyBind.defaultKeyBinds[i].keyState;
+		tempKeyBindData.key = getKeyIdFromParams(globalConfig.keyBind.defaultKeyBinds[i].keyName);
+		tempKeyBindData.commandString = globalConfig.keyBind.defaultKeyBinds[i].commandString;
+		tempKeyBindData.keyState = globalConfig.keyBind.defaultKeyBinds[i].keyState;
 		tempAccountKeybinds.push(tempKeyBindData);
 	}
 
@@ -1790,9 +1790,9 @@ function verifyAccountEmail(accountData, verificationCode) {
 // ===========================================================================
 
 function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
+	let countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, ip);
+	let subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, ip);
+	let cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, ip);
 
 	let emailBodyText = getEmailConfig().bodyContent.accountAuthFailAlert;
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
@@ -1808,9 +1808,9 @@ function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGa
 // ===========================================================================
 
 function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
+	let countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, ip);
+	let subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, ip);
+	let cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, ip);
 
 	let emailBodyText = getEmailConfig().bodyContent.accountAuthSuccessAlert;
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
@@ -1883,7 +1883,7 @@ function startLoginTimeoutForPlayer(client) {
 			getPlayerData(client).customDisconnectReason = "FailedToLogin";
 			disconnectPlayer(client);
 		}
-	}, getGlobalConfig().loginTimeout);
+	}, globalConfig.loginTimeout);
 }
 
 // ===========================================================================

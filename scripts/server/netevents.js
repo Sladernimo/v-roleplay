@@ -234,8 +234,8 @@ function syncPlayerProperties(client) {
 
 function updatePlayerSnowState(client, forceGroundSnow = false) {
 	if (isSnowSupported(getGame())) {
-		logToConsole(LOG_DEBUG, `[V.RP.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(getServerConfig().fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(getServerConfig().groundSnow))})`);
-		sendNetworkEventToPlayer("v.rp.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow, forceGroundSnow);
+		logToConsole(LOG_DEBUG, `[V.RP.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(serverConfig.fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(serverConfig.groundSnow))})`);
+		sendNetworkEventToPlayer("v.rp.snow", client, serverConfig.fallingSnow, serverConfig.groundSnow, forceGroundSnow);
 	}
 }
 
@@ -316,7 +316,7 @@ function showPlayerRegistrationFailedGUI(client, errorMessage) {
 
 function sendPlayerGUIColours(client) {
 	logToConsole(LOG_DEBUG, `[V.RP.Client] Sending GUI colours to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("v.rp.guiColour", client, getServerConfig().guiColourPrimary[0], getServerConfig().guiColourPrimary[1], getServerConfig().guiColourPrimary[2], getServerConfig().guiColourSecondary[0], getServerConfig().guiColourSecondary[1], getServerConfig().guiColourSecondary[2], getServerConfig().guiTextColourPrimary[0], getServerConfig().guiTextColourPrimary[1], getServerConfig().guiTextColourPrimary[2]);
+	sendNetworkEventToPlayer("v.rp.guiColour", client, serverConfig.guiColourPrimary[0], serverConfig.guiColourPrimary[1], serverConfig.guiColourPrimary[2], serverConfig.guiColourSecondary[0], serverConfig.guiColourSecondary[1], serverConfig.guiColourSecondary[2], serverConfig.guiTextColourPrimary[0], serverConfig.guiTextColourPrimary[1], serverConfig.guiTextColourPrimary[2]);
 }
 
 // ===========================================================================
@@ -757,16 +757,16 @@ function updateHeadingInVehicleData(client, vehicle, heading) {
 // ===========================================================================
 
 function forcePlayerIntoSkinSelect(client) {
-	if (typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
+	if (typeof gameData.skinChangePosition[getGame()] != "undefined") {
 		getPlayerData(client).returnToPosition = getPlayerPosition(client);
 		getPlayerData(client).returnToHeading = getPlayerHeading(client);
 		getPlayerData(client).returnToInterior = getPlayerInterior(client);
 		getPlayerData(client).returnToDimension = getPlayerDimension(client);
 		getPlayerData(client).returnToType = V_RETURNTO_TYPE_SKINSELECT;
 
-		setPlayerPosition(client, getGameConfig().skinChangePosition[getGame()][0]);
-		setPlayerHeading(client, getGameConfig().skinChangePosition[getGame()][1]);
-		setPlayerInterior(client, getGameConfig().skinChangePosition[getGame()][2]);
+		setPlayerPosition(client, gameData.skinChangePosition[getGame()][0]);
+		setPlayerHeading(client, gameData.skinChangePosition[getGame()][1]);
+		setPlayerInterior(client, gameData.skinChangePosition[getGame()][2]);
 		setPlayerDimension(client, getPlayerId(client) + 500);
 	}
 
@@ -782,11 +782,11 @@ function updatePlayerCash(client) {
 // ===========================================================================
 
 function sendAllPoliceStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].policeStation != -1) {
+	if (gameData.blipSprites[getGame()].policeStation != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().policeStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].policeStation,
+				gameData.blipSprites[getGame()].policeStation,
 				getServerData().policeStations[getGame()][i].position.x,
 				getServerData().policeStations[getGame()][i].position.y,
 				getServerData().policeStations[getGame()][i].position.z,
@@ -801,11 +801,11 @@ function sendAllPoliceStationBlips(client) {
 // ===========================================================================
 
 function sendAllFireStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].fireStation != -1) {
+	if (gameData.blipSprites[getGame()].fireStation != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().fireStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].fireStation,
+				gameData.blipSprites[getGame()].fireStation,
 				getServerData().fireStations[getGame()][i].position.x,
 				getServerData().fireStations[getGame()][i].position.y,
 				getServerData().fireStations[getGame()][i].position.z,
@@ -820,11 +820,11 @@ function sendAllFireStationBlips(client) {
 // ===========================================================================
 
 function sendAllHospitalBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].hospital != -1) {
+	if (gameData.blipSprites[getGame()].hospital != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().hospitals[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].hospital,
+				gameData.blipSprites[getGame()].hospital,
 				getServerData().hospitals[getGame()][i].position.x,
 				getServerData().hospitals[getGame()][i].position.y,
 				getServerData().hospitals[getGame()][i].position.z,
@@ -839,11 +839,11 @@ function sendAllHospitalBlips(client) {
 // ===========================================================================
 
 function sendAllAmmunationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].ammunation != -1) {
+	if (gameData.blipSprites[getGame()].ammunation != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().ammunations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].ammunation,
+				gameData.blipSprites[getGame()].ammunation,
 				getServerData().ammunations[getGame()][i].position.x,
 				getServerData().ammunations[getGame()][i].position.y,
 				getServerData().ammunations[getGame()][i].position.z,
@@ -858,11 +858,11 @@ function sendAllAmmunationBlips(client) {
 // ===========================================================================
 
 function sendAllPayAndSprayBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].payAndSpray != -1) {
+	if (gameData.blipSprites[getGame()].payAndSpray != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().payAndSprays[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].payAndSpray,
+				gameData.blipSprites[getGame()].payAndSpray,
 				getServerData().payAndSprays[getGame()][i].position.x,
 				getServerData().payAndSprays[getGame()][i].position.y,
 				getServerData().payAndSprays[getGame()][i].position.z,
@@ -877,11 +877,11 @@ function sendAllPayAndSprayBlips(client) {
 // ===========================================================================
 
 function sendAllFuelStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].fuelStation != -1) {
+	if (gameData.blipSprites[getGame()].fuelStation != -1) {
 		let tempBlips = [];
 		for (let i in getServerData().fuelStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].fuelStation,
+				gameData.blipSprites[getGame()].fuelStation,
 				getServerData().fuelStations[getGame()][i].position.x,
 				getServerData().fuelStations[getGame()][i].position.y,
 				getServerData().fuelStations[getGame()][i].position.z,
@@ -1094,7 +1094,7 @@ function updateAllInteriorVehiclesForPlayer(client, interior, dimension) {
 // ===========================================================================
 
 function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
-	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (globalConfig.useServerSideVehiclePurchaseCheck == false) {
 		sendNetworkEventToPlayer("v.rp.vehBuyState", client, state, vehicleId, position);
 	}
 }
@@ -1102,7 +1102,7 @@ function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
 // ==========================================================================
 
 function receiveVehiclePurchaseStateUpdateFromClient(client, state) {
-	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (globalConfig.useServerSideVehiclePurchaseCheck == false) {
 		checkVehiclePurchasing(client);
 	}
 }
@@ -1356,7 +1356,7 @@ function showLocaleChooserForPlayer(client) {
 // ==========================================================================
 
 function sendPlayerLocaleStrings(client) {
-	let strings = getGlobalConfig().locale.sendStringsToClient;
+	let strings = globalConfig.locale.sendStringsToClient;
 	for (let i in strings) {
 		sendNetworkEventToPlayer("v.rp.localeString", client, strings[i], getLocaleString(client, strings[i]));
 	}
@@ -1401,7 +1401,7 @@ function showSingleParticleEffect(position, particleEffectId, strength = 1.0, du
 // ==========================================================================
 
 function sendPlayerCurrencyString(client) {
-	sendNetworkEventToPlayer("v.rp.currencyString", client, getServerConfig().economy.currencyString);
+	sendNetworkEventToPlayer("v.rp.currencyString", client, serverConfig.economy.currencyString);
 }
 
 // ==========================================================================

@@ -40,7 +40,7 @@ function setStreamingRadioVolume(volume) {
 // ===========================================================================
 
 function playAudioFile(audioName, loop, volume) {
-	findResourceByName(extraContentResource[getGame()]).exports.playCustomAudio(audioName, volume / 100, loop);
+	playCustomAudio(audioName, volume / 100, loop);
 }
 
 // ===========================================================================

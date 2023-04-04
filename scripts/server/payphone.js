@@ -61,7 +61,7 @@ function createPayPhoneCommand(command, params, client) {
 
 	let closestPayPhone = getClosestPayPhone(getPlayerPosition(client));
 	if (closestPayPhone != -1) {
-		if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) <= getGlobalConfig().payPhoneAnswerDistance) {
+		if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) <= globalConfig.payPhoneAnswerDistance) {
 			messagePlayerError(client, "There is already a payphone at this location!");
 			return false;
 		}
@@ -141,7 +141,7 @@ function getPayPhoneNumberCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > getGlobalConfig().payPhoneAnswerDistance) {
+	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > globalConfig.payPhoneAnswerDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoPayPhoneCloseEnough"));
 		return false;
 	}
@@ -208,7 +208,7 @@ function callPayPhoneCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > getGlobalConfig().payPhoneAnswerDistance) {
+	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > globalConfig.payPhoneAnswerDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoPayPhoneCloseEnough"));
 		return false;
 	}
@@ -270,8 +270,8 @@ function callPayPhoneCommand(command, params, client) {
 
 			sendPayPhoneStateToPlayer(null, closestPayPhone, V_PAYPHONE_STATE_CALLING);
 			sendPayPhoneStateToPlayer(null, closestPayPhoneTarget, V_PAYPHONE_STATE_RINGING);
-		}, getGlobalConfig().payPhoneDialToTalkAnimationDelay);
-	}, getGlobalConfig().payPhonePickupToDialAnimationDelay);
+		}, globalConfig.payPhoneDialToTalkAnimationDelay);
+	}, globalConfig.payPhonePickupToDialAnimationDelay);
 }
 
 // ===========================================================================
@@ -289,7 +289,7 @@ function givePayPhoneToPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) >= getGlobalConfig().payPhoneGiveDistance) {
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) >= globalConfig.payPhoneGiveDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"))
 		return false;
 	}
@@ -331,7 +331,7 @@ function answerPayPhoneCommand(command, params, client) {
 
 	let closestPayPhone = getClosestPayPhone(getPlayerPosition(client));
 
-	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > getGlobalConfig().payPhoneAnswerDistance) {
+	if (getDistance(getPlayerPosition(client), getPayPhoneData(closestPayPhone).position) > globalConfig.payPhoneAnswerDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoPayPhoneCloseEnough"));
 		return false;
 	}
@@ -366,7 +366,7 @@ function answerPayPhoneCommand(command, params, client) {
 
 	setTimeout(function () {
 		makePlayerPlayAnimation(client, getAnimationFromParams("phonepickup"));
-	}, getGlobalConfig().payPhonePickupToTalkAnimationDelay);
+	}, globalConfig.payPhonePickupToTalkAnimationDelay);
 
 	setPlayerControlState(client, false);
 	setPlayerControlState(otherClient, false);
@@ -491,7 +491,7 @@ function loadPayPhonesFromDatabase() {
 // ===========================================================================
 
 function saveAllPayPhonesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -503,7 +503,7 @@ function saveAllPayPhonesToDatabase() {
 // ===========================================================================
 
 function savePayPhoneToDatabase(payPhoneIndex) {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		logToConsole(LOG_VERBOSE, `[V.RP.PayPhone]: Payphone ${payPhoneIndex} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}

@@ -315,7 +315,7 @@ function createBusinessCommand(command, params, client) {
 		params,
 		getPlayerPosition(client),
 		toVector3(0.0, 0.0, 0.0),
-		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Business : -1,
+		(isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Business : -1,
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
@@ -1096,9 +1096,9 @@ function setBusinessPickupCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		if (isNull(getGameConfig().pickupModels[getGame()][typeParam])) {
+		if (isNull(gameData.pickupModels[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid pickup type! Use a pickup type name or a model ID");
-			let pickupTypes = Object.keys(getGameConfig().pickupModels[getGame()]);
+			let pickupTypes = Object.keys(gameData.pickupModels[getGame()]);
 			let chunkedList = splitArrayIntoChunks(pickupTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPickupTypes")));
@@ -1108,7 +1108,7 @@ function setBusinessPickupCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).entrancePickupModel = getGameConfig().pickupModels[getGame()][typeParam];
+		getBusinessData(businessId).entrancePickupModel = gameData.pickupModels[getGame()][typeParam];
 	} else {
 		getBusinessData(businessId).entrancePickupModel = toInteger(typeParam);
 	}
@@ -1140,7 +1140,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getGameConfig().interiors[getGame()] == "undefined") {
+	if (typeof gameData.interiors[getGame()] == "undefined") {
 		messagePlayerError(client, `There are no interiors available for this game!`);
 		return false;
 	}
@@ -1161,9 +1161,9 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			return false;
 		}
 
-		if (isNull(getGameConfig().interiors[getGame()][typeParam])) {
+		if (isNull(gameData.interiors[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid interior type! Use an interior type name");
-			let interiorTypesList = Object.keys(getGameConfig().interiors[getGame()]);
+			let interiorTypesList = Object.keys(gameData.interiors[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderInteriorTypes")));
@@ -1173,12 +1173,12 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = (isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Exit : -1;
+		getBusinessData(businessId).exitPosition = gameData.interiors[getGame()][typeParam][0];
+		getBusinessData(businessId).exitInterior = gameData.interiors[getGame()][typeParam][1];
+		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + globalConfig.businessDimensionStart;
+		getBusinessData(businessId).exitPickupModel = (isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Exit : -1;
 		getBusinessData(businessId).hasInterior = true;
-		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getBusinessData(businessId).customInterior = gameData.interiors[getGame()][typeParam][2];
 
 		if (isGameFeatureSupported("interiorScene")) {
 			getBusinessData(businessId).exitScene = typeParam;
@@ -1218,15 +1218,15 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 		return false;
 	}
 
-	if (typeof getGameConfig().interiors[getGame()] == "undefined") {
+	if (typeof gameData.interiors[getGame()] == "undefined") {
 		messagePlayerError(client, `There are no property templates available for this game!`);
 		return false;
 	}
 
 	if (isNaN(propertyTemplateParam)) {
-		if (isNull(getGameConfig().interiors[getGame()][typeParam])) {
+		if (isNull(gameData.interiors[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid interior type! Use an interior type name");
-			let interiorTypesList = Object.keys(getGameConfig().properties[getGame()]);
+			let interiorTypesList = Object.keys(gameData.properties[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPropertyTemplateTypes")));
@@ -1236,13 +1236,13 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getBusinessData(businessId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + getGlobalConfig().businessDimensionStart;
-		getBusinessData(businessId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getBusinessData(businessId).exitPosition = gameData.interiors[getGame()][typeParam][0];
+		getBusinessData(businessId).exitInterior = gameData.interiors[getGame()][typeParam][1];
+		getBusinessData(businessId).exitDimension = getBusinessData(businessId).databaseId + globalConfig.businessDimensionStart;
+		getBusinessData(businessId).exitPickupModel = gameData.pickupModels[getGame()].Exit;
 		getBusinessData(businessId).hasInterior = true;
-		getBusinessData(businessId).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getBusinessData(businessId).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
+		getBusinessData(businessId).customInterior = gameData.interiors[getGame()][typeParam][2];
+		getBusinessData(businessId).interiorScene = gameData.interiors[getGame()][typeParam][3];
 	}
 
 	//deleteBusinessExitPickup(businessId);
@@ -1278,10 +1278,10 @@ function setBusinessBlipCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		if (isNull(getGameConfig().blipSprites[getGame()][typeParam])) {
+		if (isNull(gameData.blipSprites[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid business type! Use a business type name or a blip image ID");
 
-			let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
+			let blipTypes = Object.keys(gameData.blipSprites[getGame()]);
 			let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBlipTypes")));
@@ -1291,7 +1291,7 @@ function setBusinessBlipCommand(command, params, client) {
 			return false;
 		}
 
-		getBusinessData(businessId).entranceBlipModel = getGameConfig().blipSprites[getGame()][typeParam];
+		getBusinessData(businessId).entranceBlipModel = gameData.blipSprites[getGame()][typeParam];
 	} else {
 		getBusinessData(businessId).entranceBlipModel = toInteger(typeParam);
 	}
@@ -1329,9 +1329,9 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 
 	saveBusinessToDatabase(businessId);
 
-	if (isNull(getGameConfig().defaultBusinessItems[getGame()][typeParam])) {
+	if (isNull(gameData.defaultBusinessItems[getGame()][typeParam])) {
 		messagePlayerError(client, "Invalid business items type! Use a business items type name");
-		let businessItemTypes = Object.keys(getGameConfig().defaultBusinessItems[getGame()]);
+		let businessItemTypes = Object.keys(gameData.defaultBusinessItems[getGame()]);
 		let chunkedList = splitArrayIntoChunks(businessItemTypes, 10);
 
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDefaultBusinessItemTypes")));
@@ -1341,12 +1341,12 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	for (let i in getGameConfig().defaultBusinessItems[getGame()][typeParam]) {
-		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultBusinessItems[getGame()][typeParam][i][0]);
+	for (let i in gameData.defaultBusinessItems[getGame()][typeParam]) {
+		let itemTypeId = getItemTypeFromParams(gameData.defaultBusinessItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, getGameConfig().defaultBusinessItems[getGame()][typeParam][i][1]);
-			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultBusinessItems[getGame()][typeParam][i][2];
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(businessId).databaseId, gameData.defaultBusinessItems[getGame()][typeParam][i][1]);
+			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * gameData.defaultBusinessItems[getGame()][typeParam][i][2];
 		}
 	}
 
@@ -1881,19 +1881,19 @@ function getPlayerBusiness(client) {
 		return -1;
 	}
 
-	if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
+	if (getPlayerDimension(client) == gameData.mainWorldDimension[getGame()]) {
 		let closestEntrance = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getBusinessData(closestEntrance).index;
 		}
 	} else {
 		let closestEntrance = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getBusinessData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getBusinessData(closestEntrance).index;
 		}
 
 		let closestExit = getClosestBusinessExit(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getBusinessData(closestExit).exitPosition) <= getGlobalConfig().exitPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getBusinessData(closestExit).exitPosition) <= globalConfig.exitPropertyDistance) {
 			return getBusinessData(closestExit).index;
 		}
 
@@ -1915,7 +1915,7 @@ function getPlayerBusiness(client) {
  *
  */
 function saveAllBusinessesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -2016,7 +2016,7 @@ function saveBusinessToDatabase(businessId) {
  *
  */
 function spawnAllBusinessPickups() {
-	if (!getServerConfig().createBusinessPickups) {
+	if (!serverConfig.createBusinessPickups) {
 		return false;
 	}
 
@@ -2038,7 +2038,7 @@ function spawnAllBusinessPickups() {
  *
  */
 function spawnAllBusinessBlips() {
-	if (!getServerConfig().createBusinessBlips) {
+	if (!serverConfig.createBusinessBlips) {
 		return false;
 	}
 
@@ -2062,7 +2062,7 @@ function spawnAllBusinessBlips() {
  *
  */
 function spawnBusinessEntrancePickup(businessId) {
-	if (!getServerConfig().createBusinessPickups) {
+	if (!serverConfig.createBusinessPickups) {
 		return false;
 	}
 
@@ -2077,7 +2077,7 @@ function spawnBusinessEntrancePickup(businessId) {
 	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
-			let pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+			let pickupModelId = gameData.pickupModels[getGame()].Business;
 
 			if (businessData.entrancePickupModel == -1) {
 				return false;
@@ -2087,7 +2087,7 @@ function spawnBusinessEntrancePickup(businessId) {
 				pickupModelId = businessData.entrancePickupModel;
 			}
 
-			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+			entrancePickup = createGamePickup(pickupModelId, businessData.entrancePosition, gameData.pickupTypes[getGame()].business);
 		}
 
 		if (entrancePickup != null) {
@@ -2098,11 +2098,11 @@ function spawnBusinessEntrancePickup(businessId) {
 				setElementOnAllDimensions(entrancePickup, true);
 			}
 
-			if (getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1) {
+			if (globalConfig.businessPickupStreamInDistance == -1 || globalConfig.businessPickupStreamOutDistance == -1) {
 				entrancePickup.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entrancePickup, getGlobalConfig().businessPickupStreamInDistance);
-				setElementStreamOutDistance(entrancePickup, getGlobalConfig().businessPickupStreamOutDistance);
+				setElementStreamInDistance(entrancePickup, globalConfig.businessPickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, globalConfig.businessPickupStreamOutDistance);
 			}
 			setElementTransient(entrancePickup, false);
 			getBusinessData(businessId).entrancePickup = entrancePickup;
@@ -2125,7 +2125,7 @@ function spawnBusinessEntrancePickup(businessId) {
  *
  */
 function spawnBusinessEntranceBlip(businessId) {
-	if (!getServerConfig().createBusinessBlips) {
+	if (!serverConfig.createBusinessBlips) {
 		return false;
 	}
 
@@ -2143,7 +2143,7 @@ function spawnBusinessEntranceBlip(businessId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+	let blipModelId = gameData.blipSprites[getGame()].Business;
 
 	if (businessData.entranceBlipModel != 0) {
 		blipModelId = businessData.entranceBlipModel;
@@ -2161,11 +2161,11 @@ function spawnBusinessEntranceBlip(businessId) {
 				setElementOnAllDimensions(entranceBlip, true);
 			}
 
-			if (getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1) {
+			if (globalConfig.businessBlipStreamInDistance == -1 || globalConfig.businessBlipStreamOutDistance == -1) {
 				entranceBlip.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entranceBlip, getGlobalConfig().businessBlipStreamInDistance);
-				setElementStreamOutDistance(entranceBlip, getGlobalConfig().businessBlipStreamOutDistance);
+				setElementStreamInDistance(entranceBlip, globalConfig.businessBlipStreamInDistance);
+				setElementStreamOutDistance(entranceBlip, globalConfig.businessBlipStreamOutDistance);
 			}
 			setElementTransient(entranceBlip, false);
 			businessData.entranceBlip = entranceBlip;
@@ -2187,7 +2187,7 @@ function spawnBusinessExitPickup(businessId) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessPickups) {
+	if (!serverConfig.createBusinessPickups) {
 		return false;
 	}
 
@@ -2205,13 +2205,13 @@ function spawnBusinessExitPickup(businessId) {
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+		let pickupModelId = gameData.pickupModels[getGame()].Exit;
 
 		if (businessData.exitPickupModel != 0) {
 			pickupModelId = businessData.exitPickupModel;
 		}
 
-		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
+		exitPickup = createGamePickup(pickupModelId, businessData.exitPosition, gameData.pickupTypes[getGame()].business);
 	}
 
 	if (exitPickup != null) {
@@ -2222,11 +2222,11 @@ function spawnBusinessExitPickup(businessId) {
 			setElementOnAllDimensions(exitPickup, true);
 		}
 
-		if (getGlobalConfig().businessPickupStreamInDistance == -1 || getGlobalConfig().businessPickupStreamOutDistance == -1) {
+		if (globalConfig.businessPickupStreamInDistance == -1 || globalConfig.businessPickupStreamOutDistance == -1) {
 			exitPickup.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitPickup, getGlobalConfig().businessPickupStreamInDistance);
-			setElementStreamOutDistance(exitPickup, getGlobalConfig().businessPickupStreamOutDistance);
+			setElementStreamInDistance(exitPickup, globalConfig.businessPickupStreamInDistance);
+			setElementStreamOutDistance(exitPickup, globalConfig.businessPickupStreamOutDistance);
 		}
 		setElementTransient(exitPickup, false);
 		getBusinessData(businessId).exitPickup = exitPickup;
@@ -2249,7 +2249,7 @@ function spawnBusinessExitBlip(businessId) {
 		return false;
 	}
 
-	if (!getServerConfig().createBusinessBlips) {
+	if (!serverConfig.createBusinessBlips) {
 		return false;
 	}
 
@@ -2267,7 +2267,7 @@ function spawnBusinessExitBlip(businessId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Business;
+	let blipModelId = gameData.blipSprites[getGame()].Business;
 
 	if (businessData.exitBlipModel != 0) {
 		blipModelId = businessData.exitBlipModel;
@@ -2284,11 +2284,11 @@ function spawnBusinessExitBlip(businessId) {
 			setElementOnAllDimensions(exitBlip, true);
 		}
 
-		if (getGlobalConfig().businessBlipStreamInDistance == -1 || getGlobalConfig().businessBlipStreamOutDistance == -1) {
+		if (globalConfig.businessBlipStreamInDistance == -1 || globalConfig.businessBlipStreamOutDistance == -1) {
 			exitBlip.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitBlip, getGlobalConfig().businessBlipStreamInDistance);
-			setElementStreamOutDistance(exitBlip, getGlobalConfig().businessBlipStreamOutDistance);
+			setElementStreamInDistance(exitBlip, globalConfig.businessBlipStreamInDistance);
+			setElementStreamOutDistance(exitBlip, globalConfig.businessBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
 		businessData.exitBlip = exitBlip;
@@ -3271,7 +3271,7 @@ function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
 function getBusinessEntranceBlipModelForNetworkEvent(businessIndex) {
 	let blipModelId = -1;
 	if (isGameFeatureSupported("blip")) {
-		blipModelId = getGameConfig().blipSprites[getGame()].Business;
+		blipModelId = gameData.blipSprites[getGame()].Business;
 
 		if (getBusinessData(businessIndex).entranceBlipModel != 0) {
 			blipModelId = getBusinessData(businessIndex).entranceBlipModel;
@@ -3286,7 +3286,7 @@ function getBusinessEntranceBlipModelForNetworkEvent(businessIndex) {
 function getBusinessEntrancePickupModelForNetworkEvent(businessIndex) {
 	let pickupModelId = -1;
 	if (isGameFeatureSupported("pickup")) {
-		pickupModelId = getGameConfig().pickupModels[getGame()].Business;
+		pickupModelId = gameData.pickupModels[getGame()].Business;
 
 		if (getBusinessData(businessIndex).entrancePickupModel != 0) {
 			pickupModelId = getBusinessData(businessIndex).entrancePickupModel;
@@ -3344,7 +3344,7 @@ function getNearbyBusinessesCommand(command, params, client) {
 // ===========================================================================
 
 function logBusinessItemPurchase(businessId, purchaserId, itemId) {
-	//if (getServerConfig().devServer) {
+	//if (serverConfig.devServer) {
 	//	return false;
 	//}
 

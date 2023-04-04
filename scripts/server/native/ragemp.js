@@ -256,11 +256,11 @@ function removePlayerFromVehicle(client) {
 // ===========================================================================
 
 function setPlayerSkin(client, skinIndex) {
-	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
+	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${gameData.skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${gameData.skins[getGame()][skinIndex][1]})`);
 	if (getGame() == V_GAME_GTA_IV) {
-		triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, gameData.skins[getGame()][skinIndex][0]);
 	} else {
-		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
+		getPlayerPed(client).modelIndex = gameData.skins[getGame()][skinIndex][0];
 	}
 }
 
@@ -493,7 +493,7 @@ function createGameObject(modelIndex, position) {
 	if (!isGameFeatureSupported("object")) {
 		return false;
 	}
-	return game.createObject(getGameConfig().objects[getGame()][modelIndex][0], position);
+	return game.createObject(gameData.objects[getGame()][modelIndex][0], position);
 }
 
 // ===========================================================================
@@ -523,7 +523,7 @@ function destroyGameElement(element) {
 // ===========================================================================
 
 function isMeleeWeapon(weaponId, gameId = getGame()) {
-	return (getGameConfig().meleeWeapons[gameId].indexOf(weaponId) != -1);
+	return (gameData.meleeWeapons[gameId].indexOf(weaponId) != -1);
 }
 
 // ===========================================================================
@@ -616,7 +616,7 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 
 function createGameVehicle(modelIndex, position, heading) {
 	if (areServerElementsSupported()) {
-		return mp.vehicles.new(getGameConfig().vehicles[getGame()][modelIndex][0], position, {
+		return mp.vehicles.new(gameData.vehicles[getGame()][modelIndex][0], position, {
 			heading: heading,
 			numberPlate: "",
 			alpha: 255,
@@ -632,7 +632,7 @@ function createGameVehicle(modelIndex, position, heading) {
 
 function createGameCivilian(modelIndex, position, heading) {
 	if (areServerElementsSupported()) {
-		return mp.peds.new(getGameConfig().skins[getGame()][modelIndex][1], position, heading, 0);
+		return mp.peds.new(gameData.skins[getGame()][modelIndex][1], position, heading, 0);
 	}
 
 	return false;
@@ -723,7 +723,7 @@ function setElementCollisionsEnabled(element, state) {
 // ===========================================================================
 
 function isTaxiVehicle(vehicle) {
-	if (getGameConfig().taxiModels[getGame()].indexOf(vehicle.modelIndex) != -1) {
+	if (gameData.taxiModels[getGame()].indexOf(vehicle.modelIndex) != -1) {
 		return true;
 	}
 

@@ -801,7 +801,7 @@ function loadJobEquipmentItemsFromDatabase(jobEquipmentDatabaseId) {
 // ===========================================================================
 
 function spawnAllJobBlips() {
-	if (!getServerConfig().createJobBlips) {
+	if (!serverConfig.createJobBlips) {
 		return false;
 	}
 
@@ -817,7 +817,7 @@ function spawnAllJobBlips() {
 // ===========================================================================
 
 function spawnAllJobPickups() {
-	if (!getServerConfig().createJobPickups) {
+	if (!serverConfig.createJobPickups) {
 		return false;
 	}
 
@@ -966,7 +966,7 @@ function takeJobCommand(command, params, client) {
 		return false;
 	}
 
-	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().takeJobDistance) {
+	if (closestJobLocation.position.distance(getPlayerPosition(client)) > globalConfig.takeJobDistance) {
 		messagePlayerError(client, getLocaleString(client, "NoJobLocationCloseEnough"));
 		return false;
 	}
@@ -996,9 +996,9 @@ function startWorkingCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
-	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+	if (closestJobLocation.position.distance(getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
-		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
@@ -1275,9 +1275,9 @@ function jobUniformCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
-	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+	if (closestJobLocation.position.distance(getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
-		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
@@ -1379,9 +1379,9 @@ function jobEquipmentCommand(command, params, client) {
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 	let jobData = false;
 
-	if (closestJobLocation.position.distance(getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+	if (closestJobLocation.position.distance(getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 		let closestVehicle = getClosestVehicle(getPlayerPosition(client));
-		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > getGlobalConfig().startWorkingDistance) {
+		if (getDistance(getVehiclePosition(closestVehicle), getPlayerPosition(client)) > globalConfig.startWorkingDistance) {
 			messagePlayerError(client, getLocaleString(client, "NeedToBeNearJob"));
 			return false;
 		}
@@ -1604,8 +1604,8 @@ function createJob(name) {
 	tempJobData.name = name;
 	tempJobData.enabled = true;
 	tempJobData.needsSaved = true;
-	tempJobData.blipModel = getGameConfig().blipSprites[getGame()].Job;
-	tempJobData.pickupModel = getGameConfig().pickupModels[getGame()].Job;
+	tempJobData.blipModel = gameData.blipSprites[getGame()].Job;
+	tempJobData.pickupModel = gameData.pickupModels[getGame()].Job;
 	tempJobData.colour = toColour(255, 255, 255, 255);
 
 	getServerData().jobs.push(tempJobData);
@@ -1750,8 +1750,8 @@ function setJobBlipCommand(command, params, client) {
 		if (toLowerCase(blipParam) == "none") {
 			blipId = -1;
 		} else {
-			if (isNull(getGameConfig().blipSprites[getGame()][blipParam])) {
-				let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
+			if (isNull(gameData.blipSprites[getGame()][blipParam])) {
+				let blipTypes = Object.keys(gameData.blipSprites[getGame()]);
 				let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
 				messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBlipTypes")));
@@ -1759,7 +1759,7 @@ function setJobBlipCommand(command, params, client) {
 					messagePlayerInfo(client, chunkedList[i].join(", "));
 				}
 			} else {
-				blipId = getGameConfig().blipSprites[getGame()][blipParam];
+				blipId = gameData.blipSprites[getGame()][blipParam];
 				blipString = toString(blipParam);
 			}
 		}
@@ -1797,9 +1797,9 @@ function setJobPickupCommand(command, params, client) {
 		if (toLowerCase(pickupParam) == "none") {
 			pickupId = -1;
 		} else {
-			if (isNull(getGameConfig().pickupModels[getGame()][pickupParam])) {
+			if (isNull(gameData.pickupModels[getGame()][pickupParam])) {
 				messagePlayerError(client, "Invalid pickup type! Use a pickup type name or a model ID");
-				let pickupTypes = Object.keys(getGameConfig().pickupModels[getGame()]);
+				let pickupTypes = Object.keys(gameData.pickupModels[getGame()]);
 				let chunkedList = splitArrayIntoChunks(pickupTypes, 10);
 
 				messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPickupTypes")));
@@ -1808,7 +1808,7 @@ function setJobPickupCommand(command, params, client) {
 				}
 				return false;
 			} else {
-				pickupId = getGameConfig().pickupModels[getGame()][pickupParam];
+				pickupId = gameData.pickupModels[getGame()][pickupParam];
 				pickupString = toString(pickupParam);
 			}
 		}
@@ -2470,7 +2470,7 @@ function jobStartRouteCommand(command, params, client) {
 		return false;
 	}
 
-	if (getCurrentUnixTimestamp() - getPlayerData(client).lastJobRouteStart < getGlobalConfig().jobRouteStartCooldown) {
+	if (getCurrentUnixTimestamp() - getPlayerData(client).lastJobRouteStart < globalConfig.jobRouteStartCooldown) {
 		messagePlayerError(client, getLocaleString(client, "WaitForJobRouteStart", `{ALTCOLOUR}${getGroupedLocaleString(client, "TimeMeasurements", "Seconds", getCurrentUnixTimestamp() - getPlayerData(client).lastJobRouteStart)}{MAINCOLOUR}`));
 		return false;
 	}
@@ -2650,7 +2650,7 @@ function getPlayerJobRouteVehicle(client) {
 
 function startReturnToJobVehicleCountdown(client) {
 	/*
-	getPlayerData(client).returnToJobVehicleTick = getGlobalConfig().returnToJobVehicleTime;
+	getPlayerData(client).returnToJobVehicleTick = globalConfig.returnToJobVehicleTime;
 	getPlayerData(client).returnToJobVehicleTimer = setInterval(function () {
 		//logToConsole(LOG_DEBUG, getPlayerData(client).returnToJobVehicleTick);
 		if (getPlayerData(client).returnToJobVehicleTick > 0) {
@@ -3339,7 +3339,7 @@ function deleteJobLocationPickup(jobId, locationId) {
 // ===========================================================================
 
 function spawnJobLocationPickup(jobId, locationId) {
-	if (!getServerConfig().createJobPickups) {
+	if (!serverConfig.createJobPickups) {
 		return false;
 	}
 
@@ -3350,7 +3350,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 	if (tempJobData.pickupModel != -1) {
 		let pickupModelId = -1;
 		if (isGameFeatureSupported("pickup")) {
-			pickupModelId = getGameConfig().pickupModels[getGame()].Job;
+			pickupModelId = gameData.pickupModels[getGame()].Job;
 
 			if (tempJobData.pickupModel != 0) {
 				pickupModelId = tempJobData.pickupModel;
@@ -3359,7 +3359,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 
 		if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 			if (isGameFeatureSupported("pickup")) {
-				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, getGameConfig().pickupTypes[getGame()].job);
+				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, gameData.pickupTypes[getGame()].job);
 				if (pickup != false) {
 					tempJobData.locations[locationId].pickup = pickup;
 					setElementDimension(pickup, tempJobData.locations[locationId].dimension);
@@ -3377,7 +3377,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 			/*
 			let pickupModelId = -1;
 			if (isGameFeatureSupported("pickup")) {
-				pickupModelId = getGameConfig().pickupModels[getGame()].Job;
+				pickupModelId = gameData.pickupModels[getGame()].Job;
 
 				if (getJobData(jobId).pickupModel != 0) {
 					pickupModelId = getJobData(jobId).pickupModel;
@@ -3393,7 +3393,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 // ===========================================================================
 
 function spawnJobLocationBlip(jobId, locationId) {
-	if (!getServerConfig().createJobBlips) {
+	if (!serverConfig.createJobBlips) {
 		return false;
 	}
 
@@ -3407,7 +3407,7 @@ function spawnJobLocationBlip(jobId, locationId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Job;
+	let blipModelId = gameData.blipSprites[getGame()].Job;
 
 	if (getJobData(jobId).blipModel != 0) {
 		blipModelId = getJobData(jobId).blipModel;
@@ -3418,11 +3418,11 @@ function spawnJobLocationBlip(jobId, locationId) {
 		if (blip != false) {
 			tempJobData.locations[locationId].blip = blip;
 
-			if (getGlobalConfig().jobBlipStreamInDistance == -1 || getGlobalConfig().jobBlipStreamOutDistance == -1) {
+			if (globalConfig.jobBlipStreamInDistance == -1 || globalConfig.jobBlipStreamOutDistance == -1) {
 				blip.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(blip, getGlobalConfig().jobBlipStreamInDistance);
-				setElementStreamOutDistance(blip, getGlobalConfig().jobBlipStreamOutDistance);
+				setElementStreamInDistance(blip, globalConfig.jobBlipStreamInDistance);
+				setElementStreamOutDistance(blip, globalConfig.jobBlipStreamOutDistance);
 			}
 
 			setElementOnAllDimensions(blip, false);
@@ -3766,7 +3766,7 @@ function createJobUniformCommand(command, params, client) {
 	}
 
 	createJobUniform(jobId, skinIndex, getPlayerData(client).accountData.databaseId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)} (${getGameConfig().skins[getGame()][skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created uniform with skin {ALTCOLOUR}${getSkinNameFromIndex(skinIndex)} (${gameData.skins[getGame()][skinIndex][0]}){MAINCOLOUR} for job {jobYellow}${getJobData(jobId).name}`);
 	return true;
 }
 
@@ -3825,7 +3825,7 @@ function createJobUniform(jobId, skinIndex, whoAdded = defaultNoAccountId) {
 	tempJobUniformData.skin = skinIndex;
 	tempJobUniformData.jobIndex = jobId;
 	tempJobUniformData.job = getJobData(jobId).databaseId;
-	tempJobUniformData.name = getGameConfig().skins[getGame()][skinIndex][1];
+	tempJobUniformData.name = gameData.skins[getGame()][skinIndex][1];
 	tempJobUniformData.whoAdded = whoAdded;
 	tempJobUniformData.whenAdded = getCurrentUnixTimestamp();
 	tempJobUniformData.needsSaved = true;
@@ -4410,22 +4410,22 @@ function getHighestJobRank(jobIndex) {
 function createJobRouteLocationMarker(jobIndex, jobRouteIndex, jobRouteLocationIndex) {
 	let marker = null;
 	if (isGameFeatureSupported("sphere")) {
-		marker = createGameSphere(getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).position, getGlobalConfig().jobRouteLocationSphereRadius, getJobData(jobIndex).colour);
+		marker = createGameSphere(getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).position, globalConfig.jobRouteLocationSphereRadius, getJobData(jobIndex).colour);
 		setElementOnAllDimensions(marker, false);
 		setElementShownByDefault(marker, false);
-		setElementDimension(marker, getGameConfig().mainWorldDimension[getGame()]);
+		setElementDimension(marker, gameData.mainWorldDimension[getGame()]);
 
 		if (isGameFeatureSupported("interior")) {
-			setElementInterior(marker, getGameConfig().mainWorldDimension[getGame()]);
+			setElementInterior(marker, gameData.mainWorldDimension[getGame()]);
 		}
 	} else {
-		marker = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).marker = createGamePickup(getGameConfig().pickupModels[getGame()].Misc, getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).position, getGameConfig().pickupTypes[getGame()].job);
+		marker = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).marker = createGamePickup(gameData.pickupModels[getGame()].Misc, getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex).position, gameData.pickupTypes[getGame()].job);
 		setElementOnAllDimensions(marker, false);
 		setElementShownByDefault(marker, false);
-		setElementDimension(marker, getGameConfig().mainWorldDimension[getGame()]);
+		setElementDimension(marker, gameData.mainWorldDimension[getGame()]);
 
 		if (isGameFeatureSupported("interior")) {
-			setElementInterior(marker, getGameConfig().mainWorldDimension[getGame()]);
+			setElementInterior(marker, gameData.mainWorldDimension[getGame()]);
 		}
 	}
 
@@ -4714,7 +4714,7 @@ function removePlayerFromJobWhiteList(client, jobIndex, whoDeleted = defaultNoAc
 function getJobLocationPickupModelForNetworkEvent(jobIndex) {
 	let pickupModelId = -1;
 	if (isGameFeatureSupported("pickup")) {
-		pickupModelId = getGameConfig().pickupModels[getGame()].Job;
+		pickupModelId = gameData.pickupModels[getGame()].Job;
 
 		if (getJobData(jobIndex).pickupModel != 0) {
 			pickupModelId = getJobData(jobIndex).pickupModel;
@@ -4729,7 +4729,7 @@ function getJobLocationPickupModelForNetworkEvent(jobIndex) {
 function getJobLocationBlipModelForNetworkEvent(jobIndex) {
 	let blipModelId = -1;
 	if (isGameFeatureSupported("blip")) {
-		blipModelId = getGameConfig().blipSprites[getGame()].Job;
+		blipModelId = gameData.blipSprites[getGame()].Job;
 
 		if (getJobData(jobIndex).blipModel != 0) {
 			blipModelId = getJobData(jobIndex).blipModel;
@@ -4777,24 +4777,24 @@ function finePlayerCommand(command, params, client) {
 		return false;
 	}
 
-	if (amount > getGameConfig().maximumFineAmount[getGame()]) {
-		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(getGameConfig().maximumFineAmount[getGame()])}{MAINCOLOUR}`));
+	if (amount > gameData.maximumFineAmount[getGame()]) {
+		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(gameData.maximumFineAmount[getGame()])}{MAINCOLOUR}`));
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(targetClient).fineAmount > getGameConfig().maximumFineAmount[getGame()]) {
-		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(getGameConfig().maximumFineAmount[getGame()])}{MAINCOLOUR}`));
+	if (getPlayerCurrentSubAccount(targetClient).fineAmount > gameData.maximumFineAmount[getGame()]) {
+		messagePlayerInfo(client, getLocaleString(client, "MaximumFine", `{ALTCOLOUR}${getCurrencyString(gameData.maximumFineAmount[getGame()])}{MAINCOLOUR}`));
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > getGlobalConfig().finePlayerDistance) {
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.finePlayerDistance) {
 		messagePlayerError(client, getLocaleString(client, "PlayerTooFar", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
 		return false;
 	}
 
 	getPlayerCurrentSubAccount(targetClient).fineAmount = getPlayerCurrentSubAccount(targetClient).fineAmount + amount;
 
-	let commission = Math.round(getPlayerCurrentSubAccount(targetClient).fineAmount * getGlobalConfig().fineCommission);
+	let commission = Math.round(getPlayerCurrentSubAccount(targetClient).fineAmount * globalConfig.fineCommission);
 	getPlayerCurrentSubAccount(client).payDayAmount = getPlayerCurrentSubAccount(client).payDayAmount + commission;
 
 	messagePlayerSuccess(client, getLocaleString(client, "FinedPlayer", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));

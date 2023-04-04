@@ -144,13 +144,13 @@ function loadServerDataFromDatabase() {
 	getServerData().itemTypes = loadItemTypesFromDatabase();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
+	getServerData().cachedTranslations = new Array(globalConfig.locale.locales.length);
+	getServerData().cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
 	getServerData().cachedTranslationFrom.fill([]);
 	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
 
 	// Only load these if the server isn't a testing/dev server
-	if (!getServerConfig().devServer) {
+	if (!serverConfig.devServer) {
 		getServerData().items = loadItemsFromDatabase();
 		getServerData().businesses = loadBusinessesFromDatabase();
 		getServerData().houses = loadHousesFromDatabase();

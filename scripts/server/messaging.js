@@ -211,7 +211,7 @@ function messagePlayerTimedRandomTip(client, message) {
 
 function makeChatBoxSectionHeader(name) {
 	let resultString = `{clanOrange}== {jobYellow}${name} `;
-	let endFiller = fillStringWithCharacter("=", getGlobalConfig().chatSectionHeaderLength - resultString.length);
+	let endFiller = fillStringWithCharacter("=", globalConfig.chatSectionHeaderLength - resultString.length);
 	return `${resultString} {clanOrange}${endFiller}`;
 }
 
@@ -283,7 +283,7 @@ function messagePlayerPhoneCall(talkingPlayer, receivingPlayer, messageText) {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
-			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(talkingPlayer), getPlayerPosition(clients[i])) <= getGlobalConfig().talkDistance && getPlayerDimension(talkingPlayer) == getPlayerDimension(clients[i]))) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(talkingPlayer), getPlayerPosition(clients[i])) <= globalConfig.talkDistance && getPlayerDimension(talkingPlayer) == getPlayerDimension(clients[i]))) {
 				messagePlayerPhone(clients[i], talkingPlayer, messageText);
 			}
 		}

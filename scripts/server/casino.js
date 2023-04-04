@@ -217,7 +217,7 @@ function playerBustBlackJack(client) {
 function playerWinBlackJack(client, isBlackJack) {
 	let playerData = getPlayerData(client);
 
-	playerData.casinoChips = (!isBlackJack) ? playerData.casinoChips + playerData.casinoBet : playerData.casinoChips + (playerData.casinoBet * getGlobalConfig().blackJackPayoutMultiplier);
+	playerData.casinoChips = (!isBlackJack) ? playerData.casinoChips + playerData.casinoBet : playerData.casinoChips + (playerData.casinoBet * globalConfig.blackJackPayoutMultiplier);
 	playerData.casinoCardHand = [];
 	playerData.casinoBlackJackState = V_CASINO_BLACKJACK_PLAYSTATE_WAITING;
 

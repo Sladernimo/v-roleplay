@@ -338,9 +338,9 @@ function showRadioHelpMessage(client) {
 
 function showWealthAndTaxHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWealthandTaxHelp")));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * getServerConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * serverConfig.economy.incomeTaxRate}%{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 1));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${getServerConfig().economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 3, `{ALTCOLOUR}/wealth{MAINCOLOUR}`, `{ALTCOLOUR}/tax{MAINCOLOUR}`));
 }
 

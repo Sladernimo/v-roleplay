@@ -315,12 +315,12 @@ function playerPromptAnswerYes(client) {
 			//	removePlayerKeyBind(client, getPlayerData(client).keyBinds[i].key)
 			//}
 
-			//for (let i in getGlobalConfig().keyBind.defaultKeyBinds) {
+			//for (let i in globalConfig.keyBind.defaultKeyBinds) {
 			//	let tempKeyBindData = new KeyBindData(false);
 			//	tempKeyBindData.databaseId = -1;
-			//	tempKeyBindData.key = getKeyIdFromParams(getGlobalConfig().keyBind.defaultKeyBinds[i].keyName);
-			//	tempKeyBindData.commandString = getGlobalConfig().keyBind.defaultKeyBinds[i].commandString;
-			//	tempKeyBindData.keyState = getGlobalConfig().keyBind.defaultKeyBinds[i].keyState;
+			//	tempKeyBindData.key = getKeyIdFromParams(globalConfig.keyBind.defaultKeyBinds[i].keyName);
+			//	tempKeyBindData.commandString = globalConfig.keyBind.defaultKeyBinds[i].commandString;
+			//	tempKeyBindData.keyState = globalConfig.keyBind.defaultKeyBinds[i].keyState;
 			//	getPlayerData(client).keyBinds.push(tempKeyBindData);
 			//}
 

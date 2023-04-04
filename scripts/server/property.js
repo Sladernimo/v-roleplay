@@ -238,7 +238,7 @@ function createPropertyCommand(command, params, client) {
 		params,
 		getPlayerPosition(client),
 		toVector3(0.0, 0.0, 0.0),
-		(isGameFeatureSupported("pickup")) ? getGameConfig().pickupModels[getGame()].Property : -1,
+		(isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Property : -1,
 		-1,
 		getPlayerInterior(client),
 		getPlayerDimension(client),
@@ -801,9 +801,9 @@ function setPropertyPickupCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		if (isNull(getGameConfig().pickupModels[getGame()][typeParam])) {
+		if (isNull(gameData.pickupModels[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid pickup type! Use a pickup type name or a model ID");
-			let pickupTypes = Object.keys(getGameConfig().pickupModels[getGame()]);
+			let pickupTypes = Object.keys(gameData.pickupModels[getGame()]);
 			let chunkedList = splitArrayIntoChunks(pickupTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPickupTypes")));
@@ -813,7 +813,7 @@ function setPropertyPickupCommand(command, params, client) {
 			return false;
 		}
 
-		getPropertyData(propertyIndex).entrancePickupModel = getGameConfig().pickupModels[getGame()][typeParam];
+		getPropertyData(propertyIndex).entrancePickupModel = gameData.pickupModels[getGame()][typeParam];
 	} else {
 		getPropertyData(propertyIndex).entrancePickupModel = toInteger(typeParam);
 	}
@@ -836,7 +836,7 @@ function setPropertyInteriorTypeCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getGameConfig().interiors[getGame()] == "undefined") {
+	if (typeof gameData.interiors[getGame()] == "undefined") {
 		messagePlayerError(client, `There are no interiors available for this game!`);
 		return false;
 	}
@@ -855,9 +855,9 @@ function setPropertyInteriorTypeCommand(command, params, client) {
 			return false;
 		}
 
-		if (isNull(getGameConfig().interiors[getGame()][typeParam])) {
+		if (isNull(gameData.interiors[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid interior type! Use an interior type name");
-			let interiorTypesList = Object.keys(getGameConfig().interiors[getGame()]);
+			let interiorTypesList = Object.keys(gameData.interiors[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderInteriorTypes")));
@@ -867,18 +867,18 @@ function setPropertyInteriorTypeCommand(command, params, client) {
 			return false;
 		}
 
-		getPropertyData(propertyIndex).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getPropertyData(propertyIndex).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + getGlobalConfig().propertyDimensionStart;
-		getPropertyData(propertyIndex).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getPropertyData(propertyIndex).exitPosition = gameData.interiors[getGame()][typeParam][0];
+		getPropertyData(propertyIndex).exitInterior = gameData.interiors[getGame()][typeParam][1];
+		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + globalConfig.propertyDimensionStart;
+		getPropertyData(propertyIndex).exitPickupModel = gameData.pickupModels[getGame()].Exit;
 		getPropertyData(propertyIndex).hasInterior = true;
-		getPropertyData(propertyIndex).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
+		getPropertyData(propertyIndex).customInterior = gameData.interiors[getGame()][typeParam][2];
 
 		if (isGameFeatureSupported("interiorScene")) {
 			if (isMainWorldScene(getPlayerData(client).scene)) {
-				getPropertyData(propertyIndex).exitScene = getGameConfig().mainWorldScene[getGame()];
+				getPropertyData(propertyIndex).exitScene = gameData.mainWorldScene[getGame()];
 			} else {
-				getPropertyData(propertyIndex).exitScene = getGameConfig().interiors[getGame()][typeParam][3];
+				getPropertyData(propertyIndex).exitScene = gameData.interiors[getGame()][typeParam][3];
 			}
 		}
 	}
@@ -906,15 +906,15 @@ function addPropertyPropertyTemplateEntities(command, params, client) {
 		return false;
 	}
 
-	if (typeof getGameConfig().interiors[getGame()] == "undefined") {
+	if (typeof gameData.interiors[getGame()] == "undefined") {
 		messagePlayerError(client, `There are no property templates available for this game!`);
 		return false;
 	}
 
 	if (isNaN(propertyTemplateParam)) {
-		if (isNull(getGameConfig().interiors[getGame()][typeParam])) {
+		if (isNull(gameData.interiors[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid interior type! Use an interior type name");
-			let interiorTypesList = Object.keys(getGameConfig().properties[getGame()]);
+			let interiorTypesList = Object.keys(gameData.properties[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPropertyTemplateTypes")));
@@ -924,13 +924,13 @@ function addPropertyPropertyTemplateEntities(command, params, client) {
 			return false;
 		}
 
-		getPropertyData(propertyIndex).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getPropertyData(propertyIndex).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + getGlobalConfig().businessDimensionStart;
-		getPropertyData(propertyIndex).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getPropertyData(propertyIndex).exitPosition = gameData.interiors[getGame()][typeParam][0];
+		getPropertyData(propertyIndex).exitInterior = gameData.interiors[getGame()][typeParam][1];
+		getPropertyData(propertyIndex).exitDimension = getPropertyData(propertyIndex).databaseId + globalConfig.businessDimensionStart;
+		getPropertyData(propertyIndex).exitPickupModel = gameData.pickupModels[getGame()].Exit;
 		getPropertyData(propertyIndex).hasInterior = true;
-		getPropertyData(propertyIndex).customInterior = getGameConfig().interiors[getGame()][typeParam][2];
-		getPropertyData(propertyIndex).interiorScene = getGameConfig().interiors[getGame()][typeParam][3];
+		getPropertyData(propertyIndex).customInterior = gameData.interiors[getGame()][typeParam][2];
+		getPropertyData(propertyIndex).interiorScene = gameData.interiors[getGame()][typeParam][3];
 	}
 
 	//deletePropertyExitPickup(propertyIndex);
@@ -957,10 +957,10 @@ function setPropertyBlipCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		if (isNull(getGameConfig().blipSprites[getGame()][typeParam])) {
+		if (isNull(gameData.blipSprites[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid property type! Use a property type name or a blip image ID");
 
-			let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
+			let blipTypes = Object.keys(gameData.blipSprites[getGame()]);
 			let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
 			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBlipTypes")));
@@ -970,7 +970,7 @@ function setPropertyBlipCommand(command, params, client) {
 			return false;
 		}
 
-		getPropertyData(propertyIndex).entranceBlipModel = getGameConfig().blipSprites[getGame()][typeParam];
+		getPropertyData(propertyIndex).entranceBlipModel = gameData.blipSprites[getGame()][typeParam];
 	} else {
 		getPropertyData(propertyIndex).entranceBlipModel = toInteger(typeParam);
 	}
@@ -997,9 +997,9 @@ function giveDefaultItemsToPropertyCommand(command, params, client) {
 		return false;
 	}
 
-	if (isNull(getGameConfig().defaultPropertyItems[getGame()][typeParam])) {
+	if (isNull(gameData.defaultPropertyItems[getGame()][typeParam])) {
 		messagePlayerError(client, "Invalid property items type! Use a property items type name");
-		let businessItemTypes = Object.keys(getGameConfig().defaultPropertyItems[getGame()]);
+		let businessItemTypes = Object.keys(gameData.defaultPropertyItems[getGame()]);
 		let chunkedList = splitArrayIntoChunks(businessItemTypes, 10);
 
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDefaultPropertyItemTypes")));
@@ -1009,12 +1009,12 @@ function giveDefaultItemsToPropertyCommand(command, params, client) {
 		return false;
 	}
 
-	for (let i in getGameConfig().defaultPropertyItems[getGame()][typeParam]) {
-		let itemTypeId = getItemTypeFromParams(getGameConfig().defaultPropertyItems[getGame()][typeParam][i][0]);
+	for (let i in gameData.defaultPropertyItems[getGame()][typeParam]) {
+		let itemTypeId = getItemTypeFromParams(gameData.defaultPropertyItems[getGame()][typeParam][i][0]);
 		let itemTypeData = getItemTypeData(itemTypeId);
 		if (itemTypeData) {
-			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getPropertyData(propertyIndex).databaseId, getGameConfig().defaultPropertyItems[getGame()][typeParam][i][1]);
-			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * getGameConfig().defaultPropertyItems[getGame()][typeParam][i][2];
+			let newItemIndex = createItem(itemTypeId, itemTypeData.orderValue, V_ITEM_OWNER_BIZFLOOR, getPropertyData(propertyIndex).databaseId, gameData.defaultPropertyItems[getGame()][typeParam][i][1]);
+			getItemData(newItemIndex).buyPrice = applyServerInflationMultiplier(itemTypeData.orderPrice) * gameData.defaultPropertyItems[getGame()][typeParam][i][2];
 		}
 	}
 
@@ -1415,14 +1415,14 @@ function getPlayerProperty(client) {
 		return -1;
 	}
 
-	if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
+	if (getPlayerDimension(client) == gameData.mainWorldDimension[getGame()]) {
 		let closestEntrance = getClosestPropertyEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getPropertyData(closestEntrance).index;
 		}
 	} else {
 		let closestEntrance = getClosestPropertyEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getPropertyData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getPropertyData(closestEntrance).index;
 		}
 
@@ -1438,7 +1438,7 @@ function getPlayerProperty(client) {
 // ===========================================================================
 
 function saveAllPropertyesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -1524,7 +1524,7 @@ function savePropertyToDatabase(propertyIndex) {
 // ===========================================================================
 
 function createAllPropertyPickups() {
-	if (!getServerConfig().createPropertyPickups) {
+	if (!serverConfig.createPropertyPickups) {
 		return false;
 	}
 
@@ -1540,7 +1540,7 @@ function createAllPropertyPickups() {
 // ===========================================================================
 
 function createAllPropertyBlips() {
-	if (!getServerConfig().createPropertyBlips) {
+	if (!serverConfig.createPropertyBlips) {
 		return false;
 	}
 
@@ -1561,7 +1561,7 @@ function createPropertyEntrancePickup(propertyIndex) {
 		return false;
 	}
 
-	if (!getServerConfig().createPropertyPickups) {
+	if (!serverConfig.createPropertyPickups) {
 		return false;
 	}
 
@@ -1580,13 +1580,13 @@ function createPropertyEntrancePickup(propertyIndex) {
 	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
-			let pickupModelId = getGameConfig().pickupModels[getGame()].Property;
+			let pickupModelId = gameData.pickupModels[getGame()].Property;
 
 			if (propertyData.entrancePickupModel != 0) {
 				pickupModelId = propertyData.entrancePickupModel;
 			}
 
-			entrancePickup = createGamePickup(pickupModelId, propertyData.entrancePosition, getGameConfig().pickupTypes[getGame()].business);
+			entrancePickup = createGamePickup(pickupModelId, propertyData.entrancePosition, gameData.pickupTypes[getGame()].business);
 		} else if (isGameFeatureSupported("dummyElement")) {
 			entrancePickup = createGameDummyElement(propertyData.entrancePosition);
 		}
@@ -1599,18 +1599,18 @@ function createPropertyEntrancePickup(propertyIndex) {
 				setElementOnAllDimensions(entrancePickup, true);
 			}
 
-			if (getGlobalConfig().propertyPickupStreamInDistance == -1 || getGlobalConfig().propertyPickupStreamOutDistance == -1) {
+			if (globalConfig.propertyPickupStreamInDistance == -1 || globalConfig.propertyPickupStreamOutDistance == -1) {
 				entrancePickup.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entrancePickup, getGlobalConfig().propertyPickupStreamInDistance);
-				setElementStreamOutDistance(entrancePickup, getGlobalConfig().propertyPickupStreamOutDistance);
+				setElementStreamInDistance(entrancePickup, globalConfig.propertyPickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, globalConfig.propertyPickupStreamOutDistance);
 			}
 			setElementTransient(entrancePickup, false);
 			getPropertyData(propertyIndex).entrancePickup = entrancePickup;
 			updatePropertyPickupLabelData(propertyIndex);
 		}
 	} else {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Property;
+		let pickupModelId = gameData.pickupModels[getGame()].Property;
 
 		if (propertyData.entrancePickupModel != 0) {
 			pickupModelId = propertyData.entrancePickupModel;
@@ -1628,7 +1628,7 @@ function createPropertyEntranceBlip(propertyIndex) {
 		return false;
 	}
 
-	if (!getServerConfig().createPropertyBlips) {
+	if (!serverConfig.createPropertyBlips) {
 		return false;
 	}
 
@@ -1646,7 +1646,7 @@ function createPropertyEntranceBlip(propertyIndex) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Property;
+	let blipModelId = gameData.blipSprites[getGame()].Property;
 
 	if (propertyData.entranceBlipModel != 0) {
 		blipModelId = propertyData.entranceBlipModel;
@@ -1664,11 +1664,11 @@ function createPropertyEntranceBlip(propertyIndex) {
 				setElementOnAllDimensions(entranceBlip, true);
 			}
 
-			if (getGlobalConfig().propertyBlipStreamInDistance == -1 || getGlobalConfig().propertyBlipStreamOutDistance == -1) {
+			if (globalConfig.propertyBlipStreamInDistance == -1 || globalConfig.propertyBlipStreamOutDistance == -1) {
 				entranceBlip.netFlags.distanceStreaming = false;
 			} else {
-				setElementStreamInDistance(entranceBlip, getGlobalConfig().propertyBlipStreamInDistance);
-				setElementStreamOutDistance(entranceBlip, getGlobalConfig().propertyBlipStreamOutDistance);
+				setElementStreamInDistance(entranceBlip, globalConfig.propertyBlipStreamInDistance);
+				setElementStreamOutDistance(entranceBlip, globalConfig.propertyBlipStreamOutDistance);
 			}
 			setElementTransient(entranceBlip, false);
 			propertyData.entranceBlip = entranceBlip;
@@ -1683,7 +1683,7 @@ function createPropertyExitPickup(propertyIndex) {
 		return false;
 	}
 
-	if (!getServerConfig().createPropertyPickups) {
+	if (!serverConfig.createPropertyPickups) {
 		return false;
 	}
 
@@ -1701,13 +1701,13 @@ function createPropertyExitPickup(propertyIndex) {
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+		let pickupModelId = gameData.pickupModels[getGame()].Exit;
 
 		if (propertyData.exitPickupModel != 0) {
 			pickupModelId = propertyData.exitPickupModel;
 		}
 
-		exitPickup = createGamePickup(pickupModelId, propertyData.exitPosition, getGameConfig().pickupTypes[getGame()].business);
+		exitPickup = createGamePickup(pickupModelId, propertyData.exitPosition, gameData.pickupTypes[getGame()].business);
 	} else if (isGameFeatureSupported("dummyElement")) {
 		//exitPickup = createGameDummyElement(propertyData.exitPosition);
 	}
@@ -1720,11 +1720,11 @@ function createPropertyExitPickup(propertyIndex) {
 			setElementOnAllDimensions(exitPickup, true);
 		}
 
-		if (getGlobalConfig().propertyPickupStreamInDistance == -1 || getGlobalConfig().propertyPickupStreamOutDistance == -1) {
+		if (globalConfig.propertyPickupStreamInDistance == -1 || globalConfig.propertyPickupStreamOutDistance == -1) {
 			exitPickup.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitPickup, getGlobalConfig().propertyPickupStreamInDistance);
-			setElementStreamOutDistance(exitPickup, getGlobalConfig().propertyPickupStreamOutDistance);
+			setElementStreamInDistance(exitPickup, globalConfig.propertyPickupStreamInDistance);
+			setElementStreamOutDistance(exitPickup, globalConfig.propertyPickupStreamOutDistance);
 		}
 		setElementTransient(exitPickup, false);
 		getPropertyData(propertyIndex).exitPickup = exitPickup;
@@ -1740,7 +1740,7 @@ function createPropertyExitBlip(propertyIndex) {
 		return false;
 	}
 
-	if (!getServerConfig().createPropertyBlips) {
+	if (!serverConfig.createPropertyBlips) {
 		return false;
 	}
 
@@ -1758,7 +1758,7 @@ function createPropertyExitBlip(propertyIndex) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Property;
+	let blipModelId = gameData.blipSprites[getGame()].Property;
 
 	if (propertyData.exitBlipModel != 0) {
 		blipModelId = propertyData.exitBlipModel;
@@ -1775,11 +1775,11 @@ function createPropertyExitBlip(propertyIndex) {
 			setElementOnAllDimensions(exitBlip, true);
 		}
 
-		if (getGlobalConfig().propertyBlipStreamInDistance == -1 || getGlobalConfig().propertyBlipStreamOutDistance == -1) {
+		if (globalConfig.propertyBlipStreamInDistance == -1 || globalConfig.propertyBlipStreamOutDistance == -1) {
 			exitBlip.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitBlip, getGlobalConfig().propertyBlipStreamInDistance);
-			setElementStreamOutDistance(exitBlip, getGlobalConfig().propertyBlipStreamOutDistance);
+			setElementStreamInDistance(exitBlip, globalConfig.propertyBlipStreamInDistance);
+			setElementStreamOutDistance(exitBlip, globalConfig.propertyBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
 		propertyData.exitBlip = exitBlip;

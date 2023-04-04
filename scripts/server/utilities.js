@@ -36,7 +36,7 @@ function getAreaName(position) {
 // ===========================================================================
 
 function getGameAreas(gameId) {
-	return getGameConfig().areas[gameId];
+	return gameData.areas[gameId];
 }
 
 // ===========================================================================
@@ -79,12 +79,12 @@ function updateServerRules() {
 
 	if (isTimeSupported()) {
 		if (getServerConfig() != false) {
-			tempText = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
+			tempText = makeReadableTime(serverConfig.hour, serverConfig.minute);
 			timeWeatherRule.push(tempText);
 		}
 	} else {
 		if (getGame() == V_GAME_MAFIA_ONE) {
-			if (isNightTime(getServerConfig().hour)) {
+			if (isNightTime(serverConfig.hour)) {
 				tempText = "Night";
 			} else {
 				tempText = "Day";
@@ -96,8 +96,8 @@ function updateServerRules() {
 
 	if (isWeatherSupported()) {
 		if (getServerConfig() != false) {
-			if (getWeatherData(getServerConfig().weather) != false) {
-				let tempText = getWeatherData(getServerConfig().weather).name;
+			if (getWeatherData(serverConfig.weather) != false) {
+				let tempText = getWeatherData(serverConfig.weather).name;
 				timeWeatherRule.push(tempText);
 			}
 		}
@@ -105,7 +105,7 @@ function updateServerRules() {
 
 	if (isSnowSupported()) {
 		if (getServerConfig() != false) {
-			if (getServerConfig().fallingSnow == true) {
+			if (serverConfig.fallingSnow == true) {
 				timeWeatherRule.push("Snowing");
 			}
 		}
@@ -119,14 +119,14 @@ function updateServerRules() {
 
 function getWeatherFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().weather[getGame()]) {
-			if (toLowerCase(getGameConfig().weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in gameData.weather[getGame()]) {
+			if (toLowerCase(gameData.weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		for (let i in getGameConfig().weather[getGame()]) {
-			if (typeof getGameConfig().weather[getGame()][i].weatherId != "undefined") {
+		for (let i in gameData.weather[getGame()]) {
+			if (typeof gameData.weather[getGame()][i].weatherId != "undefined") {
 				return toInteger(i);
 			}
 		}
@@ -139,13 +139,13 @@ function getWeatherFromParams(params) {
 
 function getFightStyleFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().fightStyles[getGame()]) {
-			if (toLowerCase(getGameConfig().fightStyles[getGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in gameData.fightStyles[getGame()]) {
+			if (toLowerCase(gameData.fightStyles[getGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().fightStyles[getGame()][params] != "undefined") {
+		if (typeof gameData.fightStyles[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -156,34 +156,34 @@ function getFightStyleFromParams(params) {
 // ===========================================================================
 
 function getClosestHospital(position) {
-	if (typeof getGameConfig().hospitals[getGame()] == "undefined") {
-		return { position: getServerConfig().newCharacter.spawnPosition };
+	if (typeof gameData.hospitals[getGame()] == "undefined") {
+		return { position: serverConfig.newCharacter.spawnPosition };
 	} else {
 		let closest = 0;
-		for (let i in getGameConfig().hospitals[getGame()]) {
-			if (getDistance(getGameConfig().hospitals[getGame()][i].position, position) < getDistance(getGameConfig().hospitals[getGame()][closest].position, position)) {
+		for (let i in gameData.hospitals[getGame()]) {
+			if (getDistance(gameData.hospitals[getGame()][i].position, position) < getDistance(gameData.hospitals[getGame()][closest].position, position)) {
 				closest = i;
 			}
 		}
 
-		return getGameConfig().hospitals[getGame()][closest];
+		return gameData.hospitals[getGame()][closest];
 	}
 }
 
 // ===========================================================================
 
 function getClosestPoliceStation(position) {
-	if (typeof getGameConfig().policeStations[getGame()] == "undefined") {
-		return { position: getServerConfig().newCharacter.spawnPosition };
+	if (typeof gameData.policeStations[getGame()] == "undefined") {
+		return { position: serverConfig.newCharacter.spawnPosition };
 	} else {
 		let closest = 0;
-		for (let i in getGameConfig().policeStations[getGame()]) {
-			if (getDistance(getGameConfig().policeStations[getGame()][i].position, position) < getDistance(getGameConfig().policeStations[getGame()][closest].position, position)) {
+		for (let i in gameData.policeStations[getGame()]) {
+			if (getDistance(gameData.policeStations[getGame()][i].position, position) < getDistance(gameData.policeStations[getGame()][closest].position, position)) {
 				closest = i;
 			}
 		}
 
-		return getGameConfig().policeStations[getGame()][closest];
+		return gameData.policeStations[getGame()][closest];
 	}
 }
 
@@ -223,8 +223,8 @@ function getPlayerIsland(client) {
 // ===========================================================================
 
 function isAtPayAndSpray(position) {
-	for (let i in getGameConfig().payAndSprays[getGame()]) {
-		if (getDistance(position, getGameConfig().payAndSprays[getGame()][i]) <= getGlobalConfig().payAndSprayDistance) {
+	for (let i in gameData.payAndSprays[getGame()]) {
+		if (getDistance(position, gameData.payAndSprays[getGame()][i]) <= globalConfig.payAndSprayDistance) {
 			return true;
 		}
 	}
@@ -274,7 +274,7 @@ function showConnectCameraToPlayer(client) {
 	if (isCustomCameraSupported()) {
 		//setPlayerInterior(client, 0);
 		//setPlayerDimension(client, 0);
-		setPlayerCameraLookAt(client, getServerConfig().connectCameraPosition, getServerConfig().connectCameraLookAt);
+		setPlayerCameraLookAt(client, serverConfig.connectCameraPosition, serverConfig.connectCameraLookAt);
 	}
 	setPlayer2DRendering(client, false, false, false, false, false, false);
 }
@@ -282,7 +282,7 @@ function showConnectCameraToPlayer(client) {
 // ===========================================================================
 
 function showCharacterSelectCameraToPlayer(client) {
-	setPlayerCameraLookAt(client, getServerConfig().characterSelectCameraPosition, getServerConfig().characterSelectCameraPosition);
+	setPlayerCameraLookAt(client, serverConfig.characterSelectCameraPosition, serverConfig.characterSelectCameraPosition);
 }
 
 // ===========================================================================
@@ -370,7 +370,7 @@ function generateRandomPhoneNumber() {
 // ===========================================================================
 
 function doesNameContainInvalidCharacters(name) {
-	let disallowedCharacters = getGlobalConfig().subAccountNameAllowedCharacters;
+	let disallowedCharacters = globalConfig.subAccountNameAllowedCharacters;
 	name = toLowerCase(name);
 	for (let i = 0; i < name.length; i++) {
 		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
@@ -530,10 +530,10 @@ function processPlayerSceneSwitch(client, spawn = false) {
 	*/
 
 	if (spawn == true) {
-		let skin = getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
+		let skin = gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
 		if (isPlayerWorking(client)) {
 			if (getPlayerData(client).jobUniform != -1) {
-				skin = getGameConfig().skins[getGame()][getPlayerData(client).jobUniform][0];
+				skin = gameData.skins[getGame()][getPlayerData(client).jobUniform][0];
 			}
 		}
 
@@ -601,7 +601,7 @@ function getPlayerCountryISOCode(client) {
 		return "US";
 	}
 
-	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
+	return module.geoip.getCountryISO(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(client));
 }
 
 // ===========================================================================

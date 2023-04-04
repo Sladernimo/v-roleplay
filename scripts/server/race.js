@@ -43,7 +43,7 @@ function loadRacesFromDatabase() {
 // ===========================================================================
 
 function saveRacesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 

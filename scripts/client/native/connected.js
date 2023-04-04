@@ -89,7 +89,7 @@ function deleteLocalGameElement(element) {
 // ===========================================================================
 
 function createGameVehicle(modelIndex, position, heading) {
-	return game.createVehicle(getGameConfig().vehicles[getGame()][modelIndex][0], position, heading);
+	return game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, heading);
 }
 
 // ===========================================================================
@@ -314,7 +314,7 @@ function syncVehicleProperties(vehicle) {
 	}
 
 	if (getGame() == V_GAME_GTA_SA) {
-		let allUpgrades = getGameConfig().vehicleUpgrades[getGame()];
+		let allUpgrades = gameData.vehicleUpgrades[getGame()];
 		for (let i in allUpgrades) {
 			vehicle.removeUpgrade(i);
 		}

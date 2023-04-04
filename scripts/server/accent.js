@@ -55,7 +55,7 @@ function setAccentCommand(command, params, client) {
 		return false;
 	}
 
-	let accentString = getGlobalConfig().accents[accentId];
+	let accentString = globalConfig.accents[accentId];
 
 	getPlayerCurrentSubAccount(client).accent = accentString;
 
@@ -65,7 +65,7 @@ function setAccentCommand(command, params, client) {
 // ===========================================================================
 
 function listAccentsCommand(command, params, client) {
-	let accentList = getGlobalConfig().accents;
+	let accentList = globalConfig.accents;
 
 	let chunkedList = splitArrayIntoChunks(accentList, 8);
 
@@ -79,13 +79,13 @@ function listAccentsCommand(command, params, client) {
 
 function getAccentFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGlobalConfig().accents) {
-			if (toLowerCase(getGlobalConfig().accents[i]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in globalConfig.accents) {
+			if (toLowerCase(globalConfig.accents[i]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGlobalConfig().accents[params] != "undefined") {
+		if (typeof globalConfig.accents[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -96,7 +96,7 @@ function getAccentFromParams(params) {
 // ===========================================================================
 
 function reloadAccentConfigurationCommand(command, params, client) {
-	getGlobalConfig().accents = loadAccentConfig();
+	globalConfig.accents = loadAccentConfig();
 	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}has reloaded the accent list`);
 }
 
@@ -115,7 +115,7 @@ function addAccentCommand(command, params, client) {
 		return false;
 	}
 
-	getGlobalConfig().accents.push(newAccentName);
+	globalConfig.accents.push(newAccentName);
 	saveAccentConfig();
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} added a new accent: {ALTCOLOUR}${newAccentName}{MAINCOLOUR}`);
 }
@@ -135,7 +135,7 @@ function removeAccentCommand(command, params, client) {
 		return false;
 	}
 
-	getGlobalConfig().accents.push(newAccentName);
+	globalConfig.accents.push(newAccentName);
 	saveAccentConfig();
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed an accent: {ALTCOLOUR}${newAccentName}{MAINCOLOUR}`);
 }

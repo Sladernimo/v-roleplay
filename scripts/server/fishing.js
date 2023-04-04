@@ -135,11 +135,11 @@ function castFishingLineCommand(command, params, client) {
 		return false;
 	}
 
-	let maxStrength = getGlobalConfig().fishingCastMaxStrength;
-	let minStrength = getGlobalConfig().fishingCastMinStrength;
+	let maxStrength = globalConfig.fishingCastMaxStrength;
+	let minStrength = globalConfig.fishingCastMinStrength;
 	let keyDuration = getPlayerData(client).keyBindDuration;
 
-	let strength = Math.round((maxStrength - minStrength) * (keyDuration / getGlobalConfig().fishingLineCastDuration));
+	let strength = Math.round((maxStrength - minStrength) * (keyDuration / globalConfig.fishingLineCastDuration));
 
 	castPlayerFishingLine(client, strength);
 
@@ -196,7 +196,7 @@ function castPlayerFishingLine(client, strength) {
 
 	setTimeout(function () {
 		let particleEffectName = fishingParticleEffects[getGame()].fishingLineCast[1];
-		showParticleEffect(frontPosition, getGameConfig().particleEffects[getGame()][particleEffectName], fishingParticleEffects[getGame()].fishingLineCast[1], fishingParticleEffects[getGame()].fishingLineCast[2]);
+		showParticleEffect(frontPosition, gameData.particleEffects[getGame()][particleEffectName], fishingParticleEffects[getGame()].fishingLineCast[1], fishingParticleEffects[getGame()].fishingLineCast[2]);
 
 		getPlayerData(client).fishingLineCastPosition = frontPosition;
 		getPlayerData(client).fishingLineState = V_FISHING_LINE_STATE_CASTED;
@@ -212,7 +212,7 @@ function isPlayerInFishingSpot(client) {
 
 	let closestFishingLocation = getClosestFishingLocation(getPlayerPosition(client));
 	if (closestFishingLocation != false) {
-		if (getDistance(getPlayerPosition(client), closestFishingLocation) < getGlobalConfig().fishingSpotDistance) {
+		if (getDistance(getPlayerPosition(client), closestFishingLocation) < globalConfig.fishingSpotDistance) {
 			return true;
 		}
 	}

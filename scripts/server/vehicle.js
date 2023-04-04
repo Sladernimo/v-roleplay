@@ -206,7 +206,7 @@ function loadVehiclesFromDatabase() {
 // ===========================================================================
 
 function saveAllVehiclesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -378,7 +378,7 @@ function createVehicleCommand(command, params, client) {
 		heading = degToRad(getPlayerHeading(client));
 	}
 
-	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
+	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
 	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
@@ -399,7 +399,7 @@ function createTemporaryVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getGlobalConfig().spawnCarDistance);
+	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
 	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
@@ -449,8 +449,8 @@ function getNearbyVehiclesCommand(command, params, client) {
 function vehicleTrunkCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
-	let behindPosition = getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), getGlobalConfig().vehicleTrunkDistance);
-	if (!getPlayerVehicle(client) && getDistance(behindPosition, getPlayerPosition(client)) > getGlobalConfig().vehicleTrunkDistance) {
+	let behindPosition = getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), globalConfig.vehicleTrunkDistance);
+	if (!getPlayerVehicle(client) && getDistance(behindPosition, getPlayerPosition(client)) > globalConfig.vehicleTrunkDistance) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInOrNearVehicle"));
 		return false;
 	}
@@ -551,7 +551,7 @@ function vehicleEngineCommand(command, params, client) {
 		return false;
 	}
 
-	if (getGlobalConfig().forceAllVehicleEngines != 0) {
+	if (globalConfig.forceAllVehicleEngines != 0) {
 		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
@@ -660,7 +660,7 @@ function vehicleAdminRepairCommand(command, params, client) {
 	}
 
 	logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} repaired their ${getVehicleName(vehicle)} vehicle`);
-	//takePlayerCash(client, getGlobalConfig().repairVehicleCost);
+	//takePlayerCash(client, globalConfig.repairVehicleCost);
 	repairVehicle(vehicle);
 	getVehicleData(vehicle).needsSaved = true;
 	//meActionToNearbyPlayers(client, `repairs the ${getVehicleName(vehicle)}`);
@@ -681,14 +681,14 @@ function vehicleAdminLiveryCommand(command, params, client) {
 		return false;
 	}
 
-	//if (getPlayerCurrentSubAccount(client).cash < getGlobalConfig().repairVehicleCost) {
-	//	messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need ${getCurrencyString(getGlobalConfig().resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
+	//if (getPlayerCurrentSubAccount(client).cash < globalConfig.repairVehicleCost) {
+	//	messagePlayerError(client, `You don't have enough money to change the vehicle's livery (need ${getCurrencyString(globalConfig.resprayVehicleCost - getPlayerCurrentSubAccount(client).cash)} more!)`);
 	//	return false;
 	//}
 
 	let livery = toInteger(params) || 3;
 
-	takePlayerCash(client, getGlobalConfig().resprayVehicleCost);
+	takePlayerCash(client, globalConfig.resprayVehicleCost);
 	updatePlayerCash(client);
 	getVehicleData(vehicle).livery = livery;
 	getVehicleData(vehicle).needsSaved = true;
@@ -1444,7 +1444,7 @@ function respawnVehicle(vehicle) {
 	* @return {Vehicle} The vehicle game object
 	*/
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${getGameConfig().vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)} with heading ${vehicleData.spawnRotation.toFixed(2)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${gameData.vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)} with heading ${vehicleData.spawnRotation.toFixed(2)}`);
 
 	let position = vehicleData.spawnPosition;
 	let rotation = vehicleData.spawnRotation;
@@ -1488,9 +1488,9 @@ function spawnVehicle(vehicleData) {
 		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s engine to OFF`);
 	}
 
-	if (getGlobalConfig().forceAllVehicleEngines == 1) {
+	if (globalConfig.forceAllVehicleEngines == 1) {
 		vehicleData.engine = false;
-	} else if (getGlobalConfig().forceAllVehicleEngines == 1) {
+	} else if (globalConfig.forceAllVehicleEngines == 1) {
 		vehicleData.engine = true;
 	}
 
@@ -1516,7 +1516,7 @@ function spawnVehicle(vehicleData) {
 
 function isVehicleAtPayAndSpray(vehicle) {
 	for (let i in getServerData().payAndSprays[getGame()]) {
-		if (getDistance(getVehiclePosition(vehicle), getServerData().payAndSprays[getGame()][i].position) <= getGlobalConfig().payAndSprayDistance) {
+		if (getDistance(getVehiclePosition(vehicle), getServerData().payAndSprays[getGame()][i].position) <= globalConfig.payAndSprayDistance) {
 			return true;
 		}
 	}
@@ -1659,7 +1659,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 // ===========================================================================
 
 function processVehiclePurchasing() {
-	if (!getGlobalConfig().useServerSideVehiclePurchaseCheck) {
+	if (!globalConfig.useServerSideVehiclePurchaseCheck) {
 		return false;
 	}
 
@@ -1705,7 +1705,7 @@ function checkVehiclePurchasing(client) {
 		return false;
 	}
 
-	if (getDistance(getVehiclePosition(getPlayerData(client).buyingVehicle), getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition) > getGlobalConfig().buyVehicleDriveAwayDistance) {
+	if (getDistance(getVehiclePosition(getPlayerData(client).buyingVehicle), getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition) > globalConfig.buyVehicleDriveAwayDistance) {
 		if (getPlayerCurrentSubAccount(client).cash < getVehicleData(getPlayerData(client).buyingVehicle).buyPrice) {
 			getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
@@ -1736,7 +1736,7 @@ function checkVehiclePurchasing(client) {
 // ===========================================================================
 
 function processVehicleBurning() {
-	if (!getGlobalConfig().useServerSideVehicleBurnCheck) {
+	if (!globalConfig.useServerSideVehicleBurnCheck) {
 		return false;
 	}
 
@@ -1848,7 +1848,7 @@ function getClosestTaxi(position) {
 // ===========================================================================
 
 function getVehicleTrunkPosition(vehicle) {
-	return getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), getGlobalConfig().vehicleTrunkDistance);
+	return getPosBehindPos(getVehiclePosition(vehicle), getVehicleHeading(vehicle), globalConfig.vehicleTrunkDistance);
 }
 
 // ===========================================================================
@@ -2019,7 +2019,7 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 	}
 
 	let tempStats = [
-		[`Type`, `${getGameConfig().vehicles[getGame()][vehicleData.model][1]} (${getGameConfig().vehicles[getGame()][vehicleData.model][0]})`],
+		[`Type`, `${gameData.vehicles[getGame()][vehicleData.model][1]} (${gameData.vehicles[getGame()][vehicleData.model][0]})`],
 		[`ID`, `${vehicleData.index}/${vehicleData.databaseId}`],
 		[`Owner`, `${ownerName} (${getVehicleOwnerTypeText(vehicleData.ownerType)})`],
 		[`Locked`, `${getYesNoFromBool(vehicleData.locked)}`],
@@ -2058,7 +2058,7 @@ function despawnVehicle(vehicleData) {
 // ===========================================================================
 
 function forceAllVehicleEngines(state) {
-	getGlobalConfig().forceAllVehicleEngines = state;
+	globalConfig.forceAllVehicleEngines = state;
 
 	if (state != 0) {
 		for (let i in getServerData().vehicles) {

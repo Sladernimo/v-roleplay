@@ -175,7 +175,7 @@ function setLocalPlayerInterior(interior) {
 			localPlayer.interior = interior;
 			game.cameraInterior = interior;
 		} //else {
-		//if(getGameConfig().mainWorldInterior != interior) {
+		//if(gameData.mainWorldInterior != interior) {
 		//	let interiorId = natives.getInteriorAtCoords(localPlayer.position);
 		//	natives.activateInterior(interiorId, true);
 		//	natives.loadAllObjectsNow();
@@ -241,7 +241,7 @@ function clearLocalPedState() {
 // ===========================================================================
 
 function getWeaponSlot(weaponId) {
-	return getGameConfig().weaponSlots[getGame()][weaponId];
+	return gameData.weaponSlots[getGame()][weaponId];
 }
 
 // ===========================================================================

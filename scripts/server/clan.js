@@ -1095,7 +1095,7 @@ function doesClanIdExist(clanId) {
 // ===========================================================================
 
 function reloadAllClans() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -1105,7 +1105,7 @@ function reloadAllClans() {
 // ===========================================================================
 
 function saveClanRanksToDatabase(clanId) {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -1261,7 +1261,7 @@ function setClanRankTitle(clanId, rankId, title) {
 function saveAllClansToDatabase() {
 	logToConsole(LOG_DEBUG, `[V.RP.Clan]: Saving all server clans to database ...`);
 
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		logToConsole(LOG_DEBUG, `[V.RP.Clan]: Aborting save all clans to database, dev server is enabled.`);
 		return false;
 	}

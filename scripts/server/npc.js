@@ -344,7 +344,7 @@ function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
 // ===========================================================================
 
 function saveAllNPCsToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
@@ -356,7 +356,7 @@ function saveAllNPCsToDatabase() {
 // ===========================================================================
 
 function saveNPCToDatabase(npcDataId) {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		logToConsole(LOG_VERBOSE, `[V.RP.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}
@@ -704,7 +704,7 @@ function getNPCInfoCommand(command, params, client) {
 	}
 
 	let tempStats = [
-		[`Skin`, `${getGameConfig().skins[npcData.skin][0]} (${getGameConfig().skins[npcData.skin][1]})`],
+		[`Skin`, `${gameData.skins[npcData.skin][0]} (${gameData.skins[npcData.skin][1]})`],
 		[`ID`, `${npcData.index}/${npcData.databaseId}`],
 		[`Owner`, `${ownerName} (${ownerType})`],
 		[`Animation`, `${npcData.animationName}`],
