@@ -1252,6 +1252,17 @@ function getPlayerPed(client) {
 
 // ===========================================================================
 
+function getEntityData(entity, dataName) {
+	if (entity != null) {
+		if (entity.getData != null) {
+			return entity.getData(dataName);
+		}
+	}
+	return null;
+}
+
+// ===========================================================================
+
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 	if (entity != null) {
 		if (areServerElementsSupported()) {

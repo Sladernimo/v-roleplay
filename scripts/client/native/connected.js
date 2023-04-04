@@ -823,3 +823,14 @@ function getLocalPlayerDimension() {
 }
 
 // ===========================================================================
+
+function getEntityData(entity, dataName) {
+	if (entity != null) {
+		if (entity.getData != null) {
+			return entity.getData(dataName);
+		}
+	}
+	return null;
+}
+
+// ===========================================================================
