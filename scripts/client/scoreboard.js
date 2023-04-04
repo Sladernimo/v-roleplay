@@ -12,7 +12,7 @@ let scoreBoardListFont = null;
 
 let pausedColour = COLOUR_RED;
 
-let scoreBoardKey = getKeyIdFromParams("F5");
+let scoreBoardKey = null;
 
 // ===========================================================================
 
@@ -20,6 +20,7 @@ function initScoreBoardScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.ScoreBoard]: Initializing scoreboard script ...");
 	scoreBoardTitleFont = initScoreBoardTitleFont();
 	scoreBoardListFont = initScoreBoardListFont();
+	scoreBoardKey = getKeyIdFromParams("F5");
 	logToConsole(LOG_DEBUG, "[V.RP.ScoreBoard]: Scoreboard script initialized!");
 }
 
