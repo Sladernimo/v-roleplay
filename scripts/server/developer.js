@@ -348,7 +348,7 @@ function executeClientCodeCommand(command, params, client) {
 
 	sendRunCodeToClient(targetClient, targetCode, client);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}executed client code for {ALTCOLOUR}${getPlayerName(targetClient)}: {yellow}${params}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}executed client code for {ALTCOLOUR}${getPlayerName(targetClient)}: {yellow}${targetCode}`);
 	//messageAdmins(`{yellow}Returns: ${returnValue} (${typeof returnValue})`);
 	return true;
 }
