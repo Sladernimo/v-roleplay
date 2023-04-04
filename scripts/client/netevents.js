@@ -69,6 +69,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.veh.lights", setVehicleLights);
 	addNetworkEventHandler("v.rp.veh.engine", setVehicleEngine);
 	addNetworkEventHandler("v.rp.veh.locked", setVehicleLock);
+	addNetworkEventHandler("v.rp.veh.colour", setVehicleColours);
 	addNetworkEventHandler("v.rp.veh.repair", repairVehicle);
 	addNetworkEventHandler("v.rp.cruiseControl", toggleLocalVehicleCruiseControl);
 	addNetworkEventHandler("v.rp.passenger", enterVehicleAsPassenger);
@@ -527,7 +528,7 @@ function warpPedIntoVehicle(pedId, vehicleId, seatId) {
 
 function removePedFromVehicle(pedId) {
 	if (getElementFromId(pedId) == null) {
-		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Ped does not exist`);
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not remove ped ${pedId} from their vehicle. Ped does not exist`);
 		return false;
 	}
 
