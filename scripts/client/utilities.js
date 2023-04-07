@@ -501,12 +501,6 @@ function processGameSpecifics() {
 
 // ===========================================================================
 
-function getServerData() {
-	return serverData;
-}
-
-// ===========================================================================
-
 function setProfanityFilterState(state) {
 	profanityFilterEnabled = state;
 	updateChatBox();
@@ -590,6 +584,12 @@ function processMapChangeWarning() {
 	}
 
 	smallGameMessageFonts["AuroraBdCnBT"].render(`Map is changing to ${(mapChangeToNight) ? "night" : "day"} soon!`, [0, game.height - 90], game.width, 0.5, 0.0, smallGameMessageFonts["AuroraBdCnBT"].size, getColourByName("yellow"), true, true, false, true);
+}
+
+// ===========================================================================
+
+function getDummyElements() {
+	return getElementsByType(ELEMENT_ELEMENT).filter(element => element.type != ELEMENT_VEHICLE && element.type != ELEMENT_PLAYER && element.type != ELEMENT_PED);
 }
 
 // ===========================================================================
