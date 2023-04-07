@@ -124,8 +124,8 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 // ===========================================================================
 
 function getGateData(gateId) {
-	if (typeof getServerData().gates[gateId] != "undefined") {
-		return getServerData().gates[gateId];
+	if (typeof serverData.gates[gateId] != "undefined") {
+		return serverData.gates[gateId];
 	}
 
 	return false;
@@ -135,8 +135,8 @@ function getGateData(gateId) {
 
 function getClosestGate(position) {
 	let closest = 0;
-	for (let i in getServerData().gates[getGame()]) {
-		if (getDistance(getServerData().gates[i].position, position) < getDistance(getServerData().gates[closest].position, position)) {
+	for (let i in serverData.gates[getGame()]) {
+		if (getDistance(serverData.gates[i].position, position) < getDistance(serverData.gates[closest].position, position)) {
 			closest = i;
 		}
 	}
@@ -168,7 +168,7 @@ function saveAllGatesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().gates) {
+	for (let i in serverData.gates) {
 		saveGateToDatabase(i);
 	}
 }

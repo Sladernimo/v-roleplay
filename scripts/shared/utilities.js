@@ -1656,7 +1656,8 @@ function Enum(constantsList) {
 // ===========================================================================
 
 function clearArray(array) {
-	array.length = 0;
+	//array.length = 0;
+	array = [];
 }
 
 // ===========================================================================
@@ -3384,6 +3385,18 @@ function isSameScene(scene1, scene2) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function removeUnusedGameData() {
+	for (let i in gameData) {
+		for (let j in gameData[i]) {
+			if (j != getGame()) {
+				gameData[i][j] = null;
+			}
+		}
+	}
 }
 
 // ===========================================================================

@@ -826,7 +826,7 @@ function getCommandData(command) {
 // ===========================================================================
 
 function getCommands() {
-	return getServerData().commands;
+	return serverData.commands;
 }
 
 // ===========================================================================
@@ -909,13 +909,13 @@ function disableAllCommandsByType(command, params, client) {
 
 	params = toLowerCase(params);
 
-	if (isNull(getServerData().commands[params])) {
+	if (isNull(serverData.commands[params])) {
 		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
-	for (let i in getServerData().commands[params]) {
-		getServerData().commands[params][i].enabled = false;
+	for (let i in serverData.commands[params]) {
+		serverData.commands[params][i].enabled = false;
 	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} disabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);
@@ -932,13 +932,13 @@ function enableAllCommandsByType(command, params, client) {
 
 	params = toLowerCase(params);
 
-	if (isNull(getServerData().commands[params])) {
+	if (isNull(serverData.commands[params])) {
 		messagePlayerError(client, `Command type {ALTCOLOUR}${params}{MAINCOLOUR} does not exist!`);
 		return false;
 	}
 
-	for (let i in getServerData().commands[params]) {
-		getServerData().commands[params][i].enabled = true;
+	for (let i in serverData.commands[params]) {
+		serverData.commands[params][i].enabled = true;
 	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} enabled all {ALTCOLOUR}${params}{MAINCOLOUR} commands!`, true);

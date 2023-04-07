@@ -352,7 +352,7 @@ function processLabelRendering() {
 	if (renderLabels) {
 		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
-				getServerData().businesses.forEach((business) => {
+				serverData.businesses.forEach((business) => {
 					if (getLocalPlayerDimension() == business.entranceDimension) {
 						let entranceDistance = getDistance(getLocalPlayerPosition(), business.entrancePosition);
 						if (entranceDistance <= propertyLabelRenderDistance) {
@@ -389,7 +389,7 @@ function processLabelRendering() {
 					}
 				});
 
-				getServerData().houses.forEach((house) => {
+				serverData.houses.forEach((house) => {
 					if (getLocalPlayerDimension() == house.entranceDimension) {
 						let entranceDistance = getDistance(getLocalPlayerPosition(), house.entrancePosition);
 						if (entranceDistance <= propertyLabelRenderDistance) {
@@ -425,7 +425,7 @@ function processLabelRendering() {
 					}
 				});
 
-				getServerData().jobs.forEach((job) => {
+				serverData.jobs.forEach((job) => {
 					if (getLocalPlayerDimension() == job.dimension) {
 						let distance = getDistance(getLocalPlayerPosition(), job.position);
 						if (distance <= propertyLabelRenderDistance) {
@@ -446,9 +446,9 @@ function processLabelRendering() {
 			}
 		}
 
-		if (arePickupsSupported() && areWorldLabelsSupported()) {
+		if ((isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement")) && areWorldLabelsSupported()) {
 			if (localPlayer != null) {
-				let pickups = getElementsByType(ELEMENT_PICKUP);
+				let pickups = (isGameFeatureSupported("pickup")) ? getElementsByType(ELEMENT_PICKUP) : getElementsByType(ELEMENT_ELEMENT);
 				for (let i in pickups) {
 					if (pickups[i].getData("v.rp.label.type") != null) {
 						if (getDistance(getLocalPlayerPosition(), pickups[i].position) <= propertyLabelRenderDistance) {

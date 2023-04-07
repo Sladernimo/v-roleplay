@@ -1,8 +1,9 @@
 {
-    "host": "",
-    "user": "",
-    "pass": "",
-    "name": "",
-    "port": 3306,
+    "host": "127.0.0.1",
+    "user": "connectedrp_server",
+    "pass": "wI1OGARu7IN57e5e3A3utuW2YOd7Ja",
+    "name": "connectedrp",
+    "port": 3307,
+    "useSSL": false,
     "usePersistentConnection": false
 }

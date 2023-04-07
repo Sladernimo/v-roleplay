@@ -262,10 +262,10 @@ function initClient(client) {
 			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
 			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
 
-			getServerData().clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
+			serverData.clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
 
-			getServerData().clients[getPlayerId(client)].sessionId = saveConnectionToDatabase(client);
-			getServerData().clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
+			serverData.clients[getPlayerId(client)].sessionId = saveConnectionToDatabase(client);
+			serverData.clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
 			requestClientInfo(client);
 
 			if (tempAccountData != false) {
@@ -308,7 +308,7 @@ function initClient(client) {
 				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 			}
 
-			getServerData().clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(getServerData().clients[getPlayerId(client)].accountData.databaseId);
+			serverData.clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(serverData.clients[getPlayerId(client)].accountData.databaseId);
 			sendAccountKeyBindsToClient(client);
 		}
 	}, 2500);

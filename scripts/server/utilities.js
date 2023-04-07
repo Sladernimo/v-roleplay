@@ -54,11 +54,11 @@ function getPlayerData(client) {
 		return false;
 	}
 
-	if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+	if (typeof serverData.clients[getPlayerId(client)] == "undefined") {
 		return false;
 	}
 
-	return getServerData().clients[getPlayerId(client)];
+	return serverData.clients[getPlayerId(client)];
 }
 
 // ===========================================================================
@@ -422,7 +422,7 @@ function clearTemporaryPeds() {
 // ===========================================================================
 
 function isClientInitialized(client) {
-	//if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+	//if (typeof serverData.clients[getPlayerId(client)] == "undefined") {
 	//	return false;
 	//}
 
@@ -574,8 +574,8 @@ function processPlayerSceneSwitch(client, spawn = false) {
 			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for player ${getPlayerDisplayForConsole(client)} since map switch finished`);
 
 			if (getPlayerCurrentSubAccount(client).spawnVehicle != -1) {
-				if (getServerData().vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle != null) {
-					warpPedIntoVehicle(getPlayerPed(client), getServerData().vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle, getPlayerCurrentSubAccount(client).spawnVehicleSeat);
+				if (serverData.vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle != null) {
+					warpPedIntoVehicle(getPlayerPed(client), serverData.vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle, getPlayerCurrentSubAccount(client).spawnVehicleSeat);
 				}
 			}
 

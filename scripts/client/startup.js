@@ -30,10 +30,9 @@ function initClientScripts() {
 	initHouseScript();
 
 	loadLocaleConfig();
-
 	addAllNetworkHandlers();
-
 	initTimers();
+	removeUnusedGameData();
 }
 
 // ===========================================================================

@@ -44,7 +44,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 				natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);
 			}
 
-			getServerData().houses.splice(houseId, 1);
+			serverData.houses.splice(houseId, 1);
 			return false;
 		}
 
@@ -130,7 +130,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 				}
 			}
 
-			getServerData().houses.push(houseData);
+			serverData.houses.push(houseData);
 			setAllHouseDataIndexes();
 		}
 	}
@@ -143,7 +143,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
  * @return {HouseData} The house's data (class instance)
  */
 function getHouseData(houseId) {
-	let houses = getServerData().houses;
+	let houses = serverData.houses;
 	for (let i in houses) {
 		if (houses[i].houseId == houseId) {
 			return houses[i];
@@ -156,15 +156,15 @@ function getHouseData(houseId) {
 // ===========================================================================
 
 function setAllHouseDataIndexes() {
-	for (let i in getServerData().houses) {
-		getServerData().houses[i].index = i;
+	for (let i in serverData.houses) {
+		serverData.houses[i].index = i;
 	}
 }
 
 // ===========================================================================
 
 function removeHousesFromClient() {
-	getServerData().houses.splice(0);
+	serverData.houses.splice(0);
 }
 
 // ===========================================================================

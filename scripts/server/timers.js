@@ -158,17 +158,17 @@ function thirtyMinuteTimerFunction() {
 // ===========================================================================
 
 function checkVehicleRenting() {
-	let renting = getServerData().rentingVehicleCache;
+	let renting = serverData.rentingVehicleCache;
 	for (let i in renting) {
 		if (isClientInitialized(renting[i])) {
 			if (getPlayerData(renting[i]) != false) {
 				if (isPlayerLoggedIn(renting[i] && isPlayerSpawned(renting[i]))) {
 					if (getPlayerData(renting[i]).rentingVehicle != false) {
-						if (getPlayerCurrentSubAccount(renting[i]).cash < getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {
+						if (getPlayerCurrentSubAccount(renting[i]).cash < serverData.vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {
 							messagePlayerAlert(renting[i], `You do not have enough money to continue renting this vehicle!`);
 							stopRentingVehicle(renting[i]);
 						} else {
-							takePlayerCash(renting[i], getServerData().vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice);
+							takePlayerCash(renting[i], serverData.vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice);
 						}
 					}
 				}
@@ -177,17 +177,17 @@ function checkVehicleRenting() {
 	}
 
 	/*
-	for(let i in getServerData().vehicles) {
-		if(getServerData().vehicles[i] != null) {
-			if(getServerData().vehicles[i].rentPrice > 0) {
-				if(getServerData().vehicles[i].rentedBy != false) {
-					let rentedBy = getServerData().vehicles[i].rentedBy;
+	for(let i in serverData.vehicles) {
+		if(serverData.vehicles[i] != null) {
+			if(serverData.vehicles[i].rentPrice > 0) {
+				if(serverData.vehicles[i].rentedBy != false) {
+					let rentedBy = serverData.vehicles[i].rentedBy;
 					if(getPlayerData(rentedBy) != false) {
-						if(getPlayerCurrentSubAccount(rentedBy).cash < getServerData().vehicles[i].rentPrice) {
+						if(getPlayerCurrentSubAccount(rentedBy).cash < serverData.vehicles[i].rentPrice) {
 							messagePlayerAlert(rentedBy, `You do not have enough money to continue renting this vehicle!`);
 							stopRentingVehicle(rentedBy);
 						} else {
-							takePlayerCash(rentedBy, getServerData().vehicles[i].rentPrice);
+							takePlayerCash(rentedBy, serverData.vehicles[i].rentPrice);
 						}
 					}
 				}
@@ -325,7 +325,7 @@ function checkPayDays() {
 		}
 	}
 
-	for (let i in getServerData().businesses) {
+	for (let i in serverData.businesses) {
 		if (getBusinessData(i).ownerType != V_BIZ_OWNER_NONE && getBusinessData(i).ownerType != V_BIZ_OWNER_PUBLIC && getBusinessData(i).ownerType != V_BIZ_OWNER_FACTION) {
 			let addToTill = serverConfig.economy.passiveIncomePerPayDay;
 			if (isDoubleBonusActive()) {
@@ -350,7 +350,7 @@ function showRandomTipToAllPlayers() {
 			if (isPlayerLoggedIn(clients[i]) && isPlayerSpawned(clients[i])) {
 				if (!doesPlayerHaveRandomTipsDisabled(clients[i])) {
 					let localeId = getPlayerData(clients[i]).locale;
-					let tipId = getRandom(0, getServerData().localeStrings[localeId]["RandomTips"].length - 1);
+					let tipId = getRandom(0, serverData.localeStrings[localeId]["RandomTips"].length - 1);
 					messagePlayerTip(clients[i], getGroupedLocaleString(clients[i], "RandomTips", tipId));
 				}
 			}

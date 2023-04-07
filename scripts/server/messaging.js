@@ -61,6 +61,7 @@ function messageAdmins(messageText, announceToEventChannel = false) {
 
 	let plainMessage = removeColoursInMessage(messageText);
 	messageDiscordAdminChannel(plainMessage);
+	logToConsole(LOG_INFO, `🛡️ ${plainMessage}`);
 
 	if (announceToEventChannel == true) {
 		messageDiscordEventChannel(`🛡️ ${plainMessage}`);

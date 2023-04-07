@@ -216,8 +216,8 @@ function initNPCScript() {
  * @return {NPCData} The NPC's data (class instancee)
  */
 function getNPCData(npcId) {
-	if (typeof getServerData().npcs[npcId] != "undefined") {
-		return getServerData().npcs[npcId];
+	if (typeof serverData.npcs[npcId] != "undefined") {
+		return serverData.npcs[npcId];
 	}
 	return false;
 }
@@ -348,7 +348,7 @@ function saveAllNPCsToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().npcs) {
+	for (let i in serverData.npcs) {
 		saveNPCToDatabase(i);
 	}
 }
@@ -453,21 +453,21 @@ function saveNPCToDatabase(npcDataId) {
 // ===========================================================================
 
 function setAllNPCDataIndexes() {
-	for (let i in getServerData().npcs) {
-		getServerData().npcs[i].index = i;
+	for (let i in serverData.npcs) {
+		serverData.npcs[i].index = i;
 
-		for (let j in getServerData().npcs[i].triggers) {
-			getServerData().npcs[i].triggers[j].index = j;
-			getServerData().npcs[i].triggers[j].npcIndex = i;
+		for (let j in serverData.npcs[i].triggers) {
+			serverData.npcs[i].triggers[j].index = j;
+			serverData.npcs[i].triggers[j].npcIndex = i;
 
-			for (let k in getServerData().npcs[i].triggers[j].conditions) {
-				getServerData().npcs[i].triggers[j].conditions[k].index = k;
-				getServerData().npcs[i].triggers[j].conditions[m].triggerIndex = j;
+			for (let k in serverData.npcs[i].triggers[j].conditions) {
+				serverData.npcs[i].triggers[j].conditions[k].index = k;
+				serverData.npcs[i].triggers[j].conditions[m].triggerIndex = j;
 			}
 
-			for (let m in getServerData().npcs[i].triggers[j].responses) {
-				getServerData().npcs[i].triggers[j].responses[m].index = m;
-				getServerData().npcs[i].triggers[j].responses[m].triggerIndex = j;
+			for (let m in serverData.npcs[i].triggers[j].responses) {
+				serverData.npcs[i].triggers[j].responses[m].index = m;
+				serverData.npcs[i].triggers[j].responses[m].triggerIndex = j;
 			}
 		}
 	}
@@ -495,7 +495,7 @@ function spawnNPC(npcIndex) {
 // ===========================================================================
 
 function spawnAllNPCs() {
-	for (let i in getServerData().npcs) {
+	for (let i in serverData.npcs) {
 		spawnNPC(i);
 	}
 }
@@ -525,7 +525,7 @@ function deleteNPC(npcId) {
 		if (getNPCData(npcId).ped != false) {
 			deleteGameElement(getNPCData(npcId).ped);
 		}
-		getServerData().npcs.splice(npcId, 1);
+		serverData.npcs.splice(npcId, 1);
 	}
 
 	setAllNPCDataIndexes();
@@ -722,7 +722,7 @@ function getNPCInfoCommand(command, params, client) {
 // ===========================================================================
 
 function getClosestNPC(position, dimension, interior) {
-	let npcs = getServerData().npcs;
+	let npcs = serverData.npcs;
 
 	let closest = 0;
 	for (let i in npcs) {
@@ -748,7 +748,7 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 	tempNPCData.animationName = "";
 	tempNPCData.needsSaved = true;
 
-	let npcIndex = getServerData().npcs.push(tempNPCData);
+	let npcIndex = serverData.npcs.push(tempNPCData);
 	setAllNPCDataIndexes();
 
 	spawnNPC(npcIndex - 1);
@@ -759,16 +759,16 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 // ===========================================================================
 
 function despawnAllNPCs() {
-	for (let i in getServerData().npcs) {
-		destroyGameElement(getServerData().npc[i].npc);
-		getServerData().npc[i].npc = null;
+	for (let i in serverData.npcs) {
+		destroyGameElement(serverData.npc[i].npc);
+		serverData.npc[i].npc = null;
 	}
 }
 
 // ===========================================================================
 
 function spawnAllNPCs() {
-	for (let i in getServerData().npcs) {
+	for (let i in serverData.npcs) {
 		spawnNPC(i);
 	}
 }

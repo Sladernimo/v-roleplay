@@ -585,32 +585,32 @@ function loadJobsFromDatabase() {
 // ===========================================================================
 
 function loadAllJobEquipmentFromDatabase() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].equipment = loadJobEquipmentsFromDatabase(getServerData().jobs[i].databaseId);
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].equipment = loadJobEquipmentsFromDatabase(serverData.jobs[i].databaseId);
 	}
 }
 
 // ===========================================================================
 
 function loadAllJobUniformsFromDatabase() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].uniforms = loadJobUniformsFromDatabase(getServerData().jobs[i].databaseId);
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].uniforms = loadJobUniformsFromDatabase(serverData.jobs[i].databaseId);
 	}
 }
 
 // ===========================================================================
 
 function loadAllJobRoutesFromDatabase() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].routes = loadJobRoutesFromDatabase(getServerData().jobs[i].databaseId);
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].routes = loadJobRoutesFromDatabase(serverData.jobs[i].databaseId);
 	}
 }
 
 // ===========================================================================
 
 function loadAllJobLocationsFromDatabase() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].locations = loadJobLocationsFromDatabase(getServerData().jobs[i].databaseId);
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].locations = loadJobLocationsFromDatabase(serverData.jobs[i].databaseId);
 	}
 }
 
@@ -806,8 +806,8 @@ function spawnAllJobBlips() {
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Spawning all job location blips ...`);
-	for (let i in getServerData().jobs) {
-		for (let j in getServerData().jobs[i].locations) {
+	for (let i in serverData.jobs) {
+		for (let j in serverData.jobs[i].locations) {
 			spawnJobLocationBlip(i, j);
 		}
 	}
@@ -823,21 +823,22 @@ function spawnAllJobPickups() {
 
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Spawning all job location pickups ...`);
 	let pickupCount = 0;
-	for (let i in getServerData().jobs) {
-		if (getServerData().jobs[i].pickupModel != 0) {
-			for (let j in getServerData().jobs[i].locations) {
+	for (let i in serverData.jobs) {
+		if (serverData.jobs[i].pickupModel != 0) {
+			for (let j in serverData.jobs[i].locations) {
 				pickupCount++;
-				getServerData().jobs[i].locations[j].pickup = game.createPickup(getServerData().jobs[i].pickupModel, getServerData().jobs[i].locations[j].position);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.owner.id", j, false);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.name", getServerData().jobs[i].name, true);
-				setEntityData(getServerData().jobs[i].locations[j].pickup, "v.rp.label.jobType", getServerData().jobs[i].databaseId, true);
-				setElementOnAllDimensions(getServerData().jobs[i].locations[j].pickup, false);
-				setElementDimension(getServerData().jobs[i].locations[j].pickup, getServerData().jobs[i].locations[j].dimension);
-				addToWorld(getServerData().jobs[i].locations[j].pickup);
+				serverData.jobs[i].locations[j].pickup = game.createPickup(serverData.jobs[i].pickupModel, serverData.jobs[i].locations[j].position);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.owner.id", j, false);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.label.name", serverData.jobs[i].name, true);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.label.jobType", serverData.jobs[i].databaseId, true);
+				setEntityData(serverData.jobs[i].locations[j].pickup, "v.rp.label.publicRank", doesJobHavePublicRank(i), true);
+				setElementOnAllDimensions(serverData.jobs[i].locations[j].pickup, false);
+				setElementDimension(serverData.jobs[i].locations[j].pickup, serverData.jobs[i].locations[j].dimension);
+				addToWorld(serverData.jobs[i].locations[j].pickup);
 
-				logToConsole(LOG_VERBOSE, `[V.RP.Job] Job '${getServerData().jobs[i].name}' location pickup ${j} spawned!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Job] Job '${serverData.jobs[i].name}' location pickup ${j} spawned!`);
 			}
 		}
 	}
@@ -940,7 +941,7 @@ function jobListCommand(command, params, client) {
 		return false;
 	}
 
-	let jobList = getServerData().jobs.map(function (x) { return `[${hexFromToColour(x.colour)}]${x.name}{MAINCOLOUR}` });
+	let jobList = serverData.jobs.map(function (x) { return `[${hexFromToColour(x.colour)}]${x.name}{MAINCOLOUR}` });
 	let chunkedList = splitArrayIntoChunks(jobList, 4);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobList")));
@@ -1528,8 +1529,8 @@ function doesPlayerHaveJobType(client, jobType) {
  * @return {JobData} The job's data (class instance)
  */
 function getJobData(jobId) {
-	if (typeof getServerData().jobs[jobId] != "undefined") {
-		return getServerData().jobs[jobId];
+	if (typeof serverData.jobs[jobId] != "undefined") {
+		return serverData.jobs[jobId];
 	}
 
 	return false;
@@ -1571,10 +1572,10 @@ function reloadAllJobsCommand(command, params, client) {
 
 	deleteAllJobBlips();
 	deleteAllJobPickups();
-	clearArray(getServerData().jobs);
+	serverData.jobs = [];
 
 	//Promise.resolve().then(() => {
-	getServerData().jobs = loadJobsFromDatabase();
+	serverData.jobs = loadJobsFromDatabase();
 	spawnAllJobPickups();
 	spawnAllJobBlips();
 	//});
@@ -1608,7 +1609,7 @@ function createJob(name) {
 	tempJobData.pickupModel = gameData.pickupModels[getGame()].Job;
 	tempJobData.colour = toColour(255, 255, 255, 255);
 
-	getServerData().jobs.push(tempJobData);
+	serverData.jobs.push(tempJobData);
 	saveJobToDatabase(tempJobData);
 	setAllJobDataIndexes();
 }
@@ -1626,7 +1627,7 @@ function createJobRank(name, level) {
 	tempJobRankData.public = false;
 	tempJobRankData.needsSaved = true;
 
-	getServerData().jobs[jobIndex].push(tempJobRankData);
+	serverData.jobs[jobIndex].push(tempJobRankData);
 	saveJobRankToDatabase(tempJobRankData);
 	setAllJobDataIndexes();
 }
@@ -2722,7 +2723,9 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
 
-	sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex), 0);
+	if (!areServerElementsSupported()) {
+		sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex), 0);
+	}
 }
 
 // ===========================================================================
@@ -2752,8 +2755,8 @@ function unFreezePlayerJobVehicleForRouteLocation(client) {
 // ===========================================================================
 
 function getJobIdFromDatabaseId(databaseId) {
-	for (let i in getServerData().jobs) {
-		if (getServerData().jobs[i].databaseId == databaseId) {
+	for (let i in serverData.jobs) {
+		if (serverData.jobs[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -2763,47 +2766,47 @@ function getJobIdFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function setAllJobDataIndexes() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].index = i;
-		for (let j in getServerData().jobs[i].locations) {
-			getServerData().jobs[i].locations[j].index = j;
-			getServerData().jobs[i].locations[j].jobIndex = i;
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].index = i;
+		for (let j in serverData.jobs[i].locations) {
+			serverData.jobs[i].locations[j].index = j;
+			serverData.jobs[i].locations[j].jobIndex = i;
 
-			for (let u in getServerData().jobs[i].routes) {
-				if (getServerData().jobs[i].routes[u].locationId == getServerData().jobs[i].locations[j].databaseId) {
-					getServerData().jobs[i].locations[j].routeCache.push(u);
+			for (let u in serverData.jobs[i].routes) {
+				if (serverData.jobs[i].routes[u].locationId == serverData.jobs[i].locations[j].databaseId) {
+					serverData.jobs[i].locations[j].routeCache.push(u);
 				}
 			}
 		}
 
-		for (let k in getServerData().jobs[i].uniforms) {
-			getServerData().jobs[i].uniforms[k].index = k;
-			getServerData().jobs[i].uniforms[k].jobIndex = i;
+		for (let k in serverData.jobs[i].uniforms) {
+			serverData.jobs[i].uniforms[k].index = k;
+			serverData.jobs[i].uniforms[k].jobIndex = i;
 		}
 
-		for (let m in getServerData().jobs[i].equipment) {
-			getServerData().jobs[i].equipment[m].index = m;
-			getServerData().jobs[i].equipment[m].jobIndex = i;
-			for (let n in getServerData().jobs[i].equipment[m].items) {
-				getServerData().jobs[i].equipment[m].items[n].index = n;
-				getServerData().jobs[i].equipment[m].items[n].jobIndex = i;
-				getServerData().jobs[i].equipment[m].items[n].equipmentIndex = m;
+		for (let m in serverData.jobs[i].equipment) {
+			serverData.jobs[i].equipment[m].index = m;
+			serverData.jobs[i].equipment[m].jobIndex = i;
+			for (let n in serverData.jobs[i].equipment[m].items) {
+				serverData.jobs[i].equipment[m].items[n].index = n;
+				serverData.jobs[i].equipment[m].items[n].jobIndex = i;
+				serverData.jobs[i].equipment[m].items[n].equipmentIndex = m;
 			}
 		}
 
-		for (let o in getServerData().jobs[i].blackList) {
-			getServerData().jobs[i].blackList[o].index = o;
-			getServerData().jobs[i].blackList[o].jobIndex = i;
+		for (let o in serverData.jobs[i].blackList) {
+			serverData.jobs[i].blackList[o].index = o;
+			serverData.jobs[i].blackList[o].jobIndex = i;
 		}
 
-		for (let v in getServerData().jobs[i].whiteList) {
-			getServerData().jobs[i].whiteList[v].index = v;
-			getServerData().jobs[i].whiteList[v].jobIndex = i;
+		for (let v in serverData.jobs[i].whiteList) {
+			serverData.jobs[i].whiteList[v].index = v;
+			serverData.jobs[i].whiteList[v].jobIndex = i;
 		}
 
-		for (let t in getServerData().jobs[i].routes) {
-			getServerData().jobs[i].routes[t].index = t;
-			getServerData().jobs[i].routes[t].jobIndex = i;
+		for (let t in serverData.jobs[i].routes) {
+			serverData.jobs[i].routes[t].index = t;
+			serverData.jobs[i].routes[t].jobIndex = i;
 		}
 	}
 }
@@ -2822,9 +2825,9 @@ function createJobLocation(jobId, position, interior, dimension, whoAdded) {
 	jobLocationData.whoAdded = whoAdded;
 	jobLocationData.whenAdded = getCurrentUnixTimestamp();
 
-	getServerData().jobs[jobId].locations.push(jobLocationData);
-	let newSlot = getServerData().jobs[jobId].locations.length - 1;
-	getServerData().jobs[jobId].locations[newSlot].index = newSlot;
+	serverData.jobs[jobId].locations.push(jobLocationData);
+	let newSlot = serverData.jobs[jobId].locations.length - 1;
+	serverData.jobs[jobId].locations[newSlot].index = newSlot;
 	spawnJobLocationPickup(jobId, newSlot);
 	spawnJobLocationBlip(jobId, newSlot);
 	saveJobLocationToDatabase(jobLocationData);
@@ -3285,35 +3288,35 @@ function saveJobUniformToDatabase(jobUniformData) {
 // ===========================================================================
 
 function saveAllJobsToDatabase() {
-	for (let i in getServerData().jobs) {
-		saveJobToDatabase(getServerData().jobs[i]);
+	for (let i in serverData.jobs) {
+		saveJobToDatabase(serverData.jobs[i]);
 
-		for (let j in getServerData().jobs[i].locations) {
-			saveJobLocationToDatabase(getServerData().jobs[i].locations[j]);
+		for (let j in serverData.jobs[i].locations) {
+			saveJobLocationToDatabase(serverData.jobs[i].locations[j]);
 		}
 
-		for (let k in getServerData().jobs[i].uniforms) {
-			saveJobUniformToDatabase(getServerData().jobs[i].uniforms[k]);
+		for (let k in serverData.jobs[i].uniforms) {
+			saveJobUniformToDatabase(serverData.jobs[i].uniforms[k]);
 		}
 
-		for (let m in getServerData().jobs[i].equipment) {
-			saveJobEquipmentToDatabase(getServerData().jobs[i].equipment[m]);
+		for (let m in serverData.jobs[i].equipment) {
+			saveJobEquipmentToDatabase(serverData.jobs[i].equipment[m]);
 
-			for (let n in getServerData().jobs[i].equipment[m].items) {
-				saveJobEquipmentItemToDatabase(getServerData().jobs[i].equipment[m].items[n]);
+			for (let n in serverData.jobs[i].equipment[m].items) {
+				saveJobEquipmentItemToDatabase(serverData.jobs[i].equipment[m].items[n]);
 			}
 		}
 
-		for (let p in getServerData().jobs[i].routes) {
-			saveJobRouteToDatabase(getServerData().jobs[i].routes[p]);
+		for (let p in serverData.jobs[i].routes) {
+			saveJobRouteToDatabase(serverData.jobs[i].routes[p]);
 
-			for (let q in getServerData().jobs[i].routes[p].locations) {
-				saveJobRouteLocationToDatabase(getServerData().jobs[i].routes[p].locations[q]);
+			for (let q in serverData.jobs[i].routes[p].locations) {
+				saveJobRouteLocationToDatabase(serverData.jobs[i].routes[p].locations[q]);
 			}
 		}
 
-		for (let r in getServerData().jobs[i].ranks) {
-			saveJobRankToDatabase(getServerData().jobs[i].ranks[r]);
+		for (let r in serverData.jobs[i].ranks) {
+			saveJobRankToDatabase(serverData.jobs[i].ranks[r]);
 		}
 	}
 }
@@ -3330,9 +3333,9 @@ function deleteJobLocationBlip(jobId, locationId) {
 // ===========================================================================
 
 function deleteJobLocationPickup(jobId, locationId) {
-	if (getServerData().jobs[jobId].locations[locationId].pickup != null) {
+	if (serverData.jobs[jobId].locations[locationId].pickup != null) {
 		deleteGameElement(getJobData(jobId).locations[locationId].pickup);
-		getServerData().jobs[jobId].locations[locationId].pickup = null;
+		serverData.jobs[jobId].locations[locationId].pickup = null;
 	}
 }
 
@@ -3362,15 +3365,8 @@ function spawnJobLocationPickup(jobId, locationId) {
 				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, gameData.pickupTypes[getGame()].job);
 				if (pickup != false) {
 					tempJobData.locations[locationId].pickup = pickup;
-					setElementDimension(pickup, tempJobData.locations[locationId].dimension);
-					setElementOnAllDimensions(pickup, false);
-					setEntityData(pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
-					setEntityData(pickup, "v.rp.owner.id", locationId, false);
-					setEntityData(pickup, "v.rp.label.type", V_LABEL_JOB, true);
-					setEntityData(pickup, "v.rp.label.name", tempJobData.name, true);
-					setEntityData(pickup, "v.rp.label.jobType", tempJobData.databaseId, true);
-					setEntityData(pickup, "v.rp.label.publicRank", doesJobHavePublicRank(jobId), true);
 					addToWorld(pickup);
+					updateJobPickupLabelData(jobId);
 				}
 			}
 		} else {
@@ -3467,8 +3463,8 @@ function canPlayerUseJobs(client) {
 // ===========================================================================
 
 function getJobIndexFromDatabaseId(databaseId) {
-	for (let i in getServerData().jobs) {
-		if (getServerData().jobs[i].databaseId == databaseId) {
+	for (let i in serverData.jobs) {
+		if (serverData.jobs[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -3482,8 +3478,8 @@ function getJobRankIndexFromDatabaseId(jobIndex, databaseId) {
 		return -1;
 	}
 
-	for (let i in getServerData().jobs[jobIndex].ranks) {
-		if (getServerData().jobs[jobIndex].ranks[i].databaseId == databaseId) {
+	for (let i in serverData.jobs[jobIndex].ranks) {
+		if (serverData.jobs[jobIndex].ranks[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -3571,7 +3567,7 @@ function deleteJobItems(client) {
 		deleteItem(getPlayerData(client).jobEquipmentCache[i]);
 	}
 
-	clearArray(getPlayerData(client).jobEquipmentCache);
+	getPlayerData(client).jobEquipmentCache = [];
 
 	cachePlayerHotBarItems(client);
 	updatePlayerHotBar(client);
@@ -3609,7 +3605,7 @@ function resetAllJobPickups() {
 // ===========================================================================
 
 function deleteAllJobBlips() {
-	for (let i in getServerData().jobs) {
+	for (let i in serverData.jobs) {
 		deleteJobBlips(i);
 	}
 }
@@ -3617,7 +3613,7 @@ function deleteAllJobBlips() {
 // ===========================================================================
 
 function deleteAllJobPickups() {
-	for (let i in getServerData().jobs) {
+	for (let i in serverData.jobs) {
 		deleteJobPickups(i);
 	}
 }
@@ -3625,7 +3621,7 @@ function deleteAllJobPickups() {
 // ===========================================================================
 
 function deleteJobBlips(jobId) {
-	for (let j in getServerData().jobs[jobId].locations) {
+	for (let j in serverData.jobs[jobId].locations) {
 		deleteJobLocationBlip(jobId, j);
 	}
 }
@@ -3633,7 +3629,7 @@ function deleteJobBlips(jobId) {
 // ===========================================================================
 
 function deleteJobPickups(jobId) {
-	for (let j in getServerData().jobs[jobId].locations) {
+	for (let j in serverData.jobs[jobId].locations) {
 		deleteJobLocationPickup(jobId, j);
 	}
 }
@@ -3865,7 +3861,7 @@ function deleteJobRouteCommand(command, params, client) {
 		jobRoute = getJobRouteFromParams(params, jobId);
 	}
 
-	let jobRouteData = getServerData().jobs[jobId].routes[jobRoute];
+	let jobRouteData = serverData.jobs[jobId].routes[jobRoute];
 
 	let clients = getClients();
 	for (let i in clients) {
@@ -3886,8 +3882,8 @@ function deleteJobRouteCommand(command, params, client) {
 		quickDatabaseQuery(`UPDATE job_route_loc SET job_route_loc_deleted = 1, job_route_loc_who_deleted = ${getPlayerData(client).accountData.databaseId}, job_route_loc_when_deleted = UNIX_TIMESTAMP() WHERE job_route_loc_route = ${jobRouteData.databaseId}`);
 	}
 
-	clearArray(getServerData().jobs[jobId].routes[jobRoute].locations);
-	getServerData().jobs[jobId].routes.splice(jobRoute, 1);
+	serverData.jobs[jobId].routes[jobRoute].locations = [];
+	serverData.jobs[jobId].routes.splice(jobRoute, 1);
 
 	setAllJobDataIndexes();
 	//collectAllGarbage();
@@ -4006,13 +4002,13 @@ function setJobUniformNameCommand(command, params, client) {
 
 function getJobFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().jobs) {
-			if (toLowerCase(getServerData().jobs[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.jobs) {
+			if (toLowerCase(serverData.jobs[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().jobs[params] != "undefined") {
+		if (typeof serverData.jobs[params] != "undefined") {
 			return params;
 		}
 	}
@@ -4029,7 +4025,7 @@ function getJobFromParams(params) {
  */
 function getClosestJobLocation(position, dimension = 0) {
 	let closestJobLocation = false;
-	let jobs = getServerData().jobs;
+	let jobs = serverData.jobs;
 	for (let i in jobs) {
 		let locations = jobs[i].locations;
 		for (let j in locations) {
@@ -4058,11 +4054,11 @@ function getClosestJobLocation(position, dimension = 0) {
  */
 function getClosestJobRouteLocation(position) {
 	let closestJobRouteLocation = false;
-	for (let i in getServerData().jobs) {
-		for (let j in getServerData().jobs[i].routes) {
-			for (let k in getServerData().jobs[i].routes[j].locations) {
-				if (!closestJobRouteLocation || getServerData().jobs[i].routes[j].locations[k].position.distance(position) < closestJobRouteLocation.position.distance(position)) {
-					closestJobRouteLocation = getServerData().jobs[i].routes[j].locations[k];
+	for (let i in serverData.jobs) {
+		for (let j in serverData.jobs[i].routes) {
+			for (let k in serverData.jobs[i].routes[j].locations) {
+				if (!closestJobRouteLocation || serverData.jobs[i].routes[j].locations[k].position.distance(position) < closestJobRouteLocation.position.distance(position)) {
+					closestJobRouteLocation = serverData.jobs[i].routes[j].locations[k];
 				}
 			}
 		}
@@ -4073,7 +4069,7 @@ function getClosestJobRouteLocation(position) {
 // ===========================================================================
 
 function getJobPointsInRange(position, distance) {
-	return getServerData().jobs[getGame()].filter(x => x.position.distance(position) <= distance);
+	return serverData.jobs[getGame()].filter(x => x.position.distance(position) <= distance);
 }
 
 // ===========================================================================
@@ -4110,15 +4106,15 @@ function getRandomJobRouteForLocation(closestJobLocation) {
  * @return {JobUniformData} The jobroutes's data (class instance)
  */
 function getJobUniformData(jobIndex, uniformIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].uniforms[uniformIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].uniforms[uniformIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].uniforms[uniformIndex];
+	return serverData.jobs[jobIndex].uniforms[uniformIndex];
 }
 
 // ===========================================================================
@@ -4129,15 +4125,15 @@ function getJobUniformData(jobIndex, uniformIndex) {
  * @return {JobEquipmentData} The job equipment loadout's data (class instance)
  */
 function getJobEquipmentData(jobIndex, equipmentIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].equipment[equipmentIndex];
+	return serverData.jobs[jobIndex].equipment[equipmentIndex];
 }
 
 // ===========================================================================
@@ -4149,15 +4145,15 @@ function getJobEquipmentData(jobIndex, equipmentIndex) {
  * @return {JobEquipmentItemData} The job equipment loadout's data (class instance)
  */
 function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].equipment[equipmentIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].equipment[equipmentIndex].items[equipmentItemIndex];
+	return serverData.jobs[jobIndex].equipment[equipmentIndex].items[equipmentItemIndex];
 }
 
 // ===========================================================================
@@ -4168,11 +4164,11 @@ function getJobEquipmentItemData(jobIndex, equipmentIndex, equipmentItemIndex) {
  * @return {JobRankData} The job rank's data (class instance)
  */
 function getJobRankData(jobIndex, rankIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].ranks[rankIndex];
+	return serverData.jobs[jobIndex].ranks[rankIndex];
 }
 
 // ===========================================================================
@@ -4183,15 +4179,15 @@ function getJobRankData(jobIndex, rankIndex) {
  * @return {JobRouteData} The job routes's data (class instance)
  */
 function getJobRouteData(jobIndex, routeIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].routes[routeIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].routes[routeIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].routes[routeIndex];
+	return serverData.jobs[jobIndex].routes[routeIndex];
 }
 
 // ===========================================================================
@@ -4203,19 +4199,19 @@ function getJobRouteData(jobIndex, routeIndex) {
  * @return {JobRouteLocationData} The job route locations's data (class instance)
  */
 function getJobRouteLocationData(jobIndex, routeIndex, routeLocationIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].routes[routeIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].routes[routeIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex];
+	return serverData.jobs[jobIndex].routes[routeIndex].locations[routeLocationIndex];
 }
 
 // ===========================================================================
@@ -4226,24 +4222,24 @@ function getJobRouteLocationData(jobIndex, routeIndex, routeLocationIndex) {
  * @return {JobLocationData} The job route locations's data (class instance)
  */
 function getJobLocationData(jobIndex, locationIndex) {
-	if (typeof getServerData().jobs[jobIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
 		return false;
 	}
 
-	if (typeof getServerData().jobs[jobIndex].locations[locationIndex] == "undefined") {
+	if (typeof serverData.jobs[jobIndex].locations[locationIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().jobs[jobIndex].locations[locationIndex];
+	return serverData.jobs[jobIndex].locations[locationIndex];
 }
 
 // ===========================================================================
 
 function getClosestJobLocationForJob(position, jobId) {
 	let closestJobLocation = false;
-	for (let i in getServerData().jobs[jobId].locations) {
-		if (!closestJobLocation || getServerData().jobs[jobId].locations[i].position.distance(position) < closestJobLocation.position.distance(position)) {
-			closestJobLocation = getServerData().jobs[jobId].locations[i];
+	for (let i in serverData.jobs[jobId].locations) {
+		if (!closestJobLocation || serverData.jobs[jobId].locations[i].position.distance(position) < closestJobLocation.position.distance(position)) {
+			closestJobLocation = serverData.jobs[jobId].locations[i];
 		}
 	}
 	return closestJobLocation;
@@ -4313,13 +4309,13 @@ function isLastLocationOnJobRoute(jobId, routeId, currentLocationId) {
 
 function getJobRouteFromParams(params, jobId) {
 	if (isNaN(params)) {
-		for (let i in getServerData().jobs[jobId].routes) {
-			if (toLowerCase(getServerData().jobs[jobId].routes[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.jobs[jobId].routes) {
+			if (toLowerCase(serverData.jobs[jobId].routes[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().jobs[jobId].routes[params] != "undefined") {
+		if (typeof serverData.jobs[jobId].routes[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -4358,12 +4354,12 @@ function updateJobBlipsForPlayer(client) {
 		return false;
 	}
 
-	for (let i in getServerData().jobs) {
-		for (let j in getServerData().jobs[i].locations) {
+	for (let i in serverData.jobs) {
+		for (let j in serverData.jobs[i].locations) {
 			if (getPlayerJob(client) == -1 || getPlayerJob(client) == i) {
-				showElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+				showElementForPlayer(serverData.jobs[i].locations[j].blip, client);
 			} else {
-				hideElementForPlayer(getServerData().jobs[i].locations[j].blip, client);
+				hideElementForPlayer(serverData.jobs[i].locations[j].blip, client);
 			}
 		}
 	}
@@ -4385,7 +4381,7 @@ function getJobRouteLocationTypeFromParams(params) {
 
 function getLowestJobRank(jobIndex) {
 	let lowestRank = 0;
-	for (let i in getServerData().jobs[jobIndex].ranks) {
+	for (let i in serverData.jobs[jobIndex].ranks) {
 		if (getJobRankData(jobIndex, i).level < getJobRankData(jobIndex, lowestRank).level) {
 			lowestRank = i;
 		}
@@ -4397,7 +4393,7 @@ function getLowestJobRank(jobIndex) {
 
 function getHighestJobRank(jobIndex) {
 	let highestRank = 0;
-	for (let i in getServerData().jobs[jobIndex].ranks) {
+	for (let i in serverData.jobs[jobIndex].ranks) {
 		if (getJobRankData(jobIndex, i).level > getJobRankData(jobIndex, highestRank).level) {
 			highestRank = i;
 		}
@@ -4437,9 +4433,9 @@ function createJobRouteLocationMarker(jobIndex, jobRouteIndex, jobRouteLocationI
 // ===========================================================================
 
 function createAllJobRouteLocationMarkers() {
-	for (let i in getServerData().jobs) {
-		for (let j in getServerData().jobs[i].routes) {
-			for (let k in getServerData().jobs[i].routes[j].locations) {
+	for (let i in serverData.jobs) {
+		for (let j in serverData.jobs[i].routes) {
+			for (let k in serverData.jobs[i].routes[j].locations) {
 				createJobRouteLocationMarker(i, j, k);
 			}
 		}
@@ -4686,9 +4682,9 @@ function addPlayerToJobWhiteList(client, jobIndex, whoAdded = defaultNoAccountId
 function removePlayerFromJobBlackList(client, jobIndex, whoDeleted = defaultNoAccountId) {
 	quickDatabaseQuery(`UPDATE job_bl SET job_bl_deleted = 1, job_bl_who_deleted = ${whoDeleted}, job_bl_when_deleted = UNIX_TIMESTAMP() WHERE job_bl_sacct = ${getPlayerCurrentSubAccount(client).databaseId}`)
 
-	for (let i in getServerData().jobs[jobIndex].blackList) {
-		if (getServerData().jobs[jobIndex].blackList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
-			getServerData().jobs[jobIndex].splice(i, 1);
+	for (let i in serverData.jobs[jobIndex].blackList) {
+		if (serverData.jobs[jobIndex].blackList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
+			serverData.jobs[jobIndex].splice(i, 1);
 		}
 	}
 
@@ -4700,9 +4696,9 @@ function removePlayerFromJobBlackList(client, jobIndex, whoDeleted = defaultNoAc
 function removePlayerFromJobWhiteList(client, jobIndex, whoDeleted = defaultNoAccountId) {
 	quickDatabaseQuery(`UPDATE job_wl SET job_wl_deleted = 1, job_wl_who_deleted = ${whoDeleted}, job_wl_when_deleted = UNIX_TIMESTAMP() WHERE job_wl_sacct = ${getPlayerCurrentSubAccount(client).databaseId}`)
 
-	for (let i in getServerData().jobs[jobIndex].whiteList) {
-		if (getServerData().jobs[jobIndex].whiteList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
-			getServerData().jobs[jobIndex].splice(i, 1);
+	for (let i in serverData.jobs[jobIndex].whiteList) {
+		if (serverData.jobs[jobIndex].whiteList[i].subAccount == getPlayerCurrentSubAccount(client).databaseId) {
+			serverData.jobs[jobIndex].splice(i, 1);
 		}
 	}
 
@@ -4804,8 +4800,8 @@ function finePlayerCommand(command, params, client) {
 // ===========================================================================
 
 function doesJobHavePublicRank(jobIndex) {
-	for (let i in getServerData().jobs[jobIndex].ranks) {
-		if (getServerData().jobs[jobIndex].ranks[i].public) {
+	for (let i in serverData.jobs[jobIndex].ranks) {
+		if (serverData.jobs[jobIndex].ranks[i].public) {
 			return true;
 		}
 	}
@@ -4814,3 +4810,16 @@ function doesJobHavePublicRank(jobIndex) {
 }
 
 // ===========================================================================
+
+function updateJobPickupLabelData(jobId) {
+	for (let j in serverData.jobs[jobId].locations) {
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.id", jobId, false);
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.name", serverData.jobs[jobId].name, true);
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.jobType", serverData.jobs[jobId].databaseId, true);
+		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.publicRank", doesJobHavePublicRank(jobId), true);
+		setElementOnAllDimensions(serverData.jobs[jobId].locations[j].pickup, false);
+		setElementDimension(serverData.jobs[jobId].locations[j].pickup, serverData.jobs[jobId].locations[j].dimension);
+	}
+}

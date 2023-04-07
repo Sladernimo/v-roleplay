@@ -37,7 +37,7 @@ function isPlayerAtBank(client) {
 function isPositionAtATM(position) {
 	let atmId = getClosestATM(position);
 
-	let atmData = getServerData().atmLocationCache[atmId];
+	let atmData = serverData.atmLocationCache[atmId];
 
 	if (getDistance(position, atmData[2]) <= globalConfig.atmDistance) {
 		return true;
@@ -49,7 +49,7 @@ function isPositionAtATM(position) {
 // ===========================================================================
 
 function getClosestATM(position) {
-	let atmLocations = getServerData().atmLocationCache;
+	let atmLocations = serverData.atmLocationCache;
 	let closest = 0;
 
 	for (let i in atmLocations) {
@@ -66,7 +66,7 @@ function getClosestATM(position) {
 function isPositionAtATM(position) {
 	let atmId = getClosestATM(position);
 
-	let atmData = getServerData().atmLocationCache[atmId];
+	let atmData = serverData.atmLocationCache[atmId];
 
 	if (getDistance(position, atmData[2]) <= globalConfig.atmDistance) {
 		return true;

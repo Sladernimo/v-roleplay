@@ -8,11 +8,11 @@
 // ===========================================================================
 
 function getLocaleString(stringName, ...args) {
-	if (typeof getServerData().localeStrings[localLocaleId][stringName] == undefined) {
+	if (typeof serverData.localeStrings[localLocaleId][stringName] == undefined) {
 		return "";
 	}
 
-	let tempString = getServerData().localeStrings[localLocaleId][stringName];
+	let tempString = serverData.localeStrings[localLocaleId][stringName];
 
 	if (tempString == "" || tempString == null || tempString == undefined) {
 		return "";
@@ -28,14 +28,14 @@ function getLocaleString(stringName, ...args) {
 // ===========================================================================
 
 function getAvailableLocaleOptions() {
-	return getServerData().localeOptions.filter(localeOption => localeOption.requiresUnicode == false);
+	return serverData.localeOptions.filter(localeOption => localeOption.requiresUnicode == false);
 }
 
 // ===========================================================================
 
 function loadLocaleConfig() {
 	let configFile = loadTextFile("config/client/locale.json");
-	getServerData().localeOptions = JSON.parse(configFile);
+	serverData.localeOptions = JSON.parse(configFile);
 
 	//resetLocaleChooserOptions();
 	loadAllLocaleStrings();
@@ -44,14 +44,14 @@ function loadLocaleConfig() {
 // ===========================================================================
 
 function loadAllLocaleStrings() {
-	let localeOptions = getServerData().localeOptions;
+	let localeOptions = serverData.localeOptions;
 	for (let i in localeOptions) {
 		logToConsole(LOG_INFO, `[V.RP.Locale] Loading locale strings for ${localeOptions[i].englishName} (${i})`);
 		let localeStringFile = loadTextFile(`locale/${localeOptions[i].stringsFile}`);
 		let localeStringData = JSON.parse(localeStringFile);
 
 		let localeId = localeOptions[i].id;
-		getServerData().localeStrings[localeId] = localeStringData;
+		serverData.localeStrings[localeId] = localeStringData;
 	}
 
 	resetGUIStrings();
@@ -60,7 +60,7 @@ function loadAllLocaleStrings() {
 // ===========================================================================
 
 function setLocale(tempLocaleId) {
-	logToConsole(LOG_DEBUG, `[V.RP.Locale] Setting locale to ${tempLocaleId} (${getServerData().localeOptions[tempLocaleId].englishName})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Locale] Setting locale to ${tempLocaleId} (${serverData.localeOptions[tempLocaleId].englishName})`);
 	localLocaleId = tempLocaleId;
 	resetGUIStrings();
 }

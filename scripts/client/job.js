@@ -180,7 +180,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 				natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
 			}
 
-			getServerData().jobs.splice(jobs, 1);
+			serverData.jobs.splice(jobs, 1);
 			return false;
 		}
 
@@ -266,7 +266,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 				}
 			}
 
-			getServerData().jobs.push(jobData);
+			serverData.jobs.push(jobData);
 			setAllJobDataIndexes();
 		}
 	}
@@ -279,9 +279,9 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
  * @return {JobData} The job's data (class instance)
  */
 function getJobData(jobId) {
-	for (let i in getServerData().jobs) {
-		if (getServerData().jobs[i].jobId == jobId) {
-			return getServerData().jobs[i];
+	for (let i in serverData.jobs) {
+		if (serverData.jobs[i].jobId == jobId) {
+			return serverData.jobs[i];
 		}
 	}
 
@@ -291,15 +291,15 @@ function getJobData(jobId) {
 // ===========================================================================
 
 function setAllJobDataIndexes() {
-	for (let i in getServerData().jobs) {
-		getServerData().jobs[i].index = i;
+	for (let i in serverData.jobs) {
+		serverData.jobs[i].index = i;
 	}
 }
 
 // ===========================================================================
 
 function removeJobsFromClient() {
-	getServerData().jobs.splice(0);
+	serverData.jobs.splice(0);
 }
 
 // ===========================================================================

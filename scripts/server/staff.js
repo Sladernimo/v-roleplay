@@ -372,11 +372,11 @@ function gotoVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getServerData().vehicles[toInteger(params)] == "undefined") {
+	if (typeof serverData.vehicles[toInteger(params)] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
 	}
 
-	let vehicle = getServerData().vehicles[toInteger(params)].vehicle;
+	let vehicle = serverData.vehicles[toInteger(params)].vehicle;
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getPosAbovePos(getVehiclePosition(vehicle), 3.0));
@@ -413,15 +413,15 @@ function getVehicleCommand(command, params, client) {
 
 	let vehicleIndex = toInteger(params);
 
-	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
 	}
 
-	destroyGameElement(getServerData().vehicles[vehicleIndex]);
-	getServerData().vehicles[vehicleIndex].vehicle = null;
+	destroyGameElement(serverData.vehicles[vehicleIndex]);
+	serverData.vehicles[vehicleIndex].vehicle = null;
 
-	getServerData().vehicles[vehicleIndex].spawnPosition = getPlayerPosition(client);
-	getServerData().vehicles[vehicleIndex].spawnRotation = getPlayerHeading(client);
+	serverData.vehicles[vehicleIndex].spawnPosition = getPlayerPosition(client);
+	serverData.vehicles[vehicleIndex].spawnRotation = getPlayerHeading(client);
 
 	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
 	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
@@ -436,9 +436,9 @@ function getVehicleCommand(command, params, client) {
 	//setElementStreamInDistance(vehicle, oldStreamInDistance);
 	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
 
-	let vehicle = spawnVehicle(getServerData().vehicles[vehicleIndex]);
+	let vehicle = spawnVehicle(serverData.vehicles[vehicleIndex]);
 
-	if (getServerData().vehicles[vehicleIndex].vehicle == null) {
+	if (serverData.vehicles[vehicleIndex].vehicle == null) {
 		messagePlayerError(client, "Vehicle could not be retrieved!");
 		return false;
 	}
@@ -471,17 +471,17 @@ function setVehicleDimensionCommand(command, params, client) {
 	let vehicleIndex = toInteger(getParam(params, " ", 1));
 	let dimension = toInteger(getParam(params, " ", 2));
 
-	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 		return false;
 	}
 
-	if (getServerData().vehicles[vehicleIndex].vehicle != false) {
+	if (serverData.vehicles[vehicleIndex].vehicle != false) {
 		messagePlayerError(client, "That vehicle is not spawned!");
 		return false;
 	}
 
-	getServerData().vehicles[vehicleIndex].vehicle.dimension = dimension;
+	serverData.vehicles[vehicleIndex].vehicle.dimension = dimension;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
 }
@@ -511,18 +511,18 @@ function setVehicleInteriorCommand(command, params, client) {
 	let vehicleIndex = toInteger(getParam(params, " ", 1));
 	let dimension = toInteger(getParam(params, " ", 2));
 
-	if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 		return false;
 	}
 
-	if (getServerData().vehicles[vehicleIndex].vehicle != false) {
+	if (serverData.vehicles[vehicleIndex].vehicle != false) {
 		messagePlayerError(client, "That vehicle is not spawned!");
 		return false;
 	}
 
-	getServerData().vehicles[vehicleIndex].interior = interior;
-	setElementInterior(getServerData().vehicles[vehicleIndex].interior, interior);
+	serverData.vehicles[vehicleIndex].interior = interior;
+	setElementInterior(serverData.vehicles[vehicleIndex].interior, interior);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
 }
@@ -548,12 +548,12 @@ function warpIntoVehicleCommand(command, params, client) {
 		}
 	} else {
 		let vehicleIndex = getParam(params, " ", 1);
-		if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+		if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 			messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 			return false;
 		}
 
-		vehicle = getServerData().vehicles[vehicleIndex].vehicle;
+		vehicle = serverData.vehicles[vehicleIndex].vehicle;
 	}
 
 	if (getVehicleData(vehicle)) {

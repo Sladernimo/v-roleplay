@@ -45,7 +45,7 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 				natives.removeBlipAndClearIndex(getBusinessData(businessId).blipId);
 			}
 
-			getServerData().businesses.splice(businessId, 1);
+			serverData.businesses.splice(businessId, 1);
 			return false;
 		}
 
@@ -142,7 +142,7 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 				}
 			}
 
-			getServerData().businesses.push(businessData);
+			serverData.businesses.push(businessData);
 			setAllBusinessDataIndexes();
 		}
 	}
@@ -158,7 +158,7 @@ function getBusinessData(businessId) {
 	//let tempBusinessData = businesses.find((b) => b.businessId == businessId);
 	//return (typeof tempBusinessData != "undefined") ? tempBusinessData[0] : false;
 
-	let businesses = getServerData().businesses;
+	let businesses = serverData.businesses;
 
 	for (let i in businesses) {
 		if (businesses[i].businessId == businessId) {
@@ -172,15 +172,15 @@ function getBusinessData(businessId) {
 // ===========================================================================
 
 function setAllBusinessDataIndexes() {
-	for (let i in getServerData().businesses) {
-		getServerData().businesses[i].index = i;
+	for (let i in serverData.businesses) {
+		serverData.businesses[i].index = i;
 	}
 }
 
 // ===========================================================================
 
 function removeBusinessesFromClient() {
-	getServerData().businesses.splice(0);
+	serverData.businesses.splice(0);
 }
 
 // ===========================================================================
