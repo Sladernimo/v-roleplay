@@ -1338,6 +1338,8 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		return false;
 	}
 
+	let currentScene = getPlayerCurrentSubAccount(client).scene;
+
 	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
 	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
 	getPlayerCurrentSubAccount(client).interior = spawnInterior;
@@ -1358,7 +1360,6 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {
-		let currentScene = getPlayerCurrentSubAccount(client).scene;
 		if (!isSameScene(sceneName, currentScene)) {
 			setTimeout(function () {
 				if (getPlayerPed(client) != null) {
