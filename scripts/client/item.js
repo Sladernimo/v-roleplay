@@ -56,6 +56,16 @@ function showItemActionDelay(duration) {
 	itemActionDelayDuration = duration;
 	itemActionDelayStart = sdl.ticks;
 	itemActionDelayEnabled = true;
+
+	setTimeout(function () {
+		if (itemActionDelayEnabled) {
+			itemActionDelayEnabled = false;
+			itemActionDelayDuration = 0;
+			itemActionDelayStart = 0;
+			tellServerItemActionDelayComplete();
+		}
+	}, itemActionDelayDuration + 100);
+
 	logToConsole(LOG_DEBUG, `Item action delay started. Duration: ${itemActionDelayDuration}, Start: ${itemActionDelayStart}, Rendering Enabled: ${renderItemActionDelay}`);
 }
 
