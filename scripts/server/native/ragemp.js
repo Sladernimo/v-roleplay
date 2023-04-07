@@ -275,7 +275,7 @@ function getPlayerSkin(client) {
 function setPlayerHealth(client, health) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s health to ${health}`);
 	sendPlayerSetHealth(client, health);
-	getServerData(client).health = health;
+	getPlayerCurrentSubAccount(client).health = health;
 }
 
 // ===========================================================================
