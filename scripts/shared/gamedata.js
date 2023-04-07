@@ -302,9 +302,9 @@ let supportedFeatures = {
 		[V_GAME_GTA_SA]: false,
 		[V_GAME_GTA_IV]: false,
 		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: true,
-		[V_GAME_MAFIA_TWO]: true,
-		[V_GAME_MAFIA_THREE]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
 	},
 	mouseCursor: {
 		[V_GAME_GTA_III]: true,
