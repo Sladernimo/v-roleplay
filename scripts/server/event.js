@@ -553,7 +553,7 @@ function onPlayerSpawn(client) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
-		//sendAllBusinessesToPlayer(client);
+		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
 		sendAllPayPhonesToPlayer(client);
 		sendAllJobsToPlayer(client);
