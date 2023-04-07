@@ -172,20 +172,20 @@ function hideJobRouteLocation() {
 // ===========================================================================
 
 function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension) {
-	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId} (${name}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId}/${jobLocationId} (${name}) from server`);
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (isDeleted == true) {
 			if (getGame() == V_GAME_GTA_IV) {
-				natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
+				natives.removeBlipAndClearIndex(getJobData(jobId, jobLocationId).blipId);
 			}
 
 			serverData.jobs.splice(jobs, 1);
 			return false;
 		}
 
-		if (getJobData(jobId) != false) {
-			let jobData = getJobData(jobId);
+		if (getJobData(jobId, jobLocationId) != false) {
+			let jobData = getJobData(jobId, jobLocationId);
 			jobData.jobId = jobId;
 			jobData.jobLocationId = jobLocationId;
 			jobData.name = name;
@@ -196,22 +196,22 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 			jobData.dimension = dimension;
 
 			if (isGameFeatureSupported("blip")) {
-				logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} already exists. Checking blip ...`);
+				logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId} already exists. Checking blip ...`);
 				if (blipModel == -1) {
 					if (jobData.blipId != -1) {
-						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}'s blip has been removed by the server`);
+						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId}'s blip has been removed by the server`);
 						if (getGame() == V_GAME_GTA_IV) {
-							natives.removeBlipAndClearIndex(getJobData(jobId).blipId);
+							natives.removeBlipAndClearIndex(getJobData(jobId, jobLocationId).blipId);
 						} else {
 							destroyElement(getElementFromId(blipId));
 						}
 						jobData.blipId = -1;
 					} else {
-						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}'s blip is unchanged`);
+						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId}'s blip is unchanged`);
 					}
 				} else {
 					if (jobData.blipId != -1) {
-						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}'s blip has been changed by the server`);
+						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId}'s blip has been changed by the server`);
 						if (getGame() == V_GAME_GTA_IV) {
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
@@ -225,12 +225,12 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 						if (blipId != -1) {
 							jobData.blipId = blipId;
 						}
-						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
+						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 					}
 				}
 			}
 		} else {
-			logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId} doesn't exist. Adding ...`);
+			logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId} doesn't exist. Adding ...`);
 			let jobData = new JobData();
 			jobData.jobId = jobId;
 			jobData.jobLocationId = jobLocationId;
@@ -275,12 +275,13 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 // ===========================================================================
 
 /**
- * @param {number} job - The ID of the job (initially provided by server)
+ * @param {number} jobId - The ID of the job (initially provided by server)
+ * @param {number} jobLocationId - The ID of the job location (initially provided by server)
  * @return {JobData} The job's data (class instance)
  */
-function getJobData(jobId) {
+function getJobData(jobId, jobLocationId) {
 	for (let i in serverData.jobs) {
-		if (serverData.jobs[i].jobId == jobId) {
+		if (serverData.jobs[i].jobId == jobId && serverData.jobs[i].jobLocationId == jobLocationId) {
 			return serverData.jobs[i];
 		}
 	}
