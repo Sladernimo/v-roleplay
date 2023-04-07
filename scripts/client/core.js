@@ -87,6 +87,7 @@ let localLocaleId = 0;
  * @property {Array.<HouseData>} houses
  * @property {Array.<BusinessData>} businesses
  * @property {Array.<VehicleData>} vehicles
+ * @property {Array.<JobData>} jobs
  * @property {Array} localeStrings
  * @property {Array} localeOptions
  * @property {Object} cvars
@@ -95,10 +96,10 @@ let localLocaleId = 0;
 let serverData = {
 	houses: [],
 	businesses: [],
-	localeStrings: [],
-	localeOptions: [],
 	vehicles: [],
 	jobs: [],
+	localeStrings: [],
+	localeOptions: [],
 	cvars: {},
 	payPhones: [],
 };
