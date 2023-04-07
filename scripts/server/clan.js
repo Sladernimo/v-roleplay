@@ -177,7 +177,7 @@ function deleteClanRank(clanId, rankId, whoDeleted = defaultNoAccountId) {
 // ===========================================================================
 
 function listClansCommand(command, params, client) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 
 	if (!areParamsEmpty(params)) {
 		clans = clans.filter(clan => toLowerCase(clan.name).indexOf(toLowerCase(params)) != -1);
@@ -1018,7 +1018,7 @@ function createClan(name, whoAdded = defaultNoAccountId) {
 		tempClanRankData.enabled = true;
 		tempClan.ranks.push(tempClanRankData);
 
-		getServerData().clans.push(tempClan);
+		serverData.clans.push(tempClan);
 
 		setAllClanDataIndexes();
 		saveAllClansToDatabase();
@@ -1059,8 +1059,8 @@ function getClanData(clanId) {
 		return false;
 	}
 
-	if (typeof getServerData().clans[clanId] != null) {
-		return getServerData().clans[clanId];
+	if (typeof serverData.clans[clanId] != null) {
+		return serverData.clans[clanId];
 	}
 
 	return false;
@@ -1069,7 +1069,7 @@ function getClanData(clanId) {
 // ===========================================================================
 
 function doesClanNameExist(name) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 	for (let i in clans) {
 		if (clans[i].name == name) {
 			return true;
@@ -1082,7 +1082,7 @@ function doesClanNameExist(name) {
 // ===========================================================================
 
 function doesClanIdExist(clanId) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 	for (let i in clans) {
 		if (clans[i].databaseId == clanId) {
 			return true;
@@ -1099,7 +1099,7 @@ function reloadAllClans() {
 		return false;
 	}
 
-	getServerData().clans = loadClansFromDatabase();
+	serverData.clans = loadClansFromDatabase();
 }
 
 // ===========================================================================
@@ -1109,7 +1109,7 @@ function saveClanRanksToDatabase(clanId) {
 		return false;
 	}
 
-	let ranks = getServerData().clans[clanId].ranks;
+	let ranks = serverData.clans[clanId].ranks;
 	for (let i in ranks) {
 		saveClanRankToDatabase(clanId, i);
 	}
@@ -1266,7 +1266,7 @@ function saveAllClansToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().clans) {
+	for (let i in serverData.clans) {
 		saveClanToDatabase(i);
 	}
 
@@ -1276,12 +1276,12 @@ function saveAllClansToDatabase() {
 // ===========================================================================
 
 function setAllClanDataIndexes() {
-	for (let i in getServerData().clans) {
-		getServerData().clans[i].index = i;
+	for (let i in serverData.clans) {
+		serverData.clans[i].index = i;
 
-		for (let j in getServerData().clans[i].ranks) {
-			getServerData().clans[i].ranks[j].index = j;
-			getServerData().clans[i].ranks[j].clanIndex = i;
+		for (let j in serverData.clans[i].ranks) {
+			serverData.clans[i].ranks[j].index = j;
+			serverData.clans[i].ranks[j].clanIndex = i;
 		}
 	}
 }
@@ -1315,8 +1315,8 @@ function getClanIndexFromDatabaseId(databaseId) {
 		return -1;
 	}
 
-	for (let i in getServerData().clans) {
-		if (getServerData().clans[i].databaseId == databaseId) {
+	for (let i in serverData.clans) {
+		if (serverData.clans[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -1331,8 +1331,8 @@ function getClanRankIndexFromDatabaseId(clanIndex, databaseId) {
 		return -1;
 	}
 
-	for (let i in getServerData().clans[clanIndex].ranks) {
-		if (getServerData().clans[clanIndex].ranks[i].databaseId == databaseId) {
+	for (let i in serverData.clans[clanIndex].ranks) {
+		if (serverData.clans[clanIndex].ranks[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -1356,7 +1356,7 @@ function getClanRankData(clanIndex, rankIndex) {
 		return false;
 	}
 
-	return getServerData().clans[clanIndex].ranks[rankIndex];
+	return serverData.clans[clanIndex].ranks[rankIndex];
 }
 
 // ===========================================================================
@@ -1392,63 +1392,19 @@ function showClanFlagListCommand(command, params, client) {
 
 // ===========================================================================
 
-/*
-function showClanFlagListCommand(command, params, client) {
-	if(!doesPlayerHaveClanPermission(client, getClanFlagValue("rankFlags"))) {
-		messagePlayerError(client, "You can not change a clan rank's permissions!");
-		return false;
-	}
-
-	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let clanId = getPlayerClan(client);
-
-	if(!getClanData(clanId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
-		return false;
-	}
-
-	let rankId = getClanRankFromParams(clanId, getParam(params, " ", 1));
-
-	if(!getClanRankData(clanId, rankId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
-		return false;
-	}
-
-	let tempClanRankData = getClanRankData(clanId, rankId).flags;
-	for(let i in tempClanRankData) {
-		if(getServerBitFlags().clanFlags.indexOf(tempClanRankData)))
-	}
-	let flagList = getServerBitFlag().clanFlags;
-
-	let chunkedList = splitArrayIntoChunks(flagList, 10);
-
-	messagePlayerInfo(client, `{clanOrange}== {jobYellow}Clan Permissions List {clanOrange}=====================`);
-
-	for(let i in chunkedList) {
-		messagePlayerInfo(client, chunkedList[i].join(", "));
-	}
-}
-*/
-
-// ===========================================================================
-
 /**
  * @param {String} params - The params to search for
  * @return {Number} The data index of a matching clan
  */
 function getClanFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().clans) {
-			if (toLowerCase(getServerData().clans[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.clans) {
+			if (toLowerCase(serverData.clans[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().clans[params] != "undefined") {
+		if (typeof serverData.clans[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -1485,7 +1441,7 @@ function getClanRankFromParams(clanId, params) {
 
 function getLowestClanRank(clanIndex) {
 	let lowestRank = 0;
-	for (let i in getServerData().clans[clanIndex].ranks) {
+	for (let i in serverData.clans[clanIndex].ranks) {
 		if (getClanRankData(clanIndex, i).level < getClanRankData(clanIndex, lowestRank).level) {
 			lowestRank = i;
 		}
@@ -1497,7 +1453,7 @@ function getLowestClanRank(clanIndex) {
 
 function getHighestClanRank(clanIndex) {
 	let highestRank = 0;
-	for (let i in getServerData().clans[clanIndex].ranks) {
+	for (let i in serverData.clans[clanIndex].ranks) {
 		if (getClanRankData(clanIndex, i).level > getClanRankData(clanIndex, highestRank).level) {
 			highestRank = i;
 		}

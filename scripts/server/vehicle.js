@@ -211,7 +211,7 @@ function saveAllVehiclesToDatabase() {
 	}
 
 	logToConsole(LOG_DEBUG, "[V.RP.Vehicle]: Saving all server vehicles to database ...");
-	let vehicles = getServerData().vehicles;
+	let vehicles = serverData.vehicles;
 	for (let i in vehicles) {
 		if (vehicles[i].needsSaved) {
 			saveVehicleToDatabase(i);
@@ -230,7 +230,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		return false;
 	}
 
-	let tempVehicleData = getServerData().vehicles[vehicleDataId];
+	let tempVehicleData = serverData.vehicles[vehicleDataId];
 
 	if (tempVehicleData.databaseId == -1) {
 		// Temp vehicle, no need to save
@@ -311,12 +311,12 @@ function saveVehicleToDatabase(vehicleDataId) {
 		if (tempVehicleData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("veh_main", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().vehicles[vehicleDataId].databaseId = getDatabaseInsertId(dbConnection);
-			getServerData().vehicles[vehicleDataId].needsSaved = false;
+			serverData.vehicles[vehicleDataId].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.vehicles[vehicleDataId].needsSaved = false;
 		} else {
 			let queryString = createDatabaseUpdateQuery("veh_main", data, `veh_id=${tempVehicleData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString, true);
-			getServerData().vehicles[vehicleDataId].needsSaved = false;
+			serverData.vehicles[vehicleDataId].needsSaved = false;
 		}
 
 		freeDatabaseQuery(dbQuery);
@@ -331,10 +331,10 @@ function saveVehicleToDatabase(vehicleDataId) {
 // ===========================================================================
 
 function spawnAllVehicles() {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicle == false) {
-			let vehicle = spawnVehicle(getServerData().vehicles[i]);
-			getServerData().vehicles[i].vehicle = vehicle;
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].vehicle == false) {
+			let vehicle = spawnVehicle(serverData.vehicles[i]);
+			serverData.vehicles[i].vehicle = vehicle;
 		}
 	}
 	setAllVehicleIndexes();
@@ -348,9 +348,9 @@ function spawnAllVehicles() {
 	*/
 function getVehicleData(vehicle) {
 	if (isVehicleObject(vehicle)) {
-		for (let i in getServerData().vehicles) {
-			if (getServerData().vehicles[i].vehicle == vehicle) {
-				return getServerData().vehicles[i];
+		for (let i in serverData.vehicles) {
+			if (serverData.vehicles[i].vehicle == vehicle) {
+				return serverData.vehicles[i];
 			}
 		}
 	}
@@ -517,7 +517,7 @@ function deleteVehicleCommand(command, params, client) {
 		quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
 	}
 
-	getServerData().vehicles.splice(vehicleIndex, 1);
+	serverData.vehicles.splice(vehicleIndex, 1);
 
 	destroyGameElement(vehicle);
 
@@ -738,7 +738,7 @@ function buyVehicleCommand(command, params, client) {
 	setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_TESTDRIVE, vehicle.id, getVehiclePosition(vehicle));
 	meActionToNearbyPlayers(client, `receives a set of keys to test drive the ${getVehicleName(vehicle)} and starts the engine`);
 	messagePlayerInfo(client, getLocaleString(client, "DealershipPurchaseTestDrive"));
-	getServerData().purchasingVehicleCache.push(client);
+	serverData.purchasingVehicleCache.push(client);
 }
 
 // ===========================================================================
@@ -785,7 +785,7 @@ function rentVehicleCommand(command, params, client) {
 	getVehicleData(vehicle).rentedBy = client;
 	getPlayerData(client).rentingVehicle = vehicle;
 	getVehicleData(vehicle).rentStart = getCurrentUnixTimestamp();
-	getServerData().rentingVehicleCache.push(client);
+	serverData.rentingVehicleCache.push(client);
 	getVehicleData(vehicle).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `rents the ${getVehicleName(vehicle)} and receives a set of vehicle keys!`);
@@ -1262,8 +1262,8 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 
 function reloadAllVehiclesCommand(command, params, client) {
 	despawnAllVehicles();
-	clearArray(getServerData().vehicles);
-	getServerData().vehicles = loadVehiclesFromDatabase();
+	serverData.vehicles = [];
+	serverData.vehicles = loadVehiclesFromDatabase();
 	setAllVehicleIndexes();
 	spawnAllVehicles();
 
@@ -1293,8 +1293,8 @@ function respawnVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function respawnAllVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		respawnVehicle(serverData.vehicles[i].vehicle);
 	}
 
 	//let randomVehicles = getElementsByType(ELEMENT_VEHICLE).filter(v => getVehicleData(v) == false);
@@ -1310,9 +1310,9 @@ function respawnAllVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnEmptyVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (isVehicleUnoccupied(getServerData().vehicles[i].vehicle)) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (isVehicleUnoccupied(serverData.vehicles[i].vehicle)) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1331,9 +1331,9 @@ function respawnEmptyVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnJobVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_JOB) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1345,9 +1345,9 @@ function respawnJobVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnClanVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_CLAN) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_CLAN) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1359,9 +1359,9 @@ function respawnClanVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnPlayerVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_PLAYER) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_PLAYER) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1373,9 +1373,9 @@ function respawnPlayerVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnPublicVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_PUBLIC) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_PUBLIC) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1387,9 +1387,9 @@ function respawnPublicVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function respawnBusinessVehiclesCommand(command, params, client) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_BIZ) {
-			respawnVehicle(getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_BIZ) {
+			respawnVehicle(serverData.vehicles[i].vehicle);
 		}
 	}
 
@@ -1401,7 +1401,7 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function stopRentingVehicle(client) {
-	getServerData().rentingVehicleCache.splice(getServerData().rentingVehicleCache.indexOf(client), 1);
+	serverData.rentingVehicleCache.splice(serverData.rentingVehicleCache.indexOf(client), 1);
 	let vehicle = getPlayerData(client).rentingVehicle;
 	getPlayerData(client).rentingVehicle = false;
 	getVehicleData(vehicle).rentedBy = false;
@@ -1414,23 +1414,23 @@ function stopRentingVehicle(client) {
 // ===========================================================================
 
 function respawnVehicle(vehicle) {
-	for (let i in getServerData().vehicles) {
-		if (vehicle == getServerData().vehicles[i].vehicle) {
+	for (let i in serverData.vehicles) {
+		if (vehicle == serverData.vehicles[i].vehicle) {
 			updateVehicleSavedPosition(i);
 
-			if (getServerData().vehicles[i].spawnLocked == true) {
-				getServerData().vehicles[i].engine = false;
+			if (serverData.vehicles[i].spawnLocked == true) {
+				serverData.vehicles[i].engine = false;
 			}
 
-			if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
-				getServerData().vehicles[i].locked = true;
+			if (serverData.vehicles[i].ownerType == V_VEHOWNER_JOB) {
+				serverData.vehicles[i].locked = true;
 			}
 
 			destroyElement(vehicle);
-			getServerData().vehicles[i].vehicle = false;
+			serverData.vehicles[i].vehicle = false;
 
-			let newVehicle = spawnVehicle(getServerData().vehicles[i]);
-			getServerData().vehicles[i].vehicle = newVehicle;
+			let newVehicle = spawnVehicle(serverData.vehicles[i]);
+			serverData.vehicles[i].vehicle = newVehicle;
 		}
 	}
 
@@ -1466,6 +1466,7 @@ function spawnVehicle(vehicleData) {
 
 	setVehicleHeading(vehicle, rotation);
 	setElementDimension(vehicle, dimension);
+	setElementInterior(vehicle, interior);
 
 	vehicleData.vehicle = vehicle;
 
@@ -1485,7 +1486,11 @@ function spawnVehicle(vehicleData) {
 	if (vehicleData.spawnLocked == true && vehicleData.switchingScenes == false) {
 		vehicleData.engine = false;
 		vehicleData.locked = true;
-		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s engine to OFF`);
+
+		if (vehicleData.rentPrice == 0 || vehicleData.buyPrice == 0 || vehicleData.ownerType == V_VEHOWNER_PUBLIC) {
+			vehicleData.locked = false;
+		}
+		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s initial engine and lock state`);
 	}
 
 	if (globalConfig.forceAllVehicleEngines == 1) {
@@ -1515,8 +1520,8 @@ function spawnVehicle(vehicleData) {
 // ===========================================================================
 
 function isVehicleAtPayAndSpray(vehicle) {
-	for (let i in getServerData().payAndSprays[getGame()]) {
-		if (getDistance(getVehiclePosition(vehicle), getServerData().payAndSprays[getGame()][i].position) <= globalConfig.payAndSprayDistance) {
+	for (let i in serverData.payAndSprays[getGame()]) {
+		if (getDistance(getVehiclePosition(vehicle), serverData.payAndSprays[getGame()][i].position) <= globalConfig.payAndSprayDistance) {
 			return true;
 		}
 	}
@@ -1588,7 +1593,7 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 		tempVehicleData.colour4 = 0;
 	}
 
-	getServerData().vehicles.push(tempVehicleData);
+	serverData.vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 }
@@ -1618,7 +1623,7 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour4 = 0;
 	}
 
-	getServerData().vehicles.push(tempVehicleData);
+	serverData.vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 
@@ -1649,7 +1654,7 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 		tempVehicleData.colour4 = 0;
 	}
 
-	getServerData().vehicles.push(tempVehicleData);
+	serverData.vehicles.push(tempVehicleData);
 
 	setAllVehicleIndexes();
 
@@ -1663,7 +1668,7 @@ function processVehiclePurchasing() {
 		return false;
 	}
 
-	let purchasingVehicles = getServerData().purchasingVehicleCache;
+	let purchasingVehicles = serverData.purchasingVehicleCache;
 	for (let i in purchasingVehicles) {
 		checkVehiclePurchasing(purchasingVehicles[i]);
 	}
@@ -1696,7 +1701,7 @@ function checkVehiclePurchasing(client) {
 
 	if (!isPlayerInAnyVehicle(client)) {
 		if (getPlayerData(client).buyingVehicle != false) {
-			getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
+			serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "DealershipPurchaseExitedVehicle"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
@@ -1707,7 +1712,7 @@ function checkVehiclePurchasing(client) {
 
 	if (getDistance(getVehiclePosition(getPlayerData(client).buyingVehicle), getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition) > globalConfig.buyVehicleDriveAwayDistance) {
 		if (getPlayerCurrentSubAccount(client).cash < getVehicleData(getPlayerData(client).buyingVehicle).buyPrice) {
-			getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
+			serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = false;
@@ -1715,7 +1720,7 @@ function checkVehiclePurchasing(client) {
 			return false;
 		}
 
-		getServerData().purchasingVehicleCache.splice(getServerData().purchasingVehicleCache.indexOf(client), 1);
+		serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEHOWNER_NONE) {
 			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerType, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
 		}
@@ -1753,15 +1758,15 @@ function processVehicleBurning() {
 // ===========================================================================
 
 function cacheAllVehicleItems() {
-	for (let i in getServerData().vehicles) {
-		clearArray(getServerData().vehicles[i].trunkItemCache);
-		clearArray(getServerData().vehicles[i].dashItemCache);
-		for (let j in getServerData().items) {
-			if (getServerData().items[j] != null) {
-				if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
-					getServerData().vehicles[i].trunkItemCache.push(j);
-				} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == getServerData().vehicles[i].databaseId) {
-					getServerData().vehicles[i].dashItemCache.push(j);
+	for (let i in serverData.vehicles) {
+		serverData.vehicles[i].trunkItemCache = [];
+		serverData.vehicles[i].dashItemCache = [];
+		for (let j in serverData.items) {
+			if (serverData.items[j] != null) {
+				if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == serverData.vehicles[i].databaseId) {
+					serverData.vehicles[i].trunkItemCache.push(j);
+				} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == serverData.vehicles[i].databaseId) {
+					serverData.vehicles[i].dashItemCache.push(j);
 				}
 			}
 		}
@@ -1780,11 +1785,11 @@ function resetVehiclePosition(vehicle) {
 // ===========================================================================
 
 function setAllVehicleIndexes() {
-	for (let i in getServerData().vehicles) {
-		getServerData().vehicles[i].index = i;
+	for (let i in serverData.vehicles) {
+		serverData.vehicles[i].index = i;
 
-		if (getServerData().vehicles[i].streamingRadioStation != 0) {
-			getServerData().vehicles[i].streamingRadioStationIndex = getRadioStationIdFromDatabaseId(getServerData().vehicles[i].streamingRadioStation);
+		if (serverData.vehicles[i].streamingRadioStation != 0) {
+			serverData.vehicles[i].streamingRadioStationIndex = getRadioStationIdFromDatabaseId(serverData.vehicles[i].streamingRadioStation);
 		}
 	}
 }
@@ -1812,7 +1817,7 @@ function doesVehicleHaveMegaphone(vehicle) {
 // ===========================================================================
 
 function getVehicleFromDatabaseId(databaseId) {
-	let vehicles = getServerData().vehicles;
+	let vehicles = serverData.vehicles;
 	for (let i in vehicles) {
 		if (vehicles[i].databaseId == databaseId) {
 			return vehicles[i].vehicle;
@@ -1908,10 +1913,10 @@ function isPlayerInVehicleDriverSeat(client) {
 // ===========================================================================
 
 function despawnAllVehicles() {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicle != false) {
-			destroyGameElement(getServerData().vehicles[i].vehicle);
-			getServerData().vehicles[i].vehicle = false;
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].vehicle != false) {
+			destroyGameElement(serverData.vehicles[i].vehicle);
+			serverData.vehicles[i].vehicle = false;
 		}
 	}
 
@@ -1921,7 +1926,7 @@ function despawnAllVehicles() {
 // ===========================================================================
 
 function updateVehicleSavedPositions() {
-	for (let i in getServerData().vehicles) {
+	for (let i in serverData.vehicles) {
 		updateVehicleSavedPosition(i);
 	}
 }
@@ -1929,10 +1934,10 @@ function updateVehicleSavedPositions() {
 // ===========================================================================
 
 function updateVehicleSavedPosition(vehicleId) {
-	if (!getServerData().vehicles[vehicleId].spawnLocked) {
-		getServerData().vehicles[vehicleId].spawnPosition = getVehiclePosition(getServerData().vehicles[vehicleId].vehicle);
-		getServerData().vehicles[vehicleId].spawnRotation = getVehicleHeading(getServerData().vehicles[vehicleId].vehicle);
-		getServerData().vehicles[vehicleId].dimension = getElementDimension(getServerData().vehicles[vehicleId].vehicle);
+	if (!serverData.vehicles[vehicleId].spawnLocked) {
+		serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
+		serverData.vehicles[vehicleId].spawnRotation = getVehicleHeading(serverData.vehicles[vehicleId].vehicle);
+		serverData.vehicles[vehicleId].dimension = getElementDimension(serverData.vehicles[vehicleId].vehicle);
 	}
 }
 
@@ -1940,8 +1945,8 @@ function updateVehicleSavedPosition(vehicleId) {
 
 function getVehicleDataIndexFromVehicle(vehicle) {
 	if (isVehicleObject(vehicle)) {
-		for (let i in getServerData().vehicles) {
-			if (getServerData().vehicles[i].vehicle == vehicle) {
+		for (let i in serverData.vehicles) {
+			if (serverData.vehicles[i].vehicle == vehicle) {
 				return i;
 			}
 		}
@@ -1973,10 +1978,10 @@ function doesVehicleHaveTransmitRadio(vehicle) {
 // ===========================================================================
 
 function setAllVehicleRadioFrequencies() {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].ownerType == V_VEHOWNER_JOB) {
-			if (getJobData(getJobIdFromDatabaseId(getServerData().vehicles[i].ownerId)) != false) {
-				getServerData().vehicles[i].radioFrequency = getJobData(getJobIdFromDatabaseId(getServerData().vehicles[i].ownerId)).radioFrequency;
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].ownerType == V_VEHOWNER_JOB) {
+			if (getJobData(getJobIdFromDatabaseId(serverData.vehicles[i].ownerId)) != false) {
+				serverData.vehicles[i].radioFrequency = getJobData(getJobIdFromDatabaseId(serverData.vehicles[i].ownerId)).radioFrequency;
 			}
 		}
 	}
@@ -2061,9 +2066,9 @@ function forceAllVehicleEngines(state) {
 	globalConfig.forceAllVehicleEngines = state;
 
 	if (state != 0) {
-		for (let i in getServerData().vehicles) {
-			getServerData().vehicles[i].engine = (state == 1) ? false : true;
-			setVehicleEngine(getServerData().vehicles[i].vehicle, getServerData().vehicles[i].engine);
+		for (let i in serverData.vehicles) {
+			serverData.vehicles[i].engine = (state == 1) ? false : true;
+			setVehicleEngine(serverData.vehicles[i].vehicle, serverData.vehicles[i].engine);
 		}
 	}
 }

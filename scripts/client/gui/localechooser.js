@@ -95,7 +95,7 @@ function localeChooserSetLocale(localeId) {
 function resetLocaleChooserOptions() {
 	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Resetting locale chooser options`);
 
-	// let tempLocaleOptions = getServerData().localeOptions; // getAvailableLocaleOptions();
+	// let tempLocaleOptions = serverData.localeOptions; // getAvailableLocaleOptions();
 	let tempLocaleOptions = getAvailableLocaleOptions();
 
 	localeChooser.window.size = toVector2((tempLocaleOptions.length * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageSize.y + flagImageGap.y * 2);

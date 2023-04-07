@@ -33,7 +33,7 @@ function onPlayerJoin(event, client) {
 	playerInitialized[getPlayerId(client)] = false;
 	playerGUIReady[getPlayerId(client)] = false;
 
-	getServerData().clients[getPlayerId(client)] = null;
+	serverData.clients[getPlayerId(client)] = null;
 
 	let messageText = `👋 ${getPlayerName(client)} is connecting to the server ...`;
 	messageDiscordEventChannel(messageText);
@@ -103,7 +103,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	playerInitialized[client.index] = false;
 	playerGUIReady[client.index] = false;
 
-	getServerData().clients[getPlayerId(client)] = null;
+	serverData.clients[getPlayerId(client)] = null;
 
 	logToConsole(LOG_INFO, `👋 Client ${getPlayerDisplayForConsole(client)} disconnected (quitReasonId - ${reasonTextEnglish})`);
 	//messageDiscordEventChannel(`👋 ${clientName} has left the server (${reasonTextEnglish})`);
@@ -553,7 +553,7 @@ function onPlayerSpawn(client) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
-		sendAllBusinessesToPlayer(client);
+		//sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
 		sendAllPayPhonesToPlayer(client);
 		sendAllJobsToPlayer(client);

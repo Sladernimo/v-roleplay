@@ -192,19 +192,19 @@ function repossessFirstAsset(client) {
 // ===========================================================================
 
 function getAllVehiclesOwnedByPlayer(client) {
-	return getServerData().vehicles.filter((v) => v.ownerType == V_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return serverData.vehicles.filter((v) => v.ownerType == V_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllBusinessesOwnedByPlayer(client) {
-	return getServerData().businesses.filter((b) => b.ownerType == V_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return serverData.businesses.filter((b) => b.ownerType == V_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
 function getAllHousesOwnedByPlayer(client) {
-	return getServerData().houses.filter((h) => h.ownerType == V_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return serverData.houses.filter((h) => h.ownerType == V_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================

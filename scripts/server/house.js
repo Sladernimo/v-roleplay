@@ -710,7 +710,7 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 		return false;
 	}
 
-	let tempHouseData = getServerData().houses[houseIndex];
+	let tempHouseData = serverData.houses[houseIndex];
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
@@ -731,7 +731,7 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 
 	removePlayersFromHouse(houseIndex);
 
-	getServerData().houses.splice(houseIndex, 1);
+	serverData.houses.splice(houseIndex, 1);
 }
 
 // ===========================================================================
@@ -802,7 +802,7 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 
 	tempHouseData.needsSaved = true;
 
-	let houseId = getServerData().houses.push(tempHouseData);
+	let houseId = serverData.houses.push(tempHouseData);
 
 	saveHouseToDatabase(houseId - 1);
 	setAllHouseDataIndexes();
@@ -820,7 +820,7 @@ function getHouseDataFromDatabaseId(databaseId) {
 		return false;
 	}
 
-	let matchingHouses = getServerData().houses.filter(b => b.databaseId == databaseId)
+	let matchingHouses = serverData.houses.filter(b => b.databaseId == databaseId)
 	if (matchingHouses.length == 1) {
 		return matchingHouses[0];
 	}
@@ -831,9 +831,9 @@ function getHouseDataFromDatabaseId(databaseId) {
 
 function getClosestHouseEntrance(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].entranceDimension == dimension) {
-			if (getDistance(getServerData().houses[i].entrancePosition, position) <= getDistance(getServerData().houses[closest].entrancePosition, position)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].entranceDimension == dimension) {
+			if (getDistance(serverData.houses[i].entrancePosition, position) <= getDistance(serverData.houses[closest].entrancePosition, position)) {
 				closest = i;
 			}
 		}
@@ -845,9 +845,9 @@ function getClosestHouseEntrance(position, dimension) {
 
 function getClosestHouseExit(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].entranceDimension == dimension) {
-			if (getDistance(getServerData().houses[i].exitPosition, position) <= getDistance(getServerData().houses[closest].exitPosition, position)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].entranceDimension == dimension) {
+			if (getDistance(serverData.houses[i].exitPosition, position) <= getDistance(serverData.houses[closest].exitPosition, position)) {
 				closest = i;
 			}
 		}
@@ -858,7 +858,7 @@ function getClosestHouseExit(position, dimension) {
 // ===========================================================================
 
 function getPlayerHouse(client) {
-	if (getServerData().houses.length == 0) {
+	if (serverData.houses.length == 0) {
 		return -1;
 	}
 
@@ -873,8 +873,8 @@ function getPlayerHouse(client) {
 			return getHouseData(closestEntrance).index;
 		}
 
-		for (let i in getServerData().houses) {
-			if (getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+		for (let i in serverData.houses) {
+			if (serverData.houses[i].hasInterior && serverData.houses[i].exitDimension == getPlayerDimension(client)) {
 				return i;
 			}
 		}
@@ -892,8 +892,8 @@ function saveAllHousesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].needsSaved) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].needsSaved) {
 			saveHouseToDatabase(i);
 		}
 	}
@@ -903,7 +903,7 @@ function saveAllHousesToDatabase() {
 // ===========================================================================
 
 function saveHouseToDatabase(houseId) {
-	let tempHouseData = getServerData().houses[houseId];
+	let tempHouseData = serverData.houses[houseId];
 
 	if (!tempHouseData.needsSaved) {
 		return false;
@@ -952,7 +952,7 @@ function saveHouseToDatabase(houseId) {
 			let queryString = createDatabaseInsertQuery("house_main", data);
 			logToConsole(queryString);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().houses[houseId].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.houses[houseId].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
 			let queryString = createDatabaseUpdateQuery("house_main", data, `house_id=${tempHouseData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
@@ -971,7 +971,7 @@ function saveHouseToDatabase(houseId) {
 // ===========================================================================
 
 function saveHouseLocationToDatabase(houseId, locationId) {
-	let tempHouseLocationData = getServerData().houses[houseId].locations[locationId];
+	let tempHouseLocationData = serverData.houses[houseId].locations[locationId];
 
 	if (!tempHouseLocationData.needsSaved) {
 		return false;
@@ -1007,13 +1007,13 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		if (tempHouseData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("house_loc", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().houses[houseId].locations[locationId].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.houses[houseId].locations[locationId].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
 			let queryString = createDatabaseUpdateQuery("house_loc", data, `house_loc_id=${tempHouseLocationData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
 		}
 
-		getServerData().houses[houseId].locations[locationId].needsSaved = false;
+		serverData.houses[houseId].locations[locationId].needsSaved = false;
 		freeDatabaseQuery(dbQuery);
 		disconnectFromDatabase(dbConnection);
 		return true;
@@ -1026,7 +1026,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 // ===========================================================================
 
 function spawnAllHousePickups() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		spawnHouseEntrancePickup(i);
 		spawnHouseExitPickup(i);
 	}
@@ -1035,7 +1035,7 @@ function spawnAllHousePickups() {
 // ===========================================================================
 
 function spawnAllHouseBlips() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		spawnHouseEntranceBlip(i);
 		spawnHouseExitBlip(i);
 	}
@@ -1069,7 +1069,7 @@ function spawnHouseEntrancePickup(houseId) {
 				return false;
 			}
 
-			if (getServerData().houses[houseId].entrancePickupModel != 0) {
+			if (serverData.houses[houseId].entrancePickupModel != 0) {
 				pickupModelId = getHouseData(houseId).entrancePickupModel;
 			}
 
@@ -1129,7 +1129,7 @@ function spawnHouseEntranceBlip(houseId) {
 	}
 
 	let blipModelId = gameData.blipSprites[getGame()].House;
-	if (getServerData().houses[houseId].entranceBlipModel != 0) {
+	if (serverData.houses[houseId].entranceBlipModel != 0) {
 		blipModelId = getHouseData(houseId).entranceBlipModel;
 	}
 
@@ -1185,7 +1185,7 @@ function spawnHouseExitPickup(houseId) {
 	if (isGameFeatureSupported("pickup")) {
 		let pickupModelId = gameData.pickupModels[getGame()].Exit;
 
-		if (getServerData().houses[houseId].exitPickupModel != 0) {
+		if (serverData.houses[houseId].exitPickupModel != 0) {
 			pickupModelId = houseData.exitPickupModel;
 		}
 
@@ -1237,7 +1237,7 @@ function spawnHouseExitBlip(houseId) {
 
 	let blipModelId = gameData.blipSprites[getGame()].Exit;
 
-	if (getServerData().houses[houseId].exitBlipModel != 0) {
+	if (serverData.houses[houseId].exitBlipModel != 0) {
 		blipModelId = houseData.exitBlipModel;
 	}
 
@@ -1488,8 +1488,8 @@ function getHouseData(houseId) {
 		return false;
 	}
 
-	if (typeof getServerData().houses[houseId] != "undefined") {
-		return getServerData().houses[houseId];
+	if (typeof serverData.houses[houseId] != "undefined") {
+		return serverData.houses[houseId];
 	}
 }
 
@@ -1574,15 +1574,15 @@ function reloadAllHousesCommand(command, params, client) {
 		}
 	}
 
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		despawnHouseExitBlip(i);
 		despawnHouseEntranceBlip(i);
 		despawnHouseExitPickup(i);
 		despawnHouseEntrancePickup(i);
 	}
 
-	clearArray(getServerData().houses);
-	getServerData().houses = loadHousesFromDatabase();
+	serverData.houses = [];
+	serverData.houses = loadHousesFromDatabase();
 	createAllHousePickups();
 	createAllHouseBlips();
 
@@ -1594,26 +1594,26 @@ function reloadAllHousesCommand(command, params, client) {
 function exitHouse(client) {
 	let houseId = getPlayerHouse(client);
 	if (isPlayerSpawned(client)) {
-		setPlayerInterior(client, getServerData().houses[houseId].entranceInterior);
-		setPlayerDimension(client, getServerData().houses[houseId].entranceDimension);
-		setPlayerPosition(client, getServerData().houses[houseId].entrancePosition);
+		setPlayerInterior(client, serverData.houses[houseId].entranceInterior);
+		setPlayerDimension(client, serverData.houses[houseId].entranceDimension);
+		setPlayerPosition(client, serverData.houses[houseId].entrancePosition);
 	}
 }
 
 // ===========================================================================
 
 function setAllHouseDataIndexes() {
-	for (let i in getServerData().houses) {
-		getServerData().houses[i].index = i;
+	for (let i in serverData.houses) {
+		serverData.houses[i].index = i;
 
-		//for(let j in getServerData().houses[i].locations) {
-		//	getServerData().houses[i].locations[j].index = j;
-		//	getServerData().houses[i].locations[j].houseIndex = i;
+		//for(let j in serverData.houses[i].locations) {
+		//	serverData.houses[i].locations[j].index = j;
+		//	serverData.houses[i].locations[j].houseIndex = i;
 		//}
 
-		//for(let j in getServerData().houses[i].gameScripts) {
-		//	getServerData().houses[i].gameScripts[j].index = j;
-		//	getServerData().houses[i].gameScripts[j].houseIndex = i;
+		//for(let j in serverData.houses[i].gameScripts) {
+		//	serverData.houses[i].gameScripts[j].index = j;
+		//	serverData.houses[i].gameScripts[j].houseIndex = i;
 		//}
 	}
 }
@@ -1621,7 +1621,7 @@ function setAllHouseDataIndexes() {
 // ===========================================================================
 
 function cacheAllHouseItems() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		cacheHouseItems(i);
 	}
 }
@@ -1629,9 +1629,9 @@ function cacheAllHouseItems() {
 // ===========================================================================
 
 function cacheHouseItems(houseId) {
-	clearArray(getHouseData(houseId).itemCache);
+	getHouseData(houseId).itemCache = [];
 
-	for (let i in getServerData().items) {
+	for (let i in serverData.items) {
 		if (getItemData(i) != false) {
 			if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
 				getHouseData(houseId).itemCache.push(i);
@@ -1643,7 +1643,7 @@ function cacheHouseItems(houseId) {
 // ===========================================================================
 
 function getHouseIdFromDatabaseId(databaseId) {
-	let houses = getServerData().houses;
+	let houses = serverData.houses;
 	for (let i in houses) {
 		if (houses[i].databaseId == databaseId) {
 			return i;
@@ -1739,7 +1739,7 @@ function resetHouseBlips(houseId) {
 // ===========================================================================
 
 function resetAllHousePickups() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		resetHousePickups(i);
 	}
 }
@@ -1747,7 +1747,7 @@ function resetAllHousePickups() {
 // ===========================================================================
 
 function resetAllHouseBlips() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		resetHouseBlips(i);
 	}
 }
@@ -1783,13 +1783,13 @@ function canPlayerManageHouse(client, houseId) {
 
 function getHouseFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().houses) {
-			if (toLowerCase(getServerData().houses[i].description).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.houses) {
+			if (toLowerCase(serverData.houses[i].description).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().houses[params] != "undefined") {
+		if (typeof serverData.houses[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -1866,7 +1866,7 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 // ===========================================================================
 
 function deleteAllHouseBlips() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		despawnHouseEntranceBlip(i);
 		despawnHouseExitBlip(i);
 	}
@@ -1875,7 +1875,7 @@ function deleteAllHouseBlips() {
 // ===========================================================================
 
 function deleteAllHousePickups() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		despawnHouseEntrancePickup(i);
 		despawnHouseExitPickup(i);
 	}
@@ -1905,8 +1905,8 @@ function spawnHousePickups(houseId) {
  *
  */
 function isPlayerInAnyHouse(client) {
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].hasInterior && serverData.houses[i].exitDimension == getPlayerDimension(client)) {
 			return i;
 		}
 	}
@@ -1986,7 +1986,7 @@ function getNearbyBusinessesCommand(command, params, client) {
 // ===========================================================================
 
 function getHousesInRange(position, distance) {
-	return getServerData().houses.filter((house) => getDistance(position, house.entrancePosition) <= distance);
+	return serverData.houses.filter((house) => getDistance(position, house.entrancePosition) <= distance);
 }
 
 // ===========================================================================

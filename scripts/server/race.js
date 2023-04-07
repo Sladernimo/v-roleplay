@@ -19,8 +19,8 @@ function initRaceScript() {
  * @return {RaceData} The race's data (class instance)
  */
 function getRaceData(raceId) {
-	if (typeof getServerData().races[raceId] != "undefined") {
-		return getServerData().races[raceId];
+	if (typeof serverData.races[raceId] != "undefined") {
+		return serverData.races[raceId];
 	}
 	return false;
 }
@@ -28,8 +28,8 @@ function getRaceData(raceId) {
 // ===========================================================================
 
 function setAllRaceDataIndexes() {
-	for (let i in getServerData().races) {
-		getServerData().races[i].index = i;
+	for (let i in serverData.races) {
+		serverData.races[i].index = i;
 	}
 }
 
@@ -47,8 +47,8 @@ function saveRacesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().races) {
-		saveRaceToDatabase(getServerData().races[i]);
+	for (let i in serverData.races) {
+		saveRaceToDatabase(serverData.races[i]);
 	}
 }
 

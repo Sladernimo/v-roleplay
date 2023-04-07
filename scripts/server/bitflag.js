@@ -286,7 +286,7 @@ function initBitFlagScript() {
 	serverBitFlags.staffFlags = createBitFlagTable(serverBitFlagKeys.staffFlagKeys);
 	serverBitFlags.moderationFlags = createBitFlagTable(serverBitFlagKeys.moderationFlagKeys);
 	serverBitFlags.accountSettingsFlags = createBitFlagTable(serverBitFlagKeys.accountSettingsFlagKeys);
-	//serverBitFlags.subAccountSettingsFlags = createBitFlagTable(getServerData().subAccountSettingsFlagKeys);
+	//serverBitFlags.subAccountSettingsFlags = createBitFlagTable(serverData.subAccountSettingsFlagKeys);
 	serverBitFlags.clanFlags = createBitFlagTable(serverBitFlagKeys.clanFlagKeys);
 	serverBitFlags.clanTypeFlags = createBitFlagTable(serverBitFlagKeys.clanTypeFlagKeys);
 	serverBitFlags.clanDiscordWebhookFlags = createBitFlagTable(serverBitFlagKeys.clanDiscordWebhookFlagKeys);

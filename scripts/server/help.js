@@ -379,10 +379,7 @@ function showCommandHelpMessage(client, commandName) {
 
 	commandName = toLowerCase(commandName);
 	commandName = commandName.trim();
-
-	if (commandName.slice(0, 1) == "/") {
-		commandName = commandName.slice(1);
-	}
+	commandName = removeSlashesFromString(commandName);
 
 	let commandData = getCommandData(commandName);
 	let aliases = getCommandAliasesNames(commandData);

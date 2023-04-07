@@ -8,8 +8,8 @@
 // ===========================================================================
 
 function getItemWithPhoneNumber(phoneNumber) {
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
 			if (getItemTypeData(getItemData(i).itemTypeIndex).useType == V_ITEM_USE_TYPE_PHONE) {
 				if (getItemData(i).value == phoneNumber) {
 					return i;

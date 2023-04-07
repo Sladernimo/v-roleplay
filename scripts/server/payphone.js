@@ -85,12 +85,12 @@ function createPayPhone(position, number, addedBy = defaultNoAccountId) {
 	tempPayPhoneData.whenDeleted = 0;
 	tempPayPhoneData.enabled = true;
 
-	getServerData().payPhones.push(tempPayPhoneData);
+	serverData.payPhones.push(tempPayPhoneData);
 
 	setAllPayPhoneDataIndexes();
 	saveAllPayPhonesToDatabase();
 
-	sendPayPhoneToPlayer(null, getServerData().payPhones.length - 1, false, tempPayPhoneData.state, tempPayPhoneData.position);
+	sendPayPhoneToPlayer(null, serverData.payPhones.length - 1, false, tempPayPhoneData.state, tempPayPhoneData.position);
 
 	return true;
 }
@@ -98,11 +98,11 @@ function createPayPhone(position, number, addedBy = defaultNoAccountId) {
 // ===========================================================================
 
 function getClosestPayPhone(position) {
-	if (getServerData().payPhones.length > 0) {
+	if (serverData.payPhones.length > 0) {
 
 		let closest = 0;
-		for (let i in getServerData().payPhones) {
-			if (getDistance(position, getServerData().payPhones[i].position) < getDistance(position, getServerData().payPhones[closest].position)) {
+		for (let i in serverData.payPhones) {
+			if (getDistance(position, serverData.payPhones[i].position) < getDistance(position, serverData.payPhones[closest].position)) {
 				closest = i;
 			}
 		}
@@ -124,8 +124,8 @@ function getPayPhoneData(payPhoneIndex) {
 		return false;
 	}
 
-	if (typeof getServerData().payPhones[payPhoneIndex] != "undefined") {
-		return getServerData().payPhones[payPhoneIndex];
+	if (typeof serverData.payPhones[payPhoneIndex] != "undefined") {
+		return serverData.payPhones[payPhoneIndex];
 	}
 
 	return false;
@@ -185,7 +185,7 @@ function deletePayPhoneCommand(command, params, client) {
 
 	quickDatabaseQuery(`UPDATE payphone_main SET payphone_deleted = 1, payphone_who_deleted = ${getPlayerData(client).accountData.databaseId}, payphone_when_deleted = UNIX_TIMESTAMP() WHERE payphone_id = ${getPayPhoneData(payPhoneIndex).databaseId}`);
 
-	getServerData().payPhones.splice(payPhoneIndex, 1);
+	serverData.payPhones.splice(payPhoneIndex, 1);
 }
 
 // ===========================================================================
@@ -495,7 +495,7 @@ function saveAllPayPhonesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().payPhones) {
+	for (let i in serverData.payPhones) {
 		savePayPhoneToDatabase(i);
 	}
 }
@@ -565,8 +565,8 @@ function savePayPhoneToDatabase(payPhoneIndex) {
 // ===========================================================================
 
 function setAllPayPhoneDataIndexes() {
-	for (let i in getServerData().payPhones) {
-		getServerData().payPhones[i].index = i;
+	for (let i in serverData.payPhones) {
+		serverData.payPhones[i].index = i;
 	}
 }
 
@@ -580,8 +580,8 @@ function getPayPhoneCallPrice(payPhoneIndex, durationSeconds) {
 // ===========================================================================
 
 function getPayPhoneUsedByPlayer(client) {
-	for (let i in getServerData().payPhones) {
-		if (getServerData().payPhones[i].usingPlayer) {
+	for (let i in serverData.payPhones) {
+		if (serverData.payPhones[i].usingPlayer) {
 			return i;
 		}
 	}
@@ -631,7 +631,7 @@ function getNearbyPayPhonesCommand(command, params, client) {
 // ===========================================================================
 
 function getPayPhonesInRange(position, distance) {
-	return getServerData().payPhones.filter((payPhone) => getDistance(position, payPhone.position) <= distance);
+	return serverData.payPhones.filter((payPhone) => getDistance(position, payPhone.position) <= distance);
 }
 
 // ===========================================================================
@@ -707,14 +707,14 @@ function resetAllPayPhonesCommand(command, params, client) {
 // ===========================================================================
 
 function resetAllPayPhones() {
-	for (let i in getServerData().payPhones) {
-		if (getServerData().payPhones[i].usingPlayer != false) {
-			getPlayerData(getServerData().payPhones[i].usingPlayer).usingPayPhone = -1;
-			getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneCallStart = 0;
-			getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-			getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
+	for (let i in serverData.payPhones) {
+		if (serverData.payPhones[i].usingPlayer != false) {
+			getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
+			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
+			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
+			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
 		}
-		getServerData().payPhones[i].state = V_PAYPHONE_STATE_IDLE;
+		serverData.payPhones[i].state = V_PAYPHONE_STATE_IDLE;
 	}
 
 	sendPayPhoneStateToPlayer(null, -1, V_PAYPHONE_STATE_IDLE);
@@ -723,16 +723,16 @@ function resetAllPayPhones() {
 // ===========================================================================
 
 function fixDesyncedPayPhones() {
-	for (let i in getServerData().payPhones) {
-		switch (getServerData().payPhones[i].state) {
+	for (let i in serverData.payPhones) {
+		switch (serverData.payPhones[i].state) {
 			case V_PAYPHONE_STATE_RINGING:
 				if (getPayPhoneData(i).otherPayPhone != -1) {
 					if (getPayPhoneData(getPayPhoneData(i).otherPayPhone).state != V_PAYPHONE_STATE_CALLING) {
-						if (getServerData().payPhones[i].usingPlayer != false) {
-							getPlayerData(getServerData().payPhones[i].usingPlayer).usingPayPhone = -1;
-							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneCallStart = 0;
-							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-							getPlayerData(getServerData().payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
+						if (serverData.payPhones[i].usingPlayer != false) {
+							getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
+							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
+							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
+							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
 						}
 						getPayPhoneData(i).otherPayPhone = -1;
 						setPayPhoneState(i, V_PAYPHONE_STATE_IDLE);
@@ -782,12 +782,12 @@ function canPlayerBeCalledOnPayPhone(client) {
 // ===========================================================================
 
 function getPayPhoneFromParams(params) {
-	if (typeof getServerData().payPhones[params] != "undefined") {
+	if (typeof serverData.payPhones[params] != "undefined") {
 		return toInteger(params);
 	}
 
-	for (let i in getServerData().payPhones) {
-		if (getServerData().payPhones[i].number == toInteger(params)) {
+	for (let i in serverData.payPhones) {
+		if (serverData.payPhones[i].number == toInteger(params)) {
 			return i;
 		}
 	}

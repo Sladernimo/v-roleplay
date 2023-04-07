@@ -236,8 +236,8 @@ function isPlayerFishing(client) {
 
 function getClosestFishingLocation(position) {
 	let closest = 0;
-	for (let i in getServerData().fishingLocations) {
-		if (getDistance(position, getServerData().fishingLocations[i].position) < getDistance(position, getServerData().fishingLocations[closest].position))
+	for (let i in serverData.fishingLocations) {
+		if (getDistance(position, serverData.fishingLocations[i].position) < getDistance(position, serverData.fishingLocations[closest].position))
 			closest = i;
 	}
 

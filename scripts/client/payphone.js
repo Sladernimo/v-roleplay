@@ -169,11 +169,11 @@ function processPayPhonesDistance() {
 	}
 
 	let tempRingingPhone = -1;
-	for (let i in getServerData().payPhones) {
-		if (getServerData().payPhones[i].state == V_PAYPHONE_STATE_RINGING) {
-			if (getDistance(getLocalPlayerPosition(), getServerData().payPhones[i].position) <= payPhoneMaxAudibleDistance) {
+	for (let i in serverData.payPhones) {
+		if (serverData.payPhones[i].state == V_PAYPHONE_STATE_RINGING) {
+			if (getDistance(getLocalPlayerPosition(), serverData.payPhones[i].position) <= payPhoneMaxAudibleDistance) {
 				if (tempRingingPhone != -1) {
-					if (getDistance(getLocalPlayerPosition(), getServerData().payPhones[i].position) <= getDistance(getLocalPlayerPosition(), getServerData().payPhones[tempRingingPhone].position)) {
+					if (getDistance(getLocalPlayerPosition(), serverData.payPhones[i].position) <= getDistance(getLocalPlayerPosition(), serverData.payPhones[tempRingingPhone].position)) {
 						tempRingingPhone = i;
 					}
 				} else {
@@ -187,7 +187,7 @@ function processPayPhonesDistance() {
 		logToConsole(LOG_VERBOSE, "[V.RP.PayPhone]: No phones are ringing, stopping all ring sounds");
 		payPhoneRingingSound.stop();
 	} else {
-		let distance = getDistance(getLocalPlayerPosition(), getServerData().payPhones[tempRingingPhone].position);
+		let distance = getDistance(getLocalPlayerPosition(), serverData.payPhones[tempRingingPhone].position);
 		let distancePercent = (payPhoneRingMaxVolume - (distance * 100 / payPhoneMaxAudibleDistance));
 		payPhoneRingingSound.volume = distancePercent / 100;
 
@@ -207,7 +207,7 @@ function receivePayPhoneFromServer(payPhoneId, isDeleted, state, position) {
 
 	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (isDeleted == true) {
-			getServerData().payPhones.splice(payPhoneId, 1);
+			serverData.payPhones.splice(payPhoneId, 1);
 			return false;
 		}
 
@@ -219,7 +219,7 @@ function receivePayPhoneFromServer(payPhoneId, isDeleted, state, position) {
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.PayPhone] Payphone ${payPhoneId} doesn't exist. Adding ...`);
 			let tempPayPhoneData = new PayPhoneData(payPhoneId, state, position);
-			getServerData().payPhones.push(tempPayPhoneData);
+			serverData.payPhones.push(tempPayPhoneData);
 		}
 	}
 }
@@ -236,8 +236,8 @@ function receivePayPhoneStateFromServer(payPhoneId, state) {
 
 		getPayPhoneData(payPhoneId).state = state;
 	} else {
-		for (let i in getServerData().payPhones) {
-			getServerData().payPhones[i].state = state;
+		for (let i in serverData.payPhones) {
+			serverData.payPhones[i].state = state;
 		}
 	}
 }
@@ -253,9 +253,9 @@ function getPayPhoneData(payPhoneId) {
 		return false;
 	}
 
-	for (let i in getServerData().payPhones) {
-		if (getServerData().payPhones[i].payPhoneId == payPhoneId) {
-			return getServerData().payPhones[i];
+	for (let i in serverData.payPhones) {
+		if (serverData.payPhones[i].payPhoneId == payPhoneId) {
+			return serverData.payPhones[i];
 		}
 	}
 
@@ -265,7 +265,7 @@ function getPayPhoneData(payPhoneId) {
 // ===========================================================================
 
 function removePayPhonesFromClient() {
-	clearArray(getServerData().payPhones);
+	serverData.payPhones = [];
 }
 
 // ===========================================================================

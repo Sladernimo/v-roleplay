@@ -111,9 +111,9 @@ function setVehiclePurchaseState(state, vehicleId, position) {
  * @return {VehicleData} The vehicle's data (class instance)
  */
 function getVehicleData(vehicleId) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicleId == vehicleId) {
-			return getServerData().vehicles[i];
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].vehicleId == vehicleId) {
+			return serverData.vehicles[i];
 		}
 	}
 
@@ -123,8 +123,8 @@ function getVehicleData(vehicleId) {
 // ===========================================================================
 
 function setAllVehicleDataIndexes() {
-	for (let i in getServerData().vehicles) {
-		getServerData().vehicles[i].index = i;
+	for (let i in serverData.vehicles) {
+		serverData.vehicles[i].index = i;
 	}
 }
 
@@ -168,7 +168,7 @@ function getVehicleSpeed(vehicle) {
 function removeVehiclesFromClient() {
 	// Need to destroy elements before clearing array
 
-	getServerData().vehicles.splice(0);
+	serverData.vehicles.splice(0);
 }
 
 // ===========================================================================

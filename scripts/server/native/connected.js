@@ -549,7 +549,7 @@ function createGameDummyElement(position) {
 	if (!isGameFeatureSupported("dummyElement")) {
 		return false;
 	}
-	return game.createDummy(position);
+	return game.createDummyElement(position);
 }
 
 // ===========================================================================
@@ -826,6 +826,10 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
+	if (!isGameFeatureSupported("interiorId")) {
+		return false;
+	}
+
 	setEntityData(element, "v.rp.interior", interior, true);
 	forcePlayerToSyncElementProperties(null, element);
 }
@@ -1110,7 +1114,7 @@ function getClosestCivilian(position) {
 
 function getVehiclesInRange(position, range) {
 	//if (getGame() == V_GAME_GTA_IV) {
-	//	return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+	//	return serverData.vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	//}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }
@@ -1506,16 +1510,15 @@ function addAllEventHandlers() {
 	addEventHandler("onElementStreamIn", onElementStreamIn);
 	addEventHandler("onElementStreamOut", onElementStreamOut);
 	addEventHandler("onPedSpawn", onPedSpawn);
+	addEventHandler("onPedDeathEx", onPlayerDeath);
 
 	addEventHandler("onPlayerCommand", function (event, client, command, params) {
 		processPlayerCommand(command, params, client);
 	});
 
 	if (getGame() <= V_GAME_GTA_IV) {
-		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
-		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
-		addEventHandler("onPedEnteredSphereEx", onPedEnteredSphere);
-		addEventHandler("onPedExitedSphereEx", onPedExitedSphere);
+		addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
 	}
 
 	if (getGame() <= V_GAME_GTA_SA) {
@@ -1525,7 +1528,7 @@ function addAllEventHandlers() {
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		//addEventHandler("onPedEnteringVehicle", onPedEnteredVehicle);
 		//addEventHandler("onPedExitingVehicle", onPedExitedVehicle);
-		addEventHandler("onPedDeathEx", onPlayerDeath);
+		//addEventHandler("onPedDeathEx", onPlayerDeath);
 	}
 }
 

@@ -242,7 +242,7 @@ function getPlayerStreamingRadioVolume(client) {
  *
  */
 function showRadioStationListCommand(command, params, client) {
-	let stationList = getServerData().radioStations.map(function (x) { return `{chatBoxListIndex}${toInteger(x.index) + 1}: {MAINCOLOUR}${x.name}`; });
+	let stationList = serverData.radioStations.map(function (x) { return `{chatBoxListIndex}${toInteger(x.index) + 1}: {MAINCOLOUR}${x.name}`; });
 
 	let chunkedList = splitArrayIntoChunks(stationList, 4);
 
@@ -256,8 +256,8 @@ function showRadioStationListCommand(command, params, client) {
 // ===========================================================================
 
 function setAllRadioStationDataIndexes() {
-	for (let i in getServerData().radioStations) {
-		getServerData().radioStations[i].index = i;
+	for (let i in serverData.radioStations) {
+		serverData.radioStations[i].index = i;
 	}
 }
 
@@ -274,8 +274,8 @@ function setAllRadioStationDataIndexes() {
  */
 function reloadAllRadioStationsCommand(command, params, client) {
 	stopRadioStreamForPlayer(null);
-	clearArray(getServerData().radioStations);
-	getServerData().radioStations = loadRadioStationsFromDatabase();
+	serverData.radioStations = [];
+	serverData.radioStations = loadRadioStationsFromDatabase();
 	setRadioStationIndexes();
 
 	announceAdminAction(`AllRadioStationsReloaded`);
@@ -285,13 +285,13 @@ function reloadAllRadioStationsCommand(command, params, client) {
 
 function getRadioStationFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().radioStations) {
-			if (toLowerCase(getServerData().radioStations[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.radioStations) {
+			if (toLowerCase(serverData.radioStations[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().radioStations[params - 1] != "undefined") {
+		if (typeof serverData.radioStations[params - 1] != "undefined") {
 			return toInteger(params - 1);
 		}
 	}
@@ -306,8 +306,8 @@ function getRadioStationIdFromDatabaseId(databaseId) {
 		return -1;
 	}
 
-	for (let i in getServerData().radioStations) {
-		if (getServerData().radioStations[i].databaseId == databaseId) {
+	for (let i in serverData.radioStations) {
+		if (serverData.radioStations[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -322,11 +322,11 @@ function getRadioStationData(radioStationIndex) {
 		return false;
 	}
 
-	if (typeof getServerData().radioStations[radioStationIndex] == "undefined") {
+	if (typeof serverData.radioStations[radioStationIndex] == "undefined") {
 		return false;
 	}
 
-	return getServerData().radioStations[radioStationIndex];
+	return serverData.radioStations[radioStationIndex];
 }
 
 // ===========================================================================
@@ -388,12 +388,12 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 		}
 	}
 
-	let vehicles = getServerData().vehicles;
+	let vehicles = serverData.vehicles;
 	for (let i in vehicles) {
-		if (getServerData().vehicles[i].radioFrequency == frequency) {
+		if (serverData.vehicles[i].radioFrequency == frequency) {
 			for (let j in clients) {
 				if (seenClients.indexOf(clients[j]) == -1) {
-					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(getServerData().vehicles[i].vehicle)) <= globalConfig.transmitRadioSpeakerDistance) {
+					if (getDistance(getPlayerPosition(clients[j]), getVehiclePosition(serverData.vehicles[i].vehicle)) <= globalConfig.transmitRadioSpeakerDistance) {
 						seenClients.push(clients[j]);
 						messagePlayerNormal(clients[j], `📻 {ALTCOLOUR}(On Radio): {MAINCOLOUR}${messageText}`);
 					}
@@ -402,7 +402,7 @@ function sendRadioTransmission(frequency, messageText, sentFromClient) {
 		}
 	}
 
-	let items = getServerData().items;
+	let items = serverData.items;
 	for (let i in items) {
 		if (items[i] != null) {
 			if (items[i].enabled) {

@@ -349,7 +349,7 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary
 		tempItemData.databaseId = -1;
 	}
 
-	let index = getServerData().items.push(tempItemData);
+	let index = serverData.items.push(tempItemData);
 	setAllItemDataIndexes();
 	return index - 1;
 }
@@ -396,8 +396,8 @@ function spawnGroundItemObject(itemId) {
 // ===========================================================================
 
 function deleteGroundItemObject(itemId) {
-	if (getServerData().groundItemCache.indexOf(itemId) != -1) {
-		getServerData().groundItemCache.splice(getServerData().groundItemCache.indexOf(itemId), 1);
+	if (serverData.groundItemCache.indexOf(itemId) != -1) {
+		serverData.groundItemCache.splice(serverData.groundItemCache.indexOf(itemId), 1);
 	}
 
 	if (getItemData(itemId).object != null) {
@@ -1812,7 +1812,7 @@ function playerDropItem(client, hotBarSlot) {
 		//getItemData(itemId).interior = getPlayerInterior(client);
 		spawnGroundItemObject(itemId);
 		getItemData(itemId).needsSaved = true;
-		getServerData().groundItemCache.push(itemId);
+		serverData.groundItemCache.push(itemId);
 
 		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, V_ITEM_OWNER_GROUND, 0, position);
 	}
@@ -2135,7 +2135,7 @@ function playerSwitchHotBarSlotCommand(command, params, client) {
 // ===========================================================================
 
 function getClosestItemOnGround(position) {
-	let groundItems = getServerData().groundItemCache;
+	let groundItems = serverData.groundItemCache;
 	if (groundItems.length != 0) {
 		let closest = 0;
 		for (let i in groundItems) {
@@ -2153,10 +2153,10 @@ function getClosestItemOnGround(position) {
 // ===========================================================================
 
 function setAllItemDataIndexes() {
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
-			getServerData().items[i].index = i;
-			getServerData().items[i].itemTypeIndex = getItemTypeIndexFromDatabaseId(getServerData().items[i].itemType);
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			serverData.items[i].index = i;
+			serverData.items[i].itemTypeIndex = getItemTypeIndexFromDatabaseId(serverData.items[i].itemType);
 		}
 	}
 }
@@ -2164,16 +2164,16 @@ function setAllItemDataIndexes() {
 // ===========================================================================
 
 function setAllItemTypeDataIndexes() {
-	for (let i in getServerData().itemTypes) {
-		if (getServerData().itemTypes[i]) {
-			getServerData().itemTypes[i].index = i;
-			getServerData().itemTypes[i].useAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].useAnimationName);
-			getServerData().itemTypes[i].switchAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].switchAnimationName);
-			getServerData().itemTypes[i].dropAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].dropAnimationName);
-			getServerData().itemTypes[i].putAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].putAnimationName);
-			getServerData().itemTypes[i].takeAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].takeAnimationName);
-			getServerData().itemTypes[i].giveAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].giveAnimationName);
-			getServerData().itemTypes[i].pickupAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].pickupAnimationName);
+	for (let i in serverData.itemTypes) {
+		if (serverData.itemTypes[i]) {
+			serverData.itemTypes[i].index = i;
+			serverData.itemTypes[i].useAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].useAnimationName);
+			serverData.itemTypes[i].switchAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].switchAnimationName);
+			serverData.itemTypes[i].dropAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].dropAnimationName);
+			serverData.itemTypes[i].putAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].putAnimationName);
+			serverData.itemTypes[i].takeAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].takeAnimationName);
+			serverData.itemTypes[i].giveAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].giveAnimationName);
+			serverData.itemTypes[i].pickupAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].pickupAnimationName);
 		}
 	}
 }
@@ -2181,11 +2181,11 @@ function setAllItemTypeDataIndexes() {
 // ===========================================================================
 
 function cacheAllGroundItems() {
-	clearArray(getServerData().groundItemCache);
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
-			if (getServerData().items[i].ownerType == V_ITEM_OWNER_GROUND) {
-				getServerData().groundItemCache.push(i);
+	serverData.groundItemCache = [];
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			if (serverData.items[i].ownerType == V_ITEM_OWNER_GROUND) {
+				serverData.groundItemCache.push(i);
 			}
 		}
 	}
@@ -2194,8 +2194,8 @@ function cacheAllGroundItems() {
 // ===========================================================================
 
 function spawnAllGroundItemObjects() {
-	for (let i in getServerData().groundItemCache) {
-		spawnGroundItemObject(getServerData().groundItemCache[i]);
+	for (let i in serverData.groundItemCache) {
+		spawnGroundItemObject(serverData.groundItemCache[i]);
 	}
 }
 
@@ -2228,7 +2228,7 @@ function cachePlayerHotBarItems(client) {
 		getPlayerData(client).hotBarItems[i] = -1;
 	}
 
-	for (let i in getServerData().items) {
+	for (let i in serverData.items) {
 		if (getItemData(i) != false) {
 			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER || (isPlayerWorking(client) && getItemData(i).ownerType == V_ITEM_OWNER_JOB)) {
 				if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
@@ -2251,7 +2251,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_GROUND:
 			ownerTypeString = "Ground/Dropped";
 			deleteGroundItemObject(itemId);
-			getServerData().groundItemCache.splice(getServerData().groundItemCache.indexOf(itemId), 1);
+			serverData.groundItemCache.splice(serverData.groundItemCache.indexOf(itemId), 1);
 			break;
 
 		case V_ITEM_OWNER_PLAYER:
@@ -2329,7 +2329,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 	if (getItemData(itemId).databaseId > 0) {
 		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP(), item_who_deleted = ${whoDeleted} WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
-	getServerData().items[itemId] = null;
+	serverData.items[itemId] = null;
 
 	if (resetAllItemIndexes) {
 		setAllItemDataIndexes();
@@ -2688,12 +2688,12 @@ function getItemData(itemId) {
 		return false;
 	}
 
-	if (getServerData().items[itemId] == null) {
+	if (serverData.items[itemId] == null) {
 		return false;
 	}
 
-	if (typeof getServerData().items[itemId] != "undefined") {
-		return getServerData().items[itemId];
+	if (typeof serverData.items[itemId] != "undefined") {
+		return serverData.items[itemId];
 	}
 
 	return false;
@@ -2710,8 +2710,8 @@ function getItemTypeData(itemTypeId) {
 		return false;
 	}
 
-	if (typeof getServerData().itemTypes[itemTypeId] != "undefined") {
-		return getServerData().itemTypes[itemTypeId];
+	if (typeof serverData.itemTypes[itemTypeId] != "undefined") {
+		return serverData.itemTypes[itemTypeId];
 	}
 
 	return false;
@@ -2724,8 +2724,8 @@ function saveAllItemsToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
 			saveItemToDatabase(i);
 		}
 	}
@@ -2738,7 +2738,7 @@ function saveAllItemTypesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().itemTypes) {
+	for (let i in serverData.itemTypes) {
 		saveItemTypeToDatabase(i);
 	}
 }
@@ -2926,9 +2926,9 @@ function restorePlayerTempLockerItems(client) {
 // ===========================================================================
 
 function getItemIndexFromDatabaseId(databaseId) {
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
-			if (getServerData().items[i].databaseId == databaseId) {
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			if (serverData.items[i].databaseId == databaseId) {
 				return i;
 			}
 		}
@@ -2940,8 +2940,8 @@ function getItemIndexFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function getItemTypeIndexFromDatabaseId(databaseId) {
-	for (let i in getServerData().itemTypes) {
-		if (getServerData().itemTypes[i].databaseId == databaseId) {
+	for (let i in serverData.itemTypes) {
+		if (serverData.itemTypes[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -3469,13 +3469,13 @@ function createGroundPlant(itemId) {
 
 function getItemTypeFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().itemTypes) {
-			if (toLowerCase(getServerData().itemTypes[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.itemTypes) {
+			if (toLowerCase(serverData.itemTypes[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().itemTypes[params] != "undefined") {
+		if (typeof serverData.itemTypes[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -3514,7 +3514,7 @@ function getItemPosition(itemId) {
 // ===========================================================================
 
 function cacheAllItemItems() {
-	let items = getServerData().items;
+	let items = serverData.items;
 	for (let i in items) {
 		if (items[i] != null) {
 			cacheItemItems(i);
@@ -3525,9 +3525,9 @@ function cacheAllItemItems() {
 // ===========================================================================
 
 function cacheItemItems(itemId) {
-	clearArray(getItemData(itemId).itemCache);
+	getItemData(itemId).itemCache = [];
 
-	let items = getServerData().items;
+	let items = serverData.items;
 	for (let i in items) {
 		if (items[i] != null) {
 			if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
@@ -3540,10 +3540,10 @@ function cacheItemItems(itemId) {
 // ===========================================================================
 
 function despawnAllGroundItemObjects() {
-	for (let i in getServerData().groundItemCache) {
-		if (getItemData(getServerData().groundItemCache[i]).object != null) {
-			destroyGameElement(getItemData(getServerData().groundItemCache[i]).object);
-			getItemData(getServerData().groundItemCache[i]).object = null;
+	for (let i in serverData.groundItemCache) {
+		if (getItemData(serverData.groundItemCache[i]).object != null) {
+			destroyGameElement(getItemData(serverData.groundItemCache[i]).object);
+			getItemData(serverData.groundItemCache[i]).object = null;
 		}
 	}
 }

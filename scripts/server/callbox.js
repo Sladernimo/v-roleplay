@@ -60,7 +60,7 @@ function createCallBox(position, addedBy = defaultNoAccountId) {
 	tempCallBoxData.whenAdded = getCurrentUnixTimestamp();
 	tempCallBoxData.enabled = true;
 
-	getServerData().callBoxes.push(tempCallBoxData);
+	serverData.callBoxes.push(tempCallBoxData);
 
 	setAllCallBoxDataIndexes();
 	saveAllCallBoxesToDatabase();
@@ -71,11 +71,11 @@ function createCallBox(position, addedBy = defaultNoAccountId) {
 // ===========================================================================
 
 function getClosestCallBox(position) {
-	if (getServerData().callBoxes.length > 0) {
+	if (serverData.callBoxes.length > 0) {
 
 		let closest = 0;
-		for (let i in getServerData().callBoxes) {
-			if (getDistance(position, getServerData().callBoxes[i].position) < getDistance(position, getServerData().callBoxes[closest].position)) {
+		for (let i in serverData.callBoxes) {
+			if (getDistance(position, serverData.callBoxes[i].position) < getDistance(position, serverData.callBoxes[closest].position)) {
 				closest = i;
 			}
 		}
@@ -97,8 +97,8 @@ function getPayPhoneData(callBoxIndex) {
 		return false;
 	}
 
-	if (typeof getServerData().callBoxes[callBoxIndex] != "undefined") {
-		return getServerData().callBoxes[callBoxIndex];
+	if (typeof serverData.callBoxes[callBoxIndex] != "undefined") {
+		return serverData.callBoxes[callBoxIndex];
 	}
 
 	return false;
@@ -127,7 +127,7 @@ function deleteCallBoxCommand(command, params, client) {
 
 	quickDatabaseQuery(`UPDATE callbox_main SET callbox_deleted = 1, callbox_who_deleted = ${getPlayerData(client).accountData.databaseId}, callbox_when_deleted = UNIX_TIMESTAMP() WHERE callbox_id = ${getCallBoxData(callBoxIndex).databaseId}`);
 
-	getServerData().callBoxes.splice(callBoxIndex, 1);
+	serverData.callBoxes.splice(callBoxIndex, 1);
 	setAllCallBoxDataIndexes();
 }
 
@@ -161,7 +161,7 @@ function saveAllCallBoxesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().callBoxes) {
+	for (let i in serverData.callBoxes) {
 		saveCallBoxToDatabase(i);
 	}
 }
@@ -229,8 +229,8 @@ function saveCallBoxToDatabase(callBoxIndex) {
 // ===========================================================================
 
 function setAllCallBoxDataIndexes() {
-	for (let i in getServerData().callBoxes) {
-		getServerData().callBoxes[i].index = i;
+	for (let i in serverData.callBoxes) {
+		serverData.callBoxes[i].index = i;
 	}
 }
 
@@ -276,7 +276,7 @@ function getNearbyCallBoxesCommand(command, params, client) {
 // ===========================================================================
 
 function getCallBoxesInRange(position, distance) {
-	return getServerData().callBoxes.filter((callBox) => getDistance(position, callBox.position) <= distance);
+	return serverData.callBoxes.filter((callBox) => getDistance(position, callBox.position) <= distance);
 }
 
 // ===========================================================================
@@ -321,7 +321,7 @@ function getCallBoxInfoCommand(command, params, client) {
 // ===========================================================================
 
 function getCallBoxFromParams(params) {
-	if (typeof getServerData().callBoxes[params] != "undefined") {
+	if (typeof serverData.callBoxes[params] != "undefined") {
 		return toInteger(params);
 	}
 

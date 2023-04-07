@@ -269,7 +269,7 @@ function createPropertyLocationCommand(command, params, client) {
 	}
 
 	let tempPropertyLocationData = createPropertyLocation(locationType, propertyIndex);
-	getServerData().properties[propertyIndex].push(tempPropertyLocationData);
+	serverData.properties[propertyIndex].push(tempPropertyLocationData);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created location ${getInlinePropertyColour(propertyIndex)}${params}{MAINCOLOUR} for business ${getInlinePropertyColour(propertyIndex)}${tempPropertyData.name}`);
 }
@@ -297,7 +297,7 @@ function createProperty(name, entrancePosition, exitPosition, entrancePickupMode
 	tempPropertyData.exitScene = -1;
 
 	tempPropertyData.needsSaved = true;
-	let propertyIndex = getServerData().properties.push(tempPropertyData);
+	let propertyIndex = serverData.properties.push(tempPropertyData);
 	setPropertyDataIndexes();
 	saveAllPropertyesToDatabase();
 
@@ -1361,7 +1361,7 @@ function getPropertyDataFromDatabaseId(databaseId) {
 		return false;
 	}
 
-	let matchingPropertyes = getServerData().properties.filter(b => b.databaseId == databaseId)
+	let matchingPropertyes = serverData.properties.filter(b => b.databaseId == databaseId)
 	if (matchingPropertyes.length == 1) {
 		return matchingPropertyes[0];
 	}
@@ -1372,9 +1372,9 @@ function getPropertyDataFromDatabaseId(databaseId) {
 
 function getClosestPropertyEntrance(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().properties) {
-		if (getServerData().properties[i].entranceDimension == dimension) {
-			if (getDistance(position, getServerData().properties[i].entrancePosition) <= getDistance(position, getServerData().properties[closest].entrancePosition)) {
+	for (let i in serverData.properties) {
+		if (serverData.properties[i].entranceDimension == dimension) {
+			if (getDistance(position, serverData.properties[i].entrancePosition) <= getDistance(position, serverData.properties[closest].entrancePosition)) {
 				closest = i;
 			}
 		}
@@ -1386,9 +1386,9 @@ function getClosestPropertyEntrance(position, dimension) {
 
 function getClosestPropertyExit(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().properties) {
-		if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == dimension) {
-			if (getDistance(position, getServerData().properties[i].exitPosition) <= getDistance(position, getServerData().properties[closest].exitPosition)) {
+	for (let i in serverData.properties) {
+		if (serverData.properties[i].hasInterior && serverData.properties[i].exitDimension == dimension) {
+			if (getDistance(position, serverData.properties[i].exitPosition) <= getDistance(position, serverData.properties[closest].exitPosition)) {
 				closest = i;
 			}
 		}
@@ -1399,8 +1399,8 @@ function getClosestPropertyExit(position, dimension) {
 // ===========================================================================
 
 function isPlayerInAnyProperty(client) {
-	for (let i in getServerData().properties) {
-		if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == getPlayerDimension(client)) {
+	for (let i in serverData.properties) {
+		if (serverData.properties[i].hasInterior && serverData.properties[i].exitDimension == getPlayerDimension(client)) {
 			return i;
 		}
 	}
@@ -1411,7 +1411,7 @@ function isPlayerInAnyProperty(client) {
 // ===========================================================================
 
 function getPlayerProperty(client) {
-	if (getServerData().properties.length == 0) {
+	if (serverData.properties.length == 0) {
 		return -1;
 	}
 
@@ -1426,8 +1426,8 @@ function getPlayerProperty(client) {
 			return getPropertyData(closestEntrance).index;
 		}
 
-		for (let i in getServerData().properties) {
-			if (getServerData().properties[i].hasInterior && getServerData().properties[i].exitDimension == getPlayerDimension(client)) {
+		for (let i in serverData.properties) {
+			if (serverData.properties[i].hasInterior && serverData.properties[i].exitDimension == getPlayerDimension(client)) {
 				return i;
 			}
 		}
@@ -1442,8 +1442,8 @@ function saveAllPropertyesToDatabase() {
 		return false;
 	}
 
-	for (let i in getServerData().properties) {
-		if (getServerData().properties[i].needsSaved) {
+	for (let i in serverData.properties) {
+		if (serverData.properties[i].needsSaved) {
 			savePropertyToDatabase(i);
 		}
 	}
@@ -1454,7 +1454,7 @@ function saveAllPropertyesToDatabase() {
 // ===========================================================================
 
 function savePropertyToDatabase(propertyIndex) {
-	let tempPropertyData = getServerData().properties[propertyIndex];
+	let tempPropertyData = serverData.properties[propertyIndex];
 
 	if (!tempPropertyData.needsSaved) {
 		return false;
@@ -1504,7 +1504,7 @@ function savePropertyToDatabase(propertyIndex) {
 		if (tempPropertyData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("prop_main", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().properties[propertyIndex].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.properties[propertyIndex].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
 			let queryString = createDatabaseUpdateQuery("prop_main", data, `prop_id=${tempPropertyData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
@@ -1528,7 +1528,7 @@ function createAllPropertyPickups() {
 		return false;
 	}
 
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		createPropertyEntrancePickup(i);
 		createPropertyExitPickup(i);
 		updatePropertyPickupLabelData(i);
@@ -1548,7 +1548,7 @@ function createAllPropertyBlips() {
 		return false;
 	}
 
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		createPropertyEntranceBlip(i);
 		createPropertyExitBlip(i);
 	}
@@ -1807,7 +1807,7 @@ function deleteProperty(propertyIndex, whoDeleted = 0) {
 
 	removePlayersFromProperty(propertyIndex);
 
-	getServerData().properties.splice(propertyIndex, 1);
+	serverData.properties.splice(propertyIndex, 1);
 
 	return true;
 }
@@ -1845,9 +1845,9 @@ function exitProperty(client) {
 	}
 
 	if (isPlayerSpawned(client)) {
-		setPlayerInterior(client, getServerData().properties[propertyIndex].entranceInterior);
-		setPlayerDimension(client, getServerData().properties[propertyIndex].entranceDimension);
-		setPlayerPosition(client, getServerData().properties[propertyIndex].entrancePosition);
+		setPlayerInterior(client, serverData.properties[propertyIndex].entranceInterior);
+		setPlayerDimension(client, serverData.properties[propertyIndex].entranceDimension);
+		setPlayerPosition(client, serverData.properties[propertyIndex].entrancePosition);
 		return true;
 	}
 
@@ -1883,8 +1883,8 @@ function getPropertyData(propertyIndex) {
 		return false;
 	}
 
-	if (typeof getServerData().properties[propertyIndex] != null) {
-		return getServerData().properties[propertyIndex];
+	if (typeof serverData.properties[propertyIndex] != null) {
+		return serverData.properties[propertyIndex];
 	}
 	return false;
 }
@@ -1970,7 +1970,7 @@ function reloadAllPropertyesCommand(command, params, client) {
 		removePlayerFromProperty(clients[i]);
 	}
 
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		deletePropertyExitBlip(i);
 		deletePropertyEntranceBlip(i);
 		deletePropertyExitPickup(i);
@@ -1978,8 +1978,8 @@ function reloadAllPropertyesCommand(command, params, client) {
 	}
 
 	//forceAllPlayersToStopWorking();
-	clearArray(getServerData().properties);
-	getServerData().properties = loadPropertyesFromDatabase();
+	serverData.properties = [];
+	serverData.properties = loadPropertyesFromDatabase();
 	createAllPropertyPickups();
 	createAllPropertyBlips();
 	setPropertyDataIndexes();
@@ -1991,19 +1991,19 @@ function reloadAllPropertyesCommand(command, params, client) {
 // ===========================================================================
 
 function setPropertyDataIndexes() {
-	for (let i in getServerData().properties) {
-		getServerData().properties[i].index = i;
+	for (let i in serverData.properties) {
+		serverData.properties[i].index = i;
 
-		//if (getServerData().properties[i].streamingRadioStation > 0) {
-		//	let radioStationIndex = getRadioStationFromDatabaseId(getServerData().properties[i].streamingRadioStation);
+		//if (serverData.properties[i].streamingRadioStation > 0) {
+		//	let radioStationIndex = getRadioStationFromDatabaseId(serverData.properties[i].streamingRadioStation);
 		//	if (radioStationIndex != -1) {
-		//		getServerData().properties[i].streamingRadioStationIndex = radioStationIndex;
+		//		serverData.properties[i].streamingRadioStationIndex = radioStationIndex;
 		//	}
 		//}
 
-		for (let j in getServerData().properties[i].locations) {
-			if (getServerData().properties[i].locations[j].type == V_BIZ_LOC_ATM) {
-				getServerData().atmLocationCache.push([i, j, getServerData().properties[i].locations[j].position]);
+		for (let j in serverData.properties[i].locations) {
+			if (serverData.properties[i].locations[j].type == V_BIZ_LOC_ATM) {
+				serverData.atmLocationCache.push([i, j, serverData.properties[i].locations[j].position]);
 			}
 		}
 	}
@@ -2022,7 +2022,7 @@ function addToPropertyInventory(propertyIndex, itemType, amount, buyPrice) {
 	tempItemData.ownerIndex = propertyIndex;
 	tempItemData.itemTypeIndex = itemType;
 	saveItemToDatabase(tempItemData);
-	getServerData().items.push(tempItemData);
+	serverData.items.push(tempItemData);
 
 	setAllItemDataIndexes();
 }
@@ -2255,7 +2255,7 @@ function getPropertyFloorFirstFreeItemSlot(propertyIndex) {
 // Caches all items for all businesses
 function cacheAllPropertyItems() {
 	logToConsole(LOG_DEBUG, "[V.RP.Property] Caching all business items ...");
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		cachePropertyItems(i);
 	}
 	logToConsole(LOG_DEBUG, "[V.RP.Property] Cached all business items successfully!");
@@ -2265,17 +2265,17 @@ function cacheAllPropertyItems() {
 
 // Caches all items for a business by propertyIndex
 function cachePropertyItems(propertyIndex) {
-	clearArray(getPropertyData(propertyIndex).floorItemCache);
-	clearArray(getPropertyData(propertyIndex).storageItemCache);
+	getPropertyData(propertyIndex).floorItemCache = [];
+	getPropertyData(propertyIndex).storageItemCache = [];
 
 	//let propertyData = getPropertyData(propertyIndex);
 	//logToConsole(LOG_VERBOSE, `[V.RP.Property] Caching business items for business ${propertyIndex} (${propertyData.name}) ...`);
-	//getPropertyData(propertyIndex).floorItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
-	//getPropertyData(propertyIndex).storageItemCache = getServerData().items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
+	//getPropertyData(propertyIndex).floorItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == propertyData.databaseId).map(i => i.index);
+	//getPropertyData(propertyIndex).storageItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == propertyData.databaseId);
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Property] Caching business items for business ${propertyIndex} (${getPropertyData(propertyIndex).name}) ...`);
-	for (let i in getServerData().items) {
-		if (getServerData().items[i] != null) {
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
 			if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
 				getPropertyData(propertyIndex).floorItemCache.push(i);
 			} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getPropertyData(propertyIndex).databaseId) {
@@ -2291,7 +2291,7 @@ function cachePropertyItems(propertyIndex) {
 
 // Gets a business's data index from a business's databaseId
 function getPropertyIdFromDatabaseId(databaseId) {
-	return getServerData().properties.findIndex(business => business.databaseId == databaseId);
+	return serverData.properties.findIndex(business => business.databaseId == databaseId);
 }
 
 // ===========================================================================
@@ -2377,7 +2377,7 @@ function resetAllPropertyPickups(propertyIndex) {
 // ===========================================================================
 
 function resetAllPropertyBlips() {
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		deletePropertyBlips(i);
 		createPropertyBlips(i);
 	}
@@ -2393,7 +2393,7 @@ function createPropertyBlips(propertyIndex) {
 // ===========================================================================
 
 function resetAllPropertyPickups() {
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		deletePropertyPickups(i);
 		createPropertyPickups(i);
 	}
@@ -2545,13 +2545,13 @@ function deletePropertyPickups(business) {
 
 function getPropertyFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().properties) {
-			if (toLowerCase(getServerData().properties[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.properties) {
+			if (toLowerCase(serverData.properties[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().properties[params] != "undefined") {
+		if (typeof serverData.properties[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -2561,7 +2561,7 @@ function getPropertyFromParams(params) {
 // ===========================================================================
 
 function deleteAllPropertyBlips() {
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		deletePropertyBlips(i);
 	}
 }
@@ -2569,7 +2569,7 @@ function deleteAllPropertyBlips() {
 // ===========================================================================
 
 function deleteAllPropertyPickups() {
-	for (let i in getServerData().properties) {
+	for (let i in serverData.properties) {
 		deletePropertyPickups(i);
 	}
 }
@@ -2577,7 +2577,7 @@ function deleteAllPropertyPickups() {
 // ===========================================================================
 
 function getPropertyFromInteriorAndDimension(dimension, interior) {
-	let businesses = getServerData().properties;
+	let businesses = serverData.properties;
 	for (let i in businesses) {
 		if (businesses[i].exitInterior == interior && businesses[i].exitDimension == dimension) {
 			return i;
@@ -2604,7 +2604,7 @@ function getClosestPropertyWithBuyableItemOfUseType(position, useType) {
 // ===========================================================================
 
 function getPropertyesWithBuyableItemOfUseType(useType) {
-	let businesses = getServerData().properties;
+	let businesses = serverData.properties;
 	let availablePropertyes = [];
 	for (let i in businesses) {
 		if (doesPropertyHaveBuyableItemOfUseType(i, useType)) {

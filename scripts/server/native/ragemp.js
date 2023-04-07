@@ -961,7 +961,7 @@ function getClosestCivilian(position) {
 
 function getVehiclesInRange(position, range) {
 	if (getGame() == V_GAME_GTA_IV) {
-		return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+		return serverData.vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }

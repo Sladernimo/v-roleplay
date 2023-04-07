@@ -62,8 +62,8 @@ function initServerScripts() {
 	//addAllCommandHandlers();
 	initAllClients();
 	initTimers();
-
 	exportAllFunctions();
+	removeUnusedGameData();
 
 	serverStartTime = getCurrentUnixTimestamp();
 	serverStarting = false;
@@ -139,32 +139,32 @@ function loadServerDataFromDatabase() {
 	logToConsole(LOG_INFO, "[V.RP.Config]: Loading server data ...");
 
 	// Always load these regardless of "test server" status
-	getServerData().localeStrings = loadAllLocaleStrings();
-	getServerData().allowedSkins = getAllowedSkins(getGame());
-	getServerData().itemTypes = loadItemTypesFromDatabase();
+	serverData.localeStrings = loadAllLocaleStrings();
+	serverData.allowedSkins = getAllowedSkins(getGame());
+	serverData.itemTypes = loadItemTypesFromDatabase();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(globalConfig.locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
-	getServerData().cachedTranslationFrom.fill([]);
-	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
+	serverData.cachedTranslations = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom.fill([]);
+	serverData.cachedTranslations.fill(serverData.cachedTranslationFrom);
 
 	// Only load these if the server isn't a testing/dev server
 	if (!serverConfig.devServer) {
-		getServerData().items = loadItemsFromDatabase();
-		getServerData().businesses = loadBusinessesFromDatabase();
-		getServerData().houses = loadHousesFromDatabase();
-		getServerData().vehicles = loadVehiclesFromDatabase();
-		getServerData().clans = loadClansFromDatabase();
-		getServerData().npcs = loadNPCsFromDatabase();
-		getServerData().races = loadRacesFromDatabase();
-		getServerData().radioStations = loadRadioStationsFromDatabase();
-		getServerData().gates = loadGatesFromDatabase();
-		getServerData().jobs = loadJobsFromDatabase();
-		getServerData().payPhones = loadPayPhonesFromDatabase();
+		serverData.items = loadItemsFromDatabase();
+		serverData.businesses = loadBusinessesFromDatabase();
+		serverData.houses = loadHousesFromDatabase();
+		serverData.vehicles = loadVehiclesFromDatabase();
+		serverData.clans = loadClansFromDatabase();
+		serverData.npcs = loadNPCsFromDatabase();
+		serverData.races = loadRacesFromDatabase();
+		serverData.radioStations = loadRadioStationsFromDatabase();
+		serverData.gates = loadGatesFromDatabase();
+		serverData.jobs = loadJobsFromDatabase();
+		serverData.payPhones = loadPayPhonesFromDatabase();
 	}
 
-	getServerData().commands = loadCommands();
+	serverData.commands = loadCommands();
 }
 
 // ===========================================================================

@@ -226,25 +226,25 @@ function enterExitPropertyCommand(command, params, client) {
 				case V_PICKUP_BUSINESS_ENTRANCE:
 					isBusiness = true;
 					isEntrance = true;
-					closestProperty = getServerData().businesses[ownerId];
+					closestProperty = serverData.businesses[ownerId];
 					break;
 
 				case V_PICKUP_BUSINESS_EXIT:
 					isBusiness = true;
 					isEntrance = false;
-					closestProperty = getServerData().businesses[ownerId];
+					closestProperty = serverData.businesses[ownerId];
 					break;
 
 				case V_PICKUP_HOUSE_ENTRANCE:
 					isBusiness = false;
 					isEntrance = true;
-					closestProperty = getServerData().houses[ownerId];
+					closestProperty = serverData.houses[ownerId];
 					break;
 
 				case V_PICKUP_HOUSE_EXIT:
 					isBusiness = false;
 					isEntrance = false;
-					closestProperty = getServerData().houses[ownerId];
+					closestProperty = serverData.houses[ownerId];
 					break;
 
 				default:
@@ -263,7 +263,7 @@ function enterExitPropertyCommand(command, params, client) {
 		if (getDistance(getBusinessData(businessIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
 			isBusiness = true;
 			isEntrance = true;
-			closestProperty = getServerData().businesses[businessIndex];
+			closestProperty = serverData.businesses[businessIndex];
 		}
 	}
 
@@ -272,7 +272,7 @@ function enterExitPropertyCommand(command, params, client) {
 		if (getDistance(getBusinessData(businessIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
 			isBusiness = true;
 			isEntrance = false;
-			closestProperty = getServerData().businesses[businessIndex];
+			closestProperty = serverData.businesses[businessIndex];
 		}
 	}
 
@@ -282,7 +282,7 @@ function enterExitPropertyCommand(command, params, client) {
 		if (getDistance(getHouseData(houseIndex).entrancePosition, getPlayerPosition(client)) <= 1.5) {
 			isBusiness = false;
 			isEntrance = true;
-			closestProperty = getServerData().houses[houseIndex];
+			closestProperty = serverData.houses[houseIndex];
 		}
 	}
 
@@ -291,7 +291,7 @@ function enterExitPropertyCommand(command, params, client) {
 		if (getDistance(getHouseData(houseIndex).exitPosition, getPlayerPosition(client)) <= 1.5) {
 			isBusiness = false;
 			isEntrance = false;
-			closestProperty = getServerData().houses[houseIndex];
+			closestProperty = serverData.houses[houseIndex];
 		}
 	}
 	*/
@@ -300,17 +300,17 @@ function enterExitPropertyCommand(command, params, client) {
 	if (closestProperty == null) {
 		let businessId = getPlayerBusiness(client);
 		if (businessId != -1) {
-			if (getServerData().businesses[businessId].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().businesses[businessId].entrancePosition) <= globalConfig.enterPropertyDistance) {
+			if (serverData.businesses[businessId].entranceDimension == dimension) {
+				if (getDistance(position, serverData.businesses[businessId].entrancePosition) <= globalConfig.enterPropertyDistance) {
 					isBusiness = true;
 					isEntrance = true;
-					closestProperty = getServerData().businesses[businessId];
+					closestProperty = serverData.businesses[businessId];
 				}
-			} else if (getServerData().businesses[businessId].exitDimension == dimension) {
-				if (getDistance(position, getServerData().businesses[businessId].exitPosition) <= globalConfig.exitPropertyDistance) {
+			} else if (serverData.businesses[businessId].exitDimension == dimension) {
+				if (getDistance(position, serverData.businesses[businessId].exitPosition) <= globalConfig.exitPropertyDistance) {
 					isBusiness = true;
 					isEntrance = false;
-					closestProperty = getServerData().businesses[businessId];
+					closestProperty = serverData.businesses[businessId];
 				}
 			}
 		}
@@ -319,17 +319,17 @@ function enterExitPropertyCommand(command, params, client) {
 	if (closestProperty == null) {
 		let houseId = getPlayerHouse(client);
 		if (houseId != -1) {
-			if (getServerData().houses[houseId].entranceDimension == dimension) {
-				if (getDistance(position, getServerData().houses[houseId].entrancePosition) <= globalConfig.enterPropertyDistance) {
+			if (serverData.houses[houseId].entranceDimension == dimension) {
+				if (getDistance(position, serverData.houses[houseId].entrancePosition) <= globalConfig.enterPropertyDistance) {
 					isBusiness = false;
 					isEntrance = true;
-					closestProperty = getServerData().houses[houseId];
+					closestProperty = serverData.houses[houseId];
 				}
-			} else if (getServerData().houses[houseId].exitDimension == dimension) {
-				if (getDistance(position, getServerData().houses[houseId].exitPosition) <= globalConfig.exitPropertyDistance) {
+			} else if (serverData.houses[houseId].exitDimension == dimension) {
+				if (getDistance(position, serverData.houses[houseId].exitPosition) <= globalConfig.exitPropertyDistance) {
 					isBusiness = false;
 					isEntrance = false;
-					closestProperty = getServerData().houses[houseId];
+					closestProperty = serverData.houses[houseId];
 				}
 			}
 		}
@@ -731,7 +731,7 @@ function stuckPlayerCommand(command, params, client) {
 	//}
 
 	if (dimension > 0) {
-		let businesses = getServerData().businesses;
+		let businesses = serverData.businesses;
 		for (let i in businesses) {
 			if (businesses[i].exitDimension == dimension) {
 				setPlayerPosition(client, businesses[i].entrancePosition);
@@ -742,7 +742,7 @@ function stuckPlayerCommand(command, params, client) {
 			}
 		}
 
-		let houses = getServerData().houses;
+		let houses = serverData.houses;
 		for (let i in houses) {
 			if (houses[i].exitDimension == dimension) {
 				setPlayerPosition(client, houses[i].entrancePosition);
@@ -1256,13 +1256,13 @@ function scoreBoardCommand(command, params, client) {
 // ===========================================================================
 
 function locatePlayerCommand(command, params, client) {
-	if (isPlayerSpawned(client)) {
-		messagePlayerError(client, getLocaleString(client, "MustBeSpawned"));
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
-	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
+	if (!isPlayerSpawned(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeSpawned"));
 		return false;
 	}
 
@@ -1273,7 +1273,7 @@ function locatePlayerCommand(command, params, client) {
 		return false;
 	}
 
-	if (isPlayerSpawned(targetClient)) {
+	if (!isPlayerSpawned(targetClient)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -1338,8 +1338,6 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		return false;
 	}
 
-	let currentScene = getPlayerCurrentSubAccount(client).scene;
-
 	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
 	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
 	getPlayerCurrentSubAccount(client).interior = spawnInterior;
@@ -1360,6 +1358,7 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {
+		let currentScene = getPlayerCurrentSubAccount(client).scene;
 		if (!isSameScene(sceneName, currentScene)) {
 			setTimeout(function () {
 				if (getPlayerPed(client) != null) {

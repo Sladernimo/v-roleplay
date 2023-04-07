@@ -159,7 +159,7 @@ function loadAllLocaleStrings() {
 // ===========================================================================
 
 function getLocaleStrings() {
-	return getServerData().localeStrings;
+	return serverData.localeStrings;
 }
 
 // ===========================================================================
@@ -235,13 +235,13 @@ function getLocaleData(localeId) {
 
 function reloadLocaleConfigurationCommand(command, params, client) {
 	globalConfig.locale = loadLocaleConfig();
-	getServerData().localeStrings = loadAllLocaleStrings();
+	serverData.localeStrings = loadAllLocaleStrings();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(globalConfig.locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
-	getServerData().cachedTranslationFrom.fill([]);
-	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
+	serverData.cachedTranslations = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom.fill([]);
+	serverData.cachedTranslations.fill(serverData.cachedTranslationFrom);
 
 	globalConfig.locale.defaultLanguageId = getLocaleFromParams(globalConfig.locale.defaultLanguage);
 

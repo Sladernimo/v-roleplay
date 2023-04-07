@@ -7,9 +7,9 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let scriptVersion = "1.4";
+let scriptVersion = "1.5";
 let serverStartTime = 0;
-let logLevel = LOG_INFO | LOG_DEBUG;
+let logLevel = LOG_INFO;
 
 let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);
