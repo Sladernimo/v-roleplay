@@ -3347,6 +3347,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 	}
 
 	let tempJobData = getJobData(jobId);
+	let tempJobLocationData = getJobLocationData(jobId, locationId);
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating pickup for location ${locationId} of the ${tempJobData.name} job`);
 
@@ -3360,28 +3361,15 @@ function spawnJobLocationPickup(jobId, locationId) {
 			}
 		}
 
-		if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
-			if (isGameFeatureSupported("pickup")) {
-				let pickup = createGamePickup(pickupModelId, tempJobData.locations[locationId].position, gameData.pickupTypes[getGame()].job);
-				if (pickup != false) {
-					tempJobData.locations[locationId].pickup = pickup;
-					addToWorld(pickup);
-					updateJobPickupLabelData(jobId);
-				}
+		if (areServerElementsSupported() && (isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement"))) {
+			let pickup = createGamePickup(pickupModelId, tempJobLocationData.position, gameData.pickupTypes[getGame()].job);
+			if (pickup != false) {
+				tempJobLocationData.pickup = pickup;
+				addToWorld(pickup);
+				updateJobPickupLabelData(jobId);
 			}
 		} else {
-			/*
-			let pickupModelId = -1;
-			if (isGameFeatureSupported("pickup")) {
-				pickupModelId = gameData.pickupModels[getGame()].Job;
-
-				if (getJobData(jobId).pickupModel != 0) {
-					pickupModelId = getJobData(jobId).pickupModel;
-				}
-			}
-			*/
-
-			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobData.locations[locationId].position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index), tempJobData.locations[locationId].dimension);
+			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobLocationData.position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index), tempJobLocationData.dimension);
 		}
 	}
 }
