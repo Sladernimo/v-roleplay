@@ -370,7 +370,6 @@ function processLabelRendering() {
 						}
 					}
 
-
 					if (getLocalPlayerDimension() == business.exitDimension) {
 						let exitDistance = getDistance(getLocalPlayerPosition(), business.exitPosition);
 						if (exitDistance <= propertyLabelRenderDistance) {
@@ -446,9 +445,9 @@ function processLabelRendering() {
 			}
 		}
 
-		if ((isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement")) && areWorldLabelsSupported()) {
+		if ((isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement")) && isGameFeatureSupported("worldLabel")) {
 			if (localPlayer != null) {
-				let pickups = (isGameFeatureSupported("pickup")) ? getElementsByType(ELEMENT_PICKUP) : getElementsByType(ELEMENT_ELEMENT);
+				let pickups = (isGameFeatureSupported("pickup")) ? getElementsByType(ELEMENT_PICKUP) : getDummyElements();
 				for (let i in pickups) {
 					if (pickups[i].getData("v.rp.label.type") != null) {
 						if (getDistance(getLocalPlayerPosition(), pickups[i].position) <= propertyLabelRenderDistance) {
