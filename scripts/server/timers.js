@@ -209,9 +209,6 @@ function updatePings() {
 		if (isClientInitialized(clients[i])) {
 			if (!clients[i].console) {
 				updatePlayerPing(clients[i]);
-				if (isPlayerSpawned(clients[i])) {
-					updatePlayerCash(clients[i]);
-				}
 			}
 		}
 	}
@@ -241,6 +238,7 @@ function checkServerGameTime() {
 		let dateTime = getCurrentTimeStampWithTimeZone(serverConfig.realTimeZone);
 		serverConfig.hour = dateTime.getHours();
 		serverConfig.minute = dateTime.getMinutes();
+		setGameMinuteDuration(60);
 	}
 
 	if (!serverConfig.devServer) {
