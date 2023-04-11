@@ -474,7 +474,44 @@ function vehicleTrunkCommand(command, params, client) {
 
 // ===========================================================================
 
-function vehicleLightsCommand(command, params, client) {
+function vehicleHazardLightsCommand(command, params, client) {
+	if (!isGameFeatureSupported("vehicleHazardLights")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (!getPlayerVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	if (getPlayerVehicleSeat(client) > 1) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	if (!getVehicleData(vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	getVehicleData(vehicle).hazardLights = !getVehicleData(vehicle).hazardLights;
+	getVehicleData(vehicle).needsSaved = true;
+	setVehicleHazardLights(vehicle, getVehicleData(vehicle).hazardLights);
+
+	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s hazard lights.`);
+}
+
+// ===========================================================================
+
+function vehicleInteriorLightCommand(command, params, client) {
+	if (!isGameFeatureSupported("vehicleInteriorLight")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
 	if (!getPlayerVehicle(client)) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
@@ -487,18 +524,11 @@ function vehicleLightsCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerVehicleSeat(client) > 1) {
-		messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
-		return false;
-	}
-
-	getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
+	getVehicleData(vehicle).interiorLight = !getVehicleData(vehicle).interiorLight;
 	getVehicleData(vehicle).needsSaved = true;
-	setVehicleLights(vehicle, getVehicleData(vehicle).lights);
-	//getVehicleData(vehicle).needsSaved = true;
-	//setVehicleLightsState(vehicle, getVehicleData(vehicle).lights);
+	setVehicleInteriorLight(vehicle, getVehicleData(vehicle).interiorLight);
 
-	meActionToNearbyPlayers(client, `turned the ${getVehicleName(vehicle)}'s lights ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).lights))}`);
+	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s interior light.`);
 }
 
 // ===========================================================================
@@ -605,7 +635,7 @@ function vehicleSirenCommand(command, params, client) {
 
 function vehicleAdminColourCommand(command, params, client) {
 	if (!isGameFeatureSupported("vehicleColour")) {
-		messagePlayerError(client, "Vehicle colours are not supported in this game!");
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
 		return false;
 	}
 
@@ -1487,9 +1517,11 @@ function spawnVehicle(vehicleData) {
 		vehicleData.engine = false;
 		vehicleData.locked = true;
 
-		if (vehicleData.rentPrice == 0 || vehicleData.buyPrice == 0 || vehicleData.ownerType == V_VEHOWNER_PUBLIC) {
+		// Unlock cars that are for sale or rent, or are publicly usable
+		if (vehicleData.rentPrice > 0 || vehicleData.buyPrice > 0 || vehicleData.ownerType == V_VEHOWNER_PUBLIC) {
 			vehicleData.locked = false;
 		}
+
 		logToConsole(LOG_VERBOSE, `[V.RP.Vehicle]: Setting parked vehicle ${vehicle.id}'s initial engine and lock state`);
 	}
 
