@@ -247,19 +247,24 @@ function getWeaponSlot(weaponId) {
 // ===========================================================================
 
 function setLocalPlayerDrunkEffect(amount, duration) {
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
 	if (getMultiplayerMod() == V_MPMOD_GTAC) {
-		logToConsole(LOG_DEBUG, `[V.RP.Utilities] Drunk effect set to ${amount} for ${duration} ms`);
-		drunkEffectAmount = 0;
-		drunkEffectDurationTimer = setInterval(function () {
-			drunkEffectAmount = drunkEffectAmount;
-			if (drunkEffectAmount > 0) {
-				//game.SET_MOTION_BLUR(drunkEffectAmount);
-				game.SET_PLAYER_DRUNKENNESS(drunkEffectAmount, duration);
-			} else {
-				clearInterval(drunkEffectDurationTimer);
-				drunkEffectDurationTimer = null;
-			}
-		}, 1000);
+		if (getGame() == V_GAME_GTA_IV) {
+			natives.setDrunkCam(natives.getGameCam(), amount / 100, duration);
+			natives.setPedIsDrunk(localPlayer, true);
+		} else {
+			drunkEffectAmount = 0;
+			drunkEffectDurationTimer = setInterval(function () {
+				drunkEffectAmount = drunkEffectAmount;
+				if (drunkEffectAmount > 0) {
+					//game.SET_MOTION_BLUR(drunkEffectAmount);
+					game.SET_PLAYER_DRUNKENNESS(drunkEffectAmount, duration);
+				} else {
+					clearInterval(drunkEffectDurationTimer);
+					drunkEffectDurationTimer = null;
+				}
+			}, 1000);
+		}
 	}
 }
 
