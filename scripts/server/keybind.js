@@ -252,3 +252,23 @@ function showKeyBindListCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function updatePlayerKeyBinds(client) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
+		let keyId = getPlayerKeyBindForCommand(client, "enter");
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerEnterPropertyKey(client, keyId.key);
+	} else {
+		sendPlayerEnterPropertyKey(client, -1);
+	}
+
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "scoreboard")) {
+		let keyId = getPlayerKeyBindForCommand(client, "scoreboard");
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending scoreboard key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerScoreBoardKey(client, keyId.key);
+	} else {
+		sendPlayerScoreBoardKey(client, -1);
+	}
+}
+
+// ===========================================================================
