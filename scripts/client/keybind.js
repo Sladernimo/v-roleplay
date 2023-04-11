@@ -33,8 +33,10 @@ function bindAccountKey(key, keyState) {
 		if (hasKeyBindDelayElapsed()) {
 			if (canLocalPlayerUseKeyBinds()) {
 				logToConsole(LOG_DEBUG, `[V.RP.KeyBind]: Using keybind for key ${toUpperCase(getKeyNameFromId(key))} (${key})`);
-				lastKeyBindUse = sdl.ticks;
-				tellServerPlayerUsedKeyBind(key);
+				if (!isClientOnlyKeyBind(key)) {
+					lastKeyBindUse = sdl.ticks;
+					tellServerPlayerUsedKeyBind(key);
+				}
 			} else {
 				logToConsole(LOG_DEBUG, `[V.RP.KeyBind]: Failed to use keybind for key ${toUpperCase(getKeyNameFromId(key))} (${key}) - Not allowed to use keybinds!`);
 			}
@@ -88,6 +90,16 @@ function clearKeyBinds() {
 		unbindKey(keyBinds[i]);
 	}
 	keyBinds = [];
+}
+
+// ===========================================================================
+
+function isClientOnlyKeyBind(key) {
+	if (key == scoreBoardKey) {
+		return true;
+	}
+
+	return false;
 }
 
 // ===========================================================================
