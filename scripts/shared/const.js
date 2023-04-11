@@ -49,7 +49,7 @@ const V_KEYSTATE_UP = 1;
 const V_KEYSTATE_DOWN = 2;
 const V_KEYSTATE_HOLDSHORT = 3;
 const V_KEYSTATE_HOLDLONG = 4;
-const V_KEYSTATE_COMBO = 4;
+const V_KEYSTATE_COMBO = 5;
 
 // Business Label Info Types
 const V_PROPLABEL_INFO_NONE = 0;
