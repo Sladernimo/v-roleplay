@@ -101,7 +101,12 @@ function showJobRouteLocation(position, colour) {
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		jobRouteLocationIndicatorPosition = position;
-		jobRouteLocationIndicatorEnabled = true;
+	}
+
+	jobRouteLocationIndicatorEnabled = true;
+
+	if (getGame() == V_GAME_GTA_IV) {
+		// Enable GPS route to location
 	}
 }
 
@@ -166,6 +171,10 @@ function hideJobRouteLocation() {
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
 		jobRouteLocationIndicatorEnabled = false;
+	}
+
+	if (getGame() == V_GAME_GTA_IV) {
+		// Disable GPS route.
 	}
 }
 
@@ -333,9 +342,9 @@ function processJobLocationIndicatorRendering() {
 // ===========================================================================
 
 function processJobRouteLocationDistance() {
-	if (getGame() != V_GAME_MAFIA_ONE) {
-		return false;
-	}
+	//if (getGame() != V_GAME_MAFIA_ONE) {
+	//	return false;
+	//}
 
 	if (jobRouteLocationIndicatorEnabled == false) {
 		return false;
