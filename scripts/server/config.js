@@ -300,6 +300,7 @@ let globalConfig = {
 	payPhoneDialToTalkAnimationDelay: 7000,
 	blackJackPayoutMultiplier: 1.5,
 	playerSceneSwitchVirtualWorldStart: 50000,
+	skinChangeDimensionStart: 10000,
 };
 
 // ===========================================================================
