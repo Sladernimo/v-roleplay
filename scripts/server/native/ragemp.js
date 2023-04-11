@@ -1295,3 +1295,9 @@ function setServerRule(ruleName, ruleValue) {
 }
 
 // ===========================================================================
+
+function setGameMinuteDuration(duration) {
+	//game.time.minuteDuration = duration;
+}
+
+// ===========================================================================
