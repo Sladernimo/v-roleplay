@@ -142,6 +142,10 @@ function updateNametag(element) {
 		return false;
 	}
 
+	if (element == null) {
+		return false;
+	}
+
 	if (localPlayer != null) {
 		let playerPosition = getLocalPlayerPosition();
 		let elementPosition = element.position;
