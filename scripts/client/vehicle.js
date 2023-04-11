@@ -195,3 +195,23 @@ function processLocalPlayerVehicleControlState() {
 }
 
 // ===========================================================================
+
+function setVehicleHazardLights(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != false) {
+		natives.setVehHazardlights(vehicle, state);
+	}
+}
+
+// ===========================================================================
+
+function setVehicleInteriorLight(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != false) {
+		natives.setVehInteriorlight(vehicle, state);
+	}
+}
+
+// ===========================================================================
