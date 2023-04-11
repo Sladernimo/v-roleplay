@@ -321,13 +321,6 @@ function onPedSpawn(ped) {
 
 function onPlayerSpawn(client) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking for ${getPlayerDisplayForConsole(client)}'s player ped`);
-	//if(getPlayerPed(client) == null) {
-	//    logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player element not set yet. Rechecking ...`);
-	//    setTimeout(onPlayerSpawn, 500, client);
-	//    return false;
-	//}
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player ped is valid. Continuing spawn processing ...`);
 
 	if (areServerElementsSupported()) {
 		waitUntil(() => client != null && getPlayerPed(client) != null);
@@ -335,7 +328,6 @@ function onPlayerSpawn(client) {
 
 	stopRadioStreamForPlayer(client);
 
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s player data`);
 	if (!getPlayerData(client)) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
@@ -343,7 +335,6 @@ function onPlayerSpawn(client) {
 		return false;
 	}
 
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s login status`);
 	if (!isPlayerLoggedIn(client)) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} is NOT logged in. Despawning their player.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
@@ -351,7 +342,6 @@ function onPlayerSpawn(client) {
 		return false;
 	}
 
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
 	if (getPlayerData(client).currentSubAccount == -1) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} has NOT selected a character. Despawning their player.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
@@ -359,90 +349,41 @@ function onPlayerSpawn(client) {
 		return false;
 	}
 
-	//logToConsole(LOG_DEBUG, `[V.RP.Event] Checking ${getPlayerDisplayForConsole(client)}'s selected character status`);
-	//if (getPlayerData(client).spawnInit == true) {
-	//	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Aborting spawn processing ...`);
-	//	return false;
-	//}
-
-	/*
-	if (getPlayerData(client).spawnInit == true) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize first spawn (already did). Only setting basic rendering/audio states ...`);
-		if (isGameFeatureSupported("rendering2D")) {
-			logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
-			setPlayer2DRendering(client, true, true, true, true, true, true);
-		}
-
-		if (areServerElementsSupported()) {
-			if (globalConfig.playerStreamInDistance == -1 || globalConfig.playerStreamOutDistance == -1) {
-				//getPlayerPed(client).netFlags.distanceStreaming = false;
-				setElementStreamInDistance(getPlayerPed(client), 99999);
-				setElementStreamOutDistance(getPlayerPed(client), 99999);
-			} else {
-				setElementStreamInDistance(getPlayerPed(client), serverConfig.playerStreamInDistance);
-				setElementStreamOutDistance(getPlayerPed(client), serverConfig.playerStreamOutDistance);
-			}
-
-			resetPlayerBlip(client);
-		}
-
-		return false;
-	}
-	*/
-
 	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is valid. Continuing spawn processing ...`);
 
-	if (getGame != V_GAME_MAFIA_ONE && (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY)) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize spawn (entering/exiting property). Aborting spawn processing ...`);
-		return false;
-	}
+	//if (getGame != V_GAME_MAFIA_ONE && (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY)) {
+	//	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} does not need to initialize spawn (entering/exiting property). Aborting spawn processing ...`);
+	//	return false;
+	//}
 
 	if (isGameFeatureSupported("pedScale")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped scale (${getPlayerCurrentSubAccount(client).pedScale})`);
 		setEntityData(getPlayerPed(client), "v.rp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 	}
 
-	//if (isPlayerSwitchingCharacter(client) || isPlayerCreatingCharacter(client)) {
-	//	logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s ped is being used for character selection/creation. No further spawn processing needed'`);
-	//	return false;
-	//}
-
 	if (isCustomCameraSupported()) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
 		restorePlayerCamera(client);
 	}
 
 	if (areServerElementsSupported()) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data `);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data`);
 		getPlayerData(client).ped = getPlayerPed(client);
 	}
 
-	if (getPlayerData(client).spawnInit == true) {
+	if (getPlayerData(client).spawnInit == false) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)} the 'now playing as' message`);
 		messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
 	}
-	//messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
-	//messagePlayerNormal(client, "Please report any bugs using /bug and suggestions using /idea", getColourByName("yellow"));
 
-	// Tried this. Doesn't work for some reason.
-	// Mafia Connected needs fixed to set position on spawn.
-	//if (getGame() == V_GAME_MAFIA_ONE) {
-	//	setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
-	//	setPlayerHeading(client, getPlayerCurrentSubAccount(client).spawnHeading);
-	//	setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
-	//}
-
-	if (isGameFeatureSupported("interior")) {
+	if (isGameFeatureSupported("interior") && (getPlayerCurrentSubAccount(client).interior != getPlayerInterior(client))) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 		setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player dimension for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
-	setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
-
-	//if(getPlayerCurrentSubAccount(client).interior != 0 || getPlayerCurrentSubAccount(client).dimension != 0) {
-	//    updateAllInteriorVehiclesForPlayer(client, getPlayerCurrentSubAccount(client).interior, getPlayerCurrentSubAccount(client).dimension);
-	//}
+	if (isGameFeatureSupported("dimension") && (getPlayerCurrentSubAccount(client).dimension != getPlayerDimension(client))) {
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player dimension for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
+		setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
+	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player health for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).health}`);
 	setPlayerHealth(client, getPlayerCurrentSubAccount(client).health);
@@ -452,65 +393,36 @@ function onPlayerSpawn(client) {
 		setPlayerArmour(client, getPlayerCurrentSubAccount(client).armour);
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending ${getPlayerDisplayForConsole(client)}'s job type to their client (${getJobIndexFromDatabaseId(getPlayerCurrentSubAccount(client))})`);
-	sendPlayerJobType(client, (getPlayerCurrentSubAccount(client).job != 0) ? getPlayerCurrentSubAccount(client).jobIndex : -1);
-
-	if (isGameFeatureSupported("rendering2D")) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
-		setPlayer2DRendering(client, true, true, true, true, true, true);
-	}
-
-
-	//if (isGameFeatureSupported("snow")) {
-	//	logToConsole(LOG_DEBUG, `[V.RP.Event] Sending snow states to ${getPlayerDisplayForConsole(client)}`);
-	//	updatePlayerSnowState(client, true);
-	//}
-
 	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
-	if (isGameFeatureSupported("fightStyle")) {
+	if (areServerElementsSupported() && isGameFeatureSupported("fightStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
-		setPlayerFightStyle(client, getPlayerCurrentSubAccount(client).fightStyle);
+		setEntityData(getPlayerPed(client), "v.rp.fightStyle", getPlayerCurrentSubAccount(client).fightStyle, true);
 	}
-
-	if (isGameFeatureSupported("rendering2D")) {
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
-		updatePlayerShowLogoState(client, (serverConfig.showLogo && doesPlayerHaveLogoEnabled(client)));
-	}
-
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items`);
-	cachePlayerHotBarItems(client);
-
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s hotbar`);
-	updatePlayerHotBar(client);
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s switchchar state to false`);
 	getPlayerData(client).switchingCharacter = false;
 
-	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
-		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
-		sendPlayerEnterPropertyKey(client, keyId.key);
-	} else {
-		sendPlayerEnterPropertyKey(client, -1);
-	}
+	cachePlayerHotBarItems(client);
+	updatePlayerCash(client);
+	updatePlayerHotBar(client);
+	updatePlayerKeyBinds(client);
+	updatePlayerChatBoxStates(client);
+	updateAllPlayerNameTags();
+	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
+	updateJobBlipsForPlayer(client);
+	sendPlayerJobType(client, (getPlayerCurrentSubAccount(client).job != 0) ? getPlayerCurrentSubAccount(client).jobIndex : -1);
 
-	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "scoreboard")) {
-		let keyId = getPlayerKeyBindForCommand(client, "scoreboard");
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending scoreboard key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
-		sendPlayerScoreBoardKey(client, keyId.key);
-	} else {
-		sendPlayerScoreBoardKey(client, -1);
-	}
+	if (isGameFeatureSupported("rendering2D")) {
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Enabling all rendering states for ${getPlayerDisplayForConsole(client)}`);
+		setPlayer2DRendering(client, true, true, true, true, true, true);
 
-	sendPlayerChatBoxTimeStampsState(client, isPlayerAccountSettingEnabled(client, "ChatBoxTimestamps"));
-	sendPlayerChatEmojiState(client, isPlayerAccountSettingEnabled(client, "ChatEmoji"));
-	sendPlayerProfanityFilterState(client, isPlayerAccountSettingEnabled(client, "ProfanityFilter"));
-	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
-	//sendPlayerGlobalKeyBindsState(client, !isPlayerAccountSettingEnabled(client, "NoKeyBinds"));
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating logo state for ${getPlayerDisplayForConsole(client)}`);
+		updatePlayerShowLogoState(client, (serverConfig.showLogo && doesPlayerHaveLogoEnabled(client)));
+	}
 
 	//if(isGTAIV()) {
 	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
@@ -538,20 +450,14 @@ function onPlayerSpawn(client) {
 
 	if (areServerElementsSupported()) {
 		syncPlayerProperties(client);
-		//setTimeout(function() {
-		//    syncPlayerProperties(client);
-		//}, 1000);
 	}
-
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s cash ${getPlayerCurrentSubAccount(client).cash}`);
-	updatePlayerCash(client);
 
 	if (isGameFeatureSupported("customNametag")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending player nametag distance to ${getPlayerDisplayForConsole(client)}`);
 		sendNameTagDistanceToClient(client, serverConfig.nameTagDistance);
 	}
 
-	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+	if (!areServerElementsSupported() || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("dummyElement"))) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
@@ -566,28 +472,13 @@ function onPlayerSpawn(client) {
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
-	// Locales are handled via resource files now. No need to send anymore, but kept in case revert is needed.
-	//sendPlayerLocaleStrings(client);
-
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
-	updateAllPlayerNameTags();
-
-	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
-
-	if (doesPlayerHaveGUIEnabled(client) && serverConfig.useGUI == true) {
-		if (checkForGeoIPModule()) {
-			let iso = getPlayerCountryISOCode(client);
-			let localeId = getLocaleFromCountryISO(iso);
-
-			if (localeId != 0) {
-				if (getLocaleData(localeId).enabled) {
-					messagePlayerTip(client, getLanguageLocaleString(localeId, "LocaleOffer", `/lang ${getLocaleData(localeId).isoCode}`), getColourByName("white"), 10000, "Roboto");
-				}
-			}
-		}
+	if (getGame() == V_GAME_GTA_IV) {
+		showServerInDevelopmentMessage(client);
 	}
 
-	if (areServerElementsSupported()) {
+	showPlayerRegionalLanguageOffer(client);
+
+	if (areServerElementsSupported() && isGameFeatureSupported("perElementStreamDistance")) {
 		if (globalConfig.playerStreamInDistance == -1 || globalConfig.playerStreamOutDistance == -1) {
 			//getPlayerPed(client).netFlags.distanceStreaming = false;
 			setElementStreamInDistance(getPlayerPed(client), 99999);
@@ -599,8 +490,6 @@ function onPlayerSpawn(client) {
 
 		resetPlayerBlip(client);
 	}
-
-	updateJobBlipsForPlayer(client);
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
