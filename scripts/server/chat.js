@@ -533,3 +533,10 @@ function oocToNearbyPlayers(client, messageText) {
 }
 
 // ===========================================================================
+
+function updatePlayerChatBoxStates(client) {
+	sendPlayerChatBoxTimeStampsState(client, isPlayerAccountSettingEnabled(client, "ChatBoxTimestamps"));
+	sendPlayerChatEmojiState(client, isPlayerAccountSettingEnabled(client, "ChatEmoji"));
+	sendPlayerProfanityFilterState(client, isPlayerAccountSettingEnabled(client, "ProfanityFilter"));
+	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
+}
