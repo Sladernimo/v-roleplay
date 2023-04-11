@@ -9,7 +9,7 @@
 
 let scriptVersion = "1.5";
 let serverStartTime = 0;
-let logLevel = LOG_INFO;
+let logLevel = LOG_INFO | LOG_DEBUG;
 
 let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);
