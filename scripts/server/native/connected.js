@@ -667,6 +667,20 @@ function setVehicleSiren(vehicle, siren) {
 
 // ===========================================================================
 
+function setVehicleHazardLights(vehicle, state) {
+	setEntityData(vehicle, "v.rp.hazardLights", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.hazardLights", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleInteriorLight(vehicle, state) {
+	setEntityData(vehicle, "v.rp.interiorLight", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.interiorLight", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
 function getVehicleLights(vehicle) {
 	return vehicle.lights;
 }
@@ -1521,6 +1535,11 @@ function addAllEventHandlers() {
 		addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
 	}
 
+	if (getGame() == V_GAME_GTA_IV) {
+		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
+	}
+
 	if (getGame() <= V_GAME_GTA_SA) {
 		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
 	}
@@ -1545,6 +1564,38 @@ function getVehicleOccupants(vehicle) {
 	}
 
 	return occupants;
+}
+
+// ===========================================================================
+
+function setGameMinuteDuration(duration) {
+	if (isGameFeatureSupported("time")) {
+		game.time.minuteDuration = duration;
+	}
+}
+
+// ===========================================================================
+
+function setPedBodyPart(ped, bodyPart, value) {
+	switch (bodyPart) {
+		case V_SKINSELECT_HEAD:
+			setEntityData(ped, "v.rp.bodyPartHead", value, true);
+			break;
+
+		case V_SKINSELECT_UPPER:
+			setEntityData(ped, "v.rp.bodyPartUpper", value, true);
+			break;
+
+		case V_SKINSELECT_LOWER:
+			setEntityData(ped, "v.rp.bodyPartLower", value, true);
+			break;
+
+		case V_SKINSELECT_HAT:
+			setEntityData(ped, "v.rp.bodyPropHead", value, true);
+			break;
+	}
+
+	forcePlayerToSyncElementProperties(null, ped);
 }
 
 // ===========================================================================
