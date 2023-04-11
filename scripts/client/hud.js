@@ -10,6 +10,7 @@
 let customHUDMoneyFont = null;
 let customHUDMoneyColour = toColour(255, 255, 255, 255);
 let customHUDMoneySize = 22.0;
+let customHUDMoneyFontFilePath = (getGame() >= 10) ? "files/fonts/aurora-bold-condensed.ttf" : "files/fonts/pricedown.ttf"
 
 // ===========================================================================
 
@@ -28,7 +29,7 @@ function processCustomHUDRendering() {
 		return false;
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
+	if (getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (customHUDMoneyFont != null) {
 			let text = getCurrencyString(localPlayerMoney);
 			logToConsole(LOG_VERBOSE, `[V.RP.HUD]: Rendering custom HUD money (${text})...`);
@@ -45,7 +46,7 @@ function processCustomHUDRendering() {
 function initCustomHUDMoneyFont() {
 	logToConsole(LOG_DEBUG, "[V.RP.HUD]: Loading custom HUD money font ...");
 	let tempFont = null;
-	let fontStream = openFile("files/fonts/aurora-bold-condensed.ttf");
+	let fontStream = openFile(customHUDMoneyFontFilePath);
 	if (fontStream != null) {
 		tempFont = lucasFont.createFont(fontStream, customHUDMoneySize);
 		logToConsole(LOG_DEBUG, "[V.RP.HUD]: Custom HUD money font loaded successfully!");
