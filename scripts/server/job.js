@@ -1356,6 +1356,11 @@ function jobUniformCommand(command, params, client) {
 	}
 
 	setPlayerSkin(client, uniformData.skin);
+
+	if (isGameFeatureSupported("customBodyPart")) {
+		forcePlayerIntoSkinSelect(client, uniformData.skin);
+	}
+
 	getPlayerData(client).jobUniform = uniformData.skin;
 	meActionToNearbyPlayers(client, `puts on ${getProperDeterminerForName(uniformData.name)} ${uniformData.name} uniform`);
 }
