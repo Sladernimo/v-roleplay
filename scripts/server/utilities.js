@@ -529,8 +529,6 @@ function processPlayerSceneSwitch(client, spawn = false) {
 	}
 	*/
 
-
-
 	if (spawn == true) {
 		let skin = gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
 		if (isPlayerWorking(client)) {
@@ -542,11 +540,6 @@ function processPlayerSceneSwitch(client, spawn = false) {
 		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Spawning ped after scene switch for player ${getPlayerDisplayForConsole(client)} (Interior: ${getPlayerCurrentSubAccount(client).scene}, Game: ${getSceneForInterior(getPlayerCurrentSubAccount(client).scene)}). ...`);
 		spawnPlayer(client, getPlayerCurrentSubAccount(client).spawnPosition, getPlayerCurrentSubAccount(client).spawnHeading, skin);
 		setPlayerControlState(client, false);
-
-		if (isGameFeatureSupported("interior")) {
-			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior for player ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
-			setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
-		}
 	} else {
 		// Set interior before position
 		if (isGameFeatureSupported("interior")) {
