@@ -94,9 +94,9 @@ function syncVehicleProperties(vehicle) {
 		vehicle.lights = lightStatus;
 	}
 
-	if (doesEntityDataExist(vehicle, "v.rp.locked")) {
+	if (isGameFeatureSupported("vehicleLock") && doesEntityDataExist(vehicle, "v.rp.locked")) {
 		let lockStatus = getEntityData(vehicle, "v.rp.locked");
-		vehicle.locked = lockStatus;
+		vehicle.lockedStatus = (lockStatus == false) ? 0 : 2;
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.invincible")) {
@@ -123,6 +123,16 @@ function syncVehicleProperties(vehicle) {
 		for (let i in lightStatus) {
 			vehicle.setLightStatus(i, lightStatus[i]);
 		}
+	}
+
+	if (doesEntityDataExist(vehicle, "v.rp.hazardLights")) {
+		let hazardLightsState = getEntityData(vehicle, "v.rp.hazardLights");
+		natives.setVehHazardlights(vehicle, hazardLightsState);
+	}
+
+	if (doesEntityDataExist(vehicle, "v.rp.interiorLight")) {
+		let interiorLightState = getEntityData(vehicle, "v.rp.interiorLight");
+		natives.setVehInteriorlight(vehicle, interiorLightState);
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.suspensionHeight")) {
