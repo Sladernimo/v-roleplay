@@ -1405,8 +1405,12 @@ function playerUseItem(client, hotBarSlot) {
 
 	switch (toInteger(itemTypeData.useType)) {
 		case V_ITEM_USE_TYPE_SKIN: {
-			getPlayerData(client).itemActionItem = itemIndex;
-			forcePlayerIntoSkinSelect(client);
+			if (!isPlayerWorking(client)) {
+				getPlayerData(client).itemActionItem = itemIndex;
+				forcePlayerIntoSkinSelect(client, -1);
+			} else {
+				messagePlayerError(client, "You can't use this while working! Use /uniform instead.");
+			}
 			break;
 		}
 
@@ -2220,6 +2224,8 @@ function getPlayerFirstEmptyHotBarSlot(client) {
 // ===========================================================================
 
 function cachePlayerHotBarItems(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items ...`);
+
 	if (isPlayerWorking(client)) {
 		return false;
 	}
@@ -2228,6 +2234,7 @@ function cachePlayerHotBarItems(client) {
 		getPlayerData(client).hotBarItems[i] = -1;
 	}
 
+	//let playerItems = getItemsOwnedByPlayer(client);
 	for (let i in serverData.items) {
 		if (getItemData(i) != false) {
 			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER || (isPlayerWorking(client) && getItemData(i).ownerType == V_ITEM_OWNER_JOB)) {
