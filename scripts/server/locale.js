@@ -293,3 +293,20 @@ function getLocaleFromCountryISO(isoCode = "US") {
 }
 
 // ===========================================================================
+
+function showPlayerRegionalLanguageOffer(client) {
+	if (doesPlayerHaveGUIEnabled(client) && serverConfig.useGUI == true) {
+		if (checkForGeoIPModule()) {
+			let iso = getPlayerCountryISOCode(client);
+			let localeId = getLocaleFromCountryISO(iso);
+
+			if (localeId != 0) {
+				if (getLocaleData(localeId).enabled) {
+					messagePlayerTip(client, getLanguageLocaleString(localeId, "LocaleOffer", `/lang ${getLocaleData(localeId).isoCode}`), getColourByName("white"), 10000, "Roboto");
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
