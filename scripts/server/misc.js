@@ -1328,7 +1328,7 @@ function givePlayerMoneyCommand(command, params, client) {
 
 // ===========================================================================
 
-function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
+function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "", fade = false) {
 	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
 	if (client == null) {
 		return false;
@@ -1355,8 +1355,10 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
 	}
 
-	if (isFadeCameraSupported()) {
-		fadePlayerCamera(client, false, 2000);
+	if (fade == true) {
+		if (isFadeCameraSupported()) {
+			fadePlayerCamera(client, false, 2000);
+		}
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {
