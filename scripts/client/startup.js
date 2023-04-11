@@ -139,7 +139,7 @@ function setUpInitialGame() {
 		game.onMission = true;
 	} else if (getGame() == V_GAME_GTA_IV) {
 		natives.allowEmergencyServices(false);
-		natives.setCreateRandomCops(true);
+		natives.setCreateRandomCops(false);
 		natives.setMaxWantedLevel(0);
 		natives.setWantedMultiplier(0.0);
 		natives.allowPlayerToCarryNonMissionObjects(natives.getPlayerId(), true);
@@ -162,7 +162,7 @@ function setUpInitialGame() {
 		//natives.displayHud(false);
 		//natives.displayRadar(false);
 		//natives.displayAreaName(false);
-		natives.displayPlayerNames(true);
+		natives.displayPlayerNames(false);
 		natives.setPoliceRadarBlips(false);
 		natives.removeTemporaryRadarBlipsForPickups();
 		natives.displayNonMinigameHelpMessages(false);
@@ -178,6 +178,7 @@ function setUpInitialGame() {
 		natives.dontSuppressAnyPedModels();
 		natives.forceGenerateParkedCarsTooCloseToOthers(false);
 		natives.setParkedCarDensityMultiplier(0.0);
+		natives.overrideNumberOfParkedCars(0);
 		natives.setRandomCarDensityMultiplier(0.0);
 		natives.setPedDensityMultiplier(0.0);
 		natives.setCarDensityMultiplier(0.0);
@@ -185,7 +186,8 @@ function setUpInitialGame() {
 		natives.switchRandomTrains(false);
 		natives.switchRandomBoats(false);
 		natives.switchAmbientPlanes(false);
-		natives.switchMadDrivers(false);
+		//natives.switchMadDrivers(false);
+		natives.disableCarGenerators(true, true);
 
 		// Singleplayer Cellphone
 		//natives.requestScript("spcellphone");
