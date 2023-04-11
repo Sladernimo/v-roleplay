@@ -834,3 +834,9 @@ function getEntityData(entity, dataName) {
 }
 
 // ===========================================================================
+
+function setLocalPlayerBodyPart(bodyPart, model, texture) {
+	localPlayer.changeBodyPart(bodyPart, model, texture);
+}
+
+// ===========================================================================
