@@ -27,6 +27,26 @@ function getLocaleString(stringName, ...args) {
 
 // ===========================================================================
 
+function getGroupedLocaleString(stringName, indexName, ...args) {
+	if (typeof serverData.localeStrings[localLocaleId][stringName][indexName] == undefined) {
+		return "";
+	}
+
+	let tempString = serverData.localeStrings[localLocaleId][stringName][indexName];
+
+	if (tempString == "" || tempString == null || tempString == undefined) {
+		return "";
+	}
+
+	for (let i = 1; i <= args.length; i++) {
+		tempString = tempString.replace(`{${i}}`, args[i - 1]);
+	}
+
+	return tempString;
+}
+
+// ===========================================================================
+
 function getAvailableLocaleOptions() {
 	return serverData.localeOptions.filter(localeOption => localeOption.requiresUnicode == false);
 }
@@ -64,3 +84,5 @@ function setLocale(tempLocaleId) {
 	localLocaleId = tempLocaleId;
 	resetGUIStrings();
 }
+
+// ===========================================================================
