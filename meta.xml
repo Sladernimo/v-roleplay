@@ -105,12 +105,6 @@
 	<file type="client" src="files/images/icons/job-icon.png" />
 	<file type="client" src="files/images/icons/exit-icon.png" />
 
-	<!-- Sounds -->
-	<file type="client" src="files/sounds/payphone/old-payphone-ring.mp3" />
-	<file type="client" src="files/sounds/payphone/old-payphone-dial.mp3" />
-	<file type="client" src="files/sounds/payphone/old-payphone-pickup.mp3" />
-	<file type="client" src="files/sounds/payphone/old-payphone-hangup.mp3" />
-
 	<!-- GUI -->
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
 	<script src="scripts/client/gui/bizmgr.js" type="client" language="javascript" />
