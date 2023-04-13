@@ -66,7 +66,7 @@ function loadSkinSelectMessageFontBottom() {
 function processSkinSelectKeyPress(keyCode) {
 	if (usingSkinSelector) {
 		if (keyCode == getKeyIdFromParams("up") || keyCode == getKeyIdFromParams("w")) {
-			if (!isGameFeatureSupported("customBodyPart")) {
+			if (!isGameFeatureSupported("pedBodyPart")) {
 				return false;
 			}
 
@@ -78,7 +78,7 @@ function processSkinSelectKeyPress(keyCode) {
 				skinSelectPart = skinSelectPart - 1;
 			}
 		} else if (keyCode == getKeyIdFromParams("down") || keyCode == getKeyIdFromParams("s")) {
-			if (!isGameFeatureSupported("customBodyPart")) {
+			if (!isGameFeatureSupported("pedBodyPart")) {
 				return false;
 			}
 
@@ -103,7 +103,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_HEAD:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -123,7 +123,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_UPPER:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -143,7 +143,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_LOWER:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -163,7 +163,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_HAT:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -190,7 +190,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_HEAD:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -210,7 +210,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_UPPER:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -230,7 +230,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_LOWER:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -250,7 +250,7 @@ function processSkinSelectKeyPress(keyCode) {
 					break;
 
 				case V_SKINSELECT_HAT:
-					if (!isGameFeatureSupported("customBodyPart")) {
+					if (!isGameFeatureSupported("pedBodyPart")) {
 						return false;
 					}
 
@@ -298,7 +298,7 @@ function processSkinSelectRendering() {
 			if (skinSelectMessageTextTop != "" && skinSelectMessageTextBottom != "") {
 				skinSelectMessageFontTop.render(skinSelectMessageTextTop, [0, game.height - 100], game.width, 0.5, 0.0, skinSelectMessageFontTop.size, skinSelectMessageColourTop, true, true, false, true);
 				skinSelectMessageFontBottom.render(skinSelectMessageTextBottom, [0, game.height - 65], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
-				if (isGameFeatureSupported("customBodyPart")) {
+				if (isGameFeatureSupported("pedBodyPart")) {
 					skinSelectMessageFontBottom.render(skinSelectMessageTextBottomParts, [0, game.height - 30], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
 				}
 			}
@@ -333,7 +333,7 @@ function toggleSkinSelect(state, forceCurrentSkin) {
 		skinSelectLower = [0, 0];
 		skinSelectHat = 0;
 
-		if (isCustomCameraSupported()) {
+		if (isGameFeatureSupported("customCamera")) {
 			let cameraPosition = localPlayer.position;
 			let playerPosition = localPlayer.position;
 			if (getGame() == V_GAME_MAFIA_ONE) {
