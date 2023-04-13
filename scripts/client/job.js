@@ -10,13 +10,16 @@
 let localPlayerJobType = -1;
 let localPlayerWorking = false;
 
+let jobRouteLocationEnabled = false;
+let jobRouteLocationPosition = toVector3(0.0, 0.0, 0.0);
+let jobRouteLocationColour = toColour(0, 0, 0, 0);
+
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
 let jobRouteLocationDimension = 0;
-let jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
+
 let jobRouteLocationIndicatorSize = toVector2(32, 32);
-let jobRouteLocationIndicatorEnabled = false;
 let jobRouteLocationIndicatorImagePath = "files/images/icons/objective-icon.png";
 let jobRouteLocationIndicatorImage = null;
 
@@ -78,35 +81,37 @@ function setLocalPlayerWorkingState(tempWorking) {
 
 // ===========================================================================
 
-function showJobRouteLocation(position, colour) {
+function showJobRouteLocation(position, dimension, colour) {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Showing job route location at ${position.x}, ${position.y}, ${position.z}`);
 	hideJobRouteLocation();
-	if (getMultiplayerMod() == V_MPMOD_GTAC) {
-		if (getGame() == V_GAME_GTA_SA) {
-			// Server-side spheres don't show in GTA SA for some reason.
-			jobRouteLocationSphere = game.createPickup(1318, position, 1);
-		} else {
-			jobRouteLocationSphere = game.createSphere(position, 3);
-			jobRouteLocationSphere.colour = colour;
-		}
 
-		if (jobRouteLocationBlip != null) {
-			destroyElement(jobRouteLocationBlip);
-		}
+	jobRouteLocationEnabled = true;
+	jobRouteLocationPosition = position;
+	jobRouteLocationDimension = dimension;
+	jobRouteLocationColour = colour;
 
-		// Blinking is bugged if player hit the spot before it stops blinking.
+	if (getGame() == V_GAME_GTA_SA) {
+		// Server-side spheres don't show in GTA SA for some reason.
+		jobRouteLocationSphere = game.createPickup(1318, position, 1);
+	} else if (getGame() < V_GAME_GTA_SA) {
+		jobRouteLocationSphere = game.createSphere(position, 3);
+		jobRouteLocationSphere.colour = colour;
+	}
+
+	if (jobRouteLocationBlip != null) {
+		destroyElement(jobRouteLocationBlip);
+	}
+
+	// Blinking is bugged if player hit the spot before it stops blinking.
+	if (getGame() <= V_GAME_GTA_SA) {
 		blinkJobRouteLocationBlip(10, position, colour);
 		jobRouteLocationBlip = game.createBlip(position, 0, 2, colour);
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		jobRouteLocationIndicatorPosition = position;
-	}
-
-	jobRouteLocationIndicatorEnabled = true;
-
 	if (getGame() == V_GAME_GTA_IV) {
-		// Enable GPS route to location
+		jobRouteLocationBlip = createGameBlip(gameData.blipSprites[getGame()].Waypoint, position, "Job route stop");
+		natives.setBlipMarkerLongDistance(jobRouteLocationBlip, true);
+		natives.setBlipAsShortRange(jobRouteLocationBlip, false);
 	}
 }
 
@@ -149,9 +154,16 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 function hideJobRouteLocation() {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Hiding job route location`);
 
+	jobRouteLocationPosition = toVector3(0.0, 0.0, 0.0);
+	jobRouteLocationEnabled = false;
+
 	if (isGameFeatureSupported("blip")) {
 		if (jobRouteLocationBlip != null) {
-			destroyElement(jobRouteLocationBlip);
+			if (getGame() == V_GAME_GTA_IV) {
+				natives.removeBlip(jobRouteLocationBlip);
+			} else {
+				destroyElement(jobRouteLocationBlip);
+			}
 			jobRouteLocationBlip = null;
 		}
 
@@ -167,15 +179,6 @@ function hideJobRouteLocation() {
 		jobBlipBlinkAmount = 0;
 		jobBlipBlinkTimes = 0;
 	}
-
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		jobRouteLocationIndicatorPosition = toVector3(0.0, 0.0, 0.0);
-		jobRouteLocationIndicatorEnabled = false;
-	}
-
-	if (getGame() == V_GAME_GTA_IV) {
-		// Disable GPS route.
-	}
 }
 
 // ===========================================================================
@@ -183,7 +186,7 @@ function hideJobRouteLocation() {
 function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension) {
 	logToConsole(LOG_DEBUG, `[V.RP.Job] Received job ${jobId}/${jobLocationId} (${name}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (isDeleted == true) {
 			if (getGame() == V_GAME_GTA_IV) {
 				natives.removeBlipAndClearIndex(getJobData(jobId, jobLocationId).blipId);
@@ -320,23 +323,27 @@ function processJobLocationIndicatorRendering() {
 		return false;
 	}
 
-	if (getGame() != V_GAME_MAFIA_ONE) {
-		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Unsupported game.`);
-		return false;
-	}
-
-	if (!jobRouteLocationIndicatorEnabled) {
+	if (!jobRouteLocationEnabled) {
 		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Disabled`);
 		return false;
 	}
 
 	if (jobRouteLocationDimension != getLocalPlayerDimension()) {
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Wrong dimension`);
 		return false;
 	}
 
-	let screenPosition = getScreenFromWorldPosition(jobRouteLocationIndicatorPosition);
-	screenPosition = fixOffScreenPosition(screenPosition, jobRouteLocationIndicatorSize);
-	graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize.x / 2), screenPosition.y - (jobRouteLocationIndicatorSize.y / 2)], [jobRouteLocationIndicatorSize.x, jobRouteLocationIndicatorSize.y]);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		let screenPosition = getScreenFromWorldPosition(jobRouteLocationPosition);
+		screenPosition = fixOffScreenPosition(screenPosition, jobRouteLocationIndicatorSize);
+		graphics.drawRectangle(jobRouteLocationIndicatorImage, [screenPosition.x - (jobRouteLocationIndicatorSize.x / 2), screenPosition.y - (jobRouteLocationIndicatorSize.y / 2)], [jobRouteLocationIndicatorSize.x, jobRouteLocationIndicatorSize.y]);
+		return true;
+	}
+
+	if (getGame() == V_GAME_GTA_IV) {
+		let colourArray = rgbaArrayFromToColour(jobRouteLocationColour);
+		natives.drawColouredCylinder(jobRouteLocationPosition.x, jobRouteLocationPosition.y, jobRouteLocationPosition.z, jobRouteLocationRadius, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2], colourArray[3]);
+	}
 }
 
 // ===========================================================================
@@ -346,11 +353,11 @@ function processJobRouteLocationDistance() {
 	//	return false;
 	//}
 
-	if (jobRouteLocationIndicatorEnabled == false) {
+	if (jobRouteLocationEnabled == false) {
 		return false;
 	}
 
-	if (getDistance(getLocalPlayerPosition(), jobRouteLocationIndicatorPosition) <= jobRouteLocationRadius) {
+	if (getDistance(getLocalPlayerPosition(), jobRouteLocationPosition) <= jobRouteLocationRadius) {
 		logToConsole(LOG_DEBUG, `[V.RP.Job] Reached job route location`);
 		hideJobRouteLocation();
 		tellServerPlayerArrivedAtJobRouteLocation();
