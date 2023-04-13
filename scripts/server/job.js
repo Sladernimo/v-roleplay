@@ -39,8 +39,10 @@ const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped that gets int
 const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground, "cleans up" when driving over (used for street sweeper job)
 const V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
 const V_JOB_ROUTE_LOC_TYPE_FIRE = 6;         		// Scripted fire, placed on buildings and such
-const V_JOB_ROUTE_LOC_TYPE_PASSENGER = 7;           // Similar to 3, a ped is spawned and enters the car when you get close
-const V_JOB_ROUTE_LOC_TYPE_ITEM = 8;                // Similar to 5 but only one item, need to exit the vehicle to pick it up
+const V_JOB_ROUTE_LOC_TYPE_PASSENGER = 7;           // Similar to 3, a healthy ped is spawned and enters the car when you get close (taxi job)
+const V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP = 8;         // Similar to 5 but only one item, need to exit the vehicle to pick it up
+const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT_ILLEGAL = 9;  // Similar to 1 but alerts the police if you enter the checkpoint
+const V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF = 10;  		// Similar to 8 but the previously picked up item needs dropped off at the location instead
 
 // ===========================================================================
 
@@ -1357,7 +1359,7 @@ function jobUniformCommand(command, params, client) {
 
 	setPlayerSkin(client, uniformData.skin);
 
-	if (isGameFeatureSupported("customBodyPart")) {
+	if (isGameFeatureSupported("pedBodyPart")) {
 		forcePlayerIntoSkinSelect(client, uniformData.skin);
 	}
 
@@ -2728,7 +2730,7 @@ function deleteJobLocation(jobIndex, jobLocationIndex, whoDeleted = defaultNoAcc
 	getJobData(getJobIdFromDatabaseId(jobIndex)).locations.splice(jobLocationIndex, 1);
 	setAllJobDataIndexes();
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		sendJobToPlayer(client, jobIndex, true, -1, "", toVector3(0.0, 0.0, 0.0), -1, -1, doesJobHavePublicRank(jobIndex), 0);
 	}
 }
@@ -3366,7 +3368,7 @@ function spawnJobLocationPickup(jobId, locationId) {
 			}
 		}
 
-		if (areServerElementsSupported() && (isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement"))) {
+		if (isGameFeatureSupported("serverElements") && (isGameFeatureSupported("pickup") || isGameFeatureSupported("dummyElement"))) {
 			let pickup = createGamePickup(pickupModelId, tempJobLocationData.position, gameData.pickupTypes[getGame()].job);
 			if (pickup != false) {
 				tempJobLocationData.pickup = pickup;
@@ -3402,7 +3404,7 @@ function spawnJobLocationBlip(jobId, locationId) {
 		blipModelId = getJobData(jobId).blipModel;
 	}
 
-	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+	if (isGameFeatureSupported("serverElements") && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let blip = createGameBlip(tempJobData.locations[locationId].position, blipModelId, 2, getColourByName("yellow"));
 		if (blip != false) {
 			tempJobData.locations[locationId].blip = blip;
@@ -3538,18 +3540,23 @@ function playerArrivedAtJobRouteLocation(client) {
 	//hideElementForPlayer(getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).marker, client);
 
 	showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationArriveMessage), jobId, jobRouteId), jobData.colour, 3500);
+
 	if (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay > 0) {
 		freezePlayerJobVehicleForRouteLocation(client);
+		setVehicleHazardLights(getPlayerVehicle(client), true);
 		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 		setTimeout(function () {
 			showCurrentJobLocation(client);
 			showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
 			unFreezePlayerJobVehicleForRouteLocation(client);
+			setVehicleHazardLights(getPlayerVehicle(client), false);
 		}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
+		createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
 	} else {
 		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 		showCurrentJobLocation(client);
 		showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
+		createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
 	}
 }
 
@@ -4339,7 +4346,7 @@ function replaceJobRouteStringsInMessage(messageText, jobId, jobRouteId) {
 // ===========================================================================
 
 function updateJobBlipsForPlayer(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -4404,7 +4411,7 @@ function createJobRouteLocationMarker(jobIndex, jobRouteIndex, jobRouteLocationI
 		setElementShownByDefault(marker, false);
 		setElementDimension(marker, gameData.mainWorldDimension[getGame()]);
 
-		if (isGameFeatureSupported("interior")) {
+		if (isGameFeatureSupported("interiorId")) {
 			setElementInterior(marker, gameData.mainWorldDimension[getGame()]);
 		}
 	} else {
@@ -4413,7 +4420,7 @@ function createJobRouteLocationMarker(jobIndex, jobRouteIndex, jobRouteLocationI
 		setElementShownByDefault(marker, false);
 		setElementDimension(marker, gameData.mainWorldDimension[getGame()]);
 
-		if (isGameFeatureSupported("interior")) {
+		if (isGameFeatureSupported("interiorId")) {
 			setElementInterior(marker, gameData.mainWorldDimension[getGame()]);
 		}
 	}
@@ -4818,3 +4825,24 @@ function updateJobPickupLabelData(jobId) {
 }
 
 // ===========================================================================
+
+function createElementForJobRouteLocation(client, jobIndex, jobRouteIndex, jobRouteLocationIndex) {
+	let tempJobRouteLocationData = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex);
+
+	switch (tempJobRouteLocationData.type) {
+		case V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE:
+			let modelIndex = getRandomVehicleModel();
+			let vehicle = createGameVehicle(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
+			if (vehicle != null) {
+				setElementDimension(vehicle, tempJobRouteLocationData.dimension);
+				setElementOnAllDimensions(vehicle, false);
+
+				setVehicleEngineState(vehicle, false);
+				setVehicleBurning(vehicle, true);
+
+			}
+			break;
+	}
+
+	return true;
+}
