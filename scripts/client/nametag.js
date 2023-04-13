@@ -57,7 +57,7 @@ function updatePlayerNameTag(clientName, characterName, colour, paused, ping) {
 		let client = getPlayerFromParams(clientName);
 		if (client != false) {
 			if (getPlayerPed(client) != null) {
-				getPlayerPed(client).setNametag(characterName, colour);
+				getPlayerPed(client).removeNametag();
 			}
 		}
 	}
@@ -219,15 +219,15 @@ function processNameTagRendering(event) {
 	//	return false;
 	//}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		if (localPlayer.vehicle != null) {
-			return false;
-		}
-	}
+	getElementsByType(ELEMENT_PLAYER).forEach(function (player) {
+		if (player != localPlayer) {
+			if (getGame() == V_GAME_MAFIA_ONE) {
+				if (player.vehicle != null) {
+					return false;
+				}
+			}
 
-	getElementsByType(ELEMENT_PED).forEach(function (ped) {
-		if (ped != localPlayer) {
-			updateNametag(ped);
+			updateNametag(player);
 		}
 	});
 }
