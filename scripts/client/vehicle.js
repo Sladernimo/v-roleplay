@@ -174,7 +174,7 @@ function removeVehiclesFromClient() {
 // ===========================================================================
 
 function processLocalPlayerVehicleControlState() {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		if (localPlayer.vehicle != null) {
 			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
 				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
@@ -191,26 +191,6 @@ function processLocalPlayerVehicleControlState() {
 				}
 			}
 		}
-	}
-}
-
-// ===========================================================================
-
-function setVehicleHazardLights(vehicleId, state) {
-	let vehicle = getElementFromId(vehicleId);
-
-	if (vehicle != false) {
-		natives.setVehHazardlights(vehicle, state);
-	}
-}
-
-// ===========================================================================
-
-function setVehicleInteriorLight(vehicleId, state) {
-	let vehicle = getElementFromId(vehicleId);
-
-	if (vehicle != false) {
-		natives.setVehInteriorlight(vehicle, state);
 	}
 }
 

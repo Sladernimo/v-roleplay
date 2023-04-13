@@ -59,7 +59,7 @@ let disconnectReasons = [
 // ===========================================================================
 
 function getPlayerPosition(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncPosition;
 	} else {
 		// Check if Mafia 1, player position is bugged when in a vehicle
@@ -89,7 +89,7 @@ function setPlayerPosition(client, position) {
 // ===========================================================================
 
 function getPlayerHeading(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncHeading;
 	} else {
 		if (getGame() == V_GAME_MAFIA_ONE) {
@@ -120,7 +120,7 @@ function getPlayerVehicle(client) {
 		return null;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicle;
 	} else {
 		if (getPlayerPed(client).vehicle) {
@@ -137,7 +137,7 @@ function getPlayerDimension(client) {
 		return 0;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncDimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -149,7 +149,7 @@ function getPlayerDimension(client) {
 // ===========================================================================
 
 function getPlayerInterior(client) {
-	if (!isGameFeatureSupported("interior")) {
+	if (!isGameFeatureSupported("interiorId")) {
 		return 0;
 	}
 
@@ -160,7 +160,7 @@ function getPlayerInterior(client) {
 
 function setPlayerDimension(client, dimension) {
 	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		getPlayerData(client).syncDimension = dimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -182,7 +182,7 @@ function setPlayerInterior(client, interior) {
 // ===========================================================================
 
 function isPlayerInAnyVehicle(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return (getPlayerData().syncVehicle != null);
 	} else {
 		if (getPlayerPed(client) == null) {
@@ -204,7 +204,7 @@ function getPlayerVehicleSeat(client) {
 		return getPlayerData(client).vehicleSeat;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicleSeat;
 	} else {
 		for (let i = 0; i <= 8; i++) {
@@ -318,12 +318,7 @@ function removePedFromVehicle(ped) {
 function setPlayerSkin(client, skinIndex) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${gameData.skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${gameData.skins[getGame()][skinIndex][1]})`);
 	if (getGame() == V_GAME_GTA_IV) {
-		let position = getPlayerPosition(client);
-		let heading = getPlayerHeading(client);
-		let interior = getPlayerInterior(client);
-		let dimension = getPlayerDimension(client);
-		//triggerNetworkEvent("v.rp.localPlayerSkin", client, gameData.skins[getGame()][skinIndex][0]);
-		spawnPlayer(client, position, heading, gameData.skins[getGame()][skinIndex][0], interior, dimension);
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, gameData.skins[getGame()][skinIndex][0]);
 	} else {
 		getPlayerPed(client).modelIndex = gameData.skins[getGame()][skinIndex][0];
 	}
@@ -668,13 +663,43 @@ function setVehicleSiren(vehicle, siren) {
 // ===========================================================================
 
 function setVehicleHazardLights(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleHazardLights")) {
+		return false;
+	}
+
 	setEntityData(vehicle, "v.rp.hazardLights", state, true);
 	sendNetworkEventToPlayer("v.rp.veh.hazardLights", null, vehicle.id, state);
 }
 
 // ===========================================================================
 
+function setVehicleDirtLevel(vehicle, dirtLevel = 0) {
+	if (!isGameFeatureSupported("vehicleDirtLevel")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.dirtLevel", dirtLevel, true);
+	sendNetworkEventToPlayer("v.rp.veh.dirtLevel", null, vehicle.id, dirtLevel);
+}
+
+// ===========================================================================
+
+function setVehicleLivery(vehicle, livery) {
+	if (!isGameFeatureSupported("vehicleLivery")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.livery", livery, true);
+	sendNetworkEventToPlayer("v.rp.veh.livery", null, vehicle.id, livery);
+}
+
+// ===========================================================================
+
 function setVehicleInteriorLight(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleInteriorLight")) {
+		return false;
+	}
+
 	setEntityData(vehicle, "v.rp.interiorLight", state, true);
 	sendNetworkEventToPlayer("v.rp.veh.interiorLight", null, vehicle.id, state);
 }
@@ -727,7 +752,7 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 // ===========================================================================
 
 function createGameVehicle(modelIndex, position, heading, toClient = null) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		return game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, heading);
 	}
 }
@@ -735,7 +760,7 @@ function createGameVehicle(modelIndex, position, heading, toClient = null) {
 // ===========================================================================
 
 function createGamePed(modelIndex, position, heading, toClient = null) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		let ped = game.createPed(gameData.skins[getGame()][modelIndex][0], position);
 		if (ped) {
 			//ped.position = position;
@@ -777,7 +802,7 @@ function isValidVehicleModel(model) {
 // ===========================================================================
 
 function setGameTime(hour, minute, minuteDuration = 1000) {
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		game.time.hour = hour;
 		game.time.minute = minute;
 		game.time.minuteDuration = minuteDuration;
@@ -787,7 +812,7 @@ function setGameTime(hour, minute, minuteDuration = 1000) {
 // ===========================================================================
 
 function setGameWeather(weather) {
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		mp.world.weather = weather;
 	}
 }
@@ -799,7 +824,7 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	if (!areFightStylesSupported()) {
+	if (!isGameFeatureSupported("pedFightStyle")()) {
 		return false;
 	}
 
@@ -840,7 +865,7 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
-	if (!isGameFeatureSupported("interior")) {
+	if (!isGameFeatureSupported("interiorId")) {
 		return false;
 	}
 
@@ -1283,7 +1308,7 @@ function getEntityData(entity, dataName) {
 
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return entity.setData(dataName, dataValue, syncToClients);
 		}
 	}
@@ -1294,7 +1319,7 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 
 function removeEntityData(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return entity.removeData(dataName);
 		}
 	}
@@ -1305,7 +1330,7 @@ function removeEntityData(entity, dataName) {
 
 function doesEntityDataExist(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return (entity.getData(dataName) != null);
 		} else {
 			return false;
@@ -1472,7 +1497,7 @@ function createAttachedGameBlip(element, type, size, colour = toColour(255, 255,
 // ===========================================================================
 
 function deletePlayerPed(client) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		destroyElement(client.player);
 	} else {
 		sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);
@@ -1568,6 +1593,27 @@ function getVehicleOccupants(vehicle) {
 
 // ===========================================================================
 
+function getFirstFreeRearVehicleSeat(vehicle) {
+	let occupants = [null, null, null, null];
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (getPlayerVehicle(clients[i]) == vehicle) {
+			occupants[getPlayerVehicleSeat(clients[i])] = clients[i];
+		}
+	}
+
+	if (occupants[2] == null) {
+		return 2;
+	} else if (occupants[3] == null) {
+		return 3;
+	}
+
+	return -1;
+}
+
+// ===========================================================================
+
 function setGameMinuteDuration(duration) {
 	if (isGameFeatureSupported("time")) {
 		game.time.minuteDuration = duration;
@@ -1596,6 +1642,24 @@ function setPedBodyPart(ped, bodyPart, value) {
 	}
 
 	forcePlayerToSyncElementProperties(null, ped);
+}
+
+// ===========================================================================
+
+function isServerScript() {
+	return true;
+}
+
+// ===========================================================================
+
+function getMultiplayerMod() {
+	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
+}
+
+// ===========================================================================
+
+function isGTAIV() {
+	return (getGame() == V_GAME_GTA_IV);
 }
 
 // ===========================================================================

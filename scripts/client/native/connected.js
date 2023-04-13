@@ -277,9 +277,26 @@ function syncVehicleProperties(vehicle) {
 		return false;
 	}
 
+	if (!isGameFeatureSupported("serverElements")) {
+		return false;
+	}
+
+	if (doesEntityDataExist(vehicle, "v.rp.colour")) {
+		let colours = getEntityData(vehicle, "v.rp.colour");
+		vehicle.colour1 = colours[0];
+		vehicle.colour2 = colours[1];
+		vehicle.colour3 = colours[2];
+		vehicle.colour4 = colours[3];
+	}
+
 	if (doesEntityDataExist(vehicle, "v.rp.lights")) {
 		let lightStatus = getEntityData(vehicle, "v.rp.lights");
 		vehicle.lights = lightStatus;
+	}
+
+	if (isGameFeatureSupported("vehicleLock") && doesEntityDataExist(vehicle, "v.rp.locked")) {
+		let lockStatus = getEntityData(vehicle, "v.rp.locked");
+		vehicle.lockedStatus = (lockStatus == false) ? 0 : 2;
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.invincible")) {
@@ -308,16 +325,26 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
+	if (doesEntityDataExist(vehicle, "v.rp.hazardLights")) {
+		let hazardLightsState = getEntityData(vehicle, "v.rp.hazardLights");
+		natives.setVehHazardlights(vehicle, hazardLightsState);
+	}
+
+	if (doesEntityDataExist(vehicle, "v.rp.interiorLight")) {
+		let interiorLightState = getEntityData(vehicle, "v.rp.interiorLight");
+		natives.setVehInteriorlight(vehicle, interiorLightState);
+	}
+
 	if (doesEntityDataExist(vehicle, "v.rp.suspensionHeight")) {
 		let suspensionHeight = getEntityData(vehicle, "v.rp.suspensionHeight");
 		vehicle.setSuspensionHeight(suspensionHeight);
 	}
 
-	if (getGame() == V_GAME_GTA_SA) {
-		let allUpgrades = gameData.vehicleUpgrades[getGame()];
-		for (let i in allUpgrades) {
-			vehicle.removeUpgrade(i);
-		}
+	if (isGameFeatureSupported("vehicleUpgrades")) {
+		//let allUpgrades = gameData.vehicleUpgrades[getGame()];
+		//for(let i in allUpgrades) {
+		//	vehicle.removeUpgrade(i);
+		//}
 
 		if (doesEntityDataExist(vehicle, "v.rp.upgrades")) {
 			let upgrades = getEntityData(vehicle, "v.rp.upgrades");
@@ -362,7 +389,15 @@ function doesEntityDataExist(entity, dataName) {
 // ===========================================================================
 
 function syncCivilianProperties(civilian) {
-	if (getGame() == V_GAME_GTA_III) {
+	if (civilian == null) {
+		return false;
+	}
+
+	if (!isGameFeatureSupported("serverElements")) {
+		return false;
+	}
+
+	if (isGameFeatureSupported("pedScale")) {
 		if (doesEntityDataExist(civilian, "v.rp.scale")) {
 			let scaleFactor = getEntityData(civilian, "v.rp.scale");
 			let tempMatrix = civilian.matrix;
@@ -381,7 +416,7 @@ function syncCivilianProperties(civilian) {
 		}
 	}
 
-	if (getGame() == V_GAME_GTA_III) {
+	if (getGame() == V_GAME_GTA_SA) {
 		if (doesEntityDataExist(civilian, "v.rp.walkStyle")) {
 			let walkStyle = getEntityData(civilian, "v.rp.walkStyle");
 			civilian.walkStyle = walkStyle;
@@ -446,8 +481,9 @@ function syncCivilianProperties(civilian) {
 	}
 
 	if (doesEntityDataExist(civilian, "v.rp.anim")) {
-		let animData = getEntityData(vehicle, "v.rp.anim");
-		civilian.addAnimation(animData[0], animData[1]);
+		let animationSlot = getEntityData(civilian, "v.rp.anim");
+		let animationData = getAnimationData(animationSlot);
+		civilian.addAnimation(animationData.groupId, animationData.animId);
 	}
 }
 
@@ -460,7 +496,15 @@ function preventDefaultEventAction(event) {
 // ===========================================================================
 
 function syncPlayerProperties(player) {
-	if (getGame() == V_GAME_GTA_III) {
+	if (player == null) {
+		return false;
+	}
+
+	if (!isGameFeatureSupported("serverElements")) {
+		return false;
+	}
+
+	if (isGameFeatureSupported("pedScale")) {
 		if (doesEntityDataExist(player, "v.rp.scale")) {
 			let scaleFactor = getEntityData(player, "v.rp.scale");
 			let tempMatrix = player.matrix;
@@ -569,7 +613,15 @@ function syncPlayerProperties(player) {
 // ===========================================================================
 
 function syncObjectProperties(object) {
-	if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
+	if (object == null) {
+		return false;
+	}
+
+	if (!isGameFeatureSupported("serverElements")) {
+		return false;
+	}
+
+	if (isGameFeatureSupported("objectScale")) {
 		if (doesEntityDataExist(object, "v.rp.scale")) {
 			let scaleFactor = getEntityData(object, "v.rp.scale");
 			let tempMatrix = object.matrix;
@@ -621,31 +673,62 @@ function getPlayerId(client) {
 // ===========================================================================
 
 function syncElementProperties(element) {
-	if (doesEntityDataExist(element, "v.rp.interior")) {
-		if (typeof element.interior != "undefined") {
-			element.interior = getEntityData(element, "v.rp.interior");
+	if (!isGameFeatureSupported("serverElements")) {
+		return false;
+	}
+
+	if (isGameFeatureSupported("interiorId")) {
+		if (doesEntityDataExist(element, "v.rp.interior")) {
+			if (typeof element.interior != "undefined") {
+				element.interior = getEntityData(element, "v.rp.interior");
+			}
 		}
 	}
 
-	switch (element.type) {
-		case ELEMENT_VEHICLE:
-			syncVehicleProperties(element);
-			break;
+	if (isGameFeatureSupported("toggleCollision")) {
+		if (doesEntityDataExist(element, "v.rp.collisions")) {
+			element.collisionsEnabled = getEntityData(element, "v.rp.collisions");
+		}
+	}
 
-		case ELEMENT_PED:
-			syncCivilianProperties(element);
-			break;
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		switch (element.type) {
+			case ELEMENT_VEHICLE:
+				syncVehicleProperties(element);
+				break;
 
-		case ELEMENT_PLAYER:
-			syncPlayerProperties(element);
-			break;
+			case ELEMENT_PED:
+				syncCivilianProperties(element);
+				break;
 
-		case ELEMENT_OBJECT:
-			syncObjectProperties(element);
-			break;
+			case ELEMENT_PLAYER:
+				syncPlayerProperties(element);
+				break;
 
-		default:
-			break;
+			default:
+				break;
+		}
+	} else {
+		switch (element.type) {
+			case ELEMENT_VEHICLE:
+				syncVehicleProperties(element);
+				break;
+
+			case ELEMENT_PED:
+				syncCivilianProperties(element);
+				break;
+
+			case ELEMENT_PLAYER:
+				syncPlayerProperties(element);
+				break;
+
+			case ELEMENT_OBJECT:
+				syncObjectProperties(element);
+				break;
+
+			default:
+				break;
+		}
 	}
 }
 
@@ -837,6 +920,56 @@ function getEntityData(entity, dataName) {
 
 function setLocalPlayerBodyPart(bodyPart, model, texture) {
 	localPlayer.changeBodyPart(bodyPart, model, texture);
+}
+
+// ===========================================================================
+
+function setLocalPlayerPedPartsAndProps(parts, props) {
+	for (let i in parts) {
+		localPlayer.changeBodyPart(parts[i][0], parts[i][1], parts[i][2]);
+	}
+
+	for (let j in props) {
+		localPlayer.changeBodyProp(props[j][0], props[j][1]);
+	}
+}
+
+// ===========================================================================
+
+function setVehicleHazardLights(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != false) {
+		natives.setVehHazardlights(vehicle, state);
+	}
+}
+
+// ===========================================================================
+
+function setVehicleInteriorLight(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != false) {
+		natives.setVehInteriorlight(vehicle, state);
+	}
+}
+
+// ===========================================================================
+
+function isServerScript() {
+	return false;
+}
+
+// ===========================================================================
+
+function getMultiplayerMod() {
+	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
+}
+
+// ===========================================================================
+
+function isGTAIV() {
+	return (getGame() == V_GAME_GTA_IV);
 }
 
 // ===========================================================================
