@@ -131,6 +131,10 @@ class ClientData {
 		this.interiorLights = true;
 		this.spawnInit = false;
 		this.godMode = false;
+		this.vehicleSeat = -1;
+		this.lastJobRouteStart = 0;
+		this.draggingPlayer = null;
+		this.draggedByPlayer = null;
 
 		// Paintball
 		this.inPaintBall = false;
@@ -160,9 +164,6 @@ class ClientData {
 		this.sceneSwitchRadioStation = -1;
 		this.sceneSwitchInteriorLights = true;
 
-		this.vehicleSeat = -1;
-
-		this.lastJobRouteStart = 0;
 
 		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
 	}
@@ -207,6 +208,10 @@ function resetClientStuff(client) {
 	deleteJobItems(client);
 	deletePaintBallItems(client);
 	//deletePlayerTemporaryLockerItems(client);
+
+	if (getPlayerData(client).draggingPlayer != null) {
+		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
+	}
 
 	//getPlayerData(client).lastVehicle = null;
 }

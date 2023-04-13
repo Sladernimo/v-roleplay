@@ -44,6 +44,7 @@ let serverStarting = false;
  * @property {Array} purchasingVehicleCache
  * @property {Array} rentingVehicleCache
  * @property {Array} atmLocationCache
+ * @property {Array.<ServerVehicle>} burningVehicleCache
  */
 let serverData = {
 	vehicles: [],
@@ -69,6 +70,8 @@ let serverData = {
 	purchasingVehicleCache: [],
 	rentingVehicleCache: [],
 	atmLocationCache: [],
+	draggingPlayersCache: [],
+	burningVehicleCache: [],
 };
 
 // ===========================================================================
