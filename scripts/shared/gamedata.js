@@ -196,27 +196,9 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false
 	},
-	vehicleColour: {
-		[V_GAME_GTA_III]: true,
-		[V_GAME_GTA_VC]: true,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: true,
-		[V_GAME_GTA_IV_EFLC]: true,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
-	object: {
-		[V_GAME_GTA_III]: true,
-		[V_GAME_GTA_VC]: true,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
-	interior: {
+
+	// Interior features
+	interiorId: {
 		[V_GAME_GTA_III]: false,
 		[V_GAME_GTA_VC]: true,
 		[V_GAME_GTA_SA]: true,
@@ -236,36 +218,7 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
-	pedScale: {
-		[V_GAME_GTA_III]: true,
-		[V_GAME_GTA_VC]: true,
-		[V_GAME_GTA_SA]: false,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
-	objectScale: {
-		[V_GAME_GTA_III]: false,
-		[V_GAME_GTA_VC]: false,
-		[V_GAME_GTA_SA]: false,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
-	pedArmour: {
-		[V_GAME_GTA_III]: true,
-		[V_GAME_GTA_VC]: true,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: true,
-		[V_GAME_GTA_IV_EFLC]: true,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
+
 	rendering2D: {
 		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
@@ -326,6 +279,72 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
+
+	// Object features
+	object: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
+	objectScale: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
+
+	// Ped features
+	pedScale: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
+	pedArmour: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
+	pedBodyPart: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
+	},
+
+	// Vehicle features
+	vehicleColour: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
 	vehicleUpgrades: {
 		[V_GAME_GTA_III]: false,
 		[V_GAME_GTA_VC]: false,
@@ -356,16 +375,7 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: true,
 		[V_GAME_MAFIA_THREE]: true,
 	},
-	customBodyPart: {
-		[V_GAME_GTA_III]: false,
-		[V_GAME_GTA_VC]: false,
-		[V_GAME_GTA_SA]: false,
-		[V_GAME_GTA_IV]: true,
-		[V_GAME_GTA_IV_EFLC]: true,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false,
-	},
+
 	vehicleHazardLights: {
 		[V_GAME_GTA_III]: false,
 		[V_GAME_GTA_VC]: false,
@@ -386,6 +396,26 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
+	vehicleDirtLevel: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
+	},
+	vehicleLivery: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
+	}
 };
 
 // ===========================================================================
@@ -5224,6 +5254,7 @@ let gameData = {
 			Bowling: 49,
 			Internet: 24,
 			Darts: 52,
+			Waypoint: 8,
 		},
 	},
 	pickupModels: {
