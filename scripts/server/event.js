@@ -130,6 +130,7 @@ function onProcess(event, deltaTime) {
 	//checkVehicleBurning();
 
 	processVehiclePurchasing();
+	processPlayerDragging();
 }
 
 // ===========================================================================
@@ -149,15 +150,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 		}
 
 		if (getVehicleData(vehicle).locked) {
-			if (doesPlayerHaveVehicleKeys(client, vehicle)) {
-				if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
-					messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
-				} else {
-					messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
-				}
-			} else {
-				messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
-			}
+			showVehicleLockedMessageForPlayer(client, vehicle);
 
 			//getPlayerData(client).enteringVehicle = null;
 			//makePlayerStopAnimation(client);
@@ -322,7 +315,7 @@ function onPedSpawn(ped) {
 function onPlayerSpawn(client) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
 
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		waitUntil(() => client != null && getPlayerPed(client) != null);
 	}
 
@@ -361,11 +354,11 @@ function onPlayerSpawn(client) {
 		setEntityData(getPlayerPed(client), "v.rp.scale", getPlayerCurrentSubAccount(client).pedScale, true);
 	}
 
-	if (isCustomCameraSupported()) {
+	if (isGameFeatureSupported("customCamera")) {
 		restorePlayerCamera(client);
 	}
 
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Storing ${getPlayerDisplayForConsole(client)} ped in client data`);
 		getPlayerData(client).ped = getPlayerPed(client);
 	}
@@ -375,7 +368,7 @@ function onPlayerSpawn(client) {
 		messagePlayerAlert(client, `You are now playing as: {businessBlue}${getCharacterFullName(client)}`, getColourByName("white"));
 	}
 
-	if (isGameFeatureSupported("interior") && (getPlayerCurrentSubAccount(client).interior != getPlayerInterior(client))) {
+	if (isGameFeatureSupported("interiorId") && (getPlayerCurrentSubAccount(client).interior != getPlayerInterior(client))) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player interior for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 		setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 	}
@@ -393,12 +386,12 @@ function onPlayerSpawn(client) {
 		setPlayerArmour(client, getPlayerCurrentSubAccount(client).armour);
 	}
 
-	if (areServerElementsSupported() && isGameFeatureSupported("walkStyle")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("walkStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
-	if (areServerElementsSupported() && isGameFeatureSupported("fightStyle")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("fightStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.fightStyle", getPlayerCurrentSubAccount(client).fightStyle, true);
 	}
@@ -448,7 +441,7 @@ function onPlayerSpawn(client) {
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
 	getPlayerData(client).pedState = V_PEDSTATE_READY;
 
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		syncPlayerProperties(client);
 	}
 
@@ -457,7 +450,7 @@ function onPlayerSpawn(client) {
 		sendNameTagDistanceToClient(client, serverConfig.nameTagDistance);
 	}
 
-	if (!areServerElementsSupported() || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("dummyElement"))) {
+	if (!isGameFeatureSupported("serverElements") || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("dummyElement"))) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending properties, jobs, and vehicles to ${getPlayerDisplayForConsole(client)} (no server elements)`);
 		sendAllBusinessesToPlayer(client);
 		sendAllHousesToPlayer(client);
@@ -466,7 +459,7 @@ function onPlayerSpawn(client) {
 		//requestPlayerPedNetworkId(client);
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		sendAllVehiclesToPlayer(client);
 	}
 
@@ -478,7 +471,7 @@ function onPlayerSpawn(client) {
 
 	showPlayerRegionalLanguageOffer(client);
 
-	if (areServerElementsSupported() && isGameFeatureSupported("perElementStreamDistance")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("perElementStreamDistance")) {
 		if (globalConfig.playerStreamInDistance == -1 || globalConfig.playerStreamOutDistance == -1) {
 			//getPlayerPed(client).netFlags.distanceStreaming = false;
 			setElementStreamInDistance(getPlayerPed(client), 99999);

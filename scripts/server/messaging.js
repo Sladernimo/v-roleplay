@@ -303,3 +303,27 @@ function showServerInDevelopmentMessage(client) {
 }
 
 // ===========================================================================
+
+function showVehicleLockedMessageForPlayer(client, vehicle) {
+	if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
+			messagePlayerTip(client, getLocaleString(client, "VehicleLockedKeyPressTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
+		} else {
+			messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
+		}
+	} else {
+		messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
+	}
+}
+
+// ===========================================================================
+
+function showVehicleEngineOffMessageForPlayer(client, vehicle) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
+		messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartKeyPressTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))}{MAINCOLOUR}`));
+	} else {
+		messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/engine{MAINCOLOUR}`));
+	}
+}
+
+// ===========================================================================
