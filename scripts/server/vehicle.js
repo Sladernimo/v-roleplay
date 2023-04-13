@@ -72,6 +72,8 @@ class VehicleData {
 		this.engineDamage = 0;
 		this.visualDamage = 0;
 		this.dirtLevel = 0;
+		this.hazardLights = false;
+		this.interiorLight = false;
 
 		// Inventory
 		this.trunkItemCache = [];
@@ -247,7 +249,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 	if (dbConnection) {
 		if (tempVehicleData.vehicle != false) {
 			if (!tempVehicleData.spawnLocked) {
-				if (areServerElementsSupported()) {
+				if (isGameFeatureSupported("serverElements")) {
 					tempVehicleData.spawnPosition = tempVehicleData.vehicle.position;
 					tempVehicleData.spawnRotation = tempVehicleData.vehicle.heading;
 				} else {
@@ -822,11 +824,7 @@ function rentVehicleCommand(command, params, client) {
 	messagePlayerAlert(client, getLocaleString(client, "StartedRentingVehicle", `{ALTCOLOUR}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(getVehicleData(vehicle).rentPrice)}{MAINCOLOUR}`, `{ALTCOLOUR}/vehstoprent{MAINCOLOUR}`));
 
 	if (!getVehicleData(vehicle).engine) {
-		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
-			messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartCommandTip", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))}{MAINCOLOUR}`));
-		} else {
-			messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartKeyPressTip", `{ALTCOLOUR}/engine{MAINCOLOUR}`));
-		}
+		showVehicleEngineOffMessageForPlayer(client, vehicle);
 	}
 }
 
@@ -1516,6 +1514,9 @@ function spawnVehicle(vehicleData) {
 	if (vehicleData.spawnLocked == true && vehicleData.switchingScenes == false) {
 		vehicleData.engine = false;
 		vehicleData.locked = true;
+		vehicleData.lights = false;
+		vehicleData.interiorLight = false;
+		vehicleData.hazardLights = false;
 
 		// Unlock cars that are for sale or rent, or are publicly usable
 		if (vehicleData.rentPrice > 0 || vehicleData.buyPrice > 0 || vehicleData.ownerType == V_VEHOWNER_PUBLIC) {
@@ -1534,7 +1535,6 @@ function spawnVehicle(vehicleData) {
 	//setVehicleHealth(vehicle, 1000);
 	repairVehicle(vehicle);
 
-	setEntityData(vehicle, "v.rp.livery", vehicleData.livery, true);
 	setEntityData(vehicle, "v.rp.upgrades", vehicleData.extras, true);
 	setEntityData(vehicle, "v.rp.interior", interior, true);
 	setEntityData(vehicle, "v.rp.server", true, true);
@@ -1542,6 +1542,10 @@ function spawnVehicle(vehicleData) {
 	setVehicleLights(vehicle, vehicleData.lights);
 	setVehicleEngine(vehicle, vehicleData.engine);
 	setVehicleLocked(vehicle, vehicleData.locked);
+	setVehicleHazardLights(vehicle, vehicleData.hazardLights);
+	setVehicleInteriorLight(vehicle, vehicleData.interiorLight);
+	setVehicleDirtLevel(vehicle, vehicleData.dirtLevel);
+	setVehicleLivery(vehicle, vehicleData.livery);
 
 	forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
@@ -2122,3 +2126,27 @@ function listPersonalVehiclesCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function setVehicleBurning(vehicle, state) {
+	getVehicleData(vehicle).burning = state;
+
+	if (state == true) {
+		serverData.burningVehiclesCache.push(vehicle);
+	} else {
+		serverData.burningVehiclesCache = serverData.burningVehiclesCache.filter(x => x != vehicle);
+	}
+	return true;
+}
+
+// ===========================================================================
+
+function processVehicleBurning() {
+	for (let i in serverData.burningVehiclesCache) {
+		let vehicle = serverData.burningVehiclesCache[i];
+		if (vehicle != null) {
+			if (getGame() <= V_GAME_GTA_SA) {
+				setVehicleHealth(vehicle, 250);
+			}
+		}
+	}
+}
