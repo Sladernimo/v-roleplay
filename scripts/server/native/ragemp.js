@@ -43,7 +43,7 @@ let builtInCommands = [
 // ===========================================================================
 
 function getPlayerPosition(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncPosition;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -62,7 +62,7 @@ function setPlayerPosition(client, position) {
 // ===========================================================================
 
 function getPlayerHeading(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncHeading;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -81,7 +81,7 @@ function setPlayerHeading(client, heading) {
 // ===========================================================================
 
 function getPlayerVehicle(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicle;
 	} else {
 		if (getPlayerPed(client).vehicle) {
@@ -94,7 +94,7 @@ function getPlayerVehicle(client) {
 // ===========================================================================
 
 function getPlayerDimension(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncDimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -113,7 +113,7 @@ function getPlayerInterior(client) {
 
 function setPlayerDimension(client, dimension) {
 	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		getPlayerData(client).syncDimension = dimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -135,7 +135,7 @@ function setPlayerInterior(client, interior) {
 // ===========================================================================
 
 function isPlayerInAnyVehicle(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return (getPlayerData().syncVehicle != null);
 	} else {
 		return (getPlayerPed(client).vehicle != null);
@@ -149,7 +149,7 @@ function getPlayerVehicleSeat(client) {
 		return false;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicleSeat;
 	} else {
 		for (let i = 0; i <= 8; i++) {
@@ -615,7 +615,7 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 // ===========================================================================
 
 function createGameVehicle(modelIndex, position, heading) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		return mp.vehicles.new(gameData.vehicles[getGame()][modelIndex][0], position, {
 			heading: heading,
 			numberPlate: "",
@@ -631,7 +631,7 @@ function createGameVehicle(modelIndex, position, heading) {
 // ===========================================================================
 
 function createGameCivilian(modelIndex, position, heading) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		return mp.peds.new(gameData.skins[getGame()][modelIndex][1], position, heading, 0);
 	}
 
@@ -657,7 +657,7 @@ function isValidVehicleModel(model) {
 // ===========================================================================
 
 function setGameTime(hour, minute, minuteDuration = 1000) {
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		game.time.hour = hour;
 		game.time.minute = minute;
 		game.time.minuteDuration = minuteDuration;
@@ -667,7 +667,7 @@ function setGameTime(hour, minute, minuteDuration = 1000) {
 // ===========================================================================
 
 function setGameWeather(weather) {
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		mp.world.weather = weather;
 	}
 }
@@ -1052,7 +1052,7 @@ function getPlayerPed(client) {
 
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			if (syncToClients) {
 				return entity.setVariable(dataName, dataValue);
 			} else {
@@ -1067,7 +1067,7 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 
 function removeEntityData(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return entity.setVariable(dataName, null);
 		}
 	}
@@ -1078,7 +1078,7 @@ function removeEntityData(entity, dataName) {
 
 function doesEntityDataExist(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return (entity.getVariable(dataName) != null);
 		} else {
 			return false;
@@ -1263,7 +1263,7 @@ function createAttachedGameBlip(element, type, size, colour = toColour(255, 255,
 // ===========================================================================
 
 function deletePlayerPed(client) {
-	//if (areServerElementsSupported()) {
+	//if (isGameFeatureSupported("serverElements")) {
 	//	destroyElement(client.player);
 	//} else {
 	//	sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);

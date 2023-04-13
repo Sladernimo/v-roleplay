@@ -144,7 +144,7 @@ function playerClientStarted(client) {
 
 function playerClientStopped(client) {
 	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
-	getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
+	//getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
 	//disconnectPlayer(client);
 }
 
@@ -235,7 +235,7 @@ function syncPlayerProperties(client) {
 // ===========================================================================
 
 function updatePlayerSnowState(client, forceGroundSnow = false) {
-	if (isSnowSupported(getGame())) {
+	if (isGameFeatureSupported("snow")) {
 		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(serverConfig.fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(serverConfig.groundSnow))})`);
 		sendNetworkEventToPlayer("v.rp.snow", client, serverConfig.fallingSnow, serverConfig.groundSnow, forceGroundSnow);
 	}
@@ -915,7 +915,7 @@ function playerFinishedSkinSelection(client, skinIndex, bodyPartHead, bodyPartUp
 
 	if (isPlayerWorking(client)) {
 		//setPlayerSkin(client, getPlayerData(client).jobUniform);
-		//if (isGameFeatureSupported("customBodyPart")) {
+		//if (isGameFeatureSupported("pedBodyPart")) {
 		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HEAD, bodyPartHead);
 		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_UPPER, bodyPartUpper);
 		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_LOWER, bodyPartLower);

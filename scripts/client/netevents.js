@@ -446,7 +446,7 @@ function setLocalPlayerAsCopState(state) {
 function serverRequestedLocalPlayerSpawn(skinId, position) {
 	if (getGame() == V_GAME_GTA_IV) {
 		natives.createPlayer(skinId, position);
-		//if(isCustomCameraSupported()) {
+		//if(isGameFeatureSupported("customCamera")) {
 		//	game.restoreCamera(true);
 		//}
 	}

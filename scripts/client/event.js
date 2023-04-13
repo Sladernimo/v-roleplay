@@ -104,6 +104,10 @@ function onResourceReady(event, resource) {
 function onProcess(event, deltaTime) {
 	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess`);
 
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	if (localPlayer == null) {
 		return false;
 	}
@@ -140,6 +144,10 @@ function onProcess(event, deltaTime) {
 // ===========================================================================
 
 function onKeyUp(event, keyCode, scanCode, keyModifiers) {
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	processSkinSelectKeyPress(keyCode);
 	//processKeyDuringAnimation();
 	processGUIKeyPress(keyCode);
@@ -149,6 +157,10 @@ function onKeyUp(event, keyCode, scanCode, keyModifiers) {
 // ===========================================================================
 
 function onDrawnHUD(event) {
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	logToConsole(LOG_VERBOSE, `[V.RP.Event] HUD drawn`);
 	processMouseCursorRendering();
 
@@ -199,7 +211,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
-			if (areServerElementsSupported()) {
+			if (isGameFeatureSupported("serverElements")) {
 				sendNetworkEventToServer("v.rp.exitedVehicle", localPlayer.id, vehicle.id, seat);
 				if (inVehicleSeat == 0) {
 					//setVehicleEngine(vehicle.id, false);
@@ -240,7 +252,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
-			if (areServerElementsSupported()) {
+			if (isGameFeatureSupported("serverElements")) {
 				sendNetworkEventToServer("v.rp.enteredVehicle", localPlayer.id, vehicle.id, seat);
 
 				inVehicle = vehicle;

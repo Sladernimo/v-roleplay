@@ -1060,7 +1060,7 @@ function spawnHouseEntrancePickup(houseId) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.House]: Creating entrance pickup for house ${houseData.description} (${houseData.databaseId})`);
 
-	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+	if (isGameFeatureSupported("serverElements") && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = gameData.pickupModels[getGame()].House;
@@ -1102,7 +1102,7 @@ function spawnHouseEntrancePickup(houseId) {
 // ===========================================================================
 
 function spawnHouseEntranceBlip(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1159,7 +1159,7 @@ function spawnHouseEntranceBlip(houseId) {
 // ===========================================================================
 
 function spawnHouseExitPickup(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1209,7 +1209,7 @@ function spawnHouseExitPickup(houseId) {
 // ===========================================================================
 
 function spawnHouseExitBlip(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1502,7 +1502,7 @@ function doesHouseHaveInterior(houseId) {
 // ===========================================================================
 
 function despawnHouseEntrancePickup(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1516,7 +1516,7 @@ function despawnHouseEntrancePickup(houseId) {
 // ===========================================================================
 
 function despawnHouseExitPickup(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1530,7 +1530,7 @@ function despawnHouseExitPickup(houseId) {
 // ===========================================================================
 
 function despawnHouseEntranceBlip(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1544,7 +1544,7 @@ function despawnHouseEntranceBlip(houseId) {
 // ===========================================================================
 
 function despawnHouseExitBlip(houseId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1806,7 +1806,7 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 		houseData = getHouseData(houseId);
 	}
 
-	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (houseData == false) {
 			sendHouseToPlayer(
 				null,

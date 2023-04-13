@@ -383,7 +383,7 @@ function saveNPCToDatabase(npcDataId) {
 	if (dbConnection) {
 		if (tempNPCData.ped != false) {
 			if (!tempNPCData.spawnLocked) {
-				if (areServerElementsSupported()) {
+				if (isGameFeatureSupported("serverElements")) {
 					tempNPCData.position = tempNPCData.ped.position;
 					tempNPCData.heading = tempNPCData.ped.heading;
 				} else {

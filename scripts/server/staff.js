@@ -498,7 +498,7 @@ function setVehicleDimensionCommand(command, params, client) {
  *
  */
 function setVehicleInteriorCommand(command, params, client) {
-	if (!isGameFeatureSupported("interior")) {
+	if (!isGameFeatureSupported("interiorId")) {
 		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
 		return false;
 	}

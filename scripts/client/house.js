@@ -38,7 +38,7 @@ function initHouseScript() {
 function receiveHouseFromServer(houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension) {
 	logToConsole(LOG_DEBUG, `[V.RP.House] Received house ${houseId} (${description}) from server`);
 
-	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
 		if (isDeleted == true) {
 			if (getGame() == V_GAME_GTA_IV) {
 				natives.removeBlipAndClearIndex(getHouseData(houseId).blipId);

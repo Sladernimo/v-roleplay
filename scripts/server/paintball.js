@@ -176,7 +176,7 @@ function respawnPlayerForPaintBall(client) {
 	//spawnPlayer(client, getBusinessData(businessId).paintBallSpawns[spawnId], 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitPosition, getBusinessData(businessId).exitDimension);
 
 	spawnPlayer(client, getBusinessData(businessId).exitPosition, 0.0, getPlayerSkin(client), getBusinessData(businessId).exitInterior, getBusinessData(businessId).exitDimension);
-	if (isFadeCameraSupported()) {
+	if (isGameFeatureSupported("fadeCamera")) {
 		fadePlayerCamera(client, true, 500);
 	}
 	updatePlayerSpawnedState(client, true);

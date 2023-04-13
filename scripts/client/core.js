@@ -118,4 +118,6 @@ let myToken = "";
 
 let godMode = false;
 
+let scriptInitialized = false;
+
 // ===========================================================================

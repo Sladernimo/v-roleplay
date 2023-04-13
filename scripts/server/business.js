@@ -2074,7 +2074,7 @@ function spawnBusinessEntrancePickup(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Business]: Creating entrance pickup for business ${businessData.name} (${businessData.databaseId})`);
 
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = gameData.pickupModels[getGame()].Business;
@@ -2158,7 +2158,7 @@ function spawnBusinessEntranceBlip(businessId) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance blip for business ${businessData.name} (model ${blipModelId})`);
 
-	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+	if (isGameFeatureSupported("serverElements") && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entranceBlip = createGameBlip(businessData.entrancePosition, blipModelId, 1, getColourByType("businessBlue"));
 		if (entranceBlip != null) {
 			if (businessData.entranceDimension != -1) {
@@ -2190,7 +2190,7 @@ function spawnBusinessEntranceBlip(businessId) {
  *
  */
 function spawnBusinessExitPickup(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2252,7 +2252,7 @@ function spawnBusinessExitPickup(businessId) {
  *
  */
 function spawnBusinessExitBlip(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2463,7 +2463,7 @@ function doesBusinessHaveInterior(businessId) {
  * @returns {Boolean} Whether or not the entrance pickup of the business was deleted
  */
 function deleteBusinessEntrancePickup(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2486,7 +2486,7 @@ function deleteBusinessEntrancePickup(businessId) {
  * @returns {Boolean} Whether or not the exit pickup of the business was deleted
  */
 function deleteBusinessExitPickup(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2505,7 +2505,7 @@ function deleteBusinessExitPickup(businessId) {
  * @returns {Boolean} Whether or not the entrance blip of the business was deleted
  */
 function deleteBusinessEntranceBlip(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2528,7 +2528,7 @@ function deleteBusinessEntranceBlip(businessId) {
  * @returns {Boolean} Whether or not the exit blip of the business was deleted
  */
 function deleteBusinessExitBlip(businessId) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2935,7 +2935,7 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 		businessData = getBusinessData(businessId);
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		if (businessData == false) {
 			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, 0, V_PROPLABEL_INFO_NONE, 0, 0);
 		} else {

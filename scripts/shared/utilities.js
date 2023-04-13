@@ -1377,6 +1377,7 @@ let placesOfOrigin = [
 	"San Andreas",
 	"Blaine County",
 	"Red County",
+	"Flint County",
 	"Bone County",
 	"Lost Heaven",
 	"Empire Bay",
@@ -1393,12 +1394,6 @@ let payPhoneStateNames = [
 	"Broken",
 	"Calling"
 ];
-
-// ===========================================================================
-
-function getGameConfig() {
-	return gameData;
-}
 
 // ===========================================================================
 
@@ -1662,92 +1657,8 @@ function clearArray(array) {
 
 // ===========================================================================
 
-function isServerScript() {
-	return (typeof server != "undefined");
-}
-
-// ===========================================================================
-
 function getPercentage(num, per) {
 	return (num / 100) * per;
-}
-
-// ===========================================================================
-
-function getMultiplayerMod() {
-	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
-}
-
-// ===========================================================================
-
-function isSnowSupported(gameId) {
-	return supportedFeatures.snow[getGame()];
-}
-
-// ===========================================================================
-
-function isGTAIV() {
-	return (getGame() == V_GAME_GTA_IV);
-}
-
-// ===========================================================================
-
-function areServerElementsSupported() {
-	return isGameFeatureSupported("serverElements")
-}
-
-// ===========================================================================
-
-function isTimeSupported() {
-	return isGameFeatureSupported("time");
-}
-
-// ===========================================================================
-
-function isWeatherSupported() {
-	return isGameFeatureSupported("weather");
-}
-
-// ===========================================================================
-
-function arePickupsSupported() {
-	return isGameFeatureSupported("pickup");
-}
-
-// ===========================================================================
-
-function areBlipsSupported() {
-	return isGameFeatureSupported("blip");
-}
-
-// ===========================================================================
-
-function areMarkersSupported() {
-	return isGameFeatureSupported("marker");
-}
-
-// ===========================================================================
-
-function isFadeCameraSupported() {
-	return isGameFeatureSupported("fadeCamera");
-}
-
-// ===========================================================================
-
-function isCustomCameraSupported() {
-	return isGameFeatureSupported("customCamera");
-}
-
-// ===========================================================================
-
-function areFightStylesSupported() {
-	return isGameFeatureSupported("fightStyle");
-}
-
-// ===========================================================================
-
-function areWorldLabelsSupported() {
-	return isGameFeatureSupported("worldLabel");
 }
 
 // ===========================================================================

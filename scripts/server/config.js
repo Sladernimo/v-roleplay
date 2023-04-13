@@ -429,12 +429,12 @@ function applyConfigToServer(tempServerConfig) {
 
 	updateServerGameTime();
 
-	//if (isTimeSupported()) {
+	//if (isGameFeatureSupported("time")) {
 	//	logToConsole(LOG_DEBUG, `[V.RP.Config]: Setting time to to ${tempServerConfig.hour}:${tempServerConfig.minute} with minute duration of ${tempServerConfig.minuteDuration}`);
 	//	setGameTime(tempServerConfig.hour, tempServerConfig.minute, tempServerConfig.minuteDuration);
 	//}
 
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Config]: Setting weather to ${tempServerConfig.weather}`);
 		game.forceWeather(getWeatherData(tempServerConfig.weather).weatherId);
 	}

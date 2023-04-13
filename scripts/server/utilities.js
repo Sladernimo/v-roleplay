@@ -77,7 +77,7 @@ function updateServerRules() {
 	let timeWeatherRule = [];
 	let tempText = "";
 
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		if (getServerConfig() != false) {
 			tempText = makeReadableTime(serverConfig.hour, serverConfig.minute);
 			timeWeatherRule.push(tempText);
@@ -94,7 +94,7 @@ function updateServerRules() {
 		}
 	}
 
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		if (getServerConfig() != false) {
 			if (getWeatherData(serverConfig.weather) != false) {
 				let tempText = getWeatherData(serverConfig.weather).name;
@@ -103,7 +103,7 @@ function updateServerRules() {
 		}
 	}
 
-	if (isSnowSupported()) {
+	if (isGameFeatureSupported("snow")) {
 		if (getServerConfig() != false) {
 			if (serverConfig.fallingSnow == true) {
 				timeWeatherRule.push("Snowing");
@@ -267,11 +267,11 @@ function checkPlayerPedStates() {
 // ===========================================================================
 
 function showConnectCameraToPlayer(client) {
-	if (isFadeCameraSupported()) {
+	if (isGameFeatureSupported("fadeCamera")) {
 		fadePlayerCamera(client, true, 1000);
 	}
 
-	if (isCustomCameraSupported()) {
+	if (isGameFeatureSupported("customCamera")) {
 		//setPlayerInterior(client, 0);
 		//setPlayerDimension(client, 0);
 		setPlayerCameraLookAt(client, serverConfig.connectCameraPosition, serverConfig.connectCameraLookAt);
@@ -542,7 +542,7 @@ function processPlayerSceneSwitch(client, spawn = false) {
 		setPlayerControlState(client, false);
 	} else {
 		// Set interior before position
-		if (isGameFeatureSupported("interior")) {
+		if (isGameFeatureSupported("interiorId")) {
 			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior for player ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
 			setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 		}
@@ -558,7 +558,7 @@ function processPlayerSceneSwitch(client, spawn = false) {
 
 	setTimeout(function () {
 		if (spawn == false) {
-			if (isFadeCameraSupported()) {
+			if (isGameFeatureSupported("fadeCamera")) {
 				logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
 				fadePlayerCamera(client, true, 1000);
 			}

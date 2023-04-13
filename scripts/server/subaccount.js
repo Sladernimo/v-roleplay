@@ -776,7 +776,7 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 		getPlayerCurrentSubAccount(client).dimension = 0;
 	}
 
-	if (isGameFeatureSupported("interior")) {
+	if (isGameFeatureSupported("interiorId")) {
 		getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
 	} else {
 		getPlayerCurrentSubAccount(client).interior = 0;

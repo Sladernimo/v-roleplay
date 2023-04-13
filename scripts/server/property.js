@@ -1557,7 +1557,7 @@ function createAllPropertyBlips() {
 // ===========================================================================
 
 function createPropertyEntrancePickup(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1577,7 +1577,7 @@ function createPropertyEntrancePickup(propertyIndex) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance pickup for property ${propertyData.name}`);
 
-	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE) {
+	if (isGameFeatureSupported("serverElements") && getGame() != V_GAME_MAFIA_ONE) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
 			let pickupModelId = gameData.pickupModels[getGame()].Property;
@@ -1624,7 +1624,7 @@ function createPropertyEntrancePickup(propertyIndex) {
 // ===========================================================================
 
 function createPropertyEntranceBlip(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1654,7 +1654,7 @@ function createPropertyEntranceBlip(propertyIndex) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Job]: Creating entrance blip for business ${propertyData.name} (model ${blipModelId})`);
 
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		let entranceBlip = createGameBlip(propertyData.entrancePosition, blipModelId, 1, getColourByType("propertyColour"));
 		if (entranceBlip != null) {
 			if (propertyData.entranceDimension != -1) {
@@ -1679,7 +1679,7 @@ function createPropertyEntranceBlip(propertyIndex) {
 // ===========================================================================
 
 function createPropertyExitPickup(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1736,7 +1736,7 @@ function createPropertyExitPickup(propertyIndex) {
 // ===========================================================================
 
 function createPropertyExitBlip(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1898,7 +1898,7 @@ function doesPropertyHaveInterior(propertyIndex) {
 // ===========================================================================
 
 function deletePropertyEntrancePickup(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1915,7 +1915,7 @@ function deletePropertyEntrancePickup(propertyIndex) {
 // ===========================================================================
 
 function deletePropertyExitPickup(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1929,7 +1929,7 @@ function deletePropertyExitPickup(propertyIndex) {
 // ===========================================================================
 
 function deletePropertyEntranceBlip(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1947,7 +1947,7 @@ function deletePropertyEntranceBlip(propertyIndex) {
 // ===========================================================================
 
 function deletePropertyExitBlip(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -2298,7 +2298,7 @@ function getPropertyIdFromDatabaseId(databaseId) {
 
 // Updates all pickup data for a business by propertyIndex
 function updatePropertyPickupLabelData(propertyIndex) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 

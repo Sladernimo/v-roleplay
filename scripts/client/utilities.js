@@ -50,7 +50,7 @@ function restoreLocalCamera() {
 
 function setLocalCameraLookAt(cameraPosition, cameraLookAt) {
 	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Set camera to look at [${cameraLookAt.x}, ${cameraLookAt.y}, ${cameraLookAt.z}] from [${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}]`);
-	if (isCustomCameraSupported()) {
+	if (isGameFeatureSupported("customCamera")) {
 		game.setCameraLookAt(cameraPosition, cameraLookAt, true);
 	}
 }
@@ -185,7 +185,7 @@ function setLocalPlayerInterior(interior) {
 		//}
 	}
 
-	if (areServerElementsSupported() && isGameFeatureSupported("interior")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("interiorId")) {
 		let vehicles = getElementsByType(ELEMENT_VEHICLE);
 		for (let i in vehicles) {
 			if (getEntityData(vehicles[i], "v.rp.interior")) {
@@ -421,7 +421,7 @@ function getVehicleForNetworkEvent(vehicle) {
 function setMinuteDuration(minuteDuration) {
 	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Setting minute duration to ${minuteDuration}ms`);
 
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		game.time.minuteDuration = minuteDuration;
 	}
 }

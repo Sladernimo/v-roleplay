@@ -350,7 +350,7 @@ function processLabelRendering() {
 	//}
 
 	if (renderLabels) {
-		if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
+		if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV || getGame() == V_GAME_GTA_IV_EFLC) {
 			if (localPlayer != null) {
 				serverData.businesses.forEach((business) => {
 					if (getLocalPlayerDimension() == business.entranceDimension) {
