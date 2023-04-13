@@ -843,5 +843,6 @@
 	"WaitForJobStart": "You must wait {1} before starting another job route",
 	"InvalidPayPhone": "Payphone not found!",
 	"GameFeatureNotSupported": "Not supported on this game!",
-	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to your business ({1})?"
+	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to your business ({1})?",
+	"MustBeRestrained": "The player needs to be restrained (handcuffed or tied up)"
 }
