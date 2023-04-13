@@ -643,7 +643,7 @@ function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noB
  *
  */
 function updateServerGameTime() {
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		game.time.hour = serverConfig.hour;
 		game.time.minute = serverConfig.minute;
 	}
@@ -979,7 +979,7 @@ function resetPlayerBlip(client) {
 // ===========================================================================
 
 function createPlayerBlip(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1110,7 +1110,7 @@ function processPlayerDeath(client) {
 			}
 
 			setTimeout(function () {
-				if (isFadeCameraSupported()) {
+				if (isGameFeatureSupported("fadeCamera")) {
 					fadePlayerCamera(client, false, 1000);
 				}
 
@@ -1125,7 +1125,7 @@ function processPlayerDeath(client) {
 
 					spawnPlayer(client, prisonCell.position, prisonCell.rotation, gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
-					if (isFadeCameraSupported()) {
+					if (isGameFeatureSupported("fadeCamera")) {
 						fadePlayerCamera(client, true, 1000);
 					}
 
@@ -1175,7 +1175,7 @@ function processPlayerDeath(client) {
 			}
 
 			setTimeout(function () {
-				if (isFadeCameraSupported()) {
+				if (isGameFeatureSupported("fadeCamera")) {
 					fadePlayerCamera(client, false, 1000);
 				}
 
@@ -1190,7 +1190,7 @@ function processPlayerDeath(client) {
 
 					spawnPlayer(client, closestHospital.position, closestHospital.rotation, gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
 
-					if (isFadeCameraSupported()) {
+					if (isGameFeatureSupported("fadeCamera")) {
 						fadePlayerCamera(client, true, 1000);
 					}
 
@@ -1356,7 +1356,7 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	}
 
 	if (fade == true) {
-		if (isFadeCameraSupported()) {
+		if (isGameFeatureSupported("fadeCamera")) {
 			fadePlayerCamera(client, false, 2000);
 		}
 	}
@@ -1382,6 +1382,148 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 	setTimeout(function () {
 		processPlayerSceneSwitch(client, false);
 	}, 2000);
+}
+
+// ===========================================================================
+
+function detainPlayerCommand(command, params, client) {
+	let targetClient = getClosestPlayer(getPlayerPosition(client), client);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.detainPlayerDistance) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	let targetVehicle = getClosestVehicle(getPlayerPosition(client));
+
+	if (!targetVehicle) {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getVehiclePosition(targetVehicle)) > globalConfig.detainPlayerDistance) {
+		messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
+		return false;
+	}
+
+	if (getVehicleData(targetVehicle).locked) {
+		showVehicleLockedMessageForPlayer(client, targetVehicle);
+		return false;
+	}
+
+	meActionToNearbyPlayers(client, `throws ${getCharacterFullName(getPlayerData(client).draggingPlayer)} into the back of the ${getVehicleName(targetVehicle)}`);
+	stopDraggingPlayer(client, targetClient);
+	warpPedIntoVehicle(targetClient, targetVehicle, getFirstFreeRearVehicleSeat(targetVehicle));
+}
+
+// ===========================================================================
+
+function searchPlayerCommand(command, params, client) {
+	let targetClient = getClosestPlayer(getPlayerPosition(client), client);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.detainPlayerDistance) {
+		messagePlayerError(client, getLocaleString(client, "PlayerTooFar"));
+		return false;
+	}
+
+	if (!isPlayerSurrendered(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeSurrendered"));
+		return false;
+	}
+
+	meActionToNearbyPlayers(client, `frisks ${getCharacterFullName(targetClient)}, checking for items`);
+	showPlayerInventoryToPlayer(client, targetClient);
+}
+
+// ===========================================================================
+
+function dragPlayerCommand(command, params, client) {
+	if (getPlayerData(client).draggingPlayer != null) {
+		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
+		setPlayerControlState(getPlayerData(client).draggingPlayer, true);
+		getPlayerData(getPlayerData(client).draggingPlayer).draggedByPlayer = null;
+		meActionToNearbyPlayers(client, `stops dragging ${getCharacterFullName(getPlayerData(client).draggingPlayer)}`);
+		getPlayerData(client).draggingPlayer = null;
+		return false;
+	}
+
+	let targetClient = getClosestPlayer(getPlayerPosition(client), client);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.detainPlayerDistance) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (!isPlayerRestrained(targetClient)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeRestrained"));
+		return false;
+	}
+
+	getPlayerData(client).draggingPlayer = targetClient;
+	getPlayerData(targetClient).draggedByPlayer = client;
+	setPlayerControlState(targetClient, false);
+	meActionToNearbyPlayers(client, `starts dragging ${getCharacterFullName(getPlayerData(client).draggingPlayer)}`);
+}
+
+// ===========================================================================
+
+function processPlayerDragging() {
+	for (let i in serverData.draggingPlayersCache) {
+		setPlayerPosition(serverData.draggingPlayersCache[i].draggedPlayer, getPlayerPosition(serverData.draggingPlayersCache[i].draggingPlayer));
+	}
+}
+
+// ===========================================================================
+
+function stopDraggingPlayer(draggingPlayer, draggedPlayer) {
+	if (getPlayerData(draggedPlayer).draggedByPlayer != draggingPlayer) {
+		return false;
+	}
+
+	if (getPlayerData(draggingPlayer).draggingPlayer != draggedPlayer) {
+		return false;
+	}
+
+	for (let i in serverData.draggingPlayersCache) {
+		if (serverData.draggingPlayersCache[i].draggingPlayer == draggingPlayer && serverData.draggingPlayersCache[i].draggedPlayer == draggedPlayer) {
+			serverData.draggingPlayersCache.splice(i, 1);
+			break;
+		}
+	}
+
+	getPlayerData(draggedPlayer).draggedByPlayer = null;
+	getPlayerData(draggingPlayer).draggingPlayer = null;
+
+	setPlayerControlState(draggedPlayer, true);
+}
+
+// ===========================================================================
+
+function startDraggingPlayer(draggingPlayer, draggedPlayer) {
+	setPlayerControlState(draggedPlayer, false);
+
+	getPlayerData(draggedPlayer).draggedByPlayer = draggingPlayer;
+	getPlayerData(draggingPlayer).draggingPlayer = draggedPlayer;
+
+	serverData.draggingPlayersCache.push({
+		draggingPlayer: draggingPlayer,
+		draggedPlayer: draggedPlayer
+	});
 }
 
 // ===========================================================================

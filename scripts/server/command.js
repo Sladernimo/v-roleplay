@@ -429,9 +429,6 @@ function loadCommands() {
 			new CommandData("fare", taxiSetFareCommand, "", getStaffFlagValue("None"), true, false, "Sets the fare for passengers in your taxi (amount is charged every 10 seconds)"),
 
 			// Police
-			new CommandData("detain", policeDetainCommand, "", getStaffFlagValue("None"), true, false, "Puts a handcuffed person in the back of your police vehicle"),
-			new CommandData("drag", policeDragCommand, "", getStaffFlagValue("None"), true, false, "Drags a handcuffed person around"),
-			new CommandData("search", policeSearchCommand, "", getStaffFlagValue("None"), true, false, "Searches a person"),
 			new CommandData("fine", finePlayerCommand, "", getStaffFlagValue("None"), true, false, "Searches a person"),
 
 			// Routes
@@ -534,6 +531,9 @@ function loadCommands() {
 			new CommandData("scoreboard", scoreBoardCommand, "", getStaffFlagValue("None"), true, false, "Shows the scoreboard (key press only)"),
 			new CommandData("locate", locatePlayerCommand, "<player name/id>", getStaffFlagValue("None"), true, true, "Shows the distance and direction of another player"),
 			new CommandData("pay", givePlayerMoneyCommand, "<player name/id> <amount>", getStaffFlagValue("None"), true, true, "Gives a player some of your money"),
+			new CommandData("detain", detainPlayerCommand, "", getStaffFlagValue("None"), true, false, "Puts a handcuffed person in the back of your police vehicle"),
+			new CommandData("drag", dragPlayerCommand, "", getStaffFlagValue("None"), true, false, "Drags a handcuffed person around"),
+			new CommandData("search", searchPlayerCommand, "", getStaffFlagValue("None"), true, false, "Searches a person"),
 		],
 		npc: [
 			new CommandData("addnpc", createNPCCommand, "<skin id/name>", getStaffFlagValue("ManageNPCs"), true, false, "Creates an NPC with the specified skin"),
