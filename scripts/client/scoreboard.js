@@ -20,7 +20,7 @@ function initScoreBoardScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.ScoreBoard]: Initializing scoreboard script ...");
 	scoreBoardTitleFont = initScoreBoardTitleFont();
 	scoreBoardListFont = initScoreBoardListFont();
-	scoreBoardKey = getKeyIdFromParams("F5");
+	scoreBoardKey = getKeyIdFromParams("f5");
 	logToConsole(LOG_DEBUG, "[V.RP.ScoreBoard]: Scoreboard script initialized!");
 }
 
@@ -39,6 +39,10 @@ function initScoreBoardListFont() {
 // ===========================================================================
 
 function processScoreBoardRendering() {
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	if (!renderScoreBoard) {
 		logToConsole(LOG_VERBOSE | LOG_ERROR, `[V.RP.ScoreBoard] Could not render scoreboard. Scoreboard rendering is disabled!`);
 		return false;
@@ -60,6 +64,10 @@ function processScoreBoardRendering() {
 	}
 
 	if (scoreBoardKey == null) {
+		return false;
+	}
+
+	if (typeof scoreBoardKey != "number") {
 		return false;
 	}
 
