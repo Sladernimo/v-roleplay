@@ -33,6 +33,8 @@ function initClientScripts() {
 	addAllNetworkHandlers();
 	initTimers();
 	removeUnusedGameData();
+
+	scriptInitialized = true;
 }
 
 // ===========================================================================
