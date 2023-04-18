@@ -36,7 +36,7 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 		return false;
 	}
 
-	if (getVehicleData(vehicleId) != false) {
+	if (getVehicleData(vehicleId) != null) {
 		let vehicleData = getVehicleData(vehicleId);
 		//vehicleData.position = position;
 		//vehicleData.heading = heading;
@@ -117,7 +117,7 @@ function getVehicleData(vehicleId) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================

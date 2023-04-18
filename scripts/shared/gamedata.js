@@ -333,6 +333,16 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
+	pedBleeding: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
+	},
 
 	// Vehicle features
 	vehicleColour: {
@@ -415,7 +425,17 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_ONE]: false,
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
-	}
+	},
+	vehicleTaxiLight: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: false,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false,
+	},
 };
 
 // ===========================================================================

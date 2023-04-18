@@ -163,7 +163,7 @@ function checkVehicleRenting() {
 		if (isClientInitialized(renting[i])) {
 			if (getPlayerData(renting[i]) != false) {
 				if (isPlayerLoggedIn(renting[i] && isPlayerSpawned(renting[i]))) {
-					if (getPlayerData(renting[i]).rentingVehicle != false) {
+					if (getPlayerData(renting[i]).rentingVehicle != null) {
 						if (getPlayerCurrentSubAccount(renting[i]).cash < serverData.vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {
 							messagePlayerAlert(renting[i], `You do not have enough money to continue renting this vehicle!`);
 							stopRentingVehicle(renting[i]);
@@ -361,13 +361,11 @@ function showRandomTipToAllPlayers() {
 function checkInactiveVehicleRespawns() {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for (let i in vehicles) {
-		if (getVehicleData(vehicles[i] != false)) {
+		if (getVehicleData(vehicles[i]) != null) {
 			if (isVehicleUnoccupied(vehicles[i])) {
-				if (getVehicleData(vehicles[i]).lastActiveTime != false) {
-					if (getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= globalConfig.vehicleInactiveRespawnDelay) {
-						respawnVehicle(vehicles[i]);
-						//getVehicleData(vehicles[i]).lastActiveTime = false;
-					}
+				if (getCurrentUnixTimestamp() - getVehicleData(vehicles[i]).lastActiveTime >= globalConfig.vehicleInactiveRespawnDelay) {
+					respawnVehicle(vehicles[i]);
+					//getVehicleData(vehicles[i]).lastActiveTime = false;
 				}
 			} else {
 				getVehicleData(vehicles[i]).lastActiveTime = getCurrentUnixTimestamp();

@@ -49,7 +49,7 @@ function receiveBusinessFromServer(businessId, isDeleted, name, entrancePosition
 			return false;
 		}
 
-		if (getBusinessData(businessId) != false) {
+		if (getBusinessData(businessId) != null) {
 			let businessData = getBusinessData(businessId);
 			businessData.businessId = businessId;
 			businessData.name = name;

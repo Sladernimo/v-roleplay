@@ -15,8 +15,8 @@ class PayPhoneData {
 		this.state = V_PAYPHONE_STATE_IDLE;
 		this.number = 0;
 		this.position = toVector3(0.0, 0.0, 0.0);
-		this.usingPlayer = false;
-		this.connectedPlayer = false;
+		this.usingPlayer = null;
+		this.connectedPlayer = null;
 		this.enabled = false;
 		this.broken = false;
 		this.price = 0;
@@ -121,14 +121,14 @@ function getClosestPayPhone(position) {
  */
 function getPayPhoneData(payPhoneIndex) {
 	if (payPhoneIndex == -1) {
-		return false;
+		return null;
 	}
 
 	if (typeof serverData.payPhones[payPhoneIndex] != "undefined") {
 		return serverData.payPhones[payPhoneIndex];
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -163,7 +163,7 @@ function deletePayPhoneCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPayPhoneData(payPhoneIndex) == false) {
+	if (getPayPhoneData(payPhoneIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
 		return false;
 	}
@@ -171,12 +171,12 @@ function deletePayPhoneCommand(command, params, client) {
 	messagePlayerInfo(client, getLocaleString(client, "PayPhoneDeleted", getPayPhoneData(payPhoneIndex).number));
 
 	// Alert player using the phone, if any
-	if (getPayPhoneData(payPhoneIndex).usingPlayer != false) {
+	if (getPayPhoneData(payPhoneIndex).usingPlayer != null) {
 		messagePlayerAlert(client, getLocaleString(client, "UsingPayPhoneDeleted"));
 	}
 
 	// Alert player on the other end of the call, if any
-	if (getPayPhoneData(payPhoneIndex).connectedPlayer != false) {
+	if (getPayPhoneData(payPhoneIndex).connectedPlayer != null) {
 		messagePlayerNormal(getPayPhoneData(payPhoneIndex).connectedPlayer, getLocaleString("PayPhoneRecipientHangup", "0"));
 	}
 
@@ -305,7 +305,7 @@ function givePayPhoneToPlayerCommand(command, params, client) {
 	getPlayerData(targetClient).payPhoneInitiatedCall = getPlayerData(client).payPhoneInitiatedCall;
 
 	getPlayerData(client).payPhoneCallStart = 0;
-	getPlayerData(client).payPhoneOtherPlayer = false;
+	getPlayerData(client).payPhoneOtherPlayer = null;
 	getPlayerData(client).usingPayPhone = -1;
 	getPlayerData(client).payPhoneInitiatedCall = false;
 
@@ -385,7 +385,7 @@ function hangupPayPhoneCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPayPhoneData(getPlayerData(client).usingPayPhone) == false) {
+	if (getPayPhoneData(getPlayerData(client).usingPayPhone) == null) {
 		getPlayerData(client).usingPayPhone = -1
 		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
 		return false;
@@ -396,7 +396,7 @@ function hangupPayPhoneCommand(command, params, client) {
 
 	if (clientPayPhone.state == V_PAYPHONE_STATE_CALLING) {
 		clientPayPhone.state = V_PAYPHONE_STATE_IDLE;
-		clientPayPhone.usingPlayer = false;
+		clientPayPhone.usingPlayer = null;
 		clientPayPhone.otherPayPhone = -1;
 
 		sendPayPhoneStateToPlayer(null, clientPayPhoneIndex, V_PAYPHONE_STATE_IDLE);
@@ -404,7 +404,7 @@ function hangupPayPhoneCommand(command, params, client) {
 		let otherPayPhoneIndex = getPayPhoneUsedByPlayer(client);
 		if (clientPayPhoneIndex != otherPayPhoneIndex) {
 			getPayPhoneData(otherPayPhoneIndex).state = V_PAYPHONE_STATE_IDLE;
-			getPayPhoneData(otherPayPhoneIndex).usingPlayer = false;
+			getPayPhoneData(otherPayPhoneIndex).usingPlayer = null;
 			getPayPhoneData(otherPayPhoneIndex).otherPayPhone = -1;
 
 			sendPayPhoneStateToPlayer(null, otherPayPhoneIndex, V_PAYPHONE_STATE_IDLE);
@@ -456,12 +456,12 @@ function hangupPayPhoneCommand(command, params, client) {
 		sendPayPhoneStateToPlayer(null, otherClientPayPhone, V_PAYPHONE_STATE_IDLE);
 
 		getPlayerData(otherClient).payPhoneCallStart = 0;
-		getPlayerData(otherClient).payPhoneOtherPlayer = false;
+		getPlayerData(otherClient).payPhoneOtherPlayer = null;
 		getPlayerData(otherClient).usingPayPhone = -1;
 	}
 
 	getPlayerData(client).payPhoneCallStart = 0;
-	getPlayerData(client).payPhoneOtherPlayer = false;
+	getPlayerData(client).payPhoneOtherPlayer = null;
 	getPlayerData(client).usingPayPhone = -1;
 }
 
@@ -508,7 +508,7 @@ function savePayPhoneToDatabase(payPhoneIndex) {
 		return false;
 	}
 
-	if (getPayPhoneData(payPhoneIndex) == false) {
+	if (getPayPhoneData(payPhoneIndex) == null) {
 		logToConsole(LOG_VERBOSE, `[V.RP.PayPhone]: Payphone ${payPhoneIndex} data is invalid. Aborting save ...`);
 		return false;
 	}
@@ -653,7 +653,7 @@ function stopUsingPayPhone(client) {
 	sendPayPhoneStateToPlayer(client, getPlayerData(client).usingPayPhone, V_PAYPHONE_STATE_IDLE);
 
 	getPlayerData(client).payPhoneCallStart = 0
-	getPlayerData(client).payPhoneOtherPlayer = false;
+	getPlayerData(client).payPhoneOtherPlayer = null;
 	getPlayerData(client).usingPayPhone = -1;
 }
 
@@ -675,7 +675,7 @@ function getPayPhoneInfoCommand(command, params, client) {
 		payPhoneIndex = getPayPhoneFromParams(params);
 	}
 
-	if (!getPayPhoneData(payPhoneIndex)) {
+	if (getPayPhoneData(payPhoneIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPayPhone"));
 		return false;
 	}
@@ -708,11 +708,11 @@ function resetAllPayPhonesCommand(command, params, client) {
 
 function resetAllPayPhones() {
 	for (let i in serverData.payPhones) {
-		if (serverData.payPhones[i].usingPlayer != false) {
+		if (serverData.payPhones[i].usingPlayer != null) {
 			getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
 			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
 			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
+			getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
 		}
 		serverData.payPhones[i].state = V_PAYPHONE_STATE_IDLE;
 	}
@@ -728,11 +728,11 @@ function fixDesyncedPayPhones() {
 			case V_PAYPHONE_STATE_RINGING:
 				if (getPayPhoneData(i).otherPayPhone != -1) {
 					if (getPayPhoneData(getPayPhoneData(i).otherPayPhone).state != V_PAYPHONE_STATE_CALLING) {
-						if (serverData.payPhones[i].usingPlayer != false) {
+						if (serverData.payPhones[i].usingPlayer != null) {
 							getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
 							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
 							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = false;
+							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
 						}
 						getPayPhoneData(i).otherPayPhone = -1;
 						setPayPhoneState(i, V_PAYPHONE_STATE_IDLE);

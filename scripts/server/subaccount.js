@@ -239,7 +239,7 @@ function loadSubAccountsFromAccount(accountId) {
 					// Check if job and rank are still valid
 					if (tempSubAccount.job != 0) {
 						let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
-						if (!getJobData(jobIndex)) {
+						if (getJobData(jobIndex) == null) {
 							tempSubAccount.job = 0;
 							tempSubAccount.jobRank = 0;
 							tempSubAccount.jobIndex = -1;
@@ -699,7 +699,7 @@ function isPlayerCreatingCharacter(client) {
  *
  */
 function getPlayerCurrentSubAccount(client) {
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 

@@ -31,21 +31,6 @@ const V_JOB_ROUTE_STATE_ATSTOP = 4;              // For bus/trash stops that fre
 
 // ===========================================================================
 
-// Job Route Location Types
-const V_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
-const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (used for bus routes)
-const V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
-const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped that gets into the vehicle when near.
-const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground, "cleans up" when driving over (used for street sweeper job)
-const V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
-const V_JOB_ROUTE_LOC_TYPE_FIRE = 6;         		// Scripted fire, placed on buildings and such
-const V_JOB_ROUTE_LOC_TYPE_PASSENGER = 7;           // Similar to 3, a healthy ped is spawned and enters the car when you get close (taxi job)
-const V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP = 8;         // Similar to 5 but only one item, need to exit the vehicle to pick it up
-const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT_ILLEGAL = 9;  // Similar to 1 but alerts the police if you enter the checkpoint
-const V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF = 10;  		// Similar to 8 but the previously picked up item needs dropped off at the location instead
-
-// ===========================================================================
-
 /**
  * @class Representing a job's data. Loaded and saved in the database
  */
@@ -1540,7 +1525,7 @@ function getJobData(jobId) {
 		return serverData.jobs[jobId];
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -1649,7 +1634,7 @@ function createJobLocationCommand(command, params, client) {
 
 	let jobId = getJobFromParams(params);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -1841,7 +1826,7 @@ function setPlayerJobRankCommand(command, params, client) {
 
 	let jobIndex = getPlayerJob(client);
 
-	if (getJobData(jobIndex) == false) {
+	if (getJobData(jobIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -2331,7 +2316,7 @@ function addPlayerToJobBlackListCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -2361,7 +2346,7 @@ function removePlayerFromJobBlackListCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -2391,7 +2376,7 @@ function addPlayerToJobWhiteListCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -2421,7 +2406,7 @@ function removePlayerFromJobWhiteListCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -2629,7 +2614,7 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 	sendPlayerStopJobRoute(client);
 	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
-	getPlayerData(client).jobRouteVehicle = false;
+	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
 	getPlayerData(client).jobRouteLocation = -1;
 }
@@ -2693,7 +2678,7 @@ function canPlayerUseJob(client, jobId) {
 		return true;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		return false;
 	}
 
@@ -3376,7 +3361,18 @@ function spawnJobLocationPickup(jobId, locationId) {
 				updateJobPickupLabelData(jobId);
 			}
 		} else {
-			sendJobToPlayer(null, jobId, false, getJobData(jobId).name, tempJobData.name, tempJobLocationData.position, getJobLocationBlipModelForNetworkEvent(tempJobData.index), getJobLocationPickupModelForNetworkEvent(tempJobData.index), tempJobLocationData.dimension);
+			sendJobToPlayer(
+				null,
+				jobId,
+				false,
+				getJobData(jobId).name,
+				tempJobData.name,
+				tempJobLocationData.position,
+				getJobLocationBlipModelForNetworkEvent(tempJobData.index),
+				getJobLocationPickupModelForNetworkEvent(tempJobData.index),
+				doesJobHavePublicRank(jobId),
+				tempJobLocationData.dimension
+			);
 		}
 	}
 }
@@ -3541,23 +3537,48 @@ function playerArrivedAtJobRouteLocation(client) {
 
 	showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationArriveMessage), jobId, jobRouteId), jobData.colour, 3500);
 
-	if (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay > 0) {
-		freezePlayerJobVehicleForRouteLocation(client);
-		setVehicleHazardLights(getPlayerVehicle(client), true);
-		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
-		setTimeout(function () {
+	switch (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).type) {
+		case V_JOB_ROUTE_LOC_TYPE_CHECKPOINT:
+			if (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay > 0) {
+				freezePlayerJobVehicleForRouteLocation(client);
+				setVehicleHazardLights(getPlayerVehicle(client), true);
+				getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
+				setTimeout(function () {
+					showCurrentJobLocation(client);
+					showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
+					unFreezePlayerJobVehicleForRouteLocation(client);
+					setVehicleHazardLights(getPlayerVehicle(client), false);
+				}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
+				createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+			} else {
+				getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
+				showCurrentJobLocation(client);
+				showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
+				createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+			}
+			break;
+
+		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP:
+			getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 			showCurrentJobLocation(client);
 			showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
-			unFreezePlayerJobVehicleForRouteLocation(client);
-			setVehicleHazardLights(getPlayerVehicle(client), false);
-		}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
-		createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
-	} else {
-		getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
-		showCurrentJobLocation(client);
-		showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
-		createElementForJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+			break;
+
+		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF:
+			let ped = getPlayerData(client).jobRouteLocationElement;
+			removePedFromVehicle(ped);
+
+			setTimeout(function () {
+				deleteGameElement(ped);
+				getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
+				showCurrentJobLocation(client);
+				showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
+			}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
+			break;
+
 	}
+
+
 }
 
 // ===========================================================================
@@ -3644,7 +3665,7 @@ function createJobRankCommand(command, params, client) {
 
 	let jobId = getPlayerJob(client);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, `You need to take the job that you want to make a rank for.`);
 		return false;
 	}
@@ -3665,7 +3686,7 @@ function createJobRouteCommand(command, params, client) {
 	let jobId = getPlayerJob(client);
 	let closestJobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, `You need to take the job that you want to make a route for.`);
 		return false;
 	}
@@ -3696,7 +3717,7 @@ function createJobRouteLocationCommand(command, params, client) {
 
 	let jobId = getPlayerJob(client);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, `You need to take the job that you want to make a route location for.`);
 		return false;
 	}
@@ -3751,7 +3772,7 @@ function createJobUniformCommand(command, params, client) {
 		skinIndex = getSkinModelIndexFromParams(splitParams.slice(1).join(" "), getGame());
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -3895,7 +3916,7 @@ function deleteJobUniformCommand(command, params, client) {
 	let jobId = getJobFromParams(getParam(params, " ", 1));
 	let uniformIndex = getParam(params, " ", 1);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -3928,12 +3949,12 @@ function setJobUniformMinimumRankCommand(command, params, client) {
 	let uniformIndex = getParam(params, " ", 1);
 	let newRankLevel = getParam(params, " ", 2);
 
-	if (!getJobData(jobId)) {
+	let jobIndex = getPlayerJob(client);
+
+	if (jobIndex == -1) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
-
-	let jobIndex = getPlayerJob(client);
 
 	if (doesPlayerHaveJobPermission(client, getJobFlagValue("ManageUniforms"))) {
 		messagePlayerError(client, "You can't edit job uniforms!");
@@ -3971,12 +3992,12 @@ function setJobUniformNameCommand(command, params, client) {
 	let uniformIndex = getParam(params, " ", 1);
 	let newName = params.slice(1).join(" ");
 
-	if (!getJobData(jobId)) {
+	let jobIndex = getPlayerJob(client);
+
+	if (jobIndex == -1) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
-
-	let jobIndex = getPlayerJob(client);
 
 	if (doesPlayerHaveJobPermission(client, getJobFlagValue("ManageUniforms"))) {
 		messagePlayerError(client, "You can't edit job uniforms!");
@@ -4031,7 +4052,7 @@ function getClosestJobLocation(position, dimension = 0) {
 		for (let j in locations) {
 			if (locations[j].dimension != dimension) {
 				let businessId = getClosestBusinessExit(locations[j].position, locations[j].dimension);
-				if (getBusinessData(businessId) != false) {
+				if (getBusinessData(businessId) != null) {
 					if (!closestJobLocation || getBusinessData(businessId).entrancePosition.distance(position) < closestJobLocation.position.distance(position)) {
 						closestJobLocation = locations[j];
 					}
@@ -4281,7 +4302,7 @@ function finishSuccessfulJobRoute(client) {
 	sendPlayerStopJobRoute(client);
 	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
-	getPlayerData(client).jobRouteVehicle = false;
+	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
 	getPlayerData(client).jobRouteLocation = -1;
 }
@@ -4350,7 +4371,7 @@ function updateJobBlipsForPlayer(client) {
 		return false;
 	}
 
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 
@@ -4813,14 +4834,16 @@ function doesJobHavePublicRank(jobIndex) {
 
 function updateJobPickupLabelData(jobId) {
 	for (let j in serverData.jobs[jobId].locations) {
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.id", jobId, false);
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.name", serverData.jobs[jobId].name, true);
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.jobType", jobId, true);
-		setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.publicRank", doesJobHavePublicRank(jobId), true);
-		setElementOnAllDimensions(serverData.jobs[jobId].locations[j].pickup, false);
-		setElementDimension(serverData.jobs[jobId].locations[j].pickup, serverData.jobs[jobId].locations[j].dimension);
+		if (serverData.jobs[jobId].locations[j].pickup != null) {
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.type", V_PICKUP_JOB, false);
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.owner.id", jobId, false);
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.type", V_LABEL_JOB, true);
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.name", serverData.jobs[jobId].name, true);
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.jobType", jobId, true);
+			setEntityData(serverData.jobs[jobId].locations[j].pickup, "v.rp.label.publicRank", doesJobHavePublicRank(jobId), true);
+			setElementOnAllDimensions(serverData.jobs[jobId].locations[j].pickup, false);
+			setElementDimension(serverData.jobs[jobId].locations[j].pickup, serverData.jobs[jobId].locations[j].dimension);
+		}
 	}
 }
 
@@ -4829,9 +4852,10 @@ function updateJobPickupLabelData(jobId) {
 function createElementForJobRouteLocation(client, jobIndex, jobRouteIndex, jobRouteLocationIndex) {
 	let tempJobRouteLocationData = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex);
 
+	let modelIndex = -1;
 	switch (tempJobRouteLocationData.type) {
 		case V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE:
-			let modelIndex = getRandomVehicleModel();
+			modelIndex = getRandomVehicleModel();
 			let vehicle = createGameVehicle(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
 			if (vehicle != null) {
 				setElementDimension(vehicle, tempJobRouteLocationData.dimension);
@@ -4839,10 +4863,38 @@ function createElementForJobRouteLocation(client, jobIndex, jobRouteIndex, jobRo
 
 				setVehicleEngineState(vehicle, false);
 				setVehicleBurning(vehicle, true);
-
+				getPlayerData(client).jobRouteElement = vehicle;
 			}
+			break;
+
+		case V_JOB_ROUTE_LOC_TYPE_PASSENGER:
+			modelIndex = getRandomSkin();
+			let passenger = createGamePed(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
+			if (passenger != null) {
+				setElementDimension(passenger, tempJobRouteLocationData.dimension);
+				setElementOnAllDimensions(passenger, false);
+				getPlayerData(client).jobRouteElement = passenger;
+			}
+			break;
+
+		case V_JOB_ROUTE_LOC_TYPE_INURED_PED:
+			modelIndex = getRandomSkin();
+			let ped = createGamePed(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
+			if (ped != null) {
+				setElementDimension(ped, tempJobRouteLocationData.dimension);
+				setElementOnAllDimensions(ped, false);
+				setPedBleeding(ped, true);
+				getPlayerData(client).jobRouteElement = ped;
+			}
+			break;
+
+		case V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP:
+			let groundItem = createGroundItem(itemType, tempJobRouteLocationData.itemValue, tempJobRouteLocationData.position, tempJobRouteLocationData.dimension);
+			getPlayerData(client).jobRouteElement = groundItem;
 			break;
 	}
 
 	return true;
 }
+
+// ===========================================================================

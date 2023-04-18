@@ -350,7 +350,7 @@ function enterExitPropertyCommand(command, params, client) {
 	let vehicleIndex = -1;
 
 	if (vehicle != null) {
-		if (getVehicleData(vehicle) != false) {
+		if (getVehicleData(vehicle) != null) {
 			vehicleIndex = getVehicleDataIndexFromVehicle(vehicle);
 		}
 	}
@@ -592,7 +592,7 @@ function getPlayerInfoCommand(command, params, client) {
 // ===========================================================================
 
 function playerChangeAFKState(client, afkState) {
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 
@@ -608,7 +608,7 @@ function checkPlayerSpawning() {
 		if (!isConsole(clients[i])) {
 			if (getPlayerData(clients[i])) {
 				if (isPlayerLoggedIn(clients[i])) {
-					if (!getPlayerData(clients[i]).ped) {
+					if (getPlayerData(clients[i]).ped == null) {
 						if (clients[i].player != null) {
 							//getPlayerData(clients[i]).ped = clients[i].player;
 							onPlayerSpawn(clients[i].player);
@@ -623,12 +623,12 @@ function checkPlayerSpawning() {
 // ===========================================================================
 
 function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	//if (doesPlayerUseGUI(client)) {
-	//	showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
-	//} else {
-	messagePlayerNormal(client, `🛎️ ${promptMessage} `);
-	messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
-	//}
+	if (doesPlayerUseGUI(client)) {
+		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
+	} else {
+		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
+	}
 }
 
 // ===========================================================================
@@ -798,7 +798,7 @@ function lockCommand(command, params, client) {
 	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getPlayerVehicle(client);
 
-		if (!getVehicleData(vehicle)) {
+		if (getVehicleData(vehicle) != null) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
@@ -817,7 +817,7 @@ function lockCommand(command, params, client) {
 	} else {
 		let vehicle = getClosestVehicle(getPlayerPosition(client));
 		if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleLockDistance) {
-			if (!getVehicleData(vehicle)) {
+			if (getVehicleData(vehicle) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				return false;
 			}
@@ -883,7 +883,7 @@ function lightsCommand(command, params, client) {
 	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getPlayerVehicle(client);
 
-		if (!getVehicleData(vehicle)) {
+		if (getVehicleData(vehicle) == null) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
@@ -899,32 +899,6 @@ function lightsCommand(command, params, client) {
 
 		meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).lights))} the ${getVehicleName(vehicle)}'s lights`);
 	} else {
-		/*
-		let vehicle = getClosestVehicle(getPlayerPosition(client));
-		if(vehicle != false) {
-			if(getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleLockDistance) {
-				return false;
-			}
-
-			if(!getVehicleData(vehicle)) {
-				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
-				return false;
-			}
-
-			if(!doesPlayerHaveVehicleKeys(client, vehicle)) {
-				messagePlayerError(client, getLocaleString(client, "DontHaveVehicleKey"));
-				return false;
-			}
-
-			getVehicleData(vehicle).lights = !getVehicleData(vehicle).lights;
-			setVehicleLights(vehicle, getVehicleData(vehicle).lights);
-			getVehicleData(vehicle).needsSaved = true;
-
-			meActionToNearbyPlayers(client, `${toLowerCase(getLockedUnlockedFromBool(getVehicleData(vehicle).locked))} the ${getVehicleName(vehicle)}`);
-			return true;
-		}
-		*/
-
 		let businessId = getPlayerBusiness(client);
 		if (businessId != -1) {
 			if (!canPlayerManageBusiness(client, businessId)) {
@@ -1416,8 +1390,9 @@ function detainPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	meActionToNearbyPlayers(client, `throws ${getCharacterFullName(getPlayerData(client).draggingPlayer)} into the back of the ${getVehicleName(targetVehicle)}`);
+	meActionToNearbyPlayers(client, `throws ${getCharacterFullName(targetClient)} into the back of the ${getVehicleName(targetVehicle)}`);
 	stopDraggingPlayer(client, targetClient);
+	setPlayerControlState(targetClient, false);
 	warpPedIntoVehicle(targetClient, targetVehicle, getFirstFreeRearVehicleSeat(targetVehicle));
 }
 
@@ -1449,11 +1424,8 @@ function searchPlayerCommand(command, params, client) {
 
 function dragPlayerCommand(command, params, client) {
 	if (getPlayerData(client).draggingPlayer != null) {
-		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
-		setPlayerControlState(getPlayerData(client).draggingPlayer, true);
-		getPlayerData(getPlayerData(client).draggingPlayer).draggedByPlayer = null;
 		meActionToNearbyPlayers(client, `stops dragging ${getCharacterFullName(getPlayerData(client).draggingPlayer)}`);
-		getPlayerData(client).draggingPlayer = null;
+		stopDraggingPlayer(client, targetClient);
 		return false;
 	}
 
@@ -1474,9 +1446,7 @@ function dragPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(client).draggingPlayer = targetClient;
-	getPlayerData(targetClient).draggedByPlayer = client;
-	setPlayerControlState(targetClient, false);
+	startDraggingPlayer(client, targetClient);
 	meActionToNearbyPlayers(client, `starts dragging ${getCharacterFullName(getPlayerData(client).draggingPlayer)}`);
 }
 
@@ -1491,14 +1461,6 @@ function processPlayerDragging() {
 // ===========================================================================
 
 function stopDraggingPlayer(draggingPlayer, draggedPlayer) {
-	if (getPlayerData(draggedPlayer).draggedByPlayer != draggingPlayer) {
-		return false;
-	}
-
-	if (getPlayerData(draggingPlayer).draggingPlayer != draggedPlayer) {
-		return false;
-	}
-
 	for (let i in serverData.draggingPlayersCache) {
 		if (serverData.draggingPlayersCache[i].draggingPlayer == draggingPlayer && serverData.draggingPlayersCache[i].draggedPlayer == draggedPlayer) {
 			serverData.draggingPlayersCache.splice(i, 1);
@@ -1508,15 +1470,11 @@ function stopDraggingPlayer(draggingPlayer, draggedPlayer) {
 
 	getPlayerData(draggedPlayer).draggedByPlayer = null;
 	getPlayerData(draggingPlayer).draggingPlayer = null;
-
-	setPlayerControlState(draggedPlayer, true);
 }
 
 // ===========================================================================
 
 function startDraggingPlayer(draggingPlayer, draggedPlayer) {
-	setPlayerControlState(draggedPlayer, false);
-
 	getPlayerData(draggedPlayer).draggedByPlayer = draggingPlayer;
 	getPlayerData(draggingPlayer).draggingPlayer = draggedPlayer;
 

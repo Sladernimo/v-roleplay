@@ -626,6 +626,8 @@ function createGameVehicle(modelIndex, position, heading) {
 			dimension: 0
 		});
 	}
+
+	return null;
 }
 
 // ===========================================================================

@@ -240,7 +240,7 @@ function createHouseCommand(command, params, client) {
 function toggleHouseInteriorLightsCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -269,7 +269,7 @@ function setHouseDescriptionCommand(command, params, client) {
 
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -304,7 +304,7 @@ function setHouseOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -336,7 +336,7 @@ function setHouseOwnerCommand(command, params, client) {
 function removeHouseOwnerCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -369,7 +369,7 @@ function removeHouseOwnerCommand(command, params, client) {
 function setHouseClanCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -411,7 +411,7 @@ function setHouseClanCommand(command, params, client) {
 function setHouseRankCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -443,7 +443,7 @@ function setHousePickupCommand(command, params, client) {
 	let typeParam = params || "house";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -493,7 +493,7 @@ function setHouseInteriorTypeCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "None";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -559,7 +559,7 @@ function setHouseBlipCommand(command, params, client) {
 	let typeParam = params || "house";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -609,7 +609,7 @@ function setHouseBlipCommand(command, params, client) {
 function moveHouseEntranceCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -645,7 +645,7 @@ function moveHouseEntranceCommand(command, params, client) {
 function moveHouseExitCommand(command, params, client) {
 	let houseId = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -685,7 +685,7 @@ function moveHouseExitCommand(command, params, client) {
 function deleteHouseCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1048,7 +1048,7 @@ function spawnHouseEntrancePickup(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1114,7 +1114,7 @@ function spawnHouseEntranceBlip(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1167,7 +1167,7 @@ function spawnHouseExitPickup(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1221,7 +1221,7 @@ function spawnHouseExitBlip(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1308,7 +1308,7 @@ function getHouseInfoCommand(command, params, client) {
 		houseId = toInteger(params);
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1390,7 +1390,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1428,7 +1428,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1458,7 +1458,7 @@ function setHouseRentPriceCommand(command, params, client) {
 function buyHouseCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1485,12 +1485,14 @@ function buyHouseCommand(command, params, client) {
  */
 function getHouseData(houseId) {
 	if (houseId == -1) {
-		return false;
+		return null;
 	}
 
 	if (typeof serverData.houses[houseId] != "undefined") {
 		return serverData.houses[houseId];
 	}
+
+	return null;
 }
 
 // ===========================================================================

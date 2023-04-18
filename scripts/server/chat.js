@@ -28,7 +28,7 @@ function initChatScript() {
 
 function processPlayerChat(client, messageText) {
 	if (!isConsole(client)) {
-		if (!getPlayerData(client)) {
+		if (getPlayerData(client) == null) {
 			messagePlayerError(client, getLocaleString(client, "MustBeLoggedInAndSpawnedToChat"));
 			return false;
 		}

@@ -20,7 +20,7 @@ const V_BANK_ACCT_OWNER_PUBLIC = 5;				// Is a public bank account. Technically 
 
 function isPlayerAtBank(client) {
 	let businessId = getPlayerBusiness(client);
-	if (getBusinessData(businessId) != false) {
+	if (getBusinessData(businessId) != null) {
 		if (getBusinessData(businessId).type == V_BIZ_TYPE_BANK) {
 			return true;
 		}

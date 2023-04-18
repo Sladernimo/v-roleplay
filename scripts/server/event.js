@@ -145,7 +145,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 		let client = getClientFromPlayerElement(ped);
 		getPlayerData(client).pedState = V_PEDSTATE_ENTERINGVEHICLE;
 
-		if (!getVehicleData(vehicle)) {
+		if (getVehicleData(vehicle) == null) {
 			return false;
 		}
 
@@ -164,7 +164,7 @@ function onPedEnteringVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle) {
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		return false;
 	}
 
@@ -321,7 +321,7 @@ function onPlayerSpawn(client) {
 
 	stopRadioStreamForPlayer(client);
 
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)}'s player data is invalid. Kicking them from server.`);
 		getPlayerData(targetClient).customDisconnectReason = "Desync";
 		disconnectPlayer(client);
@@ -537,7 +537,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Ped ${ped.id} exited vehicle ${vehicle.id} from seat ${seat}!`);
 
-	if (getVehicleData(vehicle) == false) {
+	if (getVehicleData(vehicle) == null) {
 		return false;
 	}
 
@@ -554,7 +554,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 			stopRadioStreamForPlayer(client);
 
-			if (!getVehicleData(vehicle)) {
+			if (getVehicleData(vehicle) == null) {
 				return false;
 			}
 
@@ -598,7 +598,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				return false;
 			}
 
-			if (!getVehicleData(vehicle)) {
+			if (getVehicleData(vehicle) == null) {
 				logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but vehicle data is false`);
 				return false;
 			}
@@ -701,6 +701,13 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				if (getPlayerData(client).streamingRadioStation != radioStationIndex) {
 					playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url, true, getPlayerStreamingRadioVolume(client));
 				}
+			}
+		}
+	} else {
+		let clients = getClients();
+		for (let i in clients) {
+			if (ped == getPlayerData(clients[i]).jobRouteLocationElement) {
+				playerArrivedAtJobRouteLocation(clients[i]);
 			}
 		}
 	}

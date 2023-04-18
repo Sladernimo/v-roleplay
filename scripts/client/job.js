@@ -18,6 +18,7 @@ let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
 let jobRouteLocationDimension = 0;
+let jobRouteLocationType = V_JOB_ROUTE_LOC_TYPE_NONE;
 
 let jobRouteLocationIndicatorSize = toVector2(32, 32);
 let jobRouteLocationIndicatorImagePath = "files/images/icons/objective-icon.png";
@@ -117,14 +118,6 @@ function showJobRouteLocation(position, dimension, colour) {
 
 // ===========================================================================
 
-function enteredJobRouteSphere() {
-	logToConsole(LOG_DEBUG, `[V.RP.Job] Entered job route sphere`);
-	hideJobRouteLocation();
-	tellServerPlayerArrivedAtJobRouteLocation();
-}
-
-// ===========================================================================
-
 function blinkJobRouteLocationBlip(times, position, colour) {
 	jobBlipBlinkTimes = times;
 	jobBlipBlinkTimer = setInterval(function () {
@@ -196,7 +189,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 			return false;
 		}
 
-		if (getJobData(jobId, jobLocationId) != false) {
+		if (getJobData(jobId, jobLocationId) != null) {
 			let jobData = getJobData(jobId, jobLocationId);
 			jobData.jobId = jobId;
 			jobData.jobLocationId = jobLocationId;
@@ -298,7 +291,7 @@ function getJobData(jobId, jobLocationId) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -349,11 +342,11 @@ function processJobLocationIndicatorRendering() {
 // ===========================================================================
 
 function processJobRouteLocationDistance() {
-	//if (getGame() != V_GAME_MAFIA_ONE) {
-	//	return false;
-	//}
-
 	if (jobRouteLocationEnabled == false) {
+		return false;
+	}
+
+	if (jobRouteLocationType != V_JOB_ROUTE_LOC_TYPE_CHECKPOINT) {
 		return false;
 	}
 

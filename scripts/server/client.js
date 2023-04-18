@@ -35,6 +35,7 @@ class ClientData {
 		this.afk = false;
 		this.spawned = false;
 		this.sessionId = 0;
+		this.ped = null;
 
 		// Security
 		this.passwordResetState = V_RESETPASS_STATE_NONE;
@@ -49,13 +50,14 @@ class ClientData {
 		this.jobUniform = -1;
 		this.jobRoute = -1;
 		this.jobRouteLocation = -1;
-		this.jobRouteVehicle = false;
+		this.jobRouteLocationElement = null;
+		this.jobRouteVehicle = null;
 		this.returnToJobVehicleTick = 0;
 		this.returnToJobVehicleTimer = null;
 
-		this.rentingVehicle = false;
-		this.buyingVehicle = false;
-		this.lastVehicle = false;
+		this.rentingVehicle = null;
+		this.buyingVehicle = null;
+		this.lastVehicle = null;
 
 		this.switchingCharacter = false;
 
@@ -91,7 +93,7 @@ class ClientData {
 
 		// Radio
 		this.streamingRadioStation = -1;
-		this.streamingRadioElement = false;
+		this.streamingRadioElement = null;
 
 		// Return To (when being teleported)
 		this.returnToPosition = null;
@@ -103,8 +105,8 @@ class ClientData {
 
 		// Animation
 		this.currentAnimation = -1;
-		this.currentAnimationPositionOffset = false;
-		this.currentAnimationPositionReturnTo = false;
+		this.currentAnimationPositionOffset = null;
+		this.currentAnimationPositionReturnTo = null;
 		this.animationStart = 0;
 		this.animationForced = false;
 
@@ -155,7 +157,7 @@ class ClientData {
 
 		// PayPhone
 		this.usingPayPhone = -1;
-		this.payPhoneOtherPlayer = false;
+		this.payPhoneOtherPlayer = null;
 		this.payPhoneCallStart = 0;
 		this.payPhoneInitiatedCall = false;
 
@@ -163,7 +165,6 @@ class ClientData {
 		// Position, rotation, scene, etc are in current character data
 		this.sceneSwitchRadioStation = -1;
 		this.sceneSwitchInteriorLights = true;
-
 
 		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
 	}
@@ -181,7 +182,7 @@ function initClientScript() {
 function resetClientStuff(client) {
 	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
 
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 
@@ -193,7 +194,7 @@ function resetClientStuff(client) {
 		stopWorking(client);
 	}
 
-	if (getPlayerData(client).rentingVehicle) {
+	if (getPlayerData(client).rentingVehicle != null) {
 		stopRentingVehicle(client);
 	}
 

@@ -43,7 +43,7 @@ class VehicleData {
 		this.ownerId = 0;
 		this.buyPrice = 0;
 		this.rentPrice = 0;
-		this.rentedBy = false;
+		this.rentedBy = null;
 		this.rentStart = 0;
 
 		// Position and Rotation
@@ -92,7 +92,7 @@ class VehicleData {
 		this.whenAdded = 0;
 		this.licensePlate = "";
 		this.radioFrequency = -1;
-		this.lastActiveTime = false;
+		this.lastActiveTime = getCurrentUnixTimestamp();
 		this.rank = 0;
 		this.taxExempt = false;
 
@@ -357,7 +357,7 @@ function getVehicleData(vehicle) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -457,7 +457,7 @@ function vehicleTrunkCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -494,7 +494,7 @@ function vehicleHazardLightsCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -521,7 +521,7 @@ function vehicleInteriorLightCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -531,6 +531,33 @@ function vehicleInteriorLightCommand(command, params, client) {
 	setVehicleInteriorLight(vehicle, getVehicleData(vehicle).interiorLight);
 
 	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s interior light.`);
+}
+
+// ===========================================================================
+
+function vehicleTaxiLightCommand(command, params, client) {
+	if (!isGameFeatureSupported("vehicleTaxiLight")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (!getPlayerVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	if (getVehicleData(vehicle) == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	getVehicleData(vehicle).taxiLight = !getVehicleData(vehicle).taxiLight;
+	getVehicleData(vehicle).needsSaved = true;
+	setVehicleTaxiLight(vehicle, getVehicleData(vehicle).taxiLight);
+
+	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s taxi light.`);
 }
 
 // ===========================================================================
@@ -578,7 +605,7 @@ function vehicleEngineCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -609,7 +636,7 @@ function vehicleSirenCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -653,7 +680,7 @@ function vehicleAdminColourCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -685,7 +712,7 @@ function vehicleAdminRepairCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		logToConsole(LOG_DEBUG, `${getPlayerDisplayForConsole(client)} could not repair their ${getVehicleName(vehicle)} vehicle. Not a server vehicle.`);
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
@@ -708,7 +735,7 @@ function vehicleAdminLiveryCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -741,7 +768,7 @@ function buyVehicleCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -783,7 +810,7 @@ function rentVehicleCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -793,13 +820,13 @@ function rentVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerData(client).rentingVehicle) {
+	if (getPlayerData(client).rentingVehicle != null) {
 		messagePlayerAlert(client, getLocaleString(client, "StoppedRentingVehicle"));
 		stopRentingVehicle(client);
 		return false;
 	}
 
-	if (getVehicleData(vehicle).rentedBy != false) {
+	if (getVehicleData(vehicle).rentedBy != null) {
 		if (getVehicleData(vehicle).rentedBy != client) {
 			messagePlayerAlert(client, getLocaleString(client, "VehicleAlreadyRentedByOther"));
 			return false;
@@ -841,7 +868,7 @@ function enterVehicleAsPassengerCommand(command, params, client) {
 // ===========================================================================
 
 function stopRentingVehicleCommand(command, params, client) {
-	if (!getPlayerData(client).rentingVehicle) {
+	if (getPlayerData(client).rentingVehicle == null) {
 		messagePlayerError(client, getLocaleString(client, "NotRentingAVehicle"));
 		return false;
 	}
@@ -947,7 +974,7 @@ function setVehicleJobCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -994,7 +1021,7 @@ function setVehicleRankCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let level = toInteger(params);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1021,7 +1048,7 @@ function setVehicleClanCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let clanId = getPlayerClan(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1056,7 +1083,7 @@ function setVehicleBusinessCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client));
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1091,7 +1118,7 @@ function setVehicleOwnerCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let targetClient = getPlayerFromParams(params);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1119,7 +1146,7 @@ function setVehiclePublicCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1142,7 +1169,7 @@ function setVehicleRentPriceCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1172,7 +1199,7 @@ function setVehicleBuyPriceCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1203,7 +1230,7 @@ function removeVehicleOwnerCommand(command, params, client) {
 	let vehicle = getPlayerVehicle(client);
 	let targetClient = getPlayerFromParams(params);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1236,7 +1263,7 @@ function getVehicleInfoCommand(command, params, client) {
 		vehicle = getPlayerVehicle(client);
 	}
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1256,7 +1283,7 @@ function getLastVehicleInfoCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -1273,6 +1300,11 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
+
+	if (getVehicleData(vehicle) == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
 
 	getVehicleData(vehicle).spawnLocked = !getVehicleData(vehicle).spawnLocked;
 	if (getVehicleData(vehicle).spawnLocked) {
@@ -1431,8 +1463,8 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 function stopRentingVehicle(client) {
 	serverData.rentingVehicleCache.splice(serverData.rentingVehicleCache.indexOf(client), 1);
 	let vehicle = getPlayerData(client).rentingVehicle;
-	getPlayerData(client).rentingVehicle = false;
-	getVehicleData(vehicle).rentedBy = false;
+	getPlayerData(client).rentingVehicle = null;
+	getVehicleData(vehicle).rentedBy = null;
 	removeAllOccupantsFromVehicle(vehicle);
 	setTimeout(function () {
 		respawnVehicle(vehicle);
@@ -1601,9 +1633,11 @@ function isVehicleOwnedByJob(vehicle, jobId) {
 
 function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, price, ownerType, dealershipId, interior = 0, dimension = 0) {
 	let vehicle = createGameVehicle(modelIndex, spawnPosition, spawnRotation);
-	if (!vehicle) {
+
+	if (vehicle == null) {
 		return false;
 	}
+
 	setVehicleHeading(vehicle, spawnRotation);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
@@ -1638,6 +1672,11 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 
 function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
 	let vehicle = createGameVehicle(modelIndex, position, heading);
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	setVehicleHeading(vehicle, heading);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
@@ -1670,6 +1709,11 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 
 function createPermanentVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
 	let vehicle = createGameVehicle(modelIndex, position, heading);
+
+	if (vehicle == null) {
+		return false;
+	}
+
 	setVehicleHeading(vehicle, heading);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
@@ -1725,22 +1769,22 @@ function checkVehiclePurchasing(client) {
 		return false;
 	}
 
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
-	if (!getPlayerData(client).buyingVehicle) {
+	if (getPlayerData(client).buyingVehicle == null) {
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (!isPlayerInAnyVehicle(client)) {
-		if (getPlayerData(client).buyingVehicle != false) {
+		if (getPlayerData(client).buyingVehicle != null) {
 			serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "DealershipPurchaseExitedVehicle"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
-			getPlayerData(client).buyingVehicle = false;
+			getPlayerData(client).buyingVehicle = null;
 			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		}
 		return false;
@@ -1751,7 +1795,7 @@ function checkVehiclePurchasing(client) {
 			serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
 			respawnVehicle(getPlayerData(client).buyingVehicle);
-			getPlayerData(client).buyingVehicle = false;
+			getPlayerData(client).buyingVehicle = null;
 			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 			return false;
 		}
@@ -1767,7 +1811,7 @@ function checkVehiclePurchasing(client) {
 		getVehicleData(getPlayerData(client).buyingVehicle).buyPrice = 0;
 		getVehicleData(getPlayerData(client).buyingVehicle).rentPrice = 0;
 		getVehicleData(getPlayerData(client).buyingVehicle).spawnLocked = false;
-		getPlayerData(client).buyingVehicle = false;
+		getPlayerData(client).buyingVehicle = null;
 		messagePlayerSuccess(client, getLocaleString(client, "VehiclePurchaseComplete"));
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return true;

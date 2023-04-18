@@ -585,7 +585,7 @@ function gotoBusinessCommand(command, params, client) {
 
 	let businessId = getBusinessFromParams(params);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -625,7 +625,7 @@ function gotoPayPhoneCommand(command, params, client) {
 
 	let payPhoneIndex = getPayPhoneFromParams(params);
 
-	if (!getPayPhoneData(payPhoneIndex)) {
+	if (getPayPhoneData(payPhoneIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -705,7 +705,7 @@ function gotoHouseCommand(command, params, client) {
 
 	let houseId = getHouseFromParams(params)
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -745,7 +745,7 @@ function gotoJobLocationCommand(command, params, client) {
 
 	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client)).job;
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -1921,21 +1921,6 @@ function forcePlayerFightStyleCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let fightStyleId = getFightStyleFromParams(getParam(params, " ", 2));
 
-	//if(!targetClient) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!getPlayerData(targetClient)) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!isPlayerSpawned(targetClient)) {
-	//	messagePlayerError(client, `That player isn't spawned`);
-	//	return false;
-	//}
-
 	if (!fightStyleId) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
 		messagePlayerError(client, `Fight styles: ${gameData.fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
@@ -2031,7 +2016,7 @@ function addAccountStaffNoteCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let noteMessage = params.split(" ").slice(1).join(" ");
 
-	if (!getPlayerData(targetClient)) {
+	if (getPlayerData(targetClient) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -2070,10 +2055,9 @@ function showAccountStaffNotesCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let noteMessage = params.split(" ").slice(1).join(" ");
+	let targetClient = getPlayerFromParams(params);
 
-	if (!getPlayerData(targetClient)) {
+	if (getPlayerData(targetClient) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}

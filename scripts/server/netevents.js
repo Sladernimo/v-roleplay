@@ -675,7 +675,7 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 		return false;
 	}
 
-	if (!getPlayerData(damagerEntity) || !getPlayerData(client)) {
+	if (getPlayerData(damagerEntity) == null || getPlayerData(client) == null) {
 		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager's client data is INVALID`);
 		return false;
 	}
@@ -1016,7 +1016,7 @@ function stopRadioStreamForPlayer(client) {
 
 // ===========================================================================
 
-function setPlayerStreamingRadioVolume(client, volumeLevel, elementId = false) {
+function setPlayerStreamingRadioVolume(client, volumeLevel, elementId = -1) {
 	getPlayerData(client).accountData.streamingRadioVolume = volumeLevel;
 	getPlayerData(client).streamingRadioElement = elementId;
 	sendNetworkEventToPlayer("v.rp.radioVolume", client, volumeLevel, elementId);

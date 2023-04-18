@@ -610,7 +610,7 @@ function isMeleeWeapon(weaponId, gameId = getGame()) {
 // ===========================================================================
 
 function getPlayerLastVehicle(client) {
-	return (getPlayerData(client).lastVehicle != null) ? getPlayerData(client).lastVehicle : false;
+	return getPlayerData(client).lastVehicle != null;
 }
 
 // ===========================================================================
@@ -656,8 +656,9 @@ function setVehicleLocked(vehicle, locked) {
 
 // ===========================================================================
 
-function setVehicleSiren(vehicle, siren) {
-	vehicle.siren = siren;
+function setVehicleSiren(vehicle, state) {
+	setEntityData(vehicle, "v.rp.siren", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.siren", null, vehicle.id, state);
 }
 
 // ===========================================================================
@@ -702,6 +703,28 @@ function setVehicleInteriorLight(vehicle, state) {
 
 	setEntityData(vehicle, "v.rp.interiorLight", state, true);
 	sendNetworkEventToPlayer("v.rp.veh.interiorLight", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleTaxiLight(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleTaxiLight")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.taxiLight", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.taxiLight", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleAlarm(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleAlarm")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.vehAlarm", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.alarm", null, vehicle.id, state);
 }
 
 // ===========================================================================
@@ -755,6 +778,8 @@ function createGameVehicle(modelIndex, position, heading, toClient = null) {
 	if (isGameFeatureSupported("serverElements")) {
 		return game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, heading);
 	}
+
+	return null;
 }
 
 // ===========================================================================
@@ -1660,6 +1685,17 @@ function getMultiplayerMod() {
 
 function isGTAIV() {
 	return (getGame() == V_GAME_GTA_IV);
+}
+
+// ===========================================================================
+
+function setPedBleeding(ped, state) {
+	if (!isGameFeatureSupported("pedBleeding")) {
+		return false;
+	}
+
+	setEntityData(ped, "v.rp.bleeding", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.bleeding", null, ped.id, state);
 }
 
 // ===========================================================================

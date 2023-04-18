@@ -140,7 +140,7 @@ function gpsCommand(command, params, client) {
 			return false;
 		}
 
-		if (!getBusinessData(businessId)) {
+		if (getBusinessData(businessId) == null) {
 			messagePlayerError(client, getLocaleString(client, "NoBusinessWithItemType"));
 			return false;
 		}

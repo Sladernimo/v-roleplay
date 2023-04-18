@@ -130,7 +130,7 @@ function receivePayPhoneStateFromServer(payPhoneId, state) {
 	logToConsole(LOG_DEBUG, `[V.RP.PayPhone] Received payphone ${payPhoneId} state (${state}) from server`);
 
 	if (payPhoneId != -1) {
-		if (getPayPhoneData(payPhoneId) == false) {
+		if (getPayPhoneData(payPhoneId) == null) {
 			return false;
 		}
 

@@ -1489,7 +1489,7 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_ROPE: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
+			if (getPlayerData(closestPlayer) == null) {
 				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
@@ -1522,7 +1522,7 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_HANDCUFF: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
+			if (getPlayerData(closestPlayer) == null) {
 				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
@@ -1743,7 +1743,7 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_HEALTH: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
+			if (getPlayerData(closestPlayer) == null) {
 				messagePlayerError(client, "There isn't anyone close enough to heal!");
 				return false;
 			}
@@ -2264,7 +2264,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_PLAYER:
 			ownerTypeString = "Player";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				switchPlayerActiveHotBarSlot(owner, -1);
 				getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
 				updatePlayerHotBar(owner);
@@ -2274,7 +2274,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_JOB:
 			ownerTypeString = "Player (Job Item)";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				if (isPlayerWorking(owner)) {
 					switchPlayerActiveHotBarSlot(owner, -1);
 					getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
@@ -2286,7 +2286,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_TEMPLOCKER:
 			ownerTypeString = "Job Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				getPlayerData(owner).tempLockerCache.splice(getPlayerData(owner).tempLockerCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2294,7 +2294,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_LOCKER:
 			ownerTypeString = "Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				getPlayerData(owner).lockerCache.splice(getPlayerData(owner).lockerCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2302,7 +2302,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_VEHTRUNK:
 			ownerTypeString = "Vehicle Trunk";
 			owner = getVehicleFromDatabaseId(getItemData(itemId).ownerId)
-			if (getVehicleData(owner) != false) {
+			if (getVehicleData(owner) != null) {
 				getVehicleDataIndex(getItemData(itemId).ownerId).trunkItemCache.splice(getVehicleData(owner).trunkItemCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2310,7 +2310,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_BIZFLOOR:
 			ownerTypeString = "Business Floor";
 			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getBusinessData(owner) != false) {
+			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).floorItemCache.splice(getBusinessData(owner).floorItemCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2318,7 +2318,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_BIZSTORAGE:
 			ownerTypeString = "Business Storage";
 			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getBusinessData(owner) != false) {
+			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).storageItemCache.splice(getBusinessData(owner).storageItemCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2326,7 +2326,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 		case V_ITEM_OWNER_HOUSE:
 			ownerTypeString = "House";
 			owner = getHouseIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getHouseData(owner) != false) {
+			if (getHouseData(owner) != null) {
 				getHouseData(owner).itemCache.splice(getHouseData(owner).itemCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2350,7 +2350,7 @@ function getBestNewOwnerToPutItem(client) {
 
 	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getClosestVehicle(position);
-		if (getVehicleData(vehicle) != false && isPlayerInFrontVehicleSeat(client)) {
+		if (getVehicleData(vehicle) != null && isPlayerInFrontVehicleSeat(client)) {
 			return [V_ITEM_OWNER_VEHDASH, vehicle];
 		}
 	}
@@ -2364,7 +2364,7 @@ function getBestNewOwnerToPutItem(client) {
 
 	let possibleVehicle = getClosestVehicle(position);
 	if (possibleVehicle != false) {
-		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
+		if (getVehicleData(possibleVehicle) != null && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
 			return [V_ITEM_OWNER_VEHTRUNK, possibleVehicle];
 		}
 	}
@@ -2397,7 +2397,7 @@ function getBestItemToTake(client, slot) {
 
 	if (isPlayerInAnyVehicle(client)) {
 		let possibleVehicle = getPlayerVehicle(client);
-		if (getVehicleData(possibleVehicle)) {
+		if (getVehicleData(possibleVehicle) != null) {
 			if (isPlayerInFrontVehicleSeat(client)) {
 				if (typeof getVehicleData(possibleVehicle).dashItemCache[slot] != "undefined") {
 					itemId = getVehicleData(possibleVehicle).dashItemCache[slot];
@@ -2418,7 +2418,7 @@ function getBestItemToTake(client, slot) {
 	}
 
 	let possibleVehicle = getClosestVehicle(position);
-	if (getVehicleData(possibleVehicle) != false) {
+	if (getVehicleData(possibleVehicle) != null) {
 		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
 			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
 				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
@@ -2518,7 +2518,7 @@ function listOtherPlayerInventoryCommand(command, params, client) {
 function listVehicleTrunkInventoryCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -2563,7 +2563,7 @@ function listVehicleDashInventoryCommand(command, params, client) {
 
 	let vehicle = getPlayerVehicle(client);
 
-	if (!getVehicleData(vehicle)) {
+	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 		return false;
 	}
@@ -2590,7 +2590,7 @@ function listVehicleDashInventoryCommand(command, params, client) {
 function listBusinessStorageInventoryCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2617,7 +2617,7 @@ function listBusinessStorageInventoryCommand(command, params, client) {
 function listBusinessFloorInventoryCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2644,7 +2644,7 @@ function listBusinessFloorInventoryCommand(command, params, client) {
 function listHouseInventoryCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}

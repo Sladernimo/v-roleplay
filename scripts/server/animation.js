@@ -69,8 +69,8 @@ function stopPlayerAnimationCommand(command, params, client) {
 	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
-	getPlayerData(client).currentAnimationPositionOffset = false;
-	getPlayerData(client).currentAnimationPositionReturnTo = false;
+	getPlayerData(client).currentAnimationPositionOffset = null;
+	getPlayerData(client).currentAnimationPositionReturnTo = null;
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 
@@ -141,8 +141,8 @@ function makePlayerStopAnimation(client) {
 	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
-	getPlayerData(client).currentAnimationPositionOffset = false;
-	getPlayerData(client).currentAnimationPositionReturnTo = false;
+	getPlayerData(client).currentAnimationPositionOffset = null;
+	getPlayerData(client).currentAnimationPositionReturnTo = null;
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 }

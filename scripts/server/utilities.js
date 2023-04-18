@@ -208,7 +208,7 @@ function getPlayerNameForNameTag(client) {
 // ===========================================================================
 
 function isPlayerSpawned(client) {
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 	return getPlayerData(client).spawned;
@@ -392,7 +392,7 @@ function getClientFromSyncerId(syncerId) {
 function clearTemporaryVehicles() {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for (let i in vehicles) {
-		if (!getVehicleData(vehicles[i])) {
+		if (getVehicleData(vehicles[i]) == null) {
 			let occupants = vehicles[i].getOccupants();
 			for (let j in occupants) {
 				destroyGameElement(occupants[j]);

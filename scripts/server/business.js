@@ -350,7 +350,7 @@ function createBusinessLocationCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -415,7 +415,7 @@ function deleteBusinessCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -457,7 +457,7 @@ function setBusinessNameCommand(command, params, client) {
 
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -500,7 +500,7 @@ function setBusinessOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -538,12 +538,12 @@ function setBusinessJobCommand(command, params, client) {
 	let jobId = getJobFromParams(params);
 	let businessId = getPlayerBusiness(client);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -575,7 +575,7 @@ function setBusinessJobCommand(command, params, client) {
 function setBusinessClanCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -620,7 +620,7 @@ function setBusinessClanCommand(command, params, client) {
 function setBusinessRankCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -668,7 +668,7 @@ function setBusinessRankCommand(command, params, client) {
 
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -728,12 +728,12 @@ function setBusinessJobCommand(command, params, client) {
 		jobId = getJobIdFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -764,7 +764,7 @@ function setBusinessPublicCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -795,7 +795,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -822,7 +822,7 @@ function removeBusinessOwnerCommand(command, params, client) {
 function toggleBusinessInteriorLightsCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -854,7 +854,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 	let entranceFee = toInteger(getParam(params, " ", 1)) || 0;
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -885,7 +885,7 @@ function setBusinessEntranceFeeCommand(command, params, client) {
 function setBusinessPaintBallCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -916,7 +916,7 @@ function setBusinessPaintBallCommand(command, params, client) {
 function setBusinessBankCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -952,7 +952,7 @@ function getBusinessInfoCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1036,7 +1036,7 @@ function getBusinessFloorItemsCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1062,7 +1062,7 @@ function getBusinessStorageItemsCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1090,7 +1090,7 @@ function setBusinessPickupCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1135,7 +1135,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1213,7 +1213,7 @@ function addBusinessPropertyTemplateEntities(command, params, client) {
 	let propertyTemplateParam = getParam(params, " ", 1) || "business";
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1272,7 +1272,7 @@ function setBusinessBlipCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1317,7 +1317,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "business";
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1370,7 +1370,7 @@ function giveDefaultItemsToBusinessCommand(command, params, client) {
 function setBusinessDealershipCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1396,7 +1396,7 @@ function setBusinessDealershipCommand(command, params, client) {
 function deleteBusinessFloorItemsCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1426,7 +1426,7 @@ function deleteBusinessFloorItemsCommand(command, params, client) {
 function deleteBusinessStorageItemsCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1462,7 +1462,7 @@ function withdrawFromBusinessCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1505,7 +1505,7 @@ function setBusinessBuyPriceCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1547,7 +1547,7 @@ function depositIntoBusinessCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1609,7 +1609,7 @@ function orderItemForBusinessCommand(command, params, client) {
 
 	logToConsole(LOG_DEBUG, `[V.RP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")}`);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1664,7 +1664,7 @@ function viewBusinessTillAmountCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1691,7 +1691,7 @@ function viewBusinessTillAmountCommand(command, params, client) {
 function buyBusinessCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1728,7 +1728,7 @@ function moveBusinessEntranceCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -1769,7 +1769,7 @@ function moveBusinessExitCommand(command, params, client) {
 		businessId = getBusinessFromParams(params);
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2435,13 +2435,14 @@ function getBusinessOwnerTypeText(ownerType) {
  */
 function getBusinessData(businessId) {
 	if (businessId == -1) {
-		return false;
+		return null;
 	}
 
-	if (typeof serverData.businesses[businessId] != null) {
+	if (typeof serverData.businesses[businessId] != "undefined") {
 		return serverData.businesses[businessId];
 	}
-	return false;
+
+	return null;
 }
 
 // ===========================================================================
@@ -2641,7 +2642,7 @@ function buyFromBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2749,7 +2750,7 @@ function buyFromBusinessCommand(command, params, client) {
 function setBusinessItemSellPriceCommand(command, params, client) {
 	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2792,7 +2793,7 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 function storeItemInBusinessStorageCommand(command, params, client) {
 	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2836,7 +2837,7 @@ function storeItemInBusinessStorageCommand(command, params, client) {
 function stockItemOnBusinessFloorCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}

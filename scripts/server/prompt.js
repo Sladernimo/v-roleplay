@@ -136,7 +136,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (!getVehicleData(getPlayerVehicle(client))) {
+			if (getVehicleData(getPlayerVehicle(client)) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				return false;
 			}
@@ -215,7 +215,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (!getVehicleData(getPlayerVehicle(client))) {
+			if (getVehicleData(getPlayerVehicle(client)) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				return false;
 			}

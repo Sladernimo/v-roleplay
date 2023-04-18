@@ -401,7 +401,7 @@ function setPropertyJobCommand(command, params, client) {
 	let jobId = getJobFromParams(params);
 	let propertyIndex = getPlayerProperty(client);
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -558,7 +558,7 @@ function setPropertyJobCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}

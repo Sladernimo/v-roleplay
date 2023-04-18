@@ -85,7 +85,7 @@ function playStreamingRadioCommand(command, params, client) {
 	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getPlayerVehicle(client);
 
-		if (!getVehicleData(vehicle)) {
+		if (getVehicleData(vehicle) == null) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
@@ -224,7 +224,7 @@ function setStreamingRadioVolumeCommand(command, params, client) {
 // ===========================================================================
 
 function getPlayerStreamingRadioVolume(client) {
-	if (!getPlayerData(client) || !isPlayerLoggedIn(client) || !isPlayerSpawned(client)) {
+	if (getPlayerData(client) == null || !isPlayerLoggedIn(client) || !isPlayerSpawned(client)) {
 		return 20;
 	}
 	return getPlayerData(client).accountData.streamingRadioVolume;
@@ -317,13 +317,17 @@ function getRadioStationIdFromDatabaseId(databaseId) {
 
 // ===========================================================================
 
+/**
+ * @param {Number} radioStationIndex - The data index of the radio station
+ * @return {RadioStationData} The radio station's data (class instance)
+ */
 function getRadioStationData(radioStationIndex) {
 	if (radioStationIndex == -1) {
-		return false;
+		return null;
 	}
 
 	if (typeof serverData.radioStations[radioStationIndex] == "undefined") {
-		return false;
+		return null;
 	}
 
 	return serverData.radioStations[radioStationIndex];
