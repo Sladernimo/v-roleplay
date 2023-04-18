@@ -409,21 +409,21 @@ function syncCivilianProperties(civilian) {
 		}
 	}
 
-	if (getGame() == V_GAME_GTA_SA) {
+	if (isGameFeatureSupported("pedFightStyle")) {
 		if (doesEntityDataExist(civilian, "v.rp.fightStyle")) {
 			let fightStyle = getEntityData(civilian, "v.rp.fightStyle");
 			civilian.setFightStyle(fightStyle[0], fightStyle[1]);
 		}
 	}
 
-	if (getGame() == V_GAME_GTA_SA) {
+	if (isGameFeatureSupported("pedWalkStyle")) {
 		if (doesEntityDataExist(civilian, "v.rp.walkStyle")) {
 			let walkStyle = getEntityData(civilian, "v.rp.walkStyle");
 			civilian.walkStyle = walkStyle;
 		}
 	}
 
-	if (getGame() == V_GAME_GTA_IV) {
+	if (isGameFeatureSupported("pedBodyPart")) {
 		if (doesEntityDataExist(civilian, "v.rp.bodyPropHair")) {
 			let bodyPropHair = getEntityData(civilian, "v.rp.bodyPropHair");
 			civilian.changeBodyProp(0, bodyPropHair[0], bodyPropHair[1]);
@@ -484,6 +484,11 @@ function syncCivilianProperties(civilian) {
 		let animationSlot = getEntityData(civilian, "v.rp.anim");
 		let animationData = getAnimationData(animationSlot);
 		civilian.addAnimation(animationData.groupId, animationData.animId);
+	}
+
+	if (doesEntityDataExist(civilian, "v.rp.bleeding")) {
+		let bleedingState = getEntityData(civilian, "v.rp.bleeding");
+		civilian.bleeding = bleedingState;
 	}
 }
 
@@ -939,7 +944,7 @@ function setLocalPlayerPedPartsAndProps(parts, props) {
 function setVehicleHazardLights(vehicleId, state) {
 	let vehicle = getElementFromId(vehicleId);
 
-	if (vehicle != false) {
+	if (vehicle != null) {
 		natives.setVehHazardlights(vehicle, state);
 	}
 }
@@ -949,8 +954,53 @@ function setVehicleHazardLights(vehicleId, state) {
 function setVehicleInteriorLight(vehicleId, state) {
 	let vehicle = getElementFromId(vehicleId);
 
-	if (vehicle != false) {
+	if (vehicle != null) {
 		natives.setVehInteriorlight(vehicle, state);
+	}
+}
+
+
+// ===========================================================================
+
+function setVehicleTaxiLight(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != null) {
+		natives.setTaxiLights(vehicle, state);
+	}
+}
+
+// ===========================================================================
+
+function setVehicleSiren(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != null) {
+		vehicle.siren = state;
+	}
+}
+
+// ===========================================================================
+
+function setVehicleTaxiLight(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != null) {
+		if (getGame() == V_GAME_GTA_IV) {
+			natives.setTaxiLights(vehicle, state);
+		} else if (getGame() <= V_GAME_GTA_VC) {
+
+		}
+	}
+}
+
+// ===========================================================================
+
+function setPedBleeding(pedId, state) {
+	let ped = getElementFromId(pedId);
+
+	if (ped != null) {
+		ped.bleeding = state;
 	}
 }
 
