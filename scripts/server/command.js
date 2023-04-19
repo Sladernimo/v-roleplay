@@ -464,6 +464,7 @@ function loadCommands() {
 			new CommandData("jobroutevehcolours", setJobRouteVehicleColoursCommand, "<colour 1> <colour 2>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutedelays", setJobRouteAllLocationDelaysCommand, "<time in milliseconds>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutelocdelay", setJobRouteNextLocationDelayCommand, "<time in milliseconds>", getStaffFlagValue("ManageJobs"), true, false),
+			new CommandData("jobrouteloctype", setJobRouteNextLocationTypeCommand, "<type name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobcolour", setJobColourCommand, "<job id/name> <red> <green> <blue>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobblip", setJobBlipCommand, "<job id/name> <blip id/name>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobpickup", setJobPickupCommand, "<job id/name> <pickup id/name>", getStaffFlagValue("ManageJobs"), true, false),
