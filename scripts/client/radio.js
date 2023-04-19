@@ -7,6 +7,12 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let streamingRadio = null;
+let streamingRadioVolume = 50;
+let streamingRadioElement = null;
+
+// ===========================================================================
+
 function playStreamingRadio(url, loop, volume, element = false) {
 	if (streamingRadio != null) {
 		streamingRadio.stop();

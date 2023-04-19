@@ -13,6 +13,9 @@ let keyBindDelayTime = 500;
 let keyBindShortHoldDuration = 500;
 let keyBindLongHoldDuration = 1500;
 
+let enterPropertyKey = null;
+let disableGUIKey = null;
+
 // ===========================================================================
 
 function initKeyBindScript() {

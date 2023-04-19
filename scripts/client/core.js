@@ -19,14 +19,14 @@ let isSpawned = false;
 //let parkedVehiclePosition = false;
 //let parkedVehicleHeading = false;
 
-let renderHUD = true;
-let renderLabels = true;
-let renderLogo = true;
-let renderSmallGameMessage = true;
-let renderScoreBoard = true;
-let renderHotBar = true;
-let renderItemActionDelay = true;
-let renderInteriorLights = true;
+let renderHUD = false;
+let renderLabels = false;
+let renderLogo = false;
+let renderSmallGameMessage = false;
+let renderScoreBoard = false;
+let renderHotBar = false;
+let renderItemActionDelay = false;
+let renderInteriorLights = false;
 
 let logLevel = LOG_INFO | LOG_DEBUG;
 
@@ -43,44 +43,18 @@ let drunkEffectDurationTimer = null;
 
 let controlsEnabled = true;
 
-let streamingRadio = null;
-let streamingRadioVolume = 50;
-let streamingRadioElement = false;
-
-let enterPropertyKey = null;
-let disableGUIKey = getKeyIdFromParams("insert");
-
-let inAnimation = false;
-let forcedAnimation = null;
-
-let calledDeathEvent = false;
-
 let interiorLightsEnabled = true;
 let interiorLightsColour = toColour(0, 0, 0, 150);
 
 let mouseCameraEnabled = false;
 let mouseCursorEnabled = false;
 
-let currentPickup = false;
-
-let vehiclePurchaseState = V_VEHBUYSTATE_NONE;
-let vehiclePurchasing = null;
-let vehiclePurchasePosition = null;
+let currentPickup = null;
 
 let forceWantedLevel = 0;
 
-let guiSubmitKey = false;
-let guiLeftKey = false;
-let guiRightKey = false;
-let guiUpKey = false;
-let guiDownKey = false;
-
 // Pre-cache all allowed skins
 let allowedSkins = getAllowedSkins(getGame());
-
-let profanityFilterEnabled = false;
-
-let localLocaleId = 0;
 
 /**
  * @typedef {Object} ServerData
@@ -110,9 +84,6 @@ let currencyString = "${AMOUNT}";
 
 let mapChangeWarning = false;
 let mapChangeToNight = false;
-
-let cruiseControlEnabled = false;
-let cruiseControlSpeed = 0.0;
 
 let myToken = "";
 

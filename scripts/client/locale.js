@@ -7,6 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let localLocaleId = 0;
+
+// ===========================================================================
+
 function getLocaleString(stringName, ...args) {
 	if (typeof serverData.localeStrings[localLocaleId][stringName] == undefined) {
 		return "";

@@ -7,6 +7,11 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let inAnimation = false;
+let forcedAnimation = null;
+
+// ===========================================================================
+
 function initAnimationScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.Animation]: Initializing animation script ...");
 	logToConsole(LOG_DEBUG, "[V.RP.Animation]: Animation script initialized!");

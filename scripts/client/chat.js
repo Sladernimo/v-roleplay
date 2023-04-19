@@ -11,6 +11,7 @@
 
 let chatTimeStampsEnabled = false;
 let chatEmojiEnabled = false;
+let profanityFilterEnabled = false;
 
 let chatBoxHistory = [];
 let bottomMessageIndex = 0;

@@ -29,6 +29,15 @@ class VehicleData {
 
 // ===========================================================================
 
+let vehiclePurchaseState = V_VEHBUYSTATE_NONE;
+let vehiclePurchasing = null;
+let vehiclePurchasePosition = null;
+
+let cruiseControlEnabled = false;
+let cruiseControlSpeed = 0.0;
+
+// ===========================================================================
+
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
 

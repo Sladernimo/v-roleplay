@@ -7,6 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let calledDeathEvent = false;
+
+// ===========================================================================
+
 function initEventScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.Event]: Initializing event script ...");
 	addAllEventHandlers();

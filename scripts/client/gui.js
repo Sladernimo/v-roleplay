@@ -27,9 +27,13 @@ let windowTitleAlpha = 180;
 let buttonAlpha = 180;
 let textInputAlpha = 180;
 
-let guiReady = false;
+let guiSubmitKey = false;
+let guiLeftKey = false;
+let guiRightKey = false;
+let guiUpKey = false;
+let guiDownKey = false;
 
-// ===========================================================================
+let guiReady = false;
 
 let characterData = [];
 let currentCharacter = 0;
