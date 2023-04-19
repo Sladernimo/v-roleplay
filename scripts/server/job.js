@@ -464,8 +464,14 @@ class JobBlackListData {
 // ===========================================================================
 
 class JobRouteLocationTypeData {
-	constructor(jobRouteLocationTypeId, name, animStart = "", animStop = "", inVehicle = false, nearVehicle = false, nearVehicleDistance = 5.0) {
-
+	constructor(jobRouteLocationTypeId, name, extra = {}) {
+		this.jobRouteLocationTypeId = jobRouteLocationTypeId;
+		this.name = name;
+		this.animStart = (typeof extra.animStart != "undefined") ? extra.animStart : "none";
+		this.animStop = (typeof extra.animStop != "undefined") ? extra.animStop : "none";
+		this.inVehicle = (typeof extra.inVehicle != "undefined") ? extra.inVehicle : false;
+		this.nearVehicle = (typeof extra.nearVehicle != "undefined") ? extra.nearVehicle : false;
+		this.nearVehicleDistance = (typeof extra.nearVehicleDistance != "undefined") ? extra.nearVehicleDistance : 0.0;
 	}
 };
 
@@ -479,6 +485,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_GTA_VC]: [
@@ -487,6 +497,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_GTA_SA]: [
@@ -495,6 +509,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_GTA_IV]: [
@@ -503,6 +521,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_MAFIA_ONE]: [
@@ -511,6 +533,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_MAFIA_TWO]: [
@@ -519,6 +545,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 
 	[V_GAME_MAFIA_ONE_DE]: [
@@ -527,6 +557,10 @@ let jobRouteLocationTypes = {
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN, "GarbagePickup"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE, "BurningVehicle"),
 		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_INJURED_PED, "InjuredPed"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP, "PassengerPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF, "PassengerDropoff"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP, "ItemPickup"),
+		new JobRouteLocationTypeData(V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF, "ItemDropoff"),
 	],
 }
 
@@ -1003,7 +1037,7 @@ function startWorkingCommand(command, params, client) {
 
 		jobData = getJobData(getJobIdFromDatabaseId(getVehicleData(closestVehicle).ownerId));
 	} else {
-		if (getPlayerCurrentSubAccount(client).job == V_JOB_NONE) {
+		if (getPlayerCurrentSubAccount(client).jobIndex == -1) {
 			messagePlayerError(client, getLocaleString(client, "DontHaveAJob"));
 			messagePlayerInfo(client, "You can get a job by going the yellow points on the map.");
 			return false;
@@ -1597,8 +1631,8 @@ function createJob(name) {
 	tempJobData.name = name;
 	tempJobData.enabled = true;
 	tempJobData.needsSaved = true;
-	tempJobData.blipModel = gameData.blipSprites[getGame()].Job;
-	tempJobData.pickupModel = gameData.pickupModels[getGame()].Job;
+	tempJobData.blipModel = (isGameFeatureSupported("blip")) ? gameData.blipSprites[getGame()].Job : -1;
+	tempJobData.pickupModel = (isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Job : -1;
 	tempJobData.colour = toColour(255, 255, 255, 255);
 
 	serverData.jobs.push(tempJobData);
@@ -2053,9 +2087,13 @@ function setJobRouteNextLocationTypeCommand(command, params, client) {
 	let typeId = getJobRouteLocationTypeFromParams(params);
 
 	if (typeId == -1) {
-		messagePlayerError(client, `{MAINCOLOUR}${params}{ALTCOLOUR} is not a valid job route location type`);
-		let nameList = jobRouteLocationTypeNames.map((jobRouteLocationTypeName) => { return jobRouteLocationTypeName[0]; });
-		messagePlayerInfo(client, `{MAINCOLOUR}Available location types: {ALTCOLOUR}${nameList.join(", ")}{MAINCOLOUR}`);
+		messagePlayerError(client, `{ALTCOLOUR}${params}{MAINCOLOUR} is not a valid job route location type`);
+		let nameList = jobRouteLocationTypes[getGame()].map((jobRouteLocationType) => { return jobRouteLocationType[1]; });
+		let chunkedList = splitArrayIntoChunks(nameList, 10);
+		messagePlayerNormal(client, makeChatBoxSectionHeader("Job Route Location Types"));
+		for (let i in chunkedList) {
+			messagePlayerInfo(client, chunkedList[i].join(", "));
+		}
 		return false;
 	}
 
@@ -2828,8 +2866,17 @@ function createJobLocation(jobId, position, interior, dimension, whoAdded) {
 // ===========================================================================
 
 function saveJobToDatabase(jobData) {
+	if (serverConfig.devServer) {
+		return false;
+	}
+
 	if (jobData == null) {
 		// Invalid job data
+		return false;
+	}
+
+	if (jobData.databaseId == -1) {
+		// Temp job, no need to save
 		return false;
 	}
 
@@ -2883,6 +2930,11 @@ function saveJobToDatabase(jobData) {
 // ===========================================================================
 
 function saveJobRankToDatabase(jobRankData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (!jobRankData) {
 		// Invalid job route data
 		return false;
@@ -2940,6 +2992,11 @@ function saveJobRankToDatabase(jobRankData) {
  *
  */
 function saveJobRouteToDatabase(jobRouteData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (!jobRouteData) {
 		// Invalid job route data
 		return false;
@@ -3006,6 +3063,11 @@ function saveJobRouteToDatabase(jobRouteData) {
  *
  */
 function saveJobRouteLocationToDatabase(jobRouteLocationData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (!jobRouteLocationData) {
 		// Invalid job route position data
 		return false;
@@ -3070,6 +3132,11 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
  *
  */
 function saveJobLocationToDatabase(jobLocationData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (jobLocationData == null) {
 		// Invalid job location data
 		return false;
@@ -3077,6 +3144,10 @@ function saveJobLocationToDatabase(jobLocationData) {
 
 	if (!jobLocationData.needsSaved) {
 		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job location ${jobLocationData.name} (${jobLocationData.databaseId}) doesn't need saved. Skipping ...`);
+		return false;
+	}
+
+	if (jobLocationData.databaseId == -1) {
 		return false;
 	}
 
@@ -3126,6 +3197,11 @@ function saveJobLocationToDatabase(jobLocationData) {
  *
  */
 function saveJobEquipmentToDatabase(jobEquipmentData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (jobEquipmentData == null) {
 		// Invalid job equipment data
 		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment ${jobEquipmentData.index} is invalid. Skipping ...`);
@@ -3180,6 +3256,11 @@ function saveJobEquipmentToDatabase(jobEquipmentData) {
  *
  */
 function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (jobEquipmentItemData == null) {
 		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job equipment item ${jobEquipmentItemData.index} is invalid. Skipping ...`);
 		// Invalid job equipment weapon data
@@ -3233,6 +3314,11 @@ function saveJobEquipmentItemToDatabase(jobEquipmentItemData) {
  *
  */
 function saveJobUniformToDatabase(jobUniformData) {
+	if (serverConfig.devServer) {
+		// Dev server, don't save
+		return false;
+	}
+
 	if (jobUniformData == null) {
 		logToConsole(LOG_DEBUG, `[V.RP.Job]: Job uniform ${jobUniformData.index} is invalid. Skipping ...`);
 		return false;
@@ -3817,7 +3903,7 @@ function createJobRoute(routeName, closestJobLocation, whoAdded = defaultNoAccou
 
 // ===========================================================================
 
-function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAdded = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", type = V_JOB_ROUTE_LOC_TYPE_NONE) {
+function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAdded = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", typeId = V_JOB_ROUTE_LOC_TYPE_NONE) {
 	let tempJobRouteLocationData = new JobRouteLocationData(false);
 	tempJobRouteLocationData.name = routeLocationName;
 	tempJobRouteLocationData.routeId = jobRouteData.databaseId;
@@ -3828,7 +3914,7 @@ function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAd
 	tempJobRouteLocationData.stopDelay = delay;
 	tempJobRouteLocationData.arriveMessage = arriveMessage;
 	tempJobRouteLocationData.gotoMessage = gotoMessage;
-	tempJobRouteLocationData.type = type;
+	tempJobRouteLocationData.type = typeId;
 	tempJobRouteLocationData.whoAdded = whoAdded;
 	tempJobRouteLocationData.whenAdded = getCurrentUnixTimestamp();
 
@@ -4391,9 +4477,15 @@ function updateJobBlipsForPlayer(client) {
 // ===========================================================================
 
 function getJobRouteLocationTypeFromParams(params) {
-	for (let i in jobRouteLocationTypeNames) {
-		if (toLowerCase(jobRouteLocationTypeNames[i]).indexOf(toLowerCase(params)) != -1) {
-			return i;
+	if (isNaN(params)) {
+		for (let i in jobRouteLocationTypes) {
+			if (toLowerCase(jobRouteLocationTypes[i][1]).indexOf(toLowerCase(params)) != -1) {
+				return jobRouteLocationTypes[i][0];
+			}
+		}
+	} else {
+		if (typeof jobRouteLocationTypes[params] != "undefined") {
+			return jobRouteLocationTypes[params][0];
 		}
 	}
 
