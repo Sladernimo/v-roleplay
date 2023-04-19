@@ -2,3 +2,7 @@
 .git/
 *.code-workspace
 config/
+config/database.json
+config/security.json
+config/email.json
+config/discord.json
