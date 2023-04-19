@@ -3559,6 +3559,7 @@ function playerArrivedAtJobRouteLocation(client) {
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP:
+			warpPedIntoVehicle(getPlayerData(client).jobRouteLocationElement, getPlayerVehicle(client), getFirstFreeRearVehicleSeat(client));
 			getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 			showCurrentJobLocation(client);
 			showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
@@ -3567,6 +3568,7 @@ function playerArrivedAtJobRouteLocation(client) {
 		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF:
 			let ped = getPlayerData(client).jobRouteLocationElement;
 			removePedFromVehicle(ped);
+			setElementPosition(ped, getPosBehindPos(getVehiclePosition(getPlayerVehicle(client)), getVehicleHeading(getPlayerVehicle(client)), 2));
 
 			setTimeout(function () {
 				deleteGameElement(ped);
@@ -3576,9 +3578,9 @@ function playerArrivedAtJobRouteLocation(client) {
 			}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
 			break;
 
+		default:
+			break;
 	}
-
-
 }
 
 // ===========================================================================
@@ -4849,7 +4851,7 @@ function updateJobPickupLabelData(jobId) {
 
 // ===========================================================================
 
-function createElementForJobRouteLocation(client, jobIndex, jobRouteIndex, jobRouteLocationIndex) {
+function createElementForPlayerJobRouteLocation(client, jobIndex, jobRouteIndex, jobRouteLocationIndex) {
 	let tempJobRouteLocationData = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex);
 
 	let modelIndex = -1;
@@ -4889,8 +4891,13 @@ function createElementForJobRouteLocation(client, jobIndex, jobRouteIndex, jobRo
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP:
-			let groundItem = createGroundItem(itemType, tempJobRouteLocationData.itemValue, tempJobRouteLocationData.position, tempJobRouteLocationData.dimension);
-			getPlayerData(client).jobRouteElement = groundItem;
+			if (isGameFeatureSupported("object")) {
+				let groundItem = createGroundItem(itemType, tempJobRouteLocationData.itemValue, tempJobRouteLocationData.position, tempJobRouteLocationData.dimension);
+				getPlayerData(client).jobRouteElement = groundItem;
+			}
+			break;
+
+		default:
 			break;
 	}
 
