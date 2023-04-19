@@ -137,6 +137,7 @@ class ClientData {
 		this.lastJobRouteStart = 0;
 		this.draggingPlayer = null;
 		this.draggedByPlayer = null;
+		this.lastGlobalChatMessageTimeStamp = 0;
 
 		// Paintball
 		this.inPaintBall = false;

@@ -118,6 +118,7 @@ function globalOOCCommand(command, params, client) {
 	}
 
 	oocToAllPlayers(client, params);
+	markPlayerActionTipSeen(client, "UseGlobalChat");
 	return true;
 }
 
@@ -515,6 +516,18 @@ function canPlayerUseMegaphone(client) {
 function oocToAllPlayers(client, messageText) {
 	messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}(( ${messageText} ))`, getPlayerColour(client));
 	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: (( ${messageText} ))`);
+
+	// Action tip for other players
+	let clients = getClients();
+	for (let i in clients) {
+		if (clients[i] != client) {
+			if (!hasPlayerSeenActionTip(clients[i], "UseGlobalChat")) {
+				if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastGlobalChatMessageTimeStamp) <= globalConfig.globalChatActionTipCooldown) {
+					messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseGlobalChat", `{ALTCOLOUR}/o{MAINCOLOUR}`));
+				}
+			}
+		}
+	}
 }
 
 // ===========================================================================

@@ -301,6 +301,7 @@ let globalConfig = {
 	blackJackPayoutMultiplier: 1.5,
 	playerSceneSwitchVirtualWorldStart: 50000,
 	skinChangeDimensionStart: 10000,
+	globalChatActionTipCooldown: 1000 * 60 * 5,
 };
 
 // ===========================================================================
