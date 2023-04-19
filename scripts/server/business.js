@@ -1938,9 +1938,18 @@ function saveAllBusinessesToDatabase() {
  *
  */
 function saveBusinessToDatabase(businessId) {
-	let tempBusinessData = serverData.businesses[businessId];
+	if (serverConfig.devServer) {
+		return false;
+	}
+
+	let tempBusinessData = getBusinessData(businessId);
 
 	if (!tempBusinessData.needsSaved) {
+		return false;
+	}
+
+	if (tempBusinessData.databaseId == -1) {
+		// Temp business, no need to save
 		return false;
 	}
 

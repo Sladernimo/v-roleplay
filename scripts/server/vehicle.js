@@ -227,6 +227,10 @@ function saveAllVehiclesToDatabase() {
 // ===========================================================================
 
 function saveVehicleToDatabase(vehicleDataId) {
+	if (serverConfig.devServer) {
+		return false;
+	}
+
 	if (getVehicleData(vehicleDataId) == null) {
 		// Invalid vehicle data
 		return false;

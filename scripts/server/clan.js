@@ -1118,6 +1118,10 @@ function saveClanRanksToDatabase(clanId) {
 // ===========================================================================
 
 function saveClanToDatabase(clanId) {
+	if (serverConfig.devServer) {
+		return false;
+	}
+
 	let tempClanData = getClanData(clanId);
 
 	if (!tempClanData) {
@@ -1125,6 +1129,7 @@ function saveClanToDatabase(clanId) {
 	}
 
 	if (tempClanData.databaseId == -1) {
+		// Temp clan, don't save
 		return false;
 	}
 

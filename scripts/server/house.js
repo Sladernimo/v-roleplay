@@ -903,9 +903,17 @@ function saveAllHousesToDatabase() {
 // ===========================================================================
 
 function saveHouseToDatabase(houseId) {
-	let tempHouseData = serverData.houses[houseId];
+	if (serverConfig.devServer) {
+		return false;
+	}
+
+	let tempHouseData = getHouseData(houseId);
 
 	if (!tempHouseData.needsSaved) {
+		return false;
+	}
+
+	if (tempHouseData.databaseId == -1) {
 		return false;
 	}
 
