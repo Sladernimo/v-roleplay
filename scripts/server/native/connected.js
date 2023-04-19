@@ -1594,11 +1594,11 @@ function addAllEventHandlers() {
 		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		//addEventHandler("onPedEnteringVehicle", onPedEnteredVehicle);
-		//addEventHandler("onPedExitingVehicle", onPedExitedVehicle);
-		//addEventHandler("onPedDeathEx", onPlayerDeath);
-	}
+	//if (getGame() == V_GAME_MAFIA_ONE) {
+	//	addEventHandler("onPedEnteringVehicle", onPedEnteredVehicle);
+	//	addEventHandler("onPedExitingVehicle", onPedExitedVehicle);
+	//addEventHandler("onPedDeathEx", onPlayerDeath);
+	//}
 }
 
 // ===========================================================================
@@ -1630,8 +1630,15 @@ function getFirstFreeRearVehicleSeat(vehicle) {
 
 	if (occupants[2] == null) {
 		return 2;
-	} else if (occupants[3] == null) {
+	}
+
+	if (occupants[3] == null) {
 		return 3;
+	}
+
+	// By this point, no rear seats are available. Check for front seat.
+	if (occupants[1] == null) {
+		return 1;
 	}
 
 	return -1;
