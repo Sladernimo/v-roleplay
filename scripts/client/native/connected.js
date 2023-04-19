@@ -1000,7 +1000,11 @@ function setPedBleeding(pedId, state) {
 	let ped = getElementFromId(pedId);
 
 	if (ped != null) {
-		ped.bleeding = state;
+		if (getGame() <= V_GAME_GTA_VC) {
+			ped.bleeding = state;
+		} else if (getGame() == V_GAME_GTA_IV) {
+			natives.setCharBleeding(ped, state);
+		}
 	}
 }
 
