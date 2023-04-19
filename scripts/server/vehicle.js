@@ -2015,9 +2015,11 @@ function updateVehicleSavedPositions() {
 
 function updateVehicleSavedPosition(vehicleId) {
 	if (!serverData.vehicles[vehicleId].spawnLocked) {
-		serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
-		serverData.vehicles[vehicleId].spawnRotation = getVehicleHeading(serverData.vehicles[vehicleId].vehicle);
-		serverData.vehicles[vehicleId].dimension = getElementDimension(serverData.vehicles[vehicleId].vehicle);
+		if (!isVehicleUnoccupied(serverData.vehicles[vehicleId].vehicle)) {
+			serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
+			serverData.vehicles[vehicleId].spawnRotation = getVehicleHeading(serverData.vehicles[vehicleId].vehicle);
+			serverData.vehicles[vehicleId].dimension = getElementDimension(serverData.vehicles[vehicleId].vehicle);
+		}
 	}
 }
 
