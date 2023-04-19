@@ -622,26 +622,6 @@ function checkPlayerSpawning() {
 
 // ===========================================================================
 
-function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
-	} else {
-		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
-		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
-	}
-}
-
-// ===========================================================================
-
-/**
- * This is a command handler function.
- *
- * @param {string} command - The command name used by the player
- * @param {string} params - The parameters/args string used with the command by the player
- * @param {Client} client - The client/player that used the command
- * @return {bool} Whether or not the command was successful
- *
- */
 function updateServerGameTime() {
 	if (isGameFeatureSupported("time")) {
 		game.time.hour = serverConfig.hour;
@@ -1302,7 +1282,7 @@ function givePlayerMoneyCommand(command, params, client) {
 
 // ===========================================================================
 
-function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "", fade = false) {
+function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
 	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
 	if (client == null) {
 		return false;
@@ -1329,10 +1309,8 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
 	}
 
-	if (fade == true) {
-		if (isGameFeatureSupported("fadeCamera")) {
-			fadePlayerCamera(client, false, 2000);
-		}
+	if (isGameFeatureSupported("fadeCamera")) {
+		fadePlayerCamera(client, false, 2000);
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {

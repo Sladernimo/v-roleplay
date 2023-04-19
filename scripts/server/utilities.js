@@ -126,8 +126,8 @@ function getWeatherFromParams(params) {
 		}
 	} else {
 		for (let i in gameData.weather[getGame()]) {
-			if (typeof gameData.weather[getGame()][i].weatherId != "undefined") {
-				return toInteger(i);
+			if (gameData.weather[getGame()][i].weatherId == toInteger(params)) {
+				return gameData.weather[getGame()][i].weatherId;
 			}
 		}
 	}
@@ -557,11 +557,9 @@ function processPlayerSceneSwitch(client, spawn = false) {
 	}
 
 	setTimeout(function () {
-		if (spawn == false) {
-			if (isGameFeatureSupported("fadeCamera")) {
-				logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
-				fadePlayerCamera(client, true, 1000);
-			}
+		if (isGameFeatureSupported("fadeCamera")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
+			fadePlayerCamera(client, true, 1000);
 		}
 
 		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior lights ${getOnOffFromBool(getPlayerData(client).interiorLights)} for player ${getPlayerDisplayForConsole(client)}`);

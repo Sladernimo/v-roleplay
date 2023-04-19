@@ -32,6 +32,17 @@ function initPromptScript() {
 
 // ===========================================================================
 
+function showPlayerPrompt(client, promptMessage, promptTitle, yesButtonText, noButtonText) {
+	if (doesPlayerUseGUI(client)) {
+		showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText, noButtonText);
+	} else {
+		messagePlayerNormal(client, `🛎️ ${promptMessage} `);
+		messagePlayerInfo(client, getLocaleString(client, "PromptResponseTip", `{ALTCOLOUR}/yes{MAINCOLOUR}`, `{ALTCOLOUR}/no{MAINCOLOUR}`));
+	}
+}
+
+// ===========================================================================
+
 function playerPromptAnswerNo(client) {
 	if (getPlayerData(client).promptType == V_PROMPT_NONE) {
 		return false;
