@@ -552,8 +552,8 @@ function getPlayerInfoCommand(command, params, client) {
 		jobRankText = `(Rank ${jobRankData.level}: ${jobRankData.name}{mediumGrey}[${jobRankData.databaseId}]{ALTCOLOUR})`;
 	}
 
-	let clan = (getPlayerCurrentSubAccount(targetClient).clan != 0) ? `{ALTCOLOUR}${clanData.name}{mediumGrey}[${clanData.databaseId}]{ALTCOLOUR} (Rank ${clanRankData.level}: ${clanRankData.name}{mediumGrey}[${clanRankData.databaseId}]{ALTCOLOUR})` : `None`;
-	let job = (getPlayerCurrentSubAccount(targetClient).jobIndex != -1) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} ${jobRankText}` : `None`;
+	let clan = (getClanData(clanIndex) != null) ? `{ALTCOLOUR}${clanData.name}{mediumGrey}[${clanData.databaseId}]{ALTCOLOUR} (Rank ${clanRankData.level}: ${clanRankData.name}{mediumGrey}[${clanRankData.databaseId}]{ALTCOLOUR})` : `None`;
+	let job = (getJobData(jobIndex) != null) ? `{ALTCOLOUR}${jobData.name}{mediumGrey}[${jobData.databaseId}]{ALTCOLOUR} ${jobRankText}` : `None`;
 	let skinIndex = getPlayerCurrentSubAccount(targetClient).skin;
 	let skinModel = gameData.skins[getGame()][skinIndex][0];
 	let skinName = getSkinNameFromModel(skinModel);
@@ -1371,7 +1371,7 @@ function detainPlayerCommand(command, params, client) {
 	meActionToNearbyPlayers(client, `throws ${getCharacterFullName(targetClient)} into the back of the ${getVehicleName(targetVehicle)}`);
 	stopDraggingPlayer(client, targetClient);
 	setPlayerControlState(targetClient, false);
-	warpPedIntoVehicle(targetClient, targetVehicle, getFirstFreeRearVehicleSeat(targetVehicle));
+	warpPedIntoVehicle(getPlayerPed(targetClient), targetVehicle, getFirstFreeRearVehicleSeat(targetVehicle));
 }
 
 // ===========================================================================
@@ -1403,7 +1403,7 @@ function searchPlayerCommand(command, params, client) {
 function dragPlayerCommand(command, params, client) {
 	if (getPlayerData(client).draggingPlayer != null) {
 		meActionToNearbyPlayers(client, `stops dragging ${getCharacterFullName(getPlayerData(client).draggingPlayer)}`);
-		stopDraggingPlayer(client, targetClient);
+		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
 		return false;
 	}
 

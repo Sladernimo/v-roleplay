@@ -191,20 +191,92 @@ function repossessFirstAsset(client) {
 
 // ===========================================================================
 
+/**
+ * @param {Client} client The player
+ * @return {Array.<VehicleData>} Array of vehicles owned by the player
+ */
 function getAllVehiclesOwnedByPlayer(client) {
-	return serverData.vehicles.filter((v) => v.ownerType == V_VEHOWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+	return serverData.vehicles.filter((v) => v.ownerType == V_VEH_OWNER_PLAYER && v.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
+/**
+ * @param {Client} client The player
+ * @return {Array.<BusinessData>} Array of businesses owned by the player
+ */
 function getAllBusinessesOwnedByPlayer(client) {
 	return serverData.businesses.filter((b) => b.ownerType == V_BIZ_OWNER_PLAYER && b.ownerId == getPlayerCurrentSubAccount(client).databaseId);
 }
 
 // ===========================================================================
 
+/**
+ * @param {Client} client The player
+ * @return {Array.<HouseData>} Array of houses owned by the player
+ */
 function getAllHousesOwnedByPlayer(client) {
 	return serverData.houses.filter((h) => h.ownerType == V_HOUSE_OWNER_PLAYER && h.ownerId == getPlayerCurrentSubAccount(client).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} clanIndex The index of the clan
+ * @return {Array.<VehicleData>} Array of vehicles owned by the clan
+ */
+function getAllVehiclesOwnedByClan(clanIndex) {
+	return serverData.vehicles.filter((v) => v.ownerType == V_VEH_OWNER_CLAN && v.ownerId == getClanData(clanIndex).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} clanIndex The index of the clan
+ * @return {Array.<BusinessData>} Array of businesses owned by the clan
+ */
+function getAllBusinessesOwnedByClan(clanIndex) {
+	return serverData.businesses.filter((b) => b.ownerType == V_BIZ_OWNER_CLAN && b.ownerId == getClanData(clanIndex).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} clanIndex The index of the clan
+ * @return {Array.<HouseData>} Array of houses owned by the clan
+ */
+function getAllHousesOwnedByClan(clanIndex) {
+	return serverData.houses.filter((h) => h.ownerType == V_HOUSE_OWNER_CLAN && h.ownerId == getClanData(clanIndex).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} jobIndex The index of the job
+ * @return {Array.<VehicleData>} Array of vehicles owned by the job
+ */
+function getAllVehiclesOwnedByJob(jobIndex) {
+	return serverData.vehicles.filter((v) => v.ownerType == V_VEH_OWNER_JOB && v.ownerId == getJobData(jobIndex).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} jobIndex The index of the job
+ * @return {Array.<BusinessData>} Array of businesses owned by the job
+ */
+function getAllBusinessesOwnedByJob(jobIndex) {
+	return serverData.businesses.filter((b) => b.ownerType == V_BIZ_OWNER_JOB && b.ownerId == getJobData(jobIndex).databaseId);
+}
+
+// ===========================================================================
+
+/**
+ * @param {Number} jobIndex The index of the job
+ * @return {Array.<HouseData>} Array of houses owned by the job
+ */
+function getAllHousesOwnedByJob(jobIndex) {
+	return serverData.houses.filter((h) => h.ownerType == V_HOUSE_OWNER_JOB && h.ownerId == getJobData(jobIndex).databaseId);
 }
 
 // ===========================================================================

@@ -490,11 +490,11 @@ function onPlayerSpawn(client) {
 		let businessId = getPlayerBusiness(client);
 		let houseId = getPlayerHouse(client);
 		if (businessId != -1) {
-			if (getBusinessData(businessId).streamingRadioStation != -1) {
+			if (getRadioStationData(getBusinessData(businessId).streamingRadioStation) != null) {
 				playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(businessId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
 			}
 		} else if (houseId != -1) {
-			if (getHouseData(houseId).streamingRadioStation != -1) {
+			if (getRadioStationData(getHouseData(houseId).streamingRadioStation) != null) {
 				playRadioStreamForPlayer(client, getRadioStationData(getHouseData(houseId).streamingRadioStation).url, true, getPlayerStreamingRadioVolume(client), null);
 			}
 		} else {
@@ -629,23 +629,23 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 					let ownerType = getLocaleString(client, "NotOwned");
 					ownerType = toLowerCase(getVehicleOwnerTypeText(getVehicleData(vehicle).ownerType));
 					switch (getVehicleData(vehicle).ownerType) {
-						case V_VEHOWNER_CLAN:
+						case V_VEH_OWNER_CLAN:
 							ownerName = getClanData(getClanIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Clan");
 							break;
 
-						case V_VEHOWNER_JOB:
+						case V_VEH_OWNER_JOB:
 							ownerName = getJobData(getJobIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Job");
 							break;
 
-						case V_VEHOWNER_PLAYER:
+						case V_VEH_OWNER_PLAYER:
 							let subAccountData = loadSubAccountFromId(getVehicleData(vehicle).ownerId);
 							ownerName = `${subAccountData.firstName} ${subAccountData.lastName}`;
 							ownerType = getLocaleString(client, "Player");
 							break;
 
-						case V_VEHOWNER_BIZ:
+						case V_VEH_OWNER_BIZ:
 							ownerName = getBusinessData(getBusinessIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Business");
 							break;
@@ -675,7 +675,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 				let currentSubAccount = getPlayerCurrentSubAccount(client);
 
 				if (isPlayerWorking(client)) {
-					if (getVehicleData(vehicle).ownerType == V_VEHOWNER_JOB) {
+					if (getVehicleData(vehicle).ownerType == V_VEH_OWNER_JOB) {
 						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
 							if (doesJobLocationHaveAnyRoutes(getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)))) {
 								getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;

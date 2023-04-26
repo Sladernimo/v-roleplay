@@ -582,12 +582,12 @@ function setBusinessClanCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	if (getBusinessData(business).ownerType != V_VEHOWNER_PLAYER) {
+	if (getBusinessData(business).ownerType != V_VEH_OWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
@@ -632,7 +632,7 @@ function setBusinessRankCommand(command, params, client) {
 		return false;
 	}
 
-	if (getVehicleData(vehicle).ownerType == V_VEHOWNER_CLAN) {
+	if (getVehicleData(vehicle).ownerType == V_VEH_OWNER_CLAN) {
 		let clanId = getClanIndexFromDatabaseId(getBusinessData(businessId).ownerId);
 		rankId = getClanRankFromParams(clanId, params);
 		if (!getClanRankData(clanId, rankId)) {
@@ -641,7 +641,7 @@ function setBusinessRankCommand(command, params, client) {
 		}
 		getBusinessData(businessId).rank = getClanRankData(clanId, rankId).databaseId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${getClanRankData(clanId, rankId).name} {MAINCOLOUR}of the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
-	} else if (getBusinessData(businessId).ownerType == V_VEHOWNER_JOB) {
+	} else if (getBusinessData(businessId).ownerType == V_VEH_OWNER_JOB) {
 		getBusinessData(businessId).rank = rankId;
 		messagePlayerSuccess(client, `{MAINCOLOUR}You set business {businessBlue}${getBusinessData(businessId).name} {MAINCOLOUR}rank to {ALTCOLOUR}${rankId} {MAINCOLOUR}of the {jobYellow}${getJobData(getJobIdFromDatabaseId(getBusinessData(businessId).ownerId)).name} {MAINCOLOUR}job!`);
 	}
@@ -675,7 +675,7 @@ function setBusinessRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -1003,7 +1003,7 @@ function getBusinessInfoCommand(command, params, client) {
 		[`EntranceFee`, `${getCurrencyString(businessData.entranceFee)}`],
 		[`InteriorLights`, `${getOnOffFromBool(businessData.interiorLights)}`],
 		[`Balance`, `${getCurrencyString(businessData.till)}`],
-		[`RadioStation`, `${(getRadioStationData(businessData.streamingRadioStationIndex) != false) ? getRadioStationData(businessData.streamingRadioStationIndex).name : "none"}`],
+		[`RadioStation`, `${(getRadioStationData(businessData.streamingRadioStationIndex) != null) ? getRadioStationData(businessData.streamingRadioStationIndex).name : "none"}`],
 		[`LabelHelpType`, `${businessData.labelHelpType}`],
 	];
 
@@ -1146,7 +1146,7 @@ function setBusinessInteriorTypeCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		if (toLowerCase(typeParam) == "None") {
+		if (toLowerCase(typeParam) == "none") {
 			getBusinessData(businessId).exitPosition = toVector3(0.0, 0.0, 0.0);
 			getBusinessData(businessId).exitDimension = 0;
 			getBusinessData(businessId).exitInterior = -1;
@@ -1987,7 +1987,7 @@ function saveBusinessToDatabase(businessId) {
 			["biz_has_interior", boolToInt(tempBusinessData.hasInterior)],
 			["biz_interior_lights", boolToInt(tempBusinessData.interiorLights)],
 			["biz_label_help_type", tempBusinessData.labelHelpType],
-			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != false) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
+			["biz_radio_station", (getRadioStationData(tempBusinessData.streamingRadioStationIndex) != null) ? toInteger(getRadioStationData(tempBusinessData.streamingRadioStationIndex).databaseId) : -1],
 			["biz_custom_interior", boolToInt(tempBusinessData.customInterior)],
 			["biz_buy_price", tempBusinessData.buyPrice],
 			["biz_who_added", tempBusinessData.whoAdded],
@@ -2945,8 +2945,8 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 		businessData = getBusinessData(businessId);
 	}
 
-	if (!isGameFeatureSupported("serverElements")) {
-		if (businessData == false) {
+	if (!isGameFeatureSupported("serverElements") || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
+		if (businessData == null) {
 			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, 0, V_PROPLABEL_INFO_NONE, 0, 0);
 		} else {
 			logToConsole(LOG_DEBUG, `[V.RP.Business] Sending business ${businessId} (${businessData.name}) to player ${getPlayerDisplayForConsole(null)} (entrance dimension: ${businessData.entranceDimension})`);
@@ -3372,6 +3372,10 @@ function logBusinessItemPurchase(businessId, purchaserId, itemId) {
 // ===========================================================================
 
 function getBusinessPropertyInfoLabelType(businessId) {
+	if (getBusinessData(businessId) == null) {
+		return V_PROPLABEL_INFO_NONE;
+	}
+
 	switch (getBusinessData(businessId).labelHelpType) {
 		case V_PROPLABEL_INFO_ENTERVEHICLE:
 			return V_PROPLABEL_INFO_ENTERVEHICLE;
@@ -3409,6 +3413,60 @@ function listPersonalBusinessesCommand(command, params, client) {
 	let chunkedList = splitArrayIntoChunks(businessList, 4);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerBusinessesList", getCharacterFullName(targetClient))));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listClanBusinessesCommand(command, params, client) {
+	let clanIndex = getPlayerClan(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+		clanIndex = getClanFromParams(params);
+	}
+
+	if (getClanData(clanIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let businesses = getAllBusinessesOwnedByClan(clanIndex);
+
+	let businessList = businesses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(businessList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanBusinessesList", getClanData(clanIndex).name)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listJobBusinessesCommand(command, params, client) {
+	let jobIndex = getPlayerJob(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
+		jobIndex = getJobFromParams(params);
+	}
+
+	if (getJobData(jobIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let businesses = getAllBusinessesOwnedByClan(clanIndex);
+
+	let businessList = businesses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(businessList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobBusinessesList", getJobData(jobIndex).name)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}

@@ -608,7 +608,7 @@ function setNPCClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}

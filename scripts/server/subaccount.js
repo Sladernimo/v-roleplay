@@ -203,7 +203,7 @@ function loadSubAccountsFromAccount(accountId) {
 					// Check if clan and rank are still valid
 					if (tempSubAccount.clan != 0) {
 						let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
-						if (!getClanData(clanIndex)) {
+						if (getClanData(clanIndex) == null) {
 							tempSubAccount.clan = 0;
 							tempSubAccount.clanRank = 0;
 							tempSubAccount.clanIndex = -1;
@@ -319,8 +319,8 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_rot_z", subAccountData.spawnHeading],
 			["sacct_int", subAccountData.interior],
 			["sacct_vw", subAccountData.dimension],
-			["sacct_health", subAccountData.health],
-			["sacct_armour", subAccountData.armour],
+			["sacct_health", (subAccountData.health != NaN) ? subAccountData.health : 100],
+			["sacct_armour", (subAccountData.armour != NaN) ? subAccountData.armour : 0],
 			["sacct_accent", subAccountData.accent],
 		];
 
@@ -481,6 +481,17 @@ function checkNewCharacter(client, firstName, lastName) {
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
+		return false;
+	}
+
+	if (doesSubAccountNameExist(firstName, lastName)) {
+		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (name already used)`);
+		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
+		return false;
+	}
+
+	if (doesPlayerHaveSimilarCharacterName(client, firstName, lastName)) {
+		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
 		return false;
 	}
 
@@ -804,6 +815,32 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 	}
 
 	showCharacterSelectToClient(client);
+}
+
+// ===========================================================================
+
+function doesSubAccountNameExist(firstName, lastName) {
+	let dbConnection = connectToDatabase();
+	let dbQueryResult = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`);
+	return dbQueryResult.length > 0;
+}
+
+// ===========================================================================
+
+function doesPlayerHaveSimilarCharacterName(client, firstName, lastName) {
+	let tempPlayerData = getPlayerData(client);
+	for (let i in tempPlayerData.subAccounts) {
+		let subAccount = tempPlayerData.subAccounts[i];
+		if (toLowerCase(subAccount.firstName).indexOf(toLowerCase(firstName)) != -1 && toLowerCase(subAccount.lastName).indexOf(toLowerCase(lastName)) != -1) {
+			return true;
+		}
+
+		if (toLowerCase(firstName).indexOf(toLowerCase(subAccount.firstName)) != -1 && toLowerCase(lastName).indexOf(toLowerCase(subAccount.lastName)) != -1) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // ===========================================================================

@@ -166,7 +166,7 @@ function getBusinessData(businessId) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================

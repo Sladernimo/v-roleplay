@@ -374,6 +374,7 @@ function gotoVehicleCommand(command, params, client) {
 
 	if (typeof serverData.vehicles[toInteger(params)] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
+		return false;
 	}
 
 	let vehicle = serverData.vehicles[toInteger(params)].vehicle;
@@ -415,6 +416,7 @@ function getVehicleCommand(command, params, client) {
 
 	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
+		return false;
 	}
 
 	destroyGameElement(serverData.vehicles[vehicleIndex]);

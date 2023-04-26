@@ -216,8 +216,9 @@ function setVehicleEngine(vehicleId, state) {
 		return false;
 	}
 
-	//getElementFromId(vehicleId).netFlags.sendSync = state;
-	getElementFromId(vehicleId).engine = state;
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		getElementFromId(vehicleId).engine = state;
+	}
 }
 
 // ===========================================================================

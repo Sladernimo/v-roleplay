@@ -149,7 +149,7 @@ class HouseGameScriptData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.business = 0;
+		this.houseId = 0;
 		this.state = false;
 		this.index = -1;
 		this.houseIndex = -1;
@@ -159,7 +159,7 @@ class HouseGameScriptData {
 			this.databaseId = toInteger(dbAssoc["house_script_id"]);
 			this.name = toString(dbAssoc["house_script_name"]);
 			this.state = toInteger(dbAssoc["house_script_state"]);
-			this.business = toInteger(dbAssoc["house_script_biz"]);
+			this.houseId = toInteger(dbAssoc["house_script_house"]);
 		}
 	}
 };
@@ -376,12 +376,12 @@ function setHouseClanCommand(command, params, client) {
 
 	let clanId = getPlayerClan(params);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	if (getHouseData(houseId).ownerType != V_VEHOWNER_PLAYER) {
+	if (getHouseData(houseId).ownerType != V_VEH_OWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 		return false;
 	}
@@ -418,7 +418,7 @@ function setHouseRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(params);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -504,13 +504,17 @@ function setHouseInteriorTypeCommand(command, params, client) {
 	}
 
 	if (isNaN(typeParam)) {
-		let tempHouseLocation = new HouseLocationData(false);
-
-		if (toLowerCase(typeParam) == "None") {
-			tempHouseLocation.exitPosition = toVector3(0.0, 0.0, 0.0);
-			tempHouseLocation.exitInterior = -1;
-			getHouseData(houseId).exitPickupModel = -1;
+		if (toLowerCase(typeParam) == "none") {
+			getHouseData(houseId).exitPosition = toVector3(0.0, 0.0, 0.0);
+			getHouseData(houseId).exitDimension = 0;
+			getHouseData(houseId).exitInterior = -1;
 			getHouseData(houseId).hasInterior = false;
+			getHouseData(houseId).entranceScene = "";
+			getHouseData(houseId).exitScene = "";
+			getHouseData(houseId).exitPickupModel = -1;
+			getHouseData(houseId).customInterior = false;
+			getHouseData(houseId).exitScene = "";
+			getHouseData(houseId).entranceScene = "";
 			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior`, true);
 			return false;
 		}
@@ -520,7 +524,7 @@ function setHouseInteriorTypeCommand(command, params, client) {
 			let interiorTypesList = Object.keys(gameData.interiors[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
-			messagePlayerNormal(client, makeChatBoxSectionHeader("InteriorTypes"));
+			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderInteriorTypes")));
 			for (let i in chunkedList) {
 				messagePlayerInfo(client, chunkedList[i].join(", "));
 			}
@@ -530,14 +534,22 @@ function setHouseInteriorTypeCommand(command, params, client) {
 		getHouseData(houseId).exitPosition = gameData.interiors[getGame()][typeParam][0];
 		getHouseData(houseId).exitInterior = gameData.interiors[getGame()][typeParam][1];
 		getHouseData(houseId).exitDimension = getHouseData(houseId).databaseId + globalConfig.houseDimensionStart;
-		getHouseData(houseId).exitPickupModel = gameData.pickupModels[getGame()].Exit;
+		getHouseData(houseId).exitPickupModel = (isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Exit : -1;
 		getHouseData(houseId).hasInterior = true;
+		getHouseData(houseId).customInterior = gameData.interiors[getGame()][typeParam][2];
+
+		if (isGameFeatureSupported("interiorScene")) {
+			getHouseData(houseId).exitScene = typeParam;
+			getHouseData(houseId).entranceScene = getPlayerCurrentSubAccount(client).scene;
+		}
 	}
 
-	despawnHouseEntrancePickup(houseId);
-	despawnHouseExitPickup(houseId);
-	spawnHouseEntrancePickup(houseId);
-	spawnHouseExitPickup(houseId);
+	//despawnHouseEntrancePickup(houseId);
+	//despawnHouseExitPickup(houseId);
+	//spawnHouseEntrancePickup(houseId);
+	//spawnHouseExitPickup(houseId);
+
+	resetHousePickups(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -732,6 +744,8 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 	removePlayersFromHouse(houseIndex);
 
 	serverData.houses.splice(houseIndex, 1);
+
+	updateHousePickupLabelData(houseId, true);
 }
 
 // ===========================================================================
@@ -952,7 +966,7 @@ function saveHouseToDatabase(houseId) {
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
 			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
-			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != false) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
+			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != null) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
 		];
 
 		let dbQuery = null;
@@ -1362,7 +1376,7 @@ function getHouseInfoCommand(command, params, client) {
 		[`HasInterior`, `${getYesNoFromBool(houseData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(houseData.customInterior)}`],
 		[`InteriorLights`, `${getOnOffFromBool(houseData.interiorLights)}`],
-		[`RadioStation`, `${(getRadioStationData(houseData.streamingRadioStationIndex) != false) ? getRadioStationData(houseData.streamingRadioStationIndex).name : "none"}`],
+		[`RadioStation`, `${(getRadioStationData(houseData.streamingRadioStationIndex) != null) ? getRadioStationData(houseData.streamingRadioStationIndex).name : "none"}`],
 	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
@@ -1816,8 +1830,8 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 		houseData = getHouseData(houseId);
 	}
 
-	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		if (houseData == false) {
+	if (!isGameFeatureSupported("serverElements") || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
+		if (houseData == null) {
 			sendHouseToPlayer(
 				null,
 				houseId,
@@ -1908,10 +1922,10 @@ function spawnHousePickups(houseId) {
 // ===========================================================================
 
 /**
- * Gets whether or not a client is in a business
+ * Gets whether or not a client is in a house
  *
- * @param {Client} client - The client to check whether or not is in a business
- * @return {Boolean} Whether or not the client is in a business
+ * @param {Client} client - The client to check whether or not is in a house
+ * @return {Boolean} Whether or not the client is in a house
  *
  */
 function isPlayerInAnyHouse(client) {
@@ -1956,7 +1970,7 @@ function getHouseEntrancePickupModelForNetworkEvent(houseIndex) {
 
 // ===========================================================================
 
-function getNearbyBusinessesCommand(command, params, client) {
+function getNearbyHousesCommand(command, params, client) {
 	let distance = 10.0;
 
 	if (!areParamsEmpty(params)) {
@@ -1975,19 +1989,19 @@ function getNearbyBusinessesCommand(command, params, client) {
 		return false;
 	}
 
-	let nearbyBusinesses = getBusinessesInRange(getPlayerPosition(client), distance);
+	let nearbyHouses = getHousesInRange(getPlayerPosition(client), distance);
 
-	if (nearbyBusinesses.length == 0) {
-		messagePlayerAlert(client, getLocaleString(client, "NoBusinessesWithinRange", distance));
+	if (nearbyHouses.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoHousesWithinRange", distance));
 		return false;
 	}
 
-	let businessList = nearbyBusinesses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	let houseList = nearbyHouses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
-	let chunkedList = splitArrayIntoChunks(businessList, 4);
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBusinessesInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHouseInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -2002,6 +2016,10 @@ function getHousesInRange(position, distance) {
 // ===========================================================================
 
 function getHousePropertyInfoLabelType(houseIndex) {
+	if (getHouseData(houseIndex) == null) {
+		return V_PROPLABEL_INFO_NONE;
+	}
+
 	switch (getHouseData(houseIndex).labelHelpType) {
 		case V_PROPLABEL_INFO_ENTER:
 			return V_PROPLABEL_INFO_ENTER;
@@ -2035,6 +2053,60 @@ function listPersonalHousesCommand(command, params, client) {
 	let chunkedList = splitArrayIntoChunks(houseList, 4);
 
 	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerHousesList", getCharacterFullName(targetClient))));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listClanHousesCommand(command, params, client) {
+	let clanIndex = getPlayerClan(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
+		clanIndex = getClanFromParams(params);
+	}
+
+	if (getClanData(clanIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let houses = getAllHousesOwnedByClan(client);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanHousesList", getClanData(clanIndex).name)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listJobHousesCommand(command, params, client) {
+	let jobIndex = getPlayerJob(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
+		jobIndex = getJobFromParams(params);
+	}
+
+	if (getJobData(jobIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let houses = getAllHousesOwnedByJob(client);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobHousesList", getJobData(jobIndex).name)));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}

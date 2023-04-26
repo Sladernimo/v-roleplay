@@ -289,14 +289,17 @@ function showCharacterSelectCameraToPlayer(client) {
 
 function getClosestPlayer(position, exemptPlayer) {
 	let clients = getClients();
-	let closest = 0;
+	let closest = (exemptPlayer.index == 0) ? 1 : 0;
 	for (let i in clients) {
-		if (exemptPlayer != clients[i]) {
-			if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
-				closest = i;
+		if (isPlayerLoggedIn(clients[i]) && isPlayerSpawned(clients[i])) {
+			if (exemptPlayer != clients[i]) {
+				if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
+					closest = i;
+				}
 			}
 		}
 	}
+
 	return clients[closest];
 }
 
@@ -371,6 +374,20 @@ function generateRandomPhoneNumber() {
 
 function doesNameContainInvalidCharacters(name) {
 	let disallowedCharacters = globalConfig.subAccountNameAllowedCharacters;
+	name = toLowerCase(name);
+	for (let i = 0; i < name.length; i++) {
+		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function doesAccountNameContainInvalidCharacters(name) {
+	let disallowedCharacters = globalConfig.accountNameAllowedCharacters;
 	name = toLowerCase(name);
 	for (let i = 0; i < name.length; i++) {
 		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {

@@ -152,7 +152,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEHOWNER_PLAYER) {
+			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				return false;
 			}
@@ -162,7 +162,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_CLAN;
+			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEH_OWNER_CLAN;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
 			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
@@ -177,7 +177,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getHouseData(houseId).ownerType != V_VEHOWNER_PLAYER) {
+			if (getHouseData(houseId).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 				return false;
 			}
@@ -202,7 +202,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getBusinessData(businessId).ownerType != V_VEHOWNER_PLAYER) {
+			if (getBusinessData(businessId).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 				return false;
 			}
@@ -231,7 +231,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEHOWNER_PLAYER) {
+			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				return false;
 			}
@@ -253,7 +253,7 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEHOWNER_BIZ;
+			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEH_OWNER_BIZ;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getBusinessData(businessIndex).databaseId;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(getPlayerVehicle(client))}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`));
 

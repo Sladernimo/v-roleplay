@@ -13,7 +13,6 @@ let localPlayerWorking = false;
 let jobRouteLocationEnabled = false;
 let jobRouteLocationPosition = toVector3(0.0, 0.0, 0.0);
 let jobRouteLocationColour = toColour(0, 0, 0, 0);
-
 let jobRouteLocationBlip = null;
 let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
@@ -342,13 +341,16 @@ function processJobLocationIndicatorRendering() {
 // ===========================================================================
 
 function processJobRouteLocationDistance() {
+	logToConsole(LOG_VERBOSE, `[V.RP.Job] Processing job route location distance check ...`);
+
 	if (jobRouteLocationEnabled == false) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Job] Aborting job route location distance check. Job route location is disabled.`);
 		return false;
 	}
 
-	if (jobRouteLocationType != V_JOB_ROUTE_LOC_TYPE_CHECKPOINT) {
-		return false;
-	}
+	//if (jobRouteLocationType != V_JOB_ROUTE_LOC_TYPE_CHECKPOINT) {
+	//	return false;
+	//}
 
 	if (getDistance(getLocalPlayerPosition(), jobRouteLocationPosition) <= jobRouteLocationRadius) {
 		logToConsole(LOG_DEBUG, `[V.RP.Job] Reached job route location`);

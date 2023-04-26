@@ -48,7 +48,7 @@ function receiveHouseFromServer(houseId, isDeleted, description, entrancePositio
 			return false;
 		}
 
-		if (getHouseData(houseId) != false) {
+		if (getHouseData(houseId) != null) {
 			let houseData = getHouseData(houseId);
 			houseData.houseId = houseId;
 			houseData.description = description;
@@ -150,7 +150,7 @@ function getHouseData(houseId) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================

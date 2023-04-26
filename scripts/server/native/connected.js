@@ -7,22 +7,76 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-class vPlayer {
-	constructor(id, name = "", object = null) {
-		object: null;
-		name: null;
-		id: -1;
-	}
-}
+// Most of the scripting API is the same between the two mods, but there are some differences
+// The differences are explained in JSDoc documentation comments
+
+// If getGame() returns less than 10, then the game is on GTA Connected (GTAC)
+// If getGame() returns 10 or higher, then the game is on Mafia Connected (MafiaC)
+
+// Internally, client is known as a "net machine". It's the entity connected to the server.
+// Objects of class "Player" is a game human/ped character, attached to (and controlled by) the client.
+// The difference between client and player, is the client doesn't exist in the game world.
+// The player ped exists in the game world which is why it has physical properties (like position).
+// You can have a client without a player ped (although they won't have a ped to control), and vice verse (although the ped won't be controlled by a client, similar to an NPC ped)
+
+// The game entities follow a heirarchy, and inherit properties from their parent class:
+// Entity > Ped > Player
+// Entity > Vehicle
+// Entity > Object (For GTAC only, MafiaC doesn't have game object support)
+// Entity > Pickup (For GTAC only, MafiaC doesn't have game pickup support)
+// Entity > Marker (For GTAC only, MafiaC doesn't have game marker support)
+// Entity > Blip
+
+// All "get data" functions like getPlayerData and getVehicleData return an object of their respective data class (ClientData, VehicleData, etc)
+// If the data can't be found, these functions will return null
+
+// Locale strings that indicate an entity that can't be found or doesn't exist, will have a key starting with "Invalid" (e.g. InvalidPlayer, InvalidVehicle, etc)
+// On most command handler functions, these are usually followed by a return statement to prevent the rest of the command from executing.
 
 // ===========================================================================
 
-class vVehicle {
-	constructor(id, object = null) {
-		object: null;
-		id: -1;
-	}
-}
+// Players are sometimes referred to as clients in this script. They are used interchangeably.
+// Not to be confused with "player ped", which is of class "Player" which is the player's game human/ped object
+/**
+ * @typedef Client
+ * @type {Object}
+ * @property {string} name - The client's name
+ * @property {string} ip - The client's IP address
+ * @property {number} ping - The client's ping
+ * @property {number} game - The client's game ID
+ * @property {number} gameVersion - The client's game version
+ * @property {boolean} administrator - Whether or not the client can use GTAC and MafiaC built-in admin commands
+ * @property {boolean} console - Whether or not the client is the server console
+ * @property {number} index - The client's index (some multiplayer modifications call it ID)
+ * @property {Player} player - The client's player ped object
+ * @method setData - Attaches a key and value to a client, synced to all clients
+ * @method getData - Gets the value of a key attached to a client
+ * @method removeData - Removes a key and value attached to a client
+ * @method removeAllData - Removes all keys and values attached to a client
+ * @method disconnect - Disconnects a client
+ * @method despawnPlayer - Removes a player's ped and resets their camera
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Entity
+ * @type {Object}
+ * @property {*} modelIndex - The model of the entity. GTA Connected uses a number, Mafia Connected uses a string
+ * @property {Vec3} position - The entity's position
+ * @property {Vec3} rotation - The entity's rotation
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Player
+ * @type {Object}
+ * @extends {Entity}
+ * @property {string} name - The client's name
+ * @property {number} health - The player ped's health
+ * @property {number} armour - Only available on GTAC. The player ped's armour. On MafiaC, this is always 0
+ */
 
 // ===========================================================================
 
@@ -1306,16 +1360,16 @@ function getElementStreamOutDistance(element) {
 
 // ===========================================================================
 
+/**
+ * @param {Client} client - The player/client to get the ped for
+ * @return {Player} The client's player ped
+ */
 function getPlayerPed(client) {
 	if (isNull(client)) {
 		return null;
 	}
 
-	//if (getGame() == V_GAME_GTA_IV) {
-	//	return getPlayerData(client).ped;
-	//} else {
 	return client.player;
-	//}
 }
 
 // ===========================================================================

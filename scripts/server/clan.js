@@ -206,7 +206,7 @@ function listClanRanksCommand(command, params, client) {
 		}
 	}
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -250,7 +250,7 @@ function deleteClanCommand(command, params, client) {
 
 	let clanId = getClanFromParams(params);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -280,7 +280,7 @@ function setClanOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getClanData(clanIndex)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -316,7 +316,7 @@ function setClanTagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -343,7 +343,7 @@ function setClanNameCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -370,7 +370,7 @@ function setClanMOTDCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -397,7 +397,7 @@ function setClanDiscordWebhookCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -424,7 +424,7 @@ function createClanRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -454,7 +454,7 @@ function deleteClanRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -566,7 +566,7 @@ function setClanRankLevelCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -616,7 +616,7 @@ function addClanMemberFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -674,7 +674,7 @@ function removeClanMemberFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -732,7 +732,7 @@ function addClanRankFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -773,7 +773,7 @@ function removeClanRankFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -814,7 +814,7 @@ function showClanRankFlagsCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -860,7 +860,7 @@ function setClanMemberTitleCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -906,7 +906,7 @@ function setClanRankTitleCommand(command, params, client) {
 
 	let clanIndex = getPlayerClan(client);
 
-	if (!getClanData(clanIndex)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -941,7 +941,7 @@ function setClanMemberRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -1031,7 +1031,7 @@ function createClan(name, whoAdded = defaultNoAccountId) {
 function deleteClan(clanId, whoDeleted = 0) {
 	//saveAllClansToDatabase();
 
-	if (getClanData(clanId) == false) {
+	if (getClanData(clanId) == null) {
 		return false;
 	}
 
@@ -1056,14 +1056,14 @@ function deleteClan(clanId, whoDeleted = 0) {
  */
 function getClanData(clanId) {
 	if (clanId == -1) {
-		return false;
+		return null;
 	}
 
-	if (typeof serverData.clans[clanId] != null) {
+	if (typeof serverData.clans[clanId] != "undefined") {
 		return serverData.clans[clanId];
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -1439,7 +1439,7 @@ function getClanRankFromParams(clanId, params) {
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================

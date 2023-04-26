@@ -167,6 +167,10 @@ function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) 
 		return false;
 	}
 
+	if (getClanData(clanIndex) == null) {
+		return false;
+	}
+
 	if (!hasBitFlag(getClanData(clanIndex).discordWebhookFlags, requiredFlagValue)) {
 		return false;
 	}

@@ -77,7 +77,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 	let radioStationId = getRadioStationFromParams(params);
 
-	if (getRadioStationData(radioStationId) == -1) {
+	if (getRadioStationData(radioStationId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
 		return false;
 	}
@@ -127,7 +127,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
+					if (getPlayerHouse(client) == houseId) {
 						playRadioStreamForPlayer(clients[i], "");
 					}
 				}
@@ -140,7 +140,7 @@ function playStreamingRadioCommand(command, params, client) {
 
 				let clients = getClients();
 				for (let i in clients) {
-					if (getEntityData(clients[i], "v.rp.inHouse") == houseId) {
+					if (getPlayerHouse(client) == houseId) {
 						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]));
 					}
 				}
@@ -326,48 +326,17 @@ function getRadioStationData(radioStationIndex) {
 		return null;
 	}
 
-	if (typeof serverData.radioStations[radioStationIndex] == "undefined") {
-		return null;
+	if (typeof serverData.radioStations[radioStationIndex] != "undefined") {
+		return serverData.radioStations[radioStationIndex];
 	}
 
-	return serverData.radioStations[radioStationIndex];
+	return null;
 }
 
 // ===========================================================================
 
 function radioTransmitCommand(command, params, client) {
-	let possibleRadio = getPlayerFirstItemSlotByUseType(client, V_ITEM_USE_TYPE_WALKIETALKIE);
-
-	let frequency = -1;
-
-	if (possibleRadio != -1) {
-		if (getItemData(possibleRadio).enabled) {
-			frequency = getItemData(possibleRadio).value;
-		}
-	} else {
-		let vehicle = null;
-
-		if (isPlayerInAnyVehicle(client)) {
-			vehicle = getPlayerVehicle(client);
-		} else {
-			let tempVehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(tempVehicle)) <= globalConfig.vehicleTrunkDistance) {
-				vehicle = tempVehicle;
-			}
-		}
-
-		if (vehicle == null) {
-			messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
-			return false;
-		}
-
-		if (!doesVehicleHaveTransmitRadio(vehicle)) {
-			messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
-			return false;
-		}
-
-		frequency = getVehicleData(vehicle).radioFrequency;
-	}
+	let frequency = getPossibleRadioTransmitFrequency(client);
 
 	if (frequency == -1) {
 		messagePlayerError(client, getLocaleString(client, "NoRadioToUse"));
@@ -473,6 +442,79 @@ function setRadioFrequencyCommand(command, params, client) {
 	getItemData(getPlayerActiveItem(client)).value = params * 100;
 	messagePlayerSuccess(client, getLocaleString(client, "FrequencyChannelChanged", `Walkie Talkie`, `${getPlayerData(client).activeHotBarSlot + 1}`, `${getItemValueDisplayForItem(getPlayerActiveItem(client))}`));
 	*/
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setRadioStationURLCommand(command, params, client) {
+	let radioStationIndex = getRadioStationFromParams(getParam(params, " ", 1));
+	let url = params.split(" ").slice(1).join(" ");
+
+	if (getRadioStationData(radioStationIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
+		return false;
+	}
+
+	getRadioStationData(radioStationIndex).url = url;
+	getRadioStationData(radioStationIndex).needsSaved = true;
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (getPlayerData(clients[i]).streamingRadioStation == radioStationIndex) {
+			stopRadioStreamForPlayer(clients[i]);
+			playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationIndex).url, false, getPlayerStreamingRadioVolume(client));
+		}
+	}
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} has changed the URL for radio station {ALTCOLOUR}${getRadioStationData(radioStationIndex).name}{MAINCOLOUR} to {ALTCOLOUR}${url}`);
+}
+
+// ===========================================================================
+
+function getPossibleRadioTransmitFrequency(client) {
+	let possibleRadio = getPlayerFirstItemSlotByUseType(client, V_ITEM_USE_TYPE_WALKIETALKIE);
+
+	if (possibleRadio != -1) {
+		if (getItemData(possibleRadio).enabled) {
+			return getItemData(possibleRadio).value;
+		}
+	}
+
+	let vehicle = null;
+	if (isPlayerInAnyVehicle(client)) {
+		vehicle = getPlayerVehicle(client);
+	} else {
+		let tempVehicle = getClosestVehicle(getPlayerPosition(client));
+		if (getDistance(getPlayerPosition(client), getVehiclePosition(tempVehicle)) <= globalConfig.vehicleTrunkDistance) {
+			vehicle = tempVehicle;
+		}
+	}
+
+	if (vehicle != null) {
+		if (doesVehicleHaveTransmitRadio(vehicle)) {
+			return getVehicleData(vehicle).radioFrequency;
+		}
+	}
+
+	if (getPlayerJob(client) != -1) {
+		if (getJobData(getPlayerJob(client)).radioFrequency != 0) {
+			let callBoxIndex = getClosestCallBox(getPlayerPosition(client));
+			if (callBoxIndex != -1) {
+				if (getCallBoxData(callBoxIndex) != null) {
+					return getJobData(getPlayerJob(client)).radioFrequency;
+				}
+			}
+		}
+	}
 }
 
 // ===========================================================================

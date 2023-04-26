@@ -163,6 +163,16 @@ function loadCommands() {
 			new CommandData("mybiz", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
 			new CommandData("mybusinesses", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
 			new CommandData("mybusiness", listPersonalBusinessesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all businesses you own"),
+			new CommandData("clanbizs", listClanBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your clan"),
+			new CommandData("clanbiz", listClanBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your clan"),
+			new CommandData("clanbusinesses", listClanBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your clan"),
+			new CommandData("jobbizs", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
+			new CommandData("jobbiz", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
+			new CommandData("jobbusinesses", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
+		],
+		callbox: [
+			new CommandData("addcallbox", createCallBoxCommand, "", getStaffFlagValue("ManagePayPhones"), true, true, "Creates a police call box (gamewell)"),
+			new CommandData("delcallbox", deleteCallBoxCommand, "", getStaffFlagValue("ManagePayPhones"), true, true, "Removes a police call box (gamewell)"),
 		],
 		chat: [
 			new CommandData("me", meActionCommand, "<message>", getStaffFlagValue("None"), true, false, "Shows a custom action message in chat"),
@@ -356,6 +366,10 @@ function loadCommands() {
 			//new CommandData("nearhouse", getNearbyHousesCommand, "[distance]", getStaffFlagValue("None"), true, true, "Shows all houses within X meters"),
 			new CommandData("myhouses", listPersonalHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses you own"),
 			new CommandData("myhouse", listPersonalHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses you own"),
+			new CommandData("clanhouses", listClanHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses owned by your clan"),
+			new CommandData("clanhouse", listClanHousesCommand, "", getStaffFlagValue("None"), true, true, "Shows all houses owned by your clan"),
+			new CommandData("jobhouses", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
+			new CommandData("jobhouse", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
 		],
 		insurance: [],
 		item: [
@@ -780,6 +794,12 @@ function loadCommands() {
 			new CommandData("myvehicles", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
 			new CommandData("myveh", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
 			new CommandData("myvehicle", listPersonalVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("clanvehicles", listClanVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("clanveh", listClanVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("clanvehicle", listClanVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all vehicles you own"),
+			new CommandData("jobvehicles", listJobVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all job you own"),
+			new CommandData("jobveh", listJobVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all job you own"),
+			new CommandData("jobvehicle", listJobVehiclesCommand, "", getStaffFlagValue("None"), true, true, "Shows all job you own"),
 		],
 	};
 

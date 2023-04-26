@@ -89,10 +89,10 @@ function getClosestCallBox(position) {
 // ===========================================================================
 
 /**
- * @param {Number} callBoxIndex - The data index of the payphone
- * @return {PayPhoneData} The payphone's data (class instance)
+ * @param {Number} callBoxIndex - The data index of the callbox
+ * @return {CallBoxData} The callbox's data (class instance)
  */
-function getPayPhoneData(callBoxIndex) {
+function getCallBoxData(callBoxIndex) {
 	if (callBoxIndex == -1) {
 		return false;
 	}
@@ -181,7 +181,7 @@ function saveCallBoxToDatabase(callBoxIndex) {
 
 	let tempCallBoxData = getCallBoxData(callBoxIndex);
 
-	if (tempPayPhoneData.databaseId == -1) {
+	if (tempCallBoxData.databaseId == -1) {
 		logToConsole(LOG_VERBOSE, `[V.RP.CallBox]: Call box ${callBoxIndex} is a temp call box. Aborting save ...`);
 		return false;
 	}
@@ -195,13 +195,13 @@ function saveCallBoxToDatabase(callBoxIndex) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
-			["payphone_server", getServerId()],
-			["payphone_enabled", boolToInt(tempCallBoxData.enabled)],
-			["payphone_who_added", toInteger(tempCallBoxData.whoAdded)],
-			["payphone_when_added", toInteger(tempCallBoxData.whenAdded)],
-			["payphone_pos_x", toFloat(tempCallBoxData.position.x)],
-			["payphone_pos_y", toFloat(tempCallBoxData.position.y)],
-			["payphone_pos_z", toFloat(tempCallBoxData.position.z)],
+			["callbox_server", getServerId()],
+			["callbox_enabled", boolToInt(tempCallBoxData.enabled)],
+			["callbox_who_added", toInteger(tempCallBoxData.whoAdded)],
+			["callbox_when_added", toInteger(tempCallBoxData.whenAdded)],
+			["callbox_pos_x", toFloat(tempCallBoxData.position.x)],
+			["callbox_pos_y", toFloat(tempCallBoxData.position.y)],
+			["callbox_pos_z", toFloat(tempCallBoxData.position.z)],
 		];
 
 		let dbQuery = null;
