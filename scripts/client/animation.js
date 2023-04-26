@@ -165,6 +165,10 @@ function processCameraLookFromEyesForAnimation() {
 		return false;
 	}
 
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	if (typeof game.camera.lookFromEyes != "undefined") {
 		game.camera.lookFromEyes();
 	}
