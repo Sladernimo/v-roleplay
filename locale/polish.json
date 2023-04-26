@@ -832,5 +832,11 @@
 		"JobRouteStart": "Użyj {1} aby rozpocząć trasę z tym pojazdem",
 		"PayPhoneFirstUse": "Użyj {1} aby zakończyć połączenie, lub {2} aby przekazać słuchawkę komuś w pobliżu",
 		"UseGlobalChat": "Use {1} to talk in global chat"
-	}
+	},
+	"HeaderJobBusinessesList": "Job Businesses ({1})",
+	"HeaderClanBusinessesList": "Clan Businesses ({1})",
+	"HeaderJobHousesList": "Job Houses ({1})",
+	"HeaderClanHousesList": "Clan Houses ({1})",
+	"HeaderJobVehiclesList": "Job Vehicles ({1})",
+	"HeaderClanVehiclesList": "Clan Vehicles ({1})"
 }
