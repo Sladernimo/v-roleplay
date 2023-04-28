@@ -1288,7 +1288,7 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		return false;
 	}
 
-	if (getPlayerData(client) == false) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 

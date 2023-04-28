@@ -161,7 +161,7 @@ function checkVehicleRenting() {
 	let renting = serverData.rentingVehicleCache;
 	for (let i in renting) {
 		if (isClientInitialized(renting[i])) {
-			if (getPlayerData(renting[i]) != false) {
+			if (getPlayerData(renting[i]) != null) {
 				if (isPlayerLoggedIn(renting[i] && isPlayerSpawned(renting[i]))) {
 					if (getPlayerData(renting[i]).rentingVehicle != null) {
 						if (getPlayerCurrentSubAccount(renting[i]).cash < serverData.vehicles[getPlayerData(renting[i]).rentingVehicle].rentPrice) {

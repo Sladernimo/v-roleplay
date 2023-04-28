@@ -38,7 +38,7 @@ function getLocaleString(client, stringName, ...args) {
 		return "";
 	}
 
-	if (getPlayerData(client) == false) {
+	if (getPlayerData(client) == null) {
 		return "";
 	}
 

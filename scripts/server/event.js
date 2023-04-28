@@ -58,7 +58,7 @@ function onElementStreamIn(event, element, client) {
 	//    event.preventDefault();
 	//}
 
-	if (getPlayerData(getClientFromIndex(element.owner)) != false) {
+	if (getPlayerData(getClientFromIndex(element.owner)) != null) {
 		if (hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
 			event.preventDefault();
 			destroyGameElement(element);
@@ -80,7 +80,7 @@ function onPlayerQuit(event, client, quitReasonId) {
 	let reasonTextEnglish = getLanguageGroupedLocaleString(englishLocale, "DisconnectReasons", disconnectName);
 	let clientName = getPlayerName(client);
 
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		if (getPlayerData(client).customDisconnectReason != "") {
 			disconnectName = getPlayerData(client).customDisconnectReason;
 		}
@@ -593,7 +593,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			if (getPlayerData(client) == false) {
+			if (getPlayerData(client) == null) {
 				logToConsole(LOG_ERROR | LOG_DEBUG, `[V.RP.Event] ${getPlayerDisplayForConsole(client)} entered vehicle ${vehicle.id} in seat ${seat}, but player data is false`);
 				return false;
 			}
@@ -757,7 +757,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 	if (ped.isType(ELEMENT_PLAYER)) {
 		let client = getClientFromPlayerElement(ped);
 		if (client != null) {
-			if (getPlayerData(client) != false) {
+			if (getPlayerData(client) != null) {
 				getPlayerData(client).vehicleSeat = -1;
 			}
 

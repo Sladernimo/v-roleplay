@@ -222,7 +222,7 @@ function resetClientStuff(client) {
 
 function kickAllClients() {
 	getClients().forEach((client) => {
-		if (getPlayerData(client) != false) {
+		if (getPlayerData(client) != null) {
 			getPlayerData(client).customDisconnectReason = "ServerRestarting";
 		}
 		disconnectPlayer(client);

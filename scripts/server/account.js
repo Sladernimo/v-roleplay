@@ -705,7 +705,7 @@ function isPlayerRegistered(client) {
 		return true;
 	}
 
-	if (getPlayerData(client).accountData != false) {
+	if (getPlayerData(client).accountData != null) {
 		if (getPlayerData(client).accountData.databaseId != 0) {
 			return true;
 		}

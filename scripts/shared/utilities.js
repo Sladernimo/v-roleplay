@@ -2730,7 +2730,7 @@ function getHexColourByType(typeName) {
 // ===========================================================================
 
 function getPlayerColour(client) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		if (!isPlayerLoggedIn(client)) {
 			return getColourByName("darkGrey");
 		} else {

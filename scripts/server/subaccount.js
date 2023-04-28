@@ -710,7 +710,7 @@ function isPlayerCreatingCharacter(client) {
  *
  */
 function getPlayerCurrentSubAccount(client) {
-	if (getPlayerData(client) == null) {
+	if (getPlayerData(client) == false) {
 		return false;
 	}
 

@@ -47,15 +47,15 @@ function getGameAreas(gameId) {
  */
 function getPlayerData(client) {
 	if (client == null) {
-		return false;
+		return null;
 	}
 
 	if (!isClientInitialized(client)) {
-		return false;
+		return null;
 	}
 
 	if (typeof serverData.clients[getPlayerId(client)] == "undefined") {
-		return false;
+		return null;
 	}
 
 	return serverData.clients[getPlayerId(client)];
@@ -252,7 +252,7 @@ function getPlayerFromCharacterId(subAccountId) {
 function checkPlayerPedStates() {
 	let clients = getClients();
 	for (let i in clients) {
-		if (getPlayerData(clients[i])) {
+		if (getPlayerData(clients[i]) != null) {
 			if (getPlayerData(clients[i]).pedState) {
 				if (isPlayerInAnyVehicle(clients[i])) {
 					if (getPlayerData(clients[i]).pedState == V_PEDSTATE_EXITINGVEHICLE) {
@@ -337,7 +337,7 @@ function getPlayerFromParams(params) {
 // ===========================================================================
 
 function updateConnectionLogOnQuit(client) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW() WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
@@ -351,7 +351,7 @@ function updateConnectionLogOnAuth(client, authId) {
 // ===========================================================================
 
 function updateConnectionLogOnClientInfoReceive(client, clientVersion, screenWidth, screenHeight) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		getPlayerData(client).clientVersion = clientVersion;
 	}
 

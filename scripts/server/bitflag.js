@@ -313,8 +313,14 @@ function doesPlayerHaveStaffPermission(client, requiredFlags) {
 	}
 
 	let staffFlags = 0;
-	if (getPlayerData(client)) {
-		staffFlags = getPlayerData(client).accountData.flags.admin;
+	if (getPlayerData(client) != null) {
+		if (typeof getPlayerData(client).accountData != "undefined") {
+			if (typeof getPlayerData(client).accountData.flags != "undefined") {
+				if (typeof getPlayerData(client).accountData.flags.admin != "undefined") {
+					staffFlags = getPlayerData(client).accountData.flags.admin;
+				}
+			}
+		}
 	}
 
 	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
