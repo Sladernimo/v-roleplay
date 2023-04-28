@@ -135,7 +135,9 @@
 	<script src="scripts/client/camera.js" type="client" language="javascript" />
 	<script src="scripts/client/chat.js" type="client" language="javascript" />
 	<script src="scripts/client/core.js" type="client" language="javascript" />
+	<script src="scripts/client/countdown.js" type="client" language="javascript" />
 	<script src="scripts/client/cursor.js" type="client" language="javascript" />
+	<script src="scripts/client/damage.js" type="client" language="javascript" />
 	<script src="scripts/client/economy.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
