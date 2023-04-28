@@ -28,6 +28,8 @@ function initClientScripts() {
 	initItemScript();
 	initBusinessScript();
 	initHouseScript();
+	initDamageScript();
+	initCountDownScript();
 
 	loadLocaleConfig();
 	addAllNetworkHandlers();
@@ -185,9 +187,9 @@ function setUpInitialGame() {
 		natives.setPedDensityMultiplier(0.0);
 		natives.setCarDensityMultiplier(0.0);
 		natives.setScenarioPedDensityMultiplier(0.0, 0.0);
-		natives.switchRandomTrains(false);
-		natives.switchRandomBoats(false);
-		natives.switchAmbientPlanes(false);
+		//natives.switchRandomTrains(false);
+		//natives.switchRandomBoats(false);
+		//natives.switchAmbientPlanes(false);
 		//natives.switchMadDrivers(false);
 		natives.disableCarGenerators(true, true);
 
