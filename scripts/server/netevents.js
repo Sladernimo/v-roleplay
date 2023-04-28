@@ -1536,3 +1536,9 @@ function sendPlayerGodMode(client, state) {
 }
 
 // ==========================================================================
+
+function startCountDownForPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.countDown", client);
+}
+
+// ==========================================================================

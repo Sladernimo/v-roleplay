@@ -185,6 +185,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.incomingDamageMultiplier", setIncomingDamageMultiplier);
 	addNetworkEventHandler("v.rp.warpIntoVehicle", warpPedIntoVehicle);
 	addNetworkEventHandler("v.rp.godMode", setGodModeState);
+	addNetworkEventHandler("v.rp.countDown", startCountDown);
 }
 
 // ===========================================================================
