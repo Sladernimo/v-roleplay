@@ -140,6 +140,7 @@ function onProcess(event, deltaTime) {
 	processVehicleCruiseControl();
 	processPayPhonesDistance();
 	processJobRouteLocationDistance();
+	//processLocalPlayerReceivedDamage();
 
 	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
 	//processVehicleFires();
@@ -309,14 +310,6 @@ function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
 	if (calledDeathEvent == true) {
 		return false;
 	}
-
-	// Obviously don't need to take health if in god mode
-	// May need to be fixed to ensure falling still kills (calculate new health first to see if it's < 0 maybe?)
-	// Otherwise set full health
-	//if (godMode == true) {
-	//	localPlayer.health = 100;
-	//	return false;
-	//}
 
 	let newHealth = localPlayer.health - (damage * weaponDamageMultiplier);
 
