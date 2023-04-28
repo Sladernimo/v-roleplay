@@ -154,12 +154,12 @@ function updateNametag(element) {
 
 		let screenPosition = getScreenFromWorldPosition(elementPosition);
 		if (screenPosition[2] >= 0.0 || getGame() == V_GAME_MAFIA_ONE) {
-			let health = element.health / 100.0;
+			let health = (getGame() == V_GAME_GTA_IV) ? 1.0 : element.health / 100.0;
 			if (health > 1.0) {
 				health = 1.0;
 			}
 
-			let armour = element.armour / 100.0;
+			let armour = (getGame() == V_GAME_GTA_IV) ? 1.0 : element.armour / 100.0;
 			if (armour > 1.0) {
 				armour = 1.0;
 			}
