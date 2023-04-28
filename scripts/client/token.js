@@ -7,6 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let myToken = "";
+
+// ===========================================================================
+
 function saveToken(token) {
 	saveDataToFile("config/client/token.js", token);
 }

@@ -40,12 +40,16 @@ let skinSelectParts = [
 	{ name: "Hat", id: V_SKINSELECT_HAT },
 ];
 
+let allowedSkins = [];
+
 // ===========================================================================
 
 function initSkinSelectScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.SkinSelect]: Initializing skin selector script ...");
 	skinSelectMessageFontTop = loadSkinSelectMessageFontTop();
 	skinSelectMessageFontBottom = loadSkinSelectMessageFontBottom();
+
+	allowedSkins = getAllowedSkins(getGame());
 	logToConsole(LOG_DEBUG, "[V.RP.SkinSelect]: Skin selector script initialized!");
 }
 

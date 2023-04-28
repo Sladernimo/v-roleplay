@@ -16,9 +16,6 @@ let inVehicleSeat = false;
 let isWalking = false;
 let isSpawned = false;
 
-//let parkedVehiclePosition = false;
-//let parkedVehicleHeading = false;
-
 let renderHUD = false;
 let renderLabels = false;
 let renderLogo = false;
@@ -29,10 +26,6 @@ let renderItemActionDelay = false;
 let renderInteriorLights = false;
 
 let logLevel = LOG_INFO | LOG_DEBUG;
-
-let weaponDamageEnabled = {};
-let weaponDamageEvent = {};
-let weaponDamageMultiplier = 1.0;
 
 let forceWeapon = 0;
 let forceWeaponAmmo = 0;
@@ -46,15 +39,11 @@ let controlsEnabled = true;
 let interiorLightsEnabled = true;
 let interiorLightsColour = toColour(0, 0, 0, 150);
 
-let mouseCameraEnabled = false;
-let mouseCursorEnabled = false;
+
 
 let currentPickup = null;
 
 let forceWantedLevel = 0;
-
-// Pre-cache all allowed skins
-let allowedSkins = getAllowedSkins(getGame());
 
 /**
  * @typedef {Object} ServerData
@@ -64,7 +53,7 @@ let allowedSkins = getAllowedSkins(getGame());
  * @property {Array.<JobData>} jobs
  * @property {Array} localeStrings
  * @property {Array} localeOptions
- * @property {Object} cvars
+ * @property {Object} scriptVars
  * @property {Array.<PayPhoneData>} payPhones
 */
 let serverData = {
@@ -74,18 +63,12 @@ let serverData = {
 	jobs: [],
 	localeStrings: [],
 	localeOptions: [],
-	cvars: {},
+	scriptVars: {},
 	payPhones: [],
 };
 
-let localPlayerMoney = 0;
-
-let currencyString = "${AMOUNT}";
-
 let mapChangeWarning = false;
 let mapChangeToNight = false;
-
-let myToken = "";
 
 let godMode = false;
 
