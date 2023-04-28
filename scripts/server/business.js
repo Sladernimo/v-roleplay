@@ -394,6 +394,8 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	spawnBusinessPickups(businessId - 1);
 	spawnBusinessBlips(businessId - 1);
 
+	updateBusinessPickupLabelData(i, false);
+
 	return tempBusinessData;
 }
 
@@ -2945,7 +2947,7 @@ function updateBusinessPickupLabelData(businessId, deleted = false) {
 		businessData = getBusinessData(businessId);
 	}
 
-	if (!isGameFeatureSupported("serverElements") || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_GTA_IV || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
 		if (businessData == null) {
 			sendBusinessToPlayer(null, businessId, true, "", false, -1, -1, 0, 0, false, 0, V_PROPLABEL_INFO_NONE, 0, 0);
 		} else {

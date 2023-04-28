@@ -1830,7 +1830,7 @@ function updateHousePickupLabelData(houseId, deleted = false) {
 		houseData = getHouseData(houseId);
 	}
 
-	if (!isGameFeatureSupported("serverElements") || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_GTA_IV || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
 		if (houseData == null) {
 			sendHouseToPlayer(
 				null,
