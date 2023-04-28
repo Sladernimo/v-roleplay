@@ -147,3 +147,20 @@ function stopRacingCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function countDownCommand(command, params, client) {
+	let distance = 0;
+
+	if (areParamsEmpty(params)) {
+		distance = getParam(params, " ", 0);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	startCountDownForPlayer(null);
+}
+
+// ===========================================================================

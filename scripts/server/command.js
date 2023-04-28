@@ -593,6 +593,8 @@ function loadCommands() {
 			//new CommandData("stoprace", stopRaceCommand, "", getStaffFlagValue("None"), true, false, "Stops racing (forfeits if in an active race)"),
 			//new CommandData("racestopall", stopAllRacesCommand, "", getStaffFlagValue("ManageRaces"), true, false, "Stops all active races"),
 			//new CommandData("stopallraces", stopAllRacesCommand, "", getStaffFlagValue("ManageRaces"), true, false, "Stops all active races"),
+
+			new CommandData("countdown", countDownCommand, "", getStaffFlagValue("None"), true, true, "Starts a countdown for all players"),
 		],
 		radio: [
 			new CommandData("radiostation", playStreamingRadioCommand, "<radio station id>", getStaffFlagValue("None"), true, false, "Plays a radio station in your vehicle, house, or business (depending on which one you're in)"),
