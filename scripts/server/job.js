@@ -1219,7 +1219,7 @@ function stopWorking(client) {
 
 		respawnVehicle(jobVehicle);
 
-		getPlayerData(client).lastJobVehicle = false;
+		getPlayerData(client).lastJobVehicle = null;
 	}
 
 	setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
@@ -1618,7 +1618,7 @@ function createJobCommand(command, params, client) {
 		return false;
 	}
 
-	createJob(params);
+	createJob(params, getPlayerData(client).accountData.databaseId);
 
 	messagePlayerSuccess(client, `Job {jobYellow}${params} {MAINCOLOUR}created!`);
 	return true;
@@ -1626,7 +1626,7 @@ function createJobCommand(command, params, client) {
 
 // ===========================================================================
 
-function createJob(name) {
+function createJob(name, whoAdded = defaultNoAccountId) {
 	let tempJobData = new JobData(false);
 	tempJobData.serverId = getServerId();
 	tempJobData.name = name;
@@ -1635,6 +1635,7 @@ function createJob(name) {
 	tempJobData.blipModel = (isGameFeatureSupported("blip")) ? gameData.blipSprites[getGame()].Job : -1;
 	tempJobData.pickupModel = (isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Job : -1;
 	tempJobData.colour = toColour(255, 255, 255, 255);
+	tempJobData.whoAdded = whoAdded;
 
 	serverData.jobs.push(tempJobData);
 	saveJobToDatabase(tempJobData);
@@ -1644,7 +1645,7 @@ function createJob(name) {
 // ===========================================================================
 
 function createJobRank(name, level) {
-	let tempJobData = new JobRankData(false);
+	let tempJobRankData = new JobRankData(false);
 	tempJobRankData.serverId = getServerId();
 	tempJobRankData.name = name;
 	tempJobRankData.jobIndex = jobIndex;
