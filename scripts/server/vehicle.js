@@ -231,8 +231,7 @@ function saveVehicleToDatabase(vehicleDataId) {
 		return false;
 	}
 
-	if (getVehicleData(vehicleDataId) == null) {
-		// Invalid vehicle data
+	if (typeof serverData.vehicles[vehicleDataId] == "undefined") {
 		return false;
 	}
 
@@ -507,7 +506,7 @@ function vehicleHazardLightsCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 	setVehicleHazardLights(vehicle, getVehicleData(vehicle).hazardLights);
 
-	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s hazard lights.`);
+	meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).hazardLights))} the ${getVehicleName(vehicle)}'s hazard lights.`);
 }
 
 // ===========================================================================
@@ -534,7 +533,7 @@ function vehicleInteriorLightCommand(command, params, client) {
 	getVehicleData(vehicle).needsSaved = true;
 	setVehicleInteriorLight(vehicle, getVehicleData(vehicle).interiorLight);
 
-	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s interior light.`);
+	meActionToNearbyPlayers(client, `turned ${toLowerCase(getOnOffFromBool(getVehicleData(vehicle).interiorLight))} the ${getVehicleName(vehicle)}'s interior light.`);
 }
 
 // ===========================================================================
