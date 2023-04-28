@@ -298,7 +298,7 @@ function messagePlayerPhoneCall(talkingPlayer, receivingPlayer, messageText) {
 function showServerInDevelopmentMessage(client) {
 	messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
 	messagePlayerNormal(client, "Some jobs may not be available or have nothing to do. They will be ready soon.", getColourByName("orange"));
-	messagePlayerNormal(client, "Player movement and weapons are NOT synced yet. Jack needs to add it to GTA Connected.", getColourByName("softRed"));
+	//messagePlayerNormal(client, "Player movement and weapons are NOT synced yet. Jack needs to add it to GTA Connected.", getColourByName("softRed"));
 	messagePlayerNormal(client, `Please report bugs and ideas on the Connected Roleplay discord: https://discord.gg/yJABnrHujG`, getColourByName("yellow"));
 }
 
