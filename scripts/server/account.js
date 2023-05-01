@@ -50,7 +50,7 @@ class AccountData {
 		this.name = "";
 		this.password = "";
 		this.passwordRevision = 0;
-		this.registerDate = 0;
+		this.whenRegistered = 0;
 		this.flags = {
 			moderation: 0,
 			admin: 0,
@@ -76,12 +76,12 @@ class AccountData {
 		this.streamingRadioVolume = 20;
 		this.locale = 0;
 
-		if (dbAssoc) {
+		if (dbAssoc != false) {
 			this.databaseId = toInteger(dbAssoc["acct_id"]);
 			this.name = toString(dbAssoc["acct_name"]);
 			this.password = toString(dbAssoc["acct_pass"]);
 			this.passwordRevision = toString(dbAssoc["acct_pass_revision"]);
-			this.registerDate = toInteger(dbAssoc["acct_when_registered"]);
+			this.whenRegistered = toInteger(dbAssoc["acct_when_registered"]);
 			this.flags = {
 				moderation: toInteger(dbAssoc["acct_svr_mod_flags"]),
 				admin: toInteger(dbAssoc["acct_svr_staff_flags"]),
@@ -370,7 +370,7 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 			return false;
 		}
 
-		if (!isAccountEmailVerified(getPlayerData(client).accountData)) {
+		if (!doesPlayerHaveEmailVerified(client)) {
 			messagePlayerError(client, getLocaleString(client, "NeedEmailVerifiedFor2FA"));
 			messagePlayerTip(client, getLocaleString(client, "VerifyEmailHelpTip", `{ALTCOLOUR}/verifyemail{MAINCOLOUR}`));
 			return false;
@@ -567,7 +567,7 @@ function setAccountEmailCommand(command, params, client) {
 	//	return false;
 	//}
 
-	if (getPlayerData(client).accountData.emailAddress != "" && isAccountEmailVerified(getPlayerData(client).accountData)) {
+	if (getPlayerData(client).accountData.emailAddress != "" && doesPlayerHaveEmailVerified(client)) {
 		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadySetAndVerified"));
 		return false;
 	}
@@ -575,7 +575,8 @@ function setAccountEmailCommand(command, params, client) {
 	setAccountEmail(getPlayerData(client).accountData, emailAddress);
 
 	let emailVerificationCode = generateEmailVerificationCode();
-	getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
+	let hashingFunction = getAccountHashingFunction();
+	getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
 	sendEmailVerificationEmail(client, emailVerificationCode);
 
 	messagePlayerSuccess(client, getLocaleString(client, "EmailSet"));
@@ -591,7 +592,9 @@ function verifyAccountEmailCommand(command, params, client) {
 		if (getPlayerData(client).accountData.emailVerificationCode == "") {
 			messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
 			let emailVerificationCode = generateEmailVerificationCode();
-			getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
+
+			let hashingFunction = getAccountHashingFunction();
+			getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
 			sendEmailVerificationEmail(client, emailVerificationCode);
 			return false;
 		}
@@ -602,7 +605,7 @@ function verifyAccountEmailCommand(command, params, client) {
 
 	let verificationCode = getParam(params, " ", 1);
 
-	if (isAccountEmailVerified(getPlayerData(client).accountData)) {
+	if (doesPlayerHaveEmailVerified(client)) {
 		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadyVerified"));
 		return false;
 	}
@@ -610,8 +613,11 @@ function verifyAccountEmailCommand(command, params, client) {
 	if (module.hashing.sha512(verificationCode) != getPlayerData(client).accountData.emailVerificationCode) {
 		messagePlayerError(client, getLocaleString(client, "InvalidEmailVerificationCode"));
 		messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
+
 		let emailVerificationCode = generateEmailVerificationCode();
-		getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
+		let hashingFunction = getAccountHashingFunction();
+		getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
+
 		sendEmailVerificationEmail(client, emailVerificationCode);
 		return false;
 	}
@@ -752,7 +758,7 @@ function loadAccountFromName(accountName, fullLoad = false) {
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -777,7 +783,7 @@ function loadAccountFromId(accountId, fullLoad = false) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -823,8 +829,10 @@ function getAccountHashingFunction() {
 
 function isNameRegistered(name) {
 	let accountData = loadAccountFromName(name, true);
-	if (accountData.databaseId > 0) {
-		return true;
+	if (accountData != null) {
+		if (accountData.databaseId > 0) {
+			return true;
+		}
 	}
 
 	return false;
@@ -852,7 +860,7 @@ function saltAccountInfo(name, password, revision = 0) {
 // ===========================================================================
 
 function loginSuccess(client) {
-	logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
+	logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
 	getPlayerData(client).loggedIn = true;
 
 	if (getPlayerData(client).loginTimeout != null) {
@@ -900,8 +908,7 @@ function loginSuccess(client) {
 	}
 
 	getPlayerData(client).accountData.ipAddress = getPlayerIP(client);
-	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
-
+	updatePlayerChatBoxStates(client);
 	messageDiscordChatChannel(`👋 ${getPlayerName(client)} has joined the server`);
 
 	//let countryName = "Unknown";
@@ -1103,21 +1110,30 @@ function createAccount(name, password, email = "", passwordRevision = 0) {
 		let safeName = escapeDatabaseString(dbConnection, name);
 		let safeEmail = escapeDatabaseString(dbConnection, email);
 
-		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered, acct_pass_revision) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP(), ${passwordRevision})`);
+		queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered, acct_pass_revision) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP(), ${passwordRevision})`);
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let insertId = getDatabaseInsertId(dbConnection);
 			createDefaultAccountServerData(insertId);
-			let tempAccountData = loadAccountFromId(insertId, false);
 
-			tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
+			let tempAccountData = new AccountData(false);
+			tempAccountData.databaseId = insertId;
+			tempAccountData.name = name;
+			tempAccountData.password = hashedPassword;
+			tempAccountData.email = email;
+			tempAccountData.passwordRevision = passwordRevision;
+			tempAccountData.whenRegistered = getCurrentUnixTimestamp();
 			tempAccountData.flags.admin = 0;
+			tempAccountData.flags.moderation = 0;
+			tempAccountData.settings = globalConfig.defaultEnabledAccountSettings;
+
+			tempAccountData.messages = [];
+			tempAccountData.notes = [];
+			tempAccountData.contacts = [];
 			return tempAccountData;
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -1163,7 +1179,7 @@ function checkLogin(client, password) {
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if (doesPlayerHaveEmailVerified(client) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
@@ -1180,7 +1196,7 @@ function checkLogin(client, password) {
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if (doesPlayerHaveEmailVerified(client) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
@@ -1298,7 +1314,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 	}
 
 	let accountData = createAccount(getPlayerName(client), password, emailAddress);
-	if (!accountData) {
+	if (accountData == null) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedCreateError"));
 		} else {
@@ -1312,17 +1328,21 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 	getPlayerData(client).accountData = accountData;
 	getPlayerData(client).loggedIn = true;
 	getPlayerData(client).accountData.settings = 0;
+	getPlayerData(client).accountData.flags.moderation = 0;
+	getPlayerData(client).accountData.flags.admin = 0;
 	getPlayerData(client).accountData.needsSaved = true;
 
 	messagePlayerSuccess(client, getLocaleString(client, "RegistrationSuccess"));
+	logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} successfully registered their account`);
+
 	if (checkForSMTPModule() && getEmailConfig().enabled) {
-		//	messagePlayerAlert(client, getLocaleString(client, "RegistrationEmailVerifyReminder"));
-		//	let emailVerificationCode = generateEmailVerificationCode();
-		//	getPlayerData(client).accountData.emailVerificationCode = getAccountHashingFunction()(emailVerificationCode);
-		//	sendEmailVerificationEmail(client, emailVerificationCode);
-		//
+		let emailVerificationCode = generateEmailVerificationCode();
+		let hashingFunction = getAccountHashingFunction();
+		getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
+
+		sendEmailVerificationEmail(client, emailVerificationCode);
 		messagePlayerAlert(client, getLocaleString(client, "VerifyEmailHelpTip", `{ALTCOLOUR}/verifyemail{MAINCOLOUR}`));
-		//	logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
 	}
 
 	if (doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
@@ -1332,17 +1352,19 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		}, 5000);
 
 		showPlayerError(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is not a tester. Kicking them from the server ...`);
 		return false;
 	} else {
 		messagePlayerAlert(client, getLocaleString(client, "RegistrationCreateCharReminder"));
 
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			showPlayerRegistrationSuccessGUI(client);
+			//showPlayerRegistrationSuccessGUI(client);
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 			getPlayerData(client).promptType = V_PROMPT_CREATEFIRSTCHAR;
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
 		}
+		logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the "no characters" prompt.`);
 	}
 };
 
@@ -1361,7 +1383,7 @@ function checkAccountResetPasswordRequest(client, inputText) {
 				return false;
 			}
 
-			let passwordResetCode = toUpperCase(generateEmailVerificationCode());
+			let passwordResetCode = toUpperCase(toString(generateEmailVerificationCode()));
 			getPlayerData(client).passwordResetState = V_RESETPASS_STATE_CODEINPUT;
 			getPlayerData(client).passwordResetCode = passwordResetCode;
 			showPlayerResetPasswordCodeInputGUI(client);
@@ -1546,8 +1568,8 @@ function createDefaultAccountServerData(accountDatabaseId) {
 
 // ===========================================================================
 
-function loadAccountKeybindsFromDatabase(accountDatabaseID) {
-	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account keybinds for account ${accountDatabaseID} from database ...`);
+function loadAccountKeybindsFromDatabase(accountDatabaseId = 0) {
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account keybinds for account ${accountDatabaseId} from database ...`);
 
 	let tempAccountKeybinds = [];
 	let dbConnection = connectToDatabase();
@@ -1562,9 +1584,9 @@ function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 		tempAccountKeybinds.push(tempKeyBindData);
 	}
 
-	if (accountDatabaseID != 0 && typeof accountDatabaseId != "undefined") {
+	if (accountDatabaseId != 0) {
 		if (dbConnection) {
-			let dbQueryString = `SELECT * FROM acct_hotkey WHERE acct_hotkey_enabled = 1 AND acct_hotkey_acct = ${accountDatabaseID} AND acct_hotkey_server = ${getServerId()}`;
+			let dbQueryString = `SELECT * FROM acct_hotkey WHERE acct_hotkey_enabled = 1 AND acct_hotkey_acct = ${accountDatabaseId} AND acct_hotkey_server = ${getServerId()}`;
 			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
@@ -1577,7 +1599,7 @@ function loadAccountKeybindsFromDatabase(accountDatabaseID) {
 		}
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountKeybinds.length} account keybinds for account ${accountDatabaseID} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountKeybinds.length} account keybinds for account ${accountDatabaseId} loaded from database successfully!`);
 	return tempAccountKeybinds;
 }
 
@@ -1724,7 +1746,13 @@ function getPlayerStaffTitle(client) {
 // ===========================================================================
 
 function isAccountEmailVerified(accountData) {
-	return hasBitFlag(accountData.flags.moderation, getModerationFlagValue("EmailVerified"));
+	return hasBitFlag(accountData.flags.moderation || 0, getModerationFlagValue("EmailVerified"));
+}
+
+// ===========================================================================
+
+function doesPlayerHaveEmailVerified(client) {
+	return hasBitFlag(getPlayerData(client).accountData.flags.moderation || 0, getModerationFlagValue("EmailVerified"));
 }
 
 // ===========================================================================
@@ -1826,6 +1854,10 @@ function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getG
 // ===========================================================================
 
 function isAccountSettingFlagEnabled(accountData, flagValue) {
+	if (accountData == null) {
+		return false;
+	}
+
 	return hasBitFlag(accountData.settings, flagValue);
 }
 
