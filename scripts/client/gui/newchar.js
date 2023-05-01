@@ -141,9 +141,9 @@ function newCharacterFailed(errorMessage) {
 		closeAllWindows();
 		setChatWindowEnabled(false);
 		mexui.setInput(true);
-		if (typeof setHUDEnabled != "undefined") {
-			setHUDEnabled(hudState);
-		}
+		//if (typeof setHUDEnabled != "undefined") {
+		//	setHUDEnabled(false);
+		//}
 		newCharacter.window.shown = true;
 	}
 }
