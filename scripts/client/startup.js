@@ -160,6 +160,10 @@ function setUpInitialGame() {
 		natives.setPickupsFixCars(false);
 		natives.forceFullVoice(localPlayer);
 
+		// Local Player
+		natives.setCharAllowedToRunOnBoats(localPlayer, true);
+		natives.allowLockonToFriendlyPlayers(natives.getPlayerId(), true);
+
 		// HUD and Display
 		//natives.displayCash(false);
 		//natives.displayAmmo(false);
