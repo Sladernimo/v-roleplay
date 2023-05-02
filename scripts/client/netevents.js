@@ -58,7 +58,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.wantedLevel", setLocalPlayerWantedLevel);
 	addNetworkEventHandler("v.rp.playerPedId", sendLocalPlayerNetworkIdToServer);
 	addNetworkEventHandler("v.rp.ped", setLocalPlayerPedPartsAndProps);
-	addNetworkEventHandler("v.rp.spawn", serverRequestedLocalPlayerSpawn);
+	//addNetworkEventHandler("v.rp.spawn", serverRequestedLocalPlayerSpawn);
 	addNetworkEventHandler("v.rp.clearPedState", clearLocalPedState);
 	addNetworkEventHandler("v.rp.drunkEffect", setLocalPlayerDrunkEffect);
 	addNetworkEventHandler("v.rp.deleteLocalPlayerPed", deleteLocalPlayerPed);
@@ -238,20 +238,25 @@ function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardS
 function onServerSpawnedLocalPlayer(state) {
 	logToConsole(LOG_DEBUG, `[V.RP.Main] Setting spawned state to ${state}`);
 	isSpawned = state;
-	setUpInitialGame();
 	calledDeathEvent = false;
+
 	if (state) {
-		getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
-			syncCivilianProperties(ped);
-		});
+		setTimeout(function () {
+			setUpInitialGame();
+			syncPlayerProperties(localPlayer);
 
-		getElementsByType(ELEMENT_PLAYER).forEach(player => {
-			syncPlayerProperties(player);
-		});
+			getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
+				syncCivilianProperties(ped);
+			});
 
-		getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
-			syncVehicleProperties(vehicle);
-		});
+			getElementsByType(ELEMENT_PLAYER).forEach(player => {
+				syncPlayerProperties(player);
+			});
+
+			getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
+				syncVehicleProperties(vehicle);
+			});
+		}, 250);
 	}
 }
 
