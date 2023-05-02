@@ -287,7 +287,7 @@ function clanChatCommand(command, params, client) {
 		return false;
 	}
 
-	if (getClanData(getPlayerClan) == null) {
+	if (getClanData(getPlayerClan(client)) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -553,3 +553,5 @@ function updatePlayerChatBoxStates(client) {
 	sendPlayerProfanityFilterState(client, isPlayerAccountSettingEnabled(client, "ProfanityFilter"));
 	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
 }
+
+// ===========================================================================
