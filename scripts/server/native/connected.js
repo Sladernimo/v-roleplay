@@ -409,7 +409,7 @@ function setPlayerArmour(client, armour) {
 // ===========================================================================
 
 function getPlayerArmour(client) {
-	if (areServerElementsSupported(client)) {
+	if (isGameFeatureSupported("pedArmour")) {
 		return getPlayerPed(client).armour;
 	} else {
 		return getPlayerData(client).syncArmour;
