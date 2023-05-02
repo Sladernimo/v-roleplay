@@ -522,29 +522,29 @@ function syncPlayerProperties(player) {
 		}
 	}
 
-	if (getGame() == V_GAME_GTA_SA) {
+	if (isGameFeatureSupported("pedFightStyle")) {
 		if (doesEntityDataExist(player, "v.rp.fightStyle")) {
 			let fightStyle = getEntityData(player, "v.rp.fightStyle");
 			player.setFightStyle(fightStyle[0], fightStyle[1]);
 		}
 	}
 
-	//if(getGame() == V_GAME_GTA_SA) {
-	//    if(doesEntityDataExist(player, "v.rp.walkStyle")) {
-	//        let walkStyle = getEntityData(player, "v.rp.walkStyle");
-	//        player.walkStyle = walkStyle;
-	//    }
-	//}
+	if (isGameFeatureSupported("pedWalkStyle")) {
+		if (doesEntityDataExist(player, "v.rp.walkStyle")) {
+			let walkStyle = getEntityData(player, "v.rp.walkStyle");
+			player.walkStyle = walkStyle;
+		}
+	}
 
 	if (getGame() == V_GAME_GTA_IV) {
-		if (doesEntityDataExist(player, "v.rp.bodyPartHair")) {
-			let bodyPartHead = getEntityData(player, "v.rp.bodyPartHair");
-			player.changeBodyPart(0, bodyPartHead[0], bodyPartHair[1]);
-		}
+		//if (doesEntityDataExist(player, "v.rp.bodyPartHair")) {
+		//	let bodyPartHead = getEntityData(player, "v.rp.bodyPartHair");
+		//	player.changeBodyPart(0, bodyPartHead[0], bodyPartHead[1]);
+		//}
 
 		if (doesEntityDataExist(player, "v.rp.bodyPartHead")) {
 			let bodyPartHead = getEntityData(player, "v.rp.bodyPartHead");
-			player.changeBodyPart(1, bodyPartHead[0], bodyPartHead[1]);
+			player.changeBodyPart(0, bodyPartHead[0], bodyPartHead[1]);
 		}
 
 		if (doesEntityDataExist(player, "v.rp.bodyPartUpper")) {
@@ -554,10 +554,16 @@ function syncPlayerProperties(player) {
 
 		if (doesEntityDataExist(player, "v.rp.bodyPartLower")) {
 			let bodyPartLower = getEntityData(player, "v.rp.bodyPartLower");
-			player.changeBodyPart(1, bodyPartLower[0], bodyPartLower[1]);
+			player.changeBodyPart(2, bodyPartLower[0], bodyPartLower[1]);
+		}
+
+		if (doesEntityDataExist(player, "v.rp.bodyPropHead")) {
+			let bodyPropHead = getEntityData(player, "v.rp.bodyPropHead");
+			natives.setCharPropIndex(localPlayer, 0, bodyPropHead);
 		}
 	}
 
+	/*
 	if (getGame() == V_GAME_GTA_IV) {
 		if (doesEntityDataExist(player, "v.rp.bodyPropHair")) {
 			let bodyPropHair = getEntityData(player, "v.rp.bodyPropHair");
@@ -614,6 +620,7 @@ function syncPlayerProperties(player) {
 			player.changeBodyProp(1, bodyPropRightFoot[0], bodyPropRightFoot[1]);
 		}
 	}
+	*/
 }
 
 // ===========================================================================
