@@ -161,6 +161,14 @@ let serverColours = {
 			jobYellow: "FFFF00",
 			npcPink: "DB7093",
 			chatBoxListIndex: "0099FF",
+			bankGreen: "00B400",
+			policeBlue: "3250C8",
+			medicPink: "DB7093",
+			firefighterRed: "CD3C3C",
+			adminOrange: "ED4337",
+			busDriverGreen: "32A032",
+			taxiDriverYellow: "F0E664",
+			deliveryPurple: "B19CD9",
 		},
 		byName: {
 			white: "FFFFFF",
@@ -176,23 +184,10 @@ let serverColours = {
 			lightGrey: "C8C8C8",
 			mediumGrey: "969696",
 			darkGrey: "404040",
-			policeBlue: "3250C8",
-			medicPink: "DB7093",
-			firefighterRed: "CD3C3C",
-			busDriverGreen: "32A032",
-			taxiDriverYellow: "F0E664",
-			deliveryPurple: "B19CD9",
 			civilianWhite: "C8C8C8",
 			burntYellow: "D2D200",
 			burntOrange: "D27800",
-			bankGreen: "00B400",
 			softYellow: "EAC67E",
-			businessBlue: "0099FF",
-			houseGreen: "11CC11",
-			clanOrange: "FF9900",
-			vehiclePurple: "B19CD9",
-			jobYellow: "FFFF00",
-			adminOrange: "ED4337",
 			chatBoxListIndex: "0099FF",
 		},
 	},
@@ -227,6 +222,7 @@ let serverColours = {
 		npcPink: toColour(219, 112, 147, 255),
 		adminOrange: toColour(205, 60, 60, 255),
 		clanOrange: toColour(255, 153, 0, 255),
+		jobYellow: toColour(255, 255, 0, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
@@ -1683,15 +1679,15 @@ function getAllowedSkins(gameId = getGame()) {
 
 // ===========================================================================
 
-function getAllowedSkinIndexFromSkin(skin) {
-	let allowedSkins = getAllowedSkins();
-	for (let i in allowedSkins) {
-		if (allowedSkins[i][0] == skin) {
+function getAllowedSkinIndexFromSkinIndex(skinIndex, gameId = getGame()) {
+	let tempAllowedSkins = getAllowedSkins(gameId);
+	for (let i in tempAllowedSkins) {
+		if (tempAllowedSkins[i][0] == gameData.skins[gameId][skinIndex][0]) {
 			return i;
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 // ===========================================================================
@@ -3308,6 +3304,22 @@ function removeUnusedGameData() {
 			}
 		}
 	}
+}
+
+// ===========================================================================
+
+function getVehicleHeadingFromRotation(rotation) {
+	return (getGame() == V_GAME_MAFIA_ONE) ? rotation.y : rotation.z;
+}
+
+// ===========================================================================
+
+function addPrefixNumberFill(number, amount) {
+	let numberString = toString(number);
+	while (numberString.length < amount) {
+		numberString = toString(`0${numberString}`);
+	}
+	return toString(numberString);
 }
 
 // ===========================================================================
