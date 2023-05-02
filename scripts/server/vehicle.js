@@ -412,6 +412,37 @@ function createTemporaryVehicleCommand(command, params, client) {
 
 // ===========================================================================
 
+function createSingleUseRentalCommand(command, params, client) {
+	if (getGame() > V_GAME_GTA_IV) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (typeof serverData.singleUseVehicle[client.name] != "undefined") {
+		messagePlayerError(client, "You already used your one-time Faggio!");
+		return false;
+	}
+
+	let modelIndex = getVehicleModelIndexFromParams("Faggio");
+
+	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+
+	getVehicleData(vehicle).rentPrice = 5;
+
+	setTimeout(function () {
+		despawnVehicle(vehicle);
+		serverData.vehicles.splice(getVehicleData(vehicle).index, 1);
+	}, 1000 * 60 * 10);
+
+	serverData.singleUseVehicle[client.name] = true;
+
+	messagePlayerSuccess(client, `You spawned a temporary Faggio. It will despawn in 10 minutes.`);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} created a temporary 10-minute {vehiclePurple}Faggio`, true);
+}
+
+// ===========================================================================
+
 function getNearbyVehiclesCommand(command, params, client) {
 	let distance = 10.0;
 
@@ -2164,11 +2195,12 @@ function listPersonalVehiclesCommand(command, params, client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
 
 	let vehiclesList = vehicles.map(function (x) {
-		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))})`;
+		let location = `${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x.vehicle)))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))}`;
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x.vehicle)} {mediumGrey}(${location})`;
 	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerVehiclesList", getCharacterFullName(targetClient))));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerVehiclesList", getCharacterFullName(client))));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -2191,7 +2223,7 @@ function listClanVehiclesCommand(command, params, client) {
 	let vehicles = getAllVehiclesOwnedByClan(clanIndex);
 
 	let vehiclesList = vehicles.map(function (x) {
-		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x.vehicle)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x.vehicle))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))})`;
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x.vehicle)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x.vehicle)))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
@@ -2218,7 +2250,7 @@ function listJobVehiclesCommand(command, params, client) {
 	let vehicles = getAllVehiclesOwnedByJob(jobIndex);
 
 	let vehiclesList = vehicles.map(function (x) {
-		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x.vehicle)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x.vehicle))).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))})`;
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${getVehicleName(x.vehicle)} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), getVehiclePosition(x.vehicle)))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getVehiclePosition(x.vehicle)))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(vehiclesList, 4);
 
