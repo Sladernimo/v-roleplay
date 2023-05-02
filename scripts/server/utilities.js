@@ -480,16 +480,6 @@ function getPlayerConnectionsInLastMonthByName(name) {
 
 // ===========================================================================
 
-function addPrefixNumberFill(number, amount) {
-	let numberString = toString(number);
-	while (numberString.length < amount) {
-		numberString = toString(`0${numberString}`);
-	}
-	return toString(numberString);
-}
-
-// ===========================================================================
-
 function updateAllPlayerWeaponDamageStates() {
 	let clients = getClients();
 	for (let i in players) {
@@ -525,6 +515,62 @@ function removeAllPlayersFromVehicles() {
 		}
 	}
 	return false;
+}
+
+// ===========================================================================
+
+function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
+	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		return false;
+	}
+
+	let currentScene = getPlayerCurrentSubAccount(client).scene;
+
+	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
+	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
+	getPlayerCurrentSubAccount(client).interior = spawnInterior;
+	getPlayerCurrentSubAccount(client).dimension = spawnDimension;
+	getPlayerCurrentSubAccount(client).scene = sceneName;
+	getPlayerCurrentSubAccount(client).spawnVehicle = spawnVehicle;
+	getPlayerCurrentSubAccount(client).spawnVehicleSeat = vehicleSeat;
+
+	clearPlayerStateToEnterExitProperty(client);
+
+	// In Mafia 1, set virtual world to some really high unused number first so everything is removed (otherwise crashes)
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
+	}
+
+	if (isGameFeatureSupported("fadeCamera")) {
+		fadePlayerCamera(client, false, 2000);
+	}
+
+	if (isGameFeatureSupported("interiorScene")) {
+		if (!isSameScene(sceneName, currentScene)) {
+			setTimeout(function () {
+				if (getPlayerPed(client) != null) {
+					despawnPlayer(client);
+				}
+
+				setPlayerScene(client, sceneName);
+
+				//setTimeout(function () {
+				//	processPlayerSceneSwitch(client);
+				//}, 1100);
+			}, 2000);
+
+			return false;
+		}
+	}
+
+	setTimeout(function () {
+		processPlayerSceneSwitch(client, false);
+	}, 2000);
 }
 
 // ===========================================================================
@@ -629,3 +675,23 @@ function exportAllFunctions() {
 }
 
 // ===========================================================================
+
+function setPlayerPedPartsAndProps(client) {
+	//	setEntityData(getPlayerPed(client), "v.rp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPropHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
+	//
+
+	forcePlayerToSyncElementProperties(null, getPlayerPed(client));
+}
