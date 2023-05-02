@@ -18,7 +18,7 @@ const V_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin 
  * @class Representing extra data for a client
  */
 class ClientData {
-	constructor(client, accountData, subAccounts) {
+	constructor(client, accountData = null, subAccounts = []) {
 		/** @type {AccountData} */
 		this.accountData = accountData;
 
@@ -267,7 +267,12 @@ function initClient(client) {
 			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
 
 			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
-			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
+			let tempSubAccounts = [];
+			if (tempAccountData != null) {
+				if (tempAccountData.databaseId != 0) {
+					tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
+				}
+			}
 
 			serverData.clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
 
@@ -275,7 +280,7 @@ function initClient(client) {
 			serverData.clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
 			requestClientInfo(client);
 
-			if (tempAccountData != false) {
+			if (tempAccountData != null) {
 				sendPlayerLocaleId(client, getPlayerData(client).accountData.locale);
 				if (isAccountAutoIPLoginEnabled(tempAccountData) && getPlayerData(client).accountData.ipAddress == getPlayerIP(client)) {
 					messagePlayerAlert(client, getLocaleString(client, "AutoLoggedInIP"));
@@ -315,7 +320,7 @@ function initClient(client) {
 				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 			}
 
-			serverData.clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(serverData.clients[getPlayerId(client)].accountData.databaseId);
+			serverData.clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase((tempAccountData != null) ? tempAccountData.databaseId : 0);
 			sendAccountKeyBindsToClient(client);
 		}
 	}, 2500);
