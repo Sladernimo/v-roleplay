@@ -772,7 +772,7 @@ function forcePlayerIntoSkinSelect(client, forceCurrentSkin = -1) {
 		setPlayerDimension(client, getPlayerId(client) + globalConfig.skinChangeDimensionStart);
 	}
 
-	sendNetworkEventToPlayer("v.rp.skinSelect", client, true, forceCurrentSkin);
+	sendNetworkEventToPlayer("v.rp.skinSelect", client, true, getPlayerCurrentSubAccount(client).skin, forceCurrentSkin);
 }
 
 // ===========================================================================
@@ -911,8 +911,6 @@ function sendPlayerSetArmour(client, armour) {
 // ===========================================================================
 
 function playerFinishedSkinSelection(client, skinIndex, bodyPartHead, bodyPartUpper, bodyPartLower, bodyPartHat) {
-	//sendNetworkEventToPlayer("v.rp.skinSelect", client, false);
-
 	if (isPlayerWorking(client)) {
 		//setPlayerSkin(client, getPlayerData(client).jobUniform);
 		//if (isGameFeatureSupported("pedBodyPart")) {
@@ -928,7 +926,7 @@ function playerFinishedSkinSelection(client, skinIndex, bodyPartHead, bodyPartUp
 		getPlayerCurrentSubAccount(client).bodyParts.head = bodyPartHead;
 		getPlayerCurrentSubAccount(client).bodyParts.upper = bodyPartUpper;
 		getPlayerCurrentSubAccount(client).bodyParts.lower = bodyPartLower;
-		getPlayerCurrentSubAccount(client).bodyProps.hat = bodyPartHat;
+		getPlayerCurrentSubAccount(client).bodyProps.head = bodyPartHat;
 
 		//setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 		//setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HEAD, bodyPartHead);
