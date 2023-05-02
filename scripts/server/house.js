@@ -2048,11 +2048,11 @@ function listPersonalHousesCommand(command, params, client) {
 	let houses = getAllHousesOwnedByPlayer(client);
 
 	let houseList = houses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(houseList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerHousesList", getCharacterFullName(targetClient))));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerHousesList", getCharacterFullName(client))));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -2072,10 +2072,10 @@ function listClanHousesCommand(command, params, client) {
 		return false;
 	}
 
-	let houses = getAllHousesOwnedByClan(client);
+	let houses = getAllHousesOwnedByClan(jobIndex);
 
 	let houseList = houses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(houseList, 4);
 
@@ -2099,10 +2099,10 @@ function listJobHousesCommand(command, params, client) {
 		return false;
 	}
 
-	let houses = getAllHousesOwnedByJob(client);
+	let houses = getAllHousesOwnedByJob(jobIndex);
 
 	let houseList = houses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(houseList, 4);
 

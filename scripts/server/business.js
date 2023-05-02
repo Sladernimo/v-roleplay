@@ -3461,7 +3461,7 @@ function listJobBusinessesCommand(command, params, client) {
 		return false;
 	}
 
-	let businesses = getAllBusinessesOwnedByClan(clanIndex);
+	let businesses = getAllBusinessesOwnedByJob(jobIndex);
 
 	let businessList = businesses.map(function (x) {
 		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
