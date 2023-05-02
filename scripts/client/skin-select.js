@@ -112,11 +112,11 @@ function processSkinSelectKeyPress(keyCode) {
 					}
 
 					// If reached end of models and textures, reset both to 0
-					if (skinSelectHead[0] == maxBodyPartVariants) {
+					if (skinSelectHead[0] == natives.getNumberOfCharDrawableVariations(localPlayer, 0)) {
 						skinSelectHead = [0, 0];
 					} else {
 						// If reached end of textures, increment model and reset texture to 0
-						if (skinSelectHead[1] >= maxBodyPartVariants) {
+						if (skinSelectHead[1] >= natives.getNumberOfCharTextureVariations(localPlayer, 0, skinSelectHead[0])) {
 							skinSelectHead = [skinSelectHead[0] + 1, 0];
 						} else {
 							skinSelectHead = [skinSelectHead[0], skinSelectHead[1] + 1];
@@ -132,11 +132,11 @@ function processSkinSelectKeyPress(keyCode) {
 					}
 
 					// If reached end of models and textures, reset both to 0
-					if (skinSelectUpper[0] == maxBodyPartVariants) {
+					if (skinSelectUpper[0] == natives.getNumberOfCharDrawableVariations(localPlayer, 1)) {
 						skinSelectUpper = [0, 0];
 					} else {
 						// If reached end of textures, increment model and reset texture to 0
-						if (skinSelectUpper[1] >= maxBodyPartVariants) {
+						if (skinSelectUpper[1] >= natives.getNumberOfCharTextureVariations(localPlayer, 1, skinSelectUpper[0])) {
 							skinSelectUpper = [skinSelectUpper[0] + 1, 0];
 						} else {
 							skinSelectUpper = [skinSelectUpper[0], skinSelectUpper[1] + 1];
@@ -152,11 +152,11 @@ function processSkinSelectKeyPress(keyCode) {
 					}
 
 					// If reached end of models and textures, reset both to 0
-					if (skinSelectLower[0] == maxBodyPartVariants) {
+					if (skinSelectLower[0] == natives.getNumberOfCharDrawableVariations(localPlayer, 2)) {
 						skinSelectLower = [0, 0];
 					} else {
 						// If reached end of textures, increment model and reset texture to 0
-						if (skinSelectLower[1] >= maxBodyPartVariants) {
+						if (skinSelectLower[1] >= natives.getNumberOfCharTextureVariations(localPlayer, 2, skinSelectLower[0])) {
 							skinSelectLower = [skinSelectLower[0] + 1, 0];
 						} else {
 							skinSelectLower = [skinSelectLower[0], skinSelectLower[1] + 1];
@@ -200,11 +200,11 @@ function processSkinSelectKeyPress(keyCode) {
 
 					// If reached beginning of models and textures, reset both to max
 					if (skinSelectHead[0] == 0) {
-						skinSelectHead = [maxBodyPartVariants, maxBodyPartVariants];
+						skinSelectHead = [natives.getNumberOfCharDrawableVariations(localPlayer, 0), natives.getNumberOfCharTextureVariations(localPlayer, 0, natives.getNumberOfCharDrawableVariations(localPlayer, 0)) - 1];
 					} else {
 						// If reached beginning of textures, decrement model and reset texture to max
 						if (skinSelectHead[1] == 0) {
-							skinSelectHead = [skinSelectHead[0] - 1, maxBodyPartVariants];
+							skinSelectHead = [skinSelectHead[0] - 1, natives.getNumberOfCharTextureVariations(localPlayer, 0, skinSelectHead[0]) - 1];
 						} else {
 							skinSelectHead = [skinSelectHead[0], skinSelectHead[1] - 1];
 						}
@@ -220,11 +220,11 @@ function processSkinSelectKeyPress(keyCode) {
 
 					// If reached end of models and textures, reset both to 0
 					if (skinSelectUpper[0] == 0) {
-						skinSelectUpper = [maxBodyPartVariants, maxBodyPartVariants];
+						skinSelectUpper = [natives.getNumberOfCharDrawableVariations(localPlayer, 1), natives.getNumberOfCharTextureVariations(localPlayer, 1, natives.getNumberOfCharDrawableVariations(localPlayer, 1)) - 1];
 					} else {
 						// If reached beginning of textures, decrement model and reset texture to max
 						if (skinSelectUpper[1] <= 0) {
-							skinSelectUpper = [skinSelectUpper[0] - 1, maxBodyPartVariants];
+							skinSelectUpper = [skinSelectUpper[0] - 1, natives.getNumberOfCharTextureVariations(localPlayer, 1, skinSelectUpper[0]) - 1];
 						} else {
 							skinSelectUpper = [skinSelectUpper[0], skinSelectUpper[1] - 1];
 						}
@@ -240,11 +240,11 @@ function processSkinSelectKeyPress(keyCode) {
 
 					// If reached end of models and textures, reset both to 0
 					if (skinSelectLower[0] == 0) {
-						skinSelectLower = [maxBodyPartVariants, maxBodyPartVariants];
+						skinSelectLower = [natives.getNumberOfCharDrawableVariations(localPlayer, 2), natives.getNumberOfCharTextureVariations(localPlayer, 2, natives.getNumberOfCharDrawableVariations(localPlayer, 2)) - 1];
 					} else {
 						// If reached beginning of textures, decrement model and reset texture to max
 						if (skinSelectLower[1] <= 0) {
-							skinSelectLower = [skinSelectLower[0] - 1, maxBodyPartVariants];
+							skinSelectLower = [skinSelectLower[0] - 1, natives.getNumberOfCharTextureVariations(localPlayer, 2, skinSelectLower[0]) - 1];
 						} else {
 							skinSelectLower = [skinSelectLower[0], skinSelectLower[1] - 1];
 						}
@@ -303,7 +303,7 @@ function processSkinSelectRendering() {
 				skinSelectMessageFontTop.render(skinSelectMessageTextTop, [0, game.height - 100], game.width, 0.5, 0.0, skinSelectMessageFontTop.size, skinSelectMessageColourTop, true, true, false, true);
 				skinSelectMessageFontBottom.render(skinSelectMessageTextBottom, [0, game.height - 65], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
 				if (isGameFeatureSupported("pedBodyPart")) {
-					skinSelectMessageFontBottom.render(skinSelectMessageTextBottomParts, [0, game.height - 30], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
+					skinSelectMessageFontBottom.render(skinSelectMessageTextBottomParts, [0, game.height - 40], game.width, 0.5, 0.0, skinSelectMessageFontBottom.size, skinSelectMessageColourBottom, true, true, false, true);
 				}
 			}
 		}
@@ -312,11 +312,11 @@ function processSkinSelectRendering() {
 
 // ===========================================================================
 
-function toggleSkinSelect(state, forceCurrentSkin) {
+function toggleSkinSelect(state, startSkinIndex, forceCurrentSkin) {
 	if (state) {
 		skinSelectorIndex = forceCurrentSkin;
 		if (forceCurrentSkin == -1) {
-			skinSelectorIndex = getAllowedSkinIndexFromSkin(gameData.skins[getGame()][0][0]);
+			skinSelectorIndex = getAllowedSkinIndexFromSkinIndex(startSkinIndex);
 			//setLocalPlayerSkin(allowedSkins[skinSelectorIndex][0]);
 		} else {
 			//setLocalPlayerSkin(gameData.skins[getGame()][forceCurrentSkin][0]);
