@@ -394,7 +394,7 @@ function createBusiness(name, entrancePosition, exitPosition, entrancePickupMode
 	spawnBusinessPickups(businessId - 1);
 	spawnBusinessBlips(businessId - 1);
 
-	updateBusinessPickupLabelData(i, false);
+	updateBusinessPickupLabelData(businessId - 1, false);
 
 	return tempBusinessData;
 }
@@ -3410,11 +3410,11 @@ function listPersonalBusinessesCommand(command, params, client) {
 	let businesses = getAllBusinessesOwnedByPlayer(client);
 
 	let businessList = businesses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(businessList, 4);
 
-	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerBusinessesList", getCharacterFullName(targetClient))));
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerBusinessesList", getCharacterFullName(client))));
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
 	}
@@ -3437,7 +3437,7 @@ function listClanBusinessesCommand(command, params, client) {
 	let businesses = getAllBusinessesOwnedByClan(clanIndex);
 
 	let businessList = businesses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(businessList, 4);
 
@@ -3464,7 +3464,7 @@ function listJobBusinessesCommand(command, params, client) {
 	let businesses = getAllBusinessesOwnedByClan(clanIndex);
 
 	let businessList = businesses.map(function (x) {
-		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.name}{mediumGrey} (${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
 	});
 	let chunkedList = splitArrayIntoChunks(businessList, 4);
 
