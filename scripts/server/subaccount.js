@@ -30,6 +30,7 @@ class SubAccountData {
 		this.clanFlags = 0;
 		this.clanRank = 0;
 		this.clanTitle = 0;
+		this.clanIndex = -1;
 		this.isWorking = false;
 		this.jobUniform = this.skin;
 		this.job = 0;
@@ -61,16 +62,16 @@ class SubAccountData {
 		};
 
 		this.bodyProps = {
-			hair: [0, 0],
-			eyes: [0, 0],
-			head: [0, 0],
-			leftHand: [0, 0],
-			rightHand: [0, 0],
-			leftWrist: [0, 0],
-			rightWrist: [0, 0],
-			hip: [0, 0],
-			leftFoot: [0, 0],
-			rightFoot: [0, 0],
+			hair: 0,
+			eyes: 0,
+			head: 0,
+			leftHand: 0,
+			rightHand: 0,
+			leftWrist: 0,
+			rightWrist: 0,
+			hip: 0,
+			leftFoot: 0,
+			rightFoot: 0,
 		};
 
 		if (dbAssoc) {
@@ -89,6 +90,7 @@ class SubAccountData {
 			this.clanFlags = toInteger(dbAssoc["sacct_svr_clan_flags"]);
 			this.clanRank = toInteger(dbAssoc["sacct_svr_clan_rank"]);
 			this.clanTitle = toInteger(dbAssoc["sacct_svr_clan_title"]);
+
 			this.job = toInteger(dbAssoc["sacct_svr_job"]);
 			this.jobRank = toInteger(dbAssoc["sacct_svr_job_rank"]);
 			this.interior = toInteger(dbAssoc["sacct_int"]);
@@ -114,17 +116,23 @@ class SubAccountData {
 			};
 
 			this.bodyProps = {
-				hair: [toInteger(dbAssoc["sacct_svr_hd_prop_hair_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_hair_texture"]) || 0],
-				eyes: [toInteger(dbAssoc["sacct_svr_hd_prop_eyes_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_eyes_texture"]) || 0],
-				head: [toInteger(dbAssoc["sacct_svr_hd_prop_head_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_head_texture"]) || 0],
-				leftHand: [toInteger(dbAssoc["sacct_svr_hd_prop_lefthand_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_lefthand_texture"]) || 0],
-				rightHand: [toInteger(dbAssoc["sacct_svr_hd_prop_righthand_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_righthand_texture"]) || 0],
-				leftWrist: [toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist_texture"]) || 0],
-				rightWrist: [toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist_texture"]) || 0],
-				hip: [toInteger(dbAssoc["sacct_svr_hd_prop_hip_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_hip_texture"]) || 0],
-				leftFoot: [toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot_texture"]) || 0],
-				rightFoot: [toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot_texture"]) || 0],
+				hair: toInteger(dbAssoc["sacct_svr_hd_prop_hair"]) || 0,
+				eyes: toInteger(dbAssoc["sacct_svr_hd_prop_eyes"]) || 0,
+				head: toInteger(dbAssoc["sacct_svr_hd_prop_head"]) || 0,
+				leftHand: toInteger(dbAssoc["sacct_svr_hd_prop_lefthand"]) || 0,
+				rightHand: toInteger(dbAssoc["sacct_svr_hd_prop_righthand"]) || 0,
+				leftWrist: toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist"]) || 0,
+				rightWrist: toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist"]) || 0,
+				hip: toInteger(dbAssoc["sacct_svr_hd_prop_hip"]) || 0,
+				leftFoot: toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot"]) || 0,
+				rightFoot: toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot"]) || 0,
 			};
+
+			this.clanIndex = getClanIndexFromDatabaseId(this.clan);
+			this.clanRankIndex = getClanRankIndexFromDatabaseId(this.clanIndex, this.clanRank);
+
+			this.jobIndex = getJobIndexFromDatabaseId(this.job);
+			this.jobRankIndex = getJobRankIndexFromDatabaseId(this.jobIndex, this.jobRank);
 		}
 	}
 };
@@ -186,6 +194,7 @@ function loadSubAccountFromId(subAccountId) {
 function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
+
 	if (accountId > 0) {
 		let dbConnection = connectToDatabase();
 		if (dbConnection) {
@@ -201,79 +210,79 @@ function loadSubAccountsFromAccount(accountId) {
 					}
 
 					// Check if clan and rank are still valid
-					if (tempSubAccount.clan != 0) {
-						let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
-						if (getClanData(clanIndex) == null) {
-							tempSubAccount.clan = 0;
-							tempSubAccount.clanRank = 0;
-							tempSubAccount.clanIndex = -1;
-							tempSubAccount.clanRankIndex = -1;
-							tempSubAccount.clanTitle = "";
-							tempSubAccount.clanFlags = 0;
-						} else {
-							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
-							if (!getClanRankData(clanIndex, clanRankIndex)) {
-								let newClanRankIndex = getLowestClanRank(clanIndex);
-								if (getClanRankData(clanIndex, newClanRankIndex) != false) {
-									console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}! Using lowest rank ${newClanRankIndex} instead.`);
-									tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId;
-									tempSubAccount.clanRankIndex = newClanRankIndex;
-								} else {
-									// Somethings fucked. Clan rank invalid, and no other rank to use. Removing from clan.
-									logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}, and no other rank to use. Removing from clan ...`);
-									tempSubAccount.clan = 0;
-									tempSubAccount.clanRank = 0;
-									tempSubAccount.clanIndex = -1;
-									tempSubAccount.clanRankIndex = -1;
-									tempSubAccount.clanTitle = "";
-									tempSubAccount.clanFlags = 0;
-								}
-							} else {
-								tempSubAccount.clanRankIndex = clanRankIndex;
-							}
-
-							tempSubAccount.clanIndex = clanIndex;
-						}
-					}
+					//if (tempSubAccount.clan != 0) {
+					//	let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
+					//	if (getClanData(clanIndex) == null) {
+					//		tempSubAccount.clan = 0;
+					//		tempSubAccount.clanRank = 0;
+					//		tempSubAccount.clanIndex = -1;
+					//		tempSubAccount.clanRankIndex = -1;
+					//		tempSubAccount.clanTitle = "";
+					//		tempSubAccount.clanFlags = 0;
+					//	} else {
+					//		let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
+					//		if (!getClanRankData(clanIndex, clanRankIndex)) {
+					//			let newClanRankIndex = getLowestClanRank(clanIndex);
+					//			if (getClanRankData(clanIndex, newClanRankIndex) != false) {
+					//				console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}! Using lowest rank ${newClanRankIndex} instead.`);
+					//				tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId;
+					//				tempSubAccount.clanRankIndex = newClanRankIndex;
+					//			} else {
+					//				// Somethings fucked. Clan rank invalid, and no other rank to use. Removing from clan.
+					//				logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}, and no other rank to use. Removing from clan ...`);
+					//				tempSubAccount.clan = 0;
+					//				tempSubAccount.clanRank = 0;
+					//				tempSubAccount.clanIndex = -1;
+					//				tempSubAccount.clanRankIndex = -1;
+					//				tempSubAccount.clanTitle = "";
+					//				tempSubAccount.clanFlags = 0;
+					//			}
+					//		} else {
+					//			tempSubAccount.clanRankIndex = clanRankIndex;
+					//		}
+					//
+					//		tempSubAccount.clanIndex = clanIndex;
+					//	}
+					//}
 
 					// Check if job and rank are still valid
-					if (tempSubAccount.job != 0) {
-						let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
-						if (getJobData(jobIndex) == null) {
-							tempSubAccount.job = 0;
-							tempSubAccount.jobRank = 0;
-							tempSubAccount.jobIndex = -1;
-							tempSubAccount.jobRankIndex = -1;
-						} else {
-							if (getJobData(jobIndex).ranks.length > 0) {
-								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
-								if (!getJobRankData(jobIndex, jobRankIndex)) {
-									let newJobRankIndex = getLowestJobRank(jobIndex);
-									if (getJobRankData(jobIndex, newJobRankIndex) != false) {
-										console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
-										tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
-										tempSubAccount.jobRankIndex = newJobRankIndex;
-									} else {
-										// Somethings fucked. Job rank invalid, and no other rank to use. Removing from Job.
-										logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}, and no other rank to use. Removing from job ...`);
-										tempSubAccount.job = 0;
-										tempSubAccount.jobRank = 0;
-										tempSubAccount.jobIndex = -1;
-										tempSubAccount.jobRankIndex = -1;
-									}
-
-									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
-									tempSubAccount.jobRankIndex = newJobRankIndex;
-								} else {
-									tempSubAccount.jobRankIndex = jobRankIndex;
-								}
-							} else {
-								tempSubAccount.jobRankIndex = -1;
-							}
-
-							tempSubAccount.jobIndex = jobIndex;
-						}
-					}
+					//if (tempSubAccount.job != 0) {
+					//	let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
+					//	if (getJobData(jobIndex) == null) {
+					//		tempSubAccount.job = 0;
+					//		tempSubAccount.jobRank = 0;
+					//		tempSubAccount.jobIndex = -1;
+					//		tempSubAccount.jobRankIndex = -1;
+					//	} else {
+					//		if (getJobData(jobIndex).ranks.length > 0) {
+					//			let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
+					//			if (!getJobRankData(jobIndex, jobRankIndex)) {
+					//				let newJobRankIndex = getLowestJobRank(jobIndex);
+					//				if (getJobRankData(jobIndex, newJobRankIndex) != false) {
+					//					console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+					//					tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+					//					tempSubAccount.jobRankIndex = newJobRankIndex;
+					//				} else {
+					//					// Somethings fucked. Job rank invalid, and no other rank to use. Removing from Job.
+					//					logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}, and no other rank to use. Removing from job ...`);
+					//					tempSubAccount.job = 0;
+					//					tempSubAccount.jobRank = 0;
+					//					tempSubAccount.jobIndex = -1;
+					//					tempSubAccount.jobRankIndex = -1;
+					//				}
+					//
+					//				tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+					//				tempSubAccount.jobRankIndex = newJobRankIndex;
+					//			} else {
+					//				tempSubAccount.jobRankIndex = jobRankIndex;
+					//			}
+					//		} else {
+					//			tempSubAccount.jobRankIndex = -1;
+					//		}
+					//
+					//		tempSubAccount.jobIndex = jobIndex;
+					//	}
+					//}
 
 					tempSubAccounts.push(tempSubAccount);
 				}
@@ -345,34 +354,35 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_skin", subAccountData.skin],
 			["sacct_svr_fightstyle", subAccountData.fightStyle],
 			["sacct_svr_walkstyle", subAccountData.walkStyle],
-			["sacct_svr_hd_part_hair_model", subAccountData.bodyParts.hair[0]],
-			["sacct_svr_hd_part_hair_texture", subAccountData.bodyParts.hair[1]],
+			//["sacct_svr_hd_part_hair_model", subAccountData.bodyParts.hair[0]],
+			//["sacct_svr_hd_part_hair_texture", subAccountData.bodyParts.hair[1]],
 			["sacct_svr_hd_part_head_model", subAccountData.bodyParts.head[0]],
 			["sacct_svr_hd_part_head_texture", subAccountData.bodyParts.head[1]],
 			["sacct_svr_hd_part_upper_model", subAccountData.bodyParts.upper[0]],
 			["sacct_svr_hd_part_upper_texture", subAccountData.bodyParts.upper[1]],
 			["sacct_svr_hd_part_lower_model", subAccountData.bodyParts.lower[0]],
 			["sacct_svr_hd_part_lower_texture", subAccountData.bodyParts.lower[1]],
-			["sacct_svr_hd_prop_hair_model", subAccountData.bodyProps.hair[0]],
-			["sacct_svr_hd_prop_hair_texture", subAccountData.bodyProps.hair[1]],
-			["sacct_svr_hd_prop_eyes_model", subAccountData.bodyProps.eyes[0]],
-			["sacct_svr_hd_prop_eyes_texture", subAccountData.bodyProps.eyes[1]],
-			["sacct_svr_hd_prop_head_model", subAccountData.bodyProps.head[0]],
-			["sacct_svr_hd_prop_head_texture", subAccountData.bodyProps.head[1]],
-			["sacct_svr_hd_prop_lefthand_model", subAccountData.bodyProps.leftHand[0]],
-			["sacct_svr_hd_prop_lefthand_texture", subAccountData.bodyProps.leftHand[1]],
-			["sacct_svr_hd_prop_righthand_model", subAccountData.bodyProps.rightHand[0]],
-			["sacct_svr_hd_prop_righthand_texture", subAccountData.bodyProps.rightHand[1]],
-			["sacct_svr_hd_prop_leftwrist_model", subAccountData.bodyProps.leftWrist[0]],
-			["sacct_svr_hd_prop_leftwrist_texture", subAccountData.bodyProps.leftWrist[1]],
-			["sacct_svr_hd_prop_rightwrist_model", subAccountData.bodyProps.rightWrist[0]],
-			["sacct_svr_hd_prop_rightwrist_texture", subAccountData.bodyProps.rightWrist[1]],
-			["sacct_svr_hd_prop_hip_model", subAccountData.bodyProps.hip[0]],
-			["sacct_svr_hd_prop_hip_texture", subAccountData.bodyProps.hip[1]],
-			["sacct_svr_hd_prop_leftfoot_model", subAccountData.bodyProps.leftFoot[0]],
-			["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
-			["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
-			["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
+			["sacct_svr_hd_prop_head", subAccountData.bodyProps.head],
+			//["sacct_svr_hd_prop_hair_model", subAccountData.bodyProps.hair[0]],
+			//["sacct_svr_hd_prop_hair_texture", subAccountData.bodyProps.hair[1]],
+			//["sacct_svr_hd_prop_eyes_model", subAccountData.bodyProps.eyes[0]],
+			//["sacct_svr_hd_prop_eyes_texture", subAccountData.bodyProps.eyes[1]],
+			//["sacct_svr_hd_prop_head_model", subAccountData.bodyProps.head[0]],
+			//["sacct_svr_hd_prop_head_texture", subAccountData.bodyProps.head[1]],
+			//["sacct_svr_hd_prop_lefthand_model", subAccountData.bodyProps.leftHand[0]],
+			//["sacct_svr_hd_prop_lefthand_texture", subAccountData.bodyProps.leftHand[1]],
+			//["sacct_svr_hd_prop_righthand_model", subAccountData.bodyProps.rightHand[0]],
+			//["sacct_svr_hd_prop_righthand_texture", subAccountData.bodyProps.rightHand[1]],
+			//["sacct_svr_hd_prop_leftwrist_model", subAccountData.bodyProps.leftWrist[0]],
+			//["sacct_svr_hd_prop_leftwrist_texture", subAccountData.bodyProps.leftWrist[1]],
+			//["sacct_svr_hd_prop_rightwrist_model", subAccountData.bodyProps.rightWrist[0]],
+			//["sacct_svr_hd_prop_rightwrist_texture", subAccountData.bodyProps.rightWrist[1]],
+			//["sacct_svr_hd_prop_hip_model", subAccountData.bodyProps.hip[0]],
+			//["sacct_svr_hd_prop_hip_texture", subAccountData.bodyProps.hip[1]],
+			//["sacct_svr_hd_prop_leftfoot_model", subAccountData.bodyProps.leftFoot[0]],
+			//["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
+			//["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
+			//["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
 			["sacct_svr_payday", subAccountData.payDayAmount],
 			["sacct_svr_fine", subAccountData.fineAmount],
 			["sacct_svr_scene", subAccountData.scene],
@@ -484,13 +494,13 @@ function checkNewCharacter(client, firstName, lastName) {
 		return false;
 	}
 
-	if (doesSubAccountNameExist(firstName, lastName)) {
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesSubAccountNameExist(firstName, lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (name already used)`);
 		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
 		return false;
 	}
 
-	if (doesPlayerHaveSimilarCharacterName(client, firstName, lastName)) {
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesPlayerHaveSimilarCharacterName(client, firstName, lastName)) {
 		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
 		return false;
 	}
@@ -808,11 +818,11 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 
 	getPlayerData(client).switchingCharacter = true;
 
-	despawnPlayer(client);
+	setPlayerControlState(client, false);
 
-	if (getGame() != V_GAME_MAFIA_ONE) {
-		showConnectCameraToPlayer(client);
-	}
+	//despawnPlayer(client);
+
+	showConnectCameraToPlayer(client);
 
 	showCharacterSelectToClient(client);
 }
