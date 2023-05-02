@@ -416,8 +416,8 @@ function loadCommands() {
 			new CommandData("itemtypedropfrontdistance", setItemTypeDropFrontDistanceCommand, "<item type> <distance>", getStaffFlagValue("ManageItems"), true, false, "Sets how far in front of a player an item type will be dropped"),
 			new CommandData("itemtypemaxval", setItemTypeMaxValueCommand, "<item type> <max value>", getStaffFlagValue("ManageItems"), true, false, "Sets the maximum value an item type can have"),
 			new CommandData("itemtypeorderval", setItemTypeOrderValueCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the initial value of an item type when ordered by a business"),
-			new CommandData("itemtypesize", setItemTypeSizeCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets the item type's size"),
-			new CommandData("itemtypecapacity", setItemTypeCapacityCommand, "<item type> <order value>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
+			new CommandData("itemtypesize", setItemTypeSizeCommand, "<item type> <size>", getStaffFlagValue("ManageItems"), true, false, "Sets the item type's size"),
+			new CommandData("itemtypecapacity", setItemTypeCapacityCommand, "<item type> <capacity>", getStaffFlagValue("ManageItems"), true, false, "Sets an item type's capacity (how much it can hold)"),
 
 			new CommandData("delplritem", deleteItemInPlayerInventoryCommand, "<player name/id> <item slot>", getStaffFlagValue("ManageItems"), true, false, "Removes an item by slot from a player's personal inventory"),
 			new CommandData("delplritems", deleteAllItemsInPlayerInventoryCommand, "<player name/id>", getStaffFlagValue("ManageItems"), true, false, "Removes all items from a player's personal inventory"),
@@ -549,6 +549,10 @@ function loadCommands() {
 			new CommandData("detain", detainPlayerCommand, "", getStaffFlagValue("None"), true, false, "Puts a handcuffed person in the back of your police vehicle"),
 			new CommandData("drag", dragPlayerCommand, "", getStaffFlagValue("None"), true, false, "Drags a handcuffed person around"),
 			new CommandData("search", searchPlayerCommand, "", getStaffFlagValue("None"), true, false, "Searches a person"),
+			new CommandData("afk", afkCommand, "", getStaffFlagValue("None"), true, false, "Sets your AFK status"),
+			new CommandData("brb", afkCommand, "", getStaffFlagValue("None"), true, false, "Sets your AFK status"),
+			new CommandData("away", afkCommand, "", getStaffFlagValue("None"), true, false, "Sets your AFK status"),
+			new CommandData("faggio", createSingleUseRentalCommand, "", getStaffFlagValue("None"), true, false, "Creates a single use faggio rental"),
 		],
 		npc: [
 			new CommandData("addnpc", createNPCCommand, "<skin id/name>", getStaffFlagValue("ManageNPCs"), true, false, "Creates an NPC with the specified skin"),
