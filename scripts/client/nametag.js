@@ -159,7 +159,7 @@ function updateNametag(element) {
 				health = 1.0;
 			}
 
-			let armour = (getGame() == V_GAME_GTA_IV) ? 1.0 : element.armour / 100.0;
+			let armour = (getGame() == V_GAME_GTA_IV) ? 0.0 : element.armour / 100.0;
 			if (armour > 1.0) {
 				armour = 1.0;
 			}
