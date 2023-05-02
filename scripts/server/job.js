@@ -1209,6 +1209,7 @@ function stopWorking(client) {
 	getPlayerCurrentSubAccount(client).isWorking = false;
 
 	setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
+	setPlayerPedPartsAndProps(client);
 
 	let jobVehicle = getPlayerData(client).lastJobVehicle;
 	if (jobVehicle) {
@@ -1222,7 +1223,6 @@ function stopWorking(client) {
 		getPlayerData(client).lastJobVehicle = null;
 	}
 
-	setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
 	deleteJobItems(client);
 	restorePlayerTempLockerItems(client);
 	//respawnJobVehicle(client);
@@ -1359,6 +1359,7 @@ function jobUniformCommand(command, params, client) {
 
 	if (uniformId == 0) {
 		setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
+		setPlayerPedPartsAndProps(client);
 		meActionToNearbyPlayers(client, `takes off their uniform`);
 		return false;
 	}
@@ -3553,7 +3554,11 @@ function getJobIndexFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function getJobRankIndexFromDatabaseId(jobIndex, databaseId) {
-	if (databaseId <= 0) {
+	if (jobIndex == -1) {
+		return -1;
+	}
+
+	if (databaseId == 0) {
 		return -1;
 	}
 
@@ -5000,6 +5005,24 @@ function createElementForPlayerJobRouteLocation(client, jobIndex, jobRouteIndex,
 	}
 
 	return true;
+}
+
+// ===========================================================================
+
+function addPlayerToJob(client, jobIndex, jobRankIndex = 0) {
+	getPlayerCurrentSubAccount(client).job = getJobData(jobIndex).databaseId;
+	getPlayerCurrentSubAccount(client).jobIndex = jobIndex;
+	getPlayerCurrentSubAccount(client).jobRank = getJobRankData(jobIndex, jobRankIndex).databaseId;
+	getPlayerCurrentSubAccount(client).jobRankIndex = jobRankIndex;
+}
+
+// ===========================================================================
+
+function removePlayerFromJob(client) {
+	getPlayerCurrentSubAccount(client).job = 0;
+	getPlayerCurrentSubAccount(client).jobIndex = -1;
+	getPlayerCurrentSubAccount(client).jobRank = 0;
+	getPlayerCurrentSubAccount(client).jobRankIndex = -1;
 }
 
 // ===========================================================================
