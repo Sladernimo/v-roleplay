@@ -166,26 +166,6 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false
 	},
-	fightStyle: {
-		[V_GAME_GTA_III]: false,
-		[V_GAME_GTA_VC]: false,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
-	walkStyle: {
-		[V_GAME_GTA_III]: false,
-		[V_GAME_GTA_VC]: false,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: false,
-		[V_GAME_GTA_IV_EFLC]: false,
-		[V_GAME_MAFIA_ONE]: false,
-		[V_GAME_MAFIA_TWO]: false,
-		[V_GAME_MAFIA_THREE]: false
-	},
 	marker: {
 		[V_GAME_GTA_III]: true,
 		[V_GAME_GTA_VC]: true,
@@ -342,6 +322,26 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_ONE]: false,
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
+	},
+	pedFightStyle: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
+	},
+	pedWalkStyle: {
+		[V_GAME_GTA_III]: false,
+		[V_GAME_GTA_VC]: false,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: false,
+		[V_GAME_GTA_IV_EFLC]: false,
+		[V_GAME_MAFIA_ONE]: false,
+		[V_GAME_MAFIA_TWO]: false,
+		[V_GAME_MAFIA_THREE]: false
 	},
 
 	// Vehicle features
