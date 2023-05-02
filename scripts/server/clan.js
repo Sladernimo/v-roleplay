@@ -1316,7 +1316,7 @@ function getPlayerClan(client) {
 // ===========================================================================
 
 function getClanIndexFromDatabaseId(databaseId) {
-	if (databaseId <= 0) {
+	if (databaseId == 0) {
 		return -1;
 	}
 
@@ -1332,7 +1332,11 @@ function getClanIndexFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function getClanRankIndexFromDatabaseId(clanIndex, databaseId) {
-	if (databaseId <= 0) {
+	if (databaseId == 0) {
+		return -1;
+	}
+
+	if (clanIndex == -1) {
 		return -1;
 	}
 
@@ -1354,11 +1358,19 @@ function getClanRankIndexFromDatabaseId(clanIndex, databaseId) {
  */
 function getClanRankData(clanIndex, rankIndex) {
 	if (clanIndex == -1) {
-		return false;
+		return null;
 	}
 
 	if (rankIndex == -1) {
-		return false;
+		return null;
+	}
+
+	if (typeof serverData.clans[clanIndex] == "undefined") {
+		return null;
+	}
+
+	if (typeof serverData.clans[clanIndex].ranks[rankIndex] == "undefined") {
+		return null;
 	}
 
 	return serverData.clans[clanIndex].ranks[rankIndex];
@@ -1536,3 +1548,29 @@ function clanUninviteCommand(command, params, client) {
 	getPlayerCurrentSubAccount(targetClient).clanRank = 0;
 	getPlayerCurrentSubAccount(targetClient).clanRankIndex = -1;
 }
+
+// ===========================================================================
+
+function isPlayerInAnyClan(client) {
+	return (getPlayerClan(client) != -1);
+}
+
+// ===========================================================================
+
+function addPlayerToClan(client, clanIndex, clanRankIndex = 0) {
+	getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
+	getPlayerCurrentSubAccount(client).clanIndex = clanIndex;
+	getPlayerCurrentSubAccount(client).clanRank = getClanRankData(clanIndex, clanRankIndex).databaseId;
+	getPlayerCurrentSubAccount(client).clanRankIndex = clanRankIndex;
+}
+
+// ===========================================================================
+
+function removePlayerFromClan(client) {
+	getPlayerCurrentSubAccount(client).clan = 0;
+	getPlayerCurrentSubAccount(client).clanIndex = -1;
+	getPlayerCurrentSubAccount(client).clanRank = 0;
+	getPlayerCurrentSubAccount(client).clanRankIndex = -1;
+}
+
+// ===========================================================================
