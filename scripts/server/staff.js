@@ -1536,6 +1536,7 @@ function forcePlayerSkinCommand(command, params, client) {
 
 	getPlayerCurrentSubAccount(targetClient).skin = skinIndex;
 	setPlayerSkin(targetClient, skinIndex);
+	setPlayerPedPartsAndProps(client);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${gameData.skins[getGame()][skinIndex][1]}`);
 }
