@@ -1220,7 +1220,7 @@ function locatePlayerCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getPlayerFromParams(client);
+	let targetClient = getPlayerFromParams(params);
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
@@ -1232,7 +1232,7 @@ function locatePlayerCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${Math.round(getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)))} ${getLocalString(client, "Meters")}{MAINCOLOUR}`, `{ALTCOLOUR}${getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
+	messagePlayerInfo(client, getLocaleString(client, "PlayerLocateDistanceAndDirection", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`, `{ALTCOLOUR}${Math.round(getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)))} ${getLocaleString(client, "Meters")}{MAINCOLOUR}`, `{ALTCOLOUR}${getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), getPlayerPosition(targetClient))))}`))
 }
 
 // ===========================================================================
@@ -1278,62 +1278,6 @@ function givePlayerMoneyCommand(command, params, client) {
 
 	messagePlayerAlert(client, getLocaleString(client, "GaveMoneyToPlayer", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
 	messagePlayerAlert(targetClient, getLocaleString(targetClient, "ReceivedMoneyFromPlayer", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
-}
-
-// ===========================================================================
-
-function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
-	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
-	if (client == null) {
-		return false;
-	}
-
-	if (getPlayerData(client) == null) {
-		return false;
-	}
-
-	let currentScene = getPlayerCurrentSubAccount(client).scene;
-
-	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
-	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
-	getPlayerCurrentSubAccount(client).interior = spawnInterior;
-	getPlayerCurrentSubAccount(client).dimension = spawnDimension;
-	getPlayerCurrentSubAccount(client).scene = sceneName;
-	getPlayerCurrentSubAccount(client).spawnVehicle = spawnVehicle;
-	getPlayerCurrentSubAccount(client).spawnVehicleSeat = vehicleSeat;
-
-	clearPlayerStateToEnterExitProperty(client);
-
-	// In Mafia 1, set virtual world to some really high unused number first so everything is removed (otherwise crashes)
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
-	}
-
-	if (isGameFeatureSupported("fadeCamera")) {
-		fadePlayerCamera(client, false, 2000);
-	}
-
-	if (isGameFeatureSupported("interiorScene")) {
-		if (!isSameScene(sceneName, currentScene)) {
-			setTimeout(function () {
-				if (getPlayerPed(client) != null) {
-					despawnPlayer(client);
-				}
-
-				setPlayerScene(client, sceneName);
-
-				//setTimeout(function () {
-				//	processPlayerSceneSwitch(client);
-				//}, 1100);
-			}, 2000);
-
-			return false;
-		}
-	}
-
-	setTimeout(function () {
-		processPlayerSceneSwitch(client, false);
-	}, 2000);
 }
 
 // ===========================================================================
@@ -1460,6 +1404,20 @@ function startDraggingPlayer(draggingPlayer, draggedPlayer) {
 		draggingPlayer: draggingPlayer,
 		draggedPlayer: draggedPlayer
 	});
+}
+
+// ===========================================================================
+
+function afkCommand(command, params, client) {
+	if (getPlayerData(client).afk == true) {
+		messagePlayerNormal(client, getLocaleString(client, "DisabledAFK"));
+		getPlayerData(client).afk = false;
+		updatePlayerNameTag(client);
+	} else {
+		messagePlayerNormal(client, getLocaleString(client, "EnabledAFK"));
+		getPlayerData(client).afk = true;
+		updatePlayerNameTag(client);
+	}
 }
 
 // ===========================================================================
