@@ -386,12 +386,12 @@ function onPlayerSpawn(client) {
 		setPlayerArmour(client, getPlayerCurrentSubAccount(client).armour);
 	}
 
-	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("walkStyle")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("pedWalkStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player walking style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.walkStyle", getPlayerCurrentSubAccount(client).walkStyle, true);
 	}
 
-	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("fightStyle")) {
+	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("pedFightStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
 		setEntityData(getPlayerPed(client), "v.rp.fightStyle", getPlayerCurrentSubAccount(client).fightStyle, true);
 	}
@@ -417,25 +417,8 @@ function onPlayerSpawn(client) {
 		updatePlayerShowLogoState(client, (serverConfig.showLogo && doesPlayerHaveLogoEnabled(client)));
 	}
 
-	//if(isGTAIV()) {
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
-	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
-	//}
-
 	if (isGTAIV()) {
-		//sendPlayerPedPartsAndProps(client);
+		setPlayerPedPartsAndProps(client);
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s ped state to ready`);
