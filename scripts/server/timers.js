@@ -101,10 +101,11 @@ function initTimers() {
 	//	return false;
 	//}
 
-	serverTimers.updatePingsTimer = setInterval(updatePings, 5000);
-	serverTimers.oneMinuteTimer = setInterval(oneMinuteTimerFunction, 60000);
-	serverTimers.tenMinuteTimer = setInterval(tenMinuteTimerFunction, 600000);
-	serverTimers.thirtyMinuteTimer = setInterval(thirtyMinuteTimerFunction, 1800000);
+	serverTimers.updatePingsTimer = setInterval(updatePings, 1000 * 5);
+	serverTimers.oneMinuteTimer = setInterval(oneMinuteTimerFunction, 1000 * 60);
+	serverTimers.fiveMinuteTimer = setInterval(fiveMinuteTimerFunction, 1000 * 60 * 5);
+	serverTimers.tenMinuteTimer = setInterval(tenMinuteTimerFunction, 1000 * 60 * 10);
+	serverTimers.thirtyMinuteTimer = setInterval(thirtyMinuteTimerFunction, 1000 * 60 * 30);
 }
 
 // ===========================================================================
@@ -123,6 +124,12 @@ function oneMinuteTimerFunction() {
 
 	updateVehicleSavedPositions();
 	fixDesyncedPayPhones();
+}
+
+// ===========================================================================
+
+function fiveMinuteTimerFunction() {
+	saveServerDataToDatabase();
 }
 
 // ===========================================================================
@@ -151,8 +158,6 @@ function thirtyMinuteTimerFunction() {
 	}
 
 	updateServerRules();
-
-	saveServerDataToDatabase();
 }
 
 // ===========================================================================
