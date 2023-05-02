@@ -219,15 +219,24 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 						if (getGame() == V_GAME_GTA_IV) {
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
+							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
 							natives.changeBlipScale(jobData.blipId, 0.5);
 							natives.setBlipMarkerLongDistance(jobData.blipId, false);
 							natives.setBlipAsShortRange(jobData.blipId, true);
-							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 24)}${(jobData.name.length > 24) ? " ..." : ""} Job`);
+							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 20)}${(jobData.name.length > 20) ? " ..." : ""} Job`);
 						}
 					} else {
 						let blipId = createGameBlip(jobData.blipModel, jobData.position, jobData.name);
 						if (blipId != -1) {
 							jobData.blipId = blipId;
+
+							natives.setBlipCoordinates(jobData.blipId, jobData.position);
+							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
+							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
+							natives.changeBlipScale(jobData.blipId, 0.5);
+							natives.setBlipMarkerLongDistance(jobData.blipId, false);
+							natives.setBlipAsShortRange(jobData.blipId, true);
+							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 20)}${(jobData.name.length > 20) ? " ..." : ""} Job`);
 						}
 						logToConsole(LOG_DEBUG, `[V.RP.Job] Job ${jobId}/${jobLocationId}'s blip has been added by the server (Model ${blipModel}, ID ${blipId})`);
 					}
@@ -253,10 +262,11 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 						if (getGame() == V_GAME_GTA_IV) {
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
+							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
 							natives.changeBlipScale(jobData.blipId, 0.5);
 							natives.setBlipMarkerLongDistance(jobData.blipId, false);
 							natives.setBlipAsShortRange(jobData.blipId, true);
-							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 24)}${(jobData.name.length > 24) ? " ..." : " Job"}`);
+							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 20)}${(jobData.name.length > 20) ? " ..." : " Job"}`);
 						}
 					} else {
 						let blipId = createGameBlip(jobData.blipModel, jobData.position, jobData.name);
