@@ -1540,3 +1540,10 @@ function startCountDownForPlayer(client) {
 }
 
 // ==========================================================================
+
+function showPlayerListGUI(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending gui list to player ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("v.rp.list", client);
+}
+
+// ==========================================================================
