@@ -690,7 +690,7 @@ function getNPCInfoCommand(command, params, client) {
 			break;
 
 		case V_NPC_OWNER_BIZ:
-			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
+			ownerName = getBusinessData(getBusinessIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "business";
 			break;
 
