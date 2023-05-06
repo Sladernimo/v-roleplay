@@ -2907,24 +2907,25 @@ function cacheAllBusinessItems() {
 
 // Caches all items for a business by businessId
 function cacheBusinessItems(businessId) {
-	getBusinessData(businessId).floorItemCache = [];
-	getBusinessData(businessId).storageItemCache = [];
+	let businessData = getBusinessData(businessId);
 
-	//let businessData = getBusinessData(businessId);
-	//logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	//getBusinessData(businessId).floorItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
-	//getBusinessData(businessId).storageItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId);
+	businessData.floorItemCache = [];
+	businessData.storageItemCache = [];
 
-	logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
-	for (let i in serverData.items) {
-		if (getItemData(i) != false) {
-			if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-				getBusinessData(businessId).floorItemCache.push(i);
-			} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-				getBusinessData(businessId).storageItemCache.push(i);
-			}
-		}
-	}
+	logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
+	businessData.floorItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
+	businessData.storageItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId).map(i => i.index);
+
+	//logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
+	//for (let i in serverData.items) {
+	//	if (getItemData(i) != false) {
+	//		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+	//			getBusinessData(businessId).floorItemCache.push(i);
+	//		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
+	//			getBusinessData(businessId).storageItemCache.push(i);
+	//		}
+	//	}
+	//}
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
 }
@@ -2932,7 +2933,7 @@ function cacheBusinessItems(businessId) {
 // ===========================================================================
 
 // Gets a business's data index from a business's databaseId
-function getBusinessIdFromDatabaseId(databaseId) {
+function getBusinessIndexFromDatabaseId(databaseId) {
 	return serverData.businesses.findIndex(business => business.databaseId == databaseId);
 }
 
