@@ -990,7 +990,7 @@ function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
 	}
 
 	if (vehicleData.ownerType == V_VEH_OWNER_BIZ) {
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
+		if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
 			return true;
 		}
 	}
@@ -1778,37 +1778,50 @@ function createPermanentVehicle(modelIndex, position, heading, interior = 0, dim
 // ===========================================================================
 
 function processVehiclePurchasing() {
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] Processing vehicle purchasing ...`);
+
 	if (!globalConfig.useServerSideVehiclePurchaseCheck) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting process vehicle purchasing! Server side vehicle purchase check is disabled.`);
 		return false;
 	}
 
-	let purchasingVehicles = serverData.purchasingVehicleCache;
-	for (let i in purchasingVehicles) {
-		checkVehiclePurchasing(purchasingVehicles[i]);
-	}
+	serverData.purchasingVehicleCache.forEach(function (client) {
+		checkVehiclePurchasing(client);
+	});
 
-	return false;
+	return true;
 }
 
 // ===========================================================================
 
 function checkVehiclePurchasing(client) {
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] Checking purchasing for player ${getPlayerDisplayForConsole(client)}! Server side vehicle purchase check is disabled.`);
+
+	if (client == null) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Client is null.`);
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Player data is null.`);
+		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
+		return false;
+	}
+
 	if (!isPlayerLoggedIn(client)) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Player is not logged in.`);
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (!isPlayerSpawned(client)) {
-		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
-		return false;
-	}
-
-	if (getPlayerData(client) == null) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Player is not spawned.`);
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
 
 	if (getPlayerData(client).buyingVehicle == null) {
+		logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Buying vehicle is null.`);
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
 		return false;
 	}
@@ -1820,31 +1833,39 @@ function checkVehiclePurchasing(client) {
 			respawnVehicle(getPlayerData(client).buyingVehicle);
 			getPlayerData(client).buyingVehicle = null;
 			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
+			logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Player exited vehicle.`);
 		}
 		return false;
 	}
 
-	if (getDistance(getVehiclePosition(getPlayerData(client).buyingVehicle), getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition) > globalConfig.buyVehicleDriveAwayDistance) {
-		if (getPlayerCurrentSubAccount(client).cash < getVehicleData(getPlayerData(client).buyingVehicle).buyPrice) {
+	let buyingVehicle = getPlayerData(client).buyingVehicle;
+	let buyingVehicleData = getVehicleData(buyingVehicle);
+
+	if (getDistance(getVehiclePosition(buyingVehicle), buyingVehicleData.spawnPosition) > globalConfig.buyVehicleDriveAwayDistance) {
+		if (getPlayerCurrentSubAccount(client).cash < buyingVehicleData.buyPrice) {
 			serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 			messagePlayerError(client, getLocaleString(client, "VehiclePurchaseNotEnoughMoney"));
-			respawnVehicle(getPlayerData(client).buyingVehicle);
+			respawnVehicle(buyingVehicle);
 			getPlayerData(client).buyingVehicle = null;
 			setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
+			logToConsole(LOG_VERBOSE | LOG_WARN, `[V.RP.Event] Aborting vehicle purchasing for player ${getPlayerDisplayForConsole(client)}! Player doesn't have enough money.`);
 			return false;
 		}
 
 		serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
-		if (getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEH_OWNER_BIZ || getVehicleData(getPlayerData(client).buyingVehicle).ownerType == V_VEH_OWNER_NONE) {
-			createNewDealershipVehicle(getVehicleData(getPlayerData(client).buyingVehicle).model, getVehicleData(getPlayerData(client).buyingVehicle).spawnPosition, getVehicleData(getPlayerData(client).buyingVehicle).spawnRotation, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice, getVehicleData(getPlayerData(client).buyingVehicle).ownerType, getVehicleData(getPlayerData(client).buyingVehicle).ownerId);
+		if (buyingVehicleData.ownerType == V_VEH_OWNER_BIZ) {
+			getBusinessData(getBusinessIndexFromDatabaseId(buyingVehicleData.ownerId)).till += buyingVehicleData.buyPrice;
+			createNewDealershipVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice, buyingVehicleData.ownerType, buyingVehicleData.ownerId);
+		} else if (buyingVehicleData.ownerType == V_VEH_OWNER_NONE) {
+			createPermanentVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice);
 		}
-		takePlayerCash(client, getVehicleData(getPlayerData(client).buyingVehicle).buyPrice);
+		takePlayerCash(client, buyingVehicleData.buyPrice);
 		updatePlayerCash(client);
-		getVehicleData(getPlayerData(client).buyingVehicle).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-		getVehicleData(getPlayerData(client).buyingVehicle).ownerType = V_VEH_OWNER_PLAYER;
-		getVehicleData(getPlayerData(client).buyingVehicle).buyPrice = 0;
-		getVehicleData(getPlayerData(client).buyingVehicle).rentPrice = 0;
-		getVehicleData(getPlayerData(client).buyingVehicle).spawnLocked = false;
+		buyingVehicleData.ownerId = getPlayerCurrentSubAccount(client).databaseId;
+		buyingVehicleData.ownerType = V_VEH_OWNER_PLAYER;
+		buyingVehicleData.buyPrice = 0;
+		buyingVehicleData.rentPrice = 0;
+		buyingVehicleData.spawnLocked = false;
 		getPlayerData(client).buyingVehicle = null;
 		messagePlayerSuccess(client, getLocaleString(client, "VehiclePurchaseComplete"));
 		setPlayerBuyingVehicleState(client, V_VEHBUYSTATE_NONE, null, null);
@@ -2126,7 +2147,7 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 			break;
 
 		case V_VEH_OWNER_BIZ:
-			ownerName = getBusinessData(getBusinessIdFromDatabaseId(vehicleData.ownerId)).name;
+			ownerName = getBusinessData(getBusinessIndexFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "business";
 			break;
 
