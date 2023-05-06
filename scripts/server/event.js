@@ -94,8 +94,10 @@ function onPlayerQuit(event, client, quitReasonId) {
 		savePlayerToDatabase(client);
 	}
 
-	if (getPlayerData(client).loginTimeout != null) {
-		clearTimeout(getPlayerData(client).loginTimeout);
+	if (getPlayerData(client) != null) {
+		if (getPlayerData(client).loginTimeout != null) {
+			clearTimeout(getPlayerData(client).loginTimeout);
+		}
 	}
 
 	playerResourceReady[client.index] = false;
@@ -124,7 +126,9 @@ function onPlayerChat(event, client, messageText) {
 // ===========================================================================
 
 function onProcess(event, deltaTime) {
-	updateServerGameTime();
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess - Processing server tick ...`);
+
+	//updateServerGameTime();
 	//checkPlayerSpawning();
 	//checkPlayerPedState();
 	//checkVehicleBurning();
@@ -315,9 +319,9 @@ function onPedSpawn(ped) {
 function onPlayerSpawn(client) {
 	logToConsole(LOG_WARN | LOG_DEBUG, `[V.RP.Event] Player ${getPlayerDisplayForConsole(client)} spawned!`);
 
-	if (isGameFeatureSupported("serverElements")) {
-		waitUntil(() => client != null && getPlayerPed(client) != null);
-	}
+	//if (isGameFeatureSupported("serverElements")) {
+	//	waitUntil(() => client != null && getPlayerPed(client) != null);
+	//}
 
 	stopRadioStreamForPlayer(client);
 
@@ -629,7 +633,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 							break;
 
 						case V_VEH_OWNER_BIZ:
-							ownerName = getBusinessData(getBusinessIdFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
+							ownerName = getBusinessData(getBusinessIndexFromDatabaseId(getVehicleData(vehicle).ownerId)).name;
 							ownerType = getLocaleString(client, "Business");
 							break;
 
