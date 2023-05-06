@@ -1701,7 +1701,7 @@ function getFirstFreeRearVehicleSeat(vehicle) {
 // ===========================================================================
 
 function setGameMinuteDuration(duration) {
-	if (isGameFeatureSupported("time")) {
+	if (isGameFeatureSupported("time") && getGame() <= V_GAME_GTA_SA) {
 		game.time.minuteDuration = duration;
 	}
 }
