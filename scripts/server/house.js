@@ -1666,7 +1666,7 @@ function cacheHouseItems(houseId) {
 
 // ===========================================================================
 
-function getHouseIdFromDatabaseId(databaseId) {
+function getHouseIndexFromDatabaseId(databaseId) {
 	let houses = serverData.houses;
 	for (let i in houses) {
 		if (houses[i].databaseId == databaseId) {
