@@ -1039,7 +1039,7 @@ function processPlayerDeath(client) {
 			let businessData = false;
 
 			if (prisonCell.businessId != 0) {
-				businessData = getBusinessData(getBusinessIdFromDatabaseId(prisonCell.businessId));
+				businessData = getBusinessData(getBusinessIndexFromDatabaseId(prisonCell.businessId));
 				interior = businessData.exitInterior;
 				dimension = businessData.exitDimension;
 				scene = businessData.exitScene;
@@ -1103,7 +1103,7 @@ function processPlayerDeath(client) {
 			let businessData = false;
 
 			if (closestHospital.businessId != 0) {
-				businessData = getBusinessData(getBusinessIdFromDatabaseId(closestHospital.businessId));
+				businessData = getBusinessData(getBusinessIndexFromDatabaseId(closestHospital.businessId));
 				interior = businessData.exitInterior;
 				dimension = businessData.exitDimension;
 				scene = businessData.exitScene;
@@ -1375,9 +1375,9 @@ function dragPlayerCommand(command, params, client) {
 // ===========================================================================
 
 function processPlayerDragging() {
-	for (let i in serverData.draggingPlayersCache) {
-		setPlayerPosition(serverData.draggingPlayersCache[i].draggedPlayer, getPlayerPosition(serverData.draggingPlayersCache[i].draggingPlayer));
-	}
+	serverData.draggingPlayersCache.forEach(function (dragData) {
+		setPlayerPosition(dragData.draggedPlayer, getPlayerPosition(dragData.draggingPlayer));
+	});
 }
 
 // ===========================================================================
@@ -1417,6 +1417,28 @@ function afkCommand(command, params, client) {
 		messagePlayerNormal(client, getLocaleString(client, "EnabledAFK"));
 		getPlayerData(client).afk = true;
 		updatePlayerNameTag(client);
+	}
+}
+
+// ===========================================================================
+
+function showPlayerSelectableList(client, title, items) {
+	getPlayerData(client).selectableListItems = items;
+	if (doesPlayerUseGUI(client)) {
+		showPlayerListGUI(client, title, items);
+	} else {
+		showPlayerListInChat(client, title, items);
+	}
+}
+
+// ===========================================================================
+
+function showPlayerListInChat(client, title, items, chunks = 1, delimiter = ", ") {
+	messagePlayerNormal(client, makeChatBoxSectionHeader(title));
+
+	let chunkedList = splitArrayIntoChunks(items, chunks);
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(delimiter));
 	}
 }
 
