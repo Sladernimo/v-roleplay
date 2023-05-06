@@ -80,12 +80,12 @@ const V_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants, c
 const V_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
 const V_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
 const V_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
-const V_ITEM_USE_TYPE_METH_LAB = 54;  		   // Meth lab item. Allows creating meth
-const V_ITEM_USE_TYPE_PLANTER = 55;			   // Plant pot. Can be used to plant item of use type V_ITEM_USE_TYPE_PLANT where terrain is not available
-const V_ITEM_USE_TYPE_FISH = 56;				   // Fishing catch ... bass, catfish, etc
-const V_ITEM_USE_TYPE_JUNK = 57;				   // Worthless junk. Some used as fishing catches
-const V_ITEM_USE_TYPE_BAIT = 58;				   // Bait. Used for fishing
-const V_ITEM_USE_TYPE_FISHINGROD = 59;		   // Fishing rod. Used for fishing.
+const V_ITEM_USE_TYPE_METH_LAB = 54;  		   	// Meth lab item. Allows creating meth
+const V_ITEM_USE_TYPE_PLANTER = 55;			   	// Plant pot. Can be used to plant item of use type V_ITEM_USE_TYPE_PLANT where terrain is not available
+const V_ITEM_USE_TYPE_FISH = 56;				// Fishing catch ... bass, catfish, etc
+const V_ITEM_USE_TYPE_JUNK = 57;				// Worthless junk. Some used as fishing catches
+const V_ITEM_USE_TYPE_BAIT = 58;				// Bait. Used for fishing
+const V_ITEM_USE_TYPE_FISHINGROD = 59;		   	// Fishing rod. Used for fishing.
 
 // ===========================================================================
 
@@ -2309,7 +2309,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 
 		case V_ITEM_OWNER_BIZFLOOR:
 			ownerTypeString = "Business Floor";
-			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
+			owner = getBusinessIndexFromDatabaseId(getItemData(itemId).ownerId);
 			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).floorItemCache.splice(getBusinessData(owner).floorItemCache.indexOf(itemId), 1);
 			}
@@ -2317,7 +2317,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 
 		case V_ITEM_OWNER_BIZSTORAGE:
 			ownerTypeString = "Business Storage";
-			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
+			owner = getBusinessIndexFromDatabaseId(getItemData(itemId).ownerId);
 			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).storageItemCache.splice(getBusinessData(owner).storageItemCache.indexOf(itemId), 1);
 			}
@@ -2325,7 +2325,7 @@ function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes
 
 		case V_ITEM_OWNER_HOUSE:
 			ownerTypeString = "House";
-			owner = getHouseIdFromDatabaseId(getItemData(itemId).ownerId);
+			owner = getHouseIndexFromDatabaseId(getItemData(itemId).ownerId);
 			if (getHouseData(owner) != null) {
 				getHouseData(owner).itemCache.splice(getHouseData(owner).itemCache.indexOf(itemId), 1);
 			}
@@ -2447,6 +2447,25 @@ function getBestItemToTake(client, slot) {
 	}
 
 	return [ownerType, ownerId, itemId];
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listItemTypesCommand(command, params, client) {
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderItemTypesList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
 }
 
 // ===========================================================================
