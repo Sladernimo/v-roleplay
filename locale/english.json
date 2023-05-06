@@ -851,5 +851,8 @@
 	"HeaderJobHousesList": "Job Houses ({1})",
 	"HeaderClanHousesList": "Clan Houses ({1})",
 	"HeaderJobVehiclesList": "Job Vehicles ({1})",
-	"HeaderClanVehiclesList": "Clan Vehicles ({1})"
+	"HeaderClanVehiclesList": "Clan Vehicles ({1})",
+	"HeaderItemTypesList": "Item Types",
+	"EnabledAFK": "You are now AFK",
+	"DisabledAFK": "You are no longer AFK"
 }
