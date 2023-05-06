@@ -175,7 +175,7 @@ function messagePlayerMeAction(client, doingActionClient, messageText) {
 // ===========================================================================
 
 function messagePlayerClanChat(client, clanChattingClient, messageText) {
-	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRank(client) != -1) ? getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).name : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
+	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRank(clanChattingClient) != -1) ? getClanRankData(getPlayerClan(clanChattingClient), getPlayerClanRank(clanChattingClient)).name : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
 }
 
 // ===========================================================================
