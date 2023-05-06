@@ -168,6 +168,8 @@ class ClientData {
 		this.sceneSwitchInteriorLights = true;
 
 		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
+
+		this.selectableListItems = [];
 	}
 };
 
