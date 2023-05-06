@@ -103,7 +103,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 			return true;
 		}
 
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(gateData.ownerId))) {
+		if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(gateData.ownerId))) {
 			return true;
 		}
 	}
@@ -113,7 +113,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 			return true;
 		}
 
-		if (canPlayerManageHouse(client, getHouseIdFromDatabaseId(gateData.ownerId))) {
+		if (canPlayerManageHouse(client, getHouseIndexFromDatabaseId(gateData.ownerId))) {
 			return true;
 		}
 	}
