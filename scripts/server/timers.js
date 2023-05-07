@@ -163,16 +163,22 @@ function thirtyMinuteTimerFunction() {
 // ===========================================================================
 
 function checkVehicleRenting() {
-	serverData.rentingVehicleCache.forEach(function (renting) {
-		if (isClientInitialized(renting)) {
-			if (getPlayerData(renting) != null) {
-				if (isPlayerLoggedIn(renting) && isPlayerSpawned(renting)) {
-					if (getPlayerData(renting).rentingVehicle != null) {
-						if (getPlayerCurrentSubAccount(renting).cash < getVehicleData(getPlayerData(renting).rentingVehicle).rentPrice) {
-							messagePlayerAlert(renting, `You do not have enough money to continue renting this vehicle!`);
-							stopRentingVehicle(renting);
+	serverData.rentingVehicleCache.forEach(function (rentingClient) {
+		if (isClientInitialized(rentingClient)) {
+			if (getPlayerData(rentingClient) != null) {
+				if (isPlayerLoggedIn(rentingClient) && isPlayerSpawned(rentingClient)) {
+					if (getPlayerData(rentingClient).rentingVehicle != null) {
+						let rentingVehicle = getPlayerData(rentingClient).rentingVehicle;
+						let rentingVehicleData = getVehicleData(rentingVehicle);
+						if (rentingVehicleData != null) {
+							if (getPlayerCurrentSubAccount(rentingClient).cash < rentingVehicleData.rentPrice) {
+								messagePlayerAlert(rentingClient, `You do not have enough money to continue renting this vehicle!`);
+								stopRentingVehicle(rentingClient);
+							} else {
+								takePlayerCash(rentingClient, rentingVehicleData.rentPrice);
+							}
 						} else {
-							takePlayerCash(renting, getVehicleData(getPlayerData(renting).rentingVehicle).rentPrice);
+							stopRentingVehicle(rentingClient);
 						}
 					}
 				}
