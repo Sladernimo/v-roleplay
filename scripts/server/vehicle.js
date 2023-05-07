@@ -1115,7 +1115,7 @@ function setVehicleBusinessCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client));
+	let businessIndex = getClosestBusinessEntrance(getVehiclePosition(getPlayerVehicle(client)));
 
 	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -1127,6 +1127,8 @@ function setVehicleBusinessCommand(command, params, client) {
 		return false;
 	}
 
+	let businessData = getBusinessData(businessIndex);
+
 	if (getVehicleData(vehicle).ownerType != V_VEH_OWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 		return false;
@@ -1137,7 +1139,7 @@ function setVehicleBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "SetVehicleBusinessConfirmMessage", `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
+	showPlayerPrompt(client, getLocaleString(client, "SetVehicleBusinessConfirmMessage", `{businessBlue}${businessData.name}{MAINCOLOUR}`), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = V_PROMPT_GIVEVEHTOBIZ;
 }
 
@@ -1496,13 +1498,18 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 
 function stopRentingVehicle(client) {
 	serverData.rentingVehicleCache.splice(serverData.rentingVehicleCache.indexOf(client), 1);
+
 	let vehicle = getPlayerData(client).rentingVehicle;
+
+	if (vehicle != null) {
+		getVehicleData(vehicle).rentedBy = null;
+		removeAllOccupantsFromVehicle(vehicle);
+		setTimeout(function () {
+			respawnVehicle(vehicle);
+		}, 1000);
+	}
+
 	getPlayerData(client).rentingVehicle = null;
-	getVehicleData(vehicle).rentedBy = null;
-	removeAllOccupantsFromVehicle(vehicle);
-	setTimeout(function () {
-		respawnVehicle(vehicle);
-	}, 1000);
 }
 
 // ===========================================================================
