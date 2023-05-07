@@ -819,7 +819,7 @@
 	"WaitForJobStart": "You must wait {1} before starting another job route",
 	"InvalidPayPhone": "Payphone not found!",
 	"GameFeatureNotSupported": "Not supported on this game!",
-	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to your business ({1})?",
+	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to ({1})?",
 	"MustBeRestrained": "The player needs to be restrained (handcuffed or tied up)",
 	"ActionTips": {
 		"VehicleEngineOffWhenEnteringKey": "Use {1} to turn on or off a vehicle's engine",
@@ -854,5 +854,6 @@
 	"HeaderClanVehiclesList": "Clan Vehicles ({1})",
 	"HeaderItemTypesList": "Item Types",
 	"EnabledAFK": "You are now AFK",
-	"DisabledAFK": "You are no longer AFK"
+	"DisabledAFK": "You are no longer AFK",
+	"GaveVehicleToBusiness": "You gave the {1} to business {2}"
 }

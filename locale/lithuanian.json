@@ -838,5 +838,6 @@
 	"HeaderClanVehiclesList": "Clan Vehicles ({1})",
 	"HeaderItemTypesList": "Item Types",
 	"EnabledAFK": "You are now AFK",
-	"DisabledAFK": "You are no longer AFK"
+	"DisabledAFK": "You are no longer AFK",
+	"GaveVehicleToBusiness": "You gave the {1} to business {2}"
 }
