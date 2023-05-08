@@ -271,13 +271,19 @@ function setLocalPlayerDrunkEffect(amount, duration) {
 // ===========================================================================
 
 function getLocalPlayerVehicleSeat() {
-	return inVehicleSeat;
-
-	//for (let i = 0; i <= 4; i++) {
-	//	if (localPlayer.vehicle.getOccupant(i) == localPlayer) {
-	//		return i;
-	//	}
-	//}
+	if (localPlayer.vehicle != null) {
+		if (getGame() != V_GAME_MAFIA_ONE) {
+			for (let i = 0; i <= 8; i++) {
+				if (localPlayer.vehicle.getOccupant(i) == localPlayer) {
+					return i;
+				}
+			}
+		} else {
+			return inVehicleSeat;
+		}
+	} else {
+		return -1;
+	}
 }
 
 // ===========================================================================

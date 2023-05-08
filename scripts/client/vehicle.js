@@ -36,6 +36,8 @@ let vehiclePurchasePosition = null;
 let cruiseControlEnabled = false;
 let cruiseControlSpeed = 0.0;
 
+let localPlayerVehicleSeat = -1;
+
 // ===========================================================================
 
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
@@ -200,6 +202,11 @@ function processLocalPlayerVehicleControlState() {
 				}
 			}
 		}
+	}
+
+	if (getLocalPlayerVehicleSeat() != localPlayerVehicleSeat) {
+		localPlayerVehicleSeat = getLocalPlayerVehicleSeat();
+		sendNetworkEventToServer("v.rp.veh.seat", getLocalPlayerVehicleSeat());
 	}
 }
 
