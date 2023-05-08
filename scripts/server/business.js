@@ -1606,7 +1606,8 @@ function orderItemForBusinessCommand(command, params, client) {
 	let pricePerItem = getOrderPriceForItemType(itemType);
 
 	let amount = toInteger(splitParams.slice(-2, -1)) || 1;
-	let value = getItemTypeData(itemType).orderValue;
+	let sellPrice = toInteger(splitParams.slice(-1)) || pricePerItem;
+	//let value = getItemTypeData(itemType).orderValue;
 	let businessId = getPlayerBusiness(client);
 
 	logToConsole(LOG_DEBUG, `[V.RP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")}`);
@@ -1628,6 +1629,7 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
+	getPlayerData(client).businessOrderBuyPrice = buyPrice;
 	getBusinessData(businessId).needsSaved = true;
 
 	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
