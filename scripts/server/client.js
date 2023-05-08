@@ -80,6 +80,7 @@ class ClientData {
 		this.businessOrderBusiness = -1;
 		this.businessOrderItem = -1;
 		this.businessOrderValue = -1;
+		this.businessOrderBuyPrice = 0;
 
 		// For Non-Server Elements
 		this.syncPosition = null;
@@ -138,6 +139,7 @@ class ClientData {
 		this.draggingPlayer = null;
 		this.draggedByPlayer = null;
 		this.lastGlobalChatMessageTimeStamp = 0;
+		this.lastLocalChatMessageTimeStamp = 0;
 
 		// Paintball
 		this.inPaintBall = false;
