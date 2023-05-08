@@ -128,7 +128,7 @@ function onPlayerChat(event, client, messageText) {
 function onProcess(event, deltaTime) {
 	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess - Processing server tick ...`);
 
-	//updateServerGameTime();
+	updateServerGameTime();
 	//checkPlayerSpawning();
 	//checkPlayerPedState();
 	//checkVehicleBurning();
@@ -411,6 +411,8 @@ function onPlayerSpawn(client) {
 	updateAllPlayerNameTags();
 	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 	updateJobBlipsForPlayer(client);
+	updatePlayerNameTag(client);
+
 	sendPlayerJobType(client, (getPlayerCurrentSubAccount(client).job != 0) ? getPlayerCurrentSubAccount(client).jobIndex : -1);
 
 	if (isGameFeatureSupported("rendering2D")) {
@@ -535,7 +537,7 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 			if (getVehicleData(vehicle).spawnLocked == false && canPlayerManageVehicle(client, vehicle) == true) {
 				getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
-				getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
+				getVehicleData(vehicle).spawnRotation = getVehicleRotation(vehicle);
 				getVehicleData(vehicle).needsSaved = true;
 			}
 
