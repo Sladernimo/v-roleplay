@@ -303,6 +303,7 @@ let globalConfig = {
 	playerSceneSwitchVirtualWorldStart: 50000,
 	skinChangeDimensionStart: 10000,
 	globalChatActionTipCooldown: 1000 * 60 * 5,
+	localChatActionTipCooldown: 1000 * 60 * 5,
 };
 
 // ===========================================================================
