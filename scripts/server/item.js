@@ -336,13 +336,14 @@ function loadItemTypesFromDatabase() {
 
 // ===========================================================================
 
-function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary = false) {
+function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary = false, buyPrice = 0) {
 	let tempItemData = new ItemData(false);
 	tempItemData.itemType = getItemTypeData(itemTypeId).databaseId;
 	tempItemData.ownerType = ownerType;
 	tempItemData.ownerId = ownerId;
 	tempItemData.amount = amount;
 	tempItemData.value = value;
+	tempItemData.buyPrice = buyPrice;
 	tempItemData.needsSaved = true;
 
 	if (temporary == true) {
