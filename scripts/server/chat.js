@@ -514,8 +514,8 @@ function canPlayerUseMegaphone(client) {
 // ===========================================================================
 
 function oocToAllPlayers(client, messageText) {
-	messagePlayerNormal(null, `💬 ${getCharacterFullName(client)}: {MAINCOLOUR}(( ${messageText} ))`, getPlayerColour(client));
-	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: (( ${messageText} ))`);
+	messagePlayerNormal(null, `💬 (( [GLOBAL] [#${hexFromToColour(getPlayerColour(client))}]${getPlayerName(client)}: {MAINCOLOUR}${messageText} ))`, COLOUR_WHITE);
+	messageDiscordChatChannel(`💬 ${getPlayerName(client)}: (( ${messageText} ))`);
 
 	// Action tip for other players
 	let clients = getClients();
@@ -537,7 +537,13 @@ function oocToNearbyPlayers(client, messageText) {
 	for (let i in clients) {
 		if (isPlayerSpawned(clients[i])) {
 			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= globalConfig.doActionDistance && getPlayerDimension(client) == getPlayerDimension(clients[i]))) {
-				messagePlayerNormal(clients[i], `💬 ${getCharacterFullName(client)}: {lightGrey}(( ${messageText} ))`, getPlayerColour(client));
+				messagePlayerNormal(clients[i], `💬 (( [LOCAL] [#${hexFromToColour(getPlayerColour(client))}]${getPlayerName(client)}: {lightGrey} ${messageText} ))`, COLOUR_WHITE);
+			}
+
+			if (!hasPlayerSeenActionTip(clients[i], "UseLocalChat")) {
+				if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastLocalChatMessageTimeStamp) <= globalConfig.localChatActionTipCooldown) {
+					messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseLocalChat", `{ALTCOLOUR}/b{MAINCOLOUR}`));
+				}
 			}
 		}
 	}
