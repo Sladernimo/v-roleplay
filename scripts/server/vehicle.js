@@ -48,7 +48,7 @@ class VehicleData {
 
 		// Position and Rotation
 		this.spawnPosition = (vehicle) ? vehicle.position : toVector3(0.0, 0.0, 0.0);
-		this.spawnRotation = (vehicle) ? vehicle.heading : 0.0;
+		this.spawnRotation = (vehicle) ? vehicle.rotation : toVector3(0.0, 0.0, 0.0);
 		this.spawnLocked = false;
 		this.interior = 0;
 		this.dimension = 0;
@@ -117,7 +117,7 @@ class VehicleData {
 
 			// Position and Rotation
 			this.spawnPosition = toVector3(dbAssoc["veh_pos_x"], dbAssoc["veh_pos_y"], dbAssoc["veh_pos_z"]);
-			this.spawnRotation = toFloat(dbAssoc["veh_rot_z"]);
+			this.spawnRotation = toVector3(dbAssoc["veh_rot_x"], dbAssoc["veh_rot_y"], dbAssoc["veh_rot_z"]);
 			this.spawnLocked = intToBool(toInteger(dbAssoc["veh_spawn_lock"]));
 			this.interior = toInteger(dbAssoc["veh_int"]);
 			this.dimension = toInteger(dbAssoc["veh_vw"]);
@@ -274,7 +274,9 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_pos_x", toFloat(tempVehicleData.spawnPosition.x)],
 			["veh_pos_y", toFloat(tempVehicleData.spawnPosition.y)],
 			["veh_pos_z", toFloat(tempVehicleData.spawnPosition.z)],
-			["veh_rot_z", toFloat(tempVehicleData.spawnRotation)],
+			["veh_rot_x", toFloat(tempVehicleData.spawnRotation.x)],
+			["veh_rot_y", toFloat(tempVehicleData.spawnRotation.y)],
+			["veh_rot_z", toFloat(tempVehicleData.spawnRotation.z)],
 			["veh_col1", toInteger(tempVehicleData.colour1)],
 			["veh_col2", toInteger(tempVehicleData.colour2)],
 			["veh_col3", toInteger(tempVehicleData.colour3)],
@@ -812,7 +814,7 @@ function buyVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (canPlayerManageVehicle(client, vehicle, true)) {
+	if (canPlayerManageVehicle(client, vehicle, true, true)) {
 		messagePlayerError(client, getLocaleString(client, "AlreadyOwnVehicle"));
 		return false;
 	}
@@ -941,6 +943,12 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 		}
 	}
 
+	if (vehicleData.ownerType == V_VEH_OWNER_BIZ) {
+		if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
+			return true;
+		}
+	}
+
 	//if (vehicleData.ownerType == V_VEH_OWNER_FACTION) {
 	//	if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).faction) {
 	//		if (vehicleData.factionRank <= getPlayerCurrentSubAccount(client).factionRank) {
@@ -966,7 +974,7 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 // ===========================================================================
 
-function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
+function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false, onlyPersonalVehicles = false) {
 	let vehicleData = getVehicleData(vehicle);
 
 	if (!exemptAdminFlag) {
@@ -981,17 +989,21 @@ function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false) {
 		}
 	}
 
-	if (vehicleData.ownerType == V_VEH_OWNER_CLAN) {
-		if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
-			if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
-				return true;
+	if (onlyPersonalVehicles == false) {
+		if (vehicleData.ownerType == V_VEH_OWNER_CLAN) {
+			if (vehicleData.ownerId == getPlayerCurrentSubAccount(client).clan) {
+				if (doesPlayerHaveClanPermission(client, "ManageVehicles")) {
+					return true;
+				}
 			}
 		}
 	}
 
-	if (vehicleData.ownerType == V_VEH_OWNER_BIZ) {
-		if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
-			return true;
+	if (onlyPersonalVehicles == false) {
+		if (vehicleData.ownerType == V_VEH_OWNER_BIZ) {
+			if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(vehicleData.ownerId), exemptAdminFlag)) {
+				return true;
+			}
 		}
 	}
 
@@ -1345,7 +1357,7 @@ function toggleVehicleSpawnLockCommand(command, params, client) {
 	getVehicleData(vehicle).spawnLocked = !getVehicleData(vehicle).spawnLocked;
 	if (getVehicleData(vehicle).spawnLocked) {
 		getVehicleData(vehicle).spawnPosition = getVehiclePosition(vehicle);
-		getVehicleData(vehicle).spawnRotation = getVehicleHeading(vehicle);
+		getVehicleData(vehicle).spawnRotation = getVehicleRotation(vehicle);
 		getVehicleData(vehicle).dimension = getElementDimension(vehicle);
 	}
 
@@ -1565,7 +1577,8 @@ function spawnVehicle(vehicleData) {
 		return false;
 	}
 
-	setVehicleHeading(vehicle, rotation);
+	//setVehicleHeading(vehicle, rotation);
+	setElementRotation(vehicle, rotation);
 	setElementDimension(vehicle, dimension);
 	setElementInterior(vehicle, interior);
 
@@ -1679,7 +1692,7 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 		return false;
 	}
 
-	setVehicleHeading(vehicle, spawnRotation);
+	setElementRotation(vehicle, spawnRotation);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
 	addToWorld(vehicle);
@@ -2079,7 +2092,7 @@ function updateVehicleSavedPosition(vehicleId) {
 	if (!serverData.vehicles[vehicleId].spawnLocked) {
 		if (!isVehicleUnoccupied(serverData.vehicles[vehicleId].vehicle)) {
 			serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
-			serverData.vehicles[vehicleId].spawnRotation = getVehicleHeading(serverData.vehicles[vehicleId].vehicle);
+			serverData.vehicles[vehicleId].spawnRotation = getVehicleRotation(serverData.vehicles[vehicleId].vehicle);
 			serverData.vehicles[vehicleId].dimension = getElementDimension(serverData.vehicles[vehicleId].vehicle);
 		}
 	}
