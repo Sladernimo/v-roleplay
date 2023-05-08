@@ -285,6 +285,12 @@ function getVehiclePosition(vehicle) {
 
 // ===========================================================================
 
+function getVehicleRotation(vehicle) {
+	return vehicle.rotation;
+}
+
+// ===========================================================================
+
 function getVehicleHeading(vehicle) {
 	return vehicle.heading;
 }
@@ -828,9 +834,11 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 
 // ===========================================================================
 
-function createGameVehicle(modelIndex, position, heading, toClient = null) {
+function createGameVehicle(modelIndex, position, rotation, toClient = null) {
 	if (isGameFeatureSupported("serverElements")) {
-		return game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, heading);
+		let vehicle = game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position);
+		vehicle.rotation = rotation;
+		return vehicle;
 	}
 
 	return null;
