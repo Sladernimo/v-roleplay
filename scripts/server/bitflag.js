@@ -265,6 +265,7 @@ let serverBitFlagKeys = {
 		"JobRouteStart",
 		"PayPhoneFirstUse",
 		"UseGlobalChat",
+		"UseLocalChat",
 	],
 	jobFlagKeys: [
 		"None",
