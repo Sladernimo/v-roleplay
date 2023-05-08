@@ -2653,7 +2653,7 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
-	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
@@ -2683,7 +2683,6 @@ function getPlayerJobRouteVehicle(client) {
 // ===========================================================================
 
 function startReturnToJobVehicleCountdown(client) {
-	/*
 	getPlayerData(client).returnToJobVehicleTick = globalConfig.returnToJobVehicleTime;
 	getPlayerData(client).returnToJobVehicleTimer = setInterval(function () {
 		//logToConsole(LOG_DEBUG, getPlayerData(client).returnToJobVehicleTick);
@@ -2698,7 +2697,6 @@ function startReturnToJobVehicleCountdown(client) {
 			stopJobRoute(client, false, true);
 		}
 	}, 1000);
-	*/
 }
 
 // ===========================================================================
@@ -3626,6 +3624,11 @@ function playerArrivedAtJobRouteLocation(client) {
 		return false;
 	}
 
+	if (getPlayerJobRouteVehicle(client) != getPlayerVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "NeedToBeInJobVehicle"));
+		return false;
+	}
+
 	//hideElementForPlayer(getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).marker, client);
 
 	showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).arriveMessage), jobId, jobRouteId), jobData.colour, 3500);
@@ -4399,7 +4402,7 @@ function finishSuccessfulJobRoute(client) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
-	//respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
