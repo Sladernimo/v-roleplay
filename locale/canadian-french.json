@@ -836,7 +836,8 @@
 		"JobLocations": "Visit a job location to get a job. Use {1} to find a job location",
 		"JobRouteStart": "Use {1} to start a job route with this vehicle",
 		"PayPhoneFirstUse": "Use {1} to end the call, and {2} to give the phone to somebody nearby",
-		"UseGlobalChat": "Use {1} to talk in global chat"
+		"UseGlobalChat": "Use {1} to talk in global OOC chat",
+		"UseLocalChat": "Use {1} to talk in local OOC chat"
 	},
 	"HeaderJobBusinessesList": "Job Businesses ({1})",
 	"HeaderClanBusinessesList": "Clan Businesses ({1})",

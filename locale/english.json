@@ -844,7 +844,8 @@
 		"JobRouteStart": "Use {1} to start a job route with this vehicle",
 		"PayPhoneFirstUse": "Use {1} to end the call, and {2} to give the phone to somebody nearby",
 		"BusinessOwnerHelp": "Use {1} to see commands and information for business owners",
-		"UseGlobalChat": "Use {1} to talk in global chat"
+		"UseGlobalChat": "Use {1} to talk in global OOC chat",
+		"UseLocalChat": "Use {1} to talk in local OOC chat"
 	},
 	"HeaderJobBusinessesList": "Job Businesses ({1})",
 	"HeaderClanBusinessesList": "Clan Businesses ({1})",
