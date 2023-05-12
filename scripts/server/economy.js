@@ -71,17 +71,19 @@ function playerPayDay(client) {
 	}
 
 	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
-	if (netIncome < incomeTaxAmount) {
-		let totalCash = getPlayerCurrentSubAccount(client);
+
+	let totalCash = getPlayerCurrentSubAccount(client).cash;
+	if (incomeTaxAmount > netIncome) {
 		let canPayNow = totalCash + netIncome;
-		if (incomeTaxAmount <= canPayNow) {
-			takePlayerCash(client, canPayNow);
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInMoney", `{ALTCOLOUR}${getCurrencyString(canPayNow)}{MAINCOLOUR}`)}`);
+		if (canPayNow >= incomeTaxAmount) {
+			let payInCash = incomeTaxAmount - netIncome;
+			takePlayerCash(client, payInCash);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInMoney", `{ALTCOLOUR}${getCurrencyString(payInCash)}{MAINCOLOUR}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
 		} else {
 			messagePlayerInfo(client, `{orange}${getLocaleString(client, "NotEnoughMoneyForTax")}`);
-			takePlayerCash(client, canPayNow);
+			takePlayerCash(client, totalCash);
 
 			let oldVehicleCount = getAllVehiclesOwnedByPlayer(client).length;
 			let oldHouseCount = getAllHousesOwnedByPlayer(client).length;
