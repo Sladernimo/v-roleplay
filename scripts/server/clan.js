@@ -170,7 +170,7 @@ function deleteClanRank(clanId, rankId, whoDeleted = defaultNoAccountId) {
 		return false;
 	}
 
-	quickDatabaseQuery(`UPDATE clan_rank SET clan_rank_deleted = 1, clan_rank_when_deleted = UNIX_TIMESTAMP(), clan_rank_who_deleted = ${whoDeleted} WHERE biz_id ${tempClanRankData.database}`);
+	quickDatabaseQuery(`UPDATE clan_rank SET clan_rank_deleted = 1, clan_rank_when_deleted = UNIX_TIMESTAMP(), clan_rank_who_deleted = ${whoDeleted} WHERE clan_id = ${tempClanRankData.database}`);
 	getClanData(clanId).ranks.splice(tempClanRankData.index, 1);
 }
 
@@ -422,6 +422,11 @@ function createClanRankCommand(command, params, client) {
 		return false;
 	}
 
+	if (!areThereEnoughParams(params, 2, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
 	let clanId = getPlayerClan(client);
 
 	if (getClanData(clanId) == null) {
@@ -430,7 +435,7 @@ function createClanRankCommand(command, params, client) {
 	}
 
 	let splitParams = params.split(" ");
-	let level = toInteger(getParam(params, " ", 1));
+	let level = toInteger(getParam(params, " ", 1)) || 1;
 	let rankName = splitParams.slice(-1).join(" ");
 
 	let rankIndex = createClanRank(clanId, level, rankName);
