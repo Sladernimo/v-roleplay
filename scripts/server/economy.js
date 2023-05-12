@@ -62,12 +62,12 @@ function playerPayDay(client) {
 	let netIncome = Math.round(grossIncome - incomeTaxAmount - fineAmount);
 	netIncome = applyIncomeInflationMultiplier(netIncome);
 
-	messagePlayerAlert(client, "== Payday! =============================");
-	messagePlayerInfo(client, `Paycheck: {ALTCOLOUR}${getCurrencyString(grossIncome)}`);
-	messagePlayerInfo(client, `Taxes: {ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}`);
+	messagePlayerAlert(client, makeChatBoxSectionHeader(getLocaleString(client, "PayDayHeader")));
+	messagePlayerInfo(client, getLocaleString(client, "PayDayCheck", `{ALTCOLOUR}${getCurrencyString(grossIncome)}{MAINCOLOUR}`));
+	messagePlayerInfo(client, getLocaleString(client, "PayDayTaxes", `{ALTCOLOUR}${getCurrencyString(incomeTaxAmount)}{MAINCOLOUR}`));
 
 	if (fineAmount > 0) {
-		messagePlayerInfo(client, `Fines: {ALTCOLOUR}${getCurrencyString(fineAmount)}`);
+		messagePlayerInfo(client, getLocaleString(client, "PayDayFines", `{ALTCOLOUR}${getCurrencyString(fineAmount)}{MAINCOLOUR}`));
 	}
 
 	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
