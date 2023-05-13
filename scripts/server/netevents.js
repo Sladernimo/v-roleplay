@@ -67,7 +67,8 @@ function addAllNetworkEventHandlers() {
 
 	// Misc
 	addNetworkEventHandler("v.rp.plr.pos", updatePositionInPlayerData);
-	addNetworkEventHandler("v.rp.plr.rot", updateHeadingInPlayerData);
+	addNetworkEventHandler("v.rp.plr.rot", updateRotationInVehicleData);
+	addNetworkEventHandler("v.rp.veh.seat", updatePlayerVehicleSeat);
 	addNetworkEventHandler("v.rp.skinSelected", playerFinishedSkinSelection);
 	addNetworkEventHandler("v.rp.skinCanceled", playerCanceledSkinSelection);
 	addNetworkEventHandler("v.rp.clientInfo", updateConnectionLogOnClientInfoReceive);
@@ -752,8 +753,8 @@ function updatePositionInVehicleData(client, vehicle, position) {
 
 // ===========================================================================
 
-function updateHeadingInVehicleData(client, vehicle, heading) {
-	getVehicleData(vehicle).syncHeading = heading;
+function updateRotationInVehicleData(client, vehicle, rotation) {
+	getVehicleData(vehicle).syncRotation = rotation;
 }
 
 // ===========================================================================
@@ -1328,8 +1329,8 @@ function setPlayerScene(client, interiorName) {
 
 // ==========================================================================
 
-function makePlayerPedSpeak(client, pedSpeechName) {
-	sendNetworkEventToPlayer("v.rp.pedSpeak", client, pedSpeechName);
+function makePedSpeak(ped, pedSpeechName) {
+	sendNetworkEventToPlayer("v.rp.pedSpeak", null, ped.id, pedSpeechName);
 }
 
 // ==========================================================================
@@ -1544,6 +1545,20 @@ function startCountDownForPlayer(client) {
 function showPlayerListGUI(client) {
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending gui list to player ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.list", client);
+}
+
+// ==========================================================================
+
+function updatePlayerVehicleSeat(client, seat) {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		return false;
+	}
+
+	getPlayerData(client).vehicleSeat = seat;
 }
 
 // ==========================================================================
