@@ -36,7 +36,7 @@ class VehicleData {
 		// GTA IV
 		this.ivNetworkId = -1;
 		this.syncPosition = toVector3(0.0, 0.0, 0.0);
-		this.syncHeading = 0.0;
+		this.syncHeading = toVector3(0.0, 0.0, 0.0);
 
 		// Ownership
 		this.ownerType = V_VEH_OWNER_NONE;
@@ -254,10 +254,10 @@ function saveVehicleToDatabase(vehicleDataId) {
 			if (!tempVehicleData.spawnLocked) {
 				if (isGameFeatureSupported("serverElements")) {
 					tempVehicleData.spawnPosition = tempVehicleData.vehicle.position;
-					tempVehicleData.spawnRotation = tempVehicleData.vehicle.heading;
+					tempVehicleData.spawnRotation = tempVehicleData.vehicle.rotation;
 				} else {
 					tempVehicleData.spawnPosition = tempVehicleData.syncPosition;
-					tempVehicleData.spawnRotation = tempVehicleData.syncHeading;
+					tempVehicleData.spawnRotation = tempVehicleData.syncRotation;
 				}
 			}
 		}
@@ -386,7 +386,7 @@ function createVehicleCommand(command, params, client) {
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createPermanentVehicle(modelIndex, frontPos, heading, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let vehicle = createPermanentVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -406,8 +406,13 @@ function createTemporaryVehicleCommand(command, params, client) {
 		return false;
 	}
 
+	let heading = getPlayerHeading(client);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		heading = degToRad(getPlayerHeading(client));
+	}
+
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -427,8 +432,13 @@ function createSingleUseRentalCommand(command, params, client) {
 
 	let modelIndex = getVehicleModelIndexFromParams("Faggio");
 
+	let heading = getPlayerHeading(client);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		heading = degToRad(getPlayerHeading(client));
+	}
+
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getPlayerHeading(client), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	getVehicleData(vehicle).rentPrice = 5;
 
@@ -605,18 +615,9 @@ function deleteVehicleCommand(command, params, client) {
 		vehicle = getPlayerVehicle(client);
 	}
 
-	let vehicleIndex = getVehicleData(vehicle).index;
 	let vehicleName = getVehicleName(vehicle);
 
-	if (getVehicleData(vehicle).databaseId > 0) {
-		quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
-	}
-
-	serverData.vehicles.splice(vehicleIndex, 1);
-
-	destroyGameElement(vehicle);
-
-	setAllVehicleIndexes();
+	deleteVehicle(vehicle);
 
 	messagePlayerSuccess(client, `The ${vehicleName} has been deleted!`);
 }
@@ -1176,6 +1177,11 @@ function setVehicleOwnerCommand(command, params, client) {
 		return false;
 	}
 
+	if (canPlayerManageVehicle(client, vehicle) == false) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+		return false;
+	}
+
 	getVehicleData(vehicle).ownerType = V_VEH_OWNER_PLAYER;
 	getVehicleData(vehicle).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
 
@@ -1557,7 +1563,7 @@ function respawnVehicle(vehicle) {
 	* @return {Vehicle} The vehicle game object
 	*/
 function spawnVehicle(vehicleData) {
-	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${gameData.vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)} with heading ${vehicleData.spawnRotation.toFixed(2)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${gameData.vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)}`);
 
 	let position = vehicleData.spawnPosition;
 	let rotation = vehicleData.spawnRotation;
@@ -1724,14 +1730,14 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 
 // ===========================================================================
 
-function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
-	let vehicle = createGameVehicle(modelIndex, position, heading);
+function createTemporaryVehicle(modelIndex, position, rotation, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
+	let vehicle = createGameVehicle(modelIndex, position, rotation);
 
 	if (vehicle == null) {
 		return false;
 	}
 
-	setVehicleHeading(vehicle, heading);
+	setElementRotation(vehicle, rotation);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
 	addToWorld(vehicle);
@@ -1761,14 +1767,14 @@ function createTemporaryVehicle(modelIndex, position, heading, interior = 0, dim
 
 // ===========================================================================
 
-function createPermanentVehicle(modelIndex, position, heading, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
-	let vehicle = createGameVehicle(modelIndex, position, heading);
+function createPermanentVehicle(modelIndex, position, rotation, interior = 0, dimension = 0, whoAdded = defaultNoAccountId) {
+	let vehicle = createGameVehicle(modelIndex, position, rotation);
 
 	if (vehicle == null) {
 		return false;
 	}
 
-	setVehicleHeading(vehicle, heading);
+	setElementRotation(vehicle, rotation);
 	setElementInterior(vehicle, interior);
 	setElementDimension(vehicle, dimension);
 	addToWorld(vehicle);
@@ -2325,6 +2331,26 @@ function processVehicleBurning() {
 			}
 		}
 	}
+}
+
+// ===========================================================================
+
+function deleteVehicle(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
+	let vehicleIndex = getVehicleData(vehicle).index;
+
+	if (getVehicleData(vehicle).databaseId > 0) {
+		quickDatabaseQuery(`UPDATE veh_main SET veh_deleted = 1 WHERE veh_id = ${getVehicleData(vehicle).databaseId}`);
+	}
+
+	serverData.vehicles.splice(vehicleIndex, 1);
+
+	destroyGameElement(vehicle);
+
+	setAllVehicleIndexes();
 }
 
 // ===========================================================================
