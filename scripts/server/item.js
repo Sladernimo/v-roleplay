@@ -86,6 +86,7 @@ const V_ITEM_USE_TYPE_FISH = 56;				// Fishing catch ... bass, catfish, etc
 const V_ITEM_USE_TYPE_JUNK = 57;				// Worthless junk. Some used as fishing catches
 const V_ITEM_USE_TYPE_BAIT = 58;				// Bait. Used for fishing
 const V_ITEM_USE_TYPE_FISHINGROD = 59;		   	// Fishing rod. Used for fishing.
+const V_ITEM_USE_TYPE_PILLDRUG = 60;		   	// Pill drug. Used for taking pills
 
 // ===========================================================================
 
@@ -276,7 +277,45 @@ let itemRecipes = [
 		new ItemRecipeIngredientData("Salt", 1),
 		new ItemRecipeIngredientData("Lithium Batteries", 1),
 	]),
-]
+];
+
+// ===========================================================================
+
+let itemLists = [];
+let itemListCategories = {
+	"Weapons": [
+		V_ITEM_USE_TYPE_WEAPON,
+	],
+	"Food": [
+		V_ITEM_USE_TYPE_FOOD,
+	],
+	"Drinks": [
+		V_ITEM_USE_TYPE_DRINK,
+		V_ITEM_USE_TYPE_ALCOHOL,
+	],
+	"Electronics": [
+		V_ITEM_USE_TYPE_WALKIETALKIE,
+		V_ITEM_USE_TYPE_PHONE,
+		V_ITEM_USE_TYPE_BOOMBOX,
+	],
+	"Vehicle": [
+		V_ITEM_USE_TYPE_VEHREPAIR,
+		V_ITEM_USE_TYPE_VEHCOLOUR,
+		V_ITEM_USE_TYPE_VEHLIVERY,
+		V_ITEM_USE_TYPE_VEHTIRE,
+		V_ITEM_USE_TYPE_VEHUPGRADE_PART,
+	],
+	"Medical": [
+		V_ITEM_USE_TYPE_HEALTH,
+		V_ITEM_USE_TYPE_AED,
+	],
+	"Drugs": [
+		V_ITEM_USE_TYPE_SNORTDRUG,
+		V_ITEM_USE_TYPE_SMOKEDRUG,
+		V_ITEM_USE_TYPE_INJECTDRUG,
+		V_ITEM_USE_TYPE_PILLDRUG,
+	],
+};
 
 // ===========================================================================
 
@@ -3583,6 +3622,25 @@ function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector
 	//}
 	//
 	//quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+}
+
+// ===========================================================================
+
+function cacheItemLists() {
+	let tempItemList = {};
+
+	for (let i in itemListCategories) {
+		tempItemList[i] = [];
+		for (let j in itemListCategories[i]) {
+			for (let k in serverData.itemTypes) {
+				if (j == serverData.itemTypes[k].useType) {
+					tempItemList[i].push(k);
+				}
+			}
+		}
+	}
+
+	return tempItemList;
 }
 
 // ===========================================================================
