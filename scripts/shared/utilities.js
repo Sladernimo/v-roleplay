@@ -3314,6 +3314,12 @@ function getVehicleHeadingFromRotation(rotation) {
 
 // ===========================================================================
 
+function getVehicleRotationFromHeading(heading) {
+	return (getGame() == V_GAME_MAFIA_ONE) ? toVector3(0.0, heading, 0.0) : toVector3(0.0, 0.0, heading);
+}
+
+// ===========================================================================
+
 function addPrefixNumberFill(number, amount) {
 	let numberString = toString(number);
 	while (numberString.length < amount) {
