@@ -848,5 +848,10 @@
 	"HeaderItemTypesList": "Item Types",
 	"EnabledAFK": "You are now AFK",
 	"DisabledAFK": "You are no longer AFK",
-	"GaveVehicleToBusiness": "You gave the {1} to business {2}"
+	"GaveVehicleToBusiness": "You gave the {1} to business {2}",
+	"PayDayHeader": "Payday!",
+	"PayDayCheck": "Paycheck: {1}",
+	"PayDayTaxes": "Tax: {1}",
+	"PayDayFines": "Fines: {1}",
+	"PayDayReceive": "You Receive: {1}"
 }
