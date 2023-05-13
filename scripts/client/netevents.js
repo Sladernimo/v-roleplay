@@ -51,7 +51,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.money", setLocalPlayerMoney);
 	addNetworkEventHandler("v.rp.armour", setLocalPlayerArmour);
 	addNetworkEventHandler("v.rp.localPlayerSkin", setLocalPlayerSkin);
-	addNetworkEventHandler("v.rp.pedSpeak", makeLocalPlayerPedSpeak);
+	addNetworkEventHandler("v.rp.pedSpeak", makePedSpeak);
 	addNetworkEventHandler("v.rp.infiniteRun", setLocalPlayerInfiniteRun);
 	addNetworkEventHandler("v.rp.playerCop", setLocalPlayerAsCopState);
 	addNetworkEventHandler("v.rp.health", setLocalPlayerHealth);
@@ -424,15 +424,19 @@ function changeScene(sceneName) {
 
 // ===========================================================================
 
-function makeLocalPlayerPedSpeak(speechName) {
+function makePedSpeak(pedId, speechName) {
+	if (getElementFromId(pedId) == null) {
+		return false;
+	}
+
 	if (getGame() == V_GAME_GTA_IV) {
 		// if player is in vehicle, allow megaphone (if last arg is "1", it will cancel megaphone echo)
 		// Only speeches with _MEGAPHONE will have the bullhorn effect
 		// Afaik it only works on police voices anyway
 		if (localPlayer.vehicle != null) {
-			natives.sayAmbientSpeech(localPlayer, speechName, true, false, 0);
+			natives.sayAmbientSpeech(getElementFromId(pedId), speechName, true, false, 0);
 		} else {
-			natives.sayAmbientSpeech(localPlayer, speechName, true, false, 1);
+			natives.sayAmbientSpeech(getElementFromId(pedId), speechName, true, false, 1);
 		}
 	} else if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
 		// Don't have a way to get the ped ref ID and can't use ped in arg
