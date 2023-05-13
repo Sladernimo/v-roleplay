@@ -589,12 +589,12 @@ function setBusinessClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (getBusinessData(business).ownerType != V_VEH_OWNER_PLAYER) {
+	if (getBusinessData(businessId).ownerType != V_BIZ_OWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
 
-	if (getBusinessData(business).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+	if (getBusinessData(businessId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
 		return false;
 	}
@@ -3169,7 +3169,7 @@ function canPlayerManageBusiness(client, businessId, exemptAdminFlag = false) {
 	}
 
 	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN) {
-		if (getBusinessData(businessId).ownerId == getPlayerClan(client)) {
+		if (getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 				return true;
 			}
