@@ -528,6 +528,11 @@ function setElementDimension(element, dimension) {
 // ===========================================================================
 
 function setElementRotation(element, rotation) {
+	if (element.type == ELEMENT_VEHICLE && getGame() == V_GAME_MAFIA_ONE) {
+		//element.heading = rotation.y;
+		return false;
+	}
+
 	if (typeof element.setRotation != "undefined") {
 		element.setRotation(rotation);
 	} else {
@@ -836,8 +841,11 @@ function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1
 
 function createGameVehicle(modelIndex, position, rotation, toClient = null) {
 	if (isGameFeatureSupported("serverElements")) {
-		let vehicle = game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position);
-		vehicle.rotation = rotation;
+		let vehicle = game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, rotation.z);
+		if (getGame() != V_GAME_MAFIA_ONE) {
+			vehicle.rotation = rotation;
+		}
+
 		return vehicle;
 	}
 
