@@ -1759,6 +1759,33 @@ function setJobColourCommand(command, params, client) {
 
 // ===========================================================================
 
+function setJobNameCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!areThereEnoughParams(params, 4, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobId = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
+
+	if (getJobData(jobId) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+	}
+
+	let newName = params;
+	let oldName = getJobData(jobId).name;
+
+	getJobData(jobId).name = newName;
+	getJobData(jobId).needsSaved = true;
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set job {jobYellow}${oldName}'s{MAINCOLOUR} name to {jobYellow}${newName}{MAINCOLOUR}`);
+}
+
+// ===========================================================================
+
 function setJobBlipCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
