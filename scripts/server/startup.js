@@ -174,18 +174,21 @@ function setAllServerDataIndexes() {
 	setAllItemDataIndexes();
 	setAllBusinessDataIndexes();
 	setAllHouseDataIndexes();
+	setAllVehicleIndexes();
 	setAllClanDataIndexes();
 	setAllJobDataIndexes();
 	setAllNPCDataIndexes();
 	setAllRaceDataIndexes();
 	setAllRadioStationDataIndexes();
 	setAllPayPhoneDataIndexes();
+	setAllCallBoxDataIndexes();
 	setAllVehicleRadioFrequencies();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();
 	cacheAllCommandsAliases();
 	cacheAllPaintBallItemTypes();
+	cacheItemLists();
 }
 
 // ===========================================================================
