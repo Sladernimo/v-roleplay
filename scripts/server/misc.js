@@ -760,7 +760,7 @@ function playerPedSpeakCommand(command, params, client) {
 		return false;
 	}
 
-	makePlayerPedSpeak(client, params);
+	makePedSpeak(getPlayerPed(client), params);
 }
 
 // ===========================================================================
