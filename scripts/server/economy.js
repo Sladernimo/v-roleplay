@@ -59,7 +59,8 @@ function playerPayDay(client) {
 	let incomeTaxAmount = Math.round(calculateIncomeTax(wealth));
 	let fineAmount = Math.round(getPlayerCurrentSubAccount(client).fineAmount) || 0;
 
-	let netIncome = Math.round(grossIncome - incomeTaxAmount - fineAmount);
+	let allExpenses = Math.round(incomeTaxAmount - fineAmount);
+	let netIncome = Math.round(grossIncome - allExpenses);
 	netIncome = applyIncomeInflationMultiplier(netIncome);
 
 	messagePlayerAlert(client, makeChatBoxSectionHeader(getLocaleString(client, "PayDayHeader")));
@@ -70,15 +71,13 @@ function playerPayDay(client) {
 		messagePlayerInfo(client, getLocaleString(client, "PayDayFines", `{ALTCOLOUR}${getCurrencyString(fineAmount)}{MAINCOLOUR}`));
 	}
 
-	messagePlayerInfo(client, `You receive: {ALTCOLOUR}${getCurrencyString(netIncome)}`);
-
 	let totalCash = getPlayerCurrentSubAccount(client).cash;
-	if (incomeTaxAmount > netIncome) {
-		let canPayNow = totalCash + netIncome;
-		if (canPayNow >= incomeTaxAmount) {
-			let payInCash = incomeTaxAmount - netIncome;
+	if (allExpenses > grossIncome) {
+		let canPayNow = totalCash + grossIncome;
+		if (canPayNow >= allExpenses) {
+			let payInCash = allExpenses - grossIncome;
 			takePlayerCash(client, payInCash);
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInMoney", `{ALTCOLOUR}${getCurrencyString(payInCash)}{MAINCOLOUR}`)}`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInMoney", `{ALTCOLOUR}${getCurrencyString(payInCash)}{orange}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
 		} else {
@@ -94,9 +93,10 @@ function playerPayDay(client) {
 			let newVehicleCount = getAllVehiclesOwnedByPlayer(client).length;
 			let newHouseCount = getAllHousesOwnedByPlayer(client).length;
 			let newBusinessCount = getAllBusinessesOwnedByPlayer(client).length;
-			messagePlayerInfo(client, `{orange}${getLocaleString(client, "AssetsRepossessedForTax", newVehicleCount - oldVehicleCount, newHouseCount - oldHouseCount, newBusinessCount - oldBusinessCount)}`);
+			messagePlayerInfo(client, `{orange}${getLocaleString(client, "AssetsRepossessedForTax", oldVehicleCount - newVehicleCount, oldHouseCount - newHouseCount, oldBusinessCount - newBusinessCount)}`);
 		}
 	} else {
+		messagePlayerInfo(client, getLocaleString(client, "PayDayReceive", `{ALTCOLOUR}${getCurrencyString(netIncome)}{MAINCOLOUR}`));
 		givePlayerCash(client, netIncome);
 	}
 
@@ -174,7 +174,7 @@ function attemptRepossession(client, totalToPay) {
 function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
 	if (vehicles.length > 0) {
-		deleteVehicle(vehicles[0]);
+		deleteVehicle(vehicles[0].vehicle);
 		return serverConfig.economy.upKeepCosts.upKeepPerVehicle;
 	}
 
