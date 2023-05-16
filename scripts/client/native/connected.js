@@ -73,17 +73,11 @@ function setElementPosition(elementId, position) {
 // ===========================================================================
 
 function deleteGameElement(elementId, position = toVector3(0.0, 0.0, 0.0)) {
-	if (!getElementFromId(elementId).isOwner) {
+	if (getElementFromId(elementId) == null) {
 		return false;
 	}
 
-	destroyGameElement(getElementFromId(elementId));
-}
-
-// ===========================================================================
-
-function deleteLocalGameElement(element) {
-	destroyGameElement(element);
+	deleteElement(getElementFromId(elementId));
 }
 
 // ===========================================================================
@@ -389,8 +383,8 @@ function doesEntityDataExist(entity, dataName) {
 
 // ===========================================================================
 
-function syncCivilianProperties(civilian) {
-	if (civilian == null) {
+function syncPedProperties(ped) {
+	if (ped == null) {
 		return false;
 	}
 
@@ -398,98 +392,75 @@ function syncCivilianProperties(civilian) {
 		return false;
 	}
 
+	//if (isGameFeatureSupported("pedArmour")) {
+	//	if (doesEntityDataExist(ped, "v.rp.armour")) {
+	//		let armour = getEntityData(ped, "v.rp.armour");
+	//		ped.armour = armour;
+	//	}
+	//}
+
 	if (isGameFeatureSupported("pedScale")) {
-		if (doesEntityDataExist(civilian, "v.rp.scale")) {
-			let scaleFactor = getEntityData(civilian, "v.rp.scale");
-			let tempMatrix = civilian.matrix;
+		if (doesEntityDataExist(ped, "v.rp.scale")) {
+			let scaleFactor = getEntityData(ped, "v.rp.scale");
+			let tempMatrix = ped.matrix;
 			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
-			let tempPosition = civilian.position;
-			civilian.matrix = tempMatrix;
+			let tempPosition = ped.position;
+			ped.matrix = tempMatrix;
 			tempPosition.z += scaleFactor.z;
-			civilian.position = tempPosition;
+			ped.position = tempPosition;
 		}
 	}
 
 	if (isGameFeatureSupported("pedFightStyle")) {
-		if (doesEntityDataExist(civilian, "v.rp.fightStyle")) {
-			let fightStyle = getEntityData(civilian, "v.rp.fightStyle");
-			civilian.setFightStyle(fightStyle[0], fightStyle[1]);
+		if (doesEntityDataExist(ped, "v.rp.fightStyle")) {
+			let fightStyle = getEntityData(ped, "v.rp.fightStyle");
+			ped.setFightStyle(fightStyle[0], fightStyle[1]);
 		}
 	}
 
 	if (isGameFeatureSupported("pedWalkStyle")) {
-		if (doesEntityDataExist(civilian, "v.rp.walkStyle")) {
-			let walkStyle = getEntityData(civilian, "v.rp.walkStyle");
-			civilian.walkStyle = walkStyle;
+		if (doesEntityDataExist(ped, "v.rp.walkStyle")) {
+			let walkStyle = getEntityData(ped, "v.rp.walkStyle");
+			ped.walkStyle = walkStyle;
 		}
 	}
 
-	if (isGameFeatureSupported("pedBodyPart")) {
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropHair")) {
-			let bodyPropHair = getEntityData(civilian, "v.rp.bodyPropHair");
-			civilian.changeBodyProp(0, bodyPropHair[0], bodyPropHair[1]);
+	if (getGame() == V_GAME_GTA_IV) {
+		if (doesEntityDataExist(ped, "v.rp.bodyPartHead")) {
+			let bodyPartHead = getEntityData(ped, "v.rp.bodyPartHead");
+			ped.changeBodyPart(0, bodyPartHead[0], bodyPartHead[1]);
 		}
 
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropHead")) {
-			let bodyPropHead = getEntityData(civilian, "v.rp.bodyPropHead");
-			civilian.changeBodyProp(1, bodyPropHead[0], bodyPropHead[1]);
+		if (doesEntityDataExist(ped, "v.rp.bodyPartUpper")) {
+			let bodyPartUpper = getEntityData(ped, "v.rp.bodyPartUpper");
+			ped.changeBodyPart(1, bodyPartUpper[0], bodyPartUpper[1]);
 		}
 
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropEyes")) {
-			let bodyPropEyes = getEntityData(civilian, "v.rp.bodyPropEyes");
-			civilian.changeBodyProp(1, bodyPropEyes[0], bodyPropEyes[1]);
+		if (doesEntityDataExist(ped, "v.rp.bodyPartLower")) {
+			let bodyPartLower = getEntityData(ped, "v.rp.bodyPartLower");
+			ped.changeBodyPart(2, bodyPartLower[0], bodyPartLower[1]);
 		}
 
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropLeftHand")) {
-			let bodyPropLeftHand = getEntityData(civilian, "v.rp.bodyPropLeftHand");
-			civilian.changeBodyProp(1, bodyPropLeftHand[0], bodyPropLeftHand[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropRightHand")) {
-			let bodyPropRightHand = getEntityData(civilian, "v.rp.bodyPropRightHand");
-			civilian.changeBodyProp(1, bodyPropRightHand[0], bodyPropRightHand[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropLeftWrist")) {
-			let bodyPropLeftWrist = getEntityData(civilian, "v.rp.bodyPropLeftWrist");
-			civilian.changeBodyProp(1, bodyPropLeftWrist[0], bodyPropLeftWrist[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropRightWrist")) {
-			let bodyPropRightWrist = getEntityData(civilian, "v.rp.bodyPropRightWrist");
-			civilian.changeBodyProp(1, bodyPropRightWrist[0], bodyPropRightWrist[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropRightWrist")) {
-			let bodyPropRightWrist = getEntityData(civilian, "v.rp.bodyPropRightWrist");
-			civilian.changeBodyProp(1, bodyPropRightWrist[0], bodyPropRightWrist[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropHip")) {
-			let bodyPropHip = getEntityData(civilian, "v.rp.bodyPropHip");
-			civilian.changeBodyProp(1, bodyPropHip[0], bodyPropHip[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropLeftFoot")) {
-			let bodyPropLeftFoot = getEntityData(civilian, "v.rp.bodyPropLeftFoot");
-			civilian.changeBodyProp(1, bodyPropLeftFoot[0], bodyPropLeftFoot[1]);
-		}
-
-		if (doesEntityDataExist(civilian, "v.rp.bodyPropRightFoot")) {
-			let bodyPropRightFoot = getEntityData(civilian, "v.rp.bodyPropRightFoot");
-			civilian.changeBodyProp(1, bodyPropRightFoot[0], bodyPropRightFoot[1]);
+		if (doesEntityDataExist(ped, "v.rp.bodyPropHead")) {
+			let bodyPropHead = getEntityData(ped, "v.rp.bodyPropHead");
+			natives.setCharPropIndex(ped, 0, bodyPropHead);
 		}
 	}
 
-	if (doesEntityDataExist(civilian, "v.rp.anim")) {
-		let animationSlot = getEntityData(civilian, "v.rp.anim");
+	if (doesEntityDataExist(ped, "v.rp.anim")) {
+		let animationSlot = getEntityData(ped, "v.rp.anim");
 		let animationData = getAnimationData(animationSlot);
-		civilian.addAnimation(animationData.groupId, animationData.animId);
+		ped.addAnimation(animationData.groupId, animationData.animId);
 	}
 
-	if (doesEntityDataExist(civilian, "v.rp.bleeding")) {
-		let bleedingState = getEntityData(civilian, "v.rp.bleeding");
-		civilian.bleeding = bleedingState;
+	if (doesEntityDataExist(ped, "v.rp.bleeding")) {
+		let bleedingState = getEntityData(ped, "v.rp.bleeding");
+		ped.bleeding = bleedingState;
+	}
+
+	if (doesEntityDataExist(ped, "v.rp.helmet")) {
+		let helmetState = getEntityData(ped, "v.rp.helmet");
+		natives.enabledPedHelmet(ped, helmetState);
 	}
 }
 
@@ -497,130 +468,6 @@ function syncCivilianProperties(civilian) {
 
 function preventDefaultEventAction(event) {
 	event.preventDefault();
-}
-
-// ===========================================================================
-
-function syncPlayerProperties(player) {
-	if (player == null) {
-		return false;
-	}
-
-	if (!isGameFeatureSupported("serverElements")) {
-		return false;
-	}
-
-	if (isGameFeatureSupported("pedScale")) {
-		if (doesEntityDataExist(player, "v.rp.scale")) {
-			let scaleFactor = getEntityData(player, "v.rp.scale");
-			let tempMatrix = player.matrix;
-			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
-			let tempPosition = player.position;
-			player.matrix = tempMatrix;
-			tempPosition.z += scaleFactor.z;
-			player.position = tempPosition;
-		}
-	}
-
-	if (isGameFeatureSupported("pedFightStyle")) {
-		if (doesEntityDataExist(player, "v.rp.fightStyle")) {
-			let fightStyle = getEntityData(player, "v.rp.fightStyle");
-			player.setFightStyle(fightStyle[0], fightStyle[1]);
-		}
-	}
-
-	if (isGameFeatureSupported("pedWalkStyle")) {
-		if (doesEntityDataExist(player, "v.rp.walkStyle")) {
-			let walkStyle = getEntityData(player, "v.rp.walkStyle");
-			player.walkStyle = walkStyle;
-		}
-	}
-
-	if (getGame() == V_GAME_GTA_IV) {
-		//if (doesEntityDataExist(player, "v.rp.bodyPartHair")) {
-		//	let bodyPartHead = getEntityData(player, "v.rp.bodyPartHair");
-		//	player.changeBodyPart(0, bodyPartHead[0], bodyPartHead[1]);
-		//}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPartHead")) {
-			let bodyPartHead = getEntityData(player, "v.rp.bodyPartHead");
-			player.changeBodyPart(0, bodyPartHead[0], bodyPartHead[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPartUpper")) {
-			let bodyPartUpper = getEntityData(player, "v.rp.bodyPartUpper");
-			player.changeBodyPart(1, bodyPartUpper[0], bodyPartUpper[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPartLower")) {
-			let bodyPartLower = getEntityData(player, "v.rp.bodyPartLower");
-			player.changeBodyPart(2, bodyPartLower[0], bodyPartLower[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropHead")) {
-			let bodyPropHead = getEntityData(player, "v.rp.bodyPropHead");
-			natives.setCharPropIndex(localPlayer, 0, bodyPropHead);
-		}
-	}
-
-	/*
-	if (getGame() == V_GAME_GTA_IV) {
-		if (doesEntityDataExist(player, "v.rp.bodyPropHair")) {
-			let bodyPropHair = getEntityData(player, "v.rp.bodyPropHair");
-			player.changeBodyProp(0, bodyPropHair[0], bodyPropHair[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropHead")) {
-			let bodyPropHead = getEntityData(player, "v.rp.bodyPropHead");
-			player.changeBodyProp(1, bodyPropHead[0], bodyPropHead[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropEyes")) {
-			let bodyPropEyes = getEntityData(player, "v.rp.bodyPropEyes");
-			player.changeBodyProp(1, bodyPropEyes[0], bodyPropEyes[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropLeftHand")) {
-			let bodyPropLeftHand = getEntityData(player, "v.rp.bodyPropLeftHand");
-			player.changeBodyProp(1, bodyPropLeftHand[0], bodyPropLeftHand[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropRightHand")) {
-			let bodyPropRightHand = getEntityData(player, "v.rp.bodyPropRightHand");
-			player.changeBodyProp(1, bodyPropRightHand[0], bodyPropRightHand[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropLeftWrist")) {
-			let bodyPropLeftWrist = getEntityData(player, "v.rp.bodyPropLeftWrist");
-			player.changeBodyProp(1, bodyPropLeftWrist[0], bodyPropLeftWrist[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropRightWrist")) {
-			let bodyPropRightWrist = getEntityData(player, "v.rp.bodyPropRightWrist");
-			player.changeBodyProp(1, bodyPropRightWrist[0], bodyPropRightWrist[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropRightWrist")) {
-			let bodyPropRightWrist = getEntityData(player, "v.rp.bodyPropRightWrist");
-			player.changeBodyProp(1, bodyPropRightWrist[0], bodyPropRightWrist[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropHip")) {
-			let bodyPropHip = getEntityData(player, "v.rp.bodyPropHip");
-			player.changeBodyProp(1, bodyPropHip[0], bodyPropHip[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropLeftFoot")) {
-			let bodyPropLeftFoot = getEntityData(player, "v.rp.bodyPropLeftFoot");
-			player.changeBodyProp(1, bodyPropLeftFoot[0], bodyPropLeftFoot[1]);
-		}
-
-		if (doesEntityDataExist(player, "v.rp.bodyPropRightFoot")) {
-			let bodyPropRightFoot = getEntityData(player, "v.rp.bodyPropRightFoot");
-			player.changeBodyProp(1, bodyPropRightFoot[0], bodyPropRightFoot[1]);
-		}
-	}
-	*/
 }
 
 // ===========================================================================
@@ -711,11 +558,8 @@ function syncElementProperties(element) {
 				break;
 
 			case ELEMENT_PED:
-				syncCivilianProperties(element);
-				break;
-
 			case ELEMENT_PLAYER:
-				syncPlayerProperties(element);
+				syncPedProperties(element);
 				break;
 
 			default:
@@ -728,11 +572,8 @@ function syncElementProperties(element) {
 				break;
 
 			case ELEMENT_PED:
-				syncCivilianProperties(element);
-				break;
-
 			case ELEMENT_PLAYER:
-				syncPlayerProperties(element);
+				syncPedProperties(element);
 				break;
 
 			case ELEMENT_OBJECT:
@@ -847,7 +688,7 @@ function setElementHeading(elementId, heading) {
 // ===========================================================================
 
 function deleteLocalPlayerPed() {
-	destroyElement(localPlayer);
+	destroyGameElement(localPlayer);
 }
 
 // ===========================================================================
