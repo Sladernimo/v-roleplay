@@ -61,7 +61,7 @@ function onElementStreamIn(event, element, client) {
 	if (getPlayerData(getClientFromIndex(element.owner)) != null) {
 		if (hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
 			event.preventDefault();
-			destroyGameElement(element);
+			deleteGameElement(element);
 		}
 	}
 }
@@ -431,7 +431,7 @@ function onPlayerSpawn(client) {
 	getPlayerData(client).pedState = V_PEDSTATE_READY;
 
 	if (isGameFeatureSupported("serverElements")) {
-		syncPlayerProperties(client);
+		syncPedProperties(getPlayerPed(client));
 	}
 
 	if (isGameFeatureSupported("customNametag")) {
@@ -454,9 +454,9 @@ function onPlayerSpawn(client) {
 
 	getPlayerData(client).payDayTickStart = sdl.ticks;
 
-	if (getGame() == V_GAME_GTA_IV) {
-		showServerInDevelopmentMessage(client);
-	}
+	//if (getGame() == V_GAME_GTA_IV) {
+	//	showServerInDevelopmentMessage(client);
+	//}
 
 	showPlayerRegionalLanguageOffer(client);
 
@@ -472,6 +472,9 @@ function onPlayerSpawn(client) {
 
 		resetPlayerBlip(client);
 	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
+	updatePlayerSpawnedState(client, true);
 
 	// Radio stuff must be last thing sent to client because it hangs the client for a second, which blocks processing of other incoming packets
 	// Start playing business/house radio if in one
@@ -490,9 +493,6 @@ function onPlayerSpawn(client) {
 			stopRadioStreamForPlayer(client);
 		}
 	}
-
-	logToConsole(LOG_DEBUG, `[V.RP.Event] Updating spawned state for ${getPlayerDisplayForConsole(client)} to true`);
-	updatePlayerSpawnedState(client, true);
 
 	getPlayerData(client).spawnInit = true;
 
