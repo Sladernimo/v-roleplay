@@ -96,7 +96,7 @@ function processSkinSelectKeyPress(keyCode) {
 		} else if (keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
 			switch (skinSelectParts[skinSelectPart].id) {
 				case V_SKINSELECT_SKIN:
-					if (skinSelectorIndex == 0) {
+					if (skinSelectorIndex <= 0) {
 						skinSelectorIndex = allowedSkins.length - 1;
 					} else {
 						skinSelectorIndex = skinSelectorIndex - 1;
@@ -183,7 +183,7 @@ function processSkinSelectKeyPress(keyCode) {
 		} else if (keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
 			switch (skinSelectParts[skinSelectPart].id) {
 				case V_SKINSELECT_SKIN:
-					if (skinSelectorIndex == allowedSkins.length - 1) {
+					if (skinSelectorIndex >= allowedSkins.length - 1) {
 						skinSelectorIndex = 0;
 					} else {
 						skinSelectorIndex = skinSelectorIndex + 1;
