@@ -1768,14 +1768,3 @@ function setPedBleeding(ped, state) {
 }
 
 // ===========================================================================
-
-function setPedHelmetState(ped, state) {
-	if (!isGameFeatureSupported("pedHelmet")) {
-		return false;
-	}
-
-	setEntityData(ped, "v.rp.helmet", state, true);
-	sendNetworkEventToPlayer("v.rp.helmet", null, ped.id, state);
-}
-
-// ===========================================================================

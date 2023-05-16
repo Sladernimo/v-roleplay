@@ -457,11 +457,6 @@ function syncPedProperties(ped) {
 		let bleedingState = getEntityData(ped, "v.rp.bleeding");
 		ped.bleeding = bleedingState;
 	}
-
-	if (doesEntityDataExist(ped, "v.rp.helmet")) {
-		let helmetState = getEntityData(ped, "v.rp.helmet");
-		natives.enabledPedHelmet(ped, helmetState);
-	}
 }
 
 // ===========================================================================
