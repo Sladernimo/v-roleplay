@@ -2365,7 +2365,7 @@ function toggleJobBlackListCommand(command, params, client) {
 	let jobId = getJobFromParams(params) || getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)).jobIndex;
 
 	getJobData(jobId).blackListEnabled = !getJobData(jobId).blackListEnabled;
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).blackListEnabled)} the blacklist for the {jobYellow}${getJobData(jobId).name} {MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getJobData(jobId).blackListEnabled)} the blacklist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -2395,7 +2395,7 @@ function addPlayerToJobBlackListCommand(command, params, client) {
 	}
 
 	addPlayerToJobBlackList(targetClient, jobId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} added {ALTCOLOUR}${getCharacterFullName(targetClient)} {MAINCOLOUR} to the blacklist for the {jobYellow}${jobData.name} {MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} added {ALTCOLOUR}${getCharacterFullName(targetClient)} {MAINCOLOUR} to the blacklist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -2425,7 +2425,7 @@ function removePlayerFromJobBlackListCommand(command, params, client) {
 	}
 
 	removePlayerFromJobBlackList(targetClient, jobId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)} {MAINCOLOUR} from the blacklist for the {jobYellow}${jobData.name} {MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the blacklist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -2455,7 +2455,7 @@ function addPlayerToJobWhiteListCommand(command, params, client) {
 	}
 
 	addPlayerToJobWhiteList(targetClient, jobId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}added {ALTCOLOUR}${getCharacterFullName(targetClient)} {MAINCOLOUR} to the whitelist for the {jobYellow}${jobData.name} {MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} added {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} to the whitelist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -2485,7 +2485,7 @@ function removePlayerFromJobWhiteListCommand(command, params, client) {
 	}
 
 	removePlayerFromJobWhiteList(targetClient, jobId);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)} {MAINCOLOUR} from the whitelist for the {jobYellow}${jobData.name} {MAINCOLOUR} job`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed {ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR} from the whitelist for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job`);
 }
 
 // ===========================================================================
@@ -2710,6 +2710,14 @@ function getPlayerJobRouteVehicle(client) {
 // ===========================================================================
 
 function startReturnToJobVehicleCountdown(client) {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		return false;
+	}
+
 	getPlayerData(client).returnToJobVehicleTick = globalConfig.returnToJobVehicleTime;
 	getPlayerData(client).returnToJobVehicleTimer = setInterval(function () {
 		//logToConsole(LOG_DEBUG, getPlayerData(client).returnToJobVehicleTick);
