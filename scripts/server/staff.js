@@ -419,7 +419,7 @@ function getVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	destroyGameElement(serverData.vehicles[vehicleIndex]);
+	deleteGameElement(serverData.vehicles[vehicleIndex]);
 	serverData.vehicles[vehicleIndex].vehicle = null;
 
 	serverData.vehicles[vehicleIndex].spawnPosition = getPlayerPosition(client);

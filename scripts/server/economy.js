@@ -174,7 +174,7 @@ function attemptRepossession(client, totalToPay) {
 function repossessFirstAsset(client) {
 	let vehicles = getAllVehiclesOwnedByPlayer(client);
 	if (vehicles.length > 0) {
-		deleteVehicle(vehicles[0].vehicle);
+		deleteVehicle(vehicles[0].index);
 		return serverConfig.economy.upKeepCosts.upKeepPerVehicle;
 	}
 

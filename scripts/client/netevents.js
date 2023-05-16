@@ -243,14 +243,10 @@ function onServerSpawnedLocalPlayer(state) {
 	if (state) {
 		setTimeout(function () {
 			setUpInitialGame();
-			syncPlayerProperties(localPlayer);
+			syncPedProperties(localPlayer);
 
-			getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
-				syncCivilianProperties(ped);
-			});
-
-			getElementsByType(ELEMENT_PLAYER).forEach(player => {
-				syncPlayerProperties(player);
+			getElementsByType(ELEMENT_PED).forEach(ped => {
+				syncPedProperties(ped);
 			});
 
 			getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
@@ -475,7 +471,7 @@ function sendLocaleSelectToServer(localeId) {
 function clearLocalPlayerOwnedPickups() {
 	let pickups = getPickups().filter(pickup => pickup.isLocal == true);
 	for (let i in pickups) {
-		deleteLocalGameElement(pickups[i]);
+		deleteGameElement(pickups[i]);
 	}
 }
 

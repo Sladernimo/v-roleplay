@@ -514,14 +514,6 @@ function setElementOnAllDimensions(element, state) {
 
 // ===========================================================================
 
-function destroyGameElement(element) {
-	if (!isNull(element) && element != false) {
-		destroyElement(element);
-	}
-}
-
-// ===========================================================================
-
 function isMeleeWeapon(weaponId, gameId = getGame()) {
 	return (gameData.meleeWeapons[gameId].indexOf(weaponId) != -1);
 }

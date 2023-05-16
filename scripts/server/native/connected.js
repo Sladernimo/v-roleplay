@@ -660,14 +660,6 @@ function setElementOnAllDimensions(element, state) {
 
 // ===========================================================================
 
-function destroyGameElement(element) {
-	if (!isNull(element) && element != false) {
-		destroyElement(element);
-	}
-}
-
-// ===========================================================================
-
 function isMeleeWeapon(weaponId, gameId = getGame()) {
 	return (gameData.meleeWeapons[gameId].indexOf(weaponId) != -1);
 }
@@ -1772,7 +1764,18 @@ function setPedBleeding(ped, state) {
 	}
 
 	setEntityData(ped, "v.rp.bleeding", state, true);
-	sendNetworkEventToPlayer("v.rp.veh.bleeding", null, ped.id, state);
+	sendNetworkEventToPlayer("v.rp.bleeding", null, ped.id, state);
+}
+
+// ===========================================================================
+
+function setPedHelmetState(ped, state) {
+	if (!isGameFeatureSupported("pedHelmet")) {
+		return false;
+	}
+
+	setEntityData(ped, "v.rp.helmet", state, true);
+	sendNetworkEventToPlayer("v.rp.helmet", null, ped.id, state);
 }
 
 // ===========================================================================

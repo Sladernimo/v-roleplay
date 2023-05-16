@@ -412,9 +412,9 @@ function clearTemporaryVehicles() {
 		if (getVehicleData(vehicles[i]) == null) {
 			let occupants = vehicles[i].getOccupants();
 			for (let j in occupants) {
-				destroyGameElement(occupants[j]);
+				deleteGameElement(occupants[j]);
 			}
-			destroyGameElement(vehicles[i]);
+			deleteGameElement(vehicles[i]);
 		}
 	}
 }
@@ -428,7 +428,7 @@ function clearTemporaryPeds() {
 			if (!peds[i].isType(ELEMENT_PLAYER)) {
 				if (peds[i].vehicle == null) {
 					if (!getNPCData(peds[i])) {
-						destroyElement(peds[i]);
+						deleteGameElement(peds[i]);
 					}
 				}
 			}

@@ -14,7 +14,9 @@ const V_VEH_OWNER_JOB = 2;                      // Owned by a job
 const V_VEH_OWNER_CLAN = 3;                     // Owned by a clan
 const V_VEH_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
 const V_VEH_OWNER_PUBLIC = 5;                   // Public vehicle. Anybody can drive it.
-const V_VEH_OWNER_BIZ = 6;                      // Owned by a business (also includes dealerships since they're businesses)
+const V_VEH_OWNER_BIZ = 6;                      // Owned by a business (not including dealerships)
+const V_VEH_OWNER_DEALERSHIP = 7;				// Owned by a dealership (will respawn new car after buying)
+const V_VEH_OWNER_SCENARIO = 8;					// Owned by a scenario (car crashes, random situations, etc)
 
 // ===========================================================================
 
@@ -1545,8 +1547,11 @@ function respawnVehicle(vehicle) {
 				serverData.vehicles[i].locked = true;
 			}
 
-			destroyElement(vehicle);
-			serverData.vehicles[i].vehicle = false;
+			if (vehicle != null) {
+				deleteGameElement(vehicle);
+			}
+
+			serverData.vehicles[i].vehicle = null;
 
 			let newVehicle = spawnVehicle(serverData.vehicles[i]);
 			serverData.vehicles[i].vehicle = newVehicle;
@@ -2076,7 +2081,7 @@ function isPlayerInVehicleDriverSeat(client) {
 function despawnAllVehicles() {
 	for (let i in serverData.vehicles) {
 		if (serverData.vehicles[i].vehicle != false) {
-			destroyGameElement(serverData.vehicles[i].vehicle);
+			deleteGameElement(serverData.vehicles[i].vehicle);
 			serverData.vehicles[i].vehicle = false;
 		}
 	}
@@ -2218,7 +2223,7 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 
 function despawnVehicle(vehicleData) {
 	if (vehicleData.vehicle != null) {
-		destroyGameElement(vehicleData.vehicle);
+		deleteGameElement(vehicleData.vehicle);
 		vehicleData.vehicle = null;
 	}
 }
@@ -2348,7 +2353,7 @@ function deleteVehicle(vehicle) {
 
 	serverData.vehicles.splice(vehicleIndex, 1);
 
-	destroyGameElement(vehicle);
+	deleteGameElement(vehicle);
 
 	setAllVehicleIndexes();
 }

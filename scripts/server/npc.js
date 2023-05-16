@@ -760,7 +760,7 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 
 function despawnAllNPCs() {
 	for (let i in serverData.npcs) {
-		destroyGameElement(serverData.npc[i].npc);
+		deleteGameElement(serverData.npc[i].npc);
 		serverData.npc[i].npc = null;
 	}
 }
