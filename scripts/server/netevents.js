@@ -228,9 +228,8 @@ function setPlayer2DRendering(client, hudState = false, labelState = false, smal
 
 // ===========================================================================
 
-function syncPlayerProperties(client) {
-	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to sync ${getPlayerDisplayForConsole(client)}'s player ped properties`);
-	sendNetworkEventToPlayer("v.rp.syncElement", null, getPlayerPed(client).id);
+function syncPedProperties(ped) {
+	sendNetworkEventToPlayer("v.rp.syncElement", null, ped.id);
 }
 
 // ===========================================================================
@@ -1220,8 +1219,8 @@ function sendAllBusinessesToPlayer(client) {
 			businesses[i].exitPosition,
 			getBusinessEntranceBlipModelForNetworkEvent(businesses[i].index),
 			getBusinessEntrancePickupModelForNetworkEvent(businesses[i].index),
-			businesses[i].buyPrice,
-			businesses[i].rentPrice,
+			applyServerInflationMultiplier(businesses[i].buyPrice),
+			applyServerInflationMultiplier(businesses[i].rentPrice),
 			businesses[i].locked,
 			businesses[i].entranceFee,
 			getBusinessPropertyInfoLabelType(i),
