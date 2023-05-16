@@ -28,6 +28,9 @@ let jobBlipBlinkTimes = 10;
 let jobBlipBlinkInterval = 500;
 let jobBlipBlinkTimer = null;
 
+let jobBlipScale = 0.7;
+let jobBlipColour = getColourByName("yellow");
+
 // ===========================================================================
 
 class JobData {
@@ -219,8 +222,8 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 						if (getGame() == V_GAME_GTA_IV) {
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
-							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
-							natives.changeBlipScale(jobData.blipId, 0.5);
+							//natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
+							natives.changeBlipScale(jobData.blipId, 0.7);
 							natives.setBlipMarkerLongDistance(jobData.blipId, false);
 							natives.setBlipAsShortRange(jobData.blipId, true);
 							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 20)}${(jobData.name.length > 20) ? " ..." : ""} Job`);
@@ -232,8 +235,8 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
-							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
-							natives.changeBlipScale(jobData.blipId, 0.5);
+							//natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
+							natives.changeBlipScale(jobData.blipId, 0.7);
 							natives.setBlipMarkerLongDistance(jobData.blipId, false);
 							natives.setBlipAsShortRange(jobData.blipId, true);
 							natives.changeBlipNameFromAscii(jobData.blipId, `${jobData.name.substr(0, 20)}${(jobData.name.length > 20) ? " ..." : ""} Job`);
@@ -262,7 +265,7 @@ function receiveJobFromServer(jobId, isDeleted, jobLocationId, name, position, b
 						if (getGame() == V_GAME_GTA_IV) {
 							natives.setBlipCoordinates(jobData.blipId, jobData.position);
 							natives.changeBlipSprite(jobData.blipId, jobData.blipModel);
-							natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
+							//natives.changeBlipColour(jobData.blipId, getColourByType("jobYellow"));
 							natives.changeBlipScale(jobData.blipId, 0.5);
 							natives.setBlipMarkerLongDistance(jobData.blipId, false);
 							natives.setBlipAsShortRange(jobData.blipId, true);
