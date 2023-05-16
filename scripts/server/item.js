@@ -441,7 +441,7 @@ function deleteGroundItemObject(itemId) {
 	}
 
 	if (getItemData(itemId).object != null) {
-		destroyGameElement(getItemData(itemId).object);
+		deleteGameElement(getItemData(itemId).object);
 		getItemData(itemId).object = null;
 	}
 }
@@ -3608,7 +3608,7 @@ function cacheItemItems(itemId) {
 function despawnAllGroundItemObjects() {
 	for (let i in serverData.groundItemCache) {
 		if (getItemData(serverData.groundItemCache[i]).object != null) {
-			destroyGameElement(getItemData(serverData.groundItemCache[i]).object);
+			deleteGameElement(getItemData(serverData.groundItemCache[i]).object);
 			getItemData(serverData.groundItemCache[i]).object = null;
 		}
 	}
