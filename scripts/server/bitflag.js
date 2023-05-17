@@ -63,7 +63,8 @@ let serverBitFlagKeys = {
 		"NonRoleplayCharacterName",
 		"CanHearEverything",
 		"DontSyncClientElements",
-		"IsTester"
+		"IsTester",
+		"ItemBanned"
 	],
 	/*
 	factionFlagKeys: [
