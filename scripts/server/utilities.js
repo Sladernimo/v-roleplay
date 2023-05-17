@@ -306,7 +306,15 @@ function getClosestPlayer(position, exemptPlayer) {
 // ===========================================================================
 
 function isPlayerMuted(client) {
-	return hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("Muted"));
+	if (getPlayerData(client).muted == true) {
+		return true;
+	}
+
+	if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("Muted"))) {
+		return true;
+	}
+
+	return false;
 }
 
 // ===========================================================================
@@ -546,31 +554,39 @@ function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInt
 		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
 	}
 
-	if (isGameFeatureSupported("fadeCamera")) {
+	if (isGameFeatureSupported("fadeCamera") && getPlayerData(client).pedState != V_PEDSTATE_TELEPORTING) {
 		fadePlayerCamera(client, false, 2000);
 	}
 
 	if (isGameFeatureSupported("interiorScene")) {
 		if (!isSameScene(sceneName, currentScene)) {
-			setTimeout(function () {
+			if (getPlayerData(client).pedState == V_PEDSTATE_TELEPORTING) {
 				if (getPlayerPed(client) != null) {
 					despawnPlayer(client);
 				}
 
 				setPlayerScene(client, sceneName);
+			} else {
+				setTimeout(function () {
+					if (getPlayerPed(client) != null) {
+						despawnPlayer(client);
+					}
 
-				//setTimeout(function () {
-				//	processPlayerSceneSwitch(client);
-				//}, 1100);
-			}, 2000);
+					setPlayerScene(client, sceneName);
+				}, 2000);
+			}
 
 			return false;
 		}
 	}
 
-	setTimeout(function () {
+	if (getPlayerData(client).pedState == V_PEDSTATE_TELEPORTING) {
 		processPlayerSceneSwitch(client, false);
-	}, 2000);
+	} else {
+		setTimeout(function () {
+			processPlayerSceneSwitch(client, false);
+		}, 2000);
+	}
 }
 
 // ===========================================================================
