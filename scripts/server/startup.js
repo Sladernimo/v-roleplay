@@ -162,6 +162,7 @@ function loadServerDataFromDatabase() {
 		serverData.gates = loadGatesFromDatabase();
 		serverData.jobs = loadJobsFromDatabase();
 		serverData.payPhones = loadPayPhonesFromDatabase();
+		serverData.bans = loadBansFromDatabase();
 	}
 
 	serverData.commands = loadCommands();
@@ -183,6 +184,7 @@ function setAllServerDataIndexes() {
 	setAllPayPhoneDataIndexes();
 	setAllCallBoxDataIndexes();
 	setAllVehicleRadioFrequencies();
+	applyIpAddressBans();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();
