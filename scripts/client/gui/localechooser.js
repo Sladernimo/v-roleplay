@@ -39,6 +39,8 @@ function initLocaleChooserGUI() {
 
 	localeChooser.window.shown = false;
 
+	//resetLocaleChooserOptions();
+
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created locale chooser GUI`);
 }
 
@@ -56,6 +58,7 @@ function closeLocaleChooserGUI() {
 // ===========================================================================
 
 function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing locale chooser window`);
 	if (position.x != 0.0 && position.y != 0.0) {
 		localeChooser.window.position = position;
 	} else {
@@ -63,7 +66,6 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 	}
 
 	//closeAllWindows();
-	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
 
 	for (let i in localeChooser.flagImages) {
@@ -95,6 +97,11 @@ function localeChooserSetLocale(localeId) {
 function resetLocaleChooserOptions() {
 	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Resetting locale chooser options`);
 
+	// Crashed on Mafia 1, disable for now
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
 	// let tempLocaleOptions = serverData.localeOptions; // getAvailableLocaleOptions();
 	let tempLocaleOptions = getAvailableLocaleOptions();
 
@@ -106,8 +113,9 @@ function resetLocaleChooserOptions() {
 	}
 
 	for (let i in tempLocaleOptions) {
+		tempLocaleOptions
 		let imagePath = `files/images/flags/${tempLocaleOptions[i].flagImageFile}`;
-		localeChooser.flagImages[i] = localeChooser.window.image((i * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageGap.y, flagImageSize.x, flagImageSize.y, imagePath, {
+		let tempImage = localeChooser.window.image((i * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageGap.y, flagImageSize.x, flagImageSize.y, imagePath, {
 			focused: {
 				borderColour: toColour(0, 0, 0, 0),
 			},
@@ -115,7 +123,10 @@ function resetLocaleChooserOptions() {
 			localeChooserSetLocale(tempLocaleOptions[i].id);
 		});
 
-		localeChooser.flagImages[i].shown = false;
+		if (tempImage.image != false && tempImage.image != null) {
+			localeChooser.flagImages.push(tempImage);
+			tempImage.shown = false;
+		}
 
 		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
 
