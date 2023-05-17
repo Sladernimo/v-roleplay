@@ -140,6 +140,7 @@ class ClientData {
 		this.draggedByPlayer = null;
 		this.lastGlobalChatMessageTimeStamp = 0;
 		this.lastLocalChatMessageTimeStamp = 0;
+		this.selectableListItems = [];
 
 		// Paintball
 		this.inPaintBall = false;
@@ -157,6 +158,7 @@ class ClientData {
 		this.casinoChips = 0; // This might become an item with a useId of a business (for chips belonging to specific casinos)
 		this.casinoCardHand = [];
 		this.casinoPlayingGame = V_CASINO_GAME_NONE;
+		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
 
 		// PayPhone
 		this.usingPayPhone = -1;
@@ -168,10 +170,6 @@ class ClientData {
 		// Position, rotation, scene, etc are in current character data
 		this.sceneSwitchRadioStation = -1;
 		this.sceneSwitchInteriorLights = true;
-
-		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
-
-		this.selectableListItems = [];
 	}
 };
 
@@ -213,7 +211,7 @@ function resetClientStuff(client) {
 
 	deleteJobItems(client);
 	deletePaintBallItems(client);
-	//deletePlayerTemporaryLockerItems(client);
+	deletePlayerBlip(client);
 
 	if (getPlayerData(client).draggingPlayer != null) {
 		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
