@@ -22,6 +22,7 @@ let serverStarting = false;
 
 /**
  * @typedef {Object} ServerData
+ * @property {Array.<BanData>} bans
  * @property {Array.<VehicleData>} vehicles
  * @property {Array.<ClientData>} clients
  * @property {Array.<BusinessData>} businesses
@@ -48,6 +49,7 @@ let serverStarting = false;
  * @property {Array} singleUseVehicle
  */
 let serverData = {
+	bans: [],
 	vehicles: [],
 	clients: new Array(128),
 	businesses: [],
