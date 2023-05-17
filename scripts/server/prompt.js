@@ -275,10 +275,12 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
+			if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getHouseData(houseId).buyPrice)) {
 				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
 				return false;
 			}
+
+			takePlayerCash(client, applyServerInflationMultiplier(getHouseData(houseId).buyPrice));
 
 			getHouseData(houseId).ownerType = V_HOUSE_OWNER_PLAYER;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
@@ -303,12 +305,12 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getPlayerCurrentSubAccount(client).cash < getBusinessData(businessId).buyPrice) {
+			if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getBusinessData(businessId).buyPrice)) {
 				messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
 				return false;
 			}
 
-			takePlayerCash(client, getBusinessData(businessId).buyPrice);
+			takePlayerCash(client, applyServerInflationMultiplier(getBusinessData(businessId).buyPrice));
 			getBusinessData(businessId).ownerType = V_BIZ_OWNER_PLAYER;
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getBusinessData(businessId).buyPrice = 0;
