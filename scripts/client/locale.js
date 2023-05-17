@@ -52,7 +52,7 @@ function getGroupedLocaleString(stringName, indexName, ...args) {
 // ===========================================================================
 
 function getAvailableLocaleOptions() {
-	return serverData.localeOptions.filter(localeOption => localeOption.requiresUnicode == false);
+	return serverData.localeOptions.filter(localeOption => localeOption.enabled == true && localeOption.requiresUnicode == false);
 }
 
 // ===========================================================================
