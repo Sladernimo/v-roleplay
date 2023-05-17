@@ -1445,6 +1445,11 @@ function playerUseItem(client, hotBarSlot) {
 
 	switch (toInteger(itemTypeData.useType)) {
 		case V_ITEM_USE_TYPE_SKIN: {
+			if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("NoSkinCustomization"))) {
+				messagePlayerError(client, "You are not allowed to change your skin!");
+				return false;
+			}
+
 			if (!isPlayerWorking(client)) {
 				getPlayerData(client).itemActionItem = itemIndex;
 				forcePlayerIntoSkinSelect(client, -1);
