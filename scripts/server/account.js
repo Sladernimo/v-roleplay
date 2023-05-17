@@ -1476,6 +1476,18 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 // ===========================================================================
 
 function isValidEmailAddress(emailAddress) {
+	if (emailAddress == null || emailAddress == "") {
+		return false;
+	}
+
+	if (emailAddress.indexOf("@") == -1) {
+		return false;
+	}
+
+	if (emailAddress.indexOf(".") == -1) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -1529,6 +1541,13 @@ function savePlayerToDatabase(client) {
 		}
 
 		saveSubAccountToDatabase(getPlayerCurrentSubAccount(client));
+
+		for (let i in getPlayerData(client).keyBinds) {
+			// keyBinds array is a mix of both default keybinds (set as databaseId -1) and account keybinds. Only save account keybinds.
+			if (getPlayerData(client).keyBinds[i].databaseId != -1) {
+				saveAccountKeyBindToDatabase(getPlayerData(client).keyBinds[i]);
+			}
+		}
 	}
 	logToConsole(LOG_DEBUG, `[V.RP.Account]: Saved client ${getPlayerDisplayForConsole(client)} to database successfully!`);
 	return true;
