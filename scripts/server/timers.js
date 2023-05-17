@@ -86,6 +86,12 @@ function saveServerDataToDatabase() {
 	}
 
 	try {
+		saveAllBansToDatabase();
+	} catch (error) {
+		logToConsole(LOG_ERROR, `Could not save bans to database: ${error}`);
+	}
+
+	try {
 		saveServerConfigToDatabase();
 	} catch (error) {
 		logToConsole(LOG_ERROR, `Could not save server config to database: ${error}`);
