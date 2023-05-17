@@ -514,6 +514,10 @@ function canPlayerUseMegaphone(client) {
 // ===========================================================================
 
 function oocToAllPlayers(client, messageText) {
+	if (isPlayerMuted(client)) {
+		return false;
+	}
+
 	messagePlayerNormal(null, `💬 (( [GLOBAL] [${hexFromToColour(getPlayerColour(client))}]${getPlayerName(client)}: {MAINCOLOUR}${messageText} ))`, COLOUR_WHITE);
 	messageDiscordChatChannel(`💬 ${getPlayerName(client)}: (( ${messageText} ))`);
 
