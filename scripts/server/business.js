@@ -964,7 +964,7 @@ function getBusinessInfoCommand(command, params, client) {
 	let ownerName = "Unknown";
 	switch (businessData.ownerType) {
 		case V_BIZ_OWNER_CLAN:
-			ownerName = getClanData(businessData.ownerId).name;
+			ownerName = getClanData(getClanIndexFromDatabaseId(businessData.ownerId)).name;
 			break;
 
 		case V_BIZ_OWNER_JOB:
@@ -3003,7 +3003,7 @@ function resetBusinessPickups(businessId) {
 	spawnBusinessEntrancePickup(businessId);
 	spawnBusinessExitPickup(businessId);
 
-	updateBusinessPickupLabelData(businessId, false);
+	//updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -3013,7 +3013,7 @@ function resetBusinessBlips(businessId) {
 	spawnBusinessEntranceBlip(businessId);
 	spawnBusinessExitBlip(businessId);
 
-	updateBusinessPickupLabelData(businessId, false);
+	//updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -3023,7 +3023,7 @@ function resetAllBusinessPickups(businessId) {
 	spawnBusinessEntrancePickup(businessId);
 	spawnBusinessExitPickup(businessId);
 
-	updateBusinessPickupLabelData(businessId, false);
+	//updateBusinessPickupLabelData(businessId, false);
 }
 
 // ===========================================================================
@@ -3033,7 +3033,7 @@ function resetAllBusinessBlips() {
 		deleteBusinessBlips(i);
 		spawnBusinessBlips(i);
 
-		updateBusinessPickupLabelData(i, false);
+		//updateBusinessPickupLabelData(i, false);
 	}
 }
 
