@@ -408,7 +408,7 @@ function enterExitPropertyCommand(command, params, client) {
 
 						// Spawn vehicle in the other side
 						vehicleData.sceneSwitchPosition = closestProperty.exitPosition;
-						vehicleData.sceneSwitchRotation = closestProperty.exitRotation;
+						vehicleData.sceneSwitchRotation = getRotationFromHeading(closestProperty.exitRotation);
 						vehicleData.sceneSwitchInterior = closestProperty.exitInterior;
 						vehicleData.sceneSwitchDimension = closestProperty.exitDimension;
 						vehicleData.switchingScenes = true;
@@ -486,7 +486,7 @@ function enterExitPropertyCommand(command, params, client) {
 
 						// Spawn vehicle in the other side
 						vehicleData.sceneSwitchPosition = closestProperty.entrancePosition;
-						vehicleData.sceneSwitchRotation = closestProperty.entranceRotation;
+						vehicleData.sceneSwitchRotation = getRotationFromHeading(closestProperty.entranceRotation);
 						vehicleData.sceneSwitchInterior = closestProperty.entranceInterior;
 						vehicleData.sceneSwitchDimension = closestProperty.entranceDimension;
 						vehicleData.switchingScenes = true;
@@ -972,8 +972,8 @@ function deletePlayerBlip(client) {
 
 	if (getPlayerData(client).playerBlip != null) {
 		deleteGameElement(getPlayerData(client).playerBlip);
-		getPlayerData(client).playerBlip = null;
 	}
+	getPlayerData(client).playerBlip = null;
 }
 
 // ===========================================================================
