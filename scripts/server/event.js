@@ -58,12 +58,12 @@ function onElementStreamIn(event, element, client) {
 	//    event.preventDefault();
 	//}
 
-	if (getPlayerData(getClientFromIndex(element.owner)) != null) {
-		if (hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
-			event.preventDefault();
-			deleteGameElement(element);
-		}
-	}
+	//if (getPlayerData(getClientFromIndex(element.owner)) != null) {
+	//	if (hasBitFlag(getPlayerData(getClientFromIndex(element.owner)).accountData.flags.moderation, getModerationFlagValue("DontSyncClientElements"))) {
+	//		event.preventDefault();
+	//		deleteGameElement(element);
+	//	}
+	//}
 }
 
 // ===========================================================================
@@ -377,8 +377,11 @@ function onPlayerSpawn(client) {
 		setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
 	}
 
-	if (isGameFeatureSupported("dimension") && (getPlayerCurrentSubAccount(client).dimension != getPlayerDimension(client))) {
+	if (isGameFeatureSupported("dimension")) { // && (getPlayerCurrentSubAccount(client).dimension != getPlayerDimension(client))) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player dimension for ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
+		// Elements may not stream in sometimes.
+		// Wierd bug, so just "refresh" the dimension by setting to an unused dimension (1) then to the correct one
+		setPlayerDimension(client, 1);
 		setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
 	}
 
@@ -665,21 +668,19 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 
 				if (isPlayerWorking(client)) {
 					if (getVehicleData(vehicle).ownerType == V_VEH_OWNER_JOB) {
-						if (getVehicleData(vehicle).ownerId == getPlayerCurrentSubAccount(client).job) {
-							if (doesJobLocationHaveAnyRoutes(getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)))) {
-								getPlayerCurrentSubAccount(client).lastJobVehicle = vehicle;
-								if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
-									messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobRouteStart", `{ALTCOLOUR}/startroute{MAINCOLOUR}`));
+						if (getVehicleData(vehicle).ownerId == currentSubAccount.job) {
+							getPlayerData(client).lastJobVehicle = vehicle;
+							if (isPlayerOnJobRoute(client)) {
+								if (vehicle == getPlayerJobRouteVehicle(client)) {
+									stopReturnToJobVehicleCountdown(client);
+								}
+							} else {
+								if (doesJobLocationHaveAnyRoutes(getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client)))) {
+									if (!hasPlayerSeenActionTip(client, "JobRouteStart")) {
+										messagePlayerInfo(client, getGroupedLocaleString(client, "ActionTips", "JobRouteStart", `{ALTCOLOUR}/startroute{MAINCOLOUR}`));
+									}
 								}
 							}
-						}
-					}
-				}
-
-				if (isPlayerWorking(client)) {
-					if (isPlayerOnJobRoute(client)) {
-						if (vehicle == getPlayerJobRouteVehicle(client)) {
-							stopReturnToJobVehicleCountdown(client);
 						}
 					}
 				}
