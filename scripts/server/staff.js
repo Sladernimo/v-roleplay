@@ -119,8 +119,10 @@ function muteClientCommand(command, params, client) {
 		}
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been muted by {adminOrange}${getPlayerName(client)}`);
 	getPlayerData(targetClient).muted = true;
+	getPlayerData(targetClient).accountData.flags.moderation = addBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("Muted"));
+
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been muted by {adminOrange}${getPlayerName(client)}`);
 }
 
 // ===========================================================================
@@ -415,15 +417,17 @@ function getVehicleCommand(command, params, client) {
 	let vehicleIndex = toInteger(params);
 
 	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
-		messagePlayerError(client, "That vehicle ID doesn't exist!");
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 		return false;
 	}
 
 	deleteGameElement(serverData.vehicles[vehicleIndex]);
 	serverData.vehicles[vehicleIndex].vehicle = null;
 
-	serverData.vehicles[vehicleIndex].spawnPosition = getPlayerPosition(client);
-	serverData.vehicles[vehicleIndex].spawnRotation = getPlayerHeading(client);
+	serverData.vehicles[vehicleIndex].spawnPosition = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
+	serverData.vehicles[vehicleIndex].spawnRotation = getRotationFromHeading(getPlayerHeading(client));
+	serverData.vehicles[vehicleIndex].interior = getPlayerInterior(client);
+	serverData.vehicles[vehicleIndex].dimension = getPlayerDimension(client);
 
 	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
 	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
@@ -441,7 +445,7 @@ function getVehicleCommand(command, params, client) {
 	let vehicle = spawnVehicle(serverData.vehicles[vehicleIndex]);
 
 	if (serverData.vehicles[vehicleIndex].vehicle == null) {
-		messagePlayerError(client, "Vehicle could not be retrieved!");
+		messagePlayerError(client, "Vehicle could not be teleported!");
 		return false;
 	}
 
@@ -1046,8 +1050,8 @@ function getPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	removePedFromVehicle(getPlayerPed(targetClient));
 	setPlayerControlState(targetClient, false);
+	removePedFromVehicle(getPlayerPed(targetClient));
 
 	getPlayerData(targetClient).returnToPosition = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
