@@ -101,7 +101,7 @@ class VehicleData {
 		// Scene Switching
 		this.switchingScenes = false;
 		this.sceneSwitchPosition = toVector3(0.0, 0.0, 0.0);
-		this.sceneSwitchRotation = 0.0;
+		this.sceneSwitchRotation = toVector3(0.0, 0.0, 0.0);
 		this.sceneSwitchInterior = 0;
 		this.sceneSwitchDimension = 0;
 
@@ -388,7 +388,7 @@ function createVehicleCommand(command, params, client) {
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createPermanentVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let vehicle = createPermanentVehicle(modelIndex, frontPos, getRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -414,7 +414,7 @@ function createTemporaryVehicleCommand(command, params, client) {
 	}
 
 	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created a temporary {vehiclePurple}${getVehicleName(vehicle)}`, true);
 }
@@ -435,12 +435,12 @@ function createSingleUseRentalCommand(command, params, client) {
 	let modelIndex = getVehicleModelIndexFromParams("Faggio");
 
 	let heading = getPlayerHeading(client);
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		heading = degToRad(getPlayerHeading(client));
-	}
+	//if (getGame() == V_GAME_MAFIA_ONE) {
+	//	heading = degToRad(getPlayerHeading(client));
+	//}
 
-	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
-	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getVehicleRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
+	let frontPos = getPosInFrontOfPos(getPlayerPosition(client), heading, globalConfig.spawnCarDistance);
+	let vehicle = createTemporaryVehicle(modelIndex, frontPos, getRotationFromHeading(heading), getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).accountData.databaseId);
 
 	getVehicleData(vehicle).rentPrice = 5;
 
@@ -1537,6 +1537,8 @@ function stopRentingVehicle(client) {
 function respawnVehicle(vehicle) {
 	for (let i in serverData.vehicles) {
 		if (vehicle == serverData.vehicles[i].vehicle) {
+			removeAllOccupantsFromVehicle(vehicle);
+
 			updateVehicleSavedPosition(i);
 
 			if (serverData.vehicles[i].spawnLocked == true) {
@@ -1588,8 +1590,12 @@ function spawnVehicle(vehicleData) {
 		return false;
 	}
 
-	//setVehicleHeading(vehicle, rotation);
-	setElementRotation(vehicle, rotation);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		setVehicleHeading(vehicle, getHeadingFromRotation(rotation));
+	} else {
+		setElementRotation(vehicle, rotation);
+	}
+
 	setElementDimension(vehicle, dimension);
 	setElementInterior(vehicle, interior);
 
@@ -2092,14 +2098,23 @@ function despawnAllVehicles() {
 // ===========================================================================
 
 function updateVehicleSavedPositions() {
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Updating all vehicle's saved positions ...`);
+
 	for (let i in serverData.vehicles) {
 		updateVehicleSavedPosition(i);
 	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Updated all vehicle's saved positions`);
 }
 
 // ===========================================================================
 
 function updateVehicleSavedPosition(vehicleId) {
+	if (serverData.vehicles[vehicleId].vehicle == null) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Vehicle] Failed to update saved position for vehicle ${vehicleId}. Vehicle is null`);
+		return false;
+	}
+
 	if (!serverData.vehicles[vehicleId].spawnLocked) {
 		if (!isVehicleUnoccupied(serverData.vehicles[vehicleId].vehicle)) {
 			serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
