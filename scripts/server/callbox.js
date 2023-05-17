@@ -150,7 +150,7 @@ function loadCallBoxesFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[V.RP.CallBox]: ${tempCallBoxes.length} call boxes loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.CallBox]: ${tempCallBoxes.length} call boxes loaded from database successfully!`);
 	return tempCallBoxes;
 }
 
