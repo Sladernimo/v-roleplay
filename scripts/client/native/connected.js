@@ -185,8 +185,8 @@ function createGameBlip(blipModel, position, name = "") {
 		let blipId = natives.addBlipForCoord(position);
 		if (blipId) {
 			natives.changeBlipSprite(blipId, blipModel);
-			natives.setBlipMarkerLongDistance(blipId, false);
-			natives.setBlipAsShortRange(blipId, true);
+			//natives.setBlipMarkerLongDistance(blipId, false);
+			//natives.setBlipAsShortRange(blipId, true);
 			natives.changeBlipNameFromAscii(blipId, `${name.substr(0, 24)}${(name.length > 24) ? " ..." : ""}`);
 			return blipId;
 		}
