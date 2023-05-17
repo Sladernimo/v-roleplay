@@ -280,18 +280,34 @@ function isPlayerSpawned(client) {
 // ===========================================================================
 
 function getVehiclePosition(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
 	return vehicle.position;
 }
 
 // ===========================================================================
 
 function getVehicleRotation(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return getRotationFromHeading(vehicle.heading);
+	}
+
 	return vehicle.rotation;
 }
 
 // ===========================================================================
 
 function getVehicleHeading(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
 	return vehicle.heading;
 }
 
@@ -1485,8 +1501,8 @@ function getServerPort() {
 
 // ===========================================================================
 
-function serverBanIP(ip) {
-	server.banIP(ip);
+function serverBanIP(ip, durationInMilliseconds = 0) {
+	server.banIP(ip, durationInMilliseconds);
 }
 
 // ===========================================================================
