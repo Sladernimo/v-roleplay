@@ -79,6 +79,8 @@ function initGUI() {
 
 	logToConsole(LOG_DEBUG, `[V.RP.GUI] All GUI created successfully!`);
 
+	resetLocaleChooserOptions();
+
 	sendNetworkEventToServer("v.rp.guiReady", true);
 };
 
