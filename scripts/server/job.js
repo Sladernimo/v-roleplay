@@ -1218,7 +1218,9 @@ function stopWorking(client) {
 			//getPlayerPed(client).removeFromVehicle();
 		}
 
-		respawnVehicle(jobVehicle);
+		if (isVehicleUnoccupied(jobVehicle)) {
+			respawnVehicle(jobVehicle);
+		}
 
 		getPlayerData(client).lastJobVehicle = null;
 	}
@@ -2680,6 +2682,7 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
+	removePedFromVehicle(getPlayerPed(client));
 	respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = null;
@@ -2726,7 +2729,9 @@ function startReturnToJobVehicleCountdown(client) {
 			//logToConsole(LOG_WARN, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`);
 			showSmallGameMessage(client, `You have ${getPlayerData(client).returnToJobVehicleTick} seconds to return to your job vehicle!`, getColourByName("softRed"), 1500);
 		} else {
-			clearInterval(getPlayerData(client).returnToJobVehicleTimer);
+			if (getPlayerData(client).returnToJobVehicleTimer != null) {
+				clearInterval(getPlayerData(client).returnToJobVehicleTimer);
+			}
 			getPlayerData(client).returnToJobVehicleTimer = null;
 			getPlayerData(client).returnToJobVehicleTick = 0;
 			stopJobRoute(client, false, true);
@@ -3566,7 +3571,7 @@ function doesPlayerHaveAnyJob(client) {
 // ===========================================================================
 
 function canPlayerUseJobs(client) {
-	if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getServerBitFlags().moderationFlags.JobBanned)) {
+	if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("JobBanned"))) {
 		return false;
 	}
 
@@ -4437,6 +4442,7 @@ function finishSuccessfulJobRoute(client) {
 
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
+	removePedFromVehicle(getPlayerPed(client));
 	respawnVehicle(getPlayerData(client).jobRouteVehicle);
 
 	getPlayerData(client).jobRouteVehicle = null;
