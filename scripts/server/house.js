@@ -374,7 +374,7 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	let clanId = getPlayerClan(params);
+	let clanId = getPlayerClan(client);
 
 	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
@@ -391,8 +391,8 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = V_PROMPT_GIVEHOUSETOCLAN;
+	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 
 	//messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
 }
@@ -416,7 +416,7 @@ function setHouseRankCommand(command, params, client) {
 		return false;
 	}
 
-	let clanId = getPlayerClan(params);
+	let clanId = getPlayerClan(client);
 
 	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
@@ -1338,9 +1338,9 @@ function getHouseInfoCommand(command, params, client) {
 	let houseData = getHouseData(houseId);
 
 	let ownerName = "Unknown";
-	switch (getHouseData(houseId).ownerType) {
+	switch (houseData.ownerType) {
 		case V_HOUSE_OWNER_CLAN:
-			ownerName = getClanData(houseData).name;
+			ownerName = getClanData(getClanIndexFromDatabaseId(houseData.ownerId)).name;
 			break;
 
 		case V_HOUSE_OWNER_PLAYER:
@@ -1361,7 +1361,7 @@ function getHouseInfoCommand(command, params, client) {
 			break;
 
 		case V_HOUSE_OWNER_JOB:
-			ownerName = getJobData(houseData.ownerId).name;
+			ownerName = getJobData(getJobIndexFromDatabaseId(houseData.ownerId)).name;
 			break;
 	}
 
