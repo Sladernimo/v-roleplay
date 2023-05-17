@@ -3308,14 +3308,14 @@ function removeUnusedGameData() {
 
 // ===========================================================================
 
-function getVehicleHeadingFromRotation(rotation) {
-	return (getGame() == V_GAME_MAFIA_ONE) ? rotation.y : rotation.z;
+function getHeadingFromRotation(rotation) {
+	return rotation.z;
 }
 
 // ===========================================================================
 
-function getVehicleRotationFromHeading(heading) {
-	return (getGame() == V_GAME_MAFIA_ONE) ? toVector3(0.0, heading, 0.0) : toVector3(0.0, 0.0, heading);
+function getRotationFromHeading(heading) {
+	return toVector3(0.0, 0.0, heading);
 }
 
 // ===========================================================================
