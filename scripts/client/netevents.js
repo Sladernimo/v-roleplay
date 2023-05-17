@@ -395,13 +395,13 @@ function sendLocalPlayerNetworkIdToServer() {
 
 function changeScene(sceneName) {
 	if (getGame() == V_GAME_GTA_IV) {
-		if (cutsceneName == "") {
+		if (sceneName == "") {
 			natives.clearCutscene();
 		} else {
 			if (natives.isInteriorScene()) {
 				natives.clearCutscene();
 			}
-			natives.initCutscene(cutsceneName);
+			natives.initCutscene(sceneName);
 		}
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
 		renderHUD = false;
