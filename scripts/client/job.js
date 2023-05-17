@@ -31,6 +31,8 @@ let jobBlipBlinkTimer = null;
 let jobBlipScale = 0.7;
 let jobBlipColour = getColourByName("yellow");
 
+let jobCheckpointType = 1;
+
 // ===========================================================================
 
 class JobData {
@@ -113,8 +115,10 @@ function showJobRouteLocation(position, dimension, colour) {
 
 	if (getGame() == V_GAME_GTA_IV) {
 		jobRouteLocationBlip = createGameBlip(gameData.blipSprites[getGame()].Waypoint, position, "Job route stop");
-		natives.setBlipMarkerLongDistance(jobRouteLocationBlip, true);
-		natives.setBlipAsShortRange(jobRouteLocationBlip, false);
+		natives.changeBlipColour(jobRouteLocationBlip, 2);
+		natives.setRoute(jobRouteLocationBlip, true);
+		//natives.setBlipMarkerLongDistance(jobRouteLocationBlip, true);
+		//natives.setBlipAsShortRange(jobRouteLocationBlip, false);
 	}
 }
 
@@ -323,7 +327,7 @@ function removeJobsFromClient() {
 // ===========================================================================
 
 function processJobLocationIndicatorRendering() {
-	if (jobRouteLocationIndicatorImage == null) {
+	if (getGame() == V_GAME_MAFIA_ONE && jobRouteLocationIndicatorImage == null) {
 		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Image is null.`);
 		return false;
 	}
@@ -348,6 +352,7 @@ function processJobLocationIndicatorRendering() {
 	if (getGame() == V_GAME_GTA_IV) {
 		let colourArray = rgbaArrayFromToColour(jobRouteLocationColour);
 		natives.drawColouredCylinder(jobRouteLocationPosition.x, jobRouteLocationPosition.y, jobRouteLocationPosition.z, jobRouteLocationRadius, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2], colourArray[3]);
+		return true;
 	}
 }
 
