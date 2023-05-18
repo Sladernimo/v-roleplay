@@ -869,3 +869,7 @@ function isGTAIV() {
 }
 
 // ===========================================================================
+
+function getLocalPlayerVehicle() {
+	return localPlayer.vehicle;
+}
