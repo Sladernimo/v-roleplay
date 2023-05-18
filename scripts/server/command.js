@@ -111,6 +111,9 @@ function loadCommands() {
 			new CommandData("bankbalance", bankBalanceCommand, "", getStaffFlagValue("None"), true, true, "Shows how much money you have in your bank account"),
 			new CommandData("bankwithdraw", bankWithdrawCommand, "<amount>", getStaffFlagValue("None"), true, true, "Takes money from your bank account"),
 			new CommandData("bankdeposit", bankDepositCommand, "<amount>", getStaffFlagValue("None"), true, true, "Puts money into your bank account"),
+			new CommandData("clanbankbalance", clanBankBalanceCommand, "", getStaffFlagValue("None"), true, true, "Shows how much money you have in your clan's bank account"),
+			new CommandData("clanbankwithdraw", clanBankWithdrawCommand, "<amount>", getStaffFlagValue("None"), true, true, "Takes money from your clan's bank account"),
+			new CommandData("clanbankdeposit", clanBankDepositCommand, "<amount>", getStaffFlagValue("None"), true, true, "Puts money into your clan's bank account"),
 		],
 		bitFlag: [],
 		business: [
