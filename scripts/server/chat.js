@@ -519,19 +519,19 @@ function oocToAllPlayers(client, messageText) {
 	}
 
 	messagePlayerNormal(null, `💬 (( [GLOBAL] [${hexFromToColour(getPlayerColour(client))}]${getPlayerName(client)}: {MAINCOLOUR}${messageText} ))`, COLOUR_WHITE);
-	messageDiscordChatChannel(`💬 ${getPlayerName(client)}: (( ${messageText} ))`);
+	messageDiscordChatChannel(`💬 (( [GLOBAL] ${getPlayerName(client)}: ${messageText} ))`);
 
 	// Action tip for other players
-	let clients = getClients();
-	for (let i in clients) {
-		if (clients[i] != client) {
-			if (!hasPlayerSeenActionTip(clients[i], "UseGlobalChat")) {
-				if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastGlobalChatMessageTimeStamp) <= globalConfig.globalChatActionTipCooldown) {
-					messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseGlobalChat", `{ALTCOLOUR}/o{MAINCOLOUR}`));
-				}
-			}
-		}
-	}
+	//let clients = getClients();
+	//for (let i in clients) {
+	//	if (clients[i] != client) {
+	//		if (!hasPlayerSeenActionTip(clients[i], "UseGlobalChat")) {
+	//			if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastGlobalChatMessageTimeStamp) <= globalConfig.globalChatActionTipCooldown) {
+	//				messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseGlobalChat", `{ALTCOLOUR}/o{MAINCOLOUR}`));
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 // ===========================================================================
@@ -544,15 +544,15 @@ function oocToNearbyPlayers(client, messageText) {
 				messagePlayerNormal(clients[i], `💬 (( [LOCAL] [${hexFromToColour(getPlayerColour(client))}]${getPlayerName(client)}: {lightGrey} ${messageText} ))`, COLOUR_WHITE);
 			}
 
-			if (!hasPlayerSeenActionTip(clients[i], "UseLocalChat")) {
-				if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastLocalChatMessageTimeStamp) <= globalConfig.localChatActionTipCooldown) {
-					messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseLocalChat", `{ALTCOLOUR}/b{MAINCOLOUR}`));
-				}
-			}
+			//if (!hasPlayerSeenActionTip(clients[i], "UseLocalChat")) {
+			//	if ((getCurrentUnixTimestamp() - getPlayerData(clients[i]).lastLocalChatMessageTimeStamp) <= globalConfig.localChatActionTipCooldown) {
+			//		messagePlayerActionTip(clients[i], getGroupedLocaleString(clients[i], "ActionTips", "UseLocalChat", `{ALTCOLOUR}/b{MAINCOLOUR}`));
+			//	}
+			//}
 		}
 	}
 
-	messageDiscordChatChannel(`💬 ${getCharacterFullName(client)}: (( ${messageText} ))`);
+	messageDiscordChatChannel(`💬 (( [LOCAL] ${getCharacterFullName(client)}: ${messageText} ))`);
 }
 
 // ===========================================================================
