@@ -351,7 +351,7 @@ function processJobLocationIndicatorRendering() {
 
 	if (getGame() == V_GAME_GTA_IV) {
 		let colourArray = rgbaArrayFromToColour(jobRouteLocationColour);
-		natives.drawColouredCylinder(jobRouteLocationPosition.x, jobRouteLocationPosition.y, jobRouteLocationPosition.z, jobRouteLocationRadius, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2], colourArray[3]);
+		natives.drawCheckpoint(jobRouteLocationPosition.x, jobRouteLocationPosition.y, jobRouteLocationPosition.z, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2]);
 		return true;
 	}
 }
