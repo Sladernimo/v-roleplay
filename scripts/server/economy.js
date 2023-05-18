@@ -120,6 +120,20 @@ function calculateWealth(client) {
 
 // ===========================================================================
 
+function calculateClanWealth(clanIndex) {
+	let vehicles = getAllVehiclesOwnedByClan(clanIndex);
+	let houses = getAllHousesOwnedByClan(clanIndex);
+	let businesses = getAllBusinessesOwnedByClan(clanIndex);
+
+	let vehicleUpKeep = applyServerInflationMultiplier(vehicles.length * serverConfig.economy.upKeepCosts.upKeepPerVehicle);
+	let houseUpKeep = applyServerInflationMultiplier(houses.length * serverConfig.economy.upKeepCosts.upKeepPerHouse);
+	let businessUpKeep = applyServerInflationMultiplier(businesses.length * serverConfig.economy.upKeepCosts.upKeepPerBusiness);
+
+	return vehicleUpKeep + houseUpKeep + businessUpKeep;
+}
+
+// ===========================================================================
+
 function calculateIncomeTax(amount) {
 	return amount * serverConfig.economy.incomeTaxRate;
 }
