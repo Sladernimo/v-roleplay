@@ -75,7 +75,7 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 
 function processVehiclePurchasing() {
 	if (vehiclePurchaseState == V_VEHBUYSTATE_TESTDRIVE) {
-		if (getLocalPlayerVehicle() == false) {
+		if (getLocalPlayerVehicle() == null) {
 			vehiclePurchaseState = V_VEHBUYSTATE_EXITVEH;
 			sendNetworkEventToServer("v.rp.vehBuyState", V_VEHBUYSTATE_EXITVEH);
 			return false;
