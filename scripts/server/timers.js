@@ -124,26 +124,22 @@ function oneMinuteTimerFunction() {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Checking rentable vehicles`);
 		checkVehicleRenting();
 
-		logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
-		updateAllPlayerNameTags();
-	}
+		//logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
+		//updateAllPlayerNameTags();
 
-	updateVehicleSavedPositions();
-	fixDesyncedPayPhones();
+		//fixDesyncedPayPhones();
+	}
 }
 
 // ===========================================================================
 
 function fiveMinuteTimerFunction() {
-	saveServerDataToDatabase();
 }
 
 // ===========================================================================
 
 function tenMinuteTimerFunction() {
-	//showRandomTipToAllPlayers();
 	//saveServerDataToDatabase();
-	//checkInactiveVehicleRespawns();
 }
 
 // ===========================================================================
@@ -163,6 +159,7 @@ function thirtyMinuteTimerFunction() {
 		setRandomWeather();
 	}
 
+	saveServerDataToDatabase();
 	updateServerRules();
 }
 
@@ -325,6 +322,13 @@ function checkPayDays() {
 			getBusinessData(i).needsSaved = true;
 		}
 	}
+
+	//for (let i in serverData.clans) {
+	//	if (areAnyClanMembersOnline(serverData.clans[i].index)) {
+	//		let clanIndex = getPlayerClan(clan);
+	//		let clanWealth = calculateClanWealth(clanIndex);
+	//	}
+	//}
 }
 
 // ===========================================================================
