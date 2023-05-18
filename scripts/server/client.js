@@ -80,7 +80,7 @@ class ClientData {
 		this.businessOrderBusiness = -1;
 		this.businessOrderItem = -1;
 		this.businessOrderValue = -1;
-		this.businessOrderBuyPrice = 0;
+		this.businessOrderSellPrice = 0;
 
 		// For Non-Server Elements
 		this.syncPosition = null;
@@ -127,7 +127,7 @@ class ClientData {
 		this.alcoholLevel = 0;
 		this.pedState = V_PEDSTATE_NONE;
 		this.promptType = V_PROMPT_NONE;
-		this.promptValue = 0;
+		this.promptValue = false;
 		this.privateMessageReplyTo = null;
 		this.enteringExitingProperty = null;
 		this.inProperty = null;
