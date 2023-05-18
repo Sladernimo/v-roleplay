@@ -22,6 +22,9 @@ const V_PROMPT_JOBINVITE = 10;
 const V_PROMPT_CLANINVITE = 11;
 const V_PROMPT_COPYKEYBINDSTOSERVER = 12;
 const V_PROMPT_GIVEVEHTOBIZ = 13;
+const V_PROMPT_CLANOWNER = 14;
+const V_PROMPT_VEHOWNER = 15;
+const V_PROMPT_BIZOWNER = 15;
 
 // ===========================================================================
 
@@ -123,11 +126,11 @@ function playerPromptAnswerYes(client) {
 					getPlayerData(client).businessOrderBusiness = -1;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
-					getPlayerData(client).businessOrderBuyPrice = 0;
+					getPlayerData(client).businessOrderSellPrice = 0;
 				} else {
 					logToConsole(LOG_DEBUG, `[V.RP.Prompt] ${getPlayerDisplayForConsole(client)} successfully ordered ${getPlayerData(client).businessOrderAmount} ${getItemTypeData(getPlayerData(client).businessOrderItem).name} at ${getPlayerData(client).businessOrderCost / getPlayerData(client).businessOrderAmount} each for business ${getBusinessData(getPlayerData(client).businessOrderBusiness).name}`);
 					showPlayerInfo(client, getLocaleString(client, "BusinessOrderSuccessInfo", getPlayerData(client).businessOrderAmount, getItemTypeData(getPlayerData(client).businessOrderItem).name, getItemValueDisplay(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue), getPlayerData(client).businessOrderCost), getLocaleString(client, "GUIInfoTitle"));
-					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount, false, getPlayerData(client).businessOrderBuyPrice);
+					createItem(getPlayerData(client).businessOrderItem, getPlayerData(client).businessOrderValue, V_ITEM_OWNER_BIZFLOOR, getBusinessData(getPlayerData(client).businessOrderBusiness).databaseId, getPlayerData(client).businessOrderAmount, false, getPlayerData(client).businessOrderSellPrice);
 					cacheBusinessItems(getPlayerData(client).businessOrderBusiness);
 					getBusinessData(getPlayerData(client).businessOrderBusiness).till -= getPlayerData(client).businessOrderCost;
 					updateBusinessPickupLabelData(getPlayerData(client).businessOrderBusiness);
@@ -135,7 +138,7 @@ function playerPromptAnswerYes(client) {
 					getPlayerData(client).businessOrderBusiness = -1;
 					getPlayerData(client).businessOrderItem = -1;
 					getPlayerData(client).businessOrderValue = -1;
-					getPlayerData(client).businessOrderBuyPrice = 0;
+					getPlayerData(client).businessOrderSellPrice = 0;
 				}
 			} else {
 				showPlayerError(client, getLocaleString(client, "BusinessOrderCanceled"), getLocaleString(client, "GUIWarningTitle"));
@@ -146,27 +149,32 @@ function playerPromptAnswerYes(client) {
 		case V_PROMPT_GIVEVEHTOCLAN: {
 			if (!isPlayerInAnyVehicle(client)) {
 				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEH_OWNER_CLAN;
 			getVehicleData(getPlayerVehicle(client)).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
+			getPlayerData(client).promptValue = false;
 			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
@@ -176,22 +184,26 @@ function playerPromptAnswerYes(client) {
 			let houseId = getPlayerHouse(client);
 			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getHouseData(houseId).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getHouseData(houseId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			getHouseData(houseId).ownerType = V_HOUSE_OWNER_CLAN;
 			getHouseData(houseId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
+			getPlayerData(client).promptValue = false;
 			getHouseData(houseId).needsSaved = true;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
@@ -201,16 +213,19 @@ function playerPromptAnswerYes(client) {
 			let businessId = getPlayerBusiness(client);
 			if (!businessId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getBusinessData(businessId).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getBusinessData(businessId).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnBusiness"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -218,6 +233,7 @@ function playerPromptAnswerYes(client) {
 			getBusinessData(businessId).ownerId = getPlayerCurrentSubAccount(client).clan;
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			getBusinessData(businessId).needsSaved = true;
+			getPlayerData(client).promptValue = false;
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
@@ -225,21 +241,25 @@ function playerPromptAnswerYes(client) {
 		case V_PROMPT_GIVEVEHTOBIZ: {
 			if (!isPlayerInAnyVehicle(client)) {
 				messagePlayerError(client, getLocaleString(client, "MustBeInVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -247,11 +267,13 @@ function playerPromptAnswerYes(client) {
 
 			if (!getBusinessData(businessIndex)) {
 				messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (!canPlayerManageBusiness(client, businessIndex)) {
 				messagePlayerError(client, getLocaleString(client, "CantModifyBusiness"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -267,16 +289,19 @@ function playerPromptAnswerYes(client) {
 			let houseId = getPlayerHouse(client);
 			if (!houseId) {
 				messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getHouseData(houseId).buyPrice <= 0) {
 				messagePlayerError(client, getLocaleString(client, "HouseNotForSale"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getHouseData(houseId).buyPrice)) {
 				messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -302,11 +327,13 @@ function playerPromptAnswerYes(client) {
 
 			if (getBusinessData(businessId).buyPrice <= 0) {
 				messagePlayerError(client, getLocaleString(client, "BusinessNotForSale"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
 			if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getBusinessData(businessId).buyPrice)) {
 				messagePlayerError(client, getLocaleString(client, "BusinessPurchaseNotEnoughMoney"));
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -362,6 +389,7 @@ function playerPromptAnswerYes(client) {
 			let invitingPlayer = getPlayerData(client).promptValue;
 
 			if (getPlayerClan(invitingPlayer) == -1) {
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -388,6 +416,7 @@ function playerPromptAnswerYes(client) {
 			let invitingPlayer = getPlayerData(client).promptValue;
 
 			if (getPlayerJob(invitingPlayer) == -1) {
+				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
@@ -404,6 +433,35 @@ function playerPromptAnswerYes(client) {
 
 			getPlayerData(client).promptValue = false;
 			break;
+		}
+
+		case V_PROMPT_CLANOWNER: {
+			let fromClient = getPlayerData(client).promptValue;
+
+			if (fromClient == null) {
+				return false;
+			}
+
+			if (getPlayerData(fromClient) == null) {
+				return false;
+			}
+
+			let highestRankIndex = getHighestClanRank(clanIndex);
+
+			getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(client).databaseId;
+			getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
+			getPlayerCurrentSubAccount(client).clanIndex = clanIndex;
+			getPlayerCurrentSubAccount(client).clanRank = getClanRankData(clanIndex, highestRankIndex).databaseId;
+			getPlayerCurrentSubAccount(client).clanRankIndex = highestRankIndex;
+			getClanData(clanIndex).needsSaved = true;
+
+			getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
+			getPlayerCurrentSubAccount(client).clanFlags = getClanFlagValue("All");
+
+			removePlayerFromClan(fromClient);
+
+			messagePlayerSuccess(client, getLocaleString(client, "AcceptedClanOwnership", getCharacterFullName(invitingPlayer)));
+			messagePlayerAlert(invitingPlayer, getLocaleString(client, "PlayerAcceptedClanOwnership", getCharacterFullName(client)));
 		}
 
 		default: {

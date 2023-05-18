@@ -1629,7 +1629,7 @@ function orderItemForBusinessCommand(command, params, client) {
 	getPlayerData(client).businessOrderBusiness = businessId;
 	getPlayerData(client).businessOrderItem = itemType;
 	getPlayerData(client).businessOrderCost = orderTotalCost;
-	getPlayerData(client).businessOrderBuyPrice = buyPrice;
+	getPlayerData(client).businessOrderSellPrice = sellPrice;
 	getBusinessData(businessId).needsSaved = true;
 
 	showPlayerPrompt(client, `Ordering ${amount} ${getPluralForm(getItemTypeData(itemType).name)} will cost a total of ${getCurrencyString(orderTotalCost)}`, "Business Order Cost");
