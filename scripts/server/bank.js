@@ -159,3 +159,138 @@ function bankBalanceCommand(command, params, client) {
 }
 
 // ===========================================================================
+
+function clanBankWithdrawCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!isPlayerAtBank(client)) {
+		messagePlayerError(client, getLocaleString(client, "NotAtBank"));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let clanData = getClanData(getPlayerClan(client));
+
+	if (clanData == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBank"))) {
+		messagePlayerError(client, getLocaleString(client, "ClanBankCantUse"));
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount < 0) {
+		messagePlayerError(client, getLocaleString(client, "CantUseNegative"));
+		return false;
+	}
+
+	if (clanData.bank < amount) {
+		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getCurrencyString(amount - clanData.bank)}{MAINCOLOUR}`));
+		return false;
+	}
+
+	clanData.bank = clanData.bank - amount;
+	clanData.needsSaved = true;
+	givePlayerCash(client, amount);
+
+	messagePlayerSuccess(client, getLocaleString(client, "ClanBankMoneyWithdrawn", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function clanBankDepositCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!isPlayerAtBank(client)) {
+		messagePlayerError(client, getLocaleString(client, "NotAtBank"));
+		return false;
+	}
+
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let clanData = getClanData(getPlayerClan(client));
+
+	if (clanData == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBank"))) {
+		messagePlayerError(client, getLocaleString(client, "ClanBankCantUse"));
+		return false;
+	}
+
+	if (isNaN(params)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	let amount = toInteger(params);
+
+	if (amount < 0) {
+		messagePlayerError(client, getLocaleString(client, "CantUseNegative"));
+		return false;
+	}
+
+	if (getPlayerCurrentSubAccount(client).cash < amount) {
+		messagePlayerError(client, getLocaleString(client, "NotEnoughCashNeedAmountMore", `{ALTCOLOUR}${getCurrencyString(amount - getPlayerCurrentSubAccount(client).cash)}{MAINCOLOUR}`));
+		return false;
+	}
+
+	clanData.bank = clanData.bank + amount;
+	takePlayerCash(client, amount);
+
+	messagePlayerSuccess(client, getLocaleString(client, "ClanBankMoneyDeposited", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function clanBankBalanceCommand(command, params, client) {
+	if (!isPlayerAtBank(client)) {
+		messagePlayerError(client, getLocaleString(client, "NotAtBank"));
+		return false;
+	}
+
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let clanData = getClanData(getPlayerClan(client));
+
+	if (clanData == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBank"))) {
+		messagePlayerError(client, getLocaleString(client, "ClanBankCantUse"));
+		return false;
+	}
+
+	messagePlayerInfo(client, getLocaleString(client, "ClanBankBalance", `{ALTCOLOUR}${getCurrencyString(clanData.bank)}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
