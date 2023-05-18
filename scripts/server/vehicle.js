@@ -1891,7 +1891,7 @@ function checkVehiclePurchasing(client) {
 
 		serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 		if (buyingVehicleData.ownerType == V_VEH_OWNER_BIZ) {
-			getBusinessData(getBusinessIndexFromDatabaseId(buyingVehicleData.ownerId)).till += buyingVehicleData.buyPrice;
+			getBusinessData(getBusinessIndexFromDatabaseId(buyingVehicleData.ownerId)).till += (buyingVehicleData.buyPrice - (buyingVehicleData.buyPrice * incomeTaxRate));
 			createNewDealershipVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice, buyingVehicleData.ownerType, buyingVehicleData.ownerId);
 		} else if (buyingVehicleData.ownerType == V_VEH_OWNER_NONE) {
 			createPermanentVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice);
