@@ -1443,3 +1443,30 @@ function showPlayerListInChat(client, title, items, chunks = 1, delimiter = ", "
 }
 
 // ===========================================================================
+
+function saveNonRPNameToDatabase(firstName, lastName, forAccountId = defaultNoAccountId, whoAdded = defaultNoAccountId) {
+	let dbConnection = connectToDatabase();
+	let safeFirstName = escapeDatabaseString(dbConnection, firstName);
+	let safeLastName = escapeDatabaseString(dbConnection, lastName);
+
+	queryDatabase(dbConnection, `INSERT INTO log_nonrpname (log_nonrpname_first, log_nonrpname_last, log_nonrpname_server, log_nonrpname_acct, log_nonrpname_who_added, log_nonrpname_when_added) VALUES ('${safeFirstName}', '${safeLastName}', ${getServerId()}, ${forAccountId}, ${whoAdded}, ${getCurrentUnixTimestamp()})`);
+
+	disconnectFromDatabase(dbConnection);
+}
+
+// ===========================================================================
+
+function isNonRPName(firstName, lastName) {
+	let dbConnection = connectToDatabase();
+	let safeFirstName = escapeDatabaseString(dbConnection, firstName);
+	let safeLastName = escapeDatabaseString(dbConnection, lastName);
+
+	let queryAssoc = fetchQueryAssoc(dbConnection, `SELECT * FROM log_nonrpname WHERE log_nonrpname_first = '${safeFirstName}' AND log_nonrpname_last = '${safeLastName}' LIMIT 1`);
+	if (queryAssoc.length > 0) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
