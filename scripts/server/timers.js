@@ -125,9 +125,9 @@ function oneMinuteTimerFunction() {
 		checkVehicleRenting();
 
 		//logToConsole(LOG_DEBUG, `[V.RP.Event] Updating all player name tags`);
-		//updateAllPlayerNameTags();
+		updateAllPlayerNameTags();
 
-		//fixDesyncedPayPhones();
+		fixDesyncedPayPhones();
 	}
 }
 
