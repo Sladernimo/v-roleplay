@@ -25,6 +25,9 @@ class ClientData {
 		/** @type {Array.<SubAccountData>} */
 		this.subAccounts = subAccounts; // Characters
 
+		/** @type {Ped} */
+		this.ped = null;
+
 		// General Info
 		this.client = client;
 		this.currentSubAccount = -1;
@@ -35,7 +38,6 @@ class ClientData {
 		this.afk = false;
 		this.spawned = false;
 		this.sessionId = 0;
-		this.ped = null;
 
 		// Security
 		this.passwordResetState = V_RESETPASS_STATE_NONE;
@@ -55,15 +57,16 @@ class ClientData {
 		this.returnToJobVehicleTick = 0;
 		this.returnToJobVehicleTimer = null;
 
+		/** @type {Vehicle} */
 		this.rentingVehicle = null;
+
+		/** @type {Vehicle} */
 		this.buyingVehicle = null;
+
+		/** @type {Vehicle} */
 		this.lastVehicle = null;
 
 		this.switchingCharacter = false;
-
-		this.tutorialStep = -1;
-		this.tutorialItem = null;
-		this.tutorialVehicle = null;
 
 		// Items
 		this.tempLockerCache = new Array(9).fill(-1);
@@ -118,10 +121,16 @@ class ClientData {
 		this.keyBinds = [];
 		this.incomingDamageMultiplier = 1;
 		this.weaponDamageEvent = V_WEAPON_DAMAGE_EVENT_NORMAL;
+
+		/** @type {Vehicle} */
 		this.lastJobVehicle = null;
+
 		this.health = 100;
 		this.locale = 0;
+
+		/** @type {Vehicle} */
 		this.enteringVehicle = null;
+
 		this.customDisconnectReason = "";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
@@ -162,7 +171,10 @@ class ClientData {
 
 		// PayPhone
 		this.usingPayPhone = -1;
+
+		/** @type {Client} */
 		this.payPhoneOtherPlayer = null;
+
 		this.payPhoneCallStart = 0;
 		this.payPhoneInitiatedCall = false;
 
