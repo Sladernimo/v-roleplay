@@ -18,6 +18,7 @@ let jobRouteLocationSphere = null;
 let jobRouteLocationRadius = 5.0;
 let jobRouteLocationDimension = 0;
 let jobRouteLocationType = V_JOB_ROUTE_LOC_TYPE_NONE;
+let jobRouteLocationPositionGroundOffset = 0.3;
 
 let jobRouteLocationIndicatorSize = toVector2(32, 32);
 let jobRouteLocationIndicatorImagePath = "files/images/icons/objective-icon.png";
@@ -151,33 +152,44 @@ function blinkJobRouteLocationBlip(times, position, colour) {
 // ===========================================================================
 
 function hideJobRouteLocation() {
-	logToConsole(LOG_DEBUG, `[V.RP.Job] Hiding job route location`);
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Removing job route location ...`);
 
-	jobRouteLocationPosition = toVector3(0.0, 0.0, 0.0);
 	jobRouteLocationEnabled = false;
+	jobRouteLocationPosition = toVector3(0.0, 0.0, 0.0);
 
 	if (isGameFeatureSupported("blip")) {
+		logToConsole(LOG_DEBUG, `[V.RP.Job] Removing job route location blip ...`);
 		if (jobRouteLocationBlip != null) {
 			if (getGame() == V_GAME_GTA_IV) {
 				natives.removeBlip(jobRouteLocationBlip);
 			} else {
 				destroyElement(jobRouteLocationBlip);
+				if (jobBlipBlinkTimer != null) {
+					clearInterval(jobBlipBlinkTimer);
+
+				}
 			}
-			jobRouteLocationBlip = null;
+			logToConsole(LOG_DEBUG, `[V.RP.Job] Removed job route location blip.`);
 		}
 
-		if (jobRouteLocationSphere != null) {
-			destroyElement(jobRouteLocationSphere);
-			jobRouteLocationSphere = null;
-		}
-
-		if (jobBlipBlinkTimer != null) {
-			clearInterval(jobBlipBlinkTimer);
-		}
-
+		jobRouteLocationBlip = null;
 		jobBlipBlinkAmount = 0;
 		jobBlipBlinkTimes = 0;
+		jobBlipBlinkTimer = null;
 	}
+
+	if (isGameFeatureSupported("sphere")) {
+		if (getGame() != V_GAME_GTA_IV) {
+			logToConsole(LOG_DEBUG, `[V.RP.Job] Removing job route location sphere ...`);
+			if (jobRouteLocationSphere != null) {
+				destroyElement(jobRouteLocationSphere);
+				jobRouteLocationSphere = null;
+			}
+			logToConsole(LOG_DEBUG, `[V.RP.Job] Removed job route location sphere.`);
+		}
+	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Removed job route location successfully.`);
 }
 
 // ===========================================================================
@@ -333,12 +345,12 @@ function processJobLocationIndicatorRendering() {
 	}
 
 	if (!jobRouteLocationEnabled) {
-		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Disabled`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Not enabled.`);
 		return false;
 	}
 
 	if (jobRouteLocationDimension != getLocalPlayerDimension()) {
-		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Wrong dimension`);
+		logToConsole(LOG_VERBOSE, `[V.RP.Job]: Can't render job location indicator. Wrong dimension.`);
 		return false;
 	}
 
@@ -351,7 +363,8 @@ function processJobLocationIndicatorRendering() {
 
 	if (getGame() == V_GAME_GTA_IV) {
 		let colourArray = rgbaArrayFromToColour(jobRouteLocationColour);
-		natives.drawCheckpoint(jobRouteLocationPosition.x, jobRouteLocationPosition.y, jobRouteLocationPosition.z, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2]);
+		let position = getPosBelowPos(jobRouteLocationPosition, jobRouteLocationPositionGroundOffset);
+		natives.drawCheckpoint(jobRouteLocationPosition, jobRouteLocationRadius, colourArray[0], colourArray[1], colourArray[2]);
 		return true;
 	}
 }
