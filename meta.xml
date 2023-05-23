@@ -58,6 +58,7 @@
 	<script src="scripts/server/prompt.js" type="server" language="javascript" />
 	<script src="scripts/server/race.js" type="server" language="javascript" />
 	<script src="scripts/server/radio.js" type="server" language="javascript" />
+	<script src="scripts/server/scenario.js" type="server" language="javascript" />
 	<script src="scripts/server/security.js" type="server" language="javascript" />
 	<script src="scripts/server/staff.js" type="server" language="javascript" />
 	<script src="scripts/server/subaccount.js" type="server" language="javascript" />
