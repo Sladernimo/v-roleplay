@@ -29,6 +29,7 @@ const V_NPC_OWNER_CLAN = 3;                     // Owned by a clan
 const V_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
 const V_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
 const V_NPC_OWNER_BIZ = 6;                      // Owned by a business
+const V_NPC_OWNER_SCENARIO = 7;					// Scenario NPC
 
 // ===========================================================================
 
@@ -37,6 +38,10 @@ class NPCData {
 		this.databaseId = 0;
 		this.serverId = 0;
 		this.name = "NPC";
+
+		/** @type {ServerPed} */
+		this.ped = null;
+
 		this.skin = 0;
 		this.cash = 0;
 		this.position = toVector3(0.0, 0.0, 0.0);
@@ -475,11 +480,10 @@ function setAllNPCDataIndexes() {
 
 // ===========================================================================
 
-function spawnNPC(npcIndex) {
-	let npcData = getNPCData(npcIndex);
+function spawnNPC(npcData) {
 	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
 	if (ped) {
-		getNPCData(npcIndex).ped = ped;
+		npcData.ped = ped;
 		setEntityData(ped, "v.rp.dataIndex", npcIndex, false);
 		if (npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
@@ -618,6 +622,62 @@ function setNPCClanCommand(command, params, client) {
 	getNPCData(closestNPC).needsSaved = true;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`, true);
+}
+
+// ===========================================================================
+
+function setNPCJobCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let jobIndex = getJobFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (getJobData(jobIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	getNPCData(closestNPC).ownerType = V_NPC_OWNER_JOB;
+	getNPCData(closestNPC).ownerId = getJobData(jobIndex).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s job to {clanOrange}${getJobData(jobIndex).name}`, true);
+}
+
+// ===========================================================================
+
+function setNPCScenarioCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let scenarioIndex = getScenarioFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (getScenarioData(scenarioIndex) == null) {
+		messagePlayerError(client, `Scenario not found.`);
+		return false;
+	}
+
+	getNPCData(closestNPC).ownerType = V_NPC_OWNER_SCENARIO;
+	getNPCData(closestNPC).ownerId = getScenarioData(scenarioIndex).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s scenario to {clanOrange}${getScenarioData(scenarioIndex).name}`, true);
 }
 
 // ===========================================================================
@@ -771,6 +831,22 @@ function spawnAllNPCs() {
 	for (let i in serverData.npcs) {
 		spawnNPC(i);
 	}
+}
+
+// ===========================================================================
+
+function getNPCIndexFromDatabaseId(databaseId) {
+	if (databaseId <= 0) {
+		return -1;
+	}
+
+	for (let i in serverData.npc) {
+		if (serverData.npc[i].databaseId == databaseId) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================
