@@ -226,6 +226,9 @@ function loadCommands() {
 			new CommandData("clanhire", clanInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a clan"),
 			new CommandData("clanuninvite", clanUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their clan"),
 			new CommandData("clanfire", clanUninviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Removes a player from their clan"),
+			new CommandData("leaveclan", clanLeaveCommand, "", getStaffFlagValue("None"), true, false, "Removes you from your clan"),
+			new CommandData("quitclan", clanLeaveCommand, "", getStaffFlagValue("None"), true, false, "Removes you from your clan"),
+			new CommandData("clanmembers", showClanMembersCommand, "", getStaffFlagValue("None"), true, false, "Shows a list of all clan members"),
 		],
 		class: [],
 		client: [],
@@ -610,6 +613,12 @@ function loadCommands() {
 			new CommandData("radiovolume", setStreamingRadioVolumeCommand, "<volume level 0-100>", getStaffFlagValue("None"), true, false, "Sets the radio streaming volume (for your game only)."),
 			new CommandData("radiovol", setStreamingRadioVolumeCommand, "<volume level 0-100>", getStaffFlagValue("None"), true, false, "Sets the radio streaming volume (for your game only)."),
 			new CommandData("radioreloadall", reloadAllRadioStationsCommand, "", getStaffFlagValue("ManageServer"), true, false, "Reloads all radio stations from database (use after making changes)"),
+		],
+		scenario: [
+			new CommandData("addscenario", createScenarioCommand, "<scenario name>", getStaffFlagValue("ManageScenarios"), true, true, "Creates a scenario"),
+			new CommandData("delscenario", deleteScenarioCommand, "<scenario name>", getStaffFlagValue("ManageScenarios"), true, true, "Deletes a scenario"),
+			new CommandData("enablescenario", enableScenarioCommand, "<scenario name>", getStaffFlagValue("ManageScenarios"), true, true, "Enables a scenario"),
+			new CommandData("disablescenario", disableScenarioCommand, "<scenario name>", getStaffFlagValue("ManageScenarios"), true, true, "Disables a scenario"),
 		],
 		security: [],
 		staff: [
