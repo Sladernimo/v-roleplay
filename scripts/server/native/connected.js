@@ -39,7 +39,6 @@
 // Not to be confused with "player ped", which is of class "Player" which is the player's game human/ped object
 /**
  * @typedef Client
- * @type {Object}
  * @property {string} name - The client's name
  * @property {string} ip - The client's IP address
  * @property {number} ping - The client's ping
@@ -61,7 +60,6 @@
 
 /**
  * @typedef Entity
- * @type {Object}
  * @property {*} modelIndex - The model of the entity. GTA Connected uses a number, Mafia Connected uses a string
  * @property {Vec3} position - The entity's position
  * @property {Vec3} rotation - The entity's rotation
@@ -70,12 +68,22 @@
 // ===========================================================================
 
 /**
- * @typedef Player
- * @type {Object}
+ * @typedef Ped
  * @extends {Entity}
- * @property {string} name - The client's name
- * @property {number} health - The player ped's health
- * @property {number} armour - Only available on GTAC. The player ped's armour. On MafiaC, this is always 0
+ * @property {string} name - The ped's name
+ * @property {number} health - The ped's health
+ * @property {number} armour - The ped's armour. On MafiaC, this is always 0
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Vehicle
+ * @extends {Entity}
+ * @property {boolean} engine - The vehicle's engine state
+ * @property {boolean} lights - The vehicle's lights state
+ * @property {boolean} locked - The vehicle's door lock state
+ * @property {boolean} siren - The vehicle's siren state
  */
 
 // ===========================================================================
@@ -131,6 +139,8 @@ function getPlayerPosition(client) {
 			}
 		}
 	}
+
+
 }
 
 // ===========================================================================
@@ -747,6 +757,17 @@ function setVehicleHazardLights(vehicle, state) {
 
 // ===========================================================================
 
+function setVehicleAlarm(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleAlarm")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.alarm", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.alarm", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
 function setVehicleDirtLevel(vehicle, dirtLevel = 0) {
 	if (!isGameFeatureSupported("vehicleDirtLevel")) {
 		return false;
@@ -765,6 +786,17 @@ function setVehicleLivery(vehicle, livery) {
 
 	setEntityData(vehicle, "v.rp.livery", livery, true);
 	sendNetworkEventToPlayer("v.rp.veh.livery", null, vehicle.id, livery);
+}
+
+// ===========================================================================
+
+function setVehicleUpgrades(vehicle, upgrades) {
+	if (!isGameFeatureSupported("vehicleUpgrades")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.upgrades", upgrades, true);
+	sendNetworkEventToPlayer("v.rp.veh.upgrades", null, vehicle.id, upgrades);
 }
 
 // ===========================================================================
