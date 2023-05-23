@@ -255,3 +255,12 @@ mexui.setInput = function (showInput) {
 	//		game.restoreCamera(false);
 	//}
 };
+
+mexui.removeWindow = function (window) {
+	for (let i in mexui.windows) {
+		if (window == mexui.windows[i]) {
+			mexui.windows.splice(i, 1);
+			break;
+		}
+	}
+};
