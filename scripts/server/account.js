@@ -990,11 +990,13 @@ function saveAccountKeyBindToDatabase(keyBindData) {
 
 		let data = [
 			["acct_hotkey_acct", keyBindData.account],
-			["acct_hotkey_enabled", keyBindData.enabled],
-			["acct_hotkey_deleted", keyBindData.deleted],
+			["acct_hotkey_enabled", boolToInt(keyBindData.enabled)],
+			["acct_hotkey_deleted", boolToInt(keyBindData.deleted)],
 			["acct_hotkey_cmdstr", safeCommandString],
 			["acct_hotkey_key", keyBindData.key],
 			["acct_hotkey_down", boolToInt(keyBindData.keyState)],
+			["acct_hotkey_when_added", keyBindData.whenAdded],
+			["acct_hotkey_server", keyBindData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -1935,6 +1937,12 @@ function startLoginTimeoutForPlayer(client) {
 			disconnectPlayer(client);
 		}
 	}, globalConfig.loginTimeout);
+}
+
+// ===========================================================================
+
+function isAccountOnline(accountId) {
+	serverData.clients.filter(c => c.loggedIn && c.accountData.databaseId == accountId).length > 0;
 }
 
 // ===========================================================================
