@@ -1215,11 +1215,12 @@ function stopWorking(client) {
 	if (jobVehicle) {
 		if (getPlayerVehicle(client) == jobVehicle) {
 			removePedFromVehicle(getPlayerPed(client));
-			//getPlayerPed(client).removeFromVehicle();
 		}
 
 		if (isVehicleUnoccupied(jobVehicle)) {
-			respawnVehicle(jobVehicle);
+			setTimeout(function () {
+				respawnVehicle(jobVehicle);
+			}, 1000);
 		}
 
 		getPlayerData(client).lastJobVehicle = null;
@@ -2656,16 +2657,22 @@ function startJobRoute(client, forceRoute = -1) {
 // ===========================================================================
 
 function stopJobRoute(client, successful = false, alertPlayer = true) {
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Stopping job route for player ${getPlayerDisplayForConsole(client)} ...`);
+
 	if (!isPlayerOnJobRoute(client)) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Job] Aborting stop job route for player ${getPlayerDisplayForConsole(client)}. Player is not on job route`);
 		return false;
 	}
 
 	let jobId = getPlayerJob(client);
 	let routeId = getPlayerJobRoute(client);
 
+	let jobData = getJobData(jobId);
+	let jobRouteData = getJobRouteData(jobId, routeId);
+
 	if (successful == true) {
 		if (alertPlayer) {
-			messagePlayerAlert(client, replaceJobRouteStringsInMessage(getJobRouteData(jobId, routeId).finishMessage, jobId, routeId));
+			messagePlayerAlert(client, replaceJobRouteStringsInMessage(jobRouteData.finishMessage, jobId, routeId));
 		}
 
 		finishSuccessfulJobRoute(client);
@@ -2673,7 +2680,7 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 	}
 
 	if (alertPlayer) {
-		messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${getJobRouteData(jobId, getPlayerJobRoute(client)).name} route for the ${getJobData(jobId).name} job and didn't earn anything.`);
+		messageDiscordEventChannel(`💼 ${getCharacterFullName(client)} failed to finish the ${jobRouteData.name} route for the ${jobData.name} job and didn't earn anything.`);
 	}
 
 	//if (alertPlayer) {
@@ -2683,7 +2690,10 @@ function stopJobRoute(client, successful = false, alertPlayer = true) {
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
 	removePedFromVehicle(getPlayerPed(client));
-	respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	let vehicle = getPlayerData(client).jobRouteVehicle;
+	setTimeout(function () {
+		respawnVehicle(vehicle);
+	}, 1000);
 
 	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
@@ -2742,9 +2752,13 @@ function startReturnToJobVehicleCountdown(client) {
 // ===========================================================================
 
 function stopReturnToJobVehicleCountdown(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.Job] Stopping job route vehicle countdown for player ${getPlayerDisplayForConsole(client)} ...`);
 	if (getPlayerData(client).returnToJobVehicleTimer != null) {
 		clearInterval(getPlayerData(client).returnToJobVehicleTimer);
 		getPlayerData(client).returnToJobVehicleTimer = null;
+		logToConsole(LOG_DEBUG, `[V.RP.Job] Stopped job route vehicle countdown for player ${getPlayerDisplayForConsole(client)}.`);
+	} else {
+		logToConsole(LOG_DEBUG, `[V.RP.Job] Aborting stop job route vehicle countdown for player ${getPlayerDisplayForConsole(client)} ... Player doesnt have a countdown.`);
 	}
 
 	//getPlayerData(client).returnToJobVehicleTick = 0;
@@ -3600,6 +3614,10 @@ function getJobRankIndexFromDatabaseId(jobIndex, databaseId) {
 		return -1;
 	}
 
+	if (typeof serverData.jobs[jobIndex] == "undefined") {
+		return -1;
+	}
+
 	for (let i in serverData.jobs[jobIndex].ranks) {
 		if (serverData.jobs[jobIndex].ranks[i].databaseId == databaseId) {
 			return i;
@@ -4443,7 +4461,10 @@ function finishSuccessfulJobRoute(client) {
 	stopReturnToJobVehicleCountdown(client);
 	sendPlayerStopJobRoute(client);
 	removePedFromVehicle(getPlayerPed(client));
-	respawnVehicle(getPlayerData(client).jobRouteVehicle);
+	let vehicle = getPlayerData(client).jobRouteVehicle;
+	setTimeout(function () {
+		respawnVehicle(vehicle);
+	}, 1000);
 
 	getPlayerData(client).jobRouteVehicle = null;
 	getPlayerData(client).jobRoute = -1;
