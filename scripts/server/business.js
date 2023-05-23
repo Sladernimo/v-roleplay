@@ -24,8 +24,9 @@ const V_BIZ_LOC_GARAGE = 2;                     // Location for attached garage 
 const V_BIZ_LOC_FUEL = 3;                       // Fuel pump
 const V_BIZ_LOC_DRIVETHRU = 4;                  // Drivethrough
 const V_BIZ_LOC_VENDMACHINE = 5;                // Vending machine
-const V_BIZ_LOC_ATM = 6;						  // ATM
-const V_BIZ_LOC_PAYPHONE = 7;				      // Payphone
+const V_BIZ_LOC_ATM = 6;						// ATM
+const V_BIZ_LOC_PAYPHONE = 7;				    // Payphone
+const V_BIZ_LOC_MECHANIC_GARAGE = 8;			// Mechanic garage
 
 // ===========================================================================
 
