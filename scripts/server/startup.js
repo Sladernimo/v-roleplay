@@ -163,6 +163,8 @@ function loadServerDataFromDatabase() {
 		serverData.jobs = loadJobsFromDatabase();
 		serverData.payPhones = loadPayPhonesFromDatabase();
 		serverData.bans = loadBansFromDatabase();
+		serverData.scenarios = loadScenariosFromDatabase();
+		serverData.callBoxes = loadCallBoxesFromDatabase();
 	}
 
 	serverData.commands = loadCommands();
@@ -175,7 +177,7 @@ function setAllServerDataIndexes() {
 	setAllItemDataIndexes();
 	setAllBusinessDataIndexes();
 	setAllHouseDataIndexes();
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 	setAllClanDataIndexes();
 	setAllJobDataIndexes();
 	setAllNPCDataIndexes();
@@ -184,6 +186,7 @@ function setAllServerDataIndexes() {
 	setAllPayPhoneDataIndexes();
 	setAllCallBoxDataIndexes();
 	setAllVehicleRadioFrequencies();
+	setAllScenarioDataIndexes();
 	applyIpAddressBans();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
@@ -191,6 +194,8 @@ function setAllServerDataIndexes() {
 	cacheAllCommandsAliases();
 	cacheAllPaintBallItemTypes();
 	cacheItemLists();
+	cacheAllScenarioNPCs();
+	cacheAllScenarioVehicles();
 }
 
 // ===========================================================================
