@@ -400,7 +400,8 @@ function onPlayerSpawn(client) {
 
 	if (isGameFeatureSupported("serverElements") && isGameFeatureSupported("pedFightStyle")) {
 		logToConsole(LOG_DEBUG, `[V.RP.Event] Setting player fighting style for ${getPlayerDisplayForConsole(client)}`);
-		setEntityData(getPlayerPed(client), "v.rp.fightStyle", getPlayerCurrentSubAccount(client).fightStyle, true);
+		let fightStyleIndex = getPlayerCurrentSubAccount(client).fightStyle;
+		setEntityData(getPlayerPed(client), "v.rp.fightStyle", gameData.fightStyles[getGame()][fightStyleIndex][1], true);
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Event] Setting ${getPlayerDisplayForConsole(client)}'s switchchar state to false`);
