@@ -1455,6 +1455,7 @@ function forceCharacterNameChangeCommand(command, params, client) {
 	getPlayerData(targetClient).changingCharacterName = true;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} forced {ALTCOLOUR}${getPlayerName(targetClient)} (${getCharacterFullName(targetClient)}){MAINCOLOUR} to change their character's name.`);
+	saveNonRPNameToDatabase(getPlayerCurrentSubAccount(targetClient).firstName, getPlayerCurrentSubAccount(targetClient).lastName, getPlayerData(targetClient).accountData.databaseId, getPlayerData(client).accountData.databaseId);
 	showPlayerNewCharacterFailedGUI(targetClient, getLocaleString(targetClient, "NonRPName"));
 }
 
