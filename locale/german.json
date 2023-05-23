@@ -869,5 +869,8 @@
 	"ClanOwnershipTransferSent": "You offered to transfer clan ownership to {1}",
 	"VehicleOwnershipTransferSent": "You offered to give the {1} to {2}",
 	"BusinessOwnershipTransferSent": "You offered to give business {1} to {2}",
-	"HouseOwnershipTransferSent": "You offered to give house {1} to {2}"
+	"HouseOwnershipTransferSent": "You offered to give house {1} to {2}",
+	"LeftClan": "You left the {1} clan",
+	"ComingSoon": "Coming soon!",
+	"ClanMemberListHeader":	"Clan Members ({1})"
 }
