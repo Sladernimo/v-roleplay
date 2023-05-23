@@ -76,6 +76,8 @@ class VehicleData {
 		this.dirtLevel = 0;
 		this.hazardLights = false;
 		this.interiorLight = false;
+		this.alarm = false;
+		this.taxiLight = false;
 
 		// Inventory
 		this.trunkItemCache = [];
@@ -346,7 +348,7 @@ function spawnAllVehicles() {
 			serverData.vehicles[i].vehicle = vehicle;
 		}
 	}
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 }
 
 // ===========================================================================
@@ -1380,7 +1382,7 @@ function reloadAllVehiclesCommand(command, params, client) {
 	despawnAllVehicles();
 	serverData.vehicles = [];
 	serverData.vehicles = loadVehiclesFromDatabase();
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 	spawnAllVehicles();
 
 	announceAdminAction(`AllVehiclesReloaded`);
@@ -1401,7 +1403,7 @@ function respawnVehicleCommand(command, params, client) {
 	//removeAllOccupantsFromVehicle(vehicle);
 	respawnVehicle(vehicle);
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	messagePlayerSuccess(client, getLocaleString(client, `YourVehicleRespawned`));
 }
@@ -1418,7 +1420,7 @@ function respawnAllVehiclesCommand(command, params, client) {
 	//	destroyElement(randomVehicles[i]);
 	//}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`AllVehiclesRespawned`);
 }
@@ -1439,7 +1441,7 @@ function respawnEmptyVehiclesCommand(command, params, client) {
 	//	}
 	//}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`EmptyVehiclesRespawned`);
 }
@@ -1453,7 +1455,7 @@ function respawnJobVehiclesCommand(command, params, client) {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`JobVehiclesRespawned`);
 }
@@ -1467,7 +1469,7 @@ function respawnClanVehiclesCommand(command, params, client) {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`ClanVehiclesRespawned`);
 }
@@ -1481,7 +1483,7 @@ function respawnPlayerVehiclesCommand(command, params, client) {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`PlayerVehiclesRespawned`);
 }
@@ -1495,7 +1497,7 @@ function respawnPublicVehiclesCommand(command, params, client) {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`PublicVehiclesRespawned`);
 }
@@ -1509,7 +1511,7 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	announceAdminAction(`BusinessVehiclesRespawned`);
 }
@@ -1537,26 +1539,49 @@ function stopRentingVehicle(client) {
 function respawnVehicle(vehicle) {
 	for (let i in serverData.vehicles) {
 		if (vehicle == serverData.vehicles[i].vehicle) {
-			removeAllOccupantsFromVehicle(vehicle);
-
 			updateVehicleSavedPosition(i);
 
-			if (serverData.vehicles[i].spawnLocked == true) {
-				serverData.vehicles[i].engine = false;
+			if (isVehicleUnoccupied(vehicle) == false) {
+				removeAllOccupantsFromVehicle(vehicle);
+
+				setTimeout(function () {
+					updateVehicleSavedPosition(i);
+
+					if (serverData.vehicles[i].spawnLocked == true) {
+						serverData.vehicles[i].engine = false;
+					}
+
+					if (serverData.vehicles[i].ownerType == V_VEH_OWNER_JOB) {
+						serverData.vehicles[i].locked = true;
+					}
+
+					if (vehicle != null) {
+						deleteGameElement(vehicle);
+					}
+
+					serverData.vehicles[i].vehicle = null;
+
+					let newVehicle = spawnVehicle(serverData.vehicles[i]);
+					serverData.vehicles[i].vehicle = newVehicle;
+				}, 1000);
+			} else {
+				if (serverData.vehicles[i].spawnLocked == true) {
+					serverData.vehicles[i].engine = false;
+				}
+
+				if (serverData.vehicles[i].ownerType == V_VEH_OWNER_JOB) {
+					serverData.vehicles[i].locked = true;
+				}
+
+				if (vehicle != null) {
+					deleteGameElement(vehicle);
+				}
+
+				serverData.vehicles[i].vehicle = null;
+
+				let newVehicle = spawnVehicle(serverData.vehicles[i]);
+				serverData.vehicles[i].vehicle = newVehicle;
 			}
-
-			if (serverData.vehicles[i].ownerType == V_VEH_OWNER_JOB) {
-				serverData.vehicles[i].locked = true;
-			}
-
-			if (vehicle != null) {
-				deleteGameElement(vehicle);
-			}
-
-			serverData.vehicles[i].vehicle = null;
-
-			let newVehicle = spawnVehicle(serverData.vehicles[i]);
-			serverData.vehicles[i].vehicle = newVehicle;
 		}
 	}
 
@@ -1571,6 +1596,19 @@ function respawnVehicle(vehicle) {
 	*/
 function spawnVehicle(vehicleData) {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${gameData.vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)}`);
+
+	if (vehicleData.ownerType == V_VEH_OWNER_SCENARIO) {
+		let scenarioData = getScenarioData(getScenarioIndexFromDatabaseId(vehicleData.ownerId));
+		if (scenarioData == null) {
+			logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Vehicle]: Aborting vehicle spawn for ${vehicleData.index}. Vehicle is owned by scenario, and scenario data is null`);
+			return false;
+		}
+
+		if (scenarioData.enabled == false) {
+			logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Vehicle]: Aborting vehicle spawn for ${vehicleData.index}. Vehicle is owned by scenario, and scenario is disabled`);
+			return false;
+		}
+	}
 
 	let position = vehicleData.spawnPosition;
 	let rotation = vehicleData.spawnRotation;
@@ -1736,7 +1774,7 @@ function createNewDealershipVehicle(modelIndex, spawnPosition, spawnRotation, pr
 
 	serverData.vehicles.push(tempVehicleData);
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 }
 
 // ===========================================================================
@@ -1771,7 +1809,7 @@ function createTemporaryVehicle(modelIndex, position, rotation, interior = 0, di
 
 	serverData.vehicles.push(tempVehicleData);
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	return vehicle;
 }
@@ -1807,7 +1845,7 @@ function createPermanentVehicle(modelIndex, position, rotation, interior = 0, di
 
 	serverData.vehicles.push(tempVehicleData);
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 
 	return vehicle;
 }
@@ -1891,7 +1929,7 @@ function checkVehiclePurchasing(client) {
 
 		serverData.purchasingVehicleCache.splice(serverData.purchasingVehicleCache.indexOf(client), 1);
 		if (buyingVehicleData.ownerType == V_VEH_OWNER_BIZ) {
-			getBusinessData(getBusinessIndexFromDatabaseId(buyingVehicleData.ownerId)).till += (buyingVehicleData.buyPrice - (buyingVehicleData.buyPrice * incomeTaxRate));
+			getBusinessData(getBusinessIndexFromDatabaseId(buyingVehicleData.ownerId)).till += (buyingVehicleData.buyPrice - (buyingVehicleData.buyPrice * serverConfig.economy.incomeTaxRate));
 			createNewDealershipVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice, buyingVehicleData.ownerType, buyingVehicleData.ownerId);
 		} else if (buyingVehicleData.ownerType == V_VEH_OWNER_NONE) {
 			createPermanentVehicle(buyingVehicleData.model, buyingVehicleData.spawnPosition, buyingVehicleData.spawnRotation, buyingVehicleData.buyPrice);
@@ -1956,7 +1994,7 @@ function resetVehiclePosition(vehicle) {
 
 // ===========================================================================
 
-function setAllVehicleIndexes() {
+function setAllVehicleDataIndexes() {
 	for (let i in serverData.vehicles) {
 		serverData.vehicles[i].index = i;
 
@@ -2092,7 +2130,7 @@ function despawnAllVehicles() {
 		}
 	}
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
 }
 
 // ===========================================================================
@@ -2176,6 +2214,12 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 	let ownerName = "Nobody";
 	let ownerType = "None";
 	switch (vehicleData.ownerType) {
+		case V_VEH_OWNER_PLAYER:
+			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
+			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
+			ownerType = "player";
+			break;
+
 		case V_VEH_OWNER_CLAN:
 			ownerName = getClanData(getClanIndexFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "clan";
@@ -2184,12 +2228,6 @@ function showVehicleInfoToPlayer(client, vehicleData) {
 		case V_VEH_OWNER_JOB:
 			ownerName = getJobData(getJobIdFromDatabaseId(vehicleData.ownerId)).name;
 			ownerType = "job";
-			break;
-
-		case V_VEH_OWNER_PLAYER:
-			let subAccountData = loadSubAccountFromId(vehicleData.ownerId);
-			ownerName = `${subAccountData.firstName} ${subAccountData.lastName} [${subAccountData.databaseId}]`;
-			ownerType = "player";
 			break;
 
 		case V_VEH_OWNER_BIZ:
@@ -2370,7 +2408,23 @@ function deleteVehicle(vehicle) {
 
 	deleteGameElement(vehicle);
 
-	setAllVehicleIndexes();
+	setAllVehicleDataIndexes();
+}
+
+// ===========================================================================
+
+function getVehicleIndexFromDatabaseId(databaseId) {
+	if (databaseId <= 0) {
+		return -1;
+	}
+
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].databaseId == databaseId) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================
