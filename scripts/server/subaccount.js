@@ -506,7 +506,7 @@ function checkNewCharacter(client, firstName, lastName) {
 	}
 
 	if (getPlayerData(client).changingCharacterName) {
-		if ((fixCharacterName(firstName) == getPlayerCurrentSubAccount(client).firstName) && (fixCharacterName(lastName) == getPlayerCurrentSubAccount(client).lastName)) {
+		if (isNonRPName(firstName, lastName) || (fixCharacterName(firstName) == getPlayerCurrentSubAccount(client).firstName) && (fixCharacterName(lastName) == getPlayerCurrentSubAccount(client).lastName)) {
 			messageAdmins(`${getPlayerName(client)} tried to change their name to ${fixCharacterName(firstName)} ${fixCharacterName(lastName)} but failed because it's the same name.`);
 			showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "NonRPName"));
 			return false;
@@ -851,6 +851,12 @@ function doesPlayerHaveSimilarCharacterName(client, firstName, lastName) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function isSubAccountOnline(subAccountId) {
+	serverData.clients.filter(c => c.loggedIn && c.subAccounts[c.currentSubAccount].databaseId == subAccountId).length > 0;
 }
 
 // ===========================================================================
