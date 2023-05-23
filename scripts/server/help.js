@@ -89,13 +89,17 @@ function helpCommand(command, params, client) {
 			showRulesHelpMessage(client);
 			break;
 
-		//case "website":
-		//	showWebsiteHelpMessage(client);
-		//	break;
+		case "website":
+			showWebsiteHelpMessage(client);
+			break;
 
-		//case "discord":
-		//	showDiscordHelpMessage(client);
-		//	break;
+		case "discord":
+			showDiscordHelpMessage(client);
+			break;
+
+		case "mechanic":
+			showMechanicHelpMessage(client);
+			break;
 
 		case "anim":
 		case "anims":
@@ -262,19 +266,17 @@ function showRulesHelpMessage(client) {
 
 // ===========================================================================
 
-/*
 function showWebsiteHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWebsiteInfo")));
-	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Website")}`);
+	messagePlayerHelpContent(client, `{ALTCOLOUR}connected-rp.com{MAINCOLOUR}`);
 }
 
 // ===========================================================================
 
 function showDiscordHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDiscordInfo")));
-	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Discord")}`);
+	messagePlayerHelpContent(client, `{ALTCOLOUR}discord.connected-rp.com{MAINCOLOUR}`);
 }
-*/
 
 // ===========================================================================
 
@@ -342,6 +344,14 @@ function showWealthAndTaxHelpMessage(client) {
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 1));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 3, `{ALTCOLOUR}/wealth{MAINCOLOUR}`, `{ALTCOLOUR}/tax{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+// Needs finished!
+function showMechanicHelpMessage(client) {
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderMechanicHelp")));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "ComingSoon"));
 }
 
 // ===========================================================================
