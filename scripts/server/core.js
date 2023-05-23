@@ -38,6 +38,8 @@ let serverStarting = false;
  * @property {Array.<GateData>} gates
  * @property {Array.<RadioStationData>} radioStations
  * @property {Array.<PayPhoneData>} payPhones
+ * @property {Array.<ScenarioData>} scenarios
+ * @property {Array.<CallBoxData>} callBoxes
  * @property {Array} locales
  * @property {Array} localeStrings
  * @property {Array} groundItemCache
@@ -67,6 +69,8 @@ let serverData = {
 	gates: [],
 	radioStations: [],
 	payPhones: [],
+	scenarios: [],
+	callBoxes: [],
 	localeStrings: {},
 	groundItemCache: [],
 	groundPlantCache: [],
