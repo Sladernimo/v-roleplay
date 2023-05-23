@@ -234,7 +234,7 @@ function hideAllGUI() {
 // ===========================================================================
 
 function processGUIKeyPress(keyCode) {
-	logToConsole(LOG_DEBUG, `[V.RP.GUI] Processing key press: ${keyCode}`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Processing GUI key press ...`);
 
 	if (!guiReady) {
 		return false;
@@ -246,31 +246,31 @@ function processGUIKeyPress(keyCode) {
 	}
 
 	if (keyCode == SDLK_RETURN || keyCode == SDLK_RETURN2) {
-		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is submit (${guiSubmitKey})`);
+		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is submit (${guiSubmitKey.name})`);
 		if (guiSubmitKey != false) {
 			logToConsole(LOG_DEBUG, `[V.RP.GUI] Calling submit key function`);
 			guiSubmitKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("left") || keyCode == getKeyIdFromParams("a")) {
-		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is left (${guiLeftKey})`);
+		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is left (${guiLeftKey.name})`);
 		if (guiLeftKey != false) {
 			logToConsole(LOG_DEBUG, `[V.RP.GUI] Calling left key function`);
 			guiLeftKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("right") || keyCode == getKeyIdFromParams("d")) {
-		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is right (${guiRightKey})`);
+		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is right (${guiRightKey.name})`);
 		if (guiRightKey != false) {
 			logToConsole(LOG_DEBUG, `[V.RP.GUI] Calling right key function`);
 			guiRightKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("down") || keyCode == getKeyIdFromParams("s")) {
-		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is down (${guiDownKey})`);
+		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is down (${guiDownKey.name})`);
 		if (guiDownKey != false) {
 			logToConsole(LOG_DEBUG, `[V.RP.GUI] Calling down key function`);
 			guiDownKey.call();
 		}
 	} else if (keyCode == getKeyIdFromParams("up") || keyCode == getKeyIdFromParams("w")) {
-		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is up (${guiUpKey})`);
+		logToConsole(LOG_DEBUG, `[V.RP.GUI] Key press is up (${guiUpKey.name})`);
 		if (guiUpKey != false) {
 			logToConsole(LOG_DEBUG, `[V.RP.GUI] Calling up key function`);
 			guiUpKey.call();
