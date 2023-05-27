@@ -812,7 +812,6 @@
 	"WaitForJobStart": "You must wait {1} before starting another job route",
 	"InvalidPayPhone": "Payphone not found!",
 	"GameFeatureNotSupported": "Not supported on this game!",
-	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to your business ({1})?",
 	"MustBeRestrained": "The player needs to be restrained (handcuffed or tied up)",
 	"ActionTips": {
 		"VehicleEngineOffWhenEnteringKey": "Use {1} to turn on or off a vehicle's engine",
@@ -877,5 +876,7 @@
 	"HouseOwnershipTransferSent": "You offered to give house {1} to {2}",
 	"LeftClan": "You left the {1} clan",
 	"ComingSoon": "Coming soon!",
-	"ClanMemberListHeader":	"Clan Members ({1})"
+	"HeaderClanMemberList":	"Clan Members ({1})",
+	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to {1}?",
+	"InvalidNPC": "NPC not found!"
 }
