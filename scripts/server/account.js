@@ -870,7 +870,7 @@ function loginSuccess(client) {
 
 	updateConnectionLogOnAuth(client, getPlayerData(client).accountData.databaseId);
 
-	if (doesPlayerHaveStaffPermission(client, "Developer") || doesPlayerHaveStaffPermission(client, "ManageServer")) {
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer")) || doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer"))) {
 		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has needed permissions and is being given administrator access`);
 		setPlayerNativeAdminState(client, true);
 	}
@@ -1942,7 +1942,7 @@ function startLoginTimeoutForPlayer(client) {
 // ===========================================================================
 
 function isAccountOnline(accountId) {
-	serverData.clients.filter(c => c.loggedIn && c.accountData.databaseId == accountId).length > 0;
+	return (serverData.clients.filter(c => c.loggedIn && c.accountData.databaseId == accountId).length > 0);
 }
 
 // ===========================================================================
