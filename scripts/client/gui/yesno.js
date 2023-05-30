@@ -88,10 +88,10 @@ function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonT
     yesNoDialog.noButton.text = "";
     yesNoDialog.window.title = "";
 
-    yesNoDialog.messageLabel.text = promptMessage;
-    yesNoDialog.yesButton.text = yesButtonText;
-    yesNoDialog.noButton.text = noButtonText;
-    yesNoDialog.window.title = promptTitle;
+    yesNoDialog.messageLabel.text = removeColoursInMessage(promptMessage);
+    yesNoDialog.yesButton.text = removeColoursInMessage(yesButtonText);
+    yesNoDialog.noButton.text = removeColoursInMessage(noButtonText);
+    yesNoDialog.window.title = removeColoursInMessage(promptTitle);
 
     yesNoDialog.window.shown = true;
 }
