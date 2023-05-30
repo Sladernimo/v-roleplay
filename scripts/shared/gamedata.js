@@ -259,6 +259,16 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
+	perElementStreamDistance: {
+		[V_GAME_GTA_III]: true,
+		[V_GAME_GTA_VC]: true,
+		[V_GAME_GTA_SA]: true,
+		[V_GAME_GTA_IV]: true,
+		[V_GAME_GTA_IV_EFLC]: true,
+		[V_GAME_MAFIA_ONE]: true,
+		[V_GAME_MAFIA_TWO]: true,
+		[V_GAME_MAFIA_THREE]: true,
+	},
 
 	// Object features
 	object: {
@@ -375,17 +385,6 @@ let supportedFeatures = {
 		[V_GAME_MAFIA_TWO]: false,
 		[V_GAME_MAFIA_THREE]: false,
 	},
-	perElementStreamDistance: {
-		[V_GAME_GTA_III]: true,
-		[V_GAME_GTA_VC]: true,
-		[V_GAME_GTA_SA]: true,
-		[V_GAME_GTA_IV]: true,
-		[V_GAME_GTA_IV_EFLC]: true,
-		[V_GAME_MAFIA_ONE]: true,
-		[V_GAME_MAFIA_TWO]: true,
-		[V_GAME_MAFIA_THREE]: true,
-	},
-
 	vehicleHazardLights: {
 		[V_GAME_GTA_III]: false,
 		[V_GAME_GTA_VC]: false,
