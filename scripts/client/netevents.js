@@ -71,6 +71,9 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.veh.locked", setVehicleLock);
 	addNetworkEventHandler("v.rp.veh.siren", setVehicleSiren);
 	addNetworkEventHandler("v.rp.veh.hazardLights", setVehicleHazardLights);
+	addNetworkEventHandler("v.rp.veh.alarm", setVehicleAlarm);
+	addNetworkEventHandler("v.rp.veh.upgrades", setVehicleUpgrades);
+	addNetworkEventHandler("v.rp.veh.livery", setVehicleLivery);
 	addNetworkEventHandler("v.rp.veh.interiorLight", setVehicleInteriorLight);
 	addNetworkEventHandler("v.rp.veh.taxiLight", setVehicleTaxiLight);
 	addNetworkEventHandler("v.rp.veh.colour", setVehicleColours);
