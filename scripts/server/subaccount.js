@@ -856,7 +856,7 @@ function doesPlayerHaveSimilarCharacterName(client, firstName, lastName) {
 // ===========================================================================
 
 function isSubAccountOnline(subAccountId) {
-	serverData.clients.filter(c => c.loggedIn && c.subAccounts[c.currentSubAccount].databaseId == subAccountId).length > 0;
+	return (serverData.clients.filter(c => c.loggedIn && c.subAccounts[c.currentSubAccount].databaseId == subAccountId).length > 0);
 }
 
 // ===========================================================================
