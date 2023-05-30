@@ -218,10 +218,10 @@ function checkServerGameTime() {
 			if (serverConfig.hour >= 23) {
 				serverConfig.hour = 0;
 			} else {
-				serverConfig.hour = serverConfig.hour + 1;
+				serverConfig.hour = serverConfig.hour + globalConfig.gameTimeHourIncrement;
 			}
 		} else {
-			serverConfig.minute = serverConfig.minute + 1;
+			serverConfig.minute = serverConfig.minute + globalConfig.gameTimeMinuteIncrement;
 		}
 	} else {
 		let dateTime = getCurrentTimeStampWithTimeZone(serverConfig.realTimeZone);
