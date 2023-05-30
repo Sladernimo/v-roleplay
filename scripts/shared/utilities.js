@@ -169,6 +169,8 @@ let serverColours = {
 			busDriverGreen: "32A032",
 			taxiDriverYellow: "F0E664",
 			deliveryPurple: "B19CD9",
+			scenarioTeal: "44A9AA",
+			civilianWhite: "C8C8C8",
 		},
 		byName: {
 			white: "FFFFFF",
@@ -184,11 +186,9 @@ let serverColours = {
 			lightGrey: "C8C8C8",
 			mediumGrey: "969696",
 			darkGrey: "404040",
-			civilianWhite: "C8C8C8",
 			burntYellow: "D2D200",
 			burntOrange: "D27800",
 			softYellow: "EAC67E",
-			chatBoxListIndex: "0099FF",
 		},
 	},
 
@@ -223,6 +223,7 @@ let serverColours = {
 		adminOrange: toColour(205, 60, 60, 255),
 		clanOrange: toColour(255, 153, 0, 255),
 		jobYellow: toColour(255, 255, 0, 255),
+		scenarioTeal: toColour(68, 169, 170, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
