@@ -7,7 +7,7 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let scriptVersion = "1.5";
+let scriptVersion = "1.6";
 let serverStartTime = 0;
 let logLevel = LOG_INFO | LOG_DEBUG;
 
