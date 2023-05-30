@@ -502,7 +502,7 @@ function canPlayerUseMegaphone(client) {
 		}
 	}
 
-	if (getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) != null) {
 		if (doesVehicleHaveMegaphone(getPlayerVehicle(client))) {
 			return true;
 		}
