@@ -277,88 +277,50 @@ function syncVehicleProperties(vehicle) {
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.colour")) {
-		let colours = getEntityData(vehicle, "v.rp.colour");
-		vehicle.colour1 = colours[0];
-		vehicle.colour2 = colours[1];
-		vehicle.colour3 = colours[2];
-		vehicle.colour4 = colours[3];
+		if (doesEntityDataExist(vehicle, "v.rp.colour")) {
+			let colours = getEntityData(vehicle, "v.rp.colour");
+			setVehicleColours(vehicle.id, colours[0], colours[1], colours[2], colours[3]);
+		}
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.lights")) {
-		let lightStatus = getEntityData(vehicle, "v.rp.lights");
-		vehicle.lights = lightStatus;
-	}
-
-	if (isGameFeatureSupported("vehicleLock") && doesEntityDataExist(vehicle, "v.rp.locked")) {
-		let lockStatus = getEntityData(vehicle, "v.rp.locked");
-		vehicle.lockedStatus = (lockStatus == false) ? 0 : 2;
-	}
-
-	if (doesEntityDataExist(vehicle, "v.rp.invincible")) {
-		let invincible = getEntityData(vehicle, "v.rp.invincible");
-		element.setProofs(invincible, invincible, invincible, invincible, invincible);
-	}
-
-	if (doesEntityDataExist(vehicle, "v.rp.panelStatus")) {
-		let panelsStatus = getEntityData(vehicle, "v.rp.panelStatus");
-		for (let i in panelsStatus) {
-			vehicle.setPanelStatus(i, panelsStatus[i]);
+		if (doesEntityDataExist(vehicle, "v.rp.lights")) {
+			let lightStatus = getEntityData(vehicle, "v.rp.lights");
+			setVehicleLights(vehicle.id, lightStatus);
 		}
 	}
 
-	if (doesEntityDataExist(vehicle, "v.rp.wheelStatus")) {
-		let wheelsStatus = getEntityData(vehicle, "v.rp.wheelStatus");
-		for (let i in wheelsStatus) {
-			vehicle.setWheelStatus(i, wheelsStatus[i]);
-		}
-	}
-
-	if (doesEntityDataExist(vehicle, "v.rp.lightStatus")) {
-		let lightStatus = getEntityData(vehicle, "v.rp.lightStatus");
-		for (let i in lightStatus) {
-			vehicle.setLightStatus(i, lightStatus[i]);
+	if (isGameFeatureSupported("vehicleLock")) {
+		if (doesEntityDataExist(vehicle, "v.rp.locked")) {
+			let lockStatus = getEntityData(vehicle, "v.rp.locked");
+			setVehicleLock(vehicle.id, (lockStatus == false) ? 0 : 2);
 		}
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.hazardLights")) {
-		let hazardLightsState = getEntityData(vehicle, "v.rp.hazardLights");
-		natives.setVehHazardlights(vehicle, hazardLightsState);
+		if (doesEntityDataExist(vehicle, "v.rp.hazardLights")) {
+			let hazardLightsState = getEntityData(vehicle, "v.rp.hazardLights");
+			setVehicleHazardLights(vehicle.id, hazardLightsState);
+		}
 	}
 
 	if (doesEntityDataExist(vehicle, "v.rp.interiorLight")) {
-		let interiorLightState = getEntityData(vehicle, "v.rp.interiorLight");
-		natives.setVehInteriorlight(vehicle, interiorLightState);
-	}
-
-	if (doesEntityDataExist(vehicle, "v.rp.suspensionHeight")) {
-		let suspensionHeight = getEntityData(vehicle, "v.rp.suspensionHeight");
-		vehicle.setSuspensionHeight(suspensionHeight);
+		if (doesEntityDataExist(vehicle, "v.rp.interiorLight")) {
+			let interiorLightState = getEntityData(vehicle, "v.rp.interiorLight");
+			setVehicleInteriorLight(vehicle.id, interiorLightState);
+		}
 	}
 
 	if (isGameFeatureSupported("vehicleUpgrades")) {
-		//let allUpgrades = gameData.vehicleUpgrades[getGame()];
-		//for(let i in allUpgrades) {
-		//	vehicle.removeUpgrade(i);
-		//}
-
 		if (doesEntityDataExist(vehicle, "v.rp.upgrades")) {
-			let upgrades = getEntityData(vehicle, "v.rp.upgrades");
-			for (let i in upgrades) {
-				if (upgrades[i] != 0) {
-					vehicle.addUpgrade(upgrades[i]);
-				}
-			}
+			setVehicleUpgrades(vehicle.id, getEntityData(vehicle, "v.rp.upgrades"));
 		}
 	}
 
 	if (getGame() == V_GAME_GTA_SA || getGame() == V_GAME_GTA_IV) {
 		if (doesEntityDataExist(vehicle, "v.rp.livery")) {
 			let livery = getEntityData(vehicle, "v.rp.livery");
-			if (getGame() == V_GAME_GTA_SA) {
-				vehicle.setPaintJob(livery);
-			} else if (getGame() == V_GAME_GTA_IV) {
-				vehicle.livery = livery;
-			}
+			setVehicleLivery(vehicle.id, livery);
 		}
 	}
 }
@@ -804,11 +766,15 @@ function setVehicleInteriorLight(vehicleId, state) {
 
 // ===========================================================================
 
-function setVehicleTaxiLight(vehicleId, state) {
+function setVehicleLivery(vehicleId, livery) {
 	let vehicle = getElementFromId(vehicleId);
 
 	if (vehicle != null) {
-		natives.setTaxiLights(vehicle, state);
+		if (getGame() == V_GAME_GTA_SA) {
+			vehicle.setPaintJob(livery);
+		} else if (getGame() == V_GAME_GTA_IV) {
+			natives.setCarLivery(vehicle, livery);
+		}
 	}
 }
 
@@ -833,6 +799,39 @@ function setVehicleTaxiLight(vehicleId, state) {
 		} else if (getGame() <= V_GAME_GTA_VC) {
 
 		}
+	}
+}
+
+// ===========================================================================
+
+function setVehicleUpgrades(vehicleId, upgrades) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != null) {
+		if (getGame() == V_GAME_GTA_SA) {
+			for (let i in upgrades) {
+				if (upgrades[i] != 0) {
+					vehicle.addUpgrade(upgrades[i]);
+				}
+			}
+		} else if (getGame() == V_GAME_GTA_IV) {
+			for (let i = 0; i < upgrades.length; i++) {
+				if (upgrades[i] != 0) {
+					natives.turnOffVehicleExtra(vehicle, i, !boolToInt(upgrades[i]));
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function setVehicleAlarm(vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+
+	if (vehicle != null) {
+		natives.setVehAlarmDuration(vehicle, 9999999);
+		natives.setVehAlarm(vehicle, state);
 	}
 }
 
