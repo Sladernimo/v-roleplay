@@ -2591,7 +2591,7 @@ function jobStopRouteCommand(command, params, client) {
 // ===========================================================================
 
 function isPlayerInJobVehicle(client) {
-	if (getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) != null) {
 		let vehicle = getPlayerVehicle(client);
 		if (isVehicleOwnedByJob(vehicle, getPlayerCurrentSubAccount(client).job)) {
 			return true;
