@@ -80,16 +80,16 @@ class NPCData {
 		};
 
 		this.bodyProps = {
-			hair: [0, 0],
-			eyes: [0, 0],
-			head: [0, 0],
-			leftHand: [0, 0],
-			rightHand: [0, 0],
-			leftWrist: [0, 0],
-			rightWrist: [0, 0],
-			hip: [0, 0],
-			leftFoot: [0, 0],
-			rightFoot: [0, 0],
+			hair: 0,
+			eyes: 0,
+			head: 0,
+			leftHand: 0,
+			rightHand: 0,
+			leftWrist: 0,
+			rightWrist: 0,
+			hip: 0,
+			leftFoot: 0,
+			rightFoot: 0,
 		};
 
 		this.triggers = [];
@@ -121,6 +121,7 @@ class NPCData {
 			this.enabled = intToBool(dbAssoc["npc_enabled"]);
 			this.lookAtPlayer = intToBool(dbAssoc["npc_lookatplr"]);
 
+			/*
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["npc_hd_part_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_part_hair_texture"]) || 0],
 				head: [toInteger(dbAssoc["npc_hd_part_head_model"]) || 0, toInteger(dbAssoc["npc_hd_part_head_texture"]) || 0],
@@ -129,17 +130,18 @@ class NPCData {
 			};
 
 			this.bodyProps = {
-				hair: [toInteger(dbAssoc["npc_hd_prop_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_hair_texture"]) || 0],
-				eyes: [toInteger(dbAssoc["npc_hd_prop_eyes_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_eyes_texture"]) || 0],
-				head: [toInteger(dbAssoc["npc_hd_prop_head_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_head_texture"]) || 0],
-				leftHand: [toInteger(dbAssoc["npc_hd_prop_lefthand_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_lefthand_texture"]) || 0],
-				rightHand: [toInteger(dbAssoc["npc_hd_prop_righthand_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_righthand_texture"]) || 0],
-				leftWrist: [toInteger(dbAssoc["npc_hd_prop_leftwrist_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_leftwrist_texture"]) || 0],
-				rightWrist: [toInteger(dbAssoc["npc_hd_prop_rightwrist_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_rightwrist_texture"]) || 0],
-				hip: [toInteger(dbAssoc["npc_hd_prop_hip_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_hip_texture"]) || 0],
-				leftFoot: [toInteger(dbAssoc["npc_hd_prop_leftfoot_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_leftfoot_texture"]) || 0],
-				rightFoot: [toInteger(dbAssoc["npc_hd_prop_rightfoot_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_rightfoot_texture"]) || 0],
+				hair: toInteger(dbAssoc["npc_hd_prop_hair"]) || 0,
+				eyes: toInteger(dbAssoc["npc_hd_prop_eyes"]) || 0,
+				head: toInteger(dbAssoc["npc_hd_prop_head"]) || 0,
+				leftHand: toInteger(dbAssoc["npc_hd_prop_lefthand"]) || 0,
+				rightHand: toInteger(dbAssoc["npc_hd_prop_righthand"]) || 0,
+				leftWrist: toInteger(dbAssoc["npc_hd_prop_leftwrist"]) || 0,
+				rightWrist: toInteger(dbAssoc["npc_hd_prop_rightwrist"]) || 0,
+				hip: toInteger(dbAssoc["npc_hd_prop_hip"]) || 0,
+				leftFoot: toInteger(dbAssoc["npc_hd_prop_leftfoot"]) || 0,
+				rightFoot: toInteger(dbAssoc["npc_hd_prop_rightfoot"]) || 0,
 			};
+			*/
 		}
 	}
 };
@@ -481,10 +483,10 @@ function setAllNPCDataIndexes() {
 // ===========================================================================
 
 function spawnNPC(npcData) {
-	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Spawning NPC ${npcData.index} with skin ${npcData.skin} ...`);
+	let ped = createGamePed(npcData.skin, npcData.position, npcData.heading);
 	if (ped) {
 		npcData.ped = ped;
-		setEntityData(ped, "v.rp.dataIndex", npcIndex, false);
 		if (npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
 			if (animationId != false) {
@@ -500,7 +502,7 @@ function spawnNPC(npcData) {
 
 function spawnAllNPCs() {
 	for (let i in serverData.npcs) {
-		spawnNPC(i);
+		spawnNPC(serverData.npcs[i]);
 	}
 }
 
@@ -798,6 +800,23 @@ function getClosestNPC(position, dimension, interior) {
 
 // ===========================================================================
 
+function getNPCFromParams(params) {
+	if (isNaN(params)) {
+		for (let i in serverData.npc) {
+			if (toLowerCase(serverData.npc[i].name).indexOf(toLowerCase(params)) != -1) {
+				return i;
+			}
+		}
+	} else {
+		if (typeof serverData.npc[params] != "undefined") {
+			return toInteger(params);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
+
 function createNPC(skinIndex, position, heading, interior, dimension) {
 	let tempNPCData = new NPCData(false);
 	tempNPCData.position = position;
@@ -811,7 +830,7 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 	let npcIndex = serverData.npcs.push(tempNPCData);
 	setAllNPCDataIndexes();
 
-	spawnNPC(npcIndex - 1);
+	spawnNPC(serverData.npcs[npcIndex - 1]);
 
 	return npcIndex - 1;
 }
@@ -829,7 +848,7 @@ function despawnAllNPCs() {
 
 function spawnAllNPCs() {
 	for (let i in serverData.npcs) {
-		spawnNPC(i);
+		spawnNPC(serverData.npcs[i]);
 	}
 }
 
