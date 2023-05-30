@@ -886,5 +886,8 @@
 	"ComingSoon": "Coming soon!",
 	"HeaderClanMemberList":	"Clan Members ({1})",
 	"SetVehicleBusinessConfirmMessage": "Are you sure you want to give this vehicle to {1}?",
-	"InvalidNPC": "NPC not found!"
+	"InvalidNPC": "NPC not found!",
+	"ClanUnInviteTooLow": "You can't uninvite members with a rank higher than yours!",
+	"RankLevelMustBeNumber": "The rank level must be a number!",
+	"RankLevelMustBeBetween": "The rank level must be between {1} and {2}!"
 }
