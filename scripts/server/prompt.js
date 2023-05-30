@@ -176,7 +176,8 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToClan", getVehicleName(getPlayerVehicle(client))));
 			getPlayerData(client).promptValue = false;
 			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
-			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
+			messageAdmins(`{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set the {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to clan {clanOrange}${getClanData(clanId).name}`, true);
+			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their  {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
 
@@ -205,6 +206,7 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveHouseToClan"));
 			getPlayerData(client).promptValue = false;
 			getHouseData(houseId).needsSaved = true;
+			messageAdmins(`{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} owner to clan {clanOrange}${getClanData(clanId).name}`, true);
 			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
 			break;
 		}
@@ -234,7 +236,7 @@ function playerPromptAnswerYes(client) {
 			messagePlayerSuccess(client, getLocaleString(client, "GaveBusinessToClan"));
 			getBusinessData(businessId).needsSaved = true;
 			getPlayerData(client).promptValue = false;
-			//messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} {MAINCOLOUR}set their {vehiclePurple}${getVehicleName(vehicle)} {MAINCOLOUR}owner to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan`);
+			messageAdmins(`{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR} owner to clan {clanOrange}${getClanData(clanId).name}`, true);
 			break;
 		}
 
@@ -245,19 +247,21 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)) == null) {
+			let vehicle = getPlayerVehicle(client);
+
+			if (getVehicleData(vehicle) == null) {
 				messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)).ownerType != V_VEH_OWNER_PLAYER) {
+			if (getVehicleData(vehicle).ownerType != V_VEH_OWNER_PLAYER) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				getPlayerData(client).promptValue = false;
 				return false;
 			}
 
-			if (getVehicleData(getPlayerVehicle(client)).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
+			if (getVehicleData(vehicle).ownerId != getPlayerCurrentSubAccount(client).databaseId) {
 				messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 				getPlayerData(client).promptValue = false;
 				return false;
@@ -277,11 +281,11 @@ function playerPromptAnswerYes(client) {
 				return false;
 			}
 
-			getVehicleData(getPlayerVehicle(client)).ownerType = V_VEH_OWNER_BIZ;
-			getVehicleData(getPlayerVehicle(client)).ownerId = getBusinessData(businessIndex).databaseId;
-			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(getPlayerVehicle(client))}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`));
-
-			getVehicleData(getPlayerVehicle(client)).needsSaved = true;
+			getVehicleData(vehicle).ownerType = V_VEH_OWNER_BIZ;
+			getVehicleData(vehicle).ownerId = getBusinessData(businessIndex).databaseId;
+			messagePlayerSuccess(client, getLocaleString(client, "GaveVehicleToBusiness", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{businessBlue}${getBusinessData(businessIndex).name}{MAINCOLOUR}`));
+			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to business {ALTCOLOUR}${getBusinessData(businessIndex).name}{MAINCOLOUR} of the {clanOrange}${getClanData(getVehicleData(vehicle).ownerId).name}`, true);
+			getVehicleData(vehicle).needsSaved = true;
 			break;
 		}
 
