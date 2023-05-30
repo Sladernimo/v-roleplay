@@ -2044,7 +2044,6 @@ function playerSwitchItem(client, newHotBarSlot) {
 	if (newHotBarItem != -1) {
 		if (getItemData(newHotBarItem)) {
 			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_WEAPON) {
-
 				let clipAmmo = getClipAmmoSizeForWeapon(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
 				let ammo = getItemData(newHotBarItem).value - clipAmmo;
 				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
@@ -2064,12 +2063,23 @@ function playerSwitchItem(client, newHotBarSlot) {
 					}
 				}
 			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_TAZER) {
-				if (getItemData(newHotBarItem).value > 0) {
-					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+				let clipAmmo = getClipAmmoSizeForWeapon(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+				let ammo = getItemData(newHotBarItem).value - clipAmmo;
+				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
+					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 					setPlayerWeaponDamageEnabled(client, false);
 					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_TAZER);
 				} else {
-					messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
+					let ammoItemSlot = getPlayerFirstAmmoItemForWeapon(client, getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+					if (ammoItemSlot != false) {
+						getItemData(newHotBarItem).value = getItemData(getPlayerData(client).hotBarItems[ammoItemSlot]).value;
+						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
+						setPlayerWeaponDamageEnabled(client, false);
+						setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_TAZER);
+						deleteItem(getPlayerData(client).hotBarItems[ammoItemSlot]);
+					} else {
+						messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
+					}
 				}
 			}
 		}
@@ -2620,7 +2630,7 @@ function listVehicleTrunkInventoryCommand(command, params, client) {
  *
  */
 function listVehicleDashInventoryCommand(command, params, client) {
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) != null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
