@@ -118,7 +118,7 @@ function initLoginGUI() {
 		},
 	}, checkLogin);
 
-	login.forgotPasswordButton = login.window.button(180, 240, 100, 15, 'RESET PASS', {
+	login.forgotPasswordButton = login.window.button(160, 240, 120, 15, 'RESET PASS', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(primaryTextColour[0], primaryTextColour[1], primaryTextColour[2], 255),
@@ -131,7 +131,7 @@ function initLoginGUI() {
 		},
 	}, switchToPasswordResetGUI);
 
-	login.resetPasswordLabel = login.window.text(110, 240, 60, 15, 'Forgot your password?', {
+	login.resetPasswordLabel = login.window.text(90, 240, 60, 15, 'Forgot your password?', {
 		main: {
 			textSize: 8.0,
 			textAlign: 1.0,
