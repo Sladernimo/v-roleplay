@@ -304,6 +304,8 @@ let globalConfig = {
 	skinChangeDimensionStart: 10000,
 	globalChatActionTipCooldown: 1000 * 60 * 5,
 	localChatActionTipCooldown: 1000 * 60 * 5,
+	gameTimeHourIncrement: 1,
+	gameTimeMinuteIncrement: 3,
 };
 
 // ===========================================================================
