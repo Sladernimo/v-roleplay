@@ -154,6 +154,7 @@ function loadServerDataFromDatabase() {
 		serverData.items = loadItemsFromDatabase();
 		serverData.businesses = loadBusinessesFromDatabase();
 		serverData.houses = loadHousesFromDatabase();
+		serverData.scenarios = loadScenariosFromDatabase();
 		serverData.vehicles = loadVehiclesFromDatabase();
 		serverData.clans = loadClansFromDatabase();
 		serverData.npcs = loadNPCsFromDatabase();
@@ -163,7 +164,6 @@ function loadServerDataFromDatabase() {
 		serverData.jobs = loadJobsFromDatabase();
 		serverData.payPhones = loadPayPhonesFromDatabase();
 		serverData.bans = loadBansFromDatabase();
-		serverData.scenarios = loadScenariosFromDatabase();
 		serverData.callBoxes = loadCallBoxesFromDatabase();
 	}
 
