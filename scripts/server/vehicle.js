@@ -107,6 +107,9 @@ class VehicleData {
 		this.sceneSwitchInterior = 0;
 		this.sceneSwitchDimension = 0;
 
+		// Extras (components on SA, extras on IV+)
+		this.extras = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
 		if (dbAssoc) {
 			// General Info
 			this.databaseId = toInteger(dbAssoc["veh_id"]);
@@ -138,30 +141,49 @@ class VehicleData {
 			this.livery = toInteger(dbAssoc["veh_livery"]);
 
 			// Extras (components on SA, extras on IV+)
-			//this.extras = [
-			//	toInteger(dbAssoc["veh_extra1"]),
-			//	toInteger(dbAssoc["veh_extra2"]),
-			//	toInteger(dbAssoc["veh_extra3"]),
-			//	toInteger(dbAssoc["veh_extra4"]),
-			//	toInteger(dbAssoc["veh_extra5"]),
-			//	toInteger(dbAssoc["veh_extra6"]),
-			//	toInteger(dbAssoc["veh_extra7"]),
-			//	toInteger(dbAssoc["veh_extra8"]),
-			//	toInteger(dbAssoc["veh_extra9"]),
-			//	toInteger(dbAssoc["veh_extra10"]),
-			//	toInteger(dbAssoc["veh_extra11"]),
-			//	toInteger(dbAssoc["veh_extra12"]),
-			//	toInteger(dbAssoc["veh_extra13"]),
-			//];
+			this.extras = [
+				toInteger(dbAssoc["veh_extra1"]),
+				toInteger(dbAssoc["veh_extra2"]),
+				toInteger(dbAssoc["veh_extra3"]),
+				toInteger(dbAssoc["veh_extra4"]),
+				toInteger(dbAssoc["veh_extra5"]),
+				toInteger(dbAssoc["veh_extra6"]),
+				toInteger(dbAssoc["veh_extra7"]),
+				toInteger(dbAssoc["veh_extra8"]),
+				toInteger(dbAssoc["veh_extra9"]),
+				toInteger(dbAssoc["veh_extra10"]),
+				toInteger(dbAssoc["veh_extra11"]),
+				toInteger(dbAssoc["veh_extra12"]),
+				toInteger(dbAssoc["veh_extra13"]),
+			];
 
 			// Vehicle Attributes
 			this.locked = intToBool(toInteger(dbAssoc["veh_locked"]));
 			this.engine = intToBool(toInteger(dbAssoc["veh_engine"]));
 			this.lights = intToBool(toInteger(dbAssoc["veh_lights"]));
+			this.hazardLights = intToBool(toInteger(dbAssoc["veh_hazard_lights"]));
+			this.interiorLight = intToBool(toInteger(dbAssoc["veh_interior_light"]));
+			this.taxiLight = intToBool(toInteger(dbAssoc["veh_taxi_light"]));
 			this.health = toInteger(dbAssoc["veh_damage_normal"]);
 			this.engineDamage = toInteger(dbAssoc["veh_damage_engine"]);
 			this.visualDamage = toInteger(dbAssoc["veh_damage_visual"]);
 			this.dirtLevel = toInteger(dbAssoc["veh_dirt_level"]);
+			this.alarm = intToBool(toInteger(dbAssoc["veh_alarm"]));
+			this.extras = [
+				toInteger(dbAssoc["veh_extra1"]),
+				toInteger(dbAssoc["veh_extra2"]),
+				toInteger(dbAssoc["veh_extra3"]),
+				toInteger(dbAssoc["veh_extra4"]),
+				toInteger(dbAssoc["veh_extra5"]),
+				toInteger(dbAssoc["veh_extra6"]),
+				toInteger(dbAssoc["veh_extra7"]),
+				toInteger(dbAssoc["veh_extra8"]),
+				toInteger(dbAssoc["veh_extra9"]),
+				toInteger(dbAssoc["veh_extra10"]),
+				toInteger(dbAssoc["veh_extra11"]),
+				toInteger(dbAssoc["veh_extra12"]),
+				toInteger(dbAssoc["veh_extra13"]),
+			];
 
 			// Other/Misc
 			this.insuranceAccount = toInteger(0);
@@ -289,21 +311,21 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_col2_isrgb", boolToInt(tempVehicleData.colour2IsRGBA)],
 			["veh_col3_isrgb", boolToInt(tempVehicleData.colour3IsRGBA)],
 			["veh_col4_isrgb", boolToInt(tempVehicleData.colour4IsRGBA)],
-			//["veh_extra1", tempVehicleData.extras[0]],
-			//["veh_extra2", tempVehicleData.extras[1]],
-			//["veh_extra3", tempVehicleData.extras[2]],
-			//["veh_extra4", tempVehicleData.extras[3]],
-			//["veh_extra5", tempVehicleData.extras[4]],
-			//["veh_extra6", tempVehicleData.extras[5]],
-			//["veh_extra7", tempVehicleData.extras[6]],
-			//["veh_extra8", tempVehicleData.extras[7]],
-			//["veh_extra9", tempVehicleData.extras[8]],
-			//["veh_extra10", tempVehicleData.extras[9]],
-			//["veh_extra11", tempVehicleData.extras[10]],
-			//["veh_extra12", tempVehicleData.extras[11]],
-			//["veh_extra13", tempVehicleData.extras[12]],
-			["veh_engine", intToBool(tempVehicleData.engine)],
-			["veh_lights", intToBool(tempVehicleData.lights)],
+			["veh_extra1", tempVehicleData.extras[0]],
+			["veh_extra2", tempVehicleData.extras[1]],
+			["veh_extra3", tempVehicleData.extras[2]],
+			["veh_extra4", tempVehicleData.extras[3]],
+			["veh_extra5", tempVehicleData.extras[4]],
+			["veh_extra6", tempVehicleData.extras[5]],
+			["veh_extra7", tempVehicleData.extras[6]],
+			["veh_extra8", tempVehicleData.extras[7]],
+			["veh_extra9", tempVehicleData.extras[8]],
+			["veh_extra10", tempVehicleData.extras[9]],
+			["veh_extra11", tempVehicleData.extras[10]],
+			["veh_extra12", tempVehicleData.extras[11]],
+			["veh_extra13", tempVehicleData.extras[12]],
+			["veh_engine", boolToInt(tempVehicleData.engine)],
+			["veh_lights", boolToInt(tempVehicleData.lights)],
 			["veh_health", toInteger(tempVehicleData.health)],
 			["veh_damage_engine", toInteger(tempVehicleData.engineDamage)],
 			["veh_damage_visual", toInteger(tempVehicleData.visualDamage)],
@@ -315,7 +337,11 @@ function saveVehicleToDatabase(vehicleDataId) {
 			["veh_radio_station", (getRadioStationData(tempVehicleData.streamingRadioStationIndex) != null) ? toInteger(getRadioStationData(tempVehicleData.streamingRadioStationIndex).databaseId) : -1],
 			["veh_who_added", toInteger(tempVehicleData.whoAdded)],
 			["veh_when_added", toInteger(tempVehicleData.whoAdded)],
-			["veh_tax_exempt", toInteger(tempVehicleData.taxExempt)],
+			["veh_tax_exempt", boolToInt(tempVehicleData.taxExempt)],
+			["veh_hazard_lights", boolToInt(tempVehicleData.hazardLights)],
+			["veh_interior_light", boolToInt(tempVehicleData.interiorLight)],
+			["veh_taxi_light", boolToInt(tempVehicleData.taxiLight)],
+			["veh_alarm", boolToInt(tempVehicleData.alarm)],
 		];
 
 		let dbQuery = null;
@@ -532,7 +558,7 @@ function vehicleHazardLightsCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -564,7 +590,7 @@ function vehicleInteriorLightCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -591,7 +617,7 @@ function vehicleTaxiLightCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -608,6 +634,50 @@ function vehicleTaxiLightCommand(command, params, client) {
 	setVehicleTaxiLight(vehicle, getVehicleData(vehicle).taxiLight);
 
 	meActionToNearbyPlayers(client, `turned on the ${toLowerCase(getOpenedClosedFromBool(getVehicleData(vehicle).trunk))} the ${getVehicleName(vehicle)}'s taxi light.`);
+}
+
+// ===========================================================================
+
+function vehicleUpgradesCommand(command, params, client) {
+	if (!isGameFeatureSupported("vehicleUpgrades")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerVehicle(client) == null) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+	let vehicleData = getVehicleData(vehicle);
+
+	if (vehicleData == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (!canPlayerManageVehicle(client, getPlayerVehicle(client))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+	}
+
+	let slotIndex = getParam(params, ' ', 1);
+
+	if (getGame() == V_GAME_GTA_IV) {
+		vehicleData.extras[slotIndex] = (vehicleData.extras[slotIndex] == 0) ? 1 : 0;
+		messagePlayerSuccess(client, `Vehicle extra part {ALTCOLOUR}${slotIndex}{MAINCOLOUR} turned ${getBoolRedGreenInlineColour(intToBool(vehicleData.extras[slotIndex]))}${toUpperCase(getOnOffFromBool(intToBool(vehicleData.extras[slotIndex])))}{MAINCOLOUR} for the {vehiclePurple}${getVehicleName(vehicle)}`);
+	} else if (getGame() == V_GAME_GTA_SA) {
+		//getVehicleData(vehicle).extras[slotIndex] = (getVehicleData(vehicle).extras[slotIndex] == 0) ? 1 : 0;
+	}
+	getVehicleData(vehicle).needsSaved = true;
+	setVehicleUpgrades(vehicle, vehicleData.extras);
+
+	//messageAdmins(client, `added upgrade {ALTCOLOUR}${upgradeIndex}{MAINCOLOUR} in slot {ALTCOLOUR}${slotIndex}{MAINCOLOUR} to the {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -629,7 +699,7 @@ function deleteVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function vehicleEngineCommand(command, params, client) {
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -670,7 +740,7 @@ function vehicleEngineCommand(command, params, client) {
 // ===========================================================================
 
 function vehicleSirenCommand(command, params, client) {
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -703,7 +773,7 @@ function vehicleSirenCommand(command, params, client) {
 
 // ===========================================================================
 
-function vehicleAdminColourCommand(command, params, client) {
+function vehicleColourCommand(command, params, client) {
 	if (!isGameFeatureSupported("vehicleColour")) {
 		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
 		return false;
@@ -714,7 +784,7 @@ function vehicleAdminColourCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getPlayerVehicle(client)) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -723,6 +793,11 @@ function vehicleAdminColourCommand(command, params, client) {
 
 	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (!canPlayerManageVehicle(client, vehicle, false, false)) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -1053,6 +1128,42 @@ function setVehicleJobCommand(command, params, client) {
 
 // ===========================================================================
 
+function setVehicleScenarioCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!isPlayerInAnyVehicle(client)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	if (getVehicleData(vehicle) == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	let scenarioIndex = getScenarioFromParams(params);
+	let scenarioData = getScenarioData(scenarioIndex);
+
+	if (scenarioData == null) {
+		messagePlayerError(client, "Scenario not found");
+		return false;
+	}
+
+	getVehicleData(vehicle).ownerType = V_VEH_OWNER_SCENARIO;
+	getVehicleData(vehicle).ownerId = scenarioData.databaseId;
+
+	getVehicleData(vehicle).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set their {vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR} owner to the {scenarioTeal}${scenarioData.name} {MAINCOLOUR}scenario!`, true);
+}
+
+// ===========================================================================
+
 function setVehicleRankCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
@@ -1132,7 +1243,7 @@ function setVehicleBusinessCommand(command, params, client) {
 	}
 
 	let vehicle = getPlayerVehicle(client);
-	let businessIndex = getClosestBusinessEntrance(getVehiclePosition(getPlayerVehicle(client)));
+	let businessIndex = getClosestBusinessEntrance(getPlayerPosition(client), getPlayerDimension(client));
 
 	if (getVehicleData(vehicle) == null) {
 		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
@@ -1547,8 +1658,10 @@ function respawnVehicle(vehicle) {
 				setTimeout(function () {
 					updateVehicleSavedPosition(i);
 
-					if (serverData.vehicles[i].spawnLocked == true) {
-						serverData.vehicles[i].engine = false;
+					if (serverData.vehicles[i].ownerType != V_VEH_OWNER_SCENARIO) {
+						if (serverData.vehicles[i].spawnLocked == true) {
+							serverData.vehicles[i].engine = false;
+						}
 					}
 
 					if (serverData.vehicles[i].ownerType == V_VEH_OWNER_JOB) {
@@ -1565,8 +1678,10 @@ function respawnVehicle(vehicle) {
 					serverData.vehicles[i].vehicle = newVehicle;
 				}, 1000);
 			} else {
-				if (serverData.vehicles[i].spawnLocked == true) {
-					serverData.vehicles[i].engine = false;
+				if (serverData.vehicles[i].ownerType != V_VEH_OWNER_SCENARIO) {
+					if (serverData.vehicles[i].spawnLocked == true) {
+						serverData.vehicles[i].engine = false;
+					}
 				}
 
 				if (serverData.vehicles[i].ownerType == V_VEH_OWNER_JOB) {
@@ -1584,8 +1699,6 @@ function respawnVehicle(vehicle) {
 			}
 		}
 	}
-
-	//getVehicleData(vehicle).needsSaved = true;
 }
 
 // ===========================================================================
@@ -1596,6 +1709,8 @@ function respawnVehicle(vehicle) {
 	*/
 function spawnVehicle(vehicleData) {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle]: Spawning ${gameData.vehicles[getGame()][vehicleData.model][1]} at ${vehicleData.spawnPosition.x.toFixed(2)}, ${vehicleData.spawnPosition.y.toFixed(2)}, ${vehicleData.spawnPosition.z.toFixed(2)}`);
+
+	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Vehicle]: Vehicle owner type: ${vehicleData.ownerType} (${vehicleData.ownerType == V_VEH_OWNER_SCENARIO})`);
 
 	if (vehicleData.ownerType == V_VEH_OWNER_SCENARIO) {
 		let scenarioData = getScenarioData(getScenarioIndexFromDatabaseId(vehicleData.ownerId));
@@ -1687,6 +1802,7 @@ function spawnVehicle(vehicleData) {
 	setVehicleInteriorLight(vehicle, vehicleData.interiorLight);
 	setVehicleDirtLevel(vehicle, vehicleData.dirtLevel);
 	setVehicleLivery(vehicle, vehicleData.livery);
+	setVehicleUpgrades(vehicle, vehicleData.extras);
 
 	forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
