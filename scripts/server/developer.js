@@ -515,8 +515,8 @@ function submitIdea(client, ideaText) {
 			databaseId = -1;
 		} else {
 			databaseId = getPlayerData(client).accountData.databaseId;
-			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+			position = (getPlayerVehicle(client) != null) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client) != null) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
 		}
 	} else {
 		databaseId = defaultNoAccountId;
@@ -542,8 +542,8 @@ function submitBugReport(client, bugText) {
 			databaseId = -1;
 		} else {
 			databaseId = getPlayerData(client).accountData.databaseId;
-			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+			position = (getPlayerVehicle(client) != null) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client) != null) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
 		}
 	} else {
 		databaseId = defaultNoAccountId;
