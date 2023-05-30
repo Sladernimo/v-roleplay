@@ -463,6 +463,60 @@ function getVehicleCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
+function getNPCCommand(command, params, client) {
+	let npcIndex = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+
+	if (!areParamsEmpty(params)) {
+		npcIndex = getNPCFromParams(params);
+	}
+
+	if (typeof serverData.npcs[npcIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	deleteGameElement(serverData.npcs[npcIndex]);
+	serverData.npcs[npcIndex].npc = null;
+
+	serverData.npcs[npcIndex].position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
+	serverData.npcs[npcIndex].heading = getPlayerHeading(client);
+	serverData.npcs[npcIndex].interior = getPlayerInterior(client);
+	serverData.npcs[npcIndex].dimension = getPlayerDimension(client);
+
+	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+
+	//setElementStreamInDistance(vehicle, 9999999);
+	//setElementStreamOutDistance(vehicle, 9999999 + 1);
+
+	//setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
+	//setElementInterior(vehicle, getPlayerInterior(client));
+	//setElementDimension(vehicle, getPlayerDimension(client));
+
+	//setElementStreamInDistance(vehicle, oldStreamInDistance);
+	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+
+	spawnNPC(serverData.npcs[npcIndex]);
+
+	if (serverData.npcs[npcIndex].npc == null) {
+		messagePlayerError(client, "NPC could not be teleported!");
+		return false;
+	}
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported NPC {npcPink}${serverData.npcs[npcIndex].name}{ALTCOLOUR} (ID ${npcIndex}){MAINCOLOUR} to their position`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
 function setVehicleDimensionCommand(command, params, client) {
 	if (!isGameFeatureSupported("dimension")) {
 		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
@@ -548,7 +602,7 @@ function warpIntoVehicleCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
 	if (areParamsEmpty(params)) {
-		if (!getPlayerVehicle(client) && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > globalConfig.vehicleLockDistance) {
+		if (getPlayerVehicle(client) != null && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > globalConfig.vehicleLockDistance) {
 			messagePlayerError(client, getLocaleString(client, "MustBeInOrNearVehicle"));
 			return false;
 		}
