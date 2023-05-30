@@ -86,7 +86,7 @@ function loadScenariosFromDatabase() {
 	let tempScenarios = [];
 	let dbAssoc = [];
 	if (dbConnection) {
-		let dbQueryString = `SELECT * FROM scenario_main WHERE scenario_server = ${getServerData()} AND scenario_deleted = 0;`;
+		let dbQueryString = `SELECT * FROM scenario_main WHERE scenario_server = ${getServerId()} AND scenario_deleted = 0;`;
 		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
@@ -133,7 +133,7 @@ function disableScenario(scenarioIndex) {
 function spawnScenarioVehicles(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.vehicles) {
-		let vehicleData = getVehicleData(scenarioData.vehicles[i]);
+		let vehicleData = serverData.vehicles[scenarioData.vehicles[i]];
 		if (vehicleData != null) {
 			if (vehicleData.vehicle == null) {
 				deleteGameElement(vehicleData.vehicle);
@@ -149,7 +149,7 @@ function spawnScenarioVehicles(scenarioIndex) {
 function despawnScenarioVehicles(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.vehicles) {
-		let vehicleData = getVehicleData(scenarioData.vehicles[i]);
+		let vehicleData = serverData.vehicles[scenarioData.vehicles[i]];
 		if (vehicleData != null) {
 			if (vehicleData.vehicle != null) {
 				deleteGameElement(vehicleData.vehicle);
@@ -164,7 +164,7 @@ function despawnScenarioVehicles(scenarioIndex) {
 function spawnScenarioNPCs(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.npcs) {
-		let npcData = getNPCData(scenarioData.npcs[i]);
+		let npcData = serverData.npcs[scenarioData.npcs[i]];
 		if (npcData != null) {
 			if (npcData.ped == null) {
 				deleteGameElement(npcData.ped);
@@ -180,7 +180,7 @@ function spawnScenarioNPCs(scenarioIndex) {
 function despawnScenarioNPCs(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.npcs) {
-		let npcData = getNPCData(scenarioData.npcs[i]);
+		let npcData = serverData.npcs[scenarioData.npcs[i]];
 		if (npcData != null) {
 			if (npcData.ped == null) {
 				deleteGameElement(npcData.ped);
@@ -202,7 +202,7 @@ function setAllScenarioDataIndexes() {
 
 function cacheAllScenarioVehicles() {
 	for (let i in serverData.vehicles) {
-		if (serverData.vehicles[i].ownerType = V_VEH_OWNER_SCENARIO) {
+		if (serverData.vehicles[i].ownerType == V_VEH_OWNER_SCENARIO) {
 			for (let j in serverData.scenarios) {
 				if (serverData.vehicles[i].ownerId == serverData.scenarios[j].databaseId) {
 					serverData.scenarios[j].vehicles.push(i);
@@ -257,9 +257,8 @@ function deleteScenarioCommand(command, params, client) {
 	}
 
 	let scenarioData = getScenarioData(scenarioIndex);
-
+	messageAdmins(`{adminOrange}${getPlayerName(client)} deleted scenario ${scenarioData.name}{MAINCOLOUR}.`);
 	deleteScenario(scenarioIndex);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} deleted scenario ${scenarioData.name}.`);
 }
 
 // ===========================================================================
@@ -279,7 +278,7 @@ function enableScenarioCommand(command, params, client) {
 
 	enableScenario(scenarioIndex);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)} enabled scenario ${scenarioName}.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} enabled scenario {scenarioTeal}${getScenarioData(scenarioIndex).name}{MAINCOLOUR}.`);
 }
 
 // ===========================================================================
@@ -299,7 +298,7 @@ function disableScenarioCommand(command, params, client) {
 
 	disableScenario(scenarioIndex);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)} disabled scenario ${scenarioName}.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} disabled scenario {scenarioTeal}${getScenarioData(scenarioIndex).name}{MAINCOLOUR}.`);
 }
 
 // ===========================================================================
@@ -379,7 +378,7 @@ function deleteScenario(scenarioIndex, whoDeleted = defaultNoAccountId) {
 	quickDatabaseQuery(`UPDATE scenario_main SET scenario_deleted = 1, scenario_who_deleted = ${whoDeleted}, scenario_when_deleted = ${getCurrentUnixTimestamp()} WHERE scenario_id = ${getScenarioData(scenarioIndex).databaseId}`);
 
 	serverData.scenarios.splice(scenarioIndex, 1);
-	messageAdmins(`{adminOrange}${getPlayerName(client)} deleted scenario ${scenarioName}.`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} deleted scenario {scenarioTeal}${scenarioName}{MAINCOLOUR}.`);
 }
 
 // ===========================================================================
@@ -578,5 +577,3 @@ function getScenarioNPCData(scenarioIndex, npcIndex) {
 
 	return serverData.scenarios[scenarioIndex].npcs[npcIndex];
 }
-
-// ===========================================================================
