@@ -25,7 +25,7 @@ function initInventoryBulkGUI() {
 // ===========================================================================
 
 function closeAllInventoryBulkGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing all bulk inventory GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Closing all bulk inventory GUI`);
 	for (let i in inventoryBulkGUI) {
 		inventoryBulkGUI[i].window.shown = false;
 	}
@@ -36,7 +36,7 @@ function closeAllInventoryBulkGUI() {
 
 function showInventoryBulkGUI(inventoryIndex, items) {
 	closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing bulk inventory window. Index: ${inventoryIndex}`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing bulk inventory window. Index: ${inventoryIndex}`);
 	inventoryBulkGUI[inventoryIndex].window.shown = true;
 	mexui.setInput(true);
 }

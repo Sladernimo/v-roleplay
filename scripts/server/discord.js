@@ -96,15 +96,15 @@ function getDiscordUserData(discordUserId) {
 // ===========================================================================
 
 function messageDiscordChatChannel(messageString) {
-	if (getServerConfig().devServer == true) {
+	if (serverConfig.devServer == true) {
 		return false;
 	}
 
-	if (!getGlobalConfig().discord.sendChat) {
+	if (!globalConfig.discord.sendChat) {
 		return false;
 	}
 
-	if (!getServerConfig().discord.sendChat) {
+	if (!serverConfig.discord.sendChat) {
 		return false;
 	}
 
@@ -116,15 +116,15 @@ function messageDiscordChatChannel(messageString) {
 // ===========================================================================
 
 function messageDiscordEventChannel(messageString) {
-	if (getServerConfig().devServer == true) {
+	if (serverConfig.devServer == true) {
 		return false;
 	}
 
-	if (!getGlobalConfig().discord.sendEvents) {
+	if (!globalConfig.discord.sendEvents) {
 		return false;
 	}
 
-	if (!getServerConfig().discord.sendEvents) {
+	if (!serverConfig.discord.sendEvents) {
 		return false;
 	}
 
@@ -136,15 +136,15 @@ function messageDiscordEventChannel(messageString) {
 // ===========================================================================
 
 function messageDiscordAdminChannel(messageString) {
-	if (getServerConfig().devServer == true) {
+	if (serverConfig.devServer == true) {
 		return false;
 	}
 
-	if (!getGlobalConfig().discord.sendAdmin) {
+	if (!globalConfig.discord.sendAdmin) {
 		return false;
 	}
 
-	if (!getServerConfig().discord.sendAdmin) {
+	if (!serverConfig.discord.sendAdmin) {
 		return false;
 	}
 
@@ -155,15 +155,19 @@ function messageDiscordAdminChannel(messageString) {
 // ===========================================================================
 
 function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) {
-	if (getServerConfig().devServer == true) {
+	if (serverConfig.devServer == true) {
 		return false;
 	}
 
-	if (!getGlobalConfig().discord.sendClan) {
+	if (!globalConfig.discord.sendClan) {
 		return false;
 	}
 
-	if (!getServerConfig().discord.sendClan) {
+	if (!serverConfig.discord.sendClan) {
+		return false;
+	}
+
+	if (getClanData(clanIndex) == null) {
 		return false;
 	}
 
@@ -178,15 +182,15 @@ function messageDiscordClanWebhook(clanIndex, requiredFlagValue, messageString) 
 // ===========================================================================
 
 function triggerDiscordWebHook(messageString, serverId = getServerId(), type = V_DISCORD_WEBHOOK_LOG) {
-	if (!getGlobalConfig().discord.webhook.enabled) {
+	if (!globalConfig.discord.webhook.enabled) {
 		return false;
 	}
 
-	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	let tempURL = globalConfig.discord.webhook.webhookBaseURL;
 	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
-	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+	tempURL = tempURL.replace("{3}", globalConfig.discord.webhook.pass);
 
 	httpGet(
 		tempURL,
@@ -202,18 +206,18 @@ function triggerDiscordWebHook(messageString, serverId = getServerId(), type = V
 // ===========================================================================
 
 function triggerClanDiscordWebHook(clanIndex, messageString) {
-	if (!getGlobalConfig().discord.webhook.enabled) {
+	if (!globalConfig.discord.webhook.enabled) {
 		return false;
 	}
 
 	/*
 	let webhookURL = getClanData(clanIndex).discordWebhookURL;
 
-	let tempURL = getGlobalConfig().discord.webhook.webhookBaseURL;
+	let tempURL = globalConfig.discord.webhook.webhookBaseURL;
 	tempURL = tempURL.replace("{0}", encodeURIComponent(messageString));
 	tempURL = tempURL.replace("{1}", serverId);
 	tempURL = tempURL.replace("{2}", type);
-	tempURL = tempURL.replace("{3}", getGlobalConfig().discord.webhook.pass);
+	tempURL = tempURL.replace("{3}", globalConfig.discord.webhook.pass);
 
 	httpGet(
 		tempURL,

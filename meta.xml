@@ -8,6 +8,8 @@
 	<script src="scripts/shared/utilities.js" type="client" language="javascript" />
 	<script src="scripts/shared/gamedata.js" type="server" language="javascript" />
 	<script src="scripts/shared/gamedata.js" type="client" language="javascript" />
+	<script src="scripts/shared/queue.js" type="server" language="javascript" />
+	<script src="scripts/shared/queue.js" type="client" language="javascript" />
 
 	<!-- Multiplayer Mod (Wrapped Natives) -->
 	<!-- The goal is to just swap only these out when I port the script to a new MP mod -->
@@ -20,8 +22,10 @@
 	<script src="scripts/server/animation.js" type="server" language="javascript" />
 	<script src="scripts/server/anticheat.js" type="server" language="javascript" />
 	<script src="scripts/server/ban.js" type="server" language="javascript" />
+	<script src="scripts/server/bank.js" type="server" language="javascript" />
 	<script src="scripts/server/bitflag.js" type="server" language="javascript" />
 	<script src="scripts/server/business.js" type="server" language="javascript" />
+	<script src="scripts/server/callbox.js" type="server" language="javascript" />
 	<script src="scripts/server/casino.js" type="server" language="javascript" />
 	<script src="scripts/server/chat.js" type="server" language="javascript" />
 	<script src="scripts/server/clan.js" type="server" language="javascript" />
@@ -50,9 +54,11 @@
 	<script src="scripts/server/npc.js" type="server" language="javascript" />
 	<script src="scripts/server/netevents.js" type="server" language="javascript" />
 	<script src="scripts/server/paintball.js" type="server" language="javascript" />
+	<script src="scripts/server/payphone.js" type="server" language="javascript" />
 	<script src="scripts/server/prompt.js" type="server" language="javascript" />
 	<script src="scripts/server/race.js" type="server" language="javascript" />
 	<script src="scripts/server/radio.js" type="server" language="javascript" />
+	<script src="scripts/server/scenario.js" type="server" language="javascript" />
 	<script src="scripts/server/security.js" type="server" language="javascript" />
 	<script src="scripts/server/staff.js" type="server" language="javascript" />
 	<script src="scripts/server/subaccount.js" type="server" language="javascript" />
@@ -83,15 +89,23 @@
 	<script src="scripts/server/item/rope.js" type="server" language="javascript" />
 	<script src="scripts/server/item/tazer.js" type="server" language="javascript" />
 
-	<!-- Extra Client Files -->
+	<!-- Fonts -->
 	<file type="client" src="files/fonts/roboto-regular.ttf" />
 	<file type="client" src="files/fonts/pricedown.ttf" />
 	<file type="client" src="files/fonts/aurora-bold-condensed.ttf" />
+
+	<!-- Images -->
 	<file type="client" src="files/images/skins/none.png" />
-	<!--<file type="client" src="files/images/server-logo.png" />-->
 	<file type="client" src="files/images/gtac-logo.png" />
 	<file type="client" src="files/images/mafiac-logo.png" />
 	<file type="client" src="files/images/cursor.png" />
+
+	<!-- 3D World Icons -->
+	<file type="client" src="files/images/icons/objective-icon.png" />
+	<file type="client" src="files/images/icons/business-icon.png" />
+	<file type="client" src="files/images/icons/house-icon.png" />
+	<file type="client" src="files/images/icons/job-icon.png" />
+	<file type="client" src="files/images/icons/exit-icon.png" />
 
 	<!-- GUI -->
 	<script src="scripts/client/gui/2fa.js" type="client" language="javascript" />
@@ -119,14 +133,18 @@
 	<script src="scripts/client/afk.js" type="client" language="javascript" />
 	<script src="scripts/client/animation.js" type="client" language="javascript" />
 	<script src="scripts/client/business.js" type="client" language="javascript" />
-	<script src="scripts/client/core.js" type="client" language="javascript" />
+	<script src="scripts/client/camera.js" type="client" language="javascript" />
 	<script src="scripts/client/chat.js" type="client" language="javascript" />
+	<script src="scripts/client/core.js" type="client" language="javascript" />
+	<script src="scripts/client/countdown.js" type="client" language="javascript" />
 	<script src="scripts/client/cursor.js" type="client" language="javascript" />
+	<script src="scripts/client/damage.js" type="client" language="javascript" />
 	<script src="scripts/client/economy.js" type="client" language="javascript" />
 	<script src="scripts/client/event.js" type="client" language="javascript" />
 	<script src="scripts/client/gui.js" type="client" language="javascript" />
 	<script src="scripts/client/gps.js" type="client" language="javascript" />
 	<script src="scripts/client/house.js" type="client" language="javascript" />
+	<script src="scripts/client/hud.js" type="client" language="javascript" />
 	<script src="scripts/client/item.js" type="client" language="javascript" />
 	<script src="scripts/client/job.js" type="client" language="javascript" />
 	<script src="scripts/client/keybind.js" type="client" language="javascript" />
@@ -135,12 +153,15 @@
 	<script src="scripts/client/logo.js" type="client" language="javascript" />
 	<script src="scripts/client/messaging.js" type="client" language="javascript" />
 	<script src="scripts/client/mousecam.js" type="client" language="javascript" />
+	<script src="scripts/client/names.js" type="client" language="javascript" />
 	<script src="scripts/client/nametag.js" type="client" language="javascript" />
 	<script src="scripts/client/npc.js" type="client" language="javascript" />
+	<script src="scripts/client/payphone.js" type="client" language="javascript" />
 	<script src="scripts/client/radio.js" type="client" language="javascript" />
 	<script src="scripts/client/scoreboard.js" type="client" language="javascript" />
 	<script src="scripts/client/skin-select.js" type="client" language="javascript" />
 	<script src="scripts/client/sync.js" type="client" language="javascript" />
+	<script src="scripts/client/timers.js" type="client" language="javascript" />
 	<script src="scripts/client/utilities.js" type="client" language="javascript" />
 	<script src="scripts/client/vehicle.js" type="client" language="javascript" />
 	<script src="scripts/client/netevents.js" type="client" language="javascript" />
@@ -171,6 +192,9 @@
 	<file type="client" src="files/images/flags/cn.png" />
 	<file type="client" src="files/images/flags/fi.png" />
 	<file type="client" src="files/images/flags/ru.png" />
+	<file type="client" src="files/images/flags/lv.png" />
+	<file type="client" src="files/images/flags/lt.png" />
+	<file type="client" src="files/images/flags/tw.png" />
 
 	<!-- MexUI -->
 	<file type="client" src="third-party/mexui/Images/down-arrow.png" />

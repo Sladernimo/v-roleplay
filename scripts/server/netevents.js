@@ -15,7 +15,7 @@ function initNetworkEventsScript() {
 // ===========================================================================
 
 function addAllNetworkEventHandlers() {
-	logToConsole(LOG_DEBUG, "[V.RP.Client]: Adding network handlers ...");
+	logToConsole(LOG_DEBUG, "[V.RP.NetEvents]: Adding network handlers ...");
 
 	// KeyBind
 	addNetworkEventHandler("v.rp.useKeyBind", playerUsedKeyBind);
@@ -31,7 +31,7 @@ function addAllNetworkEventHandlers() {
 
 	// Event
 	addNetworkEventHandler("v.rp.pickup", onPlayerNearPickup);
-	addNetworkEventHandler("v.rp.playerDeath", onPlayerDeath);
+	addNetworkEventHandler("v.rp.playerDeath", processPlayerDeath);
 
 	// Job
 	addNetworkEventHandler("v.rp.arrivedAtJobRouteLocation", playerArrivedAtJobRouteLocation);
@@ -67,13 +67,18 @@ function addAllNetworkEventHandlers() {
 
 	// Misc
 	addNetworkEventHandler("v.rp.plr.pos", updatePositionInPlayerData);
-	addNetworkEventHandler("v.rp.plr.rot", updateHeadingInPlayerData);
+	addNetworkEventHandler("v.rp.plr.rot", updateRotationInVehicleData);
+	addNetworkEventHandler("v.rp.veh.seat", updatePlayerVehicleSeat);
 	addNetworkEventHandler("v.rp.skinSelected", playerFinishedSkinSelection);
+	addNetworkEventHandler("v.rp.skinCanceled", playerCanceledSkinSelection);
 	addNetworkEventHandler("v.rp.clientInfo", updateConnectionLogOnClientInfoReceive);
 	addNetworkEventHandler("v.rp.vehBuyState", receiveVehiclePurchaseStateUpdateFromClient);
 	addNetworkEventHandler("v.rp.playerPedId", receivePlayerPedNetworkId);
 	addNetworkEventHandler("v.rp.playerCop", setPlayerAsCopState);
 	addNetworkEventHandler("v.rp.mapLoaded", playerMapLoaded);
+	addNetworkEventHandler("v.rp.vehicleSeat", receiveVehicleSeatFromPlayer);
+	addNetworkEventHandler("v.rp.enteredVehicle", receiveEnteredVehicleFromPlayer);
+	addNetworkEventHandler("v.rp.exitedVehicle", receiveExitedVehicleFromPlayer);
 }
 
 // ===========================================================================
@@ -87,14 +92,14 @@ function updatePlayerNameTag(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending ${getPlayerDisplayForConsole(client)}'s updated nametag to all players`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending ${getPlayerDisplayForConsole(client)}'s updated nametag to all players`);
 	sendNetworkEventToPlayer("v.rp.nametag", null, getPlayerName(client), getPlayerNameForNameTag(client), getPlayerColour(client), getPlayerData(client).afk, getPlayerPing(client));
 }
 
 // ===========================================================================
 
 function updateAllPlayerNameTags() {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending updated nametags to all players`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending updated nametags to all players`);
 	let clients = getClients();
 	for (let i in clients) {
 		updatePlayerNameTag(clients[i]);
@@ -104,15 +109,16 @@ function updateAllPlayerNameTags() {
 // ===========================================================================
 
 function updatePlayerPing(client) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Client] Sending ${getPlayerDisplayForConsole(client)}'s ping to all players`);
+	//logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending ${getPlayerDisplayForConsole(client)}'s ping to all players`);
 	sendNetworkEventToPlayer("v.rp.ping", null, getPlayerName(client), getPlayerPing(client));
+	//setEntityData(client, "v.rp.ping", getPlayerPing(client), true);
 }
 
 // ===========================================================================
 
 function playerClientReady(client) {
 	playerResourceReady[client.index] = true;
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client resources are downloaded and ready! Started: ${getYesNoFromBool(playerResourceStarted[client.index])}`);
 	if (playerResourceStarted[client.index] == true && playerInitialized[client.index] == false) {
 		initClient(client);
 	}
@@ -121,15 +127,14 @@ function playerClientReady(client) {
 // ===========================================================================
 
 function playerGUIReady(client) {
-	playerGUI[client.index] = true;
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
 }
 
 // ===========================================================================
 
 function playerClientStarted(client) {
 	playerResourceStarted[client.index] = true;
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client resources are started and running! Ready: ${getYesNoFromBool(playerResourceReady[client.index])}`);
 	if (playerResourceReady[client.index] == true && playerInitialized[client.index] == false) {
 		initClient(client);
 	}
@@ -138,15 +143,15 @@ function playerClientStarted(client) {
 // ===========================================================================
 
 function playerClientStopped(client) {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
-	getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
+	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client resources have stopped (possibly error?)`);
+	//getPlayerData(client).customDisconnectReason = "ClientScriptVerificationFail";
 	//disconnectPlayer(client);
 }
 
 // ===========================================================================
 
 function showSmallGameMessage(client, text, colour, duration, fontName = "Roboto") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Showing game message to ${getPlayerDisplayForConsole(client)} (${text}) for ${duration} milliseconds`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing game message to ${getPlayerDisplayForConsole(client)} (${text}) for ${duration} milliseconds`);
 
 	if (getGame() <= V_GAME_GTA_IV_EFLC) {
 		fontName = "Pricedown";
@@ -163,7 +168,7 @@ function enableCityAmbienceForPlayer(client, clearElements = false) {
 	//    return false;
 	//}
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s city ambience to ${toUpperCase(getOnOffFromBool(false))}`);
+	//logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s city ambience to ${toUpperCase(getOnOffFromBool(false))}`);
 	//sendNetworkEventToPlayer("v.rp.ambience", client, true);
 }
 
@@ -174,21 +179,21 @@ function disableCityAmbienceForPlayer(client, clearElements = false) {
 	//    return false;
 	//}
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s city ambience to ${toUpperCase(getOnOffFromBool(false))}`);
+	//logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s city ambience to ${toUpperCase(getOnOffFromBool(false))}`);
 	//sendNetworkEventToPlayer("v.rp.ambience", client, false, clearElements);
 }
 
 // ===========================================================================
 
 function clearPlayerOwnedPeds(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Clearing peds owned by ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Clearing peds owned by ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.clearPeds", client);
 }
 
 // ===========================================================================
 
 function updatePlayerSpawnedState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s spawned state ${toUpperCase(getOnOffFromBool(state))}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s spawned state ${toUpperCase(getOnOffFromBool(state))}`);
 	getPlayerData(client).spawned = true;
 	sendNetworkEventToPlayer("v.rp.spawned", client, state);
 }
@@ -196,21 +201,21 @@ function updatePlayerSpawnedState(client, state) {
 // ===========================================================================
 
 function setPlayerControlState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s control state ${toUpperCase(getOnOffFromBool(state))}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s control state ${toUpperCase(getOnOffFromBool(state))}`);
 	sendNetworkEventToPlayer("v.rp.control", client, state, !state);
 }
 
 // ===========================================================================
 
 function updatePlayerShowLogoState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s logo state ${toUpperCase(getOnOffFromBool(state))}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s logo state ${toUpperCase(getOnOffFromBool(state))}`);
 	sendNetworkEventToPlayer("v.rp.logo", client, state);
 }
 
 // ===========================================================================
 
 function restorePlayerCamera(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Restoring ${getPlayerDisplayForConsole(client)}'s camera`);
 	sendNetworkEventToPlayer("v.rp.restoreCamera", client);
 }
 
@@ -222,24 +227,23 @@ function setPlayer2DRendering(client, hudState = false, labelState = false, smal
 
 // ===========================================================================
 
-function syncPlayerProperties(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to sync ${getPlayerDisplayForConsole(client)}'s player ped properties`);
-	sendNetworkEventToPlayer("v.rp.syncElement", null, getPlayerPed(client).id);
+function syncPedProperties(ped) {
+	sendNetworkEventToPlayer("v.rp.syncElement", null, ped.id);
 }
 
 // ===========================================================================
 
 function updatePlayerSnowState(client, forceGroundSnow = false) {
-	if (isSnowSupported(getGame())) {
-		logToConsole(LOG_DEBUG, `[AGRP.Client] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(getServerConfig().fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(getServerConfig().groundSnow))})`);
-		sendNetworkEventToPlayer("v.rp.snow", client, getServerConfig().fallingSnow, getServerConfig().groundSnow, forceGroundSnow);
+	if (isGameFeatureSupported("snow")) {
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting ${getPlayerDisplayForConsole(client)}'s snow state (Falling: ${toUpperCase(getOnOffFromBool(serverConfig.fallingSnow))}, Ground: ${toUpperCase(getOnOffFromBool(serverConfig.groundSnow))})`);
+		sendNetworkEventToPlayer("v.rp.snow", client, serverConfig.fallingSnow, serverConfig.groundSnow, forceGroundSnow);
 	}
 }
 
 // ===========================================================================
 
 function updatePlayerHotBar(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending updated hotbar data to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending updated hotbar data to ${getPlayerDisplayForConsole(client)}`);
 	let tempHotBarItems = [];
 	for (let i in getPlayerData(client).hotBarItems) {
 		let itemImage = "";
@@ -262,274 +266,274 @@ function updatePlayerHotBar(client) {
 // ===========================================================================
 
 function setPlayerWeaponDamageEnabled(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending weapon damage state for ${getPlayerDisplayForConsole(client)} to all players`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending weapon damage state for ${getPlayerDisplayForConsole(client)} to all players`);
 	sendNetworkEventToPlayer("v.rp.weaponDamageEnabled", null, getPlayerName(client), state);
 }
 
 // ===========================================================================
 
 function setPlayerWeaponDamageEvent(client, eventType) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending weapon damage event (${eventType}) for ${getPlayerDisplayForConsole(client)} to all players`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending weapon damage event (${eventType}) for ${getPlayerDisplayForConsole(client)} to all players`);
 	sendNetworkEventToPlayer("v.rp.weaponDamageEvent", null, getPlayerName(client), eventType);
 	getPlayerData(client).weaponDamageEvent = eventType;
 }
 
 // ===========================================================================
 
-function sendJobRouteLocationToPlayer(client, position, colour) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending job route location data to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("v.rp.showJobRouteLocation", client, position, colour);
+function sendJobRouteLocationToPlayer(client, position, dimension, colour) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending job route location data to ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("v.rp.showJobRouteLocation", client, position, dimension, colour);
 }
 
 // ===========================================================================
 
 function showPlayerLoginSuccessGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending login success GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending login success GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.loginSuccess", client);
 }
 
 // ===========================================================================
 
 function showPlayerLoginFailedGUI(client, errorMessage) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending login failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending login failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.loginFailed", client, errorMessage);
 }
 
 // ===========================================================================
 
 function showPlayerRegistrationSuccessGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending registration success GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending registration success GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.registrationSuccess", client);
 }
 
 // ===========================================================================
 
 function showPlayerRegistrationFailedGUI(client, errorMessage) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending registration failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending registration failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.registrationFailed", client, errorMessage);
 }
 
 // ===========================================================================
 
 function sendPlayerGUIColours(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending GUI colours to ${getPlayerDisplayForConsole(client)}`);
-	sendNetworkEventToPlayer("v.rp.guiColour", client, getServerConfig().guiColourPrimary[0], getServerConfig().guiColourPrimary[1], getServerConfig().guiColourPrimary[2], getServerConfig().guiColourSecondary[0], getServerConfig().guiColourSecondary[1], getServerConfig().guiColourSecondary[2], getServerConfig().guiTextColourPrimary[0], getServerConfig().guiTextColourPrimary[1], getServerConfig().guiTextColourPrimary[2]);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending GUI colours to ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("v.rp.guiColour", client, serverConfig.guiColourPrimary[0], serverConfig.guiColourPrimary[1], serverConfig.guiColourPrimary[2], serverConfig.guiColourSecondary[0], serverConfig.guiColourSecondary[1], serverConfig.guiColourSecondary[2], serverConfig.guiTextColourPrimary[0], serverConfig.guiTextColourPrimary[1], serverConfig.guiTextColourPrimary[2]);
 }
 
 // ===========================================================================
 
 function sendPlayerGUIInit(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending GUI init signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending GUI init signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.guiInit", client);
 }
 
 // ===========================================================================
 
 function showPlayerLoginGUI(client, errorMessage = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show login GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show login GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showLogin", client);
 }
 
 // ===========================================================================
 
 function showPlayerRegistrationGUI(client, errorMessage = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show registration GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show registration GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showRegistration", client);
 }
 
 // ===========================================================================
 
 function showPlayerNewCharacterGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show new character GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show new character GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showNewCharacter", client);
 }
 
 // ===========================================================================
 
 function showPlayerChangePasswordGUI(client, errorMessage = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show change password GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showChangePassword", client, errorMessage);
 }
 
 // ===========================================================================
 
 function showPlayerResetPasswordCodeInputGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show reset password code input GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show reset password code input GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showResetPasswordCodeInput", client);
 }
 
 // ===========================================================================
 
 function showPlayerResetPasswordEmailInputGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show reset password email input GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show reset password email input GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showResetPasswordEmailInput", client);
 }
 
 // ===========================================================================
 
 function showPlayerCharacterSelectGUI(client, firstName, lastName, cash, clan, lastPlayed, skin) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending character select GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending character select GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.showCharacterSelect", client, firstName, lastName, cash, clan, lastPlayed, skin);
 }
 
 // ===========================================================================
 
 function updatePlayerCharacterSelectGUI(client, firstName, lastName, cash, clan, lastPlayed, skin) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending update character select GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending update character select GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.switchCharacterSelect", client, firstName, lastName, cash, clan, lastPlayed, skin);
 }
 
 // ===========================================================================
 
 function showPlayerCharacterSelectSuccessGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending character select success GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending character select success GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.characterSelectSuccess", client);
 }
 
 // ===========================================================================
 
 function showPlayerCharacterSelectFailedGUI(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending character select failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending character select failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.characterSelectFailed", client);
 }
 
 // ===========================================================================
 
 function showPlayerPromptGUI(client, promptMessage, promptTitle, yesButtonText = "Yes", noButtonText = "No") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage}, YesButton: ${yesButtonText}, NoButton: ${noButtonText})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show prompt GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${promptTitle}, Message: ${promptMessage}, YesButton: ${yesButtonText}, NoButton: ${noButtonText})`);
 	sendNetworkEventToPlayer("v.rp.showPrompt", client, promptMessage, promptTitle, yesButtonText, noButtonText);
 }
 
 // ===========================================================================
 
 function showPlayerInfoGUI(client, infoMessage, infoTitle, buttonText = "OK") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show info GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${infoTitle}, Message: ${infoMessage})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show info GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${infoTitle}, Message: ${infoMessage})`);
 	sendNetworkEventToPlayer("v.rp.showInfo", client, infoMessage, infoTitle, buttonText);
 }
 
 // ===========================================================================
 
 function showPlayerErrorGUI(client, errorMessage, errorTitle, buttonText = "OK") {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending show error GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${errorTitle}, Message: ${errorMessage})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending show error GUI signal to ${getPlayerDisplayForConsole(client)} (Title: ${errorTitle}, Message: ${errorMessage})`);
 	sendNetworkEventToPlayer("v.rp.showError", client, errorMessage, errorTitle, buttonText);
 }
 
 // ===========================================================================
 
-function sendRunCodeToClient(client, code, returnTo) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending runcode to ${getPlayerDisplayForConsole(client)} (returnTo: ${getPlayerDisplayForConsole(getClientFromIndex(returnTo))}, Code: ${code})`);
-	sendNetworkEventToPlayer("v.rp.runCode", client, code, getPlayerId(returnTo));
+function sendRunCodeToClient(client, code, returnTo, shouldReturn = true) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending runcode to ${getPlayerDisplayForConsole(client)} (returnTo: ${getPlayerDisplayForConsole(getClientFromIndex(returnTo))}, Code: ${code})`);
+	sendNetworkEventToPlayer("v.rp.runCode", client, code, getPlayerId(returnTo), shouldReturn);
 }
 
 // ===========================================================================
 
 function sendPlayerWorkingState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending working state (${toUpperCase(getYesNoFromBool(state))}) to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending working state (${toUpperCase(getYesNoFromBool(state))}) to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.working", client, state);
 }
 
 // ===========================================================================
 
 function sendPlayerJobType(client, jobType) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending job type (${jobType}) to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending job type (${jobType}) to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.jobType", client, jobType);
 }
 
 // ===========================================================================
 
 function sendPlayerStopJobRoute(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to abort job route to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to abort job route to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.hideJobRouteLocation", client);
 }
 
 // ===========================================================================
 
 function sendPlayerMouseCameraToggle(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to toggle mouse camera ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to toggle mouse camera ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.mouseCamera", client);
 }
 
 // ===========================================================================
 
 function setPlayerMouseCameraState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to toggle mouse camera ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to toggle mouse camera ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.mouseCameraForce", client, state);
 }
 
 // ===========================================================================
 
 function sendPlayerMouseCursorToggle(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to toggle mouse cursor ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to toggle mouse cursor ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.mouseCursor", client);
 }
 
 // ===========================================================================
 
 function sendAddAccountKeyBindToClient(client, key, keyState) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending added keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))}, State: ${(keyState) ? "down" : "up"})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending added keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))}, State: ${(keyState) ? "down" : "up"})`);
 	sendNetworkEventToPlayer("v.rp.addKeyBind", client, toInteger(key), (keyState) ? KEYSTATE_DOWN : KEYSTATE_UP);
 }
 
 // ===========================================================================
 
 function sendClearKeyBindsToClient(client, key, keyState) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending added keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))}, State: ${(keyState) ? "down" : "up"})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending added keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))}, State: ${(keyState) ? "down" : "up"})`);
 	sendNetworkEventToPlayer("v.rp.clearKeyBinds", client);
 }
 
 // ===========================================================================
 
 function sendRemoveAccountKeyBindToClient(client, key) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending deleted keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending deleted keybind to ${getPlayerDisplayForConsole(client)} (Key: ${toUpperCase(getKeyNameFromId(key))})`);
 	sendNetworkEventToPlayer("v.rp.delKeyBind", client, toInteger(key));
 }
 
 // ===========================================================================
 
 function sendPlayerSetPosition(client, position) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending set position signal to ${getPlayerDisplayForConsole(client)} (Position: ${position.x}, ${position.y}, ${position.z})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending set position signal to ${getPlayerDisplayForConsole(client)} (Position: ${position.x}, ${position.y}, ${position.z})`);
 	sendNetworkEventToPlayer("v.rp.position", client, position);
 }
 
 // ===========================================================================
 
 function sendPlayerSetHeading(client, heading) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending set heading signal to ${getPlayerDisplayForConsole(client)} (Heading: ${heading})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending set heading signal to ${getPlayerDisplayForConsole(client)} (Heading: ${heading})`);
 	sendNetworkEventToPlayer("v.rp.heading", client, heading);
 }
 
 // ===========================================================================
 
 function sendPlayerSetInterior(client, interior) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending set interior signal to ${getPlayerDisplayForConsole(client)} (Interior: ${interior})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending set interior signal to ${getPlayerDisplayForConsole(client)} (Interior: ${interior})`);
 	sendNetworkEventToPlayer("v.rp.interior", client, interior);
 }
 
 // ===========================================================================
 
 function sendPlayerFrozenState(client, state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending set frozen signal to ${getPlayerDisplayForConsole(client)} (State: ${toUpperCase(getYesNoFromBool(state))})`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending set frozen signal to ${getPlayerDisplayForConsole(client)} (State: ${toUpperCase(getYesNoFromBool(state))})`);
 	sendNetworkEventToPlayer("v.rp.frozen", client, state);
 }
 
 // ===========================================================================
 
 function clearPlayerWeapons(client, clearData = true) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to clear weapons`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending signal to ${getPlayerDisplayForConsole(client)} to clear weapons`);
 	sendNetworkEventToPlayer("v.rp.clearWeapons", client, clearData);
 }
 
 // ===========================================================================
 
 function showPlayerNewCharacterFailedGUI(client, errorMessage) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending new character failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending new character failed GUI signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.newCharacterFailed", client, errorMessage);
 }
 
 // ===========================================================================
 
 function sendPlayerRemoveFromVehicle(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending remove from vehicle signal to ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending remove from vehicle signal to ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.removeFromVehicle", client);
 }
 
@@ -547,10 +551,10 @@ function showPlayerItemTakeDelay(client, itemId) {
 	if (getItemData(itemId)) {
 		let delay = getItemTypeData(getItemData(itemId).itemTypeIndex).pickupDelay;
 		if (delay > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item TAKE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item TAKE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item TAKE delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item TAKE delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	}
@@ -562,10 +566,10 @@ function showPlayerItemUseDelay(client, itemSlot) {
 	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).useDelay;
 		if (delay > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item USE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item USE delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item USE delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item USE delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	}
@@ -577,10 +581,10 @@ function showPlayerItemDropDelay(client, itemSlot) {
 	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).dropDelay;
 		if (delay > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item DROP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item DROP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item DROP delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item DROP delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	}
@@ -592,10 +596,10 @@ function showPlayerItemPickupDelay(client, itemId) {
 	if (getItemData(itemId)) {
 		let delay = getItemTypeData(getItemData(itemId).itemTypeIndex).pickupDelay;
 		if (delay > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item PICKUP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item PICKUP delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item PICKUP delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item PICKUP delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	}
@@ -607,10 +611,10 @@ function showPlayerItemPutDelay(client, itemSlot) {
 	if (getItemData(getPlayerData(client).hotBarItems[itemSlot])) {
 		let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).putDelay;
 		if (delay > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item PUT delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item PUT delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 			sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item PUT delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item PUT delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	}
@@ -623,18 +627,18 @@ function showPlayerItemSwitchDelay(client, itemSlot) {
 		if (getPlayerData(client).hotBarItems[itemSlot] != -1) {
 			let delay = getItemTypeData(getItemData(getPlayerData(client).hotBarItems[itemSlot]).itemTypeIndex).switchDelay;
 			if (delay > 0) {
-				logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
+				logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (${delay} milliseconds)`);
 				sendNetworkEventToPlayer("v.rp.showItemActionDelay", client, delay);
 			} else {
-				logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+				logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 				playerItemActionDelayComplete(client);
 			}
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 			playerItemActionDelayComplete(client);
 		}
 	} else {
-		logToConsole(LOG_DEBUG, `[AGRP.Client] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Showing item switch delay to ${getPlayerDisplayForConsole(client)} (instant)`);
 		playerSwitchItem(client, itemSlot);
 	}
 }
@@ -642,14 +646,14 @@ function showPlayerItemSwitchDelay(client, itemSlot) {
 // ===========================================================================
 
 function sendPlayerDrunkEffect(client, amount, duration) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Setting drunk effect for ${getPlayerDisplayForConsole(client)} to ${amount} for ${duration} milliseconds`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Setting drunk effect for ${getPlayerDisplayForConsole(client)} to ${amount} for ${duration} milliseconds`);
 	sendNetworkEventToPlayer("v.rp.drunkEffect", client, amount, duration);
 }
 
 // ===========================================================================
 
 function sendPlayerClearPedState(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Clearing ped state for ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Clearing ped state for ${getPlayerDisplayForConsole(client)}`);
 	sendNetworkEventToPlayer("v.rp.clearPedState", client);
 }
 
@@ -659,29 +663,29 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 	let damagerEntity = getPlayerFromParams(damagerEntityName);
 
 	if (isNull(damagerEntity)) {
-		logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager entity from ID is null`);
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager entity from ID is null`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)} was damaged by ${damagerEntity}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)} was damaged by ${damagerEntity}`);
 
 	if (isNull(damagerEntity)) {
-		logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager client is INVALID`);
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager client is INVALID`);
 		return false;
 	}
 
-	if (!getPlayerData(damagerEntity) || !getPlayerData(client)) {
-		logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager's client data is INVALID`);
+	if (getPlayerData(damagerEntity) == null || getPlayerData(client) == null) {
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager's client data is INVALID`);
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager is ${getPlayerDisplayForConsole(damagerEntity)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager is ${getPlayerDisplayForConsole(damagerEntity)}`);
 
 	switch (getPlayerData(damagerEntity).weaponDamageEvent) {
 		case V_WEAPON_DAMAGE_EVENT_TAZER:
-			logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} is using a tazer`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} is using a tazer`);
 			if (!isPlayerTazed(client) && !isPlayerHandCuffed(client) && !isPlayerInAnyVehicle(client)) {
-				logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)} was not previously tazed, binded, or in a vehicle. Taze successful`);
+				logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)} was not previously tazed, binded, or in a vehicle. Taze successful`);
 				meActionToNearbyPlayers(damagerEntity, `electrifies ${getCharacterFullName(client)} with their tazer`);
 				tazePlayer(client);
 			}
@@ -694,10 +698,10 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 			break;
 
 		case V_WEAPON_DAMAGE_EVENT_NORMAL:
-			logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
 			let remainingDamage = healthLoss * getPlayerData(client).incomingDamageMultiplier;
 			if (getPlayerArmour(client) > 0) {
-				//logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s armour was ${getPlayerArmour(client)}, so it was reduced by ${healthLoss}`);
+				//logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s armour was ${getPlayerArmour(client)}, so it was reduced by ${healthLoss}`);
 				if (getPlayerArmour(client) - remainingDamage < 0) {
 					setPlayerArmour(client, 0);
 					remainingDamage = remainingDamage - getPlayerArmour(client);
@@ -709,7 +713,7 @@ function playerDamagedByPlayer(client, damagerEntityName, weaponId, pedPiece, he
 			break;
 
 		default:
-			logToConsole(LOG_DEBUG, `[AGRP.Client] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s damager ${getPlayerDisplayForConsole(damagerEntity)} caused ${healthLoss} damage (damage reduction makes it ${(healthLoss * getPlayerData(client).incomingDamageMultiplier)})`);
 			setPlayerHealth(client, getPlayerHealth(client) - (healthLoss * getPlayerData(client).incomingDamageMultiplier));
 			break;
 	}
@@ -747,46 +751,47 @@ function updatePositionInVehicleData(client, vehicle, position) {
 
 // ===========================================================================
 
-function updateHeadingInVehicleData(client, vehicle, heading) {
-	getVehicleData(vehicle).syncHeading = heading;
+function updateRotationInVehicleData(client, vehicle, rotation) {
+	getVehicleData(vehicle).syncRotation = rotation;
 }
 
 // ===========================================================================
 
-function forcePlayerIntoSkinSelect(client) {
-	if (typeof getGameConfig().skinChangePosition[getGame()] != "undefined") {
+function forcePlayerIntoSkinSelect(client, forceCurrentSkin = -1) {
+	if (typeof gameData.skinChangePosition[getGame()] != "undefined") {
 		getPlayerData(client).returnToPosition = getPlayerPosition(client);
 		getPlayerData(client).returnToHeading = getPlayerHeading(client);
 		getPlayerData(client).returnToInterior = getPlayerInterior(client);
 		getPlayerData(client).returnToDimension = getPlayerDimension(client);
 		getPlayerData(client).returnToType = V_RETURNTO_TYPE_SKINSELECT;
 
-		setPlayerPosition(client, getGameConfig().skinChangePosition[getGame()][0]);
-		setPlayerHeading(client, getGameConfig().skinChangePosition[getGame()][1]);
-		setPlayerInterior(client, getGameConfig().skinChangePosition[getGame()][2]);
-		setPlayerDimension(client, getPlayerId(client) + 500);
+		setPlayerPosition(client, gameData.skinChangePosition[getGame()][0]);
+		setPlayerHeading(client, gameData.skinChangePosition[getGame()][1]);
+		setPlayerInterior(client, gameData.skinChangePosition[getGame()][2]);
+		setPlayerDimension(client, getPlayerId(client) + globalConfig.skinChangeDimensionStart);
 	}
 
-	sendNetworkEventToPlayer("v.rp.skinSelect", client, true);
+	sendNetworkEventToPlayer("v.rp.skinSelect", client, true, getPlayerCurrentSubAccount(client).skin, forceCurrentSkin);
 }
 
 // ===========================================================================
 
 function updatePlayerCash(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Syncing ${getPlayerDisplayForConsole(client)}'s cash (${getCurrencyString(getPlayerCurrentSubAccount(client).cash)})`);
 	sendNetworkEventToPlayer("v.rp.money", client, getPlayerCurrentSubAccount(client).cash);
 }
 
 // ===========================================================================
 
 function sendAllPoliceStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].policeStation != -1) {
+	if (gameData.blipSprites[getGame()].policeStation != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().policeStations[getGame()]) {
+		for (let i in serverData.policeStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].policeStation,
-				getServerData().policeStations[getGame()][i].position.x,
-				getServerData().policeStations[getGame()][i].position.y,
-				getServerData().policeStations[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].policeStation,
+				serverData.policeStations[getGame()][i].position.x,
+				serverData.policeStations[getGame()][i].position.y,
+				serverData.policeStations[getGame()][i].position.z,
 				3,
 				getColourByName("policeBlue"),
 			]);
@@ -798,14 +803,14 @@ function sendAllPoliceStationBlips(client) {
 // ===========================================================================
 
 function sendAllFireStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].fireStation != -1) {
+	if (gameData.blipSprites[getGame()].fireStation != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().fireStations[getGame()]) {
+		for (let i in serverData.fireStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].fireStation,
-				getServerData().fireStations[getGame()][i].position.x,
-				getServerData().fireStations[getGame()][i].position.y,
-				getServerData().fireStations[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].fireStation,
+				serverData.fireStations[getGame()][i].position.x,
+				serverData.fireStations[getGame()][i].position.y,
+				serverData.fireStations[getGame()][i].position.z,
 				3,
 				getColourByName("firefighterRed"),
 			]);
@@ -817,14 +822,14 @@ function sendAllFireStationBlips(client) {
 // ===========================================================================
 
 function sendAllHospitalBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].hospital != -1) {
+	if (gameData.blipSprites[getGame()].hospital != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().hospitals[getGame()]) {
+		for (let i in serverData.hospitals[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].hospital,
-				getServerData().hospitals[getGame()][i].position.x,
-				getServerData().hospitals[getGame()][i].position.y,
-				getServerData().hospitals[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].hospital,
+				serverData.hospitals[getGame()][i].position.x,
+				serverData.hospitals[getGame()][i].position.y,
+				serverData.hospitals[getGame()][i].position.z,
 				3,
 				getColourByName("medicPink"),
 			]);
@@ -836,14 +841,14 @@ function sendAllHospitalBlips(client) {
 // ===========================================================================
 
 function sendAllAmmunationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].ammunation != -1) {
+	if (gameData.blipSprites[getGame()].ammunation != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().ammunations[getGame()]) {
+		for (let i in serverData.ammunations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].ammunation,
-				getServerData().ammunations[getGame()][i].position.x,
-				getServerData().ammunations[getGame()][i].position.y,
-				getServerData().ammunations[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].ammunation,
+				serverData.ammunations[getGame()][i].position.x,
+				serverData.ammunations[getGame()][i].position.y,
+				serverData.ammunations[getGame()][i].position.z,
 				3,
 				0
 			]);
@@ -855,14 +860,14 @@ function sendAllAmmunationBlips(client) {
 // ===========================================================================
 
 function sendAllPayAndSprayBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].payAndSpray != -1) {
+	if (gameData.blipSprites[getGame()].payAndSpray != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().payAndSprays[getGame()]) {
+		for (let i in serverData.payAndSprays[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].payAndSpray,
-				getServerData().payAndSprays[getGame()][i].position.x,
-				getServerData().payAndSprays[getGame()][i].position.y,
-				getServerData().payAndSprays[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].payAndSpray,
+				serverData.payAndSprays[getGame()][i].position.x,
+				serverData.payAndSprays[getGame()][i].position.y,
+				serverData.payAndSprays[getGame()][i].position.z,
 				3,
 				0
 			]);
@@ -874,14 +879,14 @@ function sendAllPayAndSprayBlips(client) {
 // ===========================================================================
 
 function sendAllFuelStationBlips(client) {
-	if (getGameConfig().blipSprites[getGame()].fuelStation != -1) {
+	if (gameData.blipSprites[getGame()].fuelStation != -1) {
 		let tempBlips = [];
-		for (let i in getServerData().fuelStations[getGame()]) {
+		for (let i in serverData.fuelStations[getGame()]) {
 			tempBlips.push([
-				getGameConfig().blipSprites[getGame()].fuelStation,
-				getServerData().fuelStations[getGame()][i].position.x,
-				getServerData().fuelStations[getGame()][i].position.y,
-				getServerData().fuelStations[getGame()][i].position.z,
+				gameData.blipSprites[getGame()].fuelStation,
+				serverData.fuelStations[getGame()][i].position.x,
+				serverData.fuelStations[getGame()][i].position.y,
+				serverData.fuelStations[getGame()][i].position.z,
 				3,
 				getColourByName("burntOrange"),
 			]);
@@ -904,54 +909,73 @@ function sendPlayerSetArmour(client, armour) {
 
 // ===========================================================================
 
-function playerFinishedSkinSelection(client, allowedSkinIndex) {
-	sendNetworkEventToPlayer("v.rp.skinSelect", client, false);
-	if (allowedSkinIndex == -1) {
-		messagePlayerAlert(client, "You canceled the skin change.");
-		restorePlayerCamera(client);
-
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
-			setPlayerPosition(client, getPlayerData(client).returnToPosition);
-			setPlayerHeading(client, getPlayerData(client).returnToHeading);
-			setPlayerInterior(client, getPlayerData(client).returnToInterior);
-			setPlayerDimension(client, getPlayerData(client).returnToDimension);
-
-			getPlayerData(client).returnToPosition = null;
-			getPlayerData(client).returnToHeading = null;
-			getPlayerData(client).returnToInterior = null;
-			getPlayerData(client).returnToDimension = null;
-		}
-		return false;
+function playerFinishedSkinSelection(client, skinIndex, bodyPartHead, bodyPartUpper, bodyPartLower, bodyPartHat) {
+	if (isPlayerWorking(client)) {
+		//setPlayerSkin(client, getPlayerData(client).jobUniform);
+		//if (isGameFeatureSupported("pedBodyPart")) {
+		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HEAD, bodyPartHead);
+		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_UPPER, bodyPartUpper);
+		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_LOWER, bodyPartLower);
+		//	setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HAT, bodyPartHat);
+		//}
+		//messagePlayerAlert(client, "Your new skin has been saved but won't be shown until you stop working.");
 	} else {
-		getPlayerCurrentSubAccount(client).skin = getSkinIndexFromModel(getServerData().allowedSkins[allowedSkinIndex][0]);
-		if (isPlayerWorking(client)) {
-			messagePlayerAlert(client, "Your new skin has been saved but won't be shown until you stop working.");
-			setPlayerSkin(client, getJobData(getPlayerCurrentSubAccount(client).job).uniforms[getPlayerData(client).jobUniform].skinId);
-		} else {
-			setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
-		}
+		getPlayerCurrentSubAccount(client).skin = skinIndex;
 
-		if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
-			setPlayerPosition(client, getPlayerData(client).returnToPosition);
-			setPlayerHeading(client, getPlayerData(client).returnToHeading);
-			setPlayerInterior(client, getPlayerData(client).returnToInterior);
-			setPlayerDimension(client, getPlayerData(client).returnToDimension);
+		getPlayerCurrentSubAccount(client).bodyParts.head = bodyPartHead;
+		getPlayerCurrentSubAccount(client).bodyParts.upper = bodyPartUpper;
+		getPlayerCurrentSubAccount(client).bodyParts.lower = bodyPartLower;
+		getPlayerCurrentSubAccount(client).bodyProps.head = bodyPartHat;
 
-			getPlayerData(client).returnToPosition = null;
-			getPlayerData(client).returnToHeading = null;
-			getPlayerData(client).returnToInterior = null;
-			getPlayerData(client).returnToDimension = null;
-		}
-
-		restorePlayerCamera(client);
-		setPlayerControlState(client, true);
-
-		deleteItem(getPlayerData(client).itemActionItem);
-		switchPlayerActiveHotBarSlot(client, -1);
-		cachePlayerHotBarItems(client);
-
-		meActionToNearbyPlayers(client, `changes their skin to ${getServerData().allowedSkins[allowedSkinIndex][1]}`);
+		//setPlayerSkin(client, getPlayerCurrentSubAccount(client).skin);
+		//setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HEAD, bodyPartHead);
+		//setPedBodyPart(getPlayerPed(client), V_SKINSELECT_UPPER, bodyPartUpper);
+		//setPedBodyPart(getPlayerPed(client), V_SKINSELECT_LOWER, bodyPartLower);
+		//setPedBodyPart(getPlayerPed(client), V_SKINSELECT_HAT, bodyPartHat);
 	}
+
+	if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
+		setPlayerPosition(client, getPlayerData(client).returnToPosition);
+		setPlayerHeading(client, getPlayerData(client).returnToHeading);
+		setPlayerInterior(client, getPlayerData(client).returnToInterior);
+		setPlayerDimension(client, getPlayerData(client).returnToDimension);
+
+		getPlayerData(client).returnToPosition = null;
+		getPlayerData(client).returnToHeading = null;
+		getPlayerData(client).returnToInterior = null;
+		getPlayerData(client).returnToDimension = null;
+	}
+
+	restorePlayerCamera(client);
+	setPlayerControlState(client, true);
+
+	deleteItem(getPlayerData(client).itemActionItem);
+	switchPlayerActiveHotBarSlot(client, -1);
+	cachePlayerHotBarItems(client);
+
+	if (!isPlayerWorking(client)) {
+		meActionToNearbyPlayers(client, `changes their skin to ${gameData.skins[getGame()][skinIndex][1]}`);
+	}
+}
+
+// ===========================================================================
+
+function playerCanceledSkinSelection(client) {
+	messagePlayerAlert(client, "You canceled the skin change.");
+	restorePlayerCamera(client);
+
+	if (getPlayerData(client).returnToPosition != null && getPlayerData(client).returnToType == V_RETURNTO_TYPE_SKINSELECT) {
+		setPlayerPosition(client, getPlayerData(client).returnToPosition);
+		setPlayerHeading(client, getPlayerData(client).returnToHeading);
+		setPlayerInterior(client, getPlayerData(client).returnToInterior);
+		setPlayerDimension(client, getPlayerData(client).returnToDimension);
+
+		getPlayerData(client).returnToPosition = null;
+		getPlayerData(client).returnToHeading = null;
+		getPlayerData(client).returnToInterior = null;
+		getPlayerData(client).returnToDimension = null;
+	}
+	return false;
 }
 
 // ===========================================================================
@@ -969,27 +993,27 @@ function sendPlayerChatAutoHideDelay(client, delay) {
 // ===========================================================================
 
 function playRadioStreamForPlayer(client, streamURL, loop = true, volume = 0, element = false) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Forcing ${getPlayerDisplayForConsole(client)} to stream ${streamURL}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Forcing ${getPlayerDisplayForConsole(client)} to stream ${streamURL}`);
 	sendNetworkEventToPlayer("v.rp.radioStream", client, streamURL, loop, volume, element);
 }
 
 // ===========================================================================
 
 function playAudioFileForPlayer(client, audioName, loop = true, volume = 0, element = false) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Forcing ${getPlayerDisplayForConsole(client)} to play audio ${audioName}`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Forcing ${getPlayerDisplayForConsole(client)} to play audio ${audioName}`);
 	sendNetworkEventToPlayer("v.rp.audioFileStream", client, audioName, loop, volume);
 }
 
 // ===========================================================================
 
 function stopRadioStreamForPlayer(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Forcing ${getPlayerDisplayForConsole(client)} to stop their radio stream`);
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Forcing ${getPlayerDisplayForConsole(client)} to stop their radio stream`);
 	sendNetworkEventToPlayer("v.rp.stopRadioStream", client);
 }
 
 // ===========================================================================
 
-function setPlayerStreamingRadioVolume(client, volumeLevel, elementId = false) {
+function setPlayerStreamingRadioVolume(client, volumeLevel, elementId = -1) {
 	getPlayerData(client).accountData.streamingRadioVolume = volumeLevel;
 	getPlayerData(client).streamingRadioElement = elementId;
 	sendNetworkEventToPlayer("v.rp.radioVolume", client, volumeLevel, elementId);
@@ -1006,6 +1030,12 @@ function setVehicleLightsState(vehicle, state) {
 
 function sendPlayerEnterPropertyKey(client, key) {
 	sendNetworkEventToPlayer("v.rp.enterPropertyKey", client, key);
+}
+
+// ===========================================================================
+
+function sendPlayerScoreBoardKey(client, key) {
+	sendNetworkEventToPlayer("v.rp.scoreBoardKey", client, key);
 }
 
 // ===========================================================================
@@ -1073,10 +1103,10 @@ function onPlayerNearPickup(client, pickupId) {
 // ===========================================================================
 
 function updateAllInteriorVehiclesForPlayer(client, interior, dimension) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicle != false) {
-			if (getServerData().vehicles[i].interior == interior && getServerData().vehicles[i].dimension == dimension) {
-				forcePlayerToSyncElementProperties(client, getServerData().vehicles[i].vehicle);
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].vehicle != false) {
+			if (serverData.vehicles[i].interior == interior && serverData.vehicles[i].dimension == dimension) {
+				forcePlayerToSyncElementProperties(client, serverData.vehicles[i].vehicle);
 			}
 		}
 	}
@@ -1085,7 +1115,7 @@ function updateAllInteriorVehiclesForPlayer(client, interior, dimension) {
 // ===========================================================================
 
 function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
-	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (globalConfig.useServerSideVehiclePurchaseCheck == false) {
 		sendNetworkEventToPlayer("v.rp.vehBuyState", client, state, vehicleId, position);
 	}
 }
@@ -1093,7 +1123,7 @@ function setPlayerBuyingVehicleState(client, state, vehicleId, position) {
 // ==========================================================================
 
 function receiveVehiclePurchaseStateUpdateFromClient(client, state) {
-	if (getGlobalConfig().useServerSideVehiclePurchaseCheck == false) {
+	if (globalConfig.useServerSideVehiclePurchaseCheck == false) {
 		checkVehiclePurchasing(client);
 	}
 }
@@ -1112,53 +1142,138 @@ function setPlayerInfiniteRun(client, state) {
 
 // ==========================================================================
 
-function sendBusinessToPlayer(client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems) {
-	sendNetworkEventToPlayer("v.rp.business", client, businessId, name, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked, hasItems);
+function sendBusinessToPlayer(client, businessId, isDeleted, name, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, entranceFee, labelInfoType, entranceDimension, exitDimension) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending business ${businessId} (${name}) to player ${getPlayerDisplayForConsole(client)} (entrance dimension: ${entranceDimension})`);
+
+	sendNetworkEventToPlayer(
+		"v.rp.business",
+		client,
+		businessId,
+		isDeleted,
+		name,
+		entrancePosition,
+		exitPosition,
+		blipModel,
+		pickupModel,
+		buyPrice,
+		rentPrice,
+		locked,
+		entranceFee,
+		labelInfoType,
+		entranceDimension,
+		exitDimension
+	);
 }
 
 // ==========================================================================
 
-function sendHouseToPlayer(client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked) {
-	sendNetworkEventToPlayer("v.rp.house", client, houseId, description, entrancePosition, blipModel, pickupModel, buyPrice, rentPrice, hasInterior, locked);
+function sendHouseToPlayer(client, houseId, isDeleted, description, entrancePosition, exitPosition, blipModel, pickupModel, buyPrice, rentPrice, locked, labelInfoType, entranceDimension, exitDimension) {
+	sendNetworkEventToPlayer("v.rp.house", client,
+		houseId,
+		isDeleted,
+		description,
+		entrancePosition,
+		exitPosition,
+		blipModel,
+		pickupModel,
+		buyPrice,
+		rentPrice,
+		locked,
+		labelInfoType,
+		entranceDimension,
+		exitDimension
+	);
 }
 
 // ==========================================================================
 
-function sendJobToPlayer(client, jobId, jobLocationId, name, position, blipModel, pickupModel) {
-	sendNetworkEventToPlayer("v.rp.job", client, jobId, jobLocationId, name, position);
+function sendJobToPlayer(client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension) {
+	sendNetworkEventToPlayer("v.rp.job", client, jobId, isDeleted, jobLocationId, name, position, blipModel, pickupModel, hasPublicRank, dimension);
 }
 
 // ==========================================================================
 
-function sendVehicleToPlayer(client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4) {
-	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, model, position, heading, colour1, colour2, colour3, colour4);
+function sendVehicleToPlayer(client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4, dimension) {
+	sendNetworkEventToPlayer("v.rp.vehicle", client, vehicleId, isDeleted, model, position, heading, colour1, colour2, colour3, colour4, dimension);
+}
+
+// ==========================================================================
+
+function sendPayPhoneToPlayer(client, payPhoneId, isDeleted, state, position) {
+	sendNetworkEventToPlayer("v.rp.payPhone", client, payPhoneId, isDeleted, state, position);
 }
 
 // ==========================================================================
 
 function sendAllBusinessesToPlayer(client) {
-	let businesses = getServerData().businesses;
+	sendNetworkEventToPlayer("v.rp.removeBusinesses", client);
+
+	let businesses = serverData.businesses;
 	for (let i in businesses) {
-		sendBusinessToPlayer(client, businesses[i].index, businesses[i].name, businesses[i].entrancePosition, businesses[i].entranceBlipModel, businesses[i].entrancePickupModel, businesses[i].buyPrice, businesses[i].rentPrice, businesses[i].hasInterior, doesBusinessHaveAnyItemsToBuy(i));
+		sendBusinessToPlayer(client,
+			businesses[i].index,
+			false,
+			businesses[i].name,
+			businesses[i].entrancePosition,
+			businesses[i].exitPosition,
+			getBusinessEntranceBlipModelForNetworkEvent(businesses[i].index),
+			getBusinessEntrancePickupModelForNetworkEvent(businesses[i].index),
+			applyServerInflationMultiplier(businesses[i].buyPrice),
+			applyServerInflationMultiplier(businesses[i].rentPrice),
+			businesses[i].locked,
+			businesses[i].entranceFee,
+			getBusinessPropertyInfoLabelType(i),
+			businesses[i].entranceDimension,
+			businesses[i].exitDimension
+		);
 	}
 }
 
 // ==========================================================================
 
 function sendAllHousesToPlayer(client) {
-	let houses = getServerData().houses;
+	sendNetworkEventToPlayer("v.rp.removeHouses", client);
+
+	let houses = serverData.houses;
 	for (let i in houses) {
-		sendHouseToPlayer(client, houses[i].index, houses[i].entrancePosition, houses[i].entranceBlipModel, houses[i].entrancePickupModel, houses[i].buyPrice, houses[i].rentPrice, houses[i].hasInterior);
+		sendHouseToPlayer(client,
+			houses[i].index,
+			false,
+			houses[i].description,
+			houses[i].entrancePosition,
+			houses[i].exitPosition,
+			getHouseEntranceBlipModelForNetworkEvent(houses[i].index),
+			getHouseEntrancePickupModelForNetworkEvent(houses[i].index),
+			applyServerInflationMultiplier(houses[i].buyPrice),
+			applyServerInflationMultiplier(houses[i].rentPrice),
+			houses[i].locked,
+			getHousePropertyInfoLabelType(houses[i].index),
+			houses[i].entranceDimension,
+			houses[i].exitDimension,
+		);
 	}
 }
 
 // ==========================================================================
 
 function sendAllJobsToPlayer(client) {
-	let jobs = getServerData().jobs;
+	sendNetworkEventToPlayer("v.rp.removeJobs", client);
+
+	let jobs = serverData.jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(client, jobs[i].index, jobs[i].locations[j].index, jobs[i].name, jobs[i].locations[j].position, jobs[i].pickupModel, jobs[i].blipModel);
+			sendJobToPlayer(
+				client,
+				jobs[i].index,
+				false,
+				jobs[i].locations[j].index,
+				jobs[i].name,
+				jobs[i].locations[j].position,
+				getJobLocationBlipModelForNetworkEvent(i),
+				getJobLocationPickupModelForNetworkEvent(i),
+				doesJobHavePublicRank(i),
+				0
+			);
 		}
 	}
 }
@@ -1166,9 +1281,22 @@ function sendAllJobsToPlayer(client) {
 // ==========================================================================
 
 function sendAllVehiclesToPlayer(client) {
-	let vehicles = getServerData().vehicles;
+	sendNetworkEventToPlayer("v.rp.removeVehicles", client);
+
+	let vehicles = serverData.vehicles;
 	for (let i in vehicles) {
-		sendVehicleToPlayer(client, vehicles[i].index, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
+		sendVehicleToPlayer(client, vehicles[i].index, false, vehicles[i].model, vehicles[i].syncPosition, vehicles[i].syncHeading, vehicles[i].colour1, vehicles[i].colour2, vehicles[i].colour3, vehicles[i].colour4);
+	}
+}
+
+// ==========================================================================
+
+function sendAllPayPhonesToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.removePayPhones", client);
+
+	let payPhones = serverData.payPhones;
+	for (let i in payPhones) {
+		sendPayPhoneToPlayer(client, payPhones[i].index, false, payPhones[i].state, payPhones[i].position);
 	}
 }
 
@@ -1192,15 +1320,15 @@ function requestPlayerPedNetworkId(client) {
 
 // ==========================================================================
 
-function setPlayerScene(client, sceneName) {
-	getPlayerData(client).scene = sceneName;
-	sendNetworkEventToPlayer("v.rp.scene", client, sceneName);
+function setPlayerScene(client, interiorName) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Changing player ${getPlayerDisplayForConsole(client)}'s scene to ${interiorName} (Game: ${getSceneForInterior(interiorName)})`);
+	sendNetworkEventToPlayer("v.rp.scene", client, getSceneForInterior(interiorName));
 }
 
 // ==========================================================================
 
-function makePlayerPedSpeak(client, pedSpeechName) {
-	sendNetworkEventToPlayer("v.rp.pedSpeak", client, pedSpeechName);
+function makePedSpeak(ped, pedSpeechName) {
+	sendNetworkEventToPlayer("v.rp.pedSpeak", null, ped.id, pedSpeechName);
 }
 
 // ==========================================================================
@@ -1249,7 +1377,7 @@ function showLocaleChooserForPlayer(client) {
 // ==========================================================================
 
 function sendPlayerLocaleStrings(client) {
-	let strings = getGlobalConfig().locale.sendStringsToClient;
+	let strings = globalConfig.locale.sendStringsToClient;
 	for (let i in strings) {
 		sendNetworkEventToPlayer("v.rp.localeString", client, strings[i], getLocaleString(client, strings[i]));
 	}
@@ -1294,7 +1422,7 @@ function showSingleParticleEffect(position, particleEffectId, strength = 1.0, du
 // ==========================================================================
 
 function sendPlayerCurrencyString(client) {
-	sendNetworkEventToPlayer("v.rp.currencyString", client, getGlobalConfig().economy.currencyString);
+	sendNetworkEventToPlayer("v.rp.currencyString", client, serverConfig.economy.currencyString);
 }
 
 // ==========================================================================
@@ -1306,12 +1434,12 @@ function sendMapChangeWarningToPlayer(client, changingToNight) {
 // ==========================================================================
 
 function playerMapLoaded(client, mapName) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Map changed to ${mapName} for player ${getPlayerDisplayForConsole(client)}`);
 	//updateAllInteriorVehiclesForPlayer(client, propertyData.exitInterior, propertyData.exitDimension);
-	getPlayerData(client).scene = mapName;
-
-	setTimeout(function () {
-		processPlayerEnteringExitingProperty(client);
-	}, 500);
+	//if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_EXITINGPROPERTY || getPlayerData(client).pedState == V_PEDSTATE_SPAWNING) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Attempting processing of scene switch to ${mapName} for player ${getPlayerDisplayForConsole(client)} ...`);
+	processPlayerSceneSwitch(client, true);
+	//}
 }
 
 // ==========================================================================
@@ -1336,6 +1464,99 @@ function sendClientVariablesToClient(client) {
 
 function requestPlayerToken(client) {
 	sendNetworkEventToPlayer("v.rp.token", client);
+}
+
+// ==========================================================================
+
+function sendPayPhoneStateToPlayer(client, payPhoneIndex, state) {
+	sendNetworkEventToPlayer("v.rp.payPhoneState", client, payPhoneIndex, state);
+}
+
+// ==========================================================================
+
+function sendPayPhoneDialingToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhoneDial", client);
+}
+
+// ==========================================================================
+
+function sendPayPhoneHangupToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhoneHangup", client);
+}
+
+// ==========================================================================
+
+function sendPayPhonePickupToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.payPhonePickup", client);
+}
+
+// ==========================================================================
+
+function sendIncomingDamageMultiplierToClient(client, multiplier) {
+	sendNetworkEventToPlayer("v.rp.incomingDamageMultiplier", client, multiplier);
+}
+
+// ==========================================================================
+
+function receiveVehicleSeatFromPlayer(client, seat) {
+	getPlayerData(client).seat = seat;
+}
+
+// ==========================================================================
+
+function sendWarpPedIntoVehicle(client, pedId, vehicleId, seatId) {
+	sendNetworkEventToPlayer("v.rp.warpIntoVehicle", client, pedId, vehicleId, seatId);
+}
+
+// ==========================================================================
+
+function sendPedRemoveFromVehicle(client, pedId) {
+	sendNetworkEventToPlayer("v.rp.removeFromVehicle", client, pedId);
+}
+
+// ==========================================================================
+
+function receiveEnteredVehicleFromPlayer(client, pedId, vehicleId, seat) {
+	onPedEnteredVehicle(null, getElementFromId(pedId), getElementFromId(vehicleId), seat);
+}
+
+// ==========================================================================
+
+function receiveExitedVehicleFromPlayer(client, pedId, vehicleId, seat) {
+	onPedExitedVehicle(null, getElementFromId(pedId), getElementFromId(vehicleId), seat);
+}
+
+// ==========================================================================
+
+function sendPlayerGodMode(client, state) {
+	sendNetworkEventToPlayer("v.rp.godmode", client, state);
+}
+
+// ==========================================================================
+
+function startCountDownForPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.countDown", client);
+}
+
+// ==========================================================================
+
+function showPlayerListGUI(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending gui list to player ${getPlayerDisplayForConsole(client)}`);
+	sendNetworkEventToPlayer("v.rp.list", client);
+}
+
+// ==========================================================================
+
+function updatePlayerVehicleSeat(client, seat) {
+	if (client == null) {
+		return false;
+	}
+
+	if (getPlayerData(client) == null) {
+		return false;
+	}
+
+	getPlayerData(client).vehicleSeat = seat;
 }
 
 // ==========================================================================

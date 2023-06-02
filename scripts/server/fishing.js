@@ -22,6 +22,29 @@ const V_FISHING_LINE_STATE_HOOKED = 5;
 
 // ===========================================================================
 
+class FishingLocationData {
+	constructor(dbAssoc = false) {
+		this.databaseId = 0;
+		this.serverId = 0;
+		this.index = -1;
+		this.position = toVector3(0.0, 0.0, 0.0);
+		this.enabled = false;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+
+		if (dbAssoc) {
+			this.databaseId = toInteger(dbAssoc["fish_loc_id"]);
+			this.serverId = toInteger(dbAssoc["fish_loc_server"]);
+			this.enabled = intToBool(dbAssoc["fish_loc_enabled"]);
+			this.position = toVector3(toFloat(dbAssoc["fish_loc_pos_x"]), toFloat(dbAssoc["fish_loc_pos_y"]), toFloat(dbAssoc["fish_loc_pos_z"]));
+			this.whoAdded = toInteger(dbAssoc["fish_loc_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["fish_loc_when_added"]);
+		}
+	}
+};
+
+// ===========================================================================
+
 let fishingCollectables = [
 	// Fish
 	["Salmon", V_FISHING_CATCH_TYPE_FISH],
@@ -63,7 +86,11 @@ let fishingAnimations = {
 	[V_GAME_GTA_SA]: {
 		"fishingLineCasting": "none",
 		"fishingLineReeling": "none",
-	}
+	},
+	//[V_GAME_MAFIA_ONE]: {
+	//	"fishingLineCasting": "none",
+	//	"fishingLineReeling": "none",
+	//}
 };
 
 // ===========================================================================
@@ -108,11 +135,11 @@ function castFishingLineCommand(command, params, client) {
 		return false;
 	}
 
-	let maxStrength = getGlobalConfig().fishingCastMaxStrength;
-	let minStrength = getGlobalConfig().fishingCastMinStrength;
+	let maxStrength = globalConfig.fishingCastMaxStrength;
+	let minStrength = globalConfig.fishingCastMinStrength;
 	let keyDuration = getPlayerData(client).keyBindDuration;
 
-	let strength = Math.round((maxStrength - minStrength) * (keyDuration / getGlobalConfig().fishingLineCastDuration));
+	let strength = Math.round((maxStrength - minStrength) * (keyDuration / globalConfig.fishingLineCastDuration));
 
 	castPlayerFishingLine(client, strength);
 
@@ -169,7 +196,7 @@ function castPlayerFishingLine(client, strength) {
 
 	setTimeout(function () {
 		let particleEffectName = fishingParticleEffects[getGame()].fishingLineCast[1];
-		showParticleEffect(frontPosition, getGameConfig().particleEffects[getGame()][particleEffectName], fishingParticleEffects[getGame()].fishingLineCast[1], fishingParticleEffects[getGame()].fishingLineCast[2]);
+		showParticleEffect(frontPosition, gameData.particleEffects[getGame()][particleEffectName], fishingParticleEffects[getGame()].fishingLineCast[1], fishingParticleEffects[getGame()].fishingLineCast[2]);
 
 		getPlayerData(client).fishingLineCastPosition = frontPosition;
 		getPlayerData(client).fishingLineState = V_FISHING_LINE_STATE_CASTED;
@@ -185,7 +212,7 @@ function isPlayerInFishingSpot(client) {
 
 	let closestFishingLocation = getClosestFishingLocation(getPlayerPosition(client));
 	if (closestFishingLocation != false) {
-		if (getDistance(getPlayerPosition(client), closestFishingLocation) < getGlobalConfig().fishingSpotDistance) {
+		if (getDistance(getPlayerPosition(client), closestFishingLocation) < globalConfig.fishingSpotDistance) {
 			return true;
 		}
 	}
@@ -203,6 +230,18 @@ function isPlayerFishing(client) {
 
 function isPlayerFishing(client) {
 	return (getPlayerData(client).fishingLineState != V_FISHING_LINE_STATE_NONE);
+}
+
+// ===========================================================================
+
+function getClosestFishingLocation(position) {
+	let closest = 0;
+	for (let i in serverData.fishingLocations) {
+		if (getDistance(position, serverData.fishingLocations[i].position) < getDistance(position, serverData.fishingLocations[closest].position))
+			closest = i;
+	}
+
+	return closest;
 }
 
 // ===========================================================================

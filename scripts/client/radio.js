@@ -7,6 +7,12 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let streamingRadio = null;
+let streamingRadioVolume = 50;
+let streamingRadioElement = null;
+
+// ===========================================================================
+
 function playStreamingRadio(url, loop, volume, element = false) {
 	if (streamingRadio != null) {
 		streamingRadio.stop();
@@ -40,7 +46,7 @@ function setStreamingRadioVolume(volume) {
 // ===========================================================================
 
 function playAudioFile(audioName, loop, volume) {
-	findResourceByName("connectedrp-extra").exports.playCustomAudio(audioName, volume / 100, loop);
+	playCustomAudio(audioName, volume / 100, loop);
 }
 
 // ===========================================================================
@@ -48,3 +54,5 @@ function playAudioFile(audioName, loop, volume) {
 function getStreamingRadioVolumeForPosition(position1, position2) {
 	return false;
 }
+
+// ===========================================================================

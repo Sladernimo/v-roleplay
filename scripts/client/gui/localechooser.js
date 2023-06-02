@@ -19,7 +19,7 @@ let flagImageGap = toVector2(5, 5);
 // ===========================================================================
 
 function initLocaleChooserGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating locale chooser GUI ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating locale chooser GUI ...`);
 	localeChooser.window = mexui.window(game.width / 2 - 200, game.height - 150, 60, 60, 'Choose a language', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], 0),
@@ -39,13 +39,15 @@ function initLocaleChooserGUI() {
 
 	localeChooser.window.shown = false;
 
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created locale chooser GUI`);
+	//resetLocaleChooserOptions();
+
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created locale chooser GUI`);
 }
 
 // ===========================================================================
 
 function closeLocaleChooserGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Closing locale chooser window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Closing locale chooser window`);
 	localeChooser.window.shown = false;
 	for (let i in localeChooser.flagImages) {
 		localeChooser.flagImages[i].shown = false;
@@ -56,6 +58,7 @@ function closeLocaleChooserGUI() {
 // ===========================================================================
 
 function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing locale chooser window`);
 	if (position.x != 0.0 && position.y != 0.0) {
 		localeChooser.window.position = position;
 	} else {
@@ -63,13 +66,13 @@ function showLocaleChooserGUI(position = toVector2(0.0, 0.0)) {
 	}
 
 	//closeAllWindows();
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing locale chooser window`);
 	mexui.setInput(true);
-	localeChooser.window.shown = true;
 
 	for (let i in localeChooser.flagImages) {
 		localeChooser.flagImages[i].shown = true;
 	}
+
+	localeChooser.window.shown = true;
 }
 
 // ===========================================================================
@@ -85,16 +88,21 @@ function toggleLocaleChooserGUI() {
 // ===========================================================================
 
 function localeChooserSetLocale(localeId) {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Asking server to change locale to ${localeId}`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Asking server to change locale to ${localeId}`);
 	sendLocaleSelectToServer(localeId);
 }
 
 // ===========================================================================
 
 function resetLocaleChooserOptions() {
-	logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Resetting locale chooser options`);
+	logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Resetting locale chooser options`);
 
-	// let tempLocaleOptions = getServerData().localeOptions; // getAvailableLocaleOptions();
+	// Crashed on Mafia 1, disable for now
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return false;
+	}
+
+	// let tempLocaleOptions = serverData.localeOptions; // getAvailableLocaleOptions();
 	let tempLocaleOptions = getAvailableLocaleOptions();
 
 	localeChooser.window.size = toVector2((tempLocaleOptions.length * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageSize.y + flagImageGap.y * 2);
@@ -105,8 +113,9 @@ function resetLocaleChooserOptions() {
 	}
 
 	for (let i in tempLocaleOptions) {
+		tempLocaleOptions
 		let imagePath = `files/images/flags/${tempLocaleOptions[i].flagImageFile}`;
-		localeChooser.flagImages[i] = localeChooser.window.image((i * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageGap.y, flagImageSize.x, flagImageSize.y, imagePath, {
+		let tempImage = localeChooser.window.image((i * (flagImageSize.x + flagImageGap.x)) + flagImageGap.x, flagImageGap.y, flagImageSize.x, flagImageSize.y, imagePath, {
 			focused: {
 				borderColour: toColour(0, 0, 0, 0),
 			},
@@ -114,9 +123,12 @@ function resetLocaleChooserOptions() {
 			localeChooserSetLocale(tempLocaleOptions[i].id);
 		});
 
-		localeChooser.flagImages[i].shown = false;
+		if (tempImage.image != false && tempImage.image != null) {
+			localeChooser.flagImages.push(tempImage);
+			tempImage.shown = false;
+		}
 
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.GUI] Created locale chooser option ${tempLocaleOptions[i].englishName} with image ${imagePath}`);
 
 		//localeChooser.activeRingImages.push(activeRingImage);
 	}

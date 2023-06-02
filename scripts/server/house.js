@@ -149,7 +149,7 @@ class HouseGameScriptData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
 		this.name = "";
-		this.business = 0;
+		this.houseId = 0;
 		this.state = false;
 		this.index = -1;
 		this.houseIndex = -1;
@@ -159,7 +159,7 @@ class HouseGameScriptData {
 			this.databaseId = toInteger(dbAssoc["house_script_id"]);
 			this.name = toString(dbAssoc["house_script_name"]);
 			this.state = toInteger(dbAssoc["house_script_state"]);
-			this.business = toInteger(dbAssoc["house_script_biz"]);
+			this.houseId = toInteger(dbAssoc["house_script_house"]);
 		}
 	}
 };
@@ -187,12 +187,12 @@ function loadHousesFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempHouseData = new HouseData(dbAssoc[i]);
 				tempHouses.push(tempHouseData);
-				logToConsole(LOG_VERBOSE, `[AGRP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.House]: House '${tempHouseData.description}' (ID ${tempHouseData.databaseId}) loaded!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	logToConsole(LOG_INFO, `[AGRP.House]: ${tempHouses.length} houses loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.House]: ${tempHouses.length} houses loaded from database successfully!`);
 	return tempHouses;
 }
 
@@ -213,7 +213,16 @@ function createHouseCommand(command, params, client) {
 		return false;
 	}
 
-	createHouse(params, getPlayerPosition(client), toVector3(0.0, 0.0, 0.0), getGameConfig().pickupModels[getGame()].House, -1, getPlayerInterior(client), getPlayerDimension(client), getPlayerData(client).interiorScene);
+	createHouse(
+		params,
+		getPlayerPosition(client),
+		toVector3(0.0, 0.0, 0.0),
+		(isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].House : -1,
+		-1,
+		getPlayerInterior(client),
+		getPlayerDimension(client),
+		getPlayerData(client).interiorScene
+	);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created house: {houseGreen}${params}`, true);
 }
 
@@ -231,7 +240,7 @@ function createHouseCommand(command, params, client) {
 function toggleHouseInteriorLightsCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -260,7 +269,7 @@ function setHouseDescriptionCommand(command, params, client) {
 
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -295,7 +304,7 @@ function setHouseOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -327,7 +336,7 @@ function setHouseOwnerCommand(command, params, client) {
 function removeHouseOwnerCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -360,19 +369,19 @@ function removeHouseOwnerCommand(command, params, client) {
 function setHouseClanCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
 
-	let clanId = getPlayerClan(params);
+	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	if (getHouseData(houseId).ownerType != V_VEHOWNER_PLAYER) {
+	if (getHouseData(houseId).ownerType != V_VEH_OWNER_PLAYER) {
 		messagePlayerError(client, getLocaleString(client, "MustOwnHouse"));
 		return false;
 	}
@@ -382,8 +391,8 @@ function setHouseClanCommand(command, params, client) {
 		return false;
 	}
 
-	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 	getPlayerData(client).promptType = V_PROMPT_GIVEHOUSETOCLAN;
+	showPlayerPrompt(client, getLocaleString(client, "SetHouseClanConfirmMessage"), getLocaleString(client, "SetHouseClanConfirmTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 
 	//messagePlayerSuccess(`{MAINCOLOUR}You gave house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} to the {clanOrange}${getClanData(clanId).name} {MAINCOLOUR}clan!`);
 }
@@ -402,14 +411,14 @@ function setHouseClanCommand(command, params, client) {
 function setHouseRankCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
 
-	let clanId = getPlayerClan(params);
+	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -434,7 +443,7 @@ function setHousePickupCommand(command, params, client) {
 	let typeParam = params || "house";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -443,9 +452,9 @@ function setHousePickupCommand(command, params, client) {
 		if (toLowerCase(typeParam) == "None") {
 			getHouseData(houseId).entrancePickupModel = -1;
 		} else {
-			if (isNull(getGameConfig().pickupModels[getGame()][typeParam])) {
+			if (isNull(gameData.pickupModels[getGame()][typeParam])) {
 				messagePlayerError(client, "Invalid pickup type! Use a pickup type name or a model ID");
-				let pickupTypes = Object.keys(getGameConfig().pickupModels[getGame()]);
+				let pickupTypes = Object.keys(gameData.pickupModels[getGame()]);
 				let chunkedList = splitArrayIntoChunks(pickupTypes, 10);
 
 				messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPickupTypes")));
@@ -455,14 +464,14 @@ function setHousePickupCommand(command, params, client) {
 				return false;
 			}
 
-			getHouseData(houseId).entrancePickupModel = getGameConfig().pickupModels[getGame()][typeParam];
+			getHouseData(houseId).entrancePickupModel = gameData.pickupModels[getGame()][typeParam];
 		}
 	} else {
 		getHouseData(houseId).entrancePickupModel = toInteger(typeParam);
 	}
 
-	deleteHouseEntrancePickup(houseId);
-	createHouseEntrancePickup(houseId);
+	despawnHouseEntrancePickup(houseId);
+	spawnHouseEntrancePickup(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -484,51 +493,63 @@ function setHouseInteriorTypeCommand(command, params, client) {
 	let typeParam = getParam(params, " ", 1) || "None";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
 
-	if (typeof getGameConfig().interiors[getGame()] == "undefined") {
+	if (typeof gameData.interiors[getGame()] == "undefined") {
 		messagePlayerError(client, `There are no interiors available for this game!`);
 		return false;
 	}
 
 	if (isNaN(typeParam)) {
-		let tempHouseLocation = new HouseLocationData(false);
-
-		if (toLowerCase(typeParam) == "None") {
-			tempHouseLocation.exitPosition = toVector3(0.0, 0.0, 0.0);
-			tempHouseLocation.exitInterior = -1;
-			getHouseData(houseId).exitPickupModel = -1;
+		if (toLowerCase(typeParam) == "none") {
+			getHouseData(houseId).exitPosition = toVector3(0.0, 0.0, 0.0);
+			getHouseData(houseId).exitDimension = 0;
+			getHouseData(houseId).exitInterior = -1;
 			getHouseData(houseId).hasInterior = false;
+			getHouseData(houseId).entranceScene = "";
+			getHouseData(houseId).exitScene = "";
+			getHouseData(houseId).exitPickupModel = -1;
+			getHouseData(houseId).customInterior = false;
+			getHouseData(houseId).exitScene = "";
+			getHouseData(houseId).entranceScene = "";
 			messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} removed house {houseGreen}${getHouseData(houseId).description}{MAINCOLOUR} interior`, true);
 			return false;
 		}
 
-		if (isNull(getGameConfig().interiors[getGame()][typeParam])) {
+		if (isNull(gameData.interiors[getGame()][typeParam])) {
 			messagePlayerError(client, "Invalid interior type! Use an interior type name");
-			let interiorTypesList = Object.keys(getGameConfig().interiors[getGame()]);
+			let interiorTypesList = Object.keys(gameData.interiors[getGame()]);
 			let chunkedList = splitArrayIntoChunks(interiorTypesList, 10);
 
-			messagePlayerNormal(client, makeChatBoxSectionHeader("InteriorTypes"));
+			messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderInteriorTypes")));
 			for (let i in chunkedList) {
 				messagePlayerInfo(client, chunkedList[i].join(", "));
 			}
 			return false;
 		}
 
-		getHouseData(houseId).exitPosition = getGameConfig().interiors[getGame()][typeParam][0];
-		getHouseData(houseId).exitInterior = getGameConfig().interiors[getGame()][typeParam][1];
-		getHouseData(houseId).exitDimension = getHouseData(houseId).databaseId + getGlobalConfig().houseDimensionStart;
-		getHouseData(houseId).exitPickupModel = getGameConfig().pickupModels[getGame()].Exit;
+		getHouseData(houseId).exitPosition = gameData.interiors[getGame()][typeParam][0];
+		getHouseData(houseId).exitInterior = gameData.interiors[getGame()][typeParam][1];
+		getHouseData(houseId).exitDimension = getHouseData(houseId).databaseId + globalConfig.houseDimensionStart;
+		getHouseData(houseId).exitPickupModel = (isGameFeatureSupported("pickup")) ? gameData.pickupModels[getGame()].Exit : -1;
 		getHouseData(houseId).hasInterior = true;
+		getHouseData(houseId).customInterior = gameData.interiors[getGame()][typeParam][2];
+
+		if (isGameFeatureSupported("interiorScene")) {
+			getHouseData(houseId).exitScene = typeParam;
+			getHouseData(houseId).entranceScene = getPlayerCurrentSubAccount(client).scene;
+		}
 	}
 
-	deleteHouseEntrancePickup(houseId);
-	deleteHouseExitPickup(houseId);
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+	//despawnHouseEntrancePickup(houseId);
+	//despawnHouseExitPickup(houseId);
+	//spawnHouseEntrancePickup(houseId);
+	//spawnHouseExitPickup(houseId);
+
+	resetHousePickups(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -550,7 +571,7 @@ function setHouseBlipCommand(command, params, client) {
 	let typeParam = params || "house";
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -559,8 +580,8 @@ function setHouseBlipCommand(command, params, client) {
 		if (toLowerCase(typeParam) == "None") {
 			getHouseData(houseId).entranceBlipModel = -1;
 		} else {
-			if (isNull(getGameConfig().blipSprites[getGame()][typeParam])) {
-				let blipTypes = Object.keys(getGameConfig().blipSprites[getGame()]);
+			if (isNull(gameData.blipSprites[getGame()][typeParam])) {
+				let blipTypes = Object.keys(gameData.blipSprites[getGame()]);
 				let chunkedList = splitArrayIntoChunks(blipTypes, 10);
 
 				messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderBlipTypes")));
@@ -570,7 +591,7 @@ function setHouseBlipCommand(command, params, client) {
 				return false;
 			}
 
-			getHouseData(houseId).entranceBlipModel = getGameConfig().blipSprites[getGame()][typeParam];
+			getHouseData(houseId).entranceBlipModel = gameData.blipSprites[getGame()][typeParam];
 		}
 	} else {
 		getHouseData(houseId).entranceBlipModel = toInteger(typeParam);
@@ -600,7 +621,7 @@ function setHouseBlipCommand(command, params, client) {
 function moveHouseEntranceCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -636,7 +657,7 @@ function moveHouseEntranceCommand(command, params, client) {
 function moveHouseExitCommand(command, params, client) {
 	let houseId = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -652,10 +673,10 @@ function moveHouseExitCommand(command, params, client) {
 	//createAllHouseBlips(houseId);
 	//createAllHousePickups(houseId);
 
-	deleteHouseExitPickup(houseId);
-	deleteHouseExitBlip(houseId);
-	createHouseExitPickup(houseId);
-	createHouseExitBlip(houseId);
+	despawnHouseExitPickup(houseId);
+	despawnHouseExitBlip(houseId);
+	spawnHouseExitPickup(houseId);
+	spawnHouseExitBlip(houseId);
 
 	getHouseData(houseId).needsSaved = true;
 
@@ -676,7 +697,7 @@ function moveHouseExitCommand(command, params, client) {
 function deleteHouseCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -701,7 +722,7 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 		return false;
 	}
 
-	let tempHouseData = getServerData().houses[houseIndex];
+	let tempHouseData = serverData.houses[houseIndex];
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = null;
@@ -714,15 +735,17 @@ function deleteHouse(houseIndex, whoDeleted = 0) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	deleteHouseEntrancePickup(houseIndex);
-	deleteHouseExitPickup(houseIndex);
+	despawnHouseEntrancePickup(houseIndex);
+	despawnHouseExitPickup(houseIndex);
 
-	deleteHouseEntranceBlip(houseIndex);
-	deleteHouseExitBlip(houseIndex);
+	despawnHouseEntranceBlip(houseIndex);
+	despawnHouseExitBlip(houseIndex);
 
 	removePlayersFromHouse(houseIndex);
 
-	getServerData().houses.splice(houseIndex, 1);
+	serverData.houses.splice(houseIndex, 1);
+
+	updateHousePickupLabelData(houseId, true);
 }
 
 // ===========================================================================
@@ -793,13 +816,13 @@ function createHouse(description, entrancePosition, exitPosition, entrancePickup
 
 	tempHouseData.needsSaved = true;
 
-	let houseId = getServerData().houses.push(tempHouseData);
+	let houseId = serverData.houses.push(tempHouseData);
 
 	saveHouseToDatabase(houseId - 1);
-	setHouseDataIndexes();
+	setAllHouseDataIndexes();
 
-	createHousePickups(houseId - 1);
-	createHouseBlips(houseId - 1);
+	spawnHousePickups(houseId - 1);
+	spawnHouseBlips(houseId - 1);
 
 	return houseId - 1;
 }
@@ -811,7 +834,7 @@ function getHouseDataFromDatabaseId(databaseId) {
 		return false;
 	}
 
-	let matchingHouses = getServerData().houses.filter(b => b.databaseId == databaseId)
+	let matchingHouses = serverData.houses.filter(b => b.databaseId == databaseId)
 	if (matchingHouses.length == 1) {
 		return matchingHouses[0];
 	}
@@ -822,9 +845,9 @@ function getHouseDataFromDatabaseId(databaseId) {
 
 function getClosestHouseEntrance(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].entranceDimension == dimension) {
-			if (getDistance(getServerData().houses[i].entrancePosition, position) <= getDistance(getServerData().houses[closest].entrancePosition, position)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].entranceDimension == dimension) {
+			if (getDistance(serverData.houses[i].entrancePosition, position) <= getDistance(serverData.houses[closest].entrancePosition, position)) {
 				closest = i;
 			}
 		}
@@ -836,9 +859,9 @@ function getClosestHouseEntrance(position, dimension) {
 
 function getClosestHouseExit(position, dimension) {
 	let closest = 0;
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].entranceDimension == dimension) {
-			if (getDistance(getServerData().houses[i].exitPosition, position) <= getDistance(getServerData().houses[closest].exitPosition, position)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].entranceDimension == dimension) {
+			if (getDistance(serverData.houses[i].exitPosition, position) <= getDistance(serverData.houses[closest].exitPosition, position)) {
 				closest = i;
 			}
 		}
@@ -849,23 +872,23 @@ function getClosestHouseExit(position, dimension) {
 // ===========================================================================
 
 function getPlayerHouse(client) {
-	if (getServerData().houses.length == 0) {
+	if (serverData.houses.length == 0) {
 		return -1;
 	}
 
-	if (getPlayerDimension(client) == getGameConfig().mainWorldDimension[getGame()]) {
+	if (getPlayerDimension(client) == gameData.mainWorldDimension[getGame()]) {
 		let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getHouseData(closestEntrance).index;
 		}
 	} else {
 		let closestEntrance = getClosestHouseEntrance(getPlayerPosition(client), getPlayerDimension(client));
-		if (getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= getGlobalConfig().enterPropertyDistance) {
+		if (getDistance(getPlayerPosition(client), getHouseData(closestEntrance).entrancePosition) <= globalConfig.enterPropertyDistance) {
 			return getHouseData(closestEntrance).index;
 		}
 
-		for (let i in getServerData().houses) {
-			if (getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+		for (let i in serverData.houses) {
+			if (serverData.houses[i].hasInterior && serverData.houses[i].exitDimension == getPlayerDimension(client)) {
 				return i;
 			}
 		}
@@ -877,30 +900,38 @@ function getPlayerHouse(client) {
 // ===========================================================================
 
 function saveAllHousesToDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.House]: Saving all server houses to database ...`);
-	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.House]: Aborting save all houses to database, dev server is enabled.`);
+	logToConsole(LOG_DEBUG, `[V.RP.House]: Saving all server houses to database ...`);
+	if (serverConfig.devServer) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.House]: Aborting save all houses to database, dev server is enabled.`);
 		return false;
 	}
 
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].needsSaved) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].needsSaved) {
 			saveHouseToDatabase(i);
 		}
 	}
-	logToConsole(LOG_INFO, `[AGRP.House]: Saved all server houses to database`);
+	logToConsole(LOG_INFO, `[V.RP.House]: Saved all server houses to database`);
 }
 
 // ===========================================================================
 
 function saveHouseToDatabase(houseId) {
-	let tempHouseData = getServerData().houses[houseId];
+	if (serverConfig.devServer) {
+		return false;
+	}
+
+	let tempHouseData = getHouseData(houseId);
 
 	if (!tempHouseData.needsSaved) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house '${tempHouseData.description}' to database ...`);
+	if (tempHouseData.databaseId == -1) {
+		return false;
+	}
+
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saving house '${tempHouseData.description}' to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeHouseDescription = escapeDatabaseString(dbConnection, tempHouseData.description);
@@ -935,7 +966,7 @@ function saveHouseToDatabase(houseId) {
 			["house_has_interior", boolToInt(tempHouseData.hasInterior)],
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
 			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
-			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != false) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
+			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != null) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
 		];
 
 		let dbQuery = null;
@@ -943,7 +974,7 @@ function saveHouseToDatabase(houseId) {
 			let queryString = createDatabaseInsertQuery("house_main", data);
 			logToConsole(queryString);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().houses[houseId].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.houses[houseId].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
 			let queryString = createDatabaseUpdateQuery("house_main", data, `house_id=${tempHouseData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
@@ -954,7 +985,7 @@ function saveHouseToDatabase(houseId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved house '${tempHouseData.description}' to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saved house '${tempHouseData.description}' to database!`);
 
 	return false;
 }
@@ -962,13 +993,13 @@ function saveHouseToDatabase(houseId) {
 // ===========================================================================
 
 function saveHouseLocationToDatabase(houseId, locationId) {
-	let tempHouseLocationData = getServerData().houses[houseId].locations[locationId];
+	let tempHouseLocationData = serverData.houses[houseId].locations[locationId];
 
 	if (!tempHouseLocationData.needsSaved) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saving house location ${locationId} for house ${houseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let data = [
@@ -989,7 +1020,7 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 			["house_loc_pos2_z", tempHouseLocationData.positionTwo.z],
 			["house_loc_rot2_z", tempHouseLocationData.rotationTwo],
 			["house_loc_int2", tempHouseLocationData.interiorTwo],
-			["house_loc_vw2", getHouseData(houseId).databaseId + getGlobalConfig().houseDimensionStart],
+			["house_loc_vw2", getHouseData(houseId).databaseId + globalConfig.houseDimensionStart],
 			["house_loc_pickup2", tempHouseLocationData.pickupTwo],
 			["house_loc_blip2", tempHouseLocationData.blipTwo],
 		];
@@ -998,48 +1029,48 @@ function saveHouseLocationToDatabase(houseId, locationId) {
 		if (tempHouseData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("house_loc", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getServerData().houses[houseId].locations[locationId].databaseId = getDatabaseInsertId(dbConnection);
+			serverData.houses[houseId].locations[locationId].databaseId = getDatabaseInsertId(dbConnection);
 		} else {
 			let queryString = createDatabaseUpdateQuery("house_loc", data, `house_loc_id=${tempHouseLocationData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
 		}
 
-		getServerData().houses[houseId].locations[locationId].needsSaved = false;
+		serverData.houses[houseId].locations[locationId].needsSaved = false;
 		freeDatabaseQuery(dbQuery);
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.House]: Saved location ${locationId} for house ${houseId} to database`);
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Saved location ${locationId} for house ${houseId} to database`);
 
 	return false;
 }
 
 // ===========================================================================
 
-function createAllHousePickups() {
-	for (let i in getServerData().houses) {
-		createHouseEntrancePickup(i);
-		createHouseExitPickup(i);
+function spawnAllHousePickups() {
+	for (let i in serverData.houses) {
+		spawnHouseEntrancePickup(i);
+		spawnHouseExitPickup(i);
 	}
 }
 
 // ===========================================================================
 
-function createAllHouseBlips() {
-	for (let i in getServerData().houses) {
-		createHouseEntranceBlip(i);
-		createHouseExitBlip(i);
+function spawnAllHouseBlips() {
+	for (let i in serverData.houses) {
+		spawnHouseEntranceBlip(i);
+		spawnHouseExitBlip(i);
 	}
 }
 
 // ===========================================================================
 
-function createHouseEntrancePickup(houseId) {
-	if (!getServerConfig().createHousePickups) {
+function spawnHouseEntrancePickup(houseId) {
+	if (!serverConfig.createHousePickups) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1049,45 +1080,55 @@ function createHouseEntrancePickup(houseId) {
 	//	return false;
 	//}
 
-	if (houseData.entrancePickupModel == -1) {
-		return false;
-	}
+	logToConsole(LOG_VERBOSE, `[V.RP.House]: Creating entrance pickup for house ${houseData.description} (${houseData.databaseId})`);
 
-	if (areServerElementsSupported() && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
+	if (isGameFeatureSupported("serverElements") && getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
 		let entrancePickup = null;
 		if (isGameFeatureSupported("pickup")) {
-			let pickupModelId = getGameConfig().pickupModels[getGame()].House;
+			let pickupModelId = gameData.pickupModels[getGame()].House;
 
-			if (getServerData().houses[houseId].entrancePickupModel != 0) {
+			if (houseData.entrancePickupModel == -1) {
+				return false;
+			}
+
+			if (serverData.houses[houseId].entrancePickupModel != 0) {
 				pickupModelId = getHouseData(houseId).entrancePickupModel;
 			}
 
-			entrancePickup = createGamePickup(pickupModelId, houseData.entrancePosition, getGameConfig().pickupTypes[getGame()].house);
-		} else if (isGameFeatureSupported("dummyElement")) {
-			entrancePickup = createGameDummyElement(houseData.exitPosition);
+			entrancePickup = createGamePickup(pickupModelId, houseData.entrancePosition, gameData.pickupTypes[getGame()].house);
 		}
 
 		if (entrancePickup != null) {
-			setElementOnAllDimensions(entrancePickup, false);
-			setElementDimension(entrancePickup, getHouseData(houseId).entranceDimension);
-			setElementStreamInDistance(entrancePickup, getGlobalConfig().housePickupStreamInDistance);
-			setElementStreamOutDistance(entrancePickup, getGlobalConfig().housePickupStreamOutDistance);
-			setElementTransient(entrancePickup, false);
+			if (houseData.entranceDimension != -1) {
+				setElementDimension(entrancePickup, houseData.entranceDimension);
+				setElementOnAllDimensions(entrancePickup, false);
+			} else {
+				setElementOnAllDimensions(entrancePickup, true);
+			}
 
+			if (globalConfig.housePickupStreamInDistance == -1 || globalConfig.housePickupStreamOutDistance == -1) {
+				entrancePickup.netFlags.distanceStreaming = false;
+			} else {
+				setElementStreamInDistance(entrancePickup, globalConfig.housePickupStreamInDistance);
+				setElementStreamOutDistance(entrancePickup, globalConfig.housePickupStreamInDistance);
+			}
+			setElementTransient(entrancePickup, false);
 			getHouseData(houseId).entrancePickup = entrancePickup;
 			updateHousePickupLabelData(houseId);
 		}
 	}
+
+	updateHousePickupLabelData(houseId);
 }
 
 // ===========================================================================
 
-function createHouseEntranceBlip(houseId) {
-	if (!areServerElementsSupported()) {
+function spawnHouseEntranceBlip(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
-	if (!getServerConfig().createHouseBlips) {
+	if (!serverConfig.createHouseBlips) {
 		return false;
 	}
 
@@ -1095,7 +1136,7 @@ function createHouseEntranceBlip(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1109,8 +1150,8 @@ function createHouseEntranceBlip(houseId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].House;
-	if (getServerData().houses[houseId].entranceBlipModel != 0) {
+	let blipModelId = gameData.blipSprites[getGame()].House;
+	if (serverData.houses[houseId].entranceBlipModel != 0) {
 		blipModelId = getHouseData(houseId).entranceBlipModel;
 	}
 
@@ -1123,11 +1164,11 @@ function createHouseEntranceBlip(houseId) {
 			setElementOnAllDimensions(entranceBlip, true);
 		}
 
-		if (getGlobalConfig().houseBlipStreamInDistance == -1 || getGlobalConfig().houseBlipStreamOutDistance == -1) {
+		if (globalConfig.houseBlipStreamInDistance == -1 || globalConfig.houseBlipStreamOutDistance == -1) {
 			entranceBlip.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(entranceBlip, getGlobalConfig().houseBlipStreamInDistance);
-			setElementStreamOutDistance(entranceBlip, getGlobalConfig().houseBlipStreamOutDistance);
+			setElementStreamInDistance(entranceBlip, globalConfig.houseBlipStreamInDistance);
+			setElementStreamOutDistance(entranceBlip, globalConfig.houseBlipStreamOutDistance);
 		}
 
 		setEntityData(entranceBlip, "v.rp.owner.type", V_BLIP_HOUSE_ENTRANCE, false);
@@ -1139,16 +1180,16 @@ function createHouseEntranceBlip(houseId) {
 
 // ===========================================================================
 
-function createHouseExitPickup(houseId) {
-	if (!areServerElementsSupported()) {
+function spawnHouseExitPickup(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
-	if (!getServerConfig().createHousePickups) {
+	if (!serverConfig.createHousePickups) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1164,13 +1205,13 @@ function createHouseExitPickup(houseId) {
 
 	let exitPickup = null;
 	if (isGameFeatureSupported("pickup")) {
-		let pickupModelId = getGameConfig().pickupModels[getGame()].Exit;
+		let pickupModelId = gameData.pickupModels[getGame()].Exit;
 
-		if (getServerData().houses[houseId].exitPickupModel != 0) {
+		if (serverData.houses[houseId].exitPickupModel != 0) {
 			pickupModelId = houseData.exitPickupModel;
 		}
 
-		exitPickup = createGamePickup(pickupModelId, houseData.exitPosition, getGameConfig().pickupTypes[getGame()].house);
+		exitPickup = createGamePickup(pickupModelId, houseData.exitPosition, gameData.pickupTypes[getGame()].house);
 	} else if (isGameFeatureSupported("dummyElement")) {
 		//exitPickup = createGameDummyElement(houseData.exitPosition);
 	}
@@ -1178,8 +1219,8 @@ function createHouseExitPickup(houseId) {
 	if (exitPickup != null) {
 		setElementDimension(exitPickup, houseData.exitDimension);
 		setElementOnAllDimensions(exitPickup, false);
-		setElementStreamInDistance(exitPickup, getGlobalConfig().housePickupStreamInDistance);
-		setElementStreamOutDistance(exitPickup, getGlobalConfig().housePickupStreamOutDistance);
+		setElementStreamInDistance(exitPickup, globalConfig.housePickupStreamInDistance);
+		setElementStreamOutDistance(exitPickup, globalConfig.housePickupStreamOutDistance);
 		setElementTransient(exitPickup, false);
 
 		getHouseData(houseId).exitPickup = exitPickup;
@@ -1189,12 +1230,12 @@ function createHouseExitPickup(houseId) {
 
 // ===========================================================================
 
-function createHouseExitBlip(houseId) {
-	if (!areServerElementsSupported()) {
+function spawnHouseExitBlip(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
-	if (!getServerConfig().createHouseBlips) {
+	if (!serverConfig.createHouseBlips) {
 		return false;
 	}
 
@@ -1202,7 +1243,7 @@ function createHouseExitBlip(houseId) {
 		return false;
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		return false;
 	}
 
@@ -1216,9 +1257,9 @@ function createHouseExitBlip(houseId) {
 		return false;
 	}
 
-	let blipModelId = getGameConfig().blipSprites[getGame()].Exit;
+	let blipModelId = gameData.blipSprites[getGame()].Exit;
 
-	if (getServerData().houses[houseId].exitBlipModel != 0) {
+	if (serverData.houses[houseId].exitBlipModel != 0) {
 		blipModelId = houseData.exitBlipModel;
 	}
 
@@ -1231,11 +1272,11 @@ function createHouseExitBlip(houseId) {
 			setElementOnAllDimensions(entranceBlip, true);
 		}
 
-		if (getGlobalConfig().houseBlipStreamInDistance == -1 || getGlobalConfig().houseBlipStreamOutDistance == -1) {
+		if (globalConfig.houseBlipStreamInDistance == -1 || globalConfig.houseBlipStreamOutDistance == -1) {
 			exitBlip.netFlags.distanceStreaming = false;
 		} else {
-			setElementStreamInDistance(exitBlip, getGlobalConfig().houseBlipStreamInDistance);
-			setElementStreamOutDistance(exitBlip, getGlobalConfig().houseBlipStreamOutDistance);
+			setElementStreamInDistance(exitBlip, globalConfig.houseBlipStreamInDistance);
+			setElementStreamOutDistance(exitBlip, globalConfig.houseBlipStreamOutDistance);
 		}
 		setElementTransient(exitBlip, false);
 		setEntityData(exitBlip, "v.rp.owner.type", V_BLIP_HOUSE_EXIT, false);
@@ -1289,7 +1330,7 @@ function getHouseInfoCommand(command, params, client) {
 		houseId = toInteger(params);
 	}
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1297,9 +1338,9 @@ function getHouseInfoCommand(command, params, client) {
 	let houseData = getHouseData(houseId);
 
 	let ownerName = "Unknown";
-	switch (getHouseData(houseId).ownerType) {
+	switch (houseData.ownerType) {
 		case V_HOUSE_OWNER_CLAN:
-			ownerName = getClanData(houseData).name;
+			ownerName = getClanData(getClanIndexFromDatabaseId(houseData.ownerId)).name;
 			break;
 
 		case V_HOUSE_OWNER_PLAYER:
@@ -1320,7 +1361,7 @@ function getHouseInfoCommand(command, params, client) {
 			break;
 
 		case V_HOUSE_OWNER_JOB:
-			ownerName = getJobData(houseData.ownerId).name;
+			ownerName = getJobData(getJobIndexFromDatabaseId(houseData.ownerId)).name;
 			break;
 	}
 
@@ -1330,12 +1371,12 @@ function getHouseInfoCommand(command, params, client) {
 		[`ID`, `${houseData.index}/${houseData.databaseId}`],
 		[`Owner`, `${ownerName} (${getHouseOwnerTypeText(houseData.ownerType)})`],
 		[`Locked`, `${getLockedUnlockedFromBool(houseData.locked)}`],
-		[`BuyPrice`, `${houseData.buyPrice}`],
-		[`RentPrice`, `${houseData.rentPrice}`],
+		[`BuyPrice`, `${getCurrencyString(houseData.buyPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(houseData.buyPrice))})`],
+		[`RentPrice`, `${getCurrencyString(houseData.rentPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(houseData.rentPrice))})`],
 		[`HasInterior`, `${getYesNoFromBool(houseData.hasInterior)}`],
 		[`CustomInterior`, `${getYesNoFromBool(houseData.customInterior)}`],
 		[`InteriorLights`, `${getOnOffFromBool(houseData.interiorLights)}`],
-		[`RadioStation`, `${houseData.streamingRadioStation}`],
+		[`RadioStation`, `${(getRadioStationData(houseData.streamingRadioStationIndex) != null) ? getRadioStationData(houseData.streamingRadioStationIndex).name : "none"}`],
 	];
 
 	let stats = tempStats.map(stat => `{MAINCOLOUR}${stat[0]}: {ALTCOLOUR}${stat[1]}{MAINCOLOUR}`);
@@ -1371,7 +1412,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1384,7 +1425,7 @@ function setHouseBuyPriceCommand(command, params, client) {
 	getHouseData(houseId).buyPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} for-sale price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`);
 }
 
 // ===========================================================================
@@ -1409,7 +1450,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	let amount = toInteger(getParam(params, " ", 1)) || 0;
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1422,7 +1463,7 @@ function setHouseRentPriceCommand(command, params, client) {
 	getHouseData(houseId).rentPrice = amount;
 	getHouseData(houseId).needsSaved = true;
 	updateHousePickupLabelData(houseId);
-	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)}`);
+	messagePlayerSuccess(client, `{MAINCOLOUR}You set house {houseGreen}${getHouseData(houseId).description}'s{MAINCOLOUR} rent price to {ALTCOLOUR}${getCurrencyString(amount)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(amount))})`);
 }
 
 // ===========================================================================
@@ -1439,7 +1480,7 @@ function setHouseRentPriceCommand(command, params, client) {
 function buyHouseCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -1449,7 +1490,7 @@ function buyHouseCommand(command, params, client) {
 		return false;
 	}
 
-	if (getPlayerCurrentSubAccount(client).cash < getHouseData(houseId).buyPrice) {
+	if (getPlayerCurrentSubAccount(client).cash < applyServerInflationMultiplier(getHouseData(houseId).buyPrice)) {
 		messagePlayerError(client, getLocaleString(client, "HousePurchaseNotEnoughMoney"));
 		return false;
 	}
@@ -1466,12 +1507,14 @@ function buyHouseCommand(command, params, client) {
  */
 function getHouseData(houseId) {
 	if (houseId == -1) {
-		return false;
+		return null;
 	}
 
-	if (typeof getServerData().houses[houseId] != "undefined") {
-		return getServerData().houses[houseId];
+	if (typeof serverData.houses[houseId] != "undefined") {
+		return serverData.houses[houseId];
 	}
+
+	return null;
 }
 
 // ===========================================================================
@@ -1482,8 +1525,8 @@ function doesHouseHaveInterior(houseId) {
 
 // ===========================================================================
 
-function deleteHouseEntrancePickup(houseId) {
-	if (!areServerElementsSupported()) {
+function despawnHouseEntrancePickup(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1496,8 +1539,8 @@ function deleteHouseEntrancePickup(houseId) {
 
 // ===========================================================================
 
-function deleteHouseExitPickup(houseId) {
-	if (!areServerElementsSupported()) {
+function despawnHouseExitPickup(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1510,8 +1553,8 @@ function deleteHouseExitPickup(houseId) {
 
 // ===========================================================================
 
-function deleteHouseEntranceBlip(houseId) {
-	if (!areServerElementsSupported()) {
+function despawnHouseEntranceBlip(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1524,8 +1567,8 @@ function deleteHouseEntranceBlip(houseId) {
 
 // ===========================================================================
 
-function deleteHouseExitBlip(houseId) {
-	if (!areServerElementsSupported()) {
+function despawnHouseExitBlip(houseId) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return false;
 	}
 
@@ -1555,15 +1598,15 @@ function reloadAllHousesCommand(command, params, client) {
 		}
 	}
 
-	for (let i in getServerData().houses) {
-		deleteHouseExitBlip(i);
-		deleteHouseEntranceBlip(i);
-		deleteHouseExitPickup(i);
-		deleteHouseEntrancePickup(i);
+	for (let i in serverData.houses) {
+		despawnHouseExitBlip(i);
+		despawnHouseEntranceBlip(i);
+		despawnHouseExitPickup(i);
+		despawnHouseEntrancePickup(i);
 	}
 
-	clearArray(getServerData().houses);
-	getServerData().houses = loadHousesFromDatabase();
+	serverData.houses = [];
+	serverData.houses = loadHousesFromDatabase();
 	createAllHousePickups();
 	createAllHouseBlips();
 
@@ -1575,26 +1618,26 @@ function reloadAllHousesCommand(command, params, client) {
 function exitHouse(client) {
 	let houseId = getPlayerHouse(client);
 	if (isPlayerSpawned(client)) {
-		setPlayerInterior(client, getServerData().houses[houseId].entranceInterior);
-		setPlayerDimension(client, getServerData().houses[houseId].entranceDimension);
-		setPlayerPosition(client, getServerData().houses[houseId].entrancePosition);
+		setPlayerInterior(client, serverData.houses[houseId].entranceInterior);
+		setPlayerDimension(client, serverData.houses[houseId].entranceDimension);
+		setPlayerPosition(client, serverData.houses[houseId].entrancePosition);
 	}
 }
 
 // ===========================================================================
 
-function setHouseDataIndexes() {
-	for (let i in getServerData().houses) {
-		getServerData().houses[i].index = i;
+function setAllHouseDataIndexes() {
+	for (let i in serverData.houses) {
+		serverData.houses[i].index = i;
 
-		//for(let j in getServerData().houses[i].locations) {
-		//	getServerData().houses[i].locations[j].index = j;
-		//	getServerData().houses[i].locations[j].houseIndex = i;
+		//for(let j in serverData.houses[i].locations) {
+		//	serverData.houses[i].locations[j].index = j;
+		//	serverData.houses[i].locations[j].houseIndex = i;
 		//}
 
-		//for(let j in getServerData().houses[i].gameScripts) {
-		//	getServerData().houses[i].gameScripts[j].index = j;
-		//	getServerData().houses[i].gameScripts[j].houseIndex = i;
+		//for(let j in serverData.houses[i].gameScripts) {
+		//	serverData.houses[i].gameScripts[j].index = j;
+		//	serverData.houses[i].gameScripts[j].houseIndex = i;
 		//}
 	}
 }
@@ -1602,27 +1645,21 @@ function setHouseDataIndexes() {
 // ===========================================================================
 
 function cacheAllHouseItems() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		cacheHouseItems(i);
 	}
 }
 
 // ===========================================================================
 
-function cacheHouseItems(houseId) {
-	getHouseData(houseId).itemCache = [];
-
-	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
-			getHouseData(houseId).itemCache.push(i);
-		}
-	}
+function cacheHouseItems(houseIndex) {
+	getHouseData(houseIndex).itemCache = serverData.items.filter(i => i.ownerType == V_ITEM_OWNER_HOUSE && i.ownerId == getHouseData(houseIndex).databaseId).map(filteredItem => filteredItem.index);
 }
 
 // ===========================================================================
 
-function getHouseIdFromDatabaseId(databaseId) {
-	let houses = getServerData().houses;
+function getHouseIndexFromDatabaseId(databaseId) {
+	let houses = serverData.houses;
 	for (let i in houses) {
 		if (houses[i].databaseId == databaseId) {
 			return i;
@@ -1700,25 +1737,25 @@ function canPlayerLockUnlockHouse(client, houseId) {
 // ===========================================================================
 
 function resetHousePickups(houseId) {
-	deleteHouseEntrancePickup(houseId);
-	deleteHouseExitPickup(houseId);
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+	despawnHouseEntrancePickup(houseId);
+	despawnHouseExitPickup(houseId);
+	spawnHouseEntrancePickup(houseId);
+	spawnHouseExitPickup(houseId);
 }
 
 // ===========================================================================
 
 function resetHouseBlips(houseId) {
-	deleteHouseEntranceBlip(houseId);
-	deleteHouseExitBlip(houseId);
-	createHouseEntranceBlip(houseId);
-	createHouseExitBlip(houseId);
+	despawnHouseEntranceBlip(houseId);
+	despawnHouseExitBlip(houseId);
+	spawnHouseEntranceBlip(houseId);
+	spawnHouseExitBlip(houseId);
 }
 
 // ===========================================================================
 
 function resetAllHousePickups() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		resetHousePickups(i);
 	}
 }
@@ -1726,7 +1763,7 @@ function resetAllHousePickups() {
 // ===========================================================================
 
 function resetAllHouseBlips() {
-	for (let i in getServerData().houses) {
+	for (let i in serverData.houses) {
 		resetHouseBlips(i);
 	}
 }
@@ -1762,13 +1799,13 @@ function canPlayerManageHouse(client, houseId) {
 
 function getHouseFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().houses) {
-			if (toLowerCase(getServerData().houses[i].description).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.houses) {
+			if (toLowerCase(serverData.houses[i].description).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().houses[params] != "undefined") {
+		if (typeof serverData.houses[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -1777,13 +1814,52 @@ function getHouseFromParams(params) {
 
 // ===========================================================================
 
-function updateHousePickupLabelData(houseId) {
-	if (!areServerElementsSupported() || getGame() == V_GAME_MAFIA_ONE || getGame() == V_GAME_GTA_IV) {
-		sendHouseToPlayer(null, houseId, getHouseData(houseId).description, getHouseData(houseId).entrancePosition, getHouseEntranceBlipModelForNetworkEvent(houseId), getHouseEntrancePickupModelForNetworkEvent(houseId), getHouseData(houseId).buyPrice, getHouseData(houseId).rentPrice, getHouseData(houseId).hasInterior, getHouseData(houseId).locked);
-		return false;
+function updateHousePickupLabelData(houseId, deleted = false) {
+	/** @type {HouseData} */
+	let houseData = false;
+
+	if (deleted == false) {
+		houseData = getHouseData(houseId);
 	}
 
-	let houseData = getHouseData(houseId);
+	if (!isGameFeatureSupported("serverElements") || getGame() == V_GAME_GTA_IV || (!isGameFeatureSupported("pickup") && !isGameFeatureSupported("blip"))) {
+		if (houseData == null) {
+			sendHouseToPlayer(
+				null,
+				houseId,
+				true,
+				"",
+				toVector3(0.0, 0.0, 0.0),
+				toVector3(0.0, 0.0, 0.0),
+				-1,
+				-1,
+				0,
+				0,
+				false,
+				V_PROPLABEL_INFO_NONE,
+				0,
+				0
+			);
+		} else {
+			sendHouseToPlayer(
+				null,
+				houseId,
+				false,
+				houseData.description,
+				houseData.entrancePosition,
+				houseData.exitPosition,
+				getHouseEntranceBlipModelForNetworkEvent(houseId),
+				getHouseEntrancePickupModelForNetworkEvent(houseId),
+				applyServerInflationMultiplier(houseData.buyPrice),
+				applyServerInflationMultiplier(houseData.rentPrice),
+				houseData.locked,
+				getHousePropertyInfoLabelType(houseId),
+				houseData.entranceDimension,
+				houseData.exitDimension,
+			);
+		}
+		return false;
+	}
 
 	if (houseData.entrancePickup != null) {
 		setEntityData(houseData.entrancePickup, "v.rp.owner.type", V_PICKUP_HOUSE_ENTRANCE, false);
@@ -1791,15 +1867,9 @@ function updateHousePickupLabelData(houseId) {
 		setEntityData(houseData.entrancePickup, "v.rp.label.type", V_LABEL_HOUSE, true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.name", houseData.description, true);
 		setEntityData(houseData.entrancePickup, "v.rp.label.locked", houseData.locked, true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.price", houseData.buyPrice, true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", houseData.rentPrice, true);
-		setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_ENTER, true);
-
-		if (houseData.buyPrice > 0) {
-			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_BUYHOUSE, true);
-		} else if (houseData.rentPrice > 0) {
-			setEntityData(houseData.entrancePickup, "v.rp.label.help", V_PROPLABEL_INFO_RENTHOUSE, true);
-		}
+		setEntityData(houseData.entrancePickup, "v.rp.label.price", applyServerInflationMultiplier(houseData.buyPrice), true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.rentprice", applyServerInflationMultiplier(houseData.rentPrice), true);
+		setEntityData(houseData.entrancePickup, "v.rp.label.help", getHousePropertyInfoLabelType(houseId), true);
 	}
 
 	if (houseData.exitPickup != null) {
@@ -1812,47 +1882,47 @@ function updateHousePickupLabelData(houseId) {
 // ===========================================================================
 
 function deleteAllHouseBlips() {
-	for (let i in getServerData().houses) {
-		deleteHouseEntranceBlip(i);
-		deleteHouseExitBlip(i);
+	for (let i in serverData.houses) {
+		despawnHouseEntranceBlip(i);
+		despawnHouseExitBlip(i);
 	}
 }
 
 // ===========================================================================
 
 function deleteAllHousePickups() {
-	for (let i in getServerData().houses) {
-		deleteHouseEntrancePickup(i);
-		deleteHouseExitPickup(i);
+	for (let i in serverData.houses) {
+		despawnHouseEntrancePickup(i);
+		despawnHouseExitPickup(i);
 	}
 }
 
 // ===========================================================================
 
-function createHouseBlips(houseId) {
-	createHouseEntranceBlip(houseId);
-	createHouseExitBlip(houseId);
+function spawnHouseBlips(houseId) {
+	spawnHouseEntranceBlip(houseId);
+	spawnHouseExitBlip(houseId);
 }
 
 // ===========================================================================
 
-function createHousePickups(houseId) {
-	createHouseEntrancePickup(houseId);
-	createHouseExitPickup(houseId);
+function spawnHousePickups(houseId) {
+	spawnHouseEntrancePickup(houseId);
+	spawnHouseExitPickup(houseId);
 }
 
 // ===========================================================================
 
 /**
- * Gets whether or not a client is in a business
+ * Gets whether or not a client is in a house
  *
- * @param {Client} client - The client to check whether or not is in a business
- * @return {Boolean} Whether or not the client is in a business
+ * @param {Client} client - The client to check whether or not is in a house
+ * @return {Boolean} Whether or not the client is in a house
  *
  */
 function isPlayerInAnyHouse(client) {
-	for (let i in getServerData().houses) {
-		if (getServerData().houses[i].hasInterior && getServerData().houses[i].exitDimension == getPlayerDimension(client)) {
+	for (let i in serverData.houses) {
+		if (serverData.houses[i].hasInterior && serverData.houses[i].exitDimension == getPlayerDimension(client)) {
 			return i;
 		}
 	}
@@ -1865,7 +1935,7 @@ function isPlayerInAnyHouse(client) {
 function getHouseEntranceBlipModelForNetworkEvent(houseIndex) {
 	let blipModelId = -1;
 	if (isGameFeatureSupported("blip")) {
-		blipModelId = getGameConfig().blipSprites[getGame()].House;
+		blipModelId = gameData.blipSprites[getGame()].House;
 
 		if (getHouseData(houseIndex).entranceBlipModel != 0) {
 			blipModelId = getHouseData(houseIndex).entranceBlipModel;
@@ -1880,7 +1950,7 @@ function getHouseEntranceBlipModelForNetworkEvent(houseIndex) {
 function getHouseEntrancePickupModelForNetworkEvent(houseIndex) {
 	let pickupModelId = -1;
 	if (isGameFeatureSupported("pickup")) {
-		pickupModelId = getGameConfig().pickupModels[getGame()].House;
+		pickupModelId = gameData.pickupModels[getGame()].House;
 
 		if (getHouseData(houseIndex).entrancePickupModel != 0) {
 			pickupModelId = getHouseData(houseIndex).entrancePickupModel;
@@ -1888,6 +1958,150 @@ function getHouseEntrancePickupModelForNetworkEvent(houseIndex) {
 	}
 
 	return pickupModelId;
+}
+
+// ===========================================================================
+
+function getNearbyHousesCommand(command, params, client) {
+	let distance = 10.0;
+
+	if (!areParamsEmpty(params)) {
+		distance = getParam(params, " ", 1);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, "The distance must be a number!");
+		return false;
+	}
+
+	distance = toFloat(distance);
+
+	if (distance <= 0) {
+		messagePlayerError(client, "The distance must be more than 0!");
+		return false;
+	}
+
+	let nearbyHouses = getHousesInRange(getPlayerPosition(client), distance);
+
+	if (nearbyHouses.length == 0) {
+		messagePlayerAlert(client, getLocaleString(client, "NoHousesWithinRange", distance));
+		return false;
+	}
+
+	let houseList = nearbyHouses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${toFloat(getDistance(getPlayerPosition(client), x.entrancePosition)).toFixed(2)} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderHouseInRangeList", `${distance} ${toLowerCase(getLocaleString(client, "Meters"))}`)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function getHousesInRange(position, distance) {
+	return serverData.houses.filter((house) => getDistance(position, house.entrancePosition) <= distance);
+}
+
+// ===========================================================================
+
+function getHousePropertyInfoLabelType(houseIndex) {
+	if (getHouseData(houseIndex) == null) {
+		return V_PROPLABEL_INFO_NONE;
+	}
+
+	switch (getHouseData(houseIndex).labelHelpType) {
+		case V_PROPLABEL_INFO_ENTER:
+			return V_PROPLABEL_INFO_ENTER;
+
+		default:
+			if (getHouseData(houseIndex).buyPrice > 0) {
+				return V_PROPLABEL_INFO_BUYHOUSE;
+			}
+
+			if (getHouseData(houseIndex).rentPrice > 0) {
+				return V_PROPLABEL_INFO_RENTHOUSE;
+			}
+
+			if (getHouseData(houseIndex).hasInterior) {
+				return V_PROPLABEL_INFO_ENTER;
+			}
+			break;
+	}
+
+	return V_PROPLABEL_INFO_NONE;
+}
+
+// ===========================================================================
+
+function listPersonalHousesCommand(command, params, client) {
+	let houses = getAllHousesOwnedByPlayer(client);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderPlayerHousesList", getCharacterFullName(client))));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listClanHousesCommand(command, params, client) {
+	let clanIndex = getPlayerClan(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
+		clanIndex = getClanFromParams(params);
+	}
+
+	if (getClanData(clanIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let houses = getAllHousesOwnedByClan(jobIndex);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanHousesList", getClanData(clanIndex).name)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function listJobHousesCommand(command, params, client) {
+	let jobIndex = getPlayerJob(client);
+
+	if (!areParamsEmpty(params) && doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageHouses"))) {
+		jobIndex = getJobFromParams(params);
+	}
+
+	if (getJobData(jobIndex) == false) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let houses = getAllHousesOwnedByJob(jobIndex);
+
+	let houseList = houses.map(function (x) {
+		return `{chatBoxListIndex}${x.index}/${x.databaseId}: {MAINCOLOUR}${x.description} {mediumGrey}(${Math.round(getDistance(getPlayerPosition(client), x.entrancePosition))} ${toLowerCase(getLocaleString(client, "Meters"))} ${toLowerCase(getGroupedLocaleString(client, "CardinalDirections", getCardinalDirectionName(getCardinalDirection(getPlayerPosition(client), x.entrancePosition))))})`;
+	});
+	let chunkedList = splitArrayIntoChunks(houseList, 4);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderJobHousesList", getJobData(jobIndex).name)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
 }
 
 // ===========================================================================

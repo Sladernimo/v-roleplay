@@ -15,30 +15,37 @@
 class ClanData {
 	constructor(dbAssoc = false) {
 		this.databaseId = 0;
+		this.serverId = 0;
 		this.name = "";
 		this.ownerId = 0;
-		this.tag = "";
 		this.enabled = false;
 		this.index = -1;
 		this.colour = COLOUR_WHITE;
 		this.colours = [];
-		this.initialRank = 0;
-		this.members = [];
-		this.ranks = [];
 		this.needsSaved = false;
-		this.motd = false;
+		this.motd = "";
+		this.discordWebhookURL = ""; // For clan webhooks if they have their own discord server
+		this.discordWebhookFlags = 0; // What to send to the clan discord's webhooks
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+		this.bank = 0;
+
+		/** @type {Array.<ClanRankData>} */
+		this.ranks = [];
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_id"]);
 			this.name = dbAssoc["clan_name"];
-			this.owner = toInteger(dbAssoc["clan_owner"]);
-			this.tag = dbAssoc["clan_tag"];
+			this.ownerId = toInteger(dbAssoc["clan_owner"]);
 			this.enabled = intToBool(toInteger(dbAssoc["clan_enabled"]));
 			this.colour = toColour(toInteger(dbAssoc["clan_col_r"]), toInteger(dbAssoc["clan_col_g"]), toInteger(dbAssoc["clan_col_b"]));
 			this.colours = [toInteger(dbAssoc["clan_col_r"]), toInteger(dbAssoc["clan_col_g"]), toInteger(dbAssoc["clan_col_b"])];
 			this.motd = toString(dbAssoc["clan_motd"]);
 			this.discordWebhookURL = toString(dbAssoc["clan_discord_webhook_url"]);
 			this.discordWebhookFlags = toInteger(dbAssoc["clan_discord_webhook_flags"]);
+			this.whoAdded = toInteger(dbAssoc["clan_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["clan_when_added"]);
+			this.bank = toInteger(dbAssoc["clan_bank"]);
 		}
 	}
 };
@@ -55,11 +62,13 @@ class ClanRankData {
 		this.name = "";
 		this.level = 0;
 		this.flags = 0;
-		this.customTag = "";
 		this.enabled = true;
 		this.index = -1;
 		this.clanIndex = -1;
 		this.needsSaved = false;
+		this.whoAdded = 0;
+		this.whenAdded = 0;
+		this.pay = 0;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["clan_rank_id"]);
@@ -67,41 +76,10 @@ class ClanRankData {
 			this.name = dbAssoc["clan_rank_name"];
 			this.level = toInteger(dbAssoc["clan_rank_level"]);
 			this.flags = toInteger(dbAssoc["clan_rank_flags"]);
-			this.tag = dbAssoc["clan_rank_tag"];
 			this.enabled = intToBool(toInteger(dbAssoc["clan_rank_enabled"]));
-		}
-	}
-};
-
-// ===========================================================================
-
-/**
- * @class Representing a clan member's data. Loaded and saved in the database
- */
-class ClanMemberData {
-	constructor(dbAssoc = false) {
-		this.databaseId = 0;
-		this.clan = 0;
-		this.subAccount = 0;
-		this.flags = 0;
-		this.customTitle = "";
-		this.customTag = "";
-		this.rank = 0;
-		this.enabled = false;
-		this.index = -1;
-		this.clanIndex = -1;
-		this.rankIndex = -1;
-		this.needsSaved = false;
-
-		if (dbAssoc) {
-			this.databaseId = toInteger(dbAssoc["clan_member_id"]);
-			this.subAccount = toInteger(dbAssoc["clan_member_sacct"]);
-			this.clan = toInteger(dbAssoc["clan_member_clan"]);
-			this.name = dbAssoc["clan_member_name"];
-			this.rank = toInteger(dbAssoc["clan_member_rank"]);
-			this.flags = toInteger(dbAssoc["clan_member_flags"]);
-			this.customTag = dbAssoc["clan_member_tag"];
-			this.customTitle = dbAssoc["clan_member_title"];
+			this.whoAdded = toInteger(dbAssoc["clan_rank_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["clan_rank_when_added"]);
+			this.pay = toInteger(dbAssoc["clan_rank_pay"]);
 		}
 	}
 };
@@ -129,104 +107,79 @@ function loadClansFromDatabase() {
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempClanData = new ClanData(dbAssoc[i]);
-				//tempClanData.members = loadClanMembersFromDatabase(tempClanData.databaseId);
 				tempClanData.ranks = loadClanRanksFromDatabase(tempClanData.databaseId);
 				tempClans.push(tempClanData);
-				logToConsole(LOG_DEBUG, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
-	return tempClans;
-}
-
-// ===========================================================================
-
-function loadClanMembersFromDatabase() {
-	logToConsole(LOG_INFO, "[V.RP.Clan]: Loading clans from database ...");
-
-	let tempClans = [];
-	let dbConnection = connectToDatabase();
-	let dbAssoc = [];
-
-	if (dbConnection) {
-		let dbQueryString = `SELECT * FROM clan_main WHERE clan_deleted = 0 AND clan_server = ${getServerId()}`;
-		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
-		if (dbAssoc.length > 0) {
-			for (let i in dbAssoc) {
-				let tempClanData = new ClanData(dbAssoc[i]);
-				tempClans.push(tempClanData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan '${tempClanData.name}' loaded from database successfully!`);
-			}
-		}
-		disconnectFromDatabase(dbConnection);
-	}
-
-	logToConsole(LOG_INFO, `[AGRP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Clan]: ${tempClans.length} clans loaded from database successfully!`);
 	return tempClans;
 }
 
 // ===========================================================================
 
 function loadClanRanksFromDatabase(clanDatabaseId) {
-	logToConsole(LOG_INFO, `[AGRP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
+	logToConsole(LOG_INFO, `[V.RP.Clan]: Loading ranks for clan ${clanDatabaseId} from database ...`);
 
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 	let tempClanRanks = [];
 
 	if (dbConnection) {
-		let dbQueryString = `SELECT * FROM clan_rank WHERE clan_rank_clan = ${clanDatabaseId}`;
+		let dbQueryString = `SELECT * FROM clan_rank WHERE clan_rank_deleted = 0 AND clan_rank_clan = ${clanDatabaseId}`;
 		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 		if (dbAssoc.length > 0) {
 			for (let i in dbAssoc) {
 				let tempClanRankData = new ClanRankData(dbAssoc[i]);
 				tempClanRanks.push(tempClanRankData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Clan]: Clan rank '${tempClanRankData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Clan]: Loaded ranks for clan ${clanDatabaseId} from database successfully!`);
 	return tempClanRanks;
 }
 
 // ===========================================================================
 
-function createClanRank(clanId, rankId, rankName) {
+function createClanRank(clanIndex, level, rankName, whoAdded = defaultNoAccountId) {
 	let tempClanRankData = new ClanRankData(false);
-	tempClanRankData.level = rankId;
+	tempClanRankData.level = level;
 	tempClanRankData.name = rankName;
-	tempClanRankData.clan = getClanData(clanId).databaseId;
-	tempClanRankData.clanIndex = clanId;
+	tempClanRankData.clan = getClanData(clanIndex).databaseId;
+	tempClanRankData.clanIndex = clanIndex;
+	tempClanRankData.whoAdded = whoAdded;
+	tempClanRankData.enabled = true;
 	tempClanRankData.needsSaved = true;
 
-	let rankIndex = getClanData(clanId).ranks.push(tempClanRankData);
+	let rankIndex = getClanData(clanIndex).ranks.push(tempClanRankData);
 	setAllClanDataIndexes();
 
-	saveClanRanksToDatabase(clanId);
+	saveClanRanksToDatabase(clanIndex);
 	return rankIndex;
 }
 
 // ===========================================================================
 
-function removeClanRank(clanId, rankId) {
-	let tempClanRankData = getClanRankData(clanId, rankId);
+function deleteClanRank(clanIndex, rankIndex, whoDeleted = defaultNoAccountId) {
+	let tempClanRankData = getClanRankData(clanIndex, rankIndex);
 	if (!tempClanRankData) {
 		return false;
 	}
 
-	quickDatabaseQuery(`UPDATE clan_rank SET clan_rank_deleted = 1, clan_rank_when_deleted = UNIX_TIMESTAMP(), clan_rank_who_deleted = ${getPlayerData(client).accountData.databaseId} WHERE biz_id ${tempClanRankData.database}`);
-	getClanData(clanId).ranks.splice(tempClanRankData.index, 1);
+	quickDatabaseQuery(`UPDATE clan_rank SET clan_rank_deleted = 1, clan_rank_when_deleted = UNIX_TIMESTAMP(), clan_rank_who_deleted = ${whoDeleted} WHERE clan_rank_id = ${tempClanRankData.databaseId}`);
+	getClanData(clanIndex).ranks.splice(tempClanRankData.index, 1);
 }
 
 // ===========================================================================
 
 function listClansCommand(command, params, client) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 
 	if (!areParamsEmpty(params)) {
 		clans = clans.filter(clan => toLowerCase(clan.name).indexOf(toLowerCase(params)) != -1);
@@ -247,24 +200,24 @@ function listClansCommand(command, params, client) {
 // ===========================================================================
 
 function listClanRanksCommand(command, params, client) {
-	let clanId = getPlayerClan(client);
+	let clanIndex = getPlayerClan(client);
 
 	if (!areParamsEmpty(params)) {
-		if (doesPlayerHaveStaffPermission(client, "ManageClans")) {
-			clanId = getClanFromParams(params);
+		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			clanIndex = getClanFromParams(params);
 		}
 	}
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	let rankNameList = getClanData(clanId).ranks.map((clanRank) => { return `[${clanRank.level}] ${clanRank.name}`; });
+	let rankNameList = getClanData(clanIndex).ranks.map((clanRank) => { return `[${clanRank.level}] ${clanRank.name}`; });
 
 	let chunkedList = splitArrayIntoChunks(rankNameList, 5);
 
-	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanRanksList")));
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanRanksList", getClanData(clanIndex).name)));
 
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
@@ -285,7 +238,7 @@ function createClanCommand(command, params, client) {
 	}
 
 	// Create clan without owner. Can set owner with /clanowner afterward
-	createClan(params);
+	createClan(params, getPlayerData(client).accountData.databaseId);
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} created clan {clanOrange}${params}`);
 }
 
@@ -297,22 +250,22 @@ function deleteClanCommand(command, params, client) {
 		return false;
 	}
 
-	let clanId = getClanFromParams(params);
+	let clanIndex = getClanFromParams(params);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}deleted clan {clanOrange}${getClanData(clanId).name}`);
-	deleteClan(clanId, getPlayerData(client).accountData.databaseId);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} deleted clan {clanOrange}${getClanData(clanIndex).name}`);
+	deleteClan(clanIndex, getPlayerData(client).accountData.databaseId);
 }
 
 // ===========================================================================
 
 function setClanOwnerCommand(command, params, client) {
-	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("owner"))) {
-		messagePlayerError(client, "You must be the clan owner to use this command!");
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("Owner"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -321,38 +274,39 @@ function setClanOwnerCommand(command, params, client) {
 		return false;
 	}
 
-	let clanIndex = getClanFromParams(getParam(params, " ", 1));
-	let targetClient = getPlayerFromParams(getParam(params, " ", 2));
+	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
+	let clanIndex = getClanFromParams(getParam(params, " ", 2));
 
 	if (!targetClient) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	if (!getClanData(clanIndex)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	getClanData(clanIndex).owner = getPlayerCurrentSubAccount(targetClient).databaseId;
-	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
-	getPlayerCurrentSubAccount(targetClient).clanRank = getHighestClanRank(clanIndex);
-	getPlayerCurrentSubAccount(targetClient).clanIndex = getClanIndexFromDatabaseId(clanIndex)
-	getPlayerCurrentSubAccount(targetClient).clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, getPlayerCurrentSubAccount(targetClient).clanRank);
-	getClanData(clanIndex).needsSaved = true;
-
-	getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
-	getPlayerCurrentSubAccount(targetClient).clanFlags = getClanFlagValue("All");
-
-	//messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set clan {clanOrange}${getClanData(clanIndex).name} {MAINCOLOUR}owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
-	messagePlayerSuccess(client, `You changed the clan owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+		let highestRankIndex = getHighestClanRank(clanIndex);
+		getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
+		getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
+		getPlayerCurrentSubAccount(targetClient).clanIndex = clanIndex;
+		getPlayerCurrentSubAccount(targetClient).clanRank = getClanRankData(clanIndex, highestRankIndex).databaseId;
+		getPlayerCurrentSubAccount(targetClient).clanRankIndex = highestRankIndex;
+		getClanData(clanIndex).needsSaved = true;
+		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} changed clan {clanOrange}${getClanData(clanIndex).name}'s{MAINCOLOUR} owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
+	} else {
+		showPlayerPrompt(targetClient, getLocaleString(targetClient, "ClanOwnershipTransferRequest", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{clanOrange}${getClanData(clanIndex).name}{MAINCOLOUR}`), getLocaleString(targetClient, "GUIAlertTitle"), getLocaleString(targetClient, "Yes"), getLocaleString(targetClient, "No"));
+		messagePlayerAlert(client, getLocaleString(client, "ClanOwnershipTransferSent", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	}
 }
 
 // ===========================================================================
 
 function setClanTagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ClanTag"))) {
-		messagePlayerError(client, "You can not change the clan tag!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -363,7 +317,7 @@ function setClanTagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -379,7 +333,7 @@ function setClanTagCommand(command, params, client) {
 
 function setClanNameCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ClanName"))) {
-		messagePlayerError(client, "You can not change the clan name!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -390,7 +344,7 @@ function setClanNameCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -406,7 +360,7 @@ function setClanNameCommand(command, params, client) {
 
 function setClanMOTDCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ClanMOTD"))) {
-		messagePlayerError(client, "You can not change the clan MOTD!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -417,7 +371,7 @@ function setClanMOTDCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -433,7 +387,7 @@ function setClanMOTDCommand(command, params, client) {
 
 function setClanDiscordWebhookCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ClanDiscordWebhook"))) {
-		messagePlayerError(client, "You can not change the clan discord webhook!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -444,7 +398,7 @@ function setClanDiscordWebhookCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -460,7 +414,7 @@ function setClanDiscordWebhookCommand(command, params, client) {
 
 function createClanRankCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can not add new clan ranks!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -469,28 +423,42 @@ function createClanRankCommand(command, params, client) {
 		return false;
 	}
 
+	if (!areThereEnoughParams(params, 2, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
 	let splitParams = params.split(" ");
-	let rankId = toInteger(getParam(params, " ", 1));
-	let rankName = splitParams.slice(-1).join(" ");
+	let rankName = splitParams.slice(0, -1).join(" ");
+	let level = splitParams.slice(-1);
 
-	let rankIndex = createClanRank(clanId, rankId, rankName);
+	if (isNaN(level)) {
+		messagePlayerError(client, getLocaleString(client, "RankLevelMustBeNumber"));
+		return false;
+	}
 
-	messagePlayerSuccess(client, `You added the {ALTCOLOUR}${rankName} {MAINCOLOUR}rank (Level {ALTCOLOUR}${rankId}`);
-	messagePlayerSuccess(client, `Use {ALTCOLOUR}/clanaddrankflag ${rankName} <clan flag name> {MAINCOLOUR} to add permission flags to this rank.`);
+	if (level < 0 || level >= 65535) {
+		messagePlayerError(client, getLocaleString(client, "RankLevelMustBeBetween", `{ALTCOLOUR}0{MAINCOLOUR}`, `{ALTCOLOUR}65535{MAINCOLOUR}`));
+	}
+
+	let rankIndex = createClanRank(clanId, level, rankName);
+
+	messagePlayerSuccess(client, `You added the {ALTCOLOUR}${rankName}{MAINCOLOUR} rank (Level {ALTCOLOUR}${level})`);
+	messagePlayerSuccess(client, `Use {ALTCOLOUR}/clanaddrankflag ${rankName} <clan flag name>{MAINCOLOUR} to add permission flags to this rank.`);
 }
 
 // ===========================================================================
 
 function deleteClanRankCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can not remove clan ranks!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -499,23 +467,23 @@ function deleteClanRankCommand(command, params, client) {
 		return false;
 	}
 
-	let clanId = getPlayerClan(client);
+	let clanIndex = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
 
-	let rankId = getClanRankFromParams(clanId, params);
-	let tempRankName = getClanRankData(clanId, rankId);
+	let rankIndex = getClanRankFromParams(clanIndex, params);
+	let tempRankName = getClanRankData(clanIndex, rankIndex);
 
-	if (!getClanRankData(clanId, rankId)) {
+	if (!getClanRankData(clanIndex, rankIndex)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
 		return false;
 	}
 
-	removeClanRank(clanId, rankId);
-	getClanData(clanId).needsSaved = true;
+	deleteClanRank(clanIndex, rankIndex, getPlayerData(client).accountData.databaseId);
+	getClanData(clanIndex).needsSaved = true;
 
 	messagePlayerSuccess(client, `You removed the {ALTCOLOUR}${tempRankName}{MAINCOLOUR} rank`);
 }
@@ -524,7 +492,7 @@ function deleteClanRankCommand(command, params, client) {
 
 function setClanMemberTagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("manageMembers"))) {
-		messagePlayerError(client, "You can not change clan member's tags!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -548,13 +516,13 @@ function setClanMemberTagCommand(command, params, client) {
 	}
 
 	if (!doesPlayerHaveStaffPermission("ManageClans") && !doesPlayerHaveClanPermission("memberFlags")) {
-		messagePlayerError(client, "You cannot set clan member flags!");
+		messagePlayerError(client, getLocaleString(client, "CantChangeRank"));
 		return false;
 	}
 
-	if (getPlayerClanRank(client) <= getPlayerClanRank(targetClient)) {
-		if (!doesPlayerHaveStaffPermission("ManageClans")) {
-			messagePlayerError(client, "You cannot set that clan member's flags!");
+	if (getClanRankData(clanId, rankId).level > getClanRankData(clanId, getPlayerClanRank(client)).level) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			messagePlayerError(client, getLocaleString(client, "CantChangeRank"));
 			return false;
 		}
 	}
@@ -569,7 +537,7 @@ function setClanMemberTagCommand(command, params, client) {
 
 function setClanRankTagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can't change any clan ranks's tag!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -589,7 +557,7 @@ function setClanRankTagCommand(command, params, client) {
 
 	if (getClanRankData(clanId, rankId).level > getClanRankData(clanId, getPlayerClanRank(client)).level) {
 		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
-			messagePlayerError(client, "You can't change this rank's tag (it's a higher rank than yours)");
+			messagePlayerError(client, getLocaleString(client, "CantChangeRank"));
 			return false;
 		}
 	}
@@ -602,7 +570,7 @@ function setClanRankTagCommand(command, params, client) {
 
 function setClanRankLevelCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can't change any clan rank's level!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -613,7 +581,7 @@ function setClanRankLevelCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -629,30 +597,32 @@ function setClanRankLevelCommand(command, params, client) {
 
 	if (getClanRankData(clanId, rankId).level > getClanRankData(clanId, getPlayerClanRank(client)).level) {
 		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
-			messagePlayerError(client, "You can't change this rank's level (it's a higher rank than yours)");
+			messagePlayerError(client, getLocaleString(client, "CantChangeRank"));
 			return false;
 		}
 	}
 
 	if (isNaN(newLevel)) {
-		messagePlayerError(client, "The level must be a number!");
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
 		return false;
 	}
 
 	if (toInteger(newLevel) < 0) {
-		messagePlayerError(client, "The level must be 0 or higher (no negative numbers)!");
+		messagePlayerError(client, getLocaleString(client, "CantUseNegativeNumber"));
 		return false;
 	}
 
 	getClanRankData(clanId, rankId).level = toInteger(newLevel);
 	getClanRankData(clanId, rankId).needsSaved = true;
+
+	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getClanRankData(clanId, rankId).name}'s{MAINCOLOUR} level to {ALTCOLOUR}${newLevel}`);
 }
 
 // ===========================================================================
 
-function addClanMemberFlagCommand(command, params, client) {
-	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("manageMembers"))) {
-		messagePlayerError(client, "You can't change clan member's permissions!");
+function setClanRankPayCommand(command, params, client) {
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks")) || !doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBank"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -663,7 +633,59 @@ function addClanMemberFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let rankId = getClanRankFromParams(clanId, splitParams.slice(0, -1));
+	let newPay = splitParams.slice(-1);
+
+	if (!getClanRankData(clanId, rankId)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
+		return false;
+	}
+
+	if (getClanRankData(clanId, rankId).level > getClanRankData(clanId, getPlayerClanRank(client)).level) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			messagePlayerError(client, getLocaleString(client, "CantChangeRank"));
+			return false;
+		}
+	}
+
+	if (isNaN(newPay)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	if (toInteger(newPay) < 0) {
+		messagePlayerError(client, getLocaleString(client, "CantUseNegativeNumber"));
+		return false;
+	}
+
+	getClanRankData(clanId, rankId).pay = toInteger(newPay);
+	getClanRankData(clanId, rankId).needsSaved = true;
+
+	messagePlayerSuccess(client, `You set {ALTCOLOUR}${getClanRankData(clanId, rankId).name}'s{MAINCOLOUR} pay to {ALTCOLOUR}${getCurrencyString(newLevel)}`);
+}
+
+// ===========================================================================
+
+function addClanMemberFlagCommand(command, params, client) {
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("manageMembers"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let clanId = getPlayerClan(client);
+
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -677,7 +699,7 @@ function addClanMemberFlagCommand(command, params, client) {
 
 	if (!arePlayersInSameClan(client, targetClient)) {
 		if (!doesPlayerHaveStaffPermission("ManageClans")) {
-			messagePlayerError(client, "That player is not in your clan!");
+			messagePlayerError(client, getLocaleString(client, "ClanPlayerNotInSameClan"));
 			return false;
 		}
 	}
@@ -710,7 +732,7 @@ function addClanMemberFlagCommand(command, params, client) {
 
 function removeClanMemberFlagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("manageMembers"))) {
-		messagePlayerError(client, "You can't change clan member's permissions!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -721,7 +743,7 @@ function removeClanMemberFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -735,7 +757,7 @@ function removeClanMemberFlagCommand(command, params, client) {
 
 	if (!arePlayersInSameClan(client, targetClient)) {
 		if (!doesPlayerHaveStaffPermission("ManageClans")) {
-			messagePlayerError(client, "That player is not in your clan!");
+			messagePlayerError(client, getLocaleString(client, "ClanPlayerNotInSameClan"));
 			return false;
 		}
 	}
@@ -768,7 +790,7 @@ function removeClanMemberFlagCommand(command, params, client) {
 
 function addClanRankFlagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can not change a clan rank's permissions!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -779,7 +801,7 @@ function addClanRankFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -809,7 +831,7 @@ function addClanRankFlagCommand(command, params, client) {
 
 function removeClanRankFlagCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can not change a clan rank's permissions!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -820,7 +842,7 @@ function removeClanRankFlagCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -850,7 +872,7 @@ function removeClanRankFlagCommand(command, params, client) {
 
 function showClanRankFlagsCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
-		messagePlayerError(client, "You can not change a clan rank's permissions!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -861,7 +883,7 @@ function showClanRankFlagsCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -894,9 +916,47 @@ function showClanRankFlagsCommand(command, params, client) {
 
 // ===========================================================================
 
+function showClanMembersCommand(command, params, client) {
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("RemoveMember"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	let clanIndex = getPlayerClan(client);
+
+	if (getClanData(clanIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let clanMembers = loadClanMembersFromDatabase(getClanData(clanIndex).databaseId);
+
+	// Need to check why this isn't sorting properly
+	//let memberList = clanMembers.sort((m1, m2) => {
+	//	getClanRankData(clanIndex, m1.clanRankIndex).level - getClanRankData(clanIndex, m2.clanRankIndex).level;
+	//}).map((member) => {
+
+	let memberList = clanMembers.map((member) => {
+		if (isSubAccountOnline(member.databaseId)) {
+			return `{clanOrange}[${getClanRankData(clanIndex, getClanRankIndexFromDatabaseId(clanIndex, member.clanRank)).name}] {MAINCOLOUR}${member.firstName} ${member.lastName}`;
+		} else {
+			return `{clanOrange}[${getClanRankData(clanIndex, getClanRankIndexFromDatabaseId(clanIndex, member.clanRank)).name}] {ALTCOLOUR}${member.firstName} ${member.lastName}{MAINCOLOUR}`;
+		}
+	});
+
+	let chunkedList = splitArrayIntoChunks(memberList, 5);
+
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderClanMemberList", getClanData(clanIndex).name)));
+	for (let i in chunkedList) {
+		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
 function setClanMemberTitleCommand(command, params, client) {
-	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("manageMembers"))) {
-		messagePlayerError(client, "You can not change a clan member's title!");
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageMembers"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -907,7 +967,7 @@ function setClanMemberTitleCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -920,14 +980,14 @@ function setClanMemberTitleCommand(command, params, client) {
 	}
 
 	if (!arePlayersInSameClan(client, targetClient)) {
-		if (!doesPlayerHaveStaffPermission(client, "ManageClans")) {
-			messagePlayerError(client, "That player is not in your clan!");
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			messagePlayerError(client, getLocaleString(client, "ClanPlayerNotInSameClan"));
 			return false;
 		}
 	}
 
 	if (getPlayerClanRank(client) <= getPlayerClanRank(targetClient)) {
-		if (!doesPlayerHaveStaffPermission(client, "ManageClans")) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 			messagePlayerError(client, "You cannot set that clan member's custom title!");
 			return false;
 		}
@@ -941,8 +1001,8 @@ function setClanMemberTitleCommand(command, params, client) {
 // ===========================================================================
 
 function setClanRankTitleCommand(command, params, client) {
-	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("rankTitle"))) {
-		messagePlayerError(client, "You can not change your clan's rank titles!");
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("ManageRanks"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -953,7 +1013,7 @@ function setClanRankTitleCommand(command, params, client) {
 
 	let clanIndex = getPlayerClan(client);
 
-	if (!getClanData(clanIndex)) {
+	if (getClanData(clanIndex) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -977,7 +1037,7 @@ function setClanRankTitleCommand(command, params, client) {
 
 function setClanMemberRankCommand(command, params, client) {
 	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("MemberRank"))) {
-		messagePlayerError(client, "You can not change a clan member's rank!");
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 		return false;
 	}
 
@@ -988,7 +1048,7 @@ function setClanMemberRankCommand(command, params, client) {
 
 	let clanId = getPlayerClan(client);
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -1008,21 +1068,21 @@ function setClanMemberRankCommand(command, params, client) {
 	}
 
 	if (!arePlayersInSameClan(client, targetClient)) {
-		if (!doesPlayerHaveStaffPermission(client, "ManageClans")) {
-			messagePlayerError(client, "That player is not in your clan!");
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
+			messagePlayerError(client, getLocaleString(client, "ClanPlayerNotInSameClan"));
 			return false;
 		}
 	}
 
 	if (getPlayerClanRank(client) <= getPlayerClanRank(targetClient)) {
-		if (!doesPlayerHaveStaffPermission(client, "ManageClans")) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 			messagePlayerError(client, "You cannot set that clan member's rank!");
 			return false;
 		}
 	}
 
 	if (getPlayerClanRank(client) <= getPlayerClanRank(targetClient)) {
-		if (!doesPlayerHaveStaffPermission(client, "ManageClans")) {
+		if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 			messagePlayerError(client, "You can't set a member's rank that high!");
 			return false;
 		}
@@ -1036,20 +1096,39 @@ function setClanMemberRankCommand(command, params, client) {
 
 // ===========================================================================
 
-function createClan(name) {
+function createClan(name, whoAdded = defaultNoAccountId) {
 	let dbConnection = connectToDatabase();
-	let escapedName = name;
 
 	if (dbConnection) {
-		escapedName = escapeDatabaseString(dbConnection, escapedName)
-		queryDatabase(dbConnection, `INSERT INTO clan_main (clan_server, clan_name) VALUES (${getServerId()}, '${escapedName}')`);
+		//escapedName = escapeDatabaseString(dbConnection, escapedName)
+		//queryDatabase(dbConnection, `INSERT INTO clan_main (clan_server, clan_name) VALUES (${getServerId()}, '${escapedName}')`);
 
 		let tempClan = new ClanData(false);
-		tempClan.databaseId = getDatabaseInsertId(dbConnection);
+		tempClan.databaseId = 0;
+		tempClan.serverId = getServerId();
 		tempClan.name = name;
-		getServerData().clans.push(tempClan);
+		tempClan.needsSaved = true;
+		tempClan.whoAdded = whoAdded;
+		tempClan.whenAdded = getCurrentUnixTimestamp();
+		tempClan.ownerId = 0;
+		tempClan.enabled = true;
+
+		let tempClanRankData = new ClanRankData(false);
+		tempClanRankData.databaseId = 0;
+		tempClanRankData.level = 1;
+		tempClanRankData.name = "Default Rank";
+		tempClanRankData.clan = 0;
+		tempClanRankData.clanIndex = -1;
+		tempClanRankData.needsSaved = true;
+		tempClanRankData.whoAdded = whoAdded;
+		tempClanRankData.whenAdded = getCurrentUnixTimestamp();
+		tempClanRankData.enabled = true;
+		tempClan.ranks.push(tempClanRankData);
+
+		serverData.clans.push(tempClan);
 
 		setAllClanDataIndexes();
+		saveAllClansToDatabase();
 	}
 	return true;
 }
@@ -1059,7 +1138,7 @@ function createClan(name) {
 function deleteClan(clanId, whoDeleted = 0) {
 	//saveAllClansToDatabase();
 
-	if (getClanData(clanId) == false) {
+	if (getClanData(clanId) == null) {
 		return false;
 	}
 
@@ -1084,20 +1163,20 @@ function deleteClan(clanId, whoDeleted = 0) {
  */
 function getClanData(clanId) {
 	if (clanId == -1) {
-		return false;
+		return null;
 	}
 
-	if (typeof getServerData().clans[clanId] != null) {
-		return getServerData().clans[clanId];
+	if (typeof serverData.clans[clanId] != "undefined") {
+		return serverData.clans[clanId];
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
 
 function doesClanNameExist(name) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 	for (let i in clans) {
 		if (clans[i].name == name) {
 			return true;
@@ -1110,7 +1189,7 @@ function doesClanNameExist(name) {
 // ===========================================================================
 
 function doesClanIdExist(clanId) {
-	let clans = getServerData().clans;
+	let clans = serverData.clans;
 	for (let i in clans) {
 		if (clans[i].databaseId == clanId) {
 			return true;
@@ -1123,79 +1202,86 @@ function doesClanIdExist(clanId) {
 // ===========================================================================
 
 function reloadAllClans() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	getServerData().clans = loadClansFromDatabase();
+	serverData.clans = loadClansFromDatabase();
 }
 
 // ===========================================================================
 
-function saveClanRanksToDatabase(clanId) {
-	if (getServerConfig().devServer) {
+function saveClanRanksToDatabase(clanIndex) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	let ranks = getServerData().clans[clanId].ranks;
+	let ranks = serverData.clans[clanIndex].ranks;
 	for (let i in ranks) {
-		saveClanRankToDatabase(clanId, i);
+		saveClanRankToDatabase(serverData.clans[clanIndex].ranks[i]);
 	}
 }
 
 // ===========================================================================
 
-function saveClanToDatabase(clanId) {
-	let tempClanData = getClanData(clanId);
-
-	if (!tempClanData) {
+/**
+ * @param {ClanData} clanData - The data of the clan to save
+ */
+function saveClanToDatabase(clanData) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	if (tempClanData.databaseId == -1) {
+	if (!clanData) {
 		return false;
 	}
 
-	if (!tempClanData.needsSaved) {
+	if (clanData.databaseId == -1) {
+		// Temp clan, don't save
+		return false;
+	}
+
+	if (!clanData.needsSaved) {
 		return false;
 	}
 
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		if (tempClanData.needsSaved) {
-			let safeName = escapeDatabaseString(dbConnection, tempClanData.name);
-			let safeTag = escapeDatabaseString(dbConnection, tempClanData.tag);
-			let safeMOTD = escapeDatabaseString(dbConnection, tempClanData.motd);
-			let safeDiscordWebhookURL = escapeDatabaseString(dbConnection, tempClanData.discordWebhookURL);
+		if (clanData.needsSaved) {
+			let safeName = escapeDatabaseString(dbConnection, clanData.name);
+			let safeMOTD = escapeDatabaseString(dbConnection, clanData.motd);
+			let safeDiscordWebhookURL = escapeDatabaseString(dbConnection, clanData.discordWebhookURL);
 
 			let data = [
-				["clan_main", safeName],
-				["clan_owner", tempClanData.ownerId],
-				["clan_tag", safeTag],
+				["clan_name", safeName],
+				["clan_server", clanData.serverId],
+				["clan_owner", clanData.ownerId],
 				["clan_motd", safeMOTD],
 				["clan_discord_webhook_url", safeDiscordWebhookURL],
-				["clan_discord_webhook_flags", tempClanData.discordWebhookFlags],
-				["clan_enabled", boolToInt(tempClanData.enabled)],
-				["clan_initial_rank", toInteger(tempClanData.initialRank)],
+				["clan_discord_webhook_flags", clanData.discordWebhookFlags],
+				["clan_enabled", boolToInt(clanData.enabled)],
+				["clan_who_added", toInteger(clanData.whoAdded)],
+				["clan_when_added", toInteger(clanData.whenAdded)],
+				["clan_bank", toInteger(clanData.bank)],
 			];
 
 			let dbQuery = null;
-			if (tempClanData.databaseId == 0) {
+			if (clanData.databaseId == 0) {
 				let queryString = createDatabaseInsertQuery("clan_main", data);
 				dbQuery = queryDatabase(dbConnection, queryString);
-				getClanData(clanId).databaseId = getDatabaseInsertId(dbConnection);
-				getClanData(clanId).needsSaved = false;
+				clanData.databaseId = getDatabaseInsertId(dbConnection);
+				clanData.needsSaved = false;
 			} else {
-				let queryString = createDatabaseUpdateQuery("clan_main", data, `clan_id=${tempClanData.databaseId} LIMIT 1`);
+				let queryString = createDatabaseUpdateQuery("clan_main", data, `clan_id=${clanData.databaseId} LIMIT 1`);
 				dbQuery = queryDatabase(dbConnection, queryString);
-				getClanData(clanId).needsSaved = false;
+				clanData.needsSaved = false;
 			}
 
 			freeDatabaseQuery(dbQuery);
 			disconnectFromDatabase(dbConnection);
 		}
 
-		saveClanRanksToDatabase(clanId);
+		saveClanRanksToDatabase(clanData.index);
 		return true;
 	}
 
@@ -1204,39 +1290,37 @@ function saveClanToDatabase(clanId) {
 
 // ===========================================================================
 
-function saveClanRankToDatabase(clanId, rankId) {
-	let tempClanRankData = getClanRankData(clanId, rankId);
-
-	if (!tempClanRankData.needsSaved) {
+/**
+ * @param {ClanRankData} clanRankData - The data of the clan rank to save
+ */
+function saveClanRankToDatabase(clanRankData) {
+	if (!clanRankData.needsSaved) {
 		return false;
 	}
 
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
-		let safeName = escapeDatabaseString(dbConnection, tempClanRankData.name);
-		let safeTag = escapeDatabaseString(dbConnection, tempClanRankData.customTag);
-		//let safeTitle = escapeDatabaseString(dbConnection, tempClanRankData.name);
+		let safeName = escapeDatabaseString(dbConnection, clanRankData.name);
 
 		let data = [
-			["clan_rank_name", safeName],
-			["clan_rank_clan", tempClanRankData.clan],
-			["clan_rank_custom_tag", safeTag],
-			//["clan_rank_title", safeTitle],
-			["clan_rank_flags", tempClanRankData.flags],
-			["clan_rank_level", tempClanRankData.level],
-			["clan_rank_enabled", boolToInt(tempClanRankData.enabled)],
+			["clan_rank_name", toString(safeName)],
+			["clan_rank_clan", toInteger(clanRankData.clan)],
+			["clan_rank_flags", toInteger(clanRankData.flags)],
+			["clan_rank_level", toInteger(clanRankData.level)],
+			["clan_rank_enabled", boolToInt(clanRankData.enabled)],
+			["clan_rank_pay", toInteger(clanRankData.pay)],
 		];
 
 		let dbQuery = null;
-		if (tempClanRankData.databaseId == 0) {
+		if (clanRankData.databaseId == 0) {
 			let queryString = createDatabaseInsertQuery("clan_rank", data);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getClanRankData(clanId, rankId).databaseId = getDatabaseInsertId(dbConnection);
-			getClanRankData(clanId, rankId).needsSaved = false;
+			clanRankData.databaseId = getDatabaseInsertId(dbConnection);
+			clanRankData.needsSaved = false;
 		} else {
-			let queryString = createDatabaseUpdateQuery("clan_rank", data, `clan_rank_id=${tempClanRankData.databaseId} LIMIT 1`);
+			let queryString = createDatabaseUpdateQuery("clan_rank", data, `clan_rank_id=${clanRankData.databaseId} LIMIT 1`);
 			dbQuery = queryDatabase(dbConnection, queryString);
-			getClanRankData(clanId, rankId).needsSaved = false;
+			clanRankData.needsSaved = false;
 		}
 
 		freeDatabaseQuery(dbQuery);
@@ -1285,29 +1369,30 @@ function setClanRankTitle(clanId, rankId, title) {
 // ===========================================================================
 
 function saveAllClansToDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.Clan]: Saving all server clans to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Clan]: Saving all server clans to database ...`);
 
-	if (getServerConfig().devServer) {
-		logToConsole(LOG_DEBUG, `[AGRP.Clan]: Aborting save all clans to database, dev server is enabled.`);
+	if (serverConfig.devServer) {
+		logToConsole(LOG_DEBUG, `[V.RP.Clan]: Aborting save all clans to database, dev server is enabled.`);
 		return false;
 	}
 
-	for (let i in getServerData().clans) {
-		saveClanToDatabase(i);
+	for (let i in serverData.clans) {
+		saveClanToDatabase(serverData.clans[i]);
+		saveClanRanksToDatabase(i);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Clan]: Saved all server clans to database`);
+	logToConsole(LOG_INFO, `[V.RP.Clan]: Saved all server clans to database`);
 }
 
 // ===========================================================================
 
 function setAllClanDataIndexes() {
-	for (let i in getServerData().clans) {
-		getServerData().clans[i].index = i;
+	for (let i in serverData.clans) {
+		serverData.clans[i].index = i;
 
-		for (let j in getServerData().clans[i].ranks) {
-			getServerData().clans[i].ranks[j].index = j;
-			getServerData().clans[i].ranks[j].clanIndex = i;
+		for (let j in serverData.clans[i].ranks) {
+			serverData.clans[i].ranks[j].index = j;
+			serverData.clans[i].ranks[j].clanIndex = i;
 		}
 	}
 }
@@ -1337,12 +1422,12 @@ function getPlayerClan(client) {
 // ===========================================================================
 
 function getClanIndexFromDatabaseId(databaseId) {
-	if (databaseId <= 0) {
+	if (databaseId == 0) {
 		return -1;
 	}
 
-	for (let i in getServerData().clans) {
-		if (getServerData().clans[i].databaseId == databaseId) {
+	for (let i in serverData.clans) {
+		if (serverData.clans[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -1353,12 +1438,16 @@ function getClanIndexFromDatabaseId(databaseId) {
 // ===========================================================================
 
 function getClanRankIndexFromDatabaseId(clanIndex, databaseId) {
-	if (databaseId <= 0) {
+	if (databaseId == 0) {
 		return -1;
 	}
 
-	for (let i in getServerData().clans[clanIndex].ranks) {
-		if (getServerData().clans[clanIndex].ranks[i].databaseId == databaseId) {
+	if (clanIndex == -1) {
+		return -1;
+	}
+
+	for (let i in serverData.clans[clanIndex].ranks) {
+		if (serverData.clans[clanIndex].ranks[i].databaseId == databaseId) {
 			return i;
 		}
 	}
@@ -1375,14 +1464,22 @@ function getClanRankIndexFromDatabaseId(clanIndex, databaseId) {
  */
 function getClanRankData(clanIndex, rankIndex) {
 	if (clanIndex == -1) {
-		return false;
+		return null;
 	}
 
 	if (rankIndex == -1) {
-		return false;
+		return null;
 	}
 
-	return getServerData().clans[clanIndex].ranks[rankIndex];
+	if (typeof serverData.clans[clanIndex] == "undefined") {
+		return null;
+	}
+
+	if (typeof serverData.clans[clanIndex].ranks[rankIndex] == "undefined") {
+		return null;
+	}
+
+	return serverData.clans[clanIndex].ranks[rankIndex];
 }
 
 // ===========================================================================
@@ -1418,63 +1515,19 @@ function showClanFlagListCommand(command, params, client) {
 
 // ===========================================================================
 
-/*
-function showClanFlagListCommand(command, params, client) {
-	if(!doesPlayerHaveClanPermission(client, getClanFlagValue("rankFlags"))) {
-		messagePlayerError(client, "You can not change a clan rank's permissions!");
-		return false;
-	}
-
-	if(areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let clanId = getPlayerClan(client);
-
-	if(!getClanData(clanId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
-		return false;
-	}
-
-	let rankId = getClanRankFromParams(clanId, getParam(params, " ", 1));
-
-	if(!getClanRankData(clanId, rankId)) {
-		messagePlayerError(client, getLocaleString(client, "InvalidClanRank"));
-		return false;
-	}
-
-	let tempClanRankData = getClanRankData(clanId, rankId).flags;
-	for(let i in tempClanRankData) {
-		if(getServerBitFlags().clanFlags.indexOf(tempClanRankData)))
-	}
-	let flagList = getServerBitFlag().clanFlags;
-
-	let chunkedList = splitArrayIntoChunks(flagList, 10);
-
-	messagePlayerInfo(client, `{clanOrange}== {jobYellow}Clan Permissions List {clanOrange}=====================`);
-
-	for(let i in chunkedList) {
-		messagePlayerInfo(client, chunkedList[i].join(", "));
-	}
-}
-*/
-
-// ===========================================================================
-
 /**
  * @param {String} params - The params to search for
  * @return {Number} The data index of a matching clan
  */
 function getClanFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().clans) {
-			if (toLowerCase(getServerData().clans[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.clans) {
+			if (toLowerCase(serverData.clans[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().clans[params] != "undefined") {
+		if (typeof serverData.clans[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -1504,14 +1557,14 @@ function getClanRankFromParams(clanId, params) {
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================
 
 function getLowestClanRank(clanIndex) {
 	let lowestRank = 0;
-	for (let i in getServerData().clans[clanIndex].ranks) {
+	for (let i in serverData.clans[clanIndex].ranks) {
 		if (getClanRankData(clanIndex, i).level < getClanRankData(clanIndex, lowestRank).level) {
 			lowestRank = i;
 		}
@@ -1521,14 +1574,145 @@ function getLowestClanRank(clanIndex) {
 
 // ===========================================================================
 
-function getHighestJobRank(clanIndex) {
+function getHighestClanRank(clanIndex) {
 	let highestRank = 0;
-	for (let i in getServerData().clans[clanIndex].ranks) {
+	for (let i in serverData.clans[clanIndex].ranks) {
 		if (getClanRankData(clanIndex, i).level > getClanRankData(clanIndex, highestRank).level) {
 			highestRank = i;
 		}
 	}
 	return highestRank;
+}
+
+// ===========================================================================
+
+function clanInviteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("InviteMember"))) {
+		messagePlayerError(client, getLocaleString(client, "CantAddClanMembers"));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (getPlayerClan(targetClient) != -1) {
+		messagePlayerError(client, getLocaleString(client, "ClanInviteAlreadyHasClan"));
+		return false;
+	}
+
+	messagePlayerSuccess(client, getLocaleString(client, "ClanInviteSent", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	showPlayerPrompt(targetClient, getLocaleString(targetClient, "ClanInviteRequest", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`, `{clanOrange}${getClanData(getPlayerClan(client)).name}{MAINCOLOUR}`, getLocaleString(targetClient, "GUIAlertTitle"), getLocaleString(targetClient, "Yes"), getLocaleString(targetClient, "No")));
+	getPlayerData(targetClient).promptType = V_PROMPT_CLANINVITE;
+	getPlayerData(targetClient).promptValue = client;
+}
+
+// ===========================================================================
+
+function clanUninviteCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	if (!doesPlayerHaveClanPermission(client, getClanFlagValue("UninviteMember"))) {
+		messagePlayerError(client, getLocaleString(client, "CantRemoveClanMembers"));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (getPlayerClan(targetClient) != getPlayerClan(client)) {
+		messagePlayerError(client, getLocaleString(client, "ClanPlayerNotInSameClan"));
+		return false;
+	}
+
+	if (getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).level <= getClanRankData(getPlayerClan(targetClient), getPlayerClanRank(targetClient)).level) {
+		messagePlayerError(client, getLocaleString(client, "ClanUnInviteTooLow"));
+		return false;
+	}
+
+	messagePlayerSuccess(client, getLocaleString(client, "PlayerRemovedFromClan", `{ALTCOLOUR}${getCharacterFullName(targetClient)}{MAINCOLOUR}`));
+	messagePlayerAlert(targetClient, getLocaleString(client, "RemovedFromClan", `{ALTCOLOUR}${getCharacterFullName(client)}{MAINCOLOUR}`));
+
+
+	getPlayerCurrentSubAccount(targetClient).clan = 0;
+	getPlayerCurrentSubAccount(targetClient).clanIndex = -1;
+	getPlayerCurrentSubAccount(targetClient).clanRank = 0;
+	getPlayerCurrentSubAccount(targetClient).clanRankIndex = -1;
+}
+
+// ===========================================================================
+
+function clanLeaveCommand(command, params, client) {
+	if (getPlayerClan(client) == -1) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	let clanData = getClanData(getPlayerClan(client));
+
+	removePlayerFromClan(client);
+	messagePlayerSuccess(client, getLocaleString(client, "LeftClan", `{clanOrange}${clanData.name}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function isPlayerInAnyClan(client) {
+	return (getPlayerClan(client) != -1);
+}
+
+// ===========================================================================
+
+function addPlayerToClan(client, clanIndex, clanRankIndex = 0) {
+	getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
+	getPlayerCurrentSubAccount(client).clanIndex = clanIndex;
+	getPlayerCurrentSubAccount(client).clanRank = getClanRankData(clanIndex, clanRankIndex).databaseId;
+	getPlayerCurrentSubAccount(client).clanRankIndex = clanRankIndex;
+}
+
+// ===========================================================================
+
+function removePlayerFromClan(client) {
+	getPlayerCurrentSubAccount(client).clan = 0;
+	getPlayerCurrentSubAccount(client).clanIndex = -1;
+	getPlayerCurrentSubAccount(client).clanRank = 0;
+	getPlayerCurrentSubAccount(client).clanRankIndex = -1;
+}
+
+// ===========================================================================
+
+function areAnyClanMembersOnline(clanIndex) {
+	return (getClients().filter(client => getPlayerClan(client) == clanIndex).length > 0);
+}
+
+// ===========================================================================
+
+function loadClanMembersFromDatabase(clanDatabaseId) {
+	let dbConnection = connectToDatabase();
+	let tempClanMembers = [];
+	if (dbConnection) {
+		let memberAssoc = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main INNER JOIN sacct_svr ON sacct_svr.sacct_svr_sacct = sacct_main.sacct_id WHERE sacct_svr.sacct_svr_clan = ${clanDatabaseId}`);
+		for (let i in memberAssoc) {
+			let tempMemberData = new SubAccountData(memberAssoc[i]);
+			tempClanMembers.push(tempMemberData);
+		}
+	}
+
+	return tempClanMembers;
 }
 
 // ===========================================================================

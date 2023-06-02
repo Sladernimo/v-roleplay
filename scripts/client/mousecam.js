@@ -9,8 +9,9 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
-// CREDITS TO LUCASC190 FOR MAKING THE MOUSE CAMERA
-// WALKING CODE ADDED BY VORTREX
+// CREDITS TO LUCASC190 FOR MAKING THE ORIGINAL MOUSE CAMERA
+
+let mouseCameraEnabled = false;
 
 function SetStandardControlsEnabled(bEnabled) {
 	if (typeof gta == "undefined") {

@@ -7,6 +7,14 @@
 // TYPE: Shared (JavaScript)
 // ===========================================================================
 
+let dayHourStart = 6;
+let dayMinuteStart = 0;
+let dayMinuteWarningStart = 5;
+
+let nightHourStart = 18;
+let nightMinuteStart = 0;
+let nightMinuteWarningStart = 5;
+
 let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"];
 //let emojiNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"];
 //let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
@@ -153,6 +161,16 @@ let serverColours = {
 			jobYellow: "FFFF00",
 			npcPink: "DB7093",
 			chatBoxListIndex: "0099FF",
+			bankGreen: "00B400",
+			policeBlue: "3250C8",
+			medicPink: "DB7093",
+			firefighterRed: "CD3C3C",
+			adminOrange: "ED4337",
+			busDriverGreen: "32A032",
+			taxiDriverYellow: "F0E664",
+			deliveryPurple: "B19CD9",
+			scenarioTeal: "44A9AA",
+			civilianWhite: "C8C8C8",
 		},
 		byName: {
 			white: "FFFFFF",
@@ -168,24 +186,9 @@ let serverColours = {
 			lightGrey: "C8C8C8",
 			mediumGrey: "969696",
 			darkGrey: "404040",
-			policeBlue: "3250C8",
-			medicPink: "DB7093",
-			firefighterRed: "CD3C3C",
-			busDriverGreen: "32A032",
-			taxiDriverYellow: "F0E664",
-			deliveryPurple: "B19CD9",
-			civilianWhite: "C8C8C8",
 			burntYellow: "D2D200",
 			burntOrange: "D27800",
-			bankGreen: "00B400",
 			softYellow: "EAC67E",
-			businessBlue: "0099FF",
-			houseGreen: "11CC11",
-			clanOrange: "FF9900",
-			vehiclePurple: "960096",
-			jobYellow: "FFFF00",
-			adminOrange: "ED4337",
-			chatBoxListIndex: "0099FF",
 		},
 	},
 
@@ -206,7 +209,7 @@ let serverColours = {
 		firefighterRed: toColour(205, 60, 60, 255),
 		busDriverGreen: toColour(50, 160, 50, 255),
 		taxiDriverYellow: toColour(240, 230, 100, 255),
-		deliveryPurple: toColour(177, 156, 217, 255),
+		deliveryPurple: toColour(150, 0, 150, 255),
 		civilianWhite: toColour(200, 200, 200, 255),
 		burntYellow: toColour(210, 210, 0, 255),
 		burntOrange: toColour(210, 120, 0, 255),
@@ -214,11 +217,13 @@ let serverColours = {
 		softYellow: toColour(234, 198, 126, 255),
 		businessBlue: toColour(0, 153, 255, 255),
 		houseGreen: toColour(17, 204, 17, 255),
-		vehiclePurple: toColour(177, 156, 217, 255),
+		vehiclePurple: toColour(150, 0, 150, 255),
 		chatBoxListIndex: toColour(0, 153, 255, 255),
 		npcPink: toColour(219, 112, 147, 255),
 		adminOrange: toColour(205, 60, 60, 255),
 		clanOrange: toColour(255, 153, 0, 255),
+		jobYellow: toColour(255, 255, 0, 255),
+		scenarioTeal: toColour(68, 169, 170, 255),
 	},
 	byName: {
 		white: toColour(255, 255, 255, 255),
@@ -1369,34 +1374,35 @@ let placesOfOrigin = [
 	"San Andreas",
 	"Blaine County",
 	"Red County",
+	"Flint County",
 	"Bone County",
+	"Lost Heaven",
+	"Empire Bay",
 	"Other",
 ];
 
 // ===========================================================================
 
-function getGameConfig() {
-	return gameData;
-}
+let payPhoneStateNames = [
+	"None/Unknown",
+	"Idle",
+	"Ringing",
+	"Active Call",
+	"Broken",
+	"Calling"
+];
 
 // ===========================================================================
 
-function makeLargeNumberReadable(num) {
-	return new Number(num).toLocaleString("en-US");
+function makeLargeNumberReadable(num, localeCode = "en-US") {
+	return new Number(num).toLocaleString(localeCode);
 }
 
 // ===========================================================================
 
 function getKeyIdFromParams(params) {
-	let tempParams = toLowerCase(toString(params));
-
-	//let sdlName = sdl.getKeyFromName(tempParams);
-	//if(sdlName != null) {
-	//    return sdlName;
-	//}
-
 	for (let i in bindableKeys) {
-		if (toLowerCase(bindableKeys[i]) == toLowerCase(tempParams)) {
+		if (toLowerCase(bindableKeys[i]) == toLowerCase(params)) {
 			return i;
 		}
 	}
@@ -1600,37 +1606,28 @@ function isNull(val) {
 
 // ===========================================================================
 
-function getEntityData(entity, dataName) {
-	if (entity != null) {
-		if (entity.getData != null) {
-			return entity.getData(dataName);
-		}
-	}
-	return null;
-}
-
-// ===========================================================================
-
 function getDistance(vec1, vec2) {
 	if (isNull(vec1) || isNull(vec2)) {
 		return false;
 	}
+
 	return vec1.distance(vec2);
 }
 
 // ===========================================================================
 
 function logToConsole(tempLogLevel, text) {
-	text = removeColoursInMessage(text);
-
 	if (hasBitFlag(logLevel | LOG_WARN | LOG_ERROR, tempLogLevel)) {
 		if (tempLogLevel & LOG_ERROR) {
+			text = removeColoursInMessage(text);
 			consoleError(text);
 			return true;
 		} else if (tempLogLevel & LOG_WARN) {
+			text = removeColoursInMessage(text);
 			consoleWarn(text);
 			return true;
 		} else {
+			text = removeColoursInMessage(text);
 			consolePrint(text);
 			return true;
 		}
@@ -1651,13 +1648,8 @@ function Enum(constantsList) {
 // ===========================================================================
 
 function clearArray(array) {
-	array.length = 0;
-}
-
-// ===========================================================================
-
-function isServerScript() {
-	return (typeof server != "undefined");
+	//array.length = 0;
+	array = [];
 }
 
 // ===========================================================================
@@ -1668,87 +1660,9 @@ function getPercentage(num, per) {
 
 // ===========================================================================
 
-function getMultiplayerMod() {
-	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
-}
-
-// ===========================================================================
-
-function isSnowSupported(gameId) {
-	return supportedFeatures.snow[getGame()];
-}
-
-// ===========================================================================
-
-function isGTAIV() {
-	return (getGame() == V_GAME_GTA_IV);
-}
-
-// ===========================================================================
-
-function areServerElementsSupported() {
-	return isGameFeatureSupported("serverElements")
-}
-
-// ===========================================================================
-
-function isTimeSupported() {
-	return isGameFeatureSupported("time");
-}
-
-// ===========================================================================
-
-function isWeatherSupported() {
-	return isGameFeatureSupported("weather");
-}
-
-// ===========================================================================
-
-function arePickupsSupported() {
-	return isGameFeatureSupported("pickup");
-}
-
-// ===========================================================================
-
-function areBlipsSupported() {
-	return isGameFeatureSupported("blip");
-}
-
-// ===========================================================================
-
-function areMarkersSupported() {
-	return isGameFeatureSupported("marker");
-}
-
-// ===========================================================================
-
-function isFadeCameraSupported() {
-	return isGameFeatureSupported("fadeCamera");
-}
-
-// ===========================================================================
-
-function isCustomCameraSupported() {
-	return isGameFeatureSupported("customCamera");
-}
-
-// ===========================================================================
-
-function areFightStylesSupported() {
-	return isGameFeatureSupported("fightStyle");
-}
-
-// ===========================================================================
-
-function areWorldLabelsSupported() {
-	return isGameFeatureSupported("worldLabel");
-}
-
-// ===========================================================================
-
 function isGameFeatureSupported(featureName) {
 	if (typeof supportedFeatures[featureName] === "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
+		logToConsole(LOG_WARN, `[V.RP.Utilities] Game feature support error. Unknown feature name: ${featureName}`);
 		if (isServerScript()) {
 			submitBugReport(null, `[AUTOMATED REPORT] Game feature support error. Unknown feature name: ${featureName}`);
 			return false;
@@ -1761,26 +1675,26 @@ function isGameFeatureSupported(featureName) {
 // ===========================================================================
 
 function getAllowedSkins(gameId = getGame()) {
-	return getGameConfig().skins[gameId].filter(skin => skin[2] == true);
+	return gameData.skins[gameId].filter(skin => skin[2] == true);
 }
 
 // ===========================================================================
 
-function getAllowedSkinIndexFromSkin(skin) {
-	let allowedSkins = getAllowedSkins();
-	for (let i in allowedSkins) {
-		if (allowedSkins[i][0] == skin) {
+function getAllowedSkinIndexFromSkinIndex(skinIndex, gameId = getGame()) {
+	let tempAllowedSkins = getAllowedSkins(gameId);
+	for (let i in tempAllowedSkins) {
+		if (tempAllowedSkins[i][0] == gameData.skins[gameId][skinIndex][0]) {
 			return i;
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 // ===========================================================================
 
 function getSkinIndexFromModel(model, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1793,7 +1707,7 @@ function getSkinIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinIndexFromName(name, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
@@ -1806,7 +1720,7 @@ function getSkinIndexFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelIndexFromName(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1819,7 +1733,7 @@ function getObjectModelIndexFromName(model, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelIndexFromModel(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return i;
@@ -1832,7 +1746,7 @@ function getObjectModelIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getGameName(gameId = getGame()) {
-	return getGameConfig().gameNames[gameId];
+	return gameData.gameNames[gameId];
 }
 
 // ===========================================================================
@@ -1855,7 +1769,7 @@ function getVehicleModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelIndexFromName(name, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return i;
@@ -1868,7 +1782,7 @@ function getVehicleModelIndexFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelIndexFromModel(model, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (isNaN(model)) {
 			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
@@ -1887,7 +1801,7 @@ function getVehicleModelIndexFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleModelFromName(name, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (toLowerCase(vehicles[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return vehicles[i][0];
@@ -1900,7 +1814,7 @@ function getVehicleModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getVehicleNameFromModel(model, gameId = getGame()) {
-	let vehicles = getGameConfig().vehicles[gameId];
+	let vehicles = gameData.vehicles[gameId];
 	for (let i in vehicles) {
 		if (isNaN(model)) {
 			if (toLowerCase(vehicles[i][0]).indexOf(toLowerCase(model)) != -1) {
@@ -1936,7 +1850,7 @@ function getSkinModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinNameFromModel(model, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return skins[i][1];
@@ -1949,8 +1863,8 @@ function getSkinNameFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinNameFromIndex(index, gameId = getGame()) {
-	if (typeof getGameConfig().skins[gameId][index] != "undefined") {
-		return getGameConfig().skins[gameId][index][1];
+	if (typeof gameData.skins[gameId][index] != "undefined") {
+		return gameData.skins[gameId][index][1];
 	}
 
 	return "Unknown";
@@ -1959,7 +1873,7 @@ function getSkinNameFromIndex(index, gameId = getGame()) {
 // ===========================================================================
 
 function getSkinModelFromName(name, gameId = getGame()) {
-	let skins = getGameConfig().skins[gameId];
+	let skins = gameData.skins[gameId];
 	for (let i in skins) {
 		if (toLowerCase(skins[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return skins[i][0];
@@ -1987,7 +1901,7 @@ function getObjectModelIndexFromParams(params, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectNameFromModel(model, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][0]).indexOf(toLowerCase(model)) != -1) {
 			return objects[i][1];
@@ -2000,7 +1914,7 @@ function getObjectNameFromModel(model, gameId = getGame()) {
 // ===========================================================================
 
 function getObjectModelFromName(name, gameId = getGame()) {
-	let objects = getGameConfig().objects[gameId];
+	let objects = gameData.objects[gameId];
 	for (let i in objects) {
 		if (toLowerCase(objects[i][1]).indexOf(toLowerCase(name)) != -1) {
 			return objects[i][0];
@@ -2011,12 +1925,17 @@ function getObjectModelFromName(name, gameId = getGame()) {
 // ===========================================================================
 
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x + ((Math.cos((angle - 1.57) + (Math.PI / 2))) * distance));
-	let y = (pos.y + ((Math.sin((angle - 1.57) + (Math.PI / 2))) * distance));
+	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
+	let z = pos.z;
 
-	let rightPos = toVector3(x, y, pos.z);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle - 1.57)) * distance));
+		y = (pos.y + ((Math.sin(angle - 1.57)) * distance));
+		z = pos.z;
+	}
 
-	return rightPos;
+	return toVector3(x, y, z);
 }
 
 // ===========================================================================
@@ -2024,10 +1943,15 @@ function getPosToRightOfPos(pos, angle, distance) {
 function getPosToLeftOfPos(pos, angle, distance) {
 	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
 	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
+	let z = pos.z;
 
-	let leftPos = toVector3(x, y, pos.z);
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle + 1.57)) * distance));
+		y = pos.y
+		z = (pos.z + ((Math.sin(angle + 1.57)) * distance));
+	}
 
-	return leftPos;
+	return toVector3(x, y, z);
 }
 
 // ===========================================================================
@@ -2061,14 +1985,19 @@ function getPosBehindPos(pos, angle, distance) {
 	let y = pos.y;
 	let z = pos.z;
 
-	if (getGame() < V_GAME_MAFIA_ONE) {
-		y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	} else {
-		angle = radToDeg(angle);
-		z = (pos.z + ((Math.sin(angle - (Math.PI / 2))) * distance));
-	}
+		while (angle < 0.0)
+			angle += 360.0;
 
-	x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		while (angle > 360.0)
+			angle -= 360.0;
+
+		x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		z = (pos.z + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	}
 
 	return toVector3(x, y, z);
 }
@@ -2302,31 +2231,46 @@ function removeHexColoursFromString(str) {
 
 // ===========================================================================
 
-async function waitUntil(condition) {
-	return new Promise((resolve) => {
-		let interval = setInterval(() => {
-			if (!condition()) {
-				return;
-			}
+function removeSlashesFromString(str) {
+	if (str == null) {
+		return false;
+	}
 
-			clearInterval(interval);
-			resolve();
-		}, 1);
-	});
+	if (str == "") {
+		let matchRegex = /\//gi;
+		str.replace(matchRegex, ``);
+	}
+
+	return str;
+}
+
+// ===========================================================================
+
+function waitUntil(condition) {
+	//return new Promise((resolve) => {
+	//	let interval = setInterval(() => {
+	//		if (!condition()) {
+	//			return;
+	//		}
+	//
+	//		clearInterval(interval);
+	//		resolve();
+	//	}, 1);
+	//});
 }
 
 // ===========================================================================
 
 function getGameLocationFromParams(params) {
 	if (isNaN(params)) {
-		let locations = getGameConfig().locations[getGame()];
+		let locations = gameData.locations[getGame()];
 		for (let i in locations) {
 			if (toLowerCase(locations[i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().locations[getGame()][params] != "undefined") {
+		if (typeof gameData.locations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -2399,6 +2343,11 @@ function getCardinalDirection(pos1, pos2) {
 	let a = pos1.x - pos2.x;
 	let b = pos1.y - pos2.y;
 	let c = pos1.z - pos2.z;
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		b = pos1.z - pos2.z;
+		c = pos1.y - pos2.y;
+	}
 
 	let x = Math.abs(a);
 	let y = Math.abs(b);
@@ -2648,11 +2597,11 @@ function fixCharacterName(name) {
 function getCurrentTimeStampWithTimeZone(timeZone) {
 	let date = new Date();
 
-	let utcDate = new Date(date.toLocaleString('en-US', { timeZone: "UTC" }));
-	let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
-	let offset = utcDate.getTime() - tzDate.getTime();
+	//let utcDate = new Date(date.toLocaleString('en-US', { timeZone: "UTC" }));
+	//let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
+	//let offset = utcDate.getTime() - tzDate.getTime();
 
-	date.setTime(date.getTime() + offset);
+	//date.setTime(date.getTime() + offset);
 
 	return date;
 };
@@ -2778,7 +2727,7 @@ function getHexColourByType(typeName) {
 // ===========================================================================
 
 function getPlayerColour(client) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		if (!isPlayerLoggedIn(client)) {
 			return getColourByName("darkGrey");
 		} else {
@@ -3076,7 +3025,7 @@ function getPlayerLocationName(client) {
 	if(getHouseData(closestHouse)) {
 		let areaId = getGameAreaFromPos(getPlayerPosition(client));
 		if(getDistance(getHouseData(closestHouse).entrancePosition) > 7) {
-			return `near ${getHouseData(closestHouse).description} in ${getGameConfig().areas[getGame()][areaId][1]}`;
+			return `near ${getHouseData(closestHouse).description} in ${gameData.areas[getGame()][areaId][1]}`;
 		}
 	}
 }
@@ -3085,7 +3034,7 @@ function getPlayerLocationName(client) {
 // ===========================================================================
 
 function getGameAreaFromPos(position) {
-	let areas = getGameConfig().areas[getGame()];
+	let areas = gameData.areas[getGame()];
 	for (let i in areas) {
 		if (isPointInPoly(areas[i].borders, position)) {
 			return i;
@@ -3152,7 +3101,7 @@ function removeBitFlag(allFlags, flagValue) {
 // ===========================================================================
 
 function getAnimationFromParams(params) {
-	let animations = getGameConfig().animations[getGame()];
+	let animations = gameData.animations[getGame()];
 	if (isNaN(params)) {
 		for (let i in animations) {
 			if (toLowerCase(animations[i].name).indexOf(toLowerCase(params)) != -1) {
@@ -3160,7 +3109,7 @@ function getAnimationFromParams(params) {
 			}
 		}
 	} else {
-		if (typeof getGameConfig().animations[getGame()][params] != "undefined") {
+		if (typeof gameData.animations[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -3175,7 +3124,15 @@ function getAnimationFromParams(params) {
  * @return {AnimationData} The animation's data (array)
  */
 function getAnimationData(animationSlot, gameId = getGame()) {
-	return getGameConfig().animations[gameId][animationSlot];
+	if (animationSlot == -1) {
+		return false;
+	}
+
+	if (typeof gameData.animations[gameId][animationSlot] != "undefined") {
+		return gameData.animations[gameId][animationSlot];
+	}
+
+	return false;
 }
 
 // ===========================================================================
@@ -3190,14 +3147,14 @@ function fillLeadingZeros(number, length) {
 
 // ===========================================================================
 
-function isMainWorldScene(sceneName) {
-	return (sceneName == "v.rp.mainWorldScene");
+function isMainWorldScene(sceneName, gameId = getGame()) {
+	return (sceneName == "V.RP.MAINWORLD" || sceneName == "" || sceneName == gameData.mainWorldScene[gameId]);
 }
 
 // ===========================================================================
 
 function isNightTime(hour) {
-	if (hour >= 7 && hour <= 19) {
+	if (hour >= dayHourStart && hour <= nightHourStart) {
 		return false;
 	} else {
 		return true;
@@ -3208,11 +3165,11 @@ function isNightTime(hour) {
 
 function isServerGoingToChangeMapsSoon(hour, minute) {
 	if (server.mapName == "FREERIDENOC") {
-		if (hour == 6 && minute >= 30) {
-			return true
+		if (hour == dayHourStart && minute < (dayMinuteStart - dayMinuteWarningStart)) {
+			return true;
 		}
 	} else if (server.mapName == "FREERIDE") {
-		if (hour == 18 && minute >= 30) {
+		if (hour == dayHourStart && minute < (nightMinuteStart - nightMinuteWarningStart)) {
 			return true;
 		}
 	}
@@ -3229,11 +3186,147 @@ function getRandomBoolWithProbability(percentChance) {
 // ===========================================================================
 
 function getWeatherData(weatherIndex, gameId = getGame()) {
-	if (typeof getGameConfig().weather[gameId][weatherIndex] == "undefined") {
+	if (typeof gameData.weather[gameId][weatherIndex] == "undefined") {
 		return false;
 	}
 
-	return getGameConfig().weather[gameId][weatherIndex];
+	return gameData.weather[gameId][weatherIndex];
+}
+
+// ===========================================================================
+
+function getPayPhoneStateName(state) {
+	return payPhoneStateNames[state];
+}
+
+// ===========================================================================
+
+function getSceneForInterior(interiorName, gameId = getGame()) {
+	if (interiorName == "") {
+		return gameData.mainWorldScene[getGame()];
+	}
+
+	if (interiorName == "V.RP.MAINWORLD") {
+		return gameData.mainWorldScene[getGame()];
+	}
+
+	if (typeof gameData.interiors[gameId][interiorName] == "undefined") {
+		return gameData.mainWorldScene[getGame()];
+	}
+
+	if (isNightTime(serverConfig.hour)) {
+		// Check if night map exists, and return if does
+		if (gameData.interiors[gameId][interiorName][4] != "") {
+			return gameData.interiors[gameId][interiorName][4];
+		}
+	}
+
+	// Return day scene if night check fails
+	return gameData.interiors[gameId][interiorName][3];
+}
+
+// ===========================================================================
+
+function getInteriorForScene(sceneName, gameId = getGame()) {
+	if (sceneName == "") {
+		return "V.RP.MAINWORLD";
+	}
+
+	for (let i in gameData.interiors[gameId]) {
+		if (gameData.interiors[gameId][i][3] == sceneName) {
+			return i;
+		}
+
+		if (gameData.interiors[gameId][i][4] == sceneName) {
+			return i;
+		}
+	}
+
+	return "V.RP.MAINWORLD";
+}
+
+// ===========================================================================
+
+function getClipAmmoSizeForWeapon(weaponId, gameId = getGame()) {
+	if (typeof gameData.maximumClipAmmo[gameId] == "undefined") {
+		return 0;
+	}
+
+	if (typeof gameData.maximumClipAmmo[gameId][weaponId] == "undefined") {
+		return 0;
+	}
+
+	return gameData.maximumClipAmmo[gameId][weaponId];
+}
+
+// ===========================================================================
+
+function canVehicleEnterInterior(interiorName) {
+	if (interiorName == "") {
+		return true;
+	}
+
+	if (typeof gameData.interiors[gameId][interiorName] == "undefined") {
+		return true;
+	}
+
+	if (typeof gameData.interiors[gameId][interiorName][5] == true) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function isSameScene(scene1, scene2) {
+	if (scene1 == scene2) {
+		return true;
+	}
+
+	if (isMainWorldScene(scene1) && isMainWorldScene(scene2)) {
+		return true;
+	}
+
+	if (getSceneForInterior(scene1) == getSceneForInterior(scene2)) {
+		return true;
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function removeUnusedGameData() {
+	for (let i in gameData) {
+		for (let j in gameData[i]) {
+			if (j != getGame()) {
+				gameData[i][j] = null;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function getHeadingFromRotation(rotation) {
+	return rotation.z;
+}
+
+// ===========================================================================
+
+function getRotationFromHeading(heading) {
+	return toVector3(0.0, 0.0, heading);
+}
+
+// ===========================================================================
+
+function addPrefixNumberFill(number, amount) {
+	let numberString = toString(number);
+	while (numberString.length < amount) {
+		numberString = toString(`0${numberString}`);
+	}
+	return toString(numberString);
 }
 
 // ===========================================================================

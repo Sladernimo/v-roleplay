@@ -8,12 +8,15 @@
 // ===========================================================================
 
 function getItemWithPhoneNumber(phoneNumber) {
-	for (let i in getServerData().items) {
-		if (getItemTypeData(getItemData(i).itemTypeIndex).useType == V_ITEM_USE_TYPE_PHONE) {
-			if (getItemData(i).value == phoneNumber) {
-				return i;
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			if (getItemTypeData(getItemData(i).itemTypeIndex).useType == V_ITEM_USE_TYPE_PHONE) {
+				if (getItemData(i).value == phoneNumber) {
+					return i;
+				}
 			}
 		}
+
 	}
 	return -1;
 }

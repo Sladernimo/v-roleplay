@@ -45,8 +45,8 @@ class GateData {
 // ===========================================================================
 
 function initGateScript() {
-	logToConsole(LOG_INFO, `[AGRP.Gate]: Initializing gate script ...`);
-	logToConsole(LOG_INFO, `[AGRP.Gate]: Gate script initialized successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: Initializing gate script ...`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: Gate script initialized successfully!`);
 }
 
 // ===========================================================================
@@ -103,7 +103,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 			return true;
 		}
 
-		if (canPlayerManageBusiness(client, getBusinessIdFromDatabaseId(gateData.ownerId))) {
+		if (canPlayerManageBusiness(client, getBusinessIndexFromDatabaseId(gateData.ownerId))) {
 			return true;
 		}
 	}
@@ -113,7 +113,7 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 			return true;
 		}
 
-		if (canPlayerManageHouse(client, getHouseIdFromDatabaseId(gateData.ownerId))) {
+		if (canPlayerManageHouse(client, getHouseIndexFromDatabaseId(gateData.ownerId))) {
 			return true;
 		}
 	}
@@ -124,8 +124,8 @@ function doesPlayerHaveGateKeys(client, vehicle) {
 // ===========================================================================
 
 function getGateData(gateId) {
-	if (typeof getServerData().gates[gateId] != "undefined") {
-		return getServerData().gates[gateId];
+	if (typeof serverData.gates[gateId] != "undefined") {
+		return serverData.gates[gateId];
 	}
 
 	return false;
@@ -135,8 +135,8 @@ function getGateData(gateId) {
 
 function getClosestGate(position) {
 	let closest = 0;
-	for (let i in getServerData().gates[getGame()]) {
-		if (getDistance(getServerData().gates[i].position, position) < getDistance(getServerData().gates[closest].position, position)) {
+	for (let i in serverData.gates[getGame()]) {
+		if (getDistance(serverData.gates[i].position, position) < getDistance(serverData.gates[closest].position, position)) {
 			closest = i;
 		}
 	}
@@ -164,11 +164,11 @@ function triggerGateCommand(command, params, client) {
 // ===========================================================================
 
 function saveAllGatesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().gates) {
+	for (let i in serverData.gates) {
 		saveGateToDatabase(i);
 	}
 }
@@ -193,7 +193,7 @@ function saveGateToDatabase(gateId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Gate]: Saving gate ${tempGateData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeGateName = escapeDatabaseString(tempGateData.name);
@@ -227,7 +227,7 @@ function saveGateToDatabase(gateId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.Gate]: Saved gate ${gateDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Gate]: Saved gate ${gateDataId} to database!`);
 
 	return true;
 }
@@ -248,13 +248,13 @@ function loadGatesFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempGateData = new GateData(dbAssoc[i]);
 				tempGates.push(tempGateData);
-				logToConsole(LOG_DEBUG, `[AGRP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Gate]: Gate '${tempGateData.name}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_INFO, `[AGRP.Gate]: ${tempGates.length} gates loaded from database successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Gate]: ${tempGates.length} gates loaded from database successfully!`);
 	return tempGates;
 }
 

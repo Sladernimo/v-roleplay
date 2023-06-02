@@ -7,4 +7,4 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-let accountSaltHash = "FGjD49yWqMrW";
+// This stuff is in other places, depending on type. I'll probably remove this file soon.

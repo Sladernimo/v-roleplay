@@ -7,10 +7,6 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-
-
-// ===========================================================================
-
 function getPositionArea(position) {
 	if (typeof position == "Vec3") {
 		position = vec3ToVec2(position);
@@ -40,7 +36,7 @@ function getAreaName(position) {
 // ===========================================================================
 
 function getGameAreas(gameId) {
-	return getGameConfig().areas[gameId];
+	return gameData.areas[gameId];
 }
 
 // ===========================================================================
@@ -51,18 +47,18 @@ function getGameAreas(gameId) {
  */
 function getPlayerData(client) {
 	if (client == null) {
-		return false;
+		return null;
 	}
 
 	if (!isClientInitialized(client)) {
-		return false;
+		return null;
 	}
 
-	if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
-		return false;
+	if (typeof serverData.clients[getPlayerId(client)] == "undefined") {
+		return null;
 	}
 
-	return getServerData().clients[getPlayerId(client)];
+	return serverData.clients[getPlayerId(client)];
 }
 
 // ===========================================================================
@@ -76,19 +72,19 @@ function initAllClients() {
 // ===========================================================================
 
 function updateServerRules() {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Updating all server rules ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Updating all server rules ...`);
 
 	let timeWeatherRule = [];
 	let tempText = "";
 
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		if (getServerConfig() != false) {
-			tempText = makeReadableTime(getServerConfig().hour, getServerConfig().minute);
+			tempText = makeReadableTime(serverConfig.hour, serverConfig.minute);
 			timeWeatherRule.push(tempText);
 		}
 	} else {
 		if (getGame() == V_GAME_MAFIA_ONE) {
-			if (isNightTime(getServerConfig().hour)) {
+			if (isNightTime(serverConfig.hour)) {
 				tempText = "Night";
 			} else {
 				tempText = "Day";
@@ -98,40 +94,40 @@ function updateServerRules() {
 		}
 	}
 
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		if (getServerConfig() != false) {
-			if (getWeatherData(getServerConfig().weather) != false) {
-				let tempText = getWeatherData(getServerConfig().weather).name;
+			if (getWeatherData(serverConfig.weather) != false) {
+				let tempText = getWeatherData(serverConfig.weather).name;
 				timeWeatherRule.push(tempText);
 			}
 		}
 	}
 
-	if (isSnowSupported()) {
+	if (isGameFeatureSupported("snow")) {
 		if (getServerConfig() != false) {
-			if (getServerConfig().fallingSnow == true) {
+			if (serverConfig.fallingSnow == true) {
 				timeWeatherRule.push("Snowing");
 			}
 		}
 	}
 
 	setServerRule("Time & Weather", timeWeatherRule.join(", "));
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: All server rules updated successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: All server rules updated successfully!`);
 }
 
 // ===========================================================================
 
 function getWeatherFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().weather[getGame()]) {
-			if (toLowerCase(getGameConfig().weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in gameData.weather[getGame()]) {
+			if (toLowerCase(gameData.weather[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		for (let i in getGameConfig().weather[getGame()]) {
-			if (typeof getGameConfig().weather[getGame()][i].weatherId != "undefined") {
-				return toInteger(i);
+		for (let i in gameData.weather[getGame()]) {
+			if (gameData.weather[getGame()][i].weatherId == toInteger(params)) {
+				return gameData.weather[getGame()][i].weatherId;
 			}
 		}
 	}
@@ -143,13 +139,13 @@ function getWeatherFromParams(params) {
 
 function getFightStyleFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getGameConfig().fightStyles[getGame()]) {
-			if (toLowerCase(getGameConfig().fightStyles[getGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
+		for (let i in gameData.fightStyles[getGame()]) {
+			if (toLowerCase(gameData.fightStyles[getGame()][i][0]).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getGameConfig().fightStyles[getGame()][params] != "undefined") {
+		if (typeof gameData.fightStyles[getGame()][params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -160,34 +156,34 @@ function getFightStyleFromParams(params) {
 // ===========================================================================
 
 function getClosestHospital(position) {
-	if (typeof getGameConfig().hospitals[getGame()] == "undefined") {
-		return { position: getServerConfig().newCharacter.spawnPosition };
+	if (typeof gameData.hospitals[getGame()] == "undefined") {
+		return { position: serverConfig.newCharacter.spawnPosition };
 	} else {
 		let closest = 0;
-		for (let i in getGameConfig().hospitals[getGame()]) {
-			if (getDistance(getGameConfig().hospitals[getGame()][i].position, position) < getDistance(getGameConfig().hospitals[getGame()][closest].position, position)) {
+		for (let i in gameData.hospitals[getGame()]) {
+			if (getDistance(gameData.hospitals[getGame()][i].position, position) < getDistance(gameData.hospitals[getGame()][closest].position, position)) {
 				closest = i;
 			}
 		}
 
-		return getGameConfig().hospitals[getGame()][closest];
+		return gameData.hospitals[getGame()][closest];
 	}
 }
 
 // ===========================================================================
 
 function getClosestPoliceStation(position) {
-	if (typeof getGameConfig().policeStations[getGame()] == "undefined") {
-		return { position: getServerConfig().newCharacter.spawnPosition };
+	if (typeof gameData.policeStations[getGame()] == "undefined") {
+		return { position: serverConfig.newCharacter.spawnPosition };
 	} else {
 		let closest = 0;
-		for (let i in getGameConfig().policeStations[getGame()]) {
-			if (getDistance(getGameConfig().policeStations[getGame()][i].position, position) < getDistance(getGameConfig().policeStations[getGame()][closest].position, position)) {
+		for (let i in gameData.policeStations[getGame()]) {
+			if (getDistance(gameData.policeStations[getGame()][i].position, position) < getDistance(gameData.policeStations[getGame()][closest].position, position)) {
 				closest = i;
 			}
 		}
 
-		return getGameConfig().policeStations[getGame()][closest];
+		return gameData.policeStations[getGame()][closest];
 	}
 }
 
@@ -195,7 +191,7 @@ function getClosestPoliceStation(position) {
 
 function getPlayerDisplayForConsole(client) {
 	if (isNull(client)) {
-		return "(Unknown client)";
+		return "(Unknown client/all clients)";
 	}
 	return `${getPlayerName(client)}[${getPlayerId(client)}]`;
 }
@@ -212,7 +208,7 @@ function getPlayerNameForNameTag(client) {
 // ===========================================================================
 
 function isPlayerSpawned(client) {
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 	return getPlayerData(client).spawned;
@@ -227,8 +223,8 @@ function getPlayerIsland(client) {
 // ===========================================================================
 
 function isAtPayAndSpray(position) {
-	for (let i in getGameConfig().payAndSprays[getGame()]) {
-		if (getDistance(position, getGameConfig().payAndSprays[getGame()][i]) <= getGlobalConfig().payAndSprayDistance) {
+	for (let i in gameData.payAndSprays[getGame()]) {
+		if (getDistance(position, gameData.payAndSprays[getGame()][i]) <= globalConfig.payAndSprayDistance) {
 			return true;
 		}
 	}
@@ -256,7 +252,7 @@ function getPlayerFromCharacterId(subAccountId) {
 function checkPlayerPedStates() {
 	let clients = getClients();
 	for (let i in clients) {
-		if (getPlayerData(clients[i])) {
+		if (getPlayerData(clients[i]) != null) {
 			if (getPlayerData(clients[i]).pedState) {
 				if (isPlayerInAnyVehicle(clients[i])) {
 					if (getPlayerData(clients[i]).pedState == V_PEDSTATE_EXITINGVEHICLE) {
@@ -271,14 +267,14 @@ function checkPlayerPedStates() {
 // ===========================================================================
 
 function showConnectCameraToPlayer(client) {
-	if (isFadeCameraSupported()) {
-		fadeCamera(client, true, 1);
+	if (isGameFeatureSupported("fadeCamera")) {
+		fadePlayerCamera(client, true, 1000);
 	}
 
-	if (isCustomCameraSupported()) {
+	if (isGameFeatureSupported("customCamera")) {
 		//setPlayerInterior(client, 0);
 		//setPlayerDimension(client, 0);
-		setPlayerCameraLookAt(client, getServerConfig().connectCameraPosition, getServerConfig().connectCameraLookAt);
+		setPlayerCameraLookAt(client, serverConfig.connectCameraPosition, serverConfig.connectCameraLookAt);
 	}
 	setPlayer2DRendering(client, false, false, false, false, false, false);
 }
@@ -286,28 +282,39 @@ function showConnectCameraToPlayer(client) {
 // ===========================================================================
 
 function showCharacterSelectCameraToPlayer(client) {
-	setPlayerCameraLookAt(client, getServerConfig().characterSelectCameraPosition, getServerConfig().characterSelectCameraPosition);
+	setPlayerCameraLookAt(client, serverConfig.characterSelectCameraPosition, serverConfig.characterSelectCameraPosition);
 }
 
 // ===========================================================================
 
 function getClosestPlayer(position, exemptPlayer) {
 	let clients = getClients();
-	let closest = 0;
+	let closest = (exemptPlayer.index == 0) ? 1 : 0;
 	for (let i in clients) {
-		if (exemptPlayer != clients[i]) {
-			if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
-				closest = i;
+		if (isPlayerLoggedIn(clients[i]) && isPlayerSpawned(clients[i])) {
+			if (exemptPlayer != clients[i]) {
+				if (getDistance(getPlayerPosition(clients[i]), position) < getDistance(getPlayerPosition(clients[closest]), position)) {
+					closest = i;
+				}
 			}
 		}
 	}
+
 	return clients[closest];
 }
 
 // ===========================================================================
 
 function isPlayerMuted(client) {
-	return getPlayerData(client).muted;
+	if (getPlayerData(client).muted == true) {
+		return true;
+	}
+
+	if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("Muted"))) {
+		return true;
+	}
+
+	return false;
 }
 
 // ===========================================================================
@@ -338,7 +345,7 @@ function getPlayerFromParams(params) {
 // ===========================================================================
 
 function updateConnectionLogOnQuit(client) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		quickDatabaseQuery(`UPDATE conn_main SET conn_when_disconnect=NOW() WHERE conn_id = ${getPlayerData(client).sessionId}`);
 	}
 }
@@ -352,7 +359,7 @@ function updateConnectionLogOnAuth(client, authId) {
 // ===========================================================================
 
 function updateConnectionLogOnClientInfoReceive(client, clientVersion, screenWidth, screenHeight) {
-	if (getPlayerData(client) != false) {
+	if (getPlayerData(client) != null) {
 		getPlayerData(client).clientVersion = clientVersion;
 	}
 
@@ -374,7 +381,21 @@ function generateRandomPhoneNumber() {
 // ===========================================================================
 
 function doesNameContainInvalidCharacters(name) {
-	let disallowedCharacters = getGlobalConfig().subAccountNameAllowedCharacters;
+	let disallowedCharacters = globalConfig.subAccountNameAllowedCharacters;
+	name = toLowerCase(name);
+	for (let i = 0; i < name.length; i++) {
+		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function doesAccountNameContainInvalidCharacters(name) {
+	let disallowedCharacters = globalConfig.accountNameAllowedCharacters;
 	name = toLowerCase(name);
 	for (let i = 0; i < name.length; i++) {
 		if (disallowedCharacters.toLowerCase().indexOf(name.charAt(i)) == -1) {
@@ -396,12 +417,12 @@ function getClientFromSyncerId(syncerId) {
 function clearTemporaryVehicles() {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for (let i in vehicles) {
-		if (!getVehicleData(vehicles[i])) {
+		if (getVehicleData(vehicles[i]) == null) {
 			let occupants = vehicles[i].getOccupants();
 			for (let j in occupants) {
-				destroyGameElement(occupants[j]);
+				deleteGameElement(occupants[j]);
 			}
-			destroyGameElement(vehicles[i]);
+			deleteGameElement(vehicles[i]);
 		}
 	}
 }
@@ -415,7 +436,7 @@ function clearTemporaryPeds() {
 			if (!peds[i].isType(ELEMENT_PLAYER)) {
 				if (peds[i].vehicle == null) {
 					if (!getNPCData(peds[i])) {
-						destroyElement(peds[i]);
+						deleteGameElement(peds[i]);
 					}
 				}
 			}
@@ -426,7 +447,7 @@ function clearTemporaryPeds() {
 // ===========================================================================
 
 function isClientInitialized(client) {
-	//if (typeof getServerData().clients[getPlayerId(client)] == "undefined") {
+	//if (typeof serverData.clients[getPlayerId(client)] == "undefined") {
 	//	return false;
 	//}
 
@@ -467,16 +488,6 @@ function getPlayerConnectionsInLastMonthByName(name) {
 
 // ===========================================================================
 
-function addPrefixNumberFill(number, amount) {
-	let numberString = toString(number);
-	while (numberString.length < amount) {
-		numberString = toString(`0${numberString}`);
-	}
-	return toString(numberString);
-}
-
-// ===========================================================================
-
 function updateAllPlayerWeaponDamageStates() {
 	let clients = getClients();
 	for (let i in players) {
@@ -508,7 +519,7 @@ function removeAllPlayersFromVehicles() {
 	let clients = getClients();
 	for (let i in clients) {
 		if (isPlayerInAnyVehicle(clients[i])) {
-			removePlayerFromVehicle(clients[i]);
+			removePedFromVehicle(getPlayerPed(clients[i]));
 		}
 	}
 	return false;
@@ -516,126 +527,149 @@ function removeAllPlayersFromVehicles() {
 
 // ===========================================================================
 
-function processPlayerEnteringExitingProperty(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities]: Processing property enter/exit for player ${getPlayerDisplayForConsole(client)} ...`);
-	if (getPlayerData(client).enteringExitingProperty == null) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Assigned property data is null.`);
+function initPlayerPropertySwitch(client, spawnPosition, spawnRotation, spawnInterior, spawnDimension, spawnVehicle = -1, vehicleSeat = -1, sceneName = "") {
+	logToConsole(LOG_DEBUG, `[V.RP.Misc] Initializing property switch for player ${getPlayerDisplayForConsole(client)} to ${sceneName}`);
+	if (client == null) {
 		return false;
 	}
 
-	let pedState = getPlayerData(client).pedState;
-	if (pedState != V_PEDSTATE_ENTERINGPROPERTY && pedState != V_PEDSTATE_EXITINGPROPERTY) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Ped state is not entering or exiting property.`);
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 
-	let propertyData = null;
-	if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
-		propertyData = getBusinessData(getPlayerData(client).enteringExitingProperty[1]);
-	} else if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_HOUSE) {
-		propertyData = getHouseData(getPlayerData(client).enteringExitingProperty[1]);
+	let currentScene = getPlayerCurrentSubAccount(client).scene;
+
+	getPlayerCurrentSubAccount(client).spawnPosition = spawnPosition;
+	getPlayerCurrentSubAccount(client).spawnHeading = spawnRotation;
+	getPlayerCurrentSubAccount(client).interior = spawnInterior;
+	getPlayerCurrentSubAccount(client).dimension = spawnDimension;
+	getPlayerCurrentSubAccount(client).scene = sceneName;
+	getPlayerCurrentSubAccount(client).spawnVehicle = spawnVehicle;
+	getPlayerCurrentSubAccount(client).spawnVehicleSeat = vehicleSeat;
+
+	clearPlayerStateToEnterExitProperty(client);
+
+	// In Mafia 1, set virtual world to some really high unused number first so everything is removed (otherwise crashes)
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		setPlayerDimension(client, globalConfig.playerSceneSwitchVirtualWorldStart + getPlayerId(client));
 	}
 
-	if (propertyData == null || propertyData == false) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Utilities]: Aborting property enter/exit for player ${getPlayerDisplayForConsole(client)}. Property is invalid.`);
-		return false;
+	if (isGameFeatureSupported("fadeCamera") && getPlayerData(client).pedState != V_PEDSTATE_TELEPORTING) {
+		fadePlayerCamera(client, false, 2000);
 	}
 
-	if (pedState == V_PEDSTATE_ENTERINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property ENTER for player ${getPlayerDisplayForConsole(client)} ...`);
-		if (isGameFeatureSupported("interiorScene") && propertyData.exitScene != "") {
-			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is entering a property with interior scene (${propertyData.exitScene})`);
-			spawnPlayer(client, propertyData.exitPosition, propertyData.exitRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-			onPlayerSpawn(client);
-		} else {
-			setPlayerPosition(client, propertyData.exitPosition);
-			setPlayerHeading(client, propertyData.exitRotation);
+	if (isGameFeatureSupported("interiorScene")) {
+		if (!isSameScene(sceneName, currentScene)) {
+			if (getPlayerData(client).pedState == V_PEDSTATE_TELEPORTING) {
+				if (getPlayerPed(client) != null) {
+					despawnPlayer(client);
+				}
+
+				setPlayerScene(client, sceneName);
+			} else {
+				setTimeout(function () {
+					if (getPlayerPed(client) != null) {
+						despawnPlayer(client);
+					}
+
+					setPlayerScene(client, sceneName);
+				}, 2000);
+			}
+
+			return false;
+		}
+	}
+
+	if (getPlayerData(client).pedState == V_PEDSTATE_TELEPORTING) {
+		processPlayerSceneSwitch(client, false);
+	} else {
+		setTimeout(function () {
+			processPlayerSceneSwitch(client, false);
+		}, 2000);
+	}
+}
+
+// ===========================================================================
+
+function processPlayerSceneSwitch(client, spawn = false) {
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Processing scene switch for player ${getPlayerDisplayForConsole(client)} ...`);
+
+	/*
+	let position = toVector3(0.0, 0.0, 0.0);
+	let rotation = 0.0;
+	let dimension = 0;
+	let interior = 0;
+
+	if (getPlayerData(client).pedState != V_PEDSTATE_ENTERINGPROPERTY && getPlayerData(client).pedState != V_PEDSTATE_EXITINGPROPERTY) {
+		position = getPlayerCurrentSubAccount(client).spawnPosition;
+		rotation = getPlayerCurrentSubAccount(client).spawnHeading;
+		dimension = getPlayerCurrentSubAccount(client).dimension;
+		interior = getPlayerCurrentSubAccount(client).interior;
+	}
+	*/
+
+	if (spawn == true) {
+		let skin = gameData.skins[getGame()][getPlayerCurrentSubAccount(client).skin][0];
+		if (isPlayerWorking(client)) {
+			if (getPlayerData(client).jobUniform != -1) {
+				skin = gameData.skins[getGame()][getPlayerData(client).jobUniform][0];
+			}
 		}
 
-		setPlayerDimension(client, propertyData.exitDimension);
-		setPlayerInterior(client, propertyData.exitInterior);
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Spawning ped after scene switch for player ${getPlayerDisplayForConsole(client)} (Interior: ${getPlayerCurrentSubAccount(client).scene}, Game: ${getSceneForInterior(getPlayerCurrentSubAccount(client).scene)}). ...`);
+		spawnPlayer(client, getPlayerCurrentSubAccount(client).spawnPosition, getPlayerCurrentSubAccount(client).spawnHeading, skin);
+		setPlayerControlState(client, false);
+	} else {
+		// Set interior before position
+		if (isGameFeatureSupported("interiorId")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior for player ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).interior}`);
+			setPlayerInterior(client, getPlayerCurrentSubAccount(client).interior);
+		}
+
+		setPlayerPosition(client, getPlayerCurrentSubAccount(client).spawnPosition);
+		setPlayerHeading(client, getPlayerCurrentSubAccount(client).spawnHeading);
+	}
+
+	if (isGameFeatureSupported("dimension")) {
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting dimension for player ${getPlayerDisplayForConsole(client)} to ${getPlayerCurrentSubAccount(client).dimension}`);
+		setPlayerDimension(client, getPlayerCurrentSubAccount(client).dimension);
+	}
+
+	setTimeout(function () {
+		if (isGameFeatureSupported("fadeCamera")) {
+			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
+			fadePlayerCamera(client, true, 1000);
+		}
+
+		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior lights ${getOnOffFromBool(getPlayerData(client).interiorLights)} for player ${getPlayerDisplayForConsole(client)}`);
+		updateInteriorLightsForPlayer(client, getPlayerData(client).interiorLights);
+
+		if (getPlayerData(client).inPaintBall) {
+			startPaintBall(client);
+		}
 
 		setTimeout(function () {
-			if (isFadeCameraSupported()) {
-				fadeCamera(client, true, 1.0);
-			}
-			updateInteriorLightsForPlayer(client, propertyData.interiorLights);
-		}, 1000);
+			logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Enabling all rendering states for player ${getPlayerDisplayForConsole(client)} since map switch finished`);
 
-		if (getPlayerData(client).enteringExitingProperty[0] == V_PROPERTY_TYPE_BUSINESS) {
-			if (propertyData.type == V_BIZ_TYPE_PAINTBALL) {
-				startPaintBall(client);
-			}
-		}
-
-		let radioStationIndex = propertyData.streamingRadioStationIndex;
-		if (radioStationIndex != -1) {
-			if (getRadioStationData(radioStationIndex)) {
-				playRadioStreamForPlayer(client, getRadioStationData(radioStationIndex).url);
-				getPlayerData(client).streamingRadioStation = radioStationIndex;
-			}
-		}
-
-		getPlayerData(client).inProperty = [getPlayerData(client).enteringExitingProperty[0], getPlayerData(client).enteringExitingProperty[1]];
-		getPlayerData(client).enteringExitingProperty = null;
-		getPlayerData(client).pedState = V_PEDSTATE_READY;
-	} else if (pedState == V_PEDSTATE_EXITINGPROPERTY) {
-		logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Processing property EXIT for player ${getPlayerDisplayForConsole(client)} from property ID ${propertyData.index}/${propertyData.databaseId} ...`);
-		if (isGameFeatureSupported("interiorScene") && propertyData.entranceScene != "") {
-			logToConsole(LOG_VERBOSE, `[AGRP.Utilities]: Player ${getPlayerDisplayForConsole(client)} is exiting a property with external interior scene (${propertyData.entranceScene})`);
-			spawnPlayer(client, propertyData.entrancePosition, propertyData.entranceRotation, getGameConfig().skins[getGame()][getPlayerCurrentSubAccount(client).skin][0]);
-			onPlayerSpawn(client);
-		} else {
-			setPlayerPosition(client, propertyData.entrancePosition);
-			setPlayerHeading(client, propertyData.entranceRotation);
-		}
-
-		setPlayerDimension(client, propertyData.entranceDimension);
-		setPlayerInterior(client, propertyData.entranceInterior);
-
-		// Check if exiting property was into another house/business
-		let inProperty = false;
-		let inPropertyType = V_PROPERTY_TYPE_NONE;
-
-		let inBusiness = getPlayerBusiness(client);
-		if (inBusiness != -1) {
-			inProperty = getBusinessData(inBusiness);
-			inPropertyType = V_PROPERTY_TYPE_BUSINESS;
-		} else {
-			let inHouse = getPlayerHouse(client);
-			if (inHouse != -1) {
-				inProperty = getHouseData(inHouse);
-				inPropertyType = V_PROPERTY_TYPE_HOUSE;
-			}
-		}
-
-		setTimeout(function () {
-			if (getGame() != V_GAME_MAFIA_ONE && getGame() != V_GAME_GTA_IV) {
-				if (isFadeCameraSupported()) {
-					fadeCamera(client, true, 1.0);
+			if (getPlayerCurrentSubAccount(client).spawnVehicle != -1) {
+				if (serverData.vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle != null) {
+					warpPedIntoVehicle(getPlayerPed(client), serverData.vehicles[getPlayerCurrentSubAccount(client).spawnVehicle].vehicle, getPlayerCurrentSubAccount(client).spawnVehicleSeat);
 				}
 			}
-			updateInteriorLightsForPlayer(client, (inProperty != false) ? inProperty.interiorLights : true);
-		}, 1000);
 
-		stopPaintBall(client);
-
-		if (inProperty != false) {
-			if (getBusinessData(inBusiness).streamingRadioStationIndex != -1) {
-				if (getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex)) {
-					playRadioStreamForPlayer(client, getRadioStationData(getBusinessData(inBusiness).streamingRadioStationIndex).url);
-					getPlayerData(client).streamingRadioStation = getBusinessData(inBusiness).streamingRadioStationIndex;
-				}
+			if (spawn == true) {
+				onPlayerSpawn(client);
 			}
-		} else {
-			stopRadioStreamForPlayer(client);
-			getPlayerData(client).streamingRadioStation = -1;
-		}
 
-		getPlayerData(client).inProperty = [inPropertyType, inProperty.index];
-		getPlayerData(client).enteringExitingProperty = null;
-		getPlayerData(client).pedState = V_PEDSTATE_READY;
-	}
+			setPlayerControlState(client, true);
+
+			// Clear some scene switching states
+			getPlayerCurrentSubAccount(client).spawnVehicle = -1;
+			getPlayerCurrentSubAccount(client).spawnVehicleSeat = -1;
+
+			getPlayerData(client).pedState = V_PEDSTATE_READY;
+		}, 500);
+	}, 1000);
 }
 
 // ===========================================================================
@@ -645,7 +679,35 @@ function getPlayerCountryISOCode(client) {
 		return "US";
 	}
 
-	return module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
+	return module.geoip.getCountryISO(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(client));
 }
 
 // ===========================================================================
+
+function exportAllFunctions() {
+	exportFunction("forceAllVehicleEngines", forceAllVehicleEngines);
+	exportFunction("doesPlayerHaveStaffPermission", doesPlayerHaveStaffPermission);
+	exportFunction("getStaffFlagValue", getStaffFlagValue);
+}
+
+// ===========================================================================
+
+function setPlayerPedPartsAndProps(client) {
+	//	setEntityData(getPlayerPed(client), "v.rp.bodyPartHair", getPlayerCurrentSubAccount(client).bodyParts.hair, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartHead", getPlayerCurrentSubAccount(client).bodyParts.head, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartUpper", getPlayerCurrentSubAccount(client).bodyParts.upper, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPartLower", getPlayerCurrentSubAccount(client).bodyParts.lower, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropHair", getPlayerCurrentSubAccount(client).bodyProps.hair, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPropEyes", getPlayerCurrentSubAccount(client).bodyProps.eyes, true);
+	setEntityData(getPlayerPed(client), "v.rp.bodyPropHead", getPlayerCurrentSubAccount(client).bodyProps.head, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftHand", getPlayerCurrentSubAccount(client).bodyProps.leftHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightHand", getPlayerCurrentSubAccount(client).bodyProps.rightHand, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftWrist", getPlayerCurrentSubAccount(client).bodyProps.leftWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightWrist", getPlayerCurrentSubAccount(client).bodyProps.rightWrist, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartHip", getPlayerCurrentSubAccount(client).bodyProps.hip, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartLeftFoot", getPlayerCurrentSubAccount(client).bodyProps.leftFoot, true);
+	//    setEntityData(getPlayerPed(client), "v.rp.bodyPartRightFoot", getPlayerCurrentSubAccount(client).bodyProps.rightFoot, true);
+	//
+
+	forcePlayerToSyncElementProperties(null, getPlayerPed(client));
+}

@@ -13,6 +13,7 @@ let afkStatusFont = null;
 let pingFont = null;
 let nametagDistance = 50.0;
 let nametagWidth = 70;
+let nametagHeight = (getGame() == V_GAME_MAFIA_ONE) ? 2.0 : 0.9;
 
 let playerNames = {};
 let playerColours = {};
@@ -56,7 +57,7 @@ function updatePlayerNameTag(clientName, characterName, colour, paused, ping) {
 		let client = getPlayerFromParams(clientName);
 		if (client != false) {
 			if (getPlayerPed(client) != null) {
-				getPlayerPed(client).setNametag(characterName, colour);
+				getPlayerPed(client).removeNametag();
 			}
 		}
 	}
@@ -84,20 +85,14 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// -------------------------------------------
 	// Health Bar
 
-	if (getMultiplayerMod() == V_MPMOD_GTAC) {
-		if (getGame() == V_GAME_GTA_III) {
-			// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
-			if (skin == 109) {
-				y -= 20;
-			} else {
-				y -= 5;
-			}
-		} else {
-			y -= 5;
+	if (getGame() == V_GAME_GTA_III) {
+		// Mickey Hamfists is ridiculously tall. Raise the nametag for him a bit
+		if (skin == 109) {
+			y -= 15;
 		}
-	} else {
-		y -= 5;
 	}
+
+	y -= 5;
 
 	if (health > 0.0) {
 		let hx = x - width / 2;
@@ -134,8 +129,8 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 	// AFK Status
 	if (afkStatusFont != null) {
 		if (afk) {
-			let size = afkStatusFont.measure(getLocaleString(client, "Paused"), game.width, 0.0, 0.0, afkStatusFont.size, false, false);
-			afkStatusFont.render(getLocaleString(client, "Paused"), [x - size[0] / 2, y - size[1] / 2], game.width, 0.0, 0.0, afkStatusFont.size, toColour(255, 0, 0, 255), false, false, false, true);
+			let size = afkStatusFont.measure(getLocaleString("Paused"), game.width, 0.0, 0.0, afkStatusFont.size, false, false);
+			afkStatusFont.render(getLocaleString("Paused"), [x - size[0] / 2, y - size[1] / 2], game.width, 0.0, 0.0, afkStatusFont.size, toColour(255, 0, 0, 255), false, false, false, true);
 		}
 	}
 }
@@ -143,34 +138,36 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 // ===========================================================================
 
 function updateNametag(element) {
-	if (!areWorldLabelsSupported()) {
+	if (!isGameFeatureSupported("customNametag")) {
+		return false;
+	}
+
+	if (element == null) {
 		return false;
 	}
 
 	if (localPlayer != null) {
-		let playerPos = localPlayer.position;
-		let elementPos = element.position;
+		let playerPosition = getLocalPlayerPosition();
+		let elementPosition = element.position;
 
-		elementPos[2] += 0.9;
+		elementPosition = getPosAbovePos(elementPosition, nametagHeight);
 
-		//if(typeof element.getComponentPosition()) {
-
-		let screenPos = getScreenFromWorldPosition(elementPos);
-		if (screenPos[2] >= 0.0) {
-			let health = element.health / 100.0;
+		let screenPosition = getScreenFromWorldPosition(elementPosition);
+		if (screenPosition[2] >= 0.0 || getGame() == V_GAME_MAFIA_ONE) {
+			let health = (getGame() == V_GAME_GTA_IV) ? 1.0 : element.health / 100.0;
 			if (health > 1.0) {
 				health = 1.0;
 			}
 
-			let armour = element.armour / 100.0;
+			let armour = (getGame() == V_GAME_GTA_IV) ? 0.0 : element.armour / 100.0;
 			if (armour > 1.0) {
 				armour = 1.0;
 			}
 
-			let distance = playerPos.distance(elementPos);
+			let distance = playerPosition.distance(elementPosition);
 			if (distance <= nametagDistance) {
 				if (typeof game.processLineOfSight != "undefined") {
-					let losCheck = game.processLineOfSight(playerPos, elementPos, true, false, false, true, true, false, true, true);
+					let losCheck = game.processLineOfSight(playerPosition, elementPosition, true, false, false, true, true, false, true, true);
 					if (losCheck != null) {
 						return false;
 					}
@@ -182,25 +179,23 @@ function updateNametag(element) {
 					let paused = false;
 					let ping = -1;
 
-					if (element.isType(ELEMENT_PLAYER)) {
-						if (typeof playerNames[element.name] != "undefined") {
-							name = playerNames[element.name];
-						}
-
-						if (typeof playerPaused[element.name] != "undefined") {
-							paused = playerPaused[element.name];
-						}
-
-						if (typeof playerColours[element.name] != "undefined") {
-							colour = playerColours[element.name];
-						}
-
-						if (typeof playerPing[element.name] != "undefined") {
-							ping = playerPing[element.name];
-						}
+					if (typeof playerNames[element.name] != "undefined") {
+						name = playerNames[element.name];
 					}
 
-					drawNametag(screenPos[0], screenPos[1], health, armour, name, ping, 1.0 - distance / nametagDistance, distance, colour, paused, element.skin);
+					if (typeof playerPaused[element.name] != "undefined") {
+						paused = playerPaused[element.name];
+					}
+
+					if (typeof playerColours[element.name] != "undefined") {
+						colour = playerColours[element.name];
+					}
+
+					if (typeof playerPing[element.name] != "undefined") {
+						ping = playerPing[element.name];
+					}
+
+					drawNametag(screenPosition[0], screenPosition[1], health, armour, name, ping, 1.0 - distance / nametagDistance, distance, colour, paused, element.skin);
 				}
 			}
 		}
@@ -224,9 +219,15 @@ function processNameTagRendering(event) {
 	//	return false;
 	//}
 
-	getElementsByType(ELEMENT_PED).forEach(function (ped) {
-		if (ped != localPlayer) {
-			updateNametag(ped);
+	getElementsByType(ELEMENT_PLAYER).forEach(function (player) {
+		if (player != localPlayer) {
+			if (getGame() == V_GAME_MAFIA_ONE) {
+				if (player.vehicle != null) {
+					return false;
+				}
+			}
+
+			updateNametag(player);
 		}
 	});
 }

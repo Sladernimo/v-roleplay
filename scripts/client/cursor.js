@@ -7,6 +7,8 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let mouseCursorEnabled = false;
+
 let cursorImage = null;
 let cursorImagePath = "files/images/cursor.png";
 let cursorSize = toVector2(16.0, 24.0);

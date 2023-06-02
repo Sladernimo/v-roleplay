@@ -1,0 +1,8 @@
+{
+	"accountSaltHash": [
+		"LGj6w8SRwJEJ95XH"
+	],
+	"accountPasswordSaltAlgorithm": [
+		"v.roleplay.{SALTHASH}.{NAME}.{PASSWORD}"
+	]
+}

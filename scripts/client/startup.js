@@ -21,8 +21,22 @@ function initClientScripts() {
 	initEventScript();
 	initSkinSelectScript();
 	initCursorScript();
+	initCustomHUDScript();
+	initPayPhoneScript();
+	initTimersScript();
+	initJobScript();
+	initItemScript();
+	initBusinessScript();
+	initHouseScript();
+	initDamageScript();
+	initCountDownScript();
 
+	loadLocaleConfig();
 	addAllNetworkHandlers();
+	initTimers();
+	removeUnusedGameData();
+
+	scriptInitialized = true;
 }
 
 // ===========================================================================
@@ -129,7 +143,7 @@ function setUpInitialGame() {
 		game.onMission = true;
 	} else if (getGame() == V_GAME_GTA_IV) {
 		natives.allowEmergencyServices(false);
-		natives.setCreateRandomCops(true);
+		natives.setCreateRandomCops(false);
 		natives.setMaxWantedLevel(0);
 		natives.setWantedMultiplier(0.0);
 		natives.allowPlayerToCarryNonMissionObjects(natives.getPlayerId(), true);
@@ -146,13 +160,17 @@ function setUpInitialGame() {
 		natives.setPickupsFixCars(false);
 		natives.forceFullVoice(localPlayer);
 
+		// Local Player
+		natives.setCharAllowedToRunOnBoats(localPlayer, true);
+		natives.allowLockonToFriendlyPlayers(natives.getPlayerId(), true);
+
 		// HUD and Display
 		//natives.displayCash(false);
 		//natives.displayAmmo(false);
 		//natives.displayHud(false);
 		//natives.displayRadar(false);
 		//natives.displayAreaName(false);
-		natives.displayPlayerNames(true);
+		natives.displayPlayerNames(false);
 		natives.setPoliceRadarBlips(false);
 		natives.removeTemporaryRadarBlipsForPickups();
 		natives.displayNonMinigameHelpMessages(false);
@@ -164,18 +182,20 @@ function setUpInitialGame() {
 		natives.setPlayersDropMoneyInNetworkGame(false);
 
 		// Population
-		//natives.dontSuppressAnyCarModels(5.0);
-		//natives.dontSuppressAnyPedModels(5.0);
-		//natives.forceGenerateParkedCarsTooCloseToOthers(true);
-		//natives.setParkedCarDensityMultiplier(5.0);
-		//natives.setRandomCarDensityMultiplier(5.0);
-		//natives.setPedDensityMultiplier(5.0);
-		//natives.setCarDensityMultiplier(5.0);
-		//natives.setScenarioPedDensityMultiplier(5.0, 5.0);
-		natives.switchRandomTrains(true);
-		natives.switchRandomBoats(true);
-		natives.switchAmbientPlanes(true);
-		natives.switchMadDrivers(false);
+		natives.dontSuppressAnyCarModels();
+		natives.dontSuppressAnyPedModels();
+		natives.forceGenerateParkedCarsTooCloseToOthers(false);
+		natives.setParkedCarDensityMultiplier(0.0);
+		natives.overrideNumberOfParkedCars(0);
+		natives.setRandomCarDensityMultiplier(0.0);
+		natives.setPedDensityMultiplier(0.0);
+		natives.setCarDensityMultiplier(0.0);
+		natives.setScenarioPedDensityMultiplier(0.0, 0.0);
+		//natives.switchRandomTrains(false);
+		//natives.switchRandomBoats(false);
+		//natives.switchAmbientPlanes(false);
+		//natives.switchMadDrivers(false);
+		natives.disableCarGenerators(true, true);
 
 		// Singleplayer Cellphone
 		//natives.requestScript("spcellphone");
@@ -190,13 +210,15 @@ function setUpInitialGame() {
 		// Some last steps
 		//natives.loadAllObjectsNow();
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		game.mapEnabled = false;
-		game.setTrafficEnabled(false);
+		game.mapEnabled = true;
+		//game.setTrafficEnabled(false);
 	}
 }
 
 // ===========================================================================
 
-initClientScripts();
+addEventHandler("OnResourceStart", onResourceStart);
+addEventHandler("OnResourceReady", onResourceReady);
+addEventHandler("OnResourceStop", onResourceStop);
 
 // ===========================================================================

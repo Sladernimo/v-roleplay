@@ -16,13 +16,17 @@ const V_RETURNTO_TYPE_SKINSELECT = 2;          // "Return to" data is from skin 
 
 /**
  * @class Representing extra data for a client
- * @property {AccountData} accountData
- * @property {Array.<SubAccountData>} subAccounts
  */
 class ClientData {
-	constructor(client, accountData, subAccounts) {
+	constructor(client, accountData = null, subAccounts = []) {
+		/** @type {AccountData} */
 		this.accountData = accountData;
+
+		/** @type {Array.<SubAccountData>} */
 		this.subAccounts = subAccounts; // Characters
+
+		/** @type {Ped} */
+		this.ped = null;
 
 		// General Info
 		this.client = client;
@@ -45,22 +49,24 @@ class ClientData {
 
 		// Job Stuff
 		this.jobEquipmentCache = [];
-		this.jobUniform = 0;
+		this.jobUniform = -1;
 		this.jobRoute = -1;
 		this.jobRouteLocation = -1;
-		this.jobRouteVehicle = false;
+		this.jobRouteLocationElement = null;
+		this.jobRouteVehicle = null;
 		this.returnToJobVehicleTick = 0;
 		this.returnToJobVehicleTimer = null;
 
-		this.rentingVehicle = false;
-		this.buyingVehicle = false;
-		this.lastVehicle = false;
+		/** @type {Vehicle} */
+		this.rentingVehicle = null;
+
+		/** @type {Vehicle} */
+		this.buyingVehicle = null;
+
+		/** @type {Vehicle} */
+		this.lastVehicle = null;
 
 		this.switchingCharacter = false;
-
-		this.tutorialStep = -1;
-		this.tutorialItem = null;
-		this.tutorialVehicle = null;
 
 		// Items
 		this.tempLockerCache = new Array(9).fill(-1);
@@ -77,6 +83,7 @@ class ClientData {
 		this.businessOrderBusiness = -1;
 		this.businessOrderItem = -1;
 		this.businessOrderValue = -1;
+		this.businessOrderSellPrice = 0;
 
 		// For Non-Server Elements
 		this.syncPosition = null;
@@ -84,31 +91,26 @@ class ClientData {
 		this.syncVehicle = null;
 		this.syncVehicleSeat = null;
 
-		// Payday
-		this.payDayAmount = 0;
-		this.payDayTickStart = 0;
-
 		// Creating Character
 		//this.creatingCharacter = false;
 		//this.creatingCharacterSkin = -1;
 
 		// Radio
 		this.streamingRadioStation = -1;
-		this.streamingRadioElement = false;
+		this.streamingRadioElement = null;
 
 		// Return To (when being teleported)
 		this.returnToPosition = null;
 		this.returnToHeading = null;
 		this.returnToInterior = null;
 		this.returnToDimension = null;
-		this.returnToHouse = null;
-		this.returnToBusiness = null;
+		this.returnToScene = "";
 		this.returnToType = V_RETURNTO_TYPE_NONE;
 
 		// Animation
 		this.currentAnimation = -1;
-		this.currentAnimationPositionOffset = false;
-		this.currentAnimationPositionReturnTo = false;
+		this.currentAnimationPositionOffset = null;
+		this.currentAnimationPositionReturnTo = null;
 		this.animationStart = 0;
 		this.animationForced = false;
 
@@ -119,19 +121,35 @@ class ClientData {
 		this.keyBinds = [];
 		this.incomingDamageMultiplier = 1;
 		this.weaponDamageEvent = V_WEAPON_DAMAGE_EVENT_NORMAL;
+
+		/** @type {Vehicle} */
 		this.lastJobVehicle = null;
+
 		this.health = 100;
 		this.locale = 0;
+
+		/** @type {Vehicle} */
 		this.enteringVehicle = null;
+
 		this.customDisconnectReason = "";
-		this.scene = "";
 		this.playerBlip = null;
 		this.alcoholLevel = 0;
 		this.pedState = V_PEDSTATE_NONE;
 		this.promptType = V_PROMPT_NONE;
+		this.promptValue = false;
 		this.privateMessageReplyTo = null;
 		this.enteringExitingProperty = null;
 		this.inProperty = null;
+		this.interiorLights = true;
+		this.spawnInit = false;
+		this.godMode = false;
+		this.vehicleSeat = -1;
+		this.lastJobRouteStart = 0;
+		this.draggingPlayer = null;
+		this.draggedByPlayer = null;
+		this.lastGlobalChatMessageTimeStamp = 0;
+		this.lastLocalChatMessageTimeStamp = 0;
+		this.selectableListItems = [];
 
 		// Paintball
 		this.inPaintBall = false;
@@ -149,6 +167,21 @@ class ClientData {
 		this.casinoChips = 0; // This might become an item with a useId of a business (for chips belonging to specific casinos)
 		this.casinoCardHand = [];
 		this.casinoPlayingGame = V_CASINO_GAME_NONE;
+		this.blackJackState = V_CASINO_BLACKJACK_PLAYSTATE_NONE;
+
+		// PayPhone
+		this.usingPayPhone = -1;
+
+		/** @type {Client} */
+		this.payPhoneOtherPlayer = null;
+
+		this.payPhoneCallStart = 0;
+		this.payPhoneInitiatedCall = false;
+
+		// Scene Switch
+		// Position, rotation, scene, etc are in current character data
+		this.sceneSwitchRadioStation = -1;
+		this.sceneSwitchInteriorLights = true;
 	}
 };
 
@@ -162,9 +195,9 @@ function initClientScript() {
 // ===========================================================================
 
 function resetClientStuff(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Utilities] Resetting client data for ${getPlayerDisplayForConsole(client)}`);
 
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == null) {
 		return false;
 	}
 
@@ -176,7 +209,7 @@ function resetClientStuff(client) {
 		stopWorking(client);
 	}
 
-	if (getPlayerData(client).rentingVehicle) {
+	if (getPlayerData(client).rentingVehicle != null) {
 		stopRentingVehicle(client);
 	}
 
@@ -190,7 +223,11 @@ function resetClientStuff(client) {
 
 	deleteJobItems(client);
 	deletePaintBallItems(client);
-	//deletePlayerTemporaryLockerItems(client);
+	deletePlayerBlip(client);
+
+	if (getPlayerData(client).draggingPlayer != null) {
+		stopDraggingPlayer(client, getPlayerData(client).draggingPlayer);
+	}
 
 	//getPlayerData(client).lastVehicle = null;
 }
@@ -199,23 +236,25 @@ function resetClientStuff(client) {
 
 function kickAllClients() {
 	getClients().forEach((client) => {
-		getPlayerData(client).customDisconnectReason = "ServerRestarting";
+		if (getPlayerData(client) != null) {
+			getPlayerData(client).customDisconnectReason = "ServerRestarting";
+		}
 		disconnectPlayer(client);
-	})
+	});
 }
 
 // ===========================================================================
 
 function initClient(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Initializing client ${getPlayerDisplayForConsole(client)} ...`);
 
 	if (isConsole(client)) {
-		logToConsole(LOG_DEBUG | LOG_ERROR, `[AGRP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (is console client)`);
 		return false;
 	}
 
 	if (playerInitialized[client.index] == true) {
-		logToConsole(LOG_DEBUG | LOG_ERROR, `[AGRP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.Account] Client initialization failed for ${getPlayerDisplayForConsole(client)}! (already initialized)`);
 		return false;
 	}
 
@@ -223,34 +262,39 @@ function initClient(client) {
 
 	//setEntityData(client, "v.rp.isInitialized", true, false);
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Initializing GUI for ${getPlayerDisplayForConsole(client)} ...`);
 	sendPlayerCurrencyString(client);
 	sendPlayerGUIColours(client);
 	sendPlayerGUIInit(client);
-	updatePlayerSnowState(client, getServerConfig().groundSnow);
+	updatePlayerSnowState(client, serverConfig.groundSnow);
 
-	//logToConsole(LOG_DEBUG, `[AGRP.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Account] Showing connect camera to ${getPlayerDisplayForConsole(client)} ...`);
 	//showConnectCameraToPlayer(client);
 
 	messageClient(`Please wait ...`, client, getColourByName("softGreen"));
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Waiting for 2.5 seconds to prevent race attack ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Waiting for 2.5 seconds to prevent race attack ...`);
 	setTimeout(function () {
 		if (client != null) {
 			clearChatBox(client);
-			logToConsole(LOG_DEBUG, `[AGRP.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading account for ${getPlayerDisplayForConsole(client)}`);
 			let tempAccountData = loadAccountFromName(getPlayerName(client), true);
 
-			logToConsole(LOG_DEBUG, `[AGRP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
-			let tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] Loading subaccounts for ${getPlayerDisplayForConsole(client)}`);
+			let tempSubAccounts = [];
+			if (tempAccountData != null) {
+				if (tempAccountData.databaseId != 0) {
+					tempSubAccounts = loadSubAccountsFromAccount(tempAccountData.databaseId);
+				}
+			}
 
-			getServerData().clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
+			serverData.clients[getPlayerId(client)] = new ClientData(client, tempAccountData, tempSubAccounts);
 
-			getServerData().clients[getPlayerId(client)].sessionId = saveConnectionToDatabase(client);
-			getServerData().clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
+			serverData.clients[getPlayerId(client)].sessionId = saveConnectionToDatabase(client);
+			serverData.clients[getPlayerId(client)].connectTime = getCurrentUnixTimestamp();
 			requestClientInfo(client);
 
-			if (tempAccountData != false) {
+			if (tempAccountData != null) {
 				sendPlayerLocaleId(client, getPlayerData(client).accountData.locale);
 				if (isAccountAutoIPLoginEnabled(tempAccountData) && getPlayerData(client).accountData.ipAddress == getPlayerIP(client)) {
 					messagePlayerAlert(client, getLocaleString(client, "AutoLoggedInIP"));
@@ -258,14 +302,14 @@ function initClient(client) {
 					playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 				} else {
 					if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-						logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI.`);
+						logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI.`);
 						showPlayerLoginGUI(client);
 					} else {
-						logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
+						logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled).`);
 						messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "/login"), getColourByName("softGreen"));
 
 						if (checkForGeoIPModule()) {
-							let iso = module.geoip.getCountryISO(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(client));
+							let iso = module.geoip.getCountryISO(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(client));
 							let localeId = getLocaleFromCountryISO(iso);
 
 							if (localeId != 0) {
@@ -281,16 +325,16 @@ function initClient(client) {
 			} else {
 				sendPlayerLocaleId(client, 0);
 				if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-					logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
+					logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI.`);
 					showPlayerRegistrationGUI(client);
 				} else {
-					logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
+					logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled).`);
 					messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "/register"), getColourByName("softGreen"));
 				}
 				playRadioStreamForPlayer(client, getServerIntroMusicURL(), true, getPlayerStreamingRadioVolume(client));
 			}
 
-			getServerData().clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase(getServerData().clients[getPlayerId(client)].accountData.databaseId);
+			serverData.clients[getPlayerId(client)].keyBinds = loadAccountKeybindsFromDatabase((tempAccountData != null) ? tempAccountData.databaseId : 0);
 			sendAccountKeyBindsToClient(client);
 		}
 	}, 2500);

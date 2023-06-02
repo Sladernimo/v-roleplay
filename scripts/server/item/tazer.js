@@ -27,7 +27,7 @@ function tazePlayer(client) {
 	setTimeout(function () {
 		unTazePlayer(client);
 		doActionToNearbyPlayers(client, `The tazer effect wears off`);
-	}, getGlobalConfig().tazerEffectDuration);
+	}, globalConfig.tazerEffectDuration);
 }
 
 // ===========================================================================

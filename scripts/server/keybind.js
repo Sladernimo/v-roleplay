@@ -53,15 +53,17 @@ function addKeyBindCommand(command, params, client) {
 	let tempCommand = getParam(params, " ", 2);
 	let tempParams = (splitParams.length > 2) ? splitParams.slice(2).join(" ") : "";
 
+	tempCommand = removeSlashesFromString(tempCommand);
+
 	if (!keyId) {
 		messagePlayerError(client, getLocaleString(client, "InvalidKeyBindName"));
 		messagePlayerTip(client, getLocaleString(client, "KeyBindNameTip"));
-		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExampleList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
+		messagePlayerInfo(client, getLocaleString(client, "UniversalInlineExamplesList", `{ALTCOLOUR}1, 2, a, b, numplus, num1, f1, f2, pageup, delete, insert, rightshift, leftctrl{MAINCOLOR}`));
 		return false;
 	}
 
 	addPlayerKeyBind(client, keyId, tempCommand, tempParams);
-	messagePlayerSuccess(client, getLocaleString(client, "KeyBindRemoved", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`, `{ALTCOLOUR}/${tempCommand} ${tempParams}`));
+	messagePlayerSuccess(client, getLocaleString(client, "KeyBindAdded", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(keyId))}{MAINCOLOUR}`, `{ALTCOLOUR}/${tempCommand} ${tempParams}`));
 }
 
 // ===========================================================================
@@ -106,7 +108,7 @@ function copyKeyBindsToServerCommand(command, params, client) {
 // ===========================================================================
 
 function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
-	let keyBindData = new KeyBindData(false, keys, `${command} ${params}`);
+	let keyBindData = new KeyBindData(false, keyId, `${command} ${params}`);
 	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
@@ -116,7 +118,7 @@ function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
 		sendPlayerEnterPropertyKey(client, keyId.key);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
@@ -140,8 +142,8 @@ function removePlayerKeyBind(client, keyId) {
 
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
 		let keyId = getPlayerKeyBindForCommand(client, "enter");
-		logToConsole(LOG_DEBUG, `[AGRP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
-		sendPlayerEnterPropertyKey(client, keyId.key);
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerEnterPropertyKey(client, -1);
 	} else {
 		sendPlayerEnterPropertyKey(client, false);
 	}
@@ -208,7 +210,7 @@ function playerUsedKeyBind(client, key, duration = 0) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
+	logToConsole(LOG_DEBUG, `[V.RP.KeyBind] ${getPlayerDisplayForConsole(client)} used keybind ${toUpperCase(getKeyNameFromId(key))} (${key})`);
 	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForKey(client, key)) {
 		let keyBindData = getPlayerKeyBindForKey(client, key);
 		if (keyBindData.enabled) {
@@ -238,7 +240,7 @@ function sendAccountKeyBindsToClient(client) {
 // ===========================================================================
 
 function showKeyBindListCommand(command, params, client) {
-	let keybindList = getPlayerData(client).keyBinds.map(function (x) { return `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
+	let keybindList = getPlayerData(client).keyBinds.map(function (x) { return `{chatBoxListIndex}${toUpperCase(getKeyNameFromId(x.key))}: {MAINCOLOUR}${x.commandString}`; });
 
 	let chunkedList = splitArrayIntoChunks(keybindList, 6);
 
@@ -246,6 +248,26 @@ function showKeyBindListCommand(command, params, client) {
 
 	for (let i in chunkedList) {
 		messagePlayerInfo(client, chunkedList[i].join(", "));
+	}
+}
+
+// ===========================================================================
+
+function updatePlayerKeyBinds(client) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "enter")) {
+		let keyId = getPlayerKeyBindForCommand(client, "enter");
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending custom enter property key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerEnterPropertyKey(client, keyId.key);
+	} else {
+		sendPlayerEnterPropertyKey(client, -1);
+	}
+
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "scoreboard")) {
+		let keyId = getPlayerKeyBindForCommand(client, "scoreboard");
+		logToConsole(LOG_DEBUG, `[V.RP.Event] Sending scoreboard key ID (${keyId.key}, ${toUpperCase(getKeyNameFromId(keyId.key))}) to ${getPlayerDisplayForConsole(client)}`);
+		sendPlayerScoreBoardKey(client, keyId.key);
+	} else {
+		sendPlayerScoreBoardKey(client, -1);
 	}
 }
 

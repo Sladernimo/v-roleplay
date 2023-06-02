@@ -7,6 +7,87 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+// Most of the scripting API is the same between the two mods, but there are some differences
+// The differences are explained in JSDoc documentation comments
+
+// If getGame() returns less than 10, then the game is on GTA Connected (GTAC)
+// If getGame() returns 10 or higher, then the game is on Mafia Connected (MafiaC)
+
+// Internally, client is known as a "net machine". It's the entity connected to the server.
+// Objects of class "Player" is a game human/ped character, attached to (and controlled by) the client.
+// The difference between client and player, is the client doesn't exist in the game world.
+// The player ped exists in the game world which is why it has physical properties (like position).
+// You can have a client without a player ped (although they won't have a ped to control), and vice verse (although the ped won't be controlled by a client, similar to an NPC ped)
+
+// The game entities follow a heirarchy, and inherit properties from their parent class:
+// Entity > Ped > Player
+// Entity > Vehicle
+// Entity > Object (For GTAC only, MafiaC doesn't have game object support)
+// Entity > Pickup (For GTAC only, MafiaC doesn't have game pickup support)
+// Entity > Marker (For GTAC only, MafiaC doesn't have game marker support)
+// Entity > Blip
+
+// All "get data" functions like getPlayerData and getVehicleData return an object of their respective data class (ClientData, VehicleData, etc)
+// If the data can't be found, these functions will return null
+
+// Locale strings that indicate an entity that can't be found or doesn't exist, will have a key starting with "Invalid" (e.g. InvalidPlayer, InvalidVehicle, etc)
+// On most command handler functions, these are usually followed by a return statement to prevent the rest of the command from executing.
+
+// ===========================================================================
+
+// Players are sometimes referred to as clients in this script. They are used interchangeably.
+// Not to be confused with "player ped", which is of class "Player" which is the player's game human/ped object
+/**
+ * @typedef Client
+ * @property {string} name - The client's name
+ * @property {string} ip - The client's IP address
+ * @property {number} ping - The client's ping
+ * @property {number} game - The client's game ID
+ * @property {number} gameVersion - The client's game version
+ * @property {boolean} administrator - Whether or not the client can use GTAC and MafiaC built-in admin commands
+ * @property {boolean} console - Whether or not the client is the server console
+ * @property {number} index - The client's index (some multiplayer modifications call it ID)
+ * @property {Player} player - The client's player ped object
+ * @method setData - Attaches a key and value to a client, synced to all clients
+ * @method getData - Gets the value of a key attached to a client
+ * @method removeData - Removes a key and value attached to a client
+ * @method removeAllData - Removes all keys and values attached to a client
+ * @method disconnect - Disconnects a client
+ * @method despawnPlayer - Removes a player's ped and resets their camera
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Entity
+ * @property {*} modelIndex - The model of the entity. GTA Connected uses a number, Mafia Connected uses a string
+ * @property {Vec3} position - The entity's position
+ * @property {Vec3} rotation - The entity's rotation
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Ped
+ * @extends {Entity}
+ * @property {string} name - The ped's name
+ * @property {number} health - The ped's health
+ * @property {number} armour - The ped's armour. On MafiaC, this is always 0
+ */
+
+// ===========================================================================
+
+/**
+ * @typedef Vehicle
+ * @extends {Entity}
+ * @property {boolean} engine - The vehicle's engine state
+ * @property {boolean} lights - The vehicle's lights state
+ * @property {boolean} locked - The vehicle's door lock state
+ * @property {boolean} siren - The vehicle's siren state
+ */
+
+// ===========================================================================
+
 let builtInCommands = [
 	"refresh",
 	"restart",
@@ -40,13 +121,26 @@ let disconnectReasons = [
 // ===========================================================================
 
 function getPlayerPosition(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncPosition;
 	} else {
-		if (getPlayerPed(client) != null) {
-			return getPlayerPed(client).position;
+		// Check if Mafia 1, player position is bugged when in a vehicle
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isPlayerInAnyVehicle(client)) {
+				return getPlayerVehicle(client).position;
+			} else {
+				return getPlayerPed(client).position;
+			}
+		} else {
+			if (getPlayerPed(client) != null) {
+				return getPlayerPed(client).position;
+			} else {
+				return toVector3(0.0, 0.0, 0.0);
+			}
 		}
 	}
+
+
 }
 
 // ===========================================================================
@@ -59,11 +153,19 @@ function setPlayerPosition(client, position) {
 // ===========================================================================
 
 function getPlayerHeading(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncHeading;
 	} else {
-		if (getPlayerPed(client) != null) {
-			return getPlayerPed(client).heading;
+		if (getGame() == V_GAME_MAFIA_ONE) {
+			if (isPlayerInAnyVehicle(client)) {
+				return getPlayerVehicle(client).heading;
+			} else {
+				return getPlayerPed(client).heading;
+			}
+		} else {
+			if (getPlayerPed(client) != null) {
+				return getPlayerPed(client).heading;
+			}
 		}
 	}
 }
@@ -82,14 +184,14 @@ function getPlayerVehicle(client) {
 		return null;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicle;
 	} else {
 		if (getPlayerPed(client).vehicle) {
 			return getPlayerPed(client).vehicle;
 		}
 	}
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -99,7 +201,7 @@ function getPlayerDimension(client) {
 		return 0;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData(client).syncDimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -111,7 +213,7 @@ function getPlayerDimension(client) {
 // ===========================================================================
 
 function getPlayerInterior(client) {
-	if (!isGameFeatureSupported("interior")) {
+	if (!isGameFeatureSupported("interiorId")) {
 		return 0;
 	}
 
@@ -122,7 +224,7 @@ function getPlayerInterior(client) {
 
 function setPlayerDimension(client, dimension) {
 	logToConsole(LOG_VERBOSE, `Setting ${getPlayerDisplayForConsole(client)}'s dimension to ${dimension}`);
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		getPlayerData(client).syncDimension = dimension;
 	} else {
 		if (getPlayerPed(client) != null) {
@@ -144,9 +246,13 @@ function setPlayerInterior(client, interior) {
 // ===========================================================================
 
 function isPlayerInAnyVehicle(client) {
-	if (!areServerElementsSupported()) {
+	if (!isGameFeatureSupported("serverElements")) {
 		return (getPlayerData().syncVehicle != null);
 	} else {
+		if (getPlayerPed(client) == null) {
+			return false;
+		}
+
 		return (getPlayerPed(client).vehicle != null);
 	}
 }
@@ -155,10 +261,14 @@ function isPlayerInAnyVehicle(client) {
 
 function getPlayerVehicleSeat(client) {
 	if (!isPlayerInAnyVehicle(client)) {
-		return false;
+		return -1;
 	}
 
-	if (!areServerElementsSupported()) {
+	if (getPlayerData(client).vehicleSeat != -1) {
+		return getPlayerData(client).vehicleSeat;
+	}
+
+	if (!isGameFeatureSupported("serverElements")) {
 		return getPlayerData().syncVehicleSeat;
 	} else {
 		for (let i = 0; i <= 8; i++) {
@@ -168,7 +278,7 @@ function getPlayerVehicleSeat(client) {
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================
@@ -180,12 +290,34 @@ function isPlayerSpawned(client) {
 // ===========================================================================
 
 function getVehiclePosition(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
 	return vehicle.position;
 }
 
 // ===========================================================================
 
+function getVehicleRotation(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		return getRotationFromHeading(vehicle.heading);
+	}
+
+	return vehicle.rotation;
+}
+
+// ===========================================================================
+
 function getVehicleHeading(vehicle) {
+	if (vehicle == null) {
+		return false;
+	}
+
 	return vehicle.heading;
 }
 
@@ -256,25 +388,25 @@ function isPlayerInFrontVehicleSeat(client) {
 
 // ===========================================================================
 
-function removePlayerFromVehicle(client) {
-	logToConsole(LOG_DEBUG, `Removing ${getPlayerDisplayForConsole(client)} from their vehicle`);
-	sendPlayerRemoveFromVehicle(client);
+function removePedFromVehicle(ped) {
+	logToConsole(LOG_DEBUG, `Removing ped ${ped.id} from their vehicle`);
+
+	if (ped.vehicle == null) {
+		return false;
+	}
+
+	sendPedRemoveFromVehicle(null, ped.id);
 	return true;
 }
 
 // ===========================================================================
 
 function setPlayerSkin(client, skinIndex) {
-	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${getGameConfig().skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${getGameConfig().skins[getGame()][skinIndex][1]})`);
+	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s skin to ${gameData.skins[getGame()][skinIndex][0]} (Index: ${skinIndex}, Name: ${gameData.skins[getGame()][skinIndex][1]})`);
 	if (getGame() == V_GAME_GTA_IV) {
-		let position = getPlayerPosition(client);
-		let heading = getPlayerHeading(client);
-		let interior = getPlayerInterior(client);
-		let dimension = getPlayerDimension(client);
-		//triggerNetworkEvent("v.rp.localPlayerSkin", client, getGameConfig().skins[getGame()][skinIndex][0]);
-		spawnPlayer(client, position, heading, getGameConfig().skins[getGame()][skinIndex][0], interior, dimension);
+		triggerNetworkEvent("v.rp.localPlayerSkin", client, gameData.skins[getGame()][skinIndex][0]);
 	} else {
-		getPlayerPed(client).modelIndex = getGameConfig().skins[getGame()][skinIndex][0];
+		getPlayerPed(client).modelIndex = gameData.skins[getGame()][skinIndex][0];
 	}
 }
 
@@ -289,7 +421,7 @@ function getPlayerSkin(client) {
 function setPlayerHealth(client, health) {
 	logToConsole(LOG_DEBUG, `Setting ${getPlayerDisplayForConsole(client)}'s health to ${health}`);
 	sendPlayerSetHealth(client, health);
-	getServerData(client).health = health;
+	getPlayerCurrentSubAccount(client).health = health;
 }
 
 // ===========================================================================
@@ -309,7 +441,7 @@ function setPlayerArmour(client, armour) {
 // ===========================================================================
 
 function getPlayerArmour(client) {
-	if (areServerElementsSupported(client)) {
+	if (isGameFeatureSupported("pedArmour")) {
 		return getPlayerPed(client).armour;
 	} else {
 		return getPlayerData(client).syncArmour;
@@ -422,6 +554,11 @@ function setElementDimension(element, dimension) {
 // ===========================================================================
 
 function setElementRotation(element, rotation) {
+	if (element.type == ELEMENT_VEHICLE && getGame() == V_GAME_MAFIA_ONE) {
+		//element.heading = rotation.y;
+		return false;
+	}
+
 	if (typeof element.setRotation != "undefined") {
 		element.setRotation(rotation);
 	} else {
@@ -480,7 +617,7 @@ function getPlayerName(client) {
 // ===========================================================================
 
 function getServerName() {
-	return "Asshat Gaming RP";
+	return "Connected Roleplay";
 }
 
 // ===========================================================================
@@ -498,7 +635,7 @@ function createGameDummyElement(position) {
 	if (!isGameFeatureSupported("dummyElement")) {
 		return false;
 	}
-	return game.createDummy(position);
+	return game.createDummyElement(position);
 }
 
 // ===========================================================================
@@ -528,7 +665,7 @@ function createGameObject(modelIndex, position) {
 	if (!isGameFeatureSupported("object")) {
 		return false;
 	}
-	return game.createObject(getGameConfig().objects[getGame()][modelIndex][0], position);
+	return game.createObject(gameData.objects[getGame()][modelIndex][0], position);
 }
 
 // ===========================================================================
@@ -549,22 +686,14 @@ function setElementOnAllDimensions(element, state) {
 
 // ===========================================================================
 
-function destroyGameElement(element) {
-	if (!isNull(element) && element != false) {
-		destroyElement(element);
-	}
-}
-
-// ===========================================================================
-
 function isMeleeWeapon(weaponId, gameId = getGame()) {
-	return (getGameConfig().meleeWeapons[gameId].indexOf(weaponId) != -1);
+	return (gameData.meleeWeapons[gameId].indexOf(weaponId) != -1);
 }
 
 // ===========================================================================
 
 function getPlayerLastVehicle(client) {
-	return getPlayerData(client).lastVehicle;
+	return getPlayerData(client).lastVehicle != null;
 }
 
 // ===========================================================================
@@ -600,15 +729,107 @@ function setVehicleEngine(vehicle, engine) {
 // ===========================================================================
 
 function setVehicleLocked(vehicle, locked) {
-	vehicle.locked = locked;
 	setEntityData(vehicle, "v.rp.locked", locked, true);
 	sendNetworkEventToPlayer("v.rp.veh.locked", null, vehicle.id, locked);
+
+	if (isGameFeatureSupported("vehicleLock")) {
+		vehicle.locked = locked;
+	}
 }
 
 // ===========================================================================
 
-function setVehicleSiren(vehicle, siren) {
-	vehicle.siren = siren;
+function setVehicleSiren(vehicle, state) {
+	setEntityData(vehicle, "v.rp.siren", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.siren", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleHazardLights(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleHazardLights")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.hazardLights", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.hazardLights", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleAlarm(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleAlarm")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.alarm", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.alarm", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleDirtLevel(vehicle, dirtLevel = 0) {
+	if (!isGameFeatureSupported("vehicleDirtLevel")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.dirtLevel", dirtLevel, true);
+	sendNetworkEventToPlayer("v.rp.veh.dirtLevel", null, vehicle.id, dirtLevel);
+}
+
+// ===========================================================================
+
+function setVehicleLivery(vehicle, livery) {
+	if (!isGameFeatureSupported("vehicleLivery")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.livery", livery, true);
+	sendNetworkEventToPlayer("v.rp.veh.livery", null, vehicle.id, livery);
+}
+
+// ===========================================================================
+
+function setVehicleUpgrades(vehicle, upgrades) {
+	if (!isGameFeatureSupported("vehicleUpgrades")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.upgrades", upgrades, true);
+	sendNetworkEventToPlayer("v.rp.veh.upgrades", null, vehicle.id, upgrades);
+}
+
+// ===========================================================================
+
+function setVehicleInteriorLight(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleInteriorLight")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.interiorLight", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.interiorLight", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleTaxiLight(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleTaxiLight")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.taxiLight", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.taxiLight", null, vehicle.id, state);
+}
+
+// ===========================================================================
+
+function setVehicleAlarm(vehicle, state) {
+	if (!isGameFeatureSupported("vehicleAlarm")) {
+		return false;
+	}
+
+	setEntityData(vehicle, "v.rp.vehAlarm", state, true);
+	sendNetworkEventToPlayer("v.rp.veh.alarm", null, vehicle.id, state);
 }
 
 // ===========================================================================
@@ -638,31 +859,44 @@ function getVehicleSiren(vehicle) {
 // ===========================================================================
 
 function setVehicleColours(vehicle, colour1, colour2, colour3 = -1, colour4 = -1) {
-	vehicle.colour1 = colour1;
-	vehicle.colour2 = colour2;
+	if (getGame() == V_GAME_GTA_IV) {
+		setEntityData(vehicle, "v.rp.colour", [colour1, colour2, colour3, colour4], true);
+		sendNetworkEventToPlayer("v.rp.veh.colour", null, vehicle.id, colour1, colour2, colour3, colour4);
+	} else {
+		vehicle.colour1 = colour1;
+		vehicle.colour2 = colour2;
 
-	if (colour3 != -1) {
-		vehicle.colour3 = colour3;
+		if (colour3 != -1) {
+			vehicle.colour3 = colour3;
+		}
+
+		if (colour4 != -1) {
+			vehicle.colour4 = colour4;
+		}
 	}
 
-	if (colour4 != -1) {
-		vehicle.colour4 = colour4;
-	}
 }
 
 // ===========================================================================
 
-function createGameVehicle(modelIndex, position, heading, toClient = null) {
-	if (areServerElementsSupported()) {
-		return game.createVehicle(getGameConfig().vehicles[getGame()][modelIndex][0], position, heading);
+function createGameVehicle(modelIndex, position, rotation, toClient = null) {
+	if (isGameFeatureSupported("serverElements")) {
+		let vehicle = game.createVehicle(gameData.vehicles[getGame()][modelIndex][0], position, rotation.z);
+		if (getGame() != V_GAME_MAFIA_ONE) {
+			vehicle.rotation = rotation;
+		}
+
+		return vehicle;
 	}
+
+	return null;
 }
 
 // ===========================================================================
 
 function createGamePed(modelIndex, position, heading, toClient = null) {
-	if (areServerElementsSupported()) {
-		let ped = game.createPed(getGameConfig().skins[getGame()][modelIndex][0], position);
+	if (isGameFeatureSupported("serverElements")) {
+		let ped = game.createPed(gameData.skins[getGame()][modelIndex][0], position);
 		if (ped) {
 			//ped.position = position;
 			ped.heading = heading;
@@ -703,7 +937,7 @@ function isValidVehicleModel(model) {
 // ===========================================================================
 
 function setGameTime(hour, minute, minuteDuration = 1000) {
-	if (isTimeSupported()) {
+	if (isGameFeatureSupported("time")) {
 		game.time.hour = hour;
 		game.time.minute = minute;
 		game.time.minuteDuration = minuteDuration;
@@ -713,7 +947,7 @@ function setGameTime(hour, minute, minuteDuration = 1000) {
 // ===========================================================================
 
 function setGameWeather(weather) {
-	if (isWeatherSupported()) {
+	if (isGameFeatureSupported("weather")) {
 		mp.world.weather = weather;
 	}
 }
@@ -725,11 +959,11 @@ function setPlayerFightStyle(client, fightStyleId) {
 		return false;
 	}
 
-	if (!areFightStylesSupported()) {
+	if (!isGameFeatureSupported("pedFightStyle")()) {
 		return false;
 	}
 
-	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [getGameConfig().fightStyles[getGame()][fightStyleId][1][0], getGameConfig().fightStyles[getGame()][fightStyleId][1][1]]);
+	setEntityData(getPlayerElement(client), "v.rp.fightStyle", [gameData.fightStyles[getGame()][fightStyleId][1][0], gameData.fightStyles[getGame()][fightStyleId][1][1]]);
 	forcePlayerToSyncElementProperties(null, getPlayerElement(client));
 }
 
@@ -766,6 +1000,10 @@ function getElementHeading(element) {
 // ===========================================================================
 
 function setElementInterior(element, interior) {
+	if (!isGameFeatureSupported("interiorId")) {
+		return false;
+	}
+
 	setEntityData(element, "v.rp.interior", interior, true);
 	forcePlayerToSyncElementProperties(null, element);
 }
@@ -796,29 +1034,21 @@ function getVehicleName(vehicle) {
 // ===========================================================================
 
 function getElementModel(element) {
-	if (typeof element.modelIndex != "undefined") {
-		return element.modelIndex;
+	if (element == null) {
+		return -1;
 	}
-
-	if (typeof element.model != "undefined") {
-		return element.model;
-	}
+	return element.modelIndex;
 }
 
 // ===========================================================================
 
 function givePlayerWeaponAmmo(client, ammo) {
-	givePlayerWeapon(client, getPlayerWeapon(client), getPlayerWeaponAmmo(client) + ammo);
 }
 
 // ===========================================================================
 
 function getPlayerWeapon(client) {
-	if (areServerElementsSupported(client)) {
-		return getPlayerPed(client).weapon;
-	} else {
-		return getPlayerData(client).syncWeapon;
-	}
+	return getPlayerPed(client).weapon;
 }
 
 // ===========================================================================
@@ -826,24 +1056,24 @@ function getPlayerWeapon(client) {
 function connectToDatabase() {
 	if (getDatabaseConfig().usePersistentConnection) {
 		if (persistentDatabaseConnection == null) {
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Initializing database connection ...`);
-			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
+			logToConsole(LOG_DEBUG, `[V.RP.Database] Initializing database connection ...`);
+			persistentDatabaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port, getDatabaseConfig().useSSL);
 			if (persistentDatabaseConnection.error) {
-				logToConsole(LOG_ERROR, `[AGRP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
+				logToConsole(LOG_ERROR, `[V.RP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 				persistentDatabaseConnection = null;
 				return false;
 			}
 
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Database connection successful!`);
+			logToConsole(LOG_DEBUG, `[V.RP.Database] Database connection successful!`);
 			return persistentDatabaseConnection;
 		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Using existing database connection.`);
+			logToConsole(LOG_DEBUG, `[V.RP.Database] Using existing database connection.`);
 			return persistentDatabaseConnection;
 		}
 	} else {
-		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port);
+		let databaseConnection = module.mysql.connect(getDatabaseConfig().host, getDatabaseConfig().user, getDatabaseConfig().pass, getDatabaseConfig().name, getDatabaseConfig().port, getDatabaseConfig().useSSL);
 		if (databaseConnection.error) {
-			logToConsole(LOG_ERROR, `[AGRP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
+			logToConsole(LOG_ERROR, `[V.RP.Database] Database connection error: ${persistentDatabaseConnection.error}`);
 			return false;
 		} else {
 			return databaseConnection;
@@ -857,9 +1087,9 @@ function disconnectFromDatabase(dbConnection, force = false) {
 	if (!getDatabaseConfig().usePersistentConnection || force == true) {
 		try {
 			dbConnection.close();
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Database connection closed successfully`);
+			logToConsole(LOG_DEBUG, `[V.RP.Database] Database connection closed successfully`);
 		} catch (error) {
-			logToConsole(LOG_ERROR, `[AGRP.Database] Database connection could not be closed! (Error: ${error})`);
+			logToConsole(LOG_ERROR, `[V.RP.Database] Database connection could not be closed! (Error: ${error})`);
 		}
 	}
 	return true;
@@ -867,16 +1097,9 @@ function disconnectFromDatabase(dbConnection, force = false) {
 
 // ===========================================================================
 
-function queryDatabase(dbConnection, queryString, useThread = false) {
-	logToConsole(LOG_DEBUG, `[AGRP.Database] Query string: ${queryString}`);
-	if (useThread == true) {
-		Promise.resolve().then(() => {
-			let queryResult = dbConnection.query(queryString);
-			return queryResult;
-		});
-	} else {
-		return dbConnection.query(queryString);
-	}
+function queryDatabase(dbConnection, queryString) {
+	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
+	return dbConnection.query(queryString);
 }
 
 // ===========================================================================
@@ -939,22 +1162,23 @@ function fetchQueryAssoc(dbConnection, queryString) {
 // ===========================================================================
 
 function quickDatabaseQuery(queryString) {
+	logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
 	let dbConnection = connectToDatabase();
 	let insertId = 0;
 	if (dbConnection) {
-		//logToConsole(LOG_DEBUG, `[AGRP.Database] Query string: ${queryString}`);
+		//logToConsole(LOG_DEBUG, `[V.RP.Database] Query string: ${queryString}`);
 		let dbQuery = queryDatabase(dbConnection, queryString);
 		if (getDatabaseInsertId(dbConnection)) {
 			insertId = getDatabaseInsertId(dbConnection);
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Query returned insert id ${insertId}`);
+			logToConsole(LOG_DEBUG, `[V.RP.Database] Query returned insert id ${insertId}`);
 		}
 
 		if (dbQuery) {
 			try {
 				freeDatabaseQuery(dbQuery);
-				logToConsole(LOG_DEBUG, `[AGRP.Database] Query result free'd successfully`);
+				logToConsole(LOG_DEBUG, `[V.RP.Database] Query result free'd successfully`);
 			} catch (error) {
-				logToConsole(LOG_ERROR, `[AGRP.Database] Query result could not be free'd! (Error: ${error})`);
+				logToConsole(LOG_ERROR, `[V.RP.Database] Query result could not be free'd! (Error: ${error})`);
 			}
 		}
 
@@ -966,7 +1190,6 @@ function quickDatabaseQuery(queryString) {
 
 		return true;
 	}
-	return false;
 }
 
 // ===========================================================================
@@ -998,72 +1221,6 @@ function executeDatabaseQueryCommand(command, params, client) {
 		messagePlayerSuccess(client, `Database query successful: {ALTCOLOUR}${query}`);
 	}
 	return true;
-}
-
-// ===========================================================================
-
-function setConstantsAsGlobalVariablesInDatabase() {
-	let dbConnection = connectToDatabase();
-	let entries = Object.entries(global);
-	for (let i in entries) {
-		logToConsole(LOG_DEBUG, `[AGRP.Database] Checking entry ${i} (${entries[i]})`);
-		if (toString(i).slice(0, 3).indexOf("V_") != -1) {
-			logToConsole(LOG_DEBUG, `[AGRP.Database] Adding ${i} (${entries[i]}) to database global variables`);
-		}
-	}
-}
-
-// ===========================================================================
-
-function createDatabaseInsertQuery(tableName, data) {
-	let fields = [];
-	let values = [];
-
-	for (let i in data) {
-		if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][0] != 'NaN') {
-			if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				fields.push(data[i][0]);
-
-				if (typeof data[i][1] == "string") {
-					if (data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push("UNIX_TIMESTAMP()");
-					} else {
-						values.push(`'${data[i][1]}'`);
-					}
-				} else {
-					values.push(data[i][1]);
-				}
-			}
-		}
-	}
-
-	let queryString = `INSERT INTO ${tableName} (${fields.join(", ")}) VALUES (${values.join(", ")})`;
-	return queryString;
-}
-
-// ===========================================================================
-
-function createDatabaseUpdateQuery(tableName, data, whereClause) {
-	let values = [];
-
-	for (let i in data) {
-		if (data[i][0] != "undefined" && data[i][0] != NaN && data[i][0] != 'NaN') {
-			if (data[i][1] != "undefined" && data[i][1] != NaN && data[i][1] != 'NaN') {
-				if (typeof data[i][1] == "string") {
-					if (data[i][1] == "{UNIXTIMESTAMP}") {
-						values.push(`${data[i][0]}=UNIX_TIMESTAMP()`);
-					} else {
-						values.push(`${data[i][0]}='${data[i][1]}'`);
-					}
-				} else {
-					values.push(`${data[i][0]}=${data[i][1]}`);
-				}
-			}
-		}
-	}
-
-	let queryString = `UPDATE ${tableName} SET ${values.join(", ")} WHERE ${whereClause}`;
-	return queryString;
 }
 
 // ===========================================================================
@@ -1131,7 +1288,7 @@ function getClosestCivilian(position) {
 
 function getVehiclesInRange(position, range) {
 	//if (getGame() == V_GAME_GTA_IV) {
-	//	return getServerData().vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
+	//	return serverData.vehicles.reduce((i, j) => (getDistance(position, i.syncPosition) <= getDistance(position, j.syncPosition)) ? i : j);
 	//}
 	return getElementsByTypeInRange(ELEMENT_VEHICLE, position, range);
 }
@@ -1139,7 +1296,7 @@ function getVehiclesInRange(position, range) {
 // ===========================================================================
 
 function getClosestVehicle(position) {
-	return getClosestElementByType(ELEMENT_VEHICLE, position);
+	return getClosestElementByType(ELEMENT_VEHICLE, position) || false;
 }
 
 // ===========================================================================
@@ -1175,6 +1332,11 @@ function isVehicleTrain(vehicle) {
 // ===========================================================================
 
 function warpPedIntoVehicle(ped, vehicle, seatId) {
+	if (getGame() == V_GAME_MAFIA_ONE) {
+		sendWarpPedIntoVehicle(null, ped.id, vehicle.id, seatId);
+		return true;
+	}
+
 	ped.warpIntoVehicle(vehicle, seatId);
 }
 
@@ -1192,9 +1354,9 @@ function setVehicleHealth(vehicle, health) {
 
 // ===========================================================================
 
-function givePlayerWeapon(client, weaponId, ammo, active = true) {
-	logToConsole(LOG_DEBUG, `[AGRP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
-	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, ammo, active);
+function givePlayerWeapon(client, weaponId, clipAmmo, ammo, active = true) {
+	logToConsole(LOG_DEBUG, `[V.RP.Client] Sending signal to ${getPlayerDisplayForConsole(client)} to give weapon (Weapon: ${weaponId}, Ammo: ${ammo})`);
+	sendNetworkEventToPlayer("v.rp.giveWeapon", client, weaponId, clipAmmo, ammo, active);
 }
 
 // ===========================================================================
@@ -1254,23 +1416,34 @@ function getElementStreamOutDistance(element) {
 
 // ===========================================================================
 
+/**
+ * @param {Client} client - The player/client to get the ped for
+ * @return {Player} The client's player ped
+ */
 function getPlayerPed(client) {
 	if (isNull(client)) {
 		return null;
 	}
 
-	//if (getGame() == V_GAME_GTA_IV) {
-	//	return getPlayerData(client).ped;
-	//} else {
 	return client.player;
-	//}
+}
+
+// ===========================================================================
+
+function getEntityData(entity, dataName) {
+	if (entity != null) {
+		if (entity.getData != null) {
+			return entity.getData(dataName);
+		}
+	}
+	return null;
 }
 
 // ===========================================================================
 
 function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return entity.setData(dataName, dataValue, syncToClients);
 		}
 	}
@@ -1281,7 +1454,7 @@ function setEntityData(entity, dataName, dataValue, syncToClients = true) {
 
 function removeEntityData(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return entity.removeData(dataName);
 		}
 	}
@@ -1292,7 +1465,7 @@ function removeEntityData(entity, dataName) {
 
 function doesEntityDataExist(entity, dataName) {
 	if (entity != null) {
-		if (areServerElementsSupported()) {
+		if (isGameFeatureSupported("serverElements")) {
 			return (entity.getData(dataName) != null);
 		} else {
 			return false;
@@ -1360,8 +1533,8 @@ function getServerPort() {
 
 // ===========================================================================
 
-function serverBanIP(ip) {
-	server.banIP(ip);
+function serverBanIP(ip, durationInMilliseconds = 0) {
+	server.banIP(ip, durationInMilliseconds);
 }
 
 // ===========================================================================
@@ -1369,38 +1542,6 @@ function serverBanIP(ip) {
 function setVehicleTrunkState(vehicle, trunkState) {
 	sendNetworkEventToPlayer("v.rp.veh.trunk", null, getVehicleForNetworkEvent(vehicle), trunkState);
 }
-
-// ===========================================================================
-
-/*
-function addAllEventHandlers() {
-	bindServerEventHandler("onResourceStart", onResourceStart)
-	bindServerEventHandler("onResourceStop", onResourceStart)
-	addServerEventHandler("onServerStop", onResourceStart);
-
-	addServerEventHandler("onResourceStart", onResourceStart);
-	addServerEventHandler("onResourceStop", onResourceStop);
-	addServerEventHandler("onServerStop", onResourceStop);
-
-	addServerEventHandler("onProcess", onProcess);
-	addServerEventHandler("onEntityProcess", onEntityProcess);
-
-	addServerEventHandler("onPlayerConnect", onInitialConnectionToServer);
-	addServerEventHandler("onPlayerJoin", onPlayerJoin);
-	addServerEventHandler("onPlayerJoined", onPlayerJoined);
-	addServerEventHandler("onPlayerChat", onPlayerChat);
-	addServerEventHandler("onPlayerQuit", onPlayerQuit);
-	addServerEventHandler("onElementStreamIn", onElementStreamIn);
-	addServerEventHandler("onElementStreamOut", onElementStreamOut);
-
-	addServerEventHandler("onPedSpawn", onPedSpawn);
-	addServerEventHandler("onPedEnterVehicle", onPedEnteringVehicle);
-	addServerEventHandler("onPedExitVehicle", onPedExitingVehicle);
-
-	addServerEventHandler("onPedEnteringVehicle", onPedEnteringVehicle);
-	addServerEventHandler("onPedExitingVehicle", onPedExitingVehicle);
-}
-*/
 
 // ===========================================================================
 
@@ -1447,7 +1588,7 @@ function hideElementForPlayer(element, client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Hiding element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Native.Connected] Hiding element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, false);
 }
 
@@ -1462,7 +1603,7 @@ function showElementForPlayer(element, client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Native.Connected] Showing element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Native.Connected] Showing element ${element.id} for player ${getPlayerDisplayForConsole(client)}`);
 	element.setExistsFor(client, true);
 }
 
@@ -1491,7 +1632,7 @@ function createAttachedGameBlip(element, type, size, colour = toColour(255, 255,
 // ===========================================================================
 
 function deletePlayerPed(client) {
-	if (areServerElementsSupported()) {
+	if (isGameFeatureSupported("serverElements")) {
 		destroyElement(client.player);
 	} else {
 		sendNetworkEventToPlayer("v.rp.deleteLocalPlayerPed", client);
@@ -1514,7 +1655,7 @@ function setServerName(name) {
 // ===========================================================================
 
 function setServerPassword(password) {
-	server.setPassword(password);
+	//server.setPassword(password);
 }
 
 // ===========================================================================
@@ -1527,6 +1668,151 @@ function shutdownServer() {
 
 function setServerRule(ruleName, ruleValue) {
 	server.setRule(ruleName, ruleValue);
+}
+
+// ===========================================================================
+
+function addAllEventHandlers() {
+	addEventHandler("onResourceStart", onResourceStart);
+	addEventHandler("onResourceStop", onResourceStop);
+	addEventHandler("onProcess", onProcess);
+	addEventHandler("onPlayerConnect", onPlayerConnect);
+	addEventHandler("onPlayerJoin", onPlayerJoin);
+	addEventHandler("onPlayerJoined", onPlayerJoined);
+	addEventHandler("onPlayerChat", onPlayerChat);
+	addEventHandler("onPlayerQuit", onPlayerQuit);
+	addEventHandler("onElementStreamIn", onElementStreamIn);
+	addEventHandler("onElementStreamOut", onElementStreamOut);
+	addEventHandler("onPedSpawn", onPedSpawn);
+	addEventHandler("onPedDeathEx", onPlayerDeath);
+
+	addEventHandler("onPlayerCommand", function (event, client, command, params) {
+		processPlayerCommand(command, params, client);
+	});
+
+	if (getGame() <= V_GAME_GTA_IV) {
+		addEventHandler("onPedEnteredVehicle", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicle", onPedExitedVehicle);
+	}
+
+	if (getGame() == V_GAME_GTA_IV) {
+		addEventHandler("onPedEnteredVehicleEx", onPedEnteredVehicle);
+		addEventHandler("onPedExitedVehicleEx", onPedExitedVehicle);
+	}
+
+	if (getGame() <= V_GAME_GTA_SA) {
+		addEventHandler("OnPickupCollected", onPedPickupPickedUp);
+	}
+
+	//if (getGame() == V_GAME_MAFIA_ONE) {
+	//	addEventHandler("onPedEnteringVehicle", onPedEnteredVehicle);
+	//	addEventHandler("onPedExitingVehicle", onPedExitedVehicle);
+	//addEventHandler("onPedDeathEx", onPlayerDeath);
+	//}
+}
+
+// ===========================================================================
+
+function getVehicleOccupants(vehicle) {
+	let occupants = [];
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (getPlayerVehicle(clients[i]) == vehicle) {
+			occupants.push(clients[i]);
+		}
+	}
+
+	return occupants;
+}
+
+// ===========================================================================
+
+function getFirstFreeRearVehicleSeat(vehicle) {
+	let occupants = [null, null, null, null];
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (getPlayerVehicle(clients[i]) == vehicle) {
+			occupants[getPlayerVehicleSeat(clients[i])] = clients[i];
+		}
+	}
+
+	if (occupants[2] == null) {
+		return 2;
+	}
+
+	if (occupants[3] == null) {
+		return 3;
+	}
+
+	// By this point, no rear seats are available. Check for front seat.
+	if (occupants[1] == null) {
+		return 1;
+	}
+
+	return -1;
+}
+
+// ===========================================================================
+
+function setGameMinuteDuration(duration) {
+	if (isGameFeatureSupported("time") && getGame() <= V_GAME_GTA_SA) {
+		game.time.minuteDuration = duration;
+	}
+}
+
+// ===========================================================================
+
+function setPedBodyPart(ped, bodyPart, value) {
+	switch (bodyPart) {
+		case V_SKINSELECT_HEAD:
+			setEntityData(ped, "v.rp.bodyPartHead", value, true);
+			break;
+
+		case V_SKINSELECT_UPPER:
+			setEntityData(ped, "v.rp.bodyPartUpper", value, true);
+			break;
+
+		case V_SKINSELECT_LOWER:
+			setEntityData(ped, "v.rp.bodyPartLower", value, true);
+			break;
+
+		case V_SKINSELECT_HAT:
+			setEntityData(ped, "v.rp.bodyPropHead", value, true);
+			break;
+	}
+
+	forcePlayerToSyncElementProperties(null, ped);
+}
+
+// ===========================================================================
+
+function isServerScript() {
+	return true;
+}
+
+// ===========================================================================
+
+function getMultiplayerMod() {
+	return (getGame() >= 10) ? V_MPMOD_MAFIAC : V_MPMOD_GTAC;
+}
+
+// ===========================================================================
+
+function isGTAIV() {
+	return (getGame() == V_GAME_GTA_IV);
+}
+
+// ===========================================================================
+
+function setPedBleeding(ped, state) {
+	if (!isGameFeatureSupported("pedBleeding")) {
+		return false;
+	}
+
+	setEntityData(ped, "v.rp.bleeding", state, true);
+	sendNetworkEventToPlayer("v.rp.bleeding", null, ped.id, state);
 }
 
 // ===========================================================================

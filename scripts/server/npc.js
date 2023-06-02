@@ -29,6 +29,7 @@ const V_NPC_OWNER_CLAN = 3;                     // Owned by a clan
 const V_NPC_OWNER_FACTION = 4;                  // Owned by a faction (not used at the moment)
 const V_NPC_OWNER_PUBLIC = 5;                   // Public NPC. Anybody can do stuff with it.
 const V_NPC_OWNER_BIZ = 6;                      // Owned by a business
+const V_NPC_OWNER_SCENARIO = 7;					// Scenario NPC
 
 // ===========================================================================
 
@@ -37,6 +38,10 @@ class NPCData {
 		this.databaseId = 0;
 		this.serverId = 0;
 		this.name = "NPC";
+
+		/** @type {ServerPed} */
+		this.ped = null;
+
 		this.skin = 0;
 		this.cash = 0;
 		this.position = toVector3(0.0, 0.0, 0.0);
@@ -75,16 +80,16 @@ class NPCData {
 		};
 
 		this.bodyProps = {
-			hair: [0, 0],
-			eyes: [0, 0],
-			head: [0, 0],
-			leftHand: [0, 0],
-			rightHand: [0, 0],
-			leftWrist: [0, 0],
-			rightWrist: [0, 0],
-			hip: [0, 0],
-			leftFoot: [0, 0],
-			rightFoot: [0, 0],
+			hair: 0,
+			eyes: 0,
+			head: 0,
+			leftHand: 0,
+			rightHand: 0,
+			leftWrist: 0,
+			rightWrist: 0,
+			hip: 0,
+			leftFoot: 0,
+			rightFoot: 0,
 		};
 
 		this.triggers = [];
@@ -116,6 +121,7 @@ class NPCData {
 			this.enabled = intToBool(dbAssoc["npc_enabled"]);
 			this.lookAtPlayer = intToBool(dbAssoc["npc_lookatplr"]);
 
+			/*
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["npc_hd_part_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_part_hair_texture"]) || 0],
 				head: [toInteger(dbAssoc["npc_hd_part_head_model"]) || 0, toInteger(dbAssoc["npc_hd_part_head_texture"]) || 0],
@@ -124,17 +130,18 @@ class NPCData {
 			};
 
 			this.bodyProps = {
-				hair: [toInteger(dbAssoc["npc_hd_prop_hair_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_hair_texture"]) || 0],
-				eyes: [toInteger(dbAssoc["npc_hd_prop_eyes_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_eyes_texture"]) || 0],
-				head: [toInteger(dbAssoc["npc_hd_prop_head_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_head_texture"]) || 0],
-				leftHand: [toInteger(dbAssoc["npc_hd_prop_lefthand_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_lefthand_texture"]) || 0],
-				rightHand: [toInteger(dbAssoc["npc_hd_prop_righthand_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_righthand_texture"]) || 0],
-				leftWrist: [toInteger(dbAssoc["npc_hd_prop_leftwrist_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_leftwrist_texture"]) || 0],
-				rightWrist: [toInteger(dbAssoc["npc_hd_prop_rightwrist_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_rightwrist_texture"]) || 0],
-				hip: [toInteger(dbAssoc["npc_hd_prop_hip_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_hip_texture"]) || 0],
-				leftFoot: [toInteger(dbAssoc["npc_hd_prop_leftfoot_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_leftfoot_texture"]) || 0],
-				rightFoot: [toInteger(dbAssoc["npc_hd_prop_rightfoot_model"]) || 0, toInteger(dbAssoc["npc_hd_prop_rightfoot_texture"]) || 0],
+				hair: toInteger(dbAssoc["npc_hd_prop_hair"]) || 0,
+				eyes: toInteger(dbAssoc["npc_hd_prop_eyes"]) || 0,
+				head: toInteger(dbAssoc["npc_hd_prop_head"]) || 0,
+				leftHand: toInteger(dbAssoc["npc_hd_prop_lefthand"]) || 0,
+				rightHand: toInteger(dbAssoc["npc_hd_prop_righthand"]) || 0,
+				leftWrist: toInteger(dbAssoc["npc_hd_prop_leftwrist"]) || 0,
+				rightWrist: toInteger(dbAssoc["npc_hd_prop_rightwrist"]) || 0,
+				hip: toInteger(dbAssoc["npc_hd_prop_hip"]) || 0,
+				leftFoot: toInteger(dbAssoc["npc_hd_prop_leftfoot"]) || 0,
+				rightFoot: toInteger(dbAssoc["npc_hd_prop_rightfoot"]) || 0,
 			};
+			*/
 		}
 	}
 };
@@ -216,8 +223,8 @@ function initNPCScript() {
  * @return {NPCData} The NPC's data (class instancee)
  */
 function getNPCData(npcId) {
-	if (typeof getServerData().npcs[npcId] != "undefined") {
-		return getServerData().npcs[npcId];
+	if (typeof serverData.npcs[npcId] != "undefined") {
+		return serverData.npcs[npcId];
 	}
 	return false;
 }
@@ -246,7 +253,7 @@ function createNPCCommand(command, params, client) {
 // ===========================================================================
 
 function loadNPCsFromDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPCs from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Loading NPCs from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCs = [];
 	let dbAssoc = [];
@@ -263,14 +270,14 @@ function loadNPCsFromDatabase() {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: ${tempNPCs.length} NPCs loaded from database successfully!`);
 	return tempNPCs;
 }
 
 // ===========================================================================
 
 function loadNPCTriggersFromDatabase(npcDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Loading NPC triggers for NPC ${npcDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggers = [];
 	let dbAssoc = [];
@@ -288,14 +295,14 @@ function loadNPCTriggersFromDatabase(npcDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: ${tempNPCTriggers.length} NPC triggers loaded for NPC ${npcDatabaseId} from database successfully!`);
 	return tempNPCTriggers;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Loading NPC trigger conditions for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerConditions = [];
 	let dbAssoc;
@@ -311,14 +318,14 @@ function loadNPCTriggerConditionsFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: ${tempNPCTriggerConditions.length} conditions loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerConditions;
 }
 
 // ===========================================================================
 
 function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Loading NPC trigger responses for trigger ${npcTriggerDatabaseId} from database ...`);
 	let dbConnection = connectToDatabase();
 	let tempNPCTriggerResponses = [];
 	let dbAssoc;
@@ -337,18 +344,18 @@ function loadNPCTriggerResponsesFromDatabase(npcTriggerDatabaseId) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: ${tempNPCTriggerResponses.length} responses loaded for trigger ${npcTriggerDatabaseId} from database successfully!`);
 	return tempNPCTriggerResponses;
 }
 
 // ===========================================================================
 
 function saveAllNPCsToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().npcs) {
+	for (let i in serverData.npcs) {
 		saveNPCToDatabase(i);
 	}
 }
@@ -356,34 +363,34 @@ function saveAllNPCsToDatabase() {
 // ===========================================================================
 
 function saveNPCToDatabase(npcDataId) {
-	if (getServerConfig().devServer) {
-		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
+	if (serverConfig.devServer) {
+		logToConsole(LOG_VERBOSE, `[V.RP.NPC]: NPC ${npcDataId} can't be saved because server is running as developer only. Aborting save ...`);
 		return false;
 	}
 
 	if (getNPCData(npcDataId) == false) {
-		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} data is invalid. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[V.RP.NPC]: NPC ${npcDataId} data is invalid. Aborting save ...`);
 		return false;
 	}
 
 	let tempNPCData = getNPCData(npcDataId);
 
 	if (tempNPCData.databaseId == -1) {
-		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} is a temp NPC. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[V.RP.NPC]: NPC ${npcDataId} is a temp NPC. Aborting save ...`);
 		return false;
 	}
 
 	if (!tempNPCData.needsSaved) {
-		logToConsole(LOG_VERBOSE, `[AGRP.NPC]: NPC ${npcDataId} hasn't changed data. Aborting save ...`);
+		logToConsole(LOG_VERBOSE, `[V.RP.NPC]: NPC ${npcDataId} hasn't changed data. Aborting save ...`);
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.NPC]: Saving NPC ${tempNPCData.databaseId} to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.NPC]: Saving NPC ${tempNPCData.databaseId} to database ...`);
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		if (tempNPCData.ped != false) {
 			if (!tempNPCData.spawnLocked) {
-				if (areServerElementsSupported()) {
+				if (isGameFeatureSupported("serverElements")) {
 					tempNPCData.position = tempNPCData.ped.position;
 					tempNPCData.heading = tempNPCData.ped.heading;
 				} else {
@@ -445,29 +452,29 @@ function saveNPCToDatabase(npcDataId) {
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
-	logToConsole(LOG_VERBOSE, `[AGRP.NPC]: Saved NPC ${npcDataId} to database!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.NPC]: Saved NPC ${npcDataId} to database!`);
 
 	return false;
 }
 
 // ===========================================================================
 
-function setNPCDataIndexes() {
-	for (let i in getServerData().npcs) {
-		getServerData().npcs[i].index = i;
+function setAllNPCDataIndexes() {
+	for (let i in serverData.npcs) {
+		serverData.npcs[i].index = i;
 
-		for (let j in getServerData().npcs[i].triggers) {
-			getServerData().npcs[i].triggers[j].index = j;
-			getServerData().npcs[i].triggers[j].npcIndex = i;
+		for (let j in serverData.npcs[i].triggers) {
+			serverData.npcs[i].triggers[j].index = j;
+			serverData.npcs[i].triggers[j].npcIndex = i;
 
-			for (let k in getServerData().npcs[i].triggers[j].conditions) {
-				getServerData().npcs[i].triggers[j].conditions[k].index = k;
-				getServerData().npcs[i].triggers[j].conditions[m].triggerIndex = j;
+			for (let k in serverData.npcs[i].triggers[j].conditions) {
+				serverData.npcs[i].triggers[j].conditions[k].index = k;
+				serverData.npcs[i].triggers[j].conditions[m].triggerIndex = j;
 			}
 
-			for (let m in getServerData().npcs[i].triggers[j].responses) {
-				getServerData().npcs[i].triggers[j].responses[m].index = m;
-				getServerData().npcs[i].triggers[j].responses[m].triggerIndex = j;
+			for (let m in serverData.npcs[i].triggers[j].responses) {
+				serverData.npcs[i].triggers[j].responses[m].index = m;
+				serverData.npcs[i].triggers[j].responses[m].triggerIndex = j;
 			}
 		}
 	}
@@ -475,12 +482,11 @@ function setNPCDataIndexes() {
 
 // ===========================================================================
 
-function spawnNPC(npcIndex) {
-	let npcData = getNPCData(npcIndex);
-	let ped = createGamePed(npcData.skin, npcData.position, npcData.rotation.z);
+function spawnNPC(npcData) {
+	logToConsole(LOG_DEBUG, `[V.RP.NPC]: Spawning NPC ${npcData.index} with skin ${npcData.skin} ...`);
+	let ped = createGamePed(npcData.skin, npcData.position, npcData.heading);
 	if (ped) {
-		getNPCData(npcIndex).ped = ped;
-		setEntityData(ped, "v.rp.dataIndex", npcIndex, false);
+		npcData.ped = ped;
 		if (npcData.animationName != "") {
 			let animationId = getAnimationFromParams(npcData.animationName);
 			if (animationId != false) {
@@ -495,8 +501,8 @@ function spawnNPC(npcIndex) {
 // ===========================================================================
 
 function spawnAllNPCs() {
-	for (let i in getServerData().npcs) {
-		spawnNPC(i);
+	for (let i in serverData.npcs) {
+		spawnNPC(serverData.npcs[i]);
 	}
 }
 
@@ -519,16 +525,16 @@ function deleteNPCCommand(command, params, client) {
 // ===========================================================================
 
 function deleteNPC(npcId) {
-	quickDatabaseQuery(`DELETE FROM npc_main WHERE npc_id=${getNPCData(npcId).databaseId}`);
+	quickDatabaseQuery(`UPDATE npc_main SET npc_deleted = 1 WHERE npc_id=${getNPCData(npcId).databaseId}`);
 
 	if (getNPCData(npcId)) {
 		if (getNPCData(npcId).ped != false) {
 			deleteGameElement(getNPCData(npcId).ped);
 		}
-		getServerData().npcs.splice(npcId, 1);
+		serverData.npcs.splice(npcId, 1);
 	}
 
-	setNPCDataIndexes();
+	setAllNPCDataIndexes();
 }
 
 // ===========================================================================
@@ -608,7 +614,7 @@ function setNPCClanCommand(command, params, client) {
 		return false;
 	}
 
-	if (!getClanData(clanId)) {
+	if (getClanData(clanId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
@@ -618,6 +624,62 @@ function setNPCClanCommand(command, params, client) {
 	getNPCData(closestNPC).needsSaved = true;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s clan to {clanOrange}${getClanData(clanId).name}`, true);
+}
+
+// ===========================================================================
+
+function setNPCJobCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let jobIndex = getJobFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (getJobData(jobIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
+		return false;
+	}
+
+	getNPCData(closestNPC).ownerType = V_NPC_OWNER_JOB;
+	getNPCData(closestNPC).ownerId = getJobData(jobIndex).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s job to {clanOrange}${getJobData(jobIndex).name}`, true);
+}
+
+// ===========================================================================
+
+function setNPCScenarioCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let closestNPC = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+	let scenarioIndex = getScenarioFromParams(params);
+
+	if (!getNPCData(closestNPC)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	if (getScenarioData(scenarioIndex) == null) {
+		messagePlayerError(client, `Scenario not found.`);
+		return false;
+	}
+
+	getNPCData(closestNPC).ownerType = V_NPC_OWNER_SCENARIO;
+	getNPCData(closestNPC).ownerId = getScenarioData(scenarioIndex).databaseId;
+	getNPCData(closestNPC).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set {npcPink}${getNPCData(closestNPC).name}${MAINCOLOUR}'s scenario to {clanOrange}${getScenarioData(scenarioIndex).name}`, true);
 }
 
 // ===========================================================================
@@ -690,7 +752,7 @@ function getNPCInfoCommand(command, params, client) {
 			break;
 
 		case V_NPC_OWNER_BIZ:
-			ownerName = getBusinessData(getBusinessIdFromDatabaseId(npcData.ownerId)).name;
+			ownerName = getBusinessData(getBusinessIndexFromDatabaseId(npcData.ownerId)).name;
 			ownerType = "business";
 			break;
 
@@ -704,7 +766,7 @@ function getNPCInfoCommand(command, params, client) {
 	}
 
 	let tempStats = [
-		[`Skin`, `${getGameConfig().skins[npcData.skin][0]} (${getGameConfig().skins[npcData.skin][1]})`],
+		[`Skin`, `${gameData.skins[npcData.skin][0]} (${gameData.skins[npcData.skin][1]})`],
 		[`ID`, `${npcData.index}/${npcData.databaseId}`],
 		[`Owner`, `${ownerName} (${ownerType})`],
 		[`Animation`, `${npcData.animationName}`],
@@ -722,7 +784,7 @@ function getNPCInfoCommand(command, params, client) {
 // ===========================================================================
 
 function getClosestNPC(position, dimension, interior) {
-	let npcs = getServerData().npcs;
+	let npcs = serverData.npcs;
 
 	let closest = 0;
 	for (let i in npcs) {
@@ -738,6 +800,23 @@ function getClosestNPC(position, dimension, interior) {
 
 // ===========================================================================
 
+function getNPCFromParams(params) {
+	if (isNaN(params)) {
+		for (let i in serverData.npc) {
+			if (toLowerCase(serverData.npc[i].name).indexOf(toLowerCase(params)) != -1) {
+				return i;
+			}
+		}
+	} else {
+		if (typeof serverData.npc[params] != "undefined") {
+			return toInteger(params);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
+
 function createNPC(skinIndex, position, heading, interior, dimension) {
 	let tempNPCData = new NPCData(false);
 	tempNPCData.position = position;
@@ -748,12 +827,45 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 	tempNPCData.animationName = "";
 	tempNPCData.needsSaved = true;
 
-	let npcIndex = getServerData().npcs.push(tempNPCData);
-	setNPCDataIndexes();
+	let npcIndex = serverData.npcs.push(tempNPCData);
+	setAllNPCDataIndexes();
 
-	spawnNPC(npcIndex - 1);
+	spawnNPC(serverData.npcs[npcIndex - 1]);
 
 	return npcIndex - 1;
+}
+
+// ===========================================================================
+
+function despawnAllNPCs() {
+	for (let i in serverData.npcs) {
+		deleteGameElement(serverData.npc[i].npc);
+		serverData.npc[i].npc = null;
+	}
+}
+
+// ===========================================================================
+
+function spawnAllNPCs() {
+	for (let i in serverData.npcs) {
+		spawnNPC(serverData.npcs[i]);
+	}
+}
+
+// ===========================================================================
+
+function getNPCIndexFromDatabaseId(databaseId) {
+	if (databaseId <= 0) {
+		return -1;
+	}
+
+	for (let i in serverData.npc) {
+		if (serverData.npc[i].databaseId == databaseId) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 // ===========================================================================

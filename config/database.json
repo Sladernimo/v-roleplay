@@ -4,5 +4,6 @@
     "pass": "",
     "name": "",
     "port": 3306,
+    "useSSL": false,
     "usePersistentConnection": false
 }

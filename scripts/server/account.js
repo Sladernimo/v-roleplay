@@ -37,6 +37,7 @@ const V_2FA_STATE_SETUP_CODEFROMAPP = 3;       // Waiting on player to enter cod
 const V_RESETPASS_STATE_NONE = 0;             // None
 const V_RESETPASS_STATE_CODEINPUT = 1;        // Waiting on player to enter code sent via email
 const V_RESETPASS_STATE_SETPASS = 2;          // Waiting on player to enter new password
+const V_RESETPASS_STATE_EMAILCONFIRM = 3;	  // Waiting on player to enter email to verify it's correct
 
 // ===========================================================================
 
@@ -48,7 +49,8 @@ class AccountData {
 		this.databaseId = 0;
 		this.name = "";
 		this.password = "";
-		this.registerDate = 0;
+		this.passwordRevision = 0;
+		this.whenRegistered = 0;
 		this.flags = {
 			moderation: 0,
 			admin: 0,
@@ -74,11 +76,12 @@ class AccountData {
 		this.streamingRadioVolume = 20;
 		this.locale = 0;
 
-		if (dbAssoc) {
+		if (dbAssoc != false) {
 			this.databaseId = toInteger(dbAssoc["acct_id"]);
 			this.name = toString(dbAssoc["acct_name"]);
 			this.password = toString(dbAssoc["acct_pass"]);
-			this.registerDate = toInteger(dbAssoc["acct_when_registered"]);
+			this.passwordRevision = toString(dbAssoc["acct_pass_revision"]);
+			this.whenRegistered = toInteger(dbAssoc["acct_when_registered"]);
 			this.flags = {
 				moderation: toInteger(dbAssoc["acct_svr_mod_flags"]),
 				admin: toInteger(dbAssoc["acct_svr_staff_flags"]),
@@ -284,31 +287,31 @@ function toggleAccountGUICommand(command, params, client) {
 	if (doesPlayerHaveGUIEnabled(client)) {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerNormal(client, getLocaleString(client, "GUIAccountSettingToggle", `{softRed}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled GUI for their account OFF.`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled GUI for their account OFF.`);
 	} else {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerNormal(client, getLocaleString(client, "GUIAccountSettingToggle", `{softGreen}${toUpperCase(getLocaleString(client, "On"))}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled GUI for their account ON.`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled GUI for their account ON.`);
 	}
 
 	if (!isPlayerLoggedIn(client)) {
 		if (getPlayerData().accountData.databaseId != 0) {
 			if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 				showPlayerLoginGUI(client);
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI`);
 			} else {
 				hideAllPlayerGUI(client);
 				messagePlayerNormal(client, getLocaleString(client, "WelcomeBack", getServerName(), getPlayerName(client), "{ALTCOLOUR}/login{MAINCOLOUR}"));
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled)`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled)`);
 			}
 		} else {
 			if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 				showPlayerRegistrationGUI(client);
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
 			} else {
 				hideAllPlayerGUI(client);
 				messagePlayerNormal(client, getLocaleString(client, "WelcomeNewPlayer", getServerName(), getPlayerName(client), "{ALTCOLOUR}/register{MAINCOLOUR}"));
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
 			}
 		}
 	}
@@ -323,11 +326,11 @@ function toggleAccountLoginAttemptNotificationsCommand(command, params, client) 
 	if (doesPlayerHaveLoginAlertsEnabled(client)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(false)}OFF{MAINCOLOUR} notification by email when somebody tries to login to your account`);
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerNormal(client, `⚙️ You turned ${getBoolRedGreenInlineColour(true)}ON{MAINCOLOUR} notification by email when somebody tries to login to your account`);
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled the login attempt email notifications OFF for their account`);
 	}
 
 	return true;
@@ -341,14 +344,14 @@ function toggleAccountServerLogoCommand(command, params, client) {
 	if (!doesPlayerHaveLogoEnabled(client)) {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "AccountServerLogoSet", `${getBoolRedGreenInlineColour(true)}${getLocaleString(client, "On")}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo ON for their account`);
-		if (getServerConfig().showLogo) {
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo ON for their account`);
+		if (serverConfig.showLogo) {
 			updatePlayerShowLogoState(client, true);
 		}
 	} else {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "AccountServerLogoSet", `${getBoolRedGreenInlineColour(false)}${getLocaleString(client, "Off")}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo OFF for their account`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled the server logo OFF for their account`);
 		updatePlayerShowLogoState(client, false);
 	}
 
@@ -367,7 +370,7 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 			return false;
 		}
 
-		if (!isAccountEmailVerified(getPlayerData(client).accountData)) {
+		if (!doesPlayerHaveEmailVerified(client)) {
 			messagePlayerError(client, getLocaleString(client, "NeedEmailVerifiedFor2FA"));
 			messagePlayerTip(client, getLocaleString(client, "VerifyEmailHelpTip", `{ALTCOLOUR}/verifyemail{MAINCOLOUR}`));
 			return false;
@@ -377,11 +380,11 @@ function toggleAccountTwoFactorAuthCommand(command, params, client) {
 	if (!doesPlayerHaveTwoFactorAuthEnabled(client)) {
 		getPlayerData(client).accountData.settings = addBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "TwoFactorAuthSet", `${getBoolRedGreenInlineColour(true)}${getLocaleString(client, "On")}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication ON for their account`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication ON for their account`);
 	} else {
 		getPlayerData(client).accountData.settings = removeBitFlag(getPlayerData(client).accountData.settings, flagValue);
 		messagePlayerSuccess(client, getLocaleString(client, "TwoFactorAuthSet", `${getBoolRedGreenInlineColour(false)}${toUpperCase(getLocaleString(client, "Off"))}{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication OFF for their account`);
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has toggled two-factor authentication OFF for their account`);
 	}
 	return true;
 }
@@ -491,7 +494,7 @@ function changeAccountPasswordCommand(command, params, client) {
 
 	if (!doesPasswordMeetRequirements(newPassword)) {
 		messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
-		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", `${getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals)}, ${getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols)}`));
+		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", `${getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals)}, ${getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols)}`));
 		return false;
 	}
 
@@ -513,7 +516,7 @@ function setAccountChatScrollLinesCommand(command, params, client) {
 	}
 
 	if (toInteger(params) < 1 || toInteger(params) > 6) {
-		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesMustBeBetween", getGlobalConfig().minChatLines, getGlobalConfig().maxChatLines));
+		messagePlayerError(client, getLocaleString(client, "ChatScrollLinesMustBeBetween", globalConfig.minChatLines, globalConfig.maxChatLines));
 		return false;
 	}
 
@@ -564,7 +567,7 @@ function setAccountEmailCommand(command, params, client) {
 	//	return false;
 	//}
 
-	if (getPlayerData(client).accountData.emailAddress != "" && isAccountEmailVerified(getPlayerData(client).accountData)) {
+	if (getPlayerData(client).accountData.emailAddress != "" && doesPlayerHaveEmailVerified(client)) {
 		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadySetAndVerified"));
 		return false;
 	}
@@ -572,7 +575,8 @@ function setAccountEmailCommand(command, params, client) {
 	setAccountEmail(getPlayerData(client).accountData, emailAddress);
 
 	let emailVerificationCode = generateEmailVerificationCode();
-	setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
+	let hashingFunction = getAccountHashingFunction();
+	getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
 	sendEmailVerificationEmail(client, emailVerificationCode);
 
 	messagePlayerSuccess(client, getLocaleString(client, "EmailSet"));
@@ -585,21 +589,35 @@ function setAccountEmailCommand(command, params, client) {
 
 function verifyAccountEmailCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
+		if (getPlayerData(client).accountData.emailVerificationCode == "") {
+			messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
+			let emailVerificationCode = generateEmailVerificationCode();
+
+			let hashingFunction = getAccountHashingFunction();
+			getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
+			sendEmailVerificationEmail(client, emailVerificationCode);
+			return false;
+		}
+
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let verificationCode = getParam(params, " ", 1);
 
-	if (isAccountEmailVerified(getPlayerData(client).accountData)) {
+	if (doesPlayerHaveEmailVerified(client)) {
 		messagePlayerError(client, getLocaleString(client, "AccountEmailAlreadyVerified"));
 		return false;
 	}
 
 	if (module.hashing.sha512(verificationCode) != getPlayerData(client).accountData.emailVerificationCode) {
 		messagePlayerError(client, getLocaleString(client, "InvalidEmailVerificationCode"));
+		messagePlayerInfo(client, getLocaleString(client, "EmailVerificationCodeSent"));
+
 		let emailVerificationCode = generateEmailVerificationCode();
-		setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
+		let hashingFunction = getAccountHashingFunction();
+		getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
+
 		sendEmailVerificationEmail(client, emailVerificationCode);
 		return false;
 	}
@@ -610,6 +628,13 @@ function verifyAccountEmailCommand(command, params, client) {
 	messagePlayerSuccess(client, getLocaleString(client, "EmailVerified"));
 	messagePlayerAlert(client, getLocaleString(client, "EmailVerifiedTip"));
 	saveAccountToDatabase(getPlayerData(client).accountData);
+}
+
+// ===========================================================================
+
+function resetActionTipsCommand(command, params, client) {
+	getPlayerData(client).promptType = V_PROMPT_RESETACTIONTIPS;
+	showPlayerPrompt(client, getLocaleString(client, "ResetActionTipsConfirm"), getLocaleString(client, "GUIWarningTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 }
 
 // ===========================================================================
@@ -686,7 +711,7 @@ function isPlayerRegistered(client) {
 		return true;
 	}
 
-	if (getPlayerData(client).accountData != false) {
+	if (getPlayerData(client).accountData != null) {
 		if (getPlayerData(client).accountData.databaseId != 0) {
 			return true;
 		}
@@ -733,7 +758,7 @@ function loadAccountFromName(accountName, fullLoad = false) {
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -758,13 +783,13 @@ function loadAccountFromId(accountId, fullLoad = false) {
 		disconnectFromDatabase(dbConnection);
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
 
 function getAccountHashingFunction() {
-	switch (toLowerCase(getGlobalConfig().accountPasswordHash)) {
+	switch (toLowerCase(globalConfig.accountPasswordHash)) {
 		case "md5":
 			return module.hashing.md5;
 
@@ -802,10 +827,12 @@ function getAccountHashingFunction() {
 
 // ===========================================================================
 
-async function isNameRegistered(name) {
+function isNameRegistered(name) {
 	let accountData = loadAccountFromName(name, true);
-	if (accountData.databaseId > 0) {
-		return true;
+	if (accountData != null) {
+		if (accountData.databaseId > 0) {
+			return true;
+		}
 	}
 
 	return false;
@@ -813,22 +840,27 @@ async function isNameRegistered(name) {
 
 // ===========================================================================
 
-function hashAccountPassword(name, password) {
+function hashAccountPassword(name, password, revision = 0) {
 	let hashFunction = getAccountHashingFunction();
-	let saltedInfo = saltAccountInfo(name, password);
+	let saltedInfo = saltAccountInfo(name, password, revision);
 	return hashFunction(saltedInfo);
 }
 
 // ===========================================================================
 
-function saltAccountInfo(name, password) {
-	return `ag.gaming.${accountSaltHash}.${name}.${password}`;
+function saltAccountInfo(name, password, revision = 0) {
+	let tempString = getSecurityConfig().accountPasswordSaltAlgorithm[revision];
+
+	tempString = tempString.replace("{NAME}", name);
+	tempString = tempString.replace("{PASSWORD}", password);
+	tempString = tempString.replace("{SALTHASH}", getSecurityConfig().accountSaltHash[revision]);
+	return tempString;
 }
 
 // ===========================================================================
 
 function loginSuccess(client) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
+	logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} successfully logged in.`);
 	getPlayerData(client).loggedIn = true;
 
 	if (getPlayerData(client).loginTimeout != null) {
@@ -838,8 +870,8 @@ function loginSuccess(client) {
 
 	updateConnectionLogOnAuth(client, getPlayerData(client).accountData.databaseId);
 
-	if (doesPlayerHaveStaffPermission(client, "Developer") || doesPlayerHaveStaffPermission(client, "ManageServer")) {
-		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} has needed permissions and is being given administrator access`);
+	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("Developer")) || doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageServer"))) {
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} has needed permissions and is being given administrator access`);
 		setPlayerNativeAdminState(client, true);
 	}
 
@@ -851,11 +883,11 @@ function loginSuccess(client) {
 			}, 3500);
 
 			if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the error GUI (not a tester).`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the error GUI (not a tester).`);
 				showPlayerErrorGUI(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
 				return false;
 			} else {
-				logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the "not a tester" error message (GUI disabled).`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the "not a tester" error message (GUI disabled).`);
 				messagePlayerError(client, getLocaleString(client, "NotATester"));
 				return false;
 			}
@@ -866,18 +898,17 @@ function loginSuccess(client) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 			getPlayerData(client).promptType = V_PROMPT_CREATEFIRSTCHAR;
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the no characters prompt GUI`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the no characters prompt GUI`);
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the no characters message (GUI disabled)`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the no characters message (GUI disabled)`);
 		}
 	} else {
 		showCharacterSelectToClient(client);
 	}
 
 	getPlayerData(client).accountData.ipAddress = getPlayerIP(client);
-	sendPlayerChatScrollLines(client, getPlayerData(client).accountData.chatScrollLines);
-
+	updatePlayerChatBoxStates(client);
 	messageDiscordChatChannel(`👋 ${getPlayerName(client)} has joined the server`);
 
 	//let countryName = "Unknown";
@@ -915,6 +946,7 @@ function saveAccountToDatabase(accountData) {
 			["acct_streaming_radio_volume", accountData.streamingRadioVolume],
 			["acct_ip", accountData.ipAddress],
 			["acct_locale", accountData.locale],
+			["acct_pass_revision", accountData.passwordRevision],
 		];
 
 		let data2 = [
@@ -935,6 +967,10 @@ function saveAccountToDatabase(accountData) {
 		let dbQuery2 = queryDatabase(dbConnection, queryString2);
 		freeDatabaseQuery(dbQuery2);
 
+		//saveAllAccountCommandAliasesToDatabase(accountData);
+		//saveAllAccountStaffNotesToDatabase(accountData);
+		//saveAllAccountKeyBindsToDatabase(accountData);
+
 		disconnectFromDatabase(dbConnection);
 		return true;
 	}
@@ -954,11 +990,13 @@ function saveAccountKeyBindToDatabase(keyBindData) {
 
 		let data = [
 			["acct_hotkey_acct", keyBindData.account],
-			["acct_hotkey_enabled", keyBindData.enabled],
-			["acct_hotkey_deleted", keyBindData.deleted],
+			["acct_hotkey_enabled", boolToInt(keyBindData.enabled)],
+			["acct_hotkey_deleted", boolToInt(keyBindData.deleted)],
 			["acct_hotkey_cmdstr", safeCommandString],
 			["acct_hotkey_key", keyBindData.key],
 			["acct_hotkey_down", boolToInt(keyBindData.keyState)],
+			["acct_hotkey_when_added", keyBindData.whenAdded],
+			["acct_hotkey_server", keyBindData.whenAdded],
 		];
 
 		let dbQuery = null;
@@ -1010,6 +1048,39 @@ function saveAccountStaffNotesDatabase(staffNoteData) {
 
 // ===========================================================================
 
+function saveAccountCommandAliasesToDatabase(commandAliasData) {
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let safeOriginalCommandName = escapeDatabaseString(dbConnection, commandAliasData.forCommand);
+		let safeAliasCommandName = escapeDatabaseString(dbConnection, commandAliasData.aliasCommand);
+
+		let data = [
+			["acct_cmd_for_cmd", safeOriginalCommandName],
+			["acct_cmd_alias_cmd", safeAliasCommandName],
+			["acct_cmd_deleted", boolToInt(commandAliasData.whoAdded)],
+			["acct_cmd_when_added", commandAliasData.whenAdded],
+			["acct_cmd_server", commandAliasData.server],
+			["acct_cmd_acct", commandAliasData.account],
+		];
+
+		let dbQuery = null;
+		if (commandAliasData.databaseId == 0) {
+			let queryString = createDatabaseInsertQuery("acct_cmd", data);
+			dbQuery = queryDatabase(dbConnection, queryString);
+			commandAliasData.databaseId = getDatabaseInsertId(dbConnection);
+		} else {
+			let queryString = createDatabaseUpdateQuery("acct_cmd", data, `acct_cmd_id=${commandAliasData.databaseId}`);
+			dbQuery = queryDatabase(dbConnection, queryString);
+		}
+
+		commandAliasData.needsSaved = false;
+		freeDatabaseQuery(dbQuery);
+		disconnectFromDatabase(dbConnection);
+	}
+}
+
+// ===========================================================================
+
 /*
 function saveAccountContactsToDatabase(accountContactData) {
 	let dbConnection = connectToDatabase();
@@ -1033,29 +1104,38 @@ function saveAccountContactsToDatabase(accountContactData) {
 
 // ===========================================================================
 
-async function createAccount(name, password, email = "") {
+function createAccount(name, password, email = "", passwordRevision = 0) {
 	let dbConnection = connectToDatabase();
 
 	if (dbConnection) {
-		let hashedPassword = hashAccountPassword(name, password);
+		let hashedPassword = hashAccountPassword(name, password, passwordRevision);
 		let safeName = escapeDatabaseString(dbConnection, name);
 		let safeEmail = escapeDatabaseString(dbConnection, email);
 
-		let dbQuery = queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', CURRENT_TIMESTAMP())`);
+		queryDatabase(dbConnection, `INSERT INTO acct_main (acct_name, acct_pass, acct_email, acct_when_registered, acct_pass_revision) VALUES ('${safeName}', '${hashedPassword}', '${safeEmail}', UNIX_TIMESTAMP(), ${passwordRevision})`);
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let insertId = getDatabaseInsertId(dbConnection);
 			createDefaultAccountServerData(insertId);
-			let tempAccountData = loadAccountFromId(insertId, false);
 
-			tempAccountData.messages = loadAccountMessagesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.notes = loadAccountStaffNotesFromDatabase(tempAccountData.databaseId);
-			tempAccountData.contacts = loadAccountContactsFromDatabase(tempAccountData.databaseId);
+			let tempAccountData = new AccountData(false);
+			tempAccountData.databaseId = insertId;
+			tempAccountData.name = name;
+			tempAccountData.password = hashedPassword;
+			tempAccountData.email = email;
+			tempAccountData.passwordRevision = passwordRevision;
+			tempAccountData.whenRegistered = getCurrentUnixTimestamp();
 			tempAccountData.flags.admin = 0;
+			tempAccountData.flags.moderation = 0;
+			tempAccountData.settings = globalConfig.defaultEnabledAccountSettings;
+
+			tempAccountData.messages = [];
+			tempAccountData.notes = [];
+			tempAccountData.contacts = [];
 			return tempAccountData;
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -1068,7 +1148,7 @@ function checkLogin(client, password) {
 	}
 
 	if (isPlayerLoggedIn(client)) {
-		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but is already logged in`);
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but is already logged in`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerLoginSuccessGUI(client);
 		} else {
@@ -1079,46 +1159,46 @@ function checkLogin(client, password) {
 	}
 
 	if (!isPlayerRegistered(client)) {
-		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but is not registered`);
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but is not registered`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerRegistrationGUI(client);
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register GUI`);
 		} else {
 			messagePlayerError(client, "Your name is not registered! Use /register to make an account.");
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the register message (GUI disabled)`);
 		}
 		return false;
 	}
 
 	if (areParamsEmpty(password)) {
-		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (empty password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (empty password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerLoginFailedGUI(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		} else {
 			messagePlayerError(client, getLocaleString(client, "LoginFailedNoPassword", getPlayerData(client).loginAttemptsRemaining));
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if (doesPlayerHaveEmailVerified(client) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
 	}
 
 	if (!isAccountPasswordCorrect(getPlayerData(client).accountData, hashAccountPassword(getPlayerName(client), password))) {
-		logToConsole(LOG_WARN, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (wrong password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} attempted to login but failed (wrong password). ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining`);
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerLoginFailedGUI(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login GUI with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		} else {
 			messagePlayerError(client, getLocaleString(client, "LoginFailedInvalidPassword", getPlayerData(client).loginAttemptsRemaining));
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
+			logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the login message (GUI disabled) with ${getPlayerData(client).loginAttemptsRemaining} login attempts remaining alert.`);
 		}
 
 		// Disabling email login alerts for now. It hangs the server for a couple seconds. Need a way to thread it.
-		if (isAccountEmailVerified(getPlayerData(client).accountData) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
+		if (doesPlayerHaveEmailVerified(client) && !isAccountSettingFlagEnabled(getPlayerData(client).accountData, getAccountSettingsFlagValue("AuthAttemptAlert"))) {
 			sendAccountLoginFailedNotification(getPlayerData(client).accountData.emailAddress, getPlayerName(client), getPlayerIP(client), getGame());
 		}
 		return false;
@@ -1147,7 +1227,7 @@ function checkLogin(client, password) {
 // ===========================================================================
 
 function checkRegistration(client, password, confirmPassword = "", emailAddress = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Checking registration for ${getPlayerName(client)}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Checking registration for ${getPlayerName(client)}`);
 
 	if (isPlayerRegistered(client)) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
@@ -1212,16 +1292,16 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 		} else {
 			messagePlayerError(client, getLocaleString(client, "PasswordNotGoodEnough"));
 			let passwordRequirements = []
-			if (getGlobalConfig().passwordRequiredCapitals > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals))
+			if (globalConfig.passwordRequiredCapitals > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals))
 			}
 
-			if (getGlobalConfig().passwordRequiredNumbers > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers))
+			if (globalConfig.passwordRequiredNumbers > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsNumbers", globalConfig.passwordRequiredNumbers))
 			}
 
-			if (getGlobalConfig().passwordRequiredSymbols > 0) {
-				passwordRequirements.push(getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols))
+			if (globalConfig.passwordRequiredSymbols > 0) {
+				passwordRequirements.push(getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols))
 			}
 			messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirements.join(", ")));
 		}
@@ -1236,7 +1316,7 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 	}
 
 	let accountData = createAccount(getPlayerName(client), password, emailAddress);
-	if (!accountData) {
+	if (accountData == null) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 			showPlayerRegistrationFailedGUI(client, getLocaleString(client, "RegistrationFailedCreateError"));
 		} else {
@@ -1250,15 +1330,21 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 	getPlayerData(client).accountData = accountData;
 	getPlayerData(client).loggedIn = true;
 	getPlayerData(client).accountData.settings = 0;
+	getPlayerData(client).accountData.flags.moderation = 0;
+	getPlayerData(client).accountData.flags.admin = 0;
 	getPlayerData(client).accountData.needsSaved = true;
 
 	messagePlayerSuccess(client, getLocaleString(client, "RegistrationSuccess"));
+	logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} successfully registered their account`);
+
 	if (checkForSMTPModule() && getEmailConfig().enabled) {
-		messagePlayerAlert(client, getLocaleString(client, "RegistrationEmailVerifyReminder"));
 		let emailVerificationCode = generateEmailVerificationCode();
-		setAccountEmailVerificationCode(getPlayerData(client).accountData, emailVerificationCode);
+		let hashingFunction = getAccountHashingFunction();
+		getPlayerData(client).accountData.emailVerificationCode = hashingFunction(toString(emailVerificationCode));
+
 		sendEmailVerificationEmail(client, emailVerificationCode);
-		logToConsole(LOG_WARN, `${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
+		messagePlayerAlert(client, getLocaleString(client, "VerifyEmailHelpTip", `{ALTCOLOUR}/verifyemail{MAINCOLOUR}`));
+		logToConsole(LOG_DEBUG, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} was sent a registration email verification code`);
 	}
 
 	if (doesServerHaveTesterOnlyEnabled() && !isPlayerATester(client)) {
@@ -1267,25 +1353,20 @@ function checkRegistration(client, password, confirmPassword = "", emailAddress 
 			disconnectPlayer(client);
 		}, 5000);
 
-		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the error GUI (not a tester).`);
-			showPlayerErrorGUI(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
-			return false;
-		} else {
-			logToConsole(LOG_DEBUG, `[AGRP.Account] ${getPlayerDisplayForConsole(client)} is being shown the "not a tester" error message (GUI disabled).`);
-			messagePlayerError(client, getLocaleString(client, "NotATester"));
-			return false;
-		}
+		showPlayerError(client, getLocaleString(client, "NotATester"), getLocaleString(client, "AccessDenied"));
+		logToConsole(LOG_WARN, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is not a tester. Kicking them from the server ...`);
+		return false;
 	} else {
 		messagePlayerAlert(client, getLocaleString(client, "RegistrationCreateCharReminder"));
 
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			showPlayerRegistrationSuccessGUI(client);
+			//showPlayerRegistrationSuccessGUI(client);
 			showPlayerPrompt(client, getLocaleString(client, "NoCharactersGUIMessage"), getLocaleString(client, "NoCharactersGUIWindowTitle"), getLocaleString(client, "Yes"), getLocaleString(client, "No"));
 			getPlayerData(client).promptType = V_PROMPT_CREATEFIRSTCHAR;
 		} else {
 			messagePlayerAlert(client, getLocaleString(client, "NoCharactersChatMessage", `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
 		}
+		logToConsole(LOG_INFO, `[V.RP.Account] ${getPlayerDisplayForConsole(client)} is being shown the "no characters" prompt.`);
 	}
 };
 
@@ -1304,7 +1385,7 @@ function checkAccountResetPasswordRequest(client, inputText) {
 				return false;
 			}
 
-			let passwordResetCode = toUpperCase(generateEmailVerificationCode());
+			let passwordResetCode = toUpperCase(toString(generateEmailVerificationCode()));
 			getPlayerData(client).passwordResetState = V_RESETPASS_STATE_CODEINPUT;
 			getPlayerData(client).passwordResetCode = passwordResetCode;
 			showPlayerResetPasswordCodeInputGUI(client);
@@ -1364,9 +1445,9 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 
 	if (!doesPasswordMeetRequirements(newPassword)) {
 		let passwordRequirementsString = `${needsCapitals}, ${needsNumbers}, ${needsSymbols}`;
-		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", getGlobalConfig().passwordRequiredCapitals);
-		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", getGlobalConfig().passwordRequiredNumbers);
-		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", getGlobalConfig().passwordRequiredSymbols);
+		let needsCapitals = getLocaleString(client, "PasswordNeedsCapitals", globalConfig.passwordRequiredCapitals);
+		let needsNumbers = getLocaleString(client, "PasswordNeedsNumbers", globalConfig.passwordRequiredNumbers);
+		let needsSymbols = getLocaleString(client, "PasswordNeedsSymbols", globalConfig.passwordRequiredSymbols);
 
 		messagePlayerError(client, getLocaleString(client, "AccountPasswordNeedsImproved"));
 		messagePlayerInfo(client, getLocaleString(client, "PasswordNeedsBase", passwordRequirementsString));
@@ -1397,6 +1478,18 @@ function checkAccountChangePassword(client, newPassword, confirmNewPassword) {
 // ===========================================================================
 
 function isValidEmailAddress(emailAddress) {
+	if (emailAddress == null || emailAddress == "") {
+		return false;
+	}
+
+	if (emailAddress.indexOf("@") == -1) {
+		return false;
+	}
+
+	if (emailAddress.indexOf(".") == -1) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -1421,7 +1514,7 @@ function savePlayerToDatabase(client) {
 		return false;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Saving client ${getPlayerName(client)} to database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Saving client ${getPlayerName(client)} to database ...`);
 	saveAccountToDatabase(getPlayerData(client).accountData);
 
 	if (getPlayerData(client).currentSubAccount != -1) {
@@ -1433,17 +1526,32 @@ function savePlayerToDatabase(client) {
 				getPlayerCurrentSubAccount(client).spawnHeading = getPlayerData(client).returnToHeading.z;
 				getPlayerCurrentSubAccount(client).interior = getPlayerData(client).returnToInterior;
 				getPlayerCurrentSubAccount(client).dimension = getPlayerData(client).returnToDimension;
+
+				if (isMainWorldScene(getPlayerData(client).returnToScene)) {
+					getPlayerCurrentSubAccount(client).scene = "V.RP.MAINWORLD";
+				}
 			} else {
 				getPlayerCurrentSubAccount(client).spawnPosition = getPlayerPosition(client);
 				getPlayerCurrentSubAccount(client).spawnHeading = getPlayerHeading(client);
 				getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
 				getPlayerCurrentSubAccount(client).dimension = getPlayerDimension(client);
+
+				if (isMainWorldScene(getPlayerCurrentSubAccount(client).scene)) {
+					getPlayerCurrentSubAccount(client).scene = "V.RP.MAINWORLD";
+				}
 			}
 		}
 
 		saveSubAccountToDatabase(getPlayerCurrentSubAccount(client));
+
+		for (let i in getPlayerData(client).keyBinds) {
+			// keyBinds array is a mix of both default keybinds (set as databaseId -1) and account keybinds. Only save account keybinds.
+			if (getPlayerData(client).keyBinds[i].databaseId != -1) {
+				saveAccountKeyBindToDatabase(getPlayerData(client).keyBinds[i]);
+			}
+		}
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Saved client ${getPlayerDisplayForConsole(client)} to database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Saved client ${getPlayerDisplayForConsole(client)} to database successfully!`);
 	return true;
 }
 
@@ -1453,7 +1561,7 @@ function saveConnectionToDatabase(client) {
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
 		let safeName = escapeDatabaseString(dbConnection, getPlayerName(client));
-		let dbQueryString = `INSERT INTO conn_main (conn_when_connect, conn_server, conn_script_version, conn_game_version, conn_client_version, conn_name, conn_ip) VALUES (NOW(), ${getServerConfig().databaseId}, '${scriptVersion}', '${getPlayerGameVersion(client)}', '0.0.0', '${safeName}', '${getPlayerIP(client)}')`;
+		let dbQueryString = `INSERT INTO conn_main (conn_when_connect, conn_server, conn_script_version, conn_game_version, conn_client_version, conn_name, conn_ip) VALUES (NOW(), ${serverConfig.databaseId}, '${scriptVersion}', '${getPlayerGameVersion(client)}', '0.0.0', '${safeName}', '${getPlayerIP(client)}')`;
 		queryDatabase(dbConnection, dbQueryString);
 		return getDatabaseInsertId(dbConnection);
 	}
@@ -1466,8 +1574,13 @@ function createDefaultAccountServerData(accountDatabaseId) {
 	let dbConnection = connectToDatabase();
 	let serversAssoc = fetchQueryAssoc(dbConnection, "SELECT * FROM svr_main");
 
+	let defaultSettings = 0;
+	for (let i in globalConfig.defaultEnabledAccountSettings) {
+		defaultSettings = addBitFlag(defaultSettings, getAccountSettingsFlagValue(globalConfig.defaultEnabledAccountSettings[i]));
+	}
+
 	for (let i in serversAssoc) {
-		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serversAssoc[i]["svr_id"]})`;
+		let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr, acct_svr_settings) VALUES (${accountDatabaseId}, ${serversAssoc[i]["svr_id"]}, ${defaultSettings})`;
 		quickDatabaseQuery(dbQueryString);
 	}
 
@@ -1476,45 +1589,45 @@ function createDefaultAccountServerData(accountDatabaseId) {
 
 // ===========================================================================
 
-function loadAccountKeybindsFromDatabase(accountDatabaseID) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account keybinds for account ${accountDatabaseID} from database ...`);
+function loadAccountKeybindsFromDatabase(accountDatabaseId = 0) {
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account keybinds for account ${accountDatabaseId} from database ...`);
 
 	let tempAccountKeybinds = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
-	for (let i in getGlobalConfig().keyBind.defaultKeyBinds) {
+	for (let i in globalConfig.keyBind.defaultKeyBinds) {
 		let tempKeyBindData = new KeyBindData(false);
 		tempKeyBindData.databaseId = -1;
-		tempKeyBindData.key = getKeyIdFromParams(getGlobalConfig().keyBind.defaultKeyBinds[i].keyName);
-		tempKeyBindData.commandString = getGlobalConfig().keyBind.defaultKeyBinds[i].commandString;
-		tempKeyBindData.keyState = getGlobalConfig().keyBind.defaultKeyBinds[i].keyState;
+		tempKeyBindData.key = getKeyIdFromParams(globalConfig.keyBind.defaultKeyBinds[i].keyName);
+		tempKeyBindData.commandString = globalConfig.keyBind.defaultKeyBinds[i].commandString;
+		tempKeyBindData.keyState = globalConfig.keyBind.defaultKeyBinds[i].keyState;
 		tempAccountKeybinds.push(tempKeyBindData);
 	}
 
-	if (accountDatabaseID != 0 && typeof accountDatabaseId != "undefined") {
+	if (accountDatabaseId != 0) {
 		if (dbConnection) {
-			let dbQueryString = `SELECT * FROM acct_hotkey WHERE acct_hotkey_enabled = 1 AND acct_hotkey_acct = ${accountDatabaseID} AND acct_hotkey_server = ${getServerId()}`;
+			let dbQueryString = `SELECT * FROM acct_hotkey WHERE acct_hotkey_enabled = 1 AND acct_hotkey_acct = ${accountDatabaseId} AND acct_hotkey_server = ${getServerId()}`;
 			dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
 			if (dbAssoc.length > 0) {
 				for (let i in dbAssoc) {
 					let tempAccountKeyBindData = new KeyBindData(dbAssoc[i]);
 					tempAccountKeybinds.push(tempAccountKeyBindData);
-					logToConsole(LOG_DEBUG, `[AGRP.Account]: Account keybind '${tempAccountKeyBindData.databaseId}' (Key ${tempAccountKeyBindData.key} '${toUpperCase(getKeyNameFromId(tempAccountKeyBindData.key))}') loaded from database successfully!`);
+					logToConsole(LOG_DEBUG, `[V.RP.Account]: Account keybind '${tempAccountKeyBindData.databaseId}' (Key ${tempAccountKeyBindData.key} '${toUpperCase(getKeyNameFromId(tempAccountKeyBindData.key))}') loaded from database successfully!`);
 				}
 			}
 			disconnectFromDatabase(dbConnection);
 		}
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: ${tempAccountKeybinds.length} account keybinds for account ${accountDatabaseID} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountKeybinds.length} account keybinds for account ${accountDatabaseId} loaded from database successfully!`);
 	return tempAccountKeybinds;
 }
 
 // ===========================================================================
 
 function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account staff notes for account ${accountDatabaseID} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account staff notes for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountStaffNotes = [];
 	let dbConnection = connectToDatabase();
@@ -1527,20 +1640,46 @@ function loadAccountStaffNotesFromDatabase(accountDatabaseID) {
 			for (let i in dbAssoc) {
 				let tempAccountStaffNoteData = new AccountStaffNoteData(dbAssoc[i]);
 				tempAccountStaffNotes.push(tempAccountStaffNoteData);
-				logToConsole(LOG_DEBUG, `[AGRP.Account]: Account staff note '${tempAccountStaffNoteData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account]: Account staff note '${tempAccountStaffNoteData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: ${tempAccountStaffNotes.length} account staff notes for account ${accountDatabaseID} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountStaffNotes.length} account staff notes for account ${accountDatabaseID} loaded from database successfully!`);
 	return tempAccountStaffNotes;
 }
 
 // ===========================================================================
 
+function loadAccountCommandAliasesFromDatabase(accountDatabaseID) {
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account command aliases for account ${accountDatabaseID} from database ...`);
+
+	let tempAccountCommandAliases = [];
+	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
+	if (dbConnection) {
+		let dbQueryString = `SELECT * FROM acct_cmd WHERE acct_cmd_deleted = 0 AND acct_cmd_acct = ${accountDatabaseID}`;
+		dbAssoc = fetchQueryAssoc(dbConnection, dbQueryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempAccountCommandAliasData = new AccountCommandAliasData(dbAssoc[i]);
+				tempAccountCommandAliases.push(tempAccountCommandAliasData);
+				logToConsole(LOG_DEBUG, `[V.RP.Account]: Account command alias '${tempAccountCommandAliasData.databaseId}' loaded from database successfully!`);
+			}
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountCommandAliases.length} account command aliases for account ${accountDatabaseID} loaded from database successfully!`);
+	return tempAccountCommandAliases;
+}
+
+// ===========================================================================
+
 function loadAccountContactsFromDatabase(accountDatabaseID) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account contacts for account ${accountDatabaseID} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account contacts for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountContacts = [];
 	let dbConnection = connectToDatabase();
@@ -1553,20 +1692,20 @@ function loadAccountContactsFromDatabase(accountDatabaseID) {
 			for (let i in dbAssoc) {
 				let tempAccountContactData = new AccountContactData(dbAssoc[i]);
 				tempAccountContacts.push(tempAccountContactData);
-				logToConsole(LOG_DEBUG, `[AGRP.Account]: Account contact '${tempAccountContactData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account]: Account contact '${tempAccountContactData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: ${tempAccountContacts.length} account contacts for account ${accountDatabaseID} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountContacts.length} account contacts for account ${accountDatabaseID} loaded from database successfully!`);
 	return tempAccountContacts;
 }
 
 // ===========================================================================
 
 function loadAccountMessagesFromDatabase(accountDatabaseID) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: Loading account messages for account ${accountDatabaseID} from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: Loading account messages for account ${accountDatabaseID} from database ...`);
 
 	let tempAccountMessages = [];
 	let dbConnection = connectToDatabase();
@@ -1579,13 +1718,13 @@ function loadAccountMessagesFromDatabase(accountDatabaseID) {
 			for (let i in dbAssoc) {
 				let tempAccountMessageData = new AccountContactData(dbAssoc[i]);
 				tempAccountMessages.push(tempAccountMessageData);
-				logToConsole(LOG_DEBUG, `[AGRP.Account]: Account contact '${tempAccountMessageData.databaseId}' loaded from database successfully!`);
+				logToConsole(LOG_DEBUG, `[V.RP.Account]: Account contact '${tempAccountMessageData.databaseId}' loaded from database successfully!`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Account]: ${tempAccountMessages.length} account messages for account ${accountDatabaseID} loaded from database successfully!`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account]: ${tempAccountMessages.length} account messages for account ${accountDatabaseID} loaded from database successfully!`);
 	return tempAccountMessages;
 }
 
@@ -1628,7 +1767,13 @@ function getPlayerStaffTitle(client) {
 // ===========================================================================
 
 function isAccountEmailVerified(accountData) {
-	return hasBitFlag(accountData.flags.moderation, getModerationFlagValue("EmailVerified"));
+	return hasBitFlag(accountData.flags.moderation || 0, getModerationFlagValue("EmailVerified"));
+}
+
+// ===========================================================================
+
+function doesPlayerHaveEmailVerified(client) {
+	return hasBitFlag(getPlayerData(client).accountData.flags.moderation || 0, getModerationFlagValue("EmailVerified"));
 }
 
 // ===========================================================================
@@ -1651,12 +1796,6 @@ function setAccountEmail(accountData, emailAddress) {
 
 // ===========================================================================
 
-function setAccountEmailVerificationCode(accountData, emailVerificationCode) {
-	accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
-}
-
-// ===========================================================================
-
 function generateEmailVerificationCode() {
 	//return toUpperCase(generateRandomString(6));
 	return getRandom(100000, 999999);
@@ -1664,34 +1803,34 @@ function generateEmailVerificationCode() {
 
 // ===========================================================================
 
-async function sendEmailVerificationEmail(client, emailVerificationCode) {
+function sendEmailVerificationEmail(client, emailVerificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-async function sendPasswordResetEmail(client, verificationCode) {
+function sendPasswordResetEmail(client, verificationCode) {
 	let emailBodyText = getEmailConfig().bodyContent.confirmPasswordReset;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", verificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Reset your password on ${getServerName()}`, emailBodyText);
 }
 
 // ===========================================================================
 
-async function verifyAccountEmail(accountData, verificationCode) {
+function verifyAccountEmail(accountData, verificationCode) {
 	let emailVerificationCode = generateRandomString(10);
 
 	let emailBodyText = getEmailConfig().bodyContent.confirmEmail;
 	emailBodyText = emailBodyText.replace("{VERIFICATIONCODE}", emailVerificationCode);
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
+	sendEmail(getPlayerData(client).accountData.emailAddress, getPlayerData(client).accountData.name, `Confirm email on ${getServerName()}`, emailBodyText);
 
 	getPlayerData(client).accountData.emailAddress = emailAddress;
 	getPlayerData(client).accountData.emailVerificationCode = module.hashing.sha512(emailVerificationCode);
@@ -1699,10 +1838,10 @@ async function verifyAccountEmail(accountData, verificationCode) {
 
 // ===========================================================================
 
-async function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
+function sendAccountLoginFailedNotification(emailAddress, name, ip, game = getGame()) {
+	let countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, ip);
+	let subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, ip);
+	let cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, ip);
 
 	let emailBodyText = getEmailConfig().bodyContent.accountAuthFailAlert;
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
@@ -1711,16 +1850,16 @@ async function sendAccountLoginFailedNotification(emailAddress, name, ip, game =
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	await sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login failed on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
 // ===========================================================================
 
-async function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
-	let countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, ip);
-	let subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
-	let cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, ip);
+function sendAccountLoginSuccessNotification(emailAddress, name, ip, game = getGame()) {
+	let countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, ip);
+	let subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, ip);
+	let cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, ip);
 
 	let emailBodyText = getEmailConfig().bodyContent.accountAuthSuccessAlert;
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(game));
@@ -1729,13 +1868,17 @@ async function sendAccountLoginSuccessNotification(emailAddress, name, ip, game 
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 	emailBodyText = emailBodyText.replace("{TIMESTAMP}", new Date().toLocaleString('en-US'));
 
-	await sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login successful on ${getServerName()}`, emailBodyText);
 	return true;
 }
 
 // ===========================================================================
 
 function isAccountSettingFlagEnabled(accountData, flagValue) {
+	if (accountData == null) {
+		return false;
+	}
+
 	return hasBitFlag(accountData.settings, flagValue);
 }
 
@@ -1775,13 +1918,13 @@ function isPlayerATester(client) {
 
 // ===========================================================================
 
-async function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
+function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCode) {
 	let emailBodyText = getEmailConfig().bodyContent.twoFactorAuthentication;
 	emailBodyText = emailBodyText.replace("{2FACODE}", twoFactorAuthCode);
 	emailBodyText = emailBodyText.replace("{GAMENAME}", getGameName(getGame()));
 	emailBodyText = emailBodyText.replace("{SERVERNAME}", getServerName());
 
-	await sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
+	sendEmail(emailAddress, name, `Login code for ${getServerName()}`, emailBodyText);
 	return true;
 }
 
@@ -1789,11 +1932,17 @@ async function sendAccountTwoFactorAuthCode(emailAddress, name, twoFactorAuthCod
 
 function startLoginTimeoutForPlayer(client) {
 	getPlayerData(client).loginTimeout = setTimeout(function () {
-		if (isPlayerLoggedIn(client) == false) {
+		if (isPlayerLoggedIn(client) == false && getPlayerData(client).passwordResetState == V_RESETPASS_STATE_NONE) {
 			getPlayerData(client).customDisconnectReason = "FailedToLogin";
 			disconnectPlayer(client);
 		}
-	}, getGlobalConfig().loginTimeout);
+	}, globalConfig.loginTimeout);
+}
+
+// ===========================================================================
+
+function isAccountOnline(accountId) {
+	return (serverData.clients.filter(c => c.loggedIn && c.accountData.databaseId == accountId).length > 0);
 }
 
 // ===========================================================================

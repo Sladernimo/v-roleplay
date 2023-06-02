@@ -8,13 +8,14 @@
 // ===========================================================================
 
 function initHelpScript() {
-	logToConsole(LOG_INFO, `[AGRP.Help]: Initializing help script ...`);
-	logToConsole(LOG_INFO, `[AGRP.Help]: Help script initialized successfully!`);
+	logToConsole(LOG_INFO, `[V.RP.Help]: Initializing help script ...`);
+	logToConsole(LOG_INFO, `[V.RP.Help]: Help script initialized successfully!`);
 }
 
 // ===========================================================================
 
 let randomTips = [
+	/*
 	`{MAINCOLOUR}Look for yellow dots on your map for job locations.`,
 	`{MAINCOLOUR}You can set custom key binds. Use {ALTCOLOUR}/info keys {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Use /notips if you don't want to see tips and extra information`,
@@ -43,6 +44,7 @@ let randomTips = [
 	//`{MAINCOLOUR}Banks can provide loans. Use {ALTCOLOUR}/info loans {MAINCOLOUR} for more details.`,
 	`{MAINCOLOUR}Want to make a clan? Use {ALTCOLOUR}/info clans {MAINCOLOUR} for details.`,
 	`{MAINCOLOUR}Legal weapons can be purchased at any ammunation.`,
+	*/
 ];
 
 // ===========================================================================
@@ -93,6 +95,10 @@ function helpCommand(command, params, client) {
 
 		case "discord":
 			showDiscordHelpMessage(client);
+			break;
+
+		case "mechanic":
+			showMechanicHelpMessage(client);
 			break;
 
 		case "anim":
@@ -147,6 +153,14 @@ function helpCommand(command, params, client) {
 			showWealthAndTaxHelpMessage(client);
 			break;
 
+		case "admin":
+			showAdminHelpMessage(client, getParam(params, " ", 2));
+			break;
+
+		//case "items":
+		//	showItemsHelpMessage(client);
+		//	break;
+
 		default:
 			showMainHelpMessage(client);
 			break;
@@ -184,8 +198,8 @@ function helpCommand(command, params, client) {
 function showMainHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HelpMainListHeader")));
 	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Use /info <category> for commands and info. Example: {ALTCOLOUR}/info vehicle`);
-	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, website, animation`);
-	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, discord, colour, keybind`);
+	messagePlayerNormal(client, `{clanOrange}• {MAINCOLOUR}Help Categories: [#A9A9A9]account, command, vehicle, job, chat, rules, animation`);
+	messagePlayerNormal(client, `{clanOrange}• [#A9A9A9]skin, mechanic, dealership, colour, keybind, business`);
 }
 
 // ===========================================================================
@@ -254,14 +268,14 @@ function showRulesHelpMessage(client) {
 
 function showWebsiteHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWebsiteInfo")));
-	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Website")}`);
+	messagePlayerHelpContent(client, `{ALTCOLOUR}connected-rp.com{MAINCOLOUR}`);
 }
 
 // ===========================================================================
 
 function showDiscordHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderDiscordInfo")));
-	messagePlayerHelpContent(client, `{MAINCOLOUR}${server.getRule("Discord")}`);
+	messagePlayerHelpContent(client, `{ALTCOLOUR}discord.connected-rp.com{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -326,10 +340,43 @@ function showRadioHelpMessage(client) {
 
 function showWealthAndTaxHelpMessage(client) {
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderWealthandTaxHelp")));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * getGlobalConfig().economy.incomeTaxRate}%{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 0, `{ALTCOLOUR}${100 * serverConfig.economy.incomeTaxRate}%{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 1));
-	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${getGlobalConfig().economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 2, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerVehicle}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerHouse}{MAINCOLOUR}`, `{ALTCOLOUR}${serverConfig.economy.upKeepCosts.upKeepPerBusiness}{MAINCOLOUR}`));
 	messagePlayerHelpContent(client, getGroupedLocaleString(client, "WealthAndTaxHelp", 3, `{ALTCOLOUR}/wealth{MAINCOLOUR}`, `{ALTCOLOUR}/tax{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+// Needs finished!
+function showMechanicHelpMessage(client) {
+	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderMechanicHelp")));
+	messagePlayerHelpContent(client, getGroupedLocaleString(client, "ComingSoon"));
+}
+
+// ===========================================================================
+
+function showAdminHelpMessage(client, flagName) {
+	if (getPlayerData(client).accountData.flags.admin == 0) {
+		messagePlayerError(client, getLocaleString(client, "CommandNoPermissions", `{ALTCOLOUR}/info admin`));
+		return false;
+	}
+
+	if (!flagName) {
+		messagePlayerSyntax(client, `${getCommandSyntaxText("help")} admin <flag name>`);
+		messagePlayerInfo(client, `Use /staffflags to see a list of staff flags`);
+		return false;
+	}
+
+	let commandList = getCommandsUsableByStaffFlag(flagName).map(function (x) {
+		return `/${x.command}`;
+	});
+	let chunkedList = splitArrayIntoChunks(commandList, 8);
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCommandsForStaffFlagList", flagName)));
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, `{ALTCOLOUR}${chunkedList[i].join(", ")}{MAINCOLOUR}`);
+	}
 }
 
 // ===========================================================================
@@ -342,10 +389,7 @@ function showCommandHelpMessage(client, commandName) {
 
 	commandName = toLowerCase(commandName);
 	commandName = commandName.trim();
-
-	if (commandName.slice(0, 1) == "/") {
-		commandName = commandName.slice(1);
-	}
+	commandName = removeSlashesFromString(commandName);
 
 	let commandData = getCommandData(commandName);
 	let aliases = getCommandAliasesNames(commandData);

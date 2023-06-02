@@ -49,7 +49,7 @@ const V_KEYSTATE_UP = 1;
 const V_KEYSTATE_DOWN = 2;
 const V_KEYSTATE_HOLDSHORT = 3;
 const V_KEYSTATE_HOLDLONG = 4;
-const V_KEYSTATE_COMBO = 4;
+const V_KEYSTATE_COMBO = 5;
 
 // Business Label Info Types
 const V_PROPLABEL_INFO_NONE = 0;
@@ -61,6 +61,7 @@ const V_PROPLABEL_INFO_REPAIR = 5;
 const V_PROPLABEL_INFO_BUYHOUSE = 6;
 const V_PROPLABEL_INFO_RENTHOUSE = 7;
 const V_PROPLABEL_INFO_BUYBIZ = 8;
+const V_PROPLABEL_INFO_BANK = 9;
 
 // Animation Types
 const V_ANIMTYPE_NONE = 0;
@@ -143,3 +144,25 @@ const V_VEHSEAT_DRIVER = 0;
 const V_VEHSEAT_FRONTPASSENGER = 1;
 const V_VEHSEAT_REARLEFTPASSENGER = 2;
 const V_VEHSEAT_REARRIGHTPASSENGER = 3;
+
+// PayPhone States
+const V_PAYPHONE_STATE_NONE = 0;
+const V_PAYPHONE_STATE_IDLE = 1;
+const V_PAYPHONE_STATE_RINGING = 2;
+const V_PAYPHONE_STATE_ACTIVE_CALL = 3;
+const V_PAYPHONE_STATE_BROKEN = 4;
+const V_PAYPHONE_STATE_CALLING = 5;
+
+// Job Route Location Types
+const V_JOB_ROUTE_LOC_TYPE_NONE = 0;				// None
+const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT = 1;			// Checkpoint (basic stop for bus routes, truck delivery, etc)
+const V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE = 2;		// Burning vehicle (used for firefighter job)
+const V_JOB_ROUTE_LOC_TYPE_INJURED_PED = 3;         // Injured ped that gets into the vehicle when near.
+const V_JOB_ROUTE_LOC_TYPE_GROUND_GARBAGE = 4;      // Mess/Garbage on ground, "cleans up" when driving over (used for street sweeper job)
+const V_JOB_ROUTE_LOC_TYPE_GARBAGE_BIN = 5;         // Garbage in bin (used for trash collector job)
+const V_JOB_ROUTE_LOC_TYPE_FIRE = 6;         		// Scripted fire, placed on buildings and such
+const V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP = 7;    // Similar to 3, a healthy ped is spawned and enters the car when you get close (taxi job)
+const V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP = 8;         // Similar to 5 but it's a single item on the ground, need to exit the vehicle to pick it up
+const V_JOB_ROUTE_LOC_TYPE_CHECKPOINT_ILLEGAL = 9;  // Similar to 1 but alerts the police if you enter the checkpoint (booze or drug pickup?)
+const V_JOB_ROUTE_LOC_TYPE_ITEM_DROPOFF = 10;  		// Similar to 8 but the previously picked up item needs dropped off at this location
+const V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF = 11;  // Passenger destination for a ped picked up with type 7

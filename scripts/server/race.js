@@ -19,8 +19,8 @@ function initRaceScript() {
  * @return {RaceData} The race's data (class instance)
  */
 function getRaceData(raceId) {
-	if (typeof getServerData().races[raceId] != "undefined") {
-		return getServerData().races[raceId];
+	if (typeof serverData.races[raceId] != "undefined") {
+		return serverData.races[raceId];
 	}
 	return false;
 }
@@ -28,8 +28,8 @@ function getRaceData(raceId) {
 // ===========================================================================
 
 function setAllRaceDataIndexes() {
-	for (let i in getServerData().races) {
-		getServerData().races[i].index = i;
+	for (let i in serverData.races) {
+		serverData.races[i].index = i;
 	}
 }
 
@@ -43,12 +43,12 @@ function loadRacesFromDatabase() {
 // ===========================================================================
 
 function saveRacesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().races) {
-		saveRaceToDatabase(getServerData().races[i]);
+	for (let i in serverData.races) {
+		saveRaceToDatabase(serverData.races[i]);
 	}
 }
 
@@ -144,6 +144,23 @@ function stopRacingCommand(command, params, client) {
 	messagePlayerSuccess(client, "You left the race!");
 	messagePlayersInRace(`${getCharacterFullName(client)} left the race!`);
 	checkRemainingPlayersInRace(raceId)
+}
+
+// ===========================================================================
+
+function countDownCommand(command, params, client) {
+	let distance = 0;
+
+	if (areParamsEmpty(params)) {
+		distance = getParam(params, " ", 0);
+	}
+
+	if (isNaN(distance)) {
+		messagePlayerError(client, getLocaleString(client, "MustBeNumber"));
+		return false;
+	}
+
+	startCountDownForPlayer(null);
 }
 
 // ===========================================================================

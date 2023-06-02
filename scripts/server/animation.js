@@ -29,12 +29,18 @@ function playPlayerAnimationCommand(command, params, client) {
 		return false;
 	}
 
-	if (toInteger(animationPositionOffset) < 0 || toInteger(animationPositionOffset) > 3) {
+	if (!getAnimationData(animationSlot)) {
+		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
+		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
+		return false;
+	}
+
+	if (toInteger(animationPositionOffset) < globalConfig.minAnimationMoveDistance || toInteger(animationPositionOffset) > globalConfig.maxAnimationMoveDistance) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimationDistance"));
 		return false;
 	}
 
-	if (getAnimationData(animationSlot)[3] == V_ANIMTYPE_SURRENDER) {
+	if (getAnimationData(animationSlot).animType == V_ANIMTYPE_SURRENDER) {
 		getPlayerData(client).pedState = V_PEDSTATE_HANDSUP;
 	}
 
@@ -44,7 +50,7 @@ function playPlayerAnimationCommand(command, params, client) {
 	}
 
 	if (getAnimationData(animationSlot).loop == true) {
-		if (hasPlayerSeenActionTip(client, "AnimationStop")) {
+		if (!hasPlayerSeenActionTip(client, "AnimationStop")) {
 			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "AnimationStop", "{ALTCOLOUR}/stopanim{MAINCOLOUR}"));
 		}
 	}
@@ -63,8 +69,8 @@ function stopPlayerAnimationCommand(command, params, client) {
 	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
-	getPlayerData(client).currentAnimationPositionOffset = false;
-	getPlayerData(client).currentAnimationPositionReturnTo = false;
+	getPlayerData(client).currentAnimationPositionOffset = null;
+	getPlayerData(client).currentAnimationPositionReturnTo = null;
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 
@@ -76,7 +82,7 @@ function stopPlayerAnimationCommand(command, params, client) {
 // ===========================================================================
 
 function showAnimationListCommand(command, params, client) {
-	let animList = getGameConfig().animations[getGame()].map(function (x) { return x.name; });
+	let animList = gameData.animations[getGame()].map(function (x) { return x.name; });
 
 	let chunkedList = splitArrayIntoChunks(animList, 10);
 
@@ -96,7 +102,7 @@ function isPlayerInForcedAnimation(client) {
 // ===========================================================================
 
 function makePlayerPlayAnimation(client, animationSlot, offsetPosition = 1) {
-	if (getAnimationData(animationSlot).loop == true) {
+	if (getAnimationData(animationSlot).infiniteLoop == true) {
 		getPlayerData(client).currentAnimation = animationSlot;
 		getPlayerData(client).currentAnimationPositionOffset = offsetPosition;
 		getPlayerData(client).currentAnimationPositionReturnTo = getPlayerPosition(client);
@@ -135,8 +141,8 @@ function makePlayerStopAnimation(client) {
 	makePedStopAnimation(getPlayerPed(client));
 
 	getPlayerData(client).currentAnimation = -1;
-	getPlayerData(client).currentAnimationPositionOffset = false;
-	getPlayerData(client).currentAnimationPositionReturnTo = false;
+	getPlayerData(client).currentAnimationPositionOffset = null;
+	getPlayerData(client).currentAnimationPositionReturnTo = null;
 	getPlayerData(client).animationStart = 0;
 	getPlayerData(client).animationForced = false;
 }

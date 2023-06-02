@@ -13,14 +13,15 @@ let newCharacter = {
 	firstNameInput: null,
 	lastNameInput: null,
 	createCharacterButton: null,
+	randomNameButton: null,
 	mainLogoImage: null,
 };
 
 // ===========================================================================
 
 function initNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating new character GUI ...`);
-	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 115, 300, 230, 'NEW CHARACTER', {
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating new character GUI ...`);
+	newCharacter.window = mexui.window(getScreenWidth() / 2 - 150, getScreenHeight() / 2 - 130, 300, 260, 'NEW CHARACTER', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
 			transitionTime: 500,
@@ -98,7 +99,7 @@ function initNewCharacterGUI() {
 	});
 	newCharacter.lastNameInput.placeholder = "Last Name";
 
-	newCharacter.createCharacterButton = newCharacter.window.button(20, 185, 260, 25, 'CREATE CHARACTER', {
+	newCharacter.createCharacterButton = newCharacter.window.button(20, 185, 260, 30, 'CREATE CHARACTER', {
 		main: {
 			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 			textColour: toColour(255, 255, 255, 255),
@@ -110,13 +111,27 @@ function initNewCharacterGUI() {
 			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
 		},
 	}, checkNewCharacter);
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created new character GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
+
+	newCharacter.randomNameButton = newCharacter.window.button(20, 220, 260, 20, 'RANDOM NAME', {
+		main: {
+			backgroundColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
+			textColour: toColour(255, 255, 255, 255),
+			textSize: 10.0,
+			textFont: mainFont,
+			textAlign: 0.5,
+		},
+		focused: {
+			borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], buttonAlpha),
+		},
+	}, useRandomName);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created new character GUI`);
 }
 
 // ===========================================================================
 
 function newCharacterFailed(errorMessage) {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Server reports new character creation failed. Reason: ${errorMessage}`);
 	newCharacter.messageLabel.text = errorMessage;
 	newCharacter.messageLabel.styles.main.textColour = toColour(180, 32, 32, 255);
 	newCharacter.firstNameInput.text = "";
@@ -126,7 +141,9 @@ function newCharacterFailed(errorMessage) {
 		closeAllWindows();
 		setChatWindowEnabled(false);
 		mexui.setInput(true);
-		setHUDEnabled(false);
+		//if (typeof setHUDEnabled != "undefined") {
+		//	setHUDEnabled(false);
+		//}
 		newCharacter.window.shown = true;
 	}
 }
@@ -134,7 +151,7 @@ function newCharacterFailed(errorMessage) {
 // ===========================================================================
 
 function checkNewCharacter() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Checking new character with server ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Checking new character with server ...`);
 	if (newCharacter.firstNameInput.lines[0].length < 2) {
 		return false;
 	}
@@ -147,12 +164,17 @@ function checkNewCharacter() {
 		newCharacter.firstNameInput.lines[0],
 		newCharacter.lastNameInput.lines[0],
 	);
+
+	newCharacter.firstNameInput.lines[0] = "";
+	newCharacter.lastNameInput.lines[0] = "";
+
+	hideAllGUI();
 }
 
 // ===========================================================================
 
 function showNewCharacterGUI() {
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing new character window`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing new character window`);
 	closeAllWindows();
 	setChatWindowEnabled(false);
 	mexui.setInput(true);
@@ -161,6 +183,14 @@ function showNewCharacterGUI() {
 	guiSubmitKey = checkNewCharacter;
 
 	showLocaleChooserGUI(new Vec2(getScreenWidth() / 2 - (localeChooser.window.size.x / 2), newCharacter.window.position.y + newCharacter.window.size.y + 20));
+}
+
+// ===========================================================================
+
+function useRandomName() {
+	let name = getRandomName();
+	newCharacter.firstNameInput.lines[0] = name[0];
+	newCharacter.lastNameInput.lines[0] = name[1];
 }
 
 // ===========================================================================

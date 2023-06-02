@@ -29,14 +29,25 @@ class VehicleData {
 
 // ===========================================================================
 
+let vehiclePurchaseState = V_VEHBUYSTATE_NONE;
+let vehiclePurchasing = null;
+let vehiclePurchasePosition = null;
+
+let cruiseControlEnabled = false;
+let cruiseControlSpeed = 0.0;
+
+let localPlayerVehicleSeat = -1;
+
+// ===========================================================================
+
 function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, colour3 = 0, colour4 = 0, locked = false, lights = false, engine = false, licensePlate = "") {
-	logToConsole(LOG_DEBUG, `[AGRP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
+	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Received vehicle ${vehicleId} (${getVehicleNameFromModel(model, getGame())}) from server`);
 
 	if (getGame() != V_GAME_GTA_IV) {
 		return false;
 	}
 
-	if (getVehicleData(vehicleId) != false) {
+	if (getVehicleData(vehicleId) != null) {
 		let vehicleData = getVehicleData(vehicleId);
 		//vehicleData.position = position;
 		//vehicleData.heading = heading;
@@ -52,7 +63,7 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 
 		let vehicle = natives.getVehicleFromNetworkId(vehicleId.ivNetworkId);
 	} else {
-		//logToConsole(LOG_DEBUG, `[AGRP.Vehicle] Vehicle ${vehicleId} doesn't exist. Adding ...`);
+		//logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Vehicle ${vehicleId} doesn't exist. Adding ...`);
 		//let tempVehicleData = new VehicleData(vehicleId, name, position, blipModel, pickupModel);
 
 		//vehicles.push(tempVehicleData);
@@ -64,7 +75,7 @@ function receiveVehicleFromServer(vehicleId, position, model, colour1, colour2, 
 
 function processVehiclePurchasing() {
 	if (vehiclePurchaseState == V_VEHBUYSTATE_TESTDRIVE) {
-		if (getLocalPlayerVehicle() == false) {
+		if (getLocalPlayerVehicle() == null) {
 			vehiclePurchaseState = V_VEHBUYSTATE_EXITVEH;
 			sendNetworkEventToServer("v.rp.vehBuyState", V_VEHBUYSTATE_EXITVEH);
 			return false;
@@ -111,20 +122,20 @@ function setVehiclePurchaseState(state, vehicleId, position) {
  * @return {VehicleData} The vehicle's data (class instance)
  */
 function getVehicleData(vehicleId) {
-	for (let i in getServerData().vehicles) {
-		if (getServerData().vehicles[i].vehicleId == vehicleId) {
-			return getServerData().vehicles[i];
+	for (let i in serverData.vehicles) {
+		if (serverData.vehicles[i].vehicleId == vehicleId) {
+			return serverData.vehicles[i];
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
 
 function setAllVehicleDataIndexes() {
-	for (let i in getServerData().vehicles) {
-		getServerData().vehicles[i].index = i;
+	for (let i in serverData.vehicles) {
+		serverData.vehicles[i].index = i;
 	}
 }
 
@@ -161,6 +172,42 @@ function getVehicleSpeed(vehicle) {
 	speed = Math.abs(speed);
 
 	return speed;
+}
+
+// ===========================================================================
+
+function removeVehiclesFromClient() {
+	// Need to destroy elements before clearing array
+
+	serverData.vehicles.splice(0);
+}
+
+// ===========================================================================
+
+function processLocalPlayerVehicleControlState() {
+	if (isGameFeatureSupported("serverElements")) {
+		if (localPlayer.vehicle != null) {
+			if (doesEntityDataExist(localPlayer.vehicle, "v.rp.engine")) {
+				if (getEntityData(localPlayer.vehicle, "v.rp.engine") == false) {
+					//setImmediate(function () {
+					//	localPlayer.vehicle.engine = false;
+					//});
+
+					if (!getEntityData(localPlayer.vehicle, "v.rp.engine")) {
+						if (typeof localPlayer.vehicle.velocity != "undefined") {
+							localPlayer.vehicle.velocity = toVector3(0.0, 0.0, 0.0);
+							localPlayer.vehicle.turnVelocity = toVector3(0.0, 0.0, 0.0);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (getLocalPlayerVehicleSeat() != localPlayerVehicleSeat) {
+		localPlayerVehicleSeat = getLocalPlayerVehicleSeat();
+		sendNetworkEventToServer("v.rp.veh.seat", getLocalPlayerVehicleSeat());
+	}
 }
 
 // ===========================================================================

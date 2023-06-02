@@ -29,6 +29,7 @@ function addAllNetworkHandlers() {
 
 	// Job
 	addNetworkEventHandler("v.rp.job", receiveJobFromServer);
+	addNetworkEventHandler("v.rp.removeJobs", removeJobsFromClient);
 	addNetworkEventHandler("v.rp.working", setLocalPlayerWorkingState);
 	addNetworkEventHandler("v.rp.jobType", setLocalPlayerJobType);
 	addNetworkEventHandler("v.rp.showJobRouteLocation", showJobRouteLocation);
@@ -40,7 +41,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.freeze", setLocalPlayerFrozenState);
 	addNetworkEventHandler("v.rp.control", setLocalPlayerControlState);
 	addNetworkEventHandler("v.rp.fadeCamera", fadeLocalCamera);
-	addNetworkEventHandler("v.rp.removeFromVehicle", removeLocalPlayerFromVehicle);
+	addNetworkEventHandler("v.rp.removeFromVehicle", removePedFromVehicle);
 	addNetworkEventHandler("v.rp.clearWeapons", clearLocalPlayerWeapons);
 	addNetworkEventHandler("v.rp.giveWeapon", giveLocalPlayerWeapon);
 	addNetworkEventHandler("v.rp.position", setLocalPlayerPosition);
@@ -50,22 +51,32 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.money", setLocalPlayerMoney);
 	addNetworkEventHandler("v.rp.armour", setLocalPlayerArmour);
 	addNetworkEventHandler("v.rp.localPlayerSkin", setLocalPlayerSkin);
-	addNetworkEventHandler("v.rp.pedSpeak", makeLocalPlayerPedSpeak);
+	addNetworkEventHandler("v.rp.pedSpeak", makePedSpeak);
 	addNetworkEventHandler("v.rp.infiniteRun", setLocalPlayerInfiniteRun);
 	addNetworkEventHandler("v.rp.playerCop", setLocalPlayerAsCopState);
 	addNetworkEventHandler("v.rp.health", setLocalPlayerHealth);
 	addNetworkEventHandler("v.rp.wantedLevel", setLocalPlayerWantedLevel);
 	addNetworkEventHandler("v.rp.playerPedId", sendLocalPlayerNetworkIdToServer);
 	addNetworkEventHandler("v.rp.ped", setLocalPlayerPedPartsAndProps);
-	addNetworkEventHandler("v.rp.spawn", serverRequestedLocalPlayerSpawn);
+	//addNetworkEventHandler("v.rp.spawn", serverRequestedLocalPlayerSpawn);
 	addNetworkEventHandler("v.rp.clearPedState", clearLocalPedState);
 	addNetworkEventHandler("v.rp.drunkEffect", setLocalPlayerDrunkEffect);
 	addNetworkEventHandler("v.rp.deleteLocalPlayerPed", deleteLocalPlayerPed);
 
 	// Vehicle
 	addNetworkEventHandler("v.rp.vehicle", receiveVehicleFromServer);
+	addNetworkEventHandler("v.rp.removeVehicles", removeVehiclesFromClient);
 	addNetworkEventHandler("v.rp.veh.lights", setVehicleLights);
 	addNetworkEventHandler("v.rp.veh.engine", setVehicleEngine);
+	addNetworkEventHandler("v.rp.veh.locked", setVehicleLock);
+	addNetworkEventHandler("v.rp.veh.siren", setVehicleSiren);
+	addNetworkEventHandler("v.rp.veh.hazardLights", setVehicleHazardLights);
+	addNetworkEventHandler("v.rp.veh.alarm", setVehicleAlarm);
+	addNetworkEventHandler("v.rp.veh.upgrades", setVehicleUpgrades);
+	addNetworkEventHandler("v.rp.veh.livery", setVehicleLivery);
+	addNetworkEventHandler("v.rp.veh.interiorLight", setVehicleInteriorLight);
+	addNetworkEventHandler("v.rp.veh.taxiLight", setVehicleTaxiLight);
+	addNetworkEventHandler("v.rp.veh.colour", setVehicleColours);
 	addNetworkEventHandler("v.rp.veh.repair", repairVehicle);
 	addNetworkEventHandler("v.rp.cruiseControl", toggleLocalVehicleCruiseControl);
 	addNetworkEventHandler("v.rp.passenger", enterVehicleAsPassenger);
@@ -108,7 +119,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.changePassword", showChangePasswordGUI);
 	addNetworkEventHandler("v.rp.showLocaleChooser", showLocaleChooserGUI);
 	addNetworkEventHandler("v.rp.guiColour", setGUIColours);
-	addNetworkEventHandler("v.rp.mapChangeWarning", setMapChangeWarningState);
+	addNetworkEventHandler("v.rp.mapChangingSoon", setMapChangeWarningState);
 
 	// 2D Rendering
 	addNetworkEventHandler("v.rp.set2DRendering", set2DRendering);
@@ -117,9 +128,11 @@ function addAllNetworkHandlers() {
 
 	// Business
 	addNetworkEventHandler("v.rp.business", receiveBusinessFromServer);
+	addNetworkEventHandler("v.rp.removeBusinesses", removeBusinessesFromClient);
 
 	// House
 	addNetworkEventHandler("v.rp.house", receiveHouseFromServer);
+	addNetworkEventHandler("v.rp.removeHouses", removeHousesFromClient);
 
 	// GPS
 	addNetworkEventHandler("v.rp.showGPSBlip", showGPSLocation);
@@ -137,6 +150,14 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.nametag", updatePlayerNameTag);
 	addNetworkEventHandler("v.rp.nametagDistance", setNameTagDistance);
 
+	// PayPhones
+	addNetworkEventHandler("v.rp.payPhone", receivePayPhoneFromServer);
+	addNetworkEventHandler("v.rp.payPhoneState", receivePayPhoneStateFromServer);
+	addNetworkEventHandler("v.rp.removePayPhones", removePayPhonesFromClient);
+	addNetworkEventHandler("v.rp.payPhoneDial", payPhoneDial);
+	addNetworkEventHandler("v.rp.payPhoneHangup", payPhoneHangup);
+	addNetworkEventHandler("v.rp.payPhonePickup", payPhonePickup);
+
 	// Misc
 	addNetworkEventHandler("v.rp.mouseCursor", toggleMouseCursor);
 	addNetworkEventHandler("v.rp.mouseCamera", toggleMouseCamera);
@@ -148,6 +169,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.minuteDuration", setMinuteDuration);
 	addNetworkEventHandler("v.rp.snow", setSnowState);
 	addNetworkEventHandler("v.rp.enterPropertyKey", setEnterPropertyKey);
+	addNetworkEventHandler("v.rp.scoreBoardKey", setScoreBoardKey);
 	addNetworkEventHandler("v.rp.skinSelect", toggleSkinSelect);
 	addNetworkEventHandler("v.rp.hotbar", updatePlayerHotBar);
 	addNetworkEventHandler("v.rp.logLevel", setLogLevel);
@@ -163,6 +185,10 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.profanityFilter", setProfanityFilterState);
 	addNetworkEventHandler("v.rp.currencyString", receiveCurrencyStringFromServer);
 	addNetworkEventHandler("v.rp.token", serverRequestedToken);
+	addNetworkEventHandler("v.rp.incomingDamageMultiplier", setIncomingDamageMultiplier);
+	addNetworkEventHandler("v.rp.warpIntoVehicle", warpPedIntoVehicle);
+	addNetworkEventHandler("v.rp.godMode", setGodModeState);
+	addNetworkEventHandler("v.rp.countDown", startCountDown);
 }
 
 // ===========================================================================
@@ -188,7 +214,7 @@ function sendResourceStoppedSignalToServer() {
 // ===========================================================================
 
 function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardState, hotBarState, itemActionDelayState) {
-	logToConsole(LOG_DEBUG, `[AGRP.Main] Updating render states (HUD: ${hudState}, Labels: ${labelState}, Bottom Text: ${smallGameMessageState}, Scoreboard: ${scoreboardState}, HotBar: ${hotBarState}, Item Action Delay: ${itemActionDelayState})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Main] Updating render states (HUD: ${hudState}, Labels: ${labelState}, Bottom Text: ${smallGameMessageState}, Scoreboard: ${scoreboardState}, HotBar: ${hotBarState}, Item Action Delay: ${itemActionDelayState})`);
 	renderHUD = hudState;
 
 	if (getGame() == V_GAME_GTA_IV) {
@@ -213,25 +239,23 @@ function set2DRendering(hudState, labelState, smallGameMessageState, scoreboardS
 // ===========================================================================
 
 function onServerSpawnedLocalPlayer(state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Main] Setting spawned state to ${state}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Main] Setting spawned state to ${state}`);
 	isSpawned = state;
-	setUpInitialGame();
+	calledDeathEvent = false;
+
 	if (state) {
 		setTimeout(function () {
-			calledDeathEvent = false;
-		}, 1000);
+			setUpInitialGame();
+			syncPedProperties(localPlayer);
 
-		getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach(ped => {
-			syncCivilianProperties(ped);
-		});
+			getElementsByType(ELEMENT_PED).forEach(ped => {
+				syncPedProperties(ped);
+			});
 
-		getElementsByType(ELEMENT_PLAYER).forEach(player => {
-			syncPlayerProperties(player);
-		});
-
-		getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
-			syncVehicleProperties(vehicle);
-		});
+			getElementsByType(ELEMENT_VEHICLE).forEach(vehicle => {
+				syncVehicleProperties(vehicle);
+			});
+		}, 250);
 	}
 }
 
@@ -278,7 +302,11 @@ function anchorBoat(vehicleId) {
 // ===========================================================================
 
 function setEnterPropertyKey(key) {
-	enterPropertyKey = key;
+	if (key == -1) {
+		enterPropertyKey = null;
+	} else {
+		enterPropertyKey = toInteger(key);
+	}
 }
 
 // ===========================================================================
@@ -336,7 +364,7 @@ function setLocalPlayerInfiniteRun(state) {
 // ===========================================================================
 
 function setLocalPlayerSkin(skinId) {
-	logToConsole(LOG_INFO, `[AGRP.Server] Setting locale player skin to ${skinId}`);
+	logToConsole(LOG_INFO, `[V.RP.Server] Setting locale player skin to ${skinId}`);
 	if (getGame() == V_GAME_GTA_IV) {
 		if (natives.isModelInCdimage(skinId)) {
 			natives.requestModel(skinId);
@@ -354,7 +382,7 @@ function setLocalPlayerSkin(skinId) {
 
 function makePedHoldObject(pedId, modelIndex) {
 	if (getGame() == V_GAME_GTA_IV) {
-		natives.givePedAmbientObject(natives.getPedFromNetworkId(pedId), getGameConfig().objects[getGame()][modelIndex][1])
+		natives.givePedAmbientObject(natives.getPedFromNetworkId(pedId), gameData.objects[getGame()][modelIndex][1])
 	}
 }
 
@@ -370,30 +398,44 @@ function sendLocalPlayerNetworkIdToServer() {
 
 function changeScene(sceneName) {
 	if (getGame() == V_GAME_GTA_IV) {
-		if (cutsceneName == "") {
+		if (sceneName == "") {
 			natives.clearCutscene();
 		} else {
 			if (natives.isInteriorScene()) {
 				natives.clearCutscene();
 			}
-			natives.initCutscene(cutsceneName);
+			natives.initCutscene(sceneName);
 		}
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		game.changeMap(sceneName);
+		renderHUD = false;
+		renderHotBar = false;
+		renderInteriorLights = false;
+		renderItemActionDelay = false;
+		renderLabels = false;
+		renderLogo = false;
+		renderScoreBoard = false;
+		renderSmallGameMessage = false;
+		setTimeout(function () {
+			game.changeMap(sceneName, false);
+		}, 250);
 	}
 }
 
 // ===========================================================================
 
-function makeLocalPlayerPedSpeak(speechName) {
+function makePedSpeak(pedId, speechName) {
+	if (getElementFromId(pedId) == null) {
+		return false;
+	}
+
 	if (getGame() == V_GAME_GTA_IV) {
 		// if player is in vehicle, allow megaphone (if last arg is "1", it will cancel megaphone echo)
 		// Only speeches with _MEGAPHONE will have the bullhorn effect
 		// Afaik it only works on police voices anyway
 		if (localPlayer.vehicle != null) {
-			natives.sayAmbientSpeech(localPlayer, speechName, true, false, 0);
+			natives.sayAmbientSpeech(getElementFromId(pedId), speechName, true, false, 0);
 		} else {
-			natives.sayAmbientSpeech(localPlayer, speechName, true, false, 1);
+			natives.sayAmbientSpeech(getElementFromId(pedId), speechName, true, false, 1);
 		}
 	} else if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
 		// Don't have a way to get the ped ref ID and can't use ped in arg
@@ -415,7 +457,7 @@ function setLocalPlayerAsCopState(state) {
 function serverRequestedLocalPlayerSpawn(skinId, position) {
 	if (getGame() == V_GAME_GTA_IV) {
 		natives.createPlayer(skinId, position);
-		//if(isCustomCameraSupported()) {
+		//if(isGameFeatureSupported("customCamera")) {
 		//	game.restoreCamera(true);
 		//}
 	}
@@ -432,7 +474,7 @@ function sendLocaleSelectToServer(localeId) {
 function clearLocalPlayerOwnedPickups() {
 	let pickups = getPickups().filter(pickup => pickup.isLocal == true);
 	for (let i in pickups) {
-		deleteLocalGameElement(pickups[i]);
+		deleteGameElement(pickups[i]);
 	}
 }
 
@@ -444,8 +486,9 @@ function receiveCurrencyStringFromServer(newCurrencyString) {
 
 // ===========================================================================
 
-function setMapChangeWarningState(state) {
+function setMapChangeWarningState(state, changeToNight) {
 	mapChangeWarning = state;
+	mapChangeToNight = changeToNight;
 }
 
 // ===========================================================================
@@ -465,6 +508,52 @@ function receiveClientVariablesFromServer(clientVariablesString) {
 function serverRequestedToken() {
 	let token = loadToken();
 	sendNetworkEventToServer("v.rp.token", token);
+}
+
+// ===========================================================================
+
+function setIncomingDamageMultiplier(tempMultiplier) {
+	weaponDamageMultiplier = tempMultiplier;
+}
+
+// ===========================================================================
+
+function warpPedIntoVehicle(pedId, vehicleId, seatId) {
+	if (getElementFromId(pedId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Ped does not exist`);
+		return false;
+	}
+
+	if (getElementFromId(vehicleId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Vehicle does not exist`);
+		return false;
+	}
+
+	if (!getElementFromId(pedId).isSyncer) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not warp ped ${pedId} into vehicle ${vehicleId}. Is not syncer of ped`);
+		return false;
+	}
+
+	getElementFromId(pedId).warpIntoVehicle(getElementFromId(vehicleId), seatId);
+}
+
+// ===========================================================================
+
+function removePedFromVehicle(pedId) {
+	if (getElementFromId(pedId) == null) {
+		logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.NetEvents] Could not remove ped ${pedId} from their vehicle. Ped does not exist`);
+		return false;
+	}
+
+	getElementFromId(pedId).removeFromVehicle();
+}
+
+// ===========================================================================
+
+function setGodModeState(state) {
+	godMode = state;
+
+	return true;
 }
 
 // ===========================================================================

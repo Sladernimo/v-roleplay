@@ -119,8 +119,10 @@ function muteClientCommand(command, params, client) {
 		}
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been muted by {adminOrange}${getPlayerName(client)}`);
 	getPlayerData(targetClient).muted = true;
+	getPlayerData(targetClient).accountData.flags.moderation = addBitFlag(getPlayerData(targetClient).accountData.flags.moderation, getModerationFlagValue("Muted"));
+
+	messageAdmins(`{adminOrange}${getPlayerName(targetClient)}{MAINCOLOUR} has been muted by {adminOrange}${getPlayerName(client)}`);
 }
 
 // ===========================================================================
@@ -253,6 +255,24 @@ function gotoPlayerCommand(command, params, client) {
 		return false;
 	}
 
+	if (isSameScene(getPlayerCurrentSubAccount(client).scene, getPlayerCurrentSubAccount(targetClient).scene)) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
+		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
+		initPlayerPropertySwitch(
+			client,
+			getPosBehindPos(getPlayerPosition(targetClient), getPlayerHeading(targetClient), 2),
+			getPlayerHeading(targetClient),
+			getPlayerInterior(targetClient),
+			getPlayerDimension(targetClient),
+			-1,
+			-1,
+			getPlayerCurrentSubAccount(targetClient).scene,
+		);
+		messagePlayerSuccess(client, `You teleported to {ALTCOLOUR}${getPlayerName(targetClient)}`);
+		return false;
+	}
+
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getPosBehindPos(getPlayerPosition(targetClient), getPlayerHeading(targetClient), 2));
 	setPlayerHeading(client, getPlayerHeading(targetClient));
@@ -299,9 +319,9 @@ function getPlayerGeoIPInformationCommand(command, params, client) {
 	let cityName = "Unknown";
 
 	try {
-		countryName = module.geoip.getCountryName(getGlobalConfig().geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
-		subDivisionName = module.geoip.getSubdivisionName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
-		cityName = module.geoip.getCityName(getGlobalConfig().geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		countryName = module.geoip.getCountryName(globalConfig.geoIPCountryDatabaseFilePath, getPlayerIP(targetClient));
+		subDivisionName = module.geoip.getSubdivisionName(globalConfig.geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
+		cityName = module.geoip.getCityName(globalConfig.geoIPCityDatabaseFilePath, getPlayerIP(targetClient));
 	} catch (err) {
 		messagePlayerError(client, `There was an error getting the geoip information for ${getPlayerName(targetClient)}`);
 		submitBugReport(client, `[AUTOMATED REPORT] Getting geoip information for ${getPlayerName(targetClient)} (${getPlayerIP(targetClient)} failed: ${err}`);
@@ -354,11 +374,12 @@ function gotoVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getServerData().vehicles[toInteger(params)] == "undefined") {
+	if (typeof serverData.vehicles[toInteger(params)] == "undefined") {
 		messagePlayerError(client, "That vehicle ID doesn't exist!");
+		return false;
 	}
 
-	let vehicle = getServerData().vehicles[toInteger(params)].vehicle;
+	let vehicle = serverData.vehicles[toInteger(params)].vehicle;
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
 	setPlayerPosition(client, getPosAbovePos(getVehiclePosition(vehicle), 3.0));
@@ -393,26 +414,177 @@ function getVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	if (typeof getServerData().vehicles[toInteger(params) - 1] == "undefined") {
-		messagePlayerError(client, "That vehicle ID doesn't exist!");
+	let vehicleIndex = toInteger(params);
+
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
 	}
 
-	let vehicle = getServerData().vehicles[toInteger(params) - 1].vehicle;
+	deleteGameElement(serverData.vehicles[vehicleIndex]);
+	serverData.vehicles[vehicleIndex].vehicle = null;
 
-	let oldStreamInDistance = getElementStreamInDistance(vehicle);
-	let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+	serverData.vehicles[vehicleIndex].spawnPosition = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
+	serverData.vehicles[vehicleIndex].spawnRotation = getRotationFromHeading(getPlayerHeading(client));
+	serverData.vehicles[vehicleIndex].interior = getPlayerInterior(client);
+	serverData.vehicles[vehicleIndex].dimension = getPlayerDimension(client);
 
-	setElementStreamInDistance(vehicle, 9999999);
-	setElementStreamOutDistance(vehicle, 9999999 + 1);
+	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
 
-	setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
-	setElementInterior(vehicle, getPlayerInterior(client));
-	setElementDimension(vehicle, getPlayerDimension(client));
+	//setElementStreamInDistance(vehicle, 9999999);
+	//setElementStreamOutDistance(vehicle, 9999999 + 1);
 
-	setElementStreamInDistance(vehicle, oldStreamInDistance);
-	setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+	//setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
+	//setElementInterior(vehicle, getPlayerInterior(client));
+	//setElementDimension(vehicle, getPlayerDimension(client));
+
+	//setElementStreamInDistance(vehicle, oldStreamInDistance);
+	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+
+	let vehicle = spawnVehicle(serverData.vehicles[vehicleIndex]);
+
+	if (serverData.vehicles[vehicleIndex].vehicle == null) {
+		messagePlayerError(client, "Vehicle could not be teleported!");
+		return false;
+	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function getNPCCommand(command, params, client) {
+	let npcIndex = getClosestNPC(getPlayerPosition(client), getPlayerDimension(client), getPlayerInterior(client));
+
+	if (!areParamsEmpty(params)) {
+		npcIndex = getNPCFromParams(params);
+	}
+
+	if (typeof serverData.npcs[npcIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidNPC"));
+		return false;
+	}
+
+	deleteGameElement(serverData.npcs[npcIndex]);
+	serverData.npcs[npcIndex].npc = null;
+
+	serverData.npcs[npcIndex].position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
+	serverData.npcs[npcIndex].heading = getPlayerHeading(client);
+	serverData.npcs[npcIndex].interior = getPlayerInterior(client);
+	serverData.npcs[npcIndex].dimension = getPlayerDimension(client);
+
+	//let oldStreamInDistance = getElementStreamInDistance(vehicle);
+	//let oldStreamOutDistance = getElementStreamOutDistance(vehicle);
+
+	//setElementStreamInDistance(vehicle, 9999999);
+	//setElementStreamOutDistance(vehicle, 9999999 + 1);
+
+	//setElementPosition(vehicle, getPosInFrontOfPos(getPlayerPosition(client), fixAngle(getPlayerHeading(client)), 5.0));
+	//setElementInterior(vehicle, getPlayerInterior(client));
+	//setElementDimension(vehicle, getPlayerDimension(client));
+
+	//setElementStreamInDistance(vehicle, oldStreamInDistance);
+	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
+
+	spawnNPC(serverData.npcs[npcIndex]);
+
+	if (serverData.npcs[npcIndex].npc == null) {
+		messagePlayerError(client, "NPC could not be teleported!");
+		return false;
+	}
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported NPC {npcPink}${serverData.npcs[npcIndex].name}{ALTCOLOUR} (ID ${npcIndex}){MAINCOLOUR} to their position`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setVehicleDimensionCommand(command, params, client) {
+	if (!isGameFeatureSupported("dimension")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let vehicleIndex = toInteger(getParam(params, " ", 1));
+	let dimension = toInteger(getParam(params, " ", 2));
+
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
+	if (serverData.vehicles[vehicleIndex].vehicle != false) {
+		messagePlayerError(client, "That vehicle is not spawned!");
+		return false;
+	}
+
+	serverData.vehicles[vehicleIndex].vehicle.dimension = dimension;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setVehicleInteriorCommand(command, params, client) {
+	if (!isGameFeatureSupported("interiorId")) {
+		messagePlayerError(client, getLocaleString(client, "GameFeatureNotSupported"));
+		return false;
+	}
+
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let vehicleIndex = toInteger(getParam(params, " ", 1));
+	let dimension = toInteger(getParam(params, " ", 2));
+
+	if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
+		messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
+		return false;
+	}
+
+	if (serverData.vehicles[vehicleIndex].vehicle != false) {
+		messagePlayerError(client, "That vehicle is not spawned!");
+		return false;
+	}
+
+	serverData.vehicles[vehicleIndex].interior = interior;
+	setElementInterior(serverData.vehicles[vehicleIndex].interior, interior);
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set vehicle {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR}'s virtual woirld to ${dimension}`, true);
 }
 
 // ===========================================================================
@@ -430,18 +602,18 @@ function warpIntoVehicleCommand(command, params, client) {
 	let vehicle = getClosestVehicle(getPlayerPosition(client));
 
 	if (areParamsEmpty(params)) {
-		if (!getPlayerVehicle(client) && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > getGlobalConfig().vehicleLockDistance) {
+		if (getPlayerVehicle(client) != null && getDistance(getVehiclePosition(vehicle), getPlayerPosition(client)) > globalConfig.vehicleLockDistance) {
 			messagePlayerError(client, getLocaleString(client, "MustBeInOrNearVehicle"));
 			return false;
 		}
 	} else {
 		let vehicleIndex = getParam(params, " ", 1);
-		if (typeof getServerData().vehicles[vehicleIndex] == "undefined") {
+		if (typeof serverData.vehicles[vehicleIndex] == "undefined") {
 			messagePlayerError(client, getLocaleString(client, "InvalidVehicle"));
 			return false;
 		}
 
-		vehicle = getServerData().vehicles[vehicleIndex].vehicle;
+		vehicle = serverData.vehicles[vehicleIndex].vehicle;
 	}
 
 	if (getVehicleData(vehicle)) {
@@ -471,9 +643,9 @@ function gotoBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	let businessId = getBusinessFromParams(params)
+	let businessId = getBusinessFromParams(params);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -482,6 +654,45 @@ function gotoBusinessCommand(command, params, client) {
 	setPlayerPosition(client, getBusinessData(businessId).entrancePosition);
 	setPlayerInterior(client, getBusinessData(businessId).entranceInterior);
 	setPlayerDimension(client, getBusinessData(businessId).entranceDimension);
+	updateInteriorLightsForPlayer(client, true);
+
+	//setTimeout(function() {
+	//	setPlayerPosition(client, getBusinessData(businessId).entrancePosition);
+	//	setPlayerInterior(client, getBusinessData(businessId).entranceInterior);
+	//	setPlayerDimension(client, getBusinessData(businessId).entranceDimension);
+	//	updateInteriorLightsForPlayer(client, true);
+	//}, 500);
+
+	messagePlayerSuccess(client, `You teleported to business {businessBlue}${getBusinessData(businessId).name} {ALTCOLOUR}(ID ${businessId})`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function gotoPayPhoneCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let payPhoneIndex = getPayPhoneFromParams(params);
+
+	if (getPayPhoneData(payPhoneIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
+	setPlayerPosition(client, getPayPhoneData(payPhoneIndex).position);
+	setPlayerDimension(client, getPayPhoneData(payPhoneIndex).dimension);
 	updateInteriorLightsForPlayer(client, true);
 
 	//setTimeout(function() {
@@ -519,20 +730,20 @@ function gotoGameLocationCommand(command, params, client) {
 	}
 
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
-	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
-	setPlayerHeading(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	setPlayerPosition(client, gameData.locations[getGame()][gameLocationId][1]);
+	setPlayerHeading(client, gameData.locations[getGame()][gameLocationId][1]);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
 
 	//setTimeout(function() {
-	//	setPlayerPosition(client, getGameConfig().locations[getGame()][gameLocationId][1]);
+	//	setPlayerPosition(client, gameData.locations[getGame()][gameLocationId][1]);
 	//	setPlayerInterior(client, 0);
 	//	setPlayerDimension(client, 0);
 	//	updateInteriorLightsForPlayer(client, true);
 	//}, 500);
 
-	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${getGameConfig().locations[getGame()][gameLocationId][0]}`);
+	messagePlayerSuccess(client, `You teleported to game location {ALTCOLOUR}${gameData.locations[getGame()][gameLocationId][0]}`);
 }
 
 // ===========================================================================
@@ -554,7 +765,7 @@ function gotoHouseCommand(command, params, client) {
 
 	let houseId = getHouseFromParams(params)
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -594,7 +805,7 @@ function gotoJobLocationCommand(command, params, client) {
 
 	let jobId = getJobFromParams(getParam(params, " ", 1)) || getClosestJobLocation(getPlayerPosition(client)).job;
 
-	if (!getJobData(jobId)) {
+	if (getJobData(jobId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
 		return false;
 	}
@@ -628,7 +839,7 @@ function gotoJobLocationCommand(command, params, client) {
  */
 function gotoNewPlayerSpawnCommand(command, params, client) {
 	setPlayerVelocity(client, toVector3(0.0, 0.0, 0.0));
-	setPlayerPosition(client, getServerConfig().newCharacter.spawnPosition);
+	setPlayerPosition(client, serverConfig.newCharacter.spawnPosition);
 	setPlayerInterior(client, 0);
 	setPlayerDimension(client, 0);
 	updateInteriorLightsForPlayer(client, true);
@@ -893,18 +1104,39 @@ function getPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	removePlayerFromVehicle(targetClient);
+	setPlayerControlState(targetClient, false);
+	removePedFromVehicle(getPlayerPed(targetClient));
 
 	getPlayerData(targetClient).returnToPosition = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToHeading = getPlayerPosition(targetClient);
 	getPlayerData(targetClient).returnToDimension = getPlayerDimension(targetClient);
 	getPlayerData(targetClient).returnToInterior = getPlayerInterior(targetClient);
+	getPlayerData(targetClient).returnToScene = getPlayerData(targetClient).scene;
 	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_ADMINGET;
 
-	setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
-	setPlayerHeading(targetClient, getPlayerHeading(client));
-	setPlayerInterior(targetClient, getPlayerInterior(client));
-	setPlayerDimension(targetClient, getPlayerDimension(client));
+	if (isSameScene(getPlayerCurrentSubAccount(targetClient).scene, getPlayerCurrentSubAccount(client).scene)) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		getPlayerData(targetClient).streamingRadioStation = getPlayerData(client).streamingRadioStation;
+		getPlayerData(targetClient).interiorLights = getPlayerData(client).interiorLights;
+		initPlayerPropertySwitch(
+			targetClient,
+			getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2),
+			getPlayerHeading(client),
+			getPlayerInterior(client),
+			getPlayerDimension(client),
+			-1,
+			-1,
+			getPlayerCurrentSubAccount(client).scene,
+		);
+	} else {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		setPlayerPosition(targetClient, getPosBehindPos(getPlayerPosition(client), getPlayerHeading(client), 2));
+		setPlayerHeading(targetClient, getPlayerHeading(client));
+		setPlayerInterior(targetClient, getPlayerInterior(client));
+		setPlayerDimension(targetClient, getPlayerDimension(client));
+		getPlayerData(targetClient).pedState = V_PEDSTATE_READY;
+	}
+
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their position.`, true);
 	messagePlayerAlert(targetClient, `An admin has teleported you to their location`);
@@ -933,25 +1165,41 @@ function returnPlayerCommand(command, params, client) {
 		return false;
 	}
 
-	removePlayerFromVehicle(targetClient);
+	removePedFromVehicle(getPlayerPed(targetClient));
 
 	if (getPlayerData(targetClient).returnToPosition == null) {
 		messagePlayerError(client, "There is nowhere to return that player to!");
 		return false;
 	}
 
-	setPlayerPosition(targetClient, getPlayerData(targetClient).returnToPosition);
-	setPlayerHeading(targetClient, getPlayerData(targetClient).returnToHeading);
-	setPlayerInterior(targetClient, getPlayerData(targetClient).returnToInterior);
-	setPlayerDimension(targetClient, getPlayerData(targetClient).returnToDimension);
+	if (isSameScene(getPlayerData(targetClient).returnToScene, getPlayerCurrentSubAccount(targetClient).scene)) {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		initPlayerPropertySwitch(
+			targetClient,
+			getPlayerData(targetClient).returnToPosition,
+			getPlayerData(targetClient).returnToHeading,
+			getPlayerData(targetClient).returnToInterior,
+			getPlayerData(targetClient).returnToDimension,
+			-1,
+			-1,
+			getPlayerData(targetClient).returnToScene,
+		);
+	} else {
+		getPlayerData(targetClient).pedState = V_PEDSTATE_TELEPORTING;
+		setPlayerPosition(targetClient, getPlayerData(targetClient).returnToPosition);
+		setPlayerHeading(targetClient, getPlayerData(targetClient).returnToHeading);
+		setPlayerInterior(targetClient, getPlayerData(targetClient).returnToInterior);
+		setPlayerDimension(targetClient, getPlayerData(targetClient).returnToDimension);
 
-	getPlayerData(targetClient).returnToPosition = null;
-	getPlayerData(targetClient).returnToHeading = null;
-	getPlayerData(targetClient).returnToDimension = null;
-	getPlayerData(targetClient).returnToInterior = null;
-	getPlayerData(targetClient).returnToHouse = null;
-	getPlayerData(targetClient).returnToBusiness = null;
-	getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
+		getPlayerData(targetClient).returnToPosition = null;
+		getPlayerData(targetClient).returnToHeading = null;
+		getPlayerData(targetClient).returnToDimension = null;
+		getPlayerData(targetClient).returnToInterior = null;
+		getPlayerData(targetClient).returnToScene = "";
+		getPlayerData(targetClient).returnToType = V_RETURNTO_TYPE_NONE;
+
+		getPlayerData(targetClient).pedState = V_PEDSTATE_READY;
+	}
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} returned {ALTCOLOUR}${getPlayerName(targetClient)}{MAINCOLOUR} to their previous position.`, true);
 	messagePlayerAlert(targetClient, `An admin has returned you to your previous location`);
@@ -1152,18 +1400,6 @@ function getPlayerStaffFlagsCommand(command, params, client) {
  *
  */
 function getStaffFlagsCommand(command, params, client) {
-	if (areParamsEmpty(params)) {
-		messagePlayerSyntax(client, getCommandSyntaxText(command));
-		return false;
-	}
-
-	let targetClient = getParam(params, " ", 1);
-
-	if (!targetClient) {
-		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
-		return false;
-	}
-
 	let chunkedList = splitArrayIntoChunks(getServerBitFlagKeys().staffFlagKeys, 8);
 
 	messagePlayerInfo(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderStaffFlagsList")));
@@ -1183,7 +1419,7 @@ function getStaffFlagsCommand(command, params, client) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function givePlayerMoneyCommand(command, params, client) {
+function givePlayerMoneyStaffCommand(command, params, client) {
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -1273,6 +1509,7 @@ function forceCharacterNameChangeCommand(command, params, client) {
 	getPlayerData(targetClient).changingCharacterName = true;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} forced {ALTCOLOUR}${getPlayerName(targetClient)} (${getCharacterFullName(targetClient)}){MAINCOLOUR} to change their character's name.`);
+	saveNonRPNameToDatabase(getPlayerCurrentSubAccount(targetClient).firstName, getPlayerCurrentSubAccount(targetClient).lastName, getPlayerData(targetClient).accountData.databaseId, getPlayerData(client).accountData.databaseId);
 	showPlayerNewCharacterFailedGUI(targetClient, getLocaleString(targetClient, "NonRPName"));
 }
 
@@ -1358,8 +1595,9 @@ function forcePlayerSkinCommand(command, params, client) {
 
 	getPlayerCurrentSubAccount(targetClient).skin = skinIndex;
 	setPlayerSkin(targetClient, skinIndex);
+	setPlayerPedPartsAndProps(client);
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${getGameConfig().skins[getGame()][skinIndex][1]}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} skin to {ALTCOLOUR}${gameData.skins[getGame()][skinIndex][1]}`);
 }
 
 /**
@@ -1386,7 +1624,7 @@ function setPlayerStaffTitleCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(client).accountData.staffTitle = newTitle;
+	getPlayerData(targetClient).accountData.staffTitle = newTitle;
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set ${getPlayerName(targetClient)}'s{MAINCOLOUR} staff title to {ALTCOLOUR}${newTitle}`);
 }
@@ -1647,6 +1885,10 @@ function forceAccountPasswordResetCommand(command, params, client) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
+
+	getPlayerData(targetClient).passwordResetState = V_RESETPASS_STATE_SETPASS;
+	hideAllPlayerGUI(targetClient);
+	showPlayerChangePasswordGUI(targetClient);
 }
 
 // ===========================================================================
@@ -1741,30 +1983,15 @@ function forcePlayerFightStyleCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let fightStyleId = getFightStyleFromParams(getParam(params, " ", 2));
 
-	//if(!targetClient) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!getPlayerData(targetClient)) {
-	//	messagePlayerError(client, `Player not found!`);
-	//	return false;
-	//}
-
-	//if(!isPlayerSpawned(targetClient)) {
-	//	messagePlayerError(client, `That player isn't spawned`);
-	//	return false;
-	//}
-
 	if (!fightStyleId) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
-		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
+		messagePlayerError(client, `Fight styles: ${gameData.fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
 		return false;
 	}
 
 	getPlayerCurrentSubAccount(client).fightStyle = fightStyleId;
 	setPlayerFightStyle(client, fightStyleId);
-	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${getGameConfig().fightStyles[getGame()][fightStyleId][0]}`)
+	messagePlayerSuccess(client, `You set ${getCharacterFullName(targetClient)}'s fight style to ${gameData.fightStyles[getGame()][fightStyleId][0]}`)
 
 	return true;
 }
@@ -1851,7 +2078,7 @@ function addAccountStaffNoteCommand(command, params, client) {
 	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
 	let noteMessage = params.split(" ").slice(1).join(" ");
 
-	if (!getPlayerData(targetClient)) {
+	if (getPlayerData(targetClient) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
@@ -1890,15 +2117,14 @@ function showAccountStaffNotesCommand(command, params, client) {
 		return false;
 	}
 
-	let targetClient = getPlayerFromParams(getParam(params, " ", 1));
-	let noteMessage = params.split(" ").slice(1).join(" ");
+	let targetClient = getPlayerFromParams(params);
 
-	if (!getPlayerData(targetClient)) {
+	if (getPlayerData(targetClient) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
 		return false;
 	}
 
-	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{ALTCOLOUR}${toInteger(i) + 1}. (Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: ${x.note}` });
+	let staffNoteList = getPlayerData(targetClient).accountData.staffNotes.map(function (x, i, a) { return `{chatBoxListIndex}${toInteger(i) + 1}. {ALTCOLOUR}(Added by ${loadAccountFromId(x.whoAdded).name} on ${new Date(x.whenAdded).toLocaleString()}: {MAINCOLOUR}${x.note}` });
 
 	//let chunkedList = splitArrayIntoChunks(staffNoteList, 1);
 
@@ -1908,6 +2134,129 @@ function showAccountStaffNotesCommand(command, params, client) {
 		messagePlayerInfo(client, staffNoteList[i]);
 	}
 	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setServerDefaultChatTypeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	switch (toLowerCase(params)) {
+		case "global":
+			serverConfig.normalChatType = V_CHAT_TYPE_GLOBAL;
+			break;
+
+		case "local":
+			serverConfig.normalChatType = V_CHAT_TYPE_LOCAL;
+			break;
+
+		case "talk":
+			serverConfig.normalChatType = V_CHAT_TYPE_TALK;
+			break;
+
+		case "shout":
+			serverConfig.normalChatType = V_CHAT_TYPE_SHOUT;
+			break;
+
+		case "whisper":
+			serverConfig.normalChatType = V_CHAT_TYPE_WHISPER;
+			break;
+
+		case "none":
+			serverConfig.normalChatType = V_CHAT_TYPE_NONE;
+			break;
+
+		default:
+			messagePlayerError(client, "That chat type is invalid!")
+			messagePlayerInfo(client, "Available chat types: global, local, talk, shout, whisper, none");
+			messagePlayerInfo(client, "Global and local are out-of-character, the rest is in-character");
+			break;
+	}
+
+	messagePlayerSuccess(client, `You set the server's normal chat type to ${toLowerCase(params)}`);
+	return true;
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function clearChatCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	clearChatBox(null);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function forceAllVehicleEnginesCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	forceAllVehicleEngines(toInteger(params));
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function setPlayerGodModeCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "Player not found"));
+		return false;
+	}
+
+	getPlayerData(targetClient).godMode = !getPlayerData(targetClient).godMode;
+	sendPlayerGodMode(targetClient, getPlayerData(targetClient).godMode);
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}set {ALTCOLOUR}${getPlayerName(targetClient)}'s{MAINCOLOUR} god mode ${toUpperCase(getOnOffFromBool(getPlayerData(client).godMode))}!`);
 }
 
 // ===========================================================================

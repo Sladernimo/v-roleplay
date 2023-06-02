@@ -25,17 +25,23 @@ function gpsCommand(command, params, client) {
 	let blipColour = "white";
 
 	switch (toLowerCase(params)) {
+		case "cops":
+		case "cop":
 		case "police":
 			blipColour = "businessBlue"
 			locationType = V_GPS_TYPE_POLICE;
 			break;
 
+		case "medical":
+		case "health":
 		case "hospital":
 			blipColour = "businessBlue"
 			locationType = V_GPS_TYPE_HOSPITAL;
 			break;
 
 		case "job":
+		case "jobs":
+		case "work":
 			blipColour = "businessBlue"
 			locationType = V_GPS_TYPE_JOB;
 			break;
@@ -109,7 +115,14 @@ function gpsCommand(command, params, client) {
 			} else {
 				let gameLocationId = getGameLocationFromParams(params);
 				if (gameLocationId != false) {
-					position = getGameConfig().locations[getServerGame()][gameLocationId][1]
+					locationType = V_GPS_TYPE_GAMELOC;
+					blipColour = "white";
+					position = gameData.locations[getGame()][gameLocationId][1];
+				} else {
+					let jobLocation = getClosestJobLocation(getPlayerPosition(client), getPlayerDimension(client));
+					locationType = V_GPS_TYPE_JOB;
+					blipColour = "jobYellow";
+					position = jobLocation.position;
 				}
 			}
 		}
@@ -127,7 +140,7 @@ function gpsCommand(command, params, client) {
 			return false;
 		}
 
-		if (!getBusinessData(businessId)) {
+		if (getBusinessData(businessId) == null) {
 			messagePlayerError(client, getLocaleString(client, "NoBusinessWithItemType"));
 			return false;
 		}

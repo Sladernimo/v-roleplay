@@ -21,28 +21,28 @@ function initEmailScript() {
 
 // ===========================================================================
 
-async function sendEmail(toEmail, toName, subject, body) {
+function sendEmail(toEmail, toName, subject, body) {
 	switch (getEmailConfig().method) {
 		case V_EMAIL_METHOD_SMTP_MODULE:
 			if (!checkForSMTPModule()) {
 				return false;
 			}
 
-			Promise.resolve().then(() => {
-				module.smtp.send(
-					getEmailConfig().smtp.host,
-					getEmailConfig().smtp.port,
-					intToBool(getEmailConfig().smtp.useTLS),
-					getEmailConfig().smtp.username,
-					getEmailConfig().smtp.password,
-					toEmail,
-					toName,
-					subject,
-					body,
-					getEmailConfig().smtp.from,
-					getEmailConfig().smtp.fromName
-				);
-			});
+			//Promise.resolve().then(() => {
+			module.smtp.send(
+				getEmailConfig().smtp.host,
+				getEmailConfig().smtp.port,
+				intToBool(getEmailConfig().smtp.useTLS),
+				getEmailConfig().smtp.username,
+				getEmailConfig().smtp.password,
+				toEmail,
+				toName,
+				subject,
+				body,
+				getEmailConfig().smtp.from,
+				getEmailConfig().smtp.fromName
+			);
+			//});
 			break;
 
 		case V_EMAIL_METHOD_GET_REQUEST:
@@ -74,7 +74,7 @@ async function sendEmail(toEmail, toName, subject, body) {
 // ===========================================================================
 
 function getEmailConfig() {
-	return getGlobalConfig().email;
+	return globalConfig.email;
 }
 
 // ===========================================================================

@@ -7,6 +7,10 @@
 // TYPE: Client (JavaScript)
 // ===========================================================================
 
+let calledDeathEvent = false;
+
+// ===========================================================================
+
 function initEventScript() {
 	logToConsole(LOG_DEBUG, "[V.RP.Event]: Initializing event script ...");
 	addAllEventHandlers();
@@ -16,9 +20,6 @@ function initEventScript() {
 // ===========================================================================
 
 function addAllEventHandlers() {
-	addEventHandler("OnResourceStart", onResourceStart);
-	addEventHandler("OnResourceReady", onResourceReady);
-	addEventHandler("OnResourceStop", onResourceStop);
 	addEventHandler("OnProcess", onProcess);
 	addEventHandler("OnKeyUp", onKeyUp);
 	addEventHandler("OnDrawnHUD", onDrawnHUD);
@@ -32,17 +33,22 @@ function addAllEventHandlers() {
 	addEventHandler("OnMouseWheel", onMouseWheel);
 	addEventHandler("OnEntityProcess", onEntityProcess);
 
-	if (findResourceByName("v-events") != null) {
-		if (findResourceByName("v-events").isStarted) {
-			addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
-			addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-			addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
-			addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+	if (getGame() <= V_GAME_GTA_SA) {
+		if (findResourceByName("v-events") != null) {
+			if (findResourceByName("v-events").isStarted) {
+				addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+				addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+				addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+				addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+			}
 		}
 	}
 
 	if (getGame() == V_GAME_MAFIA_ONE) {
 		addEventHandler("OnMapLoaded", onMapLoaded);
+		addEventHandler("OnPedEnteringVehicle", onPedEnteredVehicle);
+		addEventHandler("OnPedExitingVehicle", onPedExitedVehicle);
+		addEventHandler("OnPedInflictDamage", onPedHit);
 	}
 }
 
@@ -50,21 +56,27 @@ function addAllEventHandlers() {
 
 function onResourceStart(event, resource) {
 	if (resource == findResourceByName("v-events")) {
-		// Remove and re-add events, in case v-events was loaded after agrp_main
+		// Remove and re-add events, in case v-events was loaded after v-roleplay
 		removeEventHandler("OnPedEnteredVehicleEx");
 		removeEventHandler("OnPedExitedVehicleEx");
 		removeEventHandler("OnPedEnteredSphereEx");
 		removeEventHandler("OnPedExitedSphereEx");
 
-		addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
-		addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
-		addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
-		addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+		if (getGame() <= V_GAME_GTA_SA) {
+			if (findResourceByName("v-events") != null) {
+				if (findResourceByName("v-events").isStarted) {
+					addEventHandler("OnPedEnteredVehicleEx", onPedEnteredVehicle);
+					addEventHandler("OnPedExitedVehicleEx", onPedExitedVehicle);
+					addEventHandler("OnPedEnteredSphereEx", onPedEnteredSphere);
+					addEventHandler("OnPedExitedSphereEx", onPedExitedSphere);
+				}
+			}
+		}
 	}
 
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStart called - Sending signal to server`);
-		localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceStart called - Sending signal to server`);
+		//localPlayerMoneyInterval = setInterval(updateLocalPlayerMoney, 1000 * 5);
 		sendResourceStartedSignalToServer();
 	}
 }
@@ -73,7 +85,7 @@ function onResourceStart(event, resource) {
 
 function onResourceStop(event, resource) {
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceStop called - Sending signal to server`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceStop called - Sending signal to server`);
 		sendResourceStoppedSignalToServer();
 	}
 }
@@ -82,16 +94,24 @@ function onResourceStop(event, resource) {
 
 function onResourceReady(event, resource) {
 	if (resource == thisResource) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Event] onResourceReady called - Sending signal to server`);
-		loadLocaleConfig();
-		sendResourceReadySignalToServer();
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Event] onResourceReady called - Sending signal to server`);
+
+		setTimeout(function () {
+			initClientScripts();
+			sendResourceReadySignalToServer();
+		}, 500);
 	}
 }
 
 // ===========================================================================
 
 function onProcess(event, deltaTime) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Event] onProcess`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] onProcess`);
+
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	if (localPlayer == null) {
 		return false;
 	}
@@ -100,7 +120,15 @@ function onProcess(event, deltaTime) {
 		return false;
 	}
 
-	processSync();
+	if (localPlayer.health <= 0) {
+		if (calledDeathEvent == false) {
+			calledDeathEvent = true;
+			sendNetworkEventToServer("v.rp.playerDeath");
+			return false;
+		}
+	}
+
+	//processSync();
 	processLocalPlayerControlState();
 	processLocalPlayerVehicleControlState();
 	forceLocalPlayerEquippedWeaponItem();
@@ -110,6 +138,10 @@ function onProcess(event, deltaTime) {
 	processVehiclePurchasing();
 	processVehicleBurning();
 	processVehicleCruiseControl();
+	processPayPhonesDistance();
+	processJobRouteLocationDistance();
+	//processLocalPlayerReceivedDamage();
+
 	//checkChatBoxAutoHide(); // Will be uncommented on 1.4.0 GTAC update
 	//processVehicleFires();
 }
@@ -117,6 +149,10 @@ function onProcess(event, deltaTime) {
 // ===========================================================================
 
 function onKeyUp(event, keyCode, scanCode, keyModifiers) {
+	if (!scriptInitialized) {
+		return false;
+	}
+
 	processSkinSelectKeyPress(keyCode);
 	//processKeyDuringAnimation();
 	processGUIKeyPress(keyCode);
@@ -126,7 +162,11 @@ function onKeyUp(event, keyCode, scanCode, keyModifiers) {
 // ===========================================================================
 
 function onDrawnHUD(event) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Event] HUD drawn`);
+	if (!scriptInitialized) {
+		return false;
+	}
+
+	logToConsole(LOG_VERBOSE, `[V.RP.Event] HUD drawn`);
 	processMouseCursorRendering();
 
 	if (!renderHUD) {
@@ -145,12 +185,17 @@ function onDrawnHUD(event) {
 	processSkinSelectRendering();
 	processNameTagRendering();
 	processInteriorLightsRendering();
+	processCustomHUDRendering();
+	processCameraFadeRendering();
+	processJobLocationIndicatorRendering();
+	processMapChangeWarning();
+	//processCameraLookFromEyesForAnimation();
 }
 
 // ===========================================================================
 
 function onPedWasted(event, wastedPed, killerPed, weapon, pedPiece) {
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped ${wastedPed.name} died`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${wastedPed.name} died`);
 	wastedPed.clearWeapons();
 }
 
@@ -163,7 +208,7 @@ function onElementStreamIn(event, element) {
 // ===========================================================================
 
 function onPedExitedVehicle(event, ped, vehicle, seat) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
@@ -171,7 +216,8 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
-			if (areServerElementsSupported()) {
+			if (isGameFeatureSupported("serverElements")) {
+				sendNetworkEventToServer("v.rp.exitedVehicle", localPlayer.id, vehicle.id, seat);
 				if (inVehicleSeat == 0) {
 					//setVehicleEngine(vehicle.id, false);
 					//if (!inVehicle.engine) {
@@ -187,13 +233,15 @@ function onPedExitedVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedExitingVehicle(event, ped, vehicle, seat) {
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] Local player exited vehicle`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] Local player exited vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerExitVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
 			cruiseControlEnabled = false;
 			cruiseControlSpeed = 0.0;
+
+			sendNetworkEventToServer("v.rp.vehicleSeat", -1);
 		}
 	}
 }
@@ -201,7 +249,7 @@ function onPedExitingVehicle(event, ped, vehicle, seat) {
 // ===========================================================================
 
 function onPedEnteredVehicle(event, ped, vehicle, seat) {
-	logToConsole(LOG_DEBUG, `[AGRP.Event] Ped entered vehicle`);
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped entered vehicle`);
 	//sendNetworkEventToServer("v.rp.onPlayerEnterVehicle", getVehicleForNetworkEvent(vehicle), seat);
 
 	cruiseControlEnabled = false;
@@ -209,8 +257,13 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 
 	if (localPlayer != null) {
 		if (ped == localPlayer) {
-			if (areServerElementsSupported()) {
-				if (inVehicleSeat == 0) {
+			if (isGameFeatureSupported("serverElements")) {
+				sendNetworkEventToServer("v.rp.enteredVehicle", localPlayer.id, vehicle.id, seat);
+
+				inVehicle = vehicle;
+				inVehicleSeat = seat;
+				sendNetworkEventToServer("v.rp.vehicleSeat", seat);
+				if (seat == 0) {
 					//parkedVehiclePosition = inVehicle.position;
 					//parkedVehicleHeading = inVehicle.heading;
 					if (doesEntityDataExist(vehicle, "v.rp.server") == true) {
@@ -229,7 +282,7 @@ function onPedEnteredVehicle(event, ped, vehicle, seat) {
 function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healthLoss, pedPiece) {
 	//let damagerEntityString = (!isNull(damagedEntity)) ? `${damagerEntity.name} (${damagerEntity.name}, ${damagerEntity.type} - ${typeof damagerEntity})` : `Unknown ped`;
 	//let damagedEntityString = (!isNull(damagedEntity)) ? `${damagedEntity.name} (${damagedEntity.name}, ${damagedEntity.type} - ${typeof damagedEntity})` : `Unknown ped`;
-	//logToConsole(LOG_DEBUG, `[AGRP.Event] ${damagerEntityString} damaged ${damagedEntityString}'s '${pedPiece} with weapon ${weaponId}`);
+	//logToConsole(LOG_DEBUG, `[V.RP.Event] ${damagerEntityString} damaged ${damagedEntityString}'s '${pedPiece} with weapon ${weaponId}`);
 	if (!isNull(damagedEntity) && !isNull(damagerEntity)) {
 		if (damagedEntity.isType(ELEMENT_PLAYER)) {
 			if (damagedEntity == localPlayer) {
@@ -238,6 +291,39 @@ function onPedInflictDamage(event, damagedEntity, damagerEntity, weaponId, healt
 				}
 				sendNetworkEventToServer("v.rp.weaponDamage", damagerEntity.name, weaponId, pedPiece, healthLoss);
 			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function onPedHit(event, hitPed, vec1, vec2, vec3, hitType, damage, bodyPart) {
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Ped ${hitPed.id} (${hitPed.name}) hit using type ${hitType}, causing ${damage} to body part ${bodyPart}`);
+	event.preventDefault();
+
+	// Only handle this for our ped
+	if (hitPed != localPlayer) {
+		return false;
+	}
+
+	// Dont handle if already told the server we're dead
+	if (calledDeathEvent == true) {
+		return false;
+	}
+
+	let newHealth = localPlayer.health - (damage * weaponDamageMultiplier);
+
+	if (newHealth <= 0) {
+		if (calledDeathEvent == false) {
+			calledDeathEvent = true;
+			sendNetworkEventToServer("v.rp.playerDeath");
+			return false;
+		}
+	} else {
+		if (godMode == true) {
+			localPlayer.health = 100;
+		} else {
+			localPlayer.health = newHealth;
 		}
 	}
 }
@@ -294,7 +380,7 @@ function onEntityProcess(event, entity) {
 
 // ===========================================================================
 
-function onMapLoaded(mapName) {
+function onMapLoaded(event, mapName) {
 	sendNetworkEventToServer("v.rp.mapLoaded", mapName);
 }
 

@@ -11,6 +11,7 @@
 
 let chatTimeStampsEnabled = false;
 let chatEmojiEnabled = false;
+let profanityFilterEnabled = false;
 
 let chatBoxHistory = [];
 let bottomMessageIndex = 0;
@@ -52,12 +53,10 @@ function unBindChatBoxKeys() {
 // ===========================================================================
 
 function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, second) {
-	logToConsole(LOG_DEBUG, `[AGRP.Chat]: Received chatbox message from server: ${messageString}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Chat]: Received chatbox message from server: ${messageString}`);
 
 	// Just in case it's hidden by auto hide
 	//setChatWindowEnabled(true);
-
-	//let timeStamp = findResourceByName("agrp_time").exports.getCurrentUnixTimeStampSquirrel();
 
 	hour = fillLeadingZeros(hour, 2);
 	minute = fillLeadingZeros(minute, 2);
@@ -77,16 +76,16 @@ function receiveChatBoxMessageFromServer(messageString, colour, hour, minute, se
 		outputString = `${timeStampString}${messageString}`;
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Chat]: Changed colours in string: ${outputString}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Chat]: Changed colours in string: ${outputString}`);
 	outputString = replaceColoursInMessage(`${outputString}`);
 
 	if (chatEmojiEnabled == true) {
-		logToConsole(LOG_DEBUG, `[AGRP.Chat]: Enabled emoji in string: ${outputString}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Chat]: Enabled emoji in string: ${outputString}`);
 		outputString = replaceEmojiInMessage(outputString);
 	}
 
 	if (profanityFilterEnabled == true) {
-		logToConsole(LOG_DEBUG, `[AGRP.Chat]: Removed profanity in string: ${outputString}`);
+		logToConsole(LOG_DEBUG, `[V.RP.Chat]: Removed profanity in string: ${outputString}`);
 		outputString = replaceProfanityInMessage(outputString);
 	}
 

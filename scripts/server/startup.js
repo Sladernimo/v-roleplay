@@ -7,7 +7,8 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
-async function initServerScripts() {
+function initServerScripts() {
+	serverStarting = true;
 	checkForAllRequiredModules();
 
 	initDatabaseScript();
@@ -38,10 +39,11 @@ async function initServerScripts() {
 	initRadioScript();
 	initLocaleScript();
 	initCommandScript();
+	initPayPhoneScript();
 
 	// Load config and stuff
 	loadGlobalConfig();
-	await loadServerConfig();
+	loadServerConfig();
 	applyConfigToServer(getServerConfig());
 
 	// Load all the server data
@@ -49,12 +51,22 @@ async function initServerScripts() {
 	setAllServerDataIndexes();
 
 	checkServerGameTime();
-	createAllServerElements();
+
+	// In Mafia 1, server elements are spawned after possible map switch
+	// Other games can spawn elements immediately
+	if (getGame() != V_GAME_MAFIA_ONE) {
+		spawnAllServerElements();
+	}
+
 	addAllNetworkEventHandlers();
+	//addAllCommandHandlers();
 	initAllClients();
 	initTimers();
+	exportAllFunctions();
+	removeUnusedGameData();
 
 	serverStartTime = getCurrentUnixTimestamp();
+	serverStarting = false;
 }
 
 // ===========================================================================
@@ -127,31 +139,35 @@ function loadServerDataFromDatabase() {
 	logToConsole(LOG_INFO, "[V.RP.Config]: Loading server data ...");
 
 	// Always load these regardless of "test server" status
-	getServerData().localeStrings = loadAllLocaleStrings();
-	getServerData().allowedSkins = getAllowedSkins(getGame());
-	getServerData().itemTypes = loadItemTypesFromDatabase();
+	serverData.localeStrings = loadAllLocaleStrings();
+	serverData.allowedSkins = getAllowedSkins(getGame());
+	serverData.itemTypes = loadItemTypesFromDatabase();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom.fill([]);
-	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
+	serverData.cachedTranslations = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom.fill([]);
+	serverData.cachedTranslations.fill(serverData.cachedTranslationFrom);
 
 	// Only load these if the server isn't a testing/dev server
-	if (!getServerConfig().devServer) {
-		getServerData().items = loadItemsFromDatabase();
-		getServerData().businesses = loadBusinessesFromDatabase();
-		getServerData().houses = loadHousesFromDatabase();
-		getServerData().vehicles = loadVehiclesFromDatabase();
-		getServerData().clans = loadClansFromDatabase();
-		getServerData().npcs = loadNPCsFromDatabase();
-		getServerData().races = loadRacesFromDatabase();
-		getServerData().radioStations = loadRadioStationsFromDatabase();
-		getServerData().gates = loadGatesFromDatabase();
-		getServerData().jobs = loadJobsFromDatabase();
+	if (!serverConfig.devServer) {
+		serverData.items = loadItemsFromDatabase();
+		serverData.businesses = loadBusinessesFromDatabase();
+		serverData.houses = loadHousesFromDatabase();
+		serverData.scenarios = loadScenariosFromDatabase();
+		serverData.vehicles = loadVehiclesFromDatabase();
+		serverData.clans = loadClansFromDatabase();
+		serverData.npcs = loadNPCsFromDatabase();
+		serverData.races = loadRacesFromDatabase();
+		serverData.radioStations = loadRadioStationsFromDatabase();
+		serverData.gates = loadGatesFromDatabase();
+		serverData.jobs = loadJobsFromDatabase();
+		serverData.payPhones = loadPayPhonesFromDatabase();
+		serverData.bans = loadBansFromDatabase();
+		serverData.callBoxes = loadCallBoxesFromDatabase();
 	}
 
-	getServerData().commands = loadCommands();
+	serverData.commands = loadCommands();
 }
 
 // ===========================================================================
@@ -159,33 +175,60 @@ function loadServerDataFromDatabase() {
 function setAllServerDataIndexes() {
 	setAllItemTypeDataIndexes();
 	setAllItemDataIndexes();
-	setBusinessDataIndexes();
-	setHouseDataIndexes();
+	setAllBusinessDataIndexes();
+	setAllHouseDataIndexes();
+	setAllVehicleDataIndexes();
 	setAllClanDataIndexes();
 	setAllJobDataIndexes();
-	setNPCDataIndexes();
+	setAllNPCDataIndexes();
 	setAllRaceDataIndexes();
-	setAllRadioStationIndexes();
+	setAllRadioStationDataIndexes();
+	setAllPayPhoneDataIndexes();
+	setAllCallBoxDataIndexes();
+	setAllVehicleRadioFrequencies();
+	setAllScenarioDataIndexes();
+	applyIpAddressBans();
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();
+	cacheAllVehicleItems();
+	cacheAllHouseItems();
 	cacheAllCommandsAliases();
 	cacheAllPaintBallItemTypes();
+	cacheItemLists();
+	cacheAllScenarioNPCs();
+	cacheAllScenarioVehicles();
 }
 
 // ===========================================================================
 
-function createAllServerElements() {
-	createAllBusinessPickups();
-	createAllBusinessBlips();
-	createAllHousePickups();
-	createAllHouseBlips();
-	createAllJobPickups();
-	createAllJobBlips();
-	createAllGroundItemObjects();
+function spawnAllServerElements() {
+	spawnAllBusinessPickups();
+	spawnAllBusinessBlips();
+	spawnAllHousePickups();
+	spawnAllHouseBlips();
+	spawnAllJobPickups();
+	spawnAllJobBlips();
+	spawnAllGroundItemObjects();
 	spawnAllVehicles();
 	spawnAllNPCs();
-	addAllCommandHandlers();
+
+	// Using client-side spheres since server-side ones don't show on GTAC atm (bug)
+	//createAllJobRouteLocationMarkers();
+}
+
+// ===========================================================================
+
+function despawnAllServerElements() {
+	//despawnAllBusinessPickups();
+	//despawnAllBusinessBlips();
+	//despawnAllHousePickups();
+	//despawnAllHouseBlips();
+	//despawnAllJobPickups();
+	//despawnAllJobBlips();
+	//despawnAllGroundItemObjects();
+	despawnAllVehicles();
+	despawnAllNPCs();
 
 	// Using client-side spheres since server-side ones don't show on GTAC atm (bug)
 	//createAllJobRouteLocationMarkers();

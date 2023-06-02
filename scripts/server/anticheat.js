@@ -15,6 +15,11 @@ function initAntiCheatScript() {
 // ===========================================================================
 
 function clearPlayerStateToEnterExitProperty(client) {
+	if (getPlayerData(client).pedState == V_PEDSTATE_TELEPORTING) {
+		sendPlayerClearPedState(client);
+		return false;
+	}
+
 	if (getPlayerData(client).pedState != V_PEDSTATE_READY) {
 		if (getPlayerData(client).pedState == V_PEDSTATE_ENTERINGVEHICLE) {
 			sendPlayerClearPedState(client);

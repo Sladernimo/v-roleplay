@@ -317,10 +317,10 @@ function executeServerCodeCommand(command, params, client) {
 		return false;
 	}
 
-	messagePlayerSuccess(client, "Server code executed!");
-	messagePlayerNormal(client, `Code: ${params}`, COLOUR_YELLOW);
-	messagePlayerNormal(client, `Returns: ${returnValue} (${typeof returnValue})`, COLOUR_YELLOW);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} executed server code: {yellow}${params}`);
+	messageAdmins(`{yellow}Returns: ${returnValue} (${typeof returnValue})`);
 	logToConsole(LOG_INFO, `Server code executed by ${getPlayerDisplayForConsole(client)}: ${params}`);
+	logToConsole(LOG_INFO, `Returns ${returnValue} (${typeof returnValue})`);
 	return true;
 }
 
@@ -348,8 +348,8 @@ function executeClientCodeCommand(command, params, client) {
 
 	sendRunCodeToClient(targetClient, targetCode, client);
 
-	messagePlayerSuccess(client, `Executing client code for ${getPlayerName(targetClient)}`);
-	messagePlayerNormal(client, `Code: ${targetCode}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}executed client code for {ALTCOLOUR}${getPlayerName(targetClient)}: {yellow}${targetCode}`);
+	//messageAdmins(`{yellow}Returns: ${returnValue} (${typeof returnValue})`);
 	return true;
 }
 
@@ -448,7 +448,7 @@ function saveServerDataCommand(command, params, client) {
 
 // ===========================================================================
 
-async function testEmailCommand(command, params, client) {
+function testEmailCommand(command, params, client) {
 	sendEmail(params, "Player", "Test email", "Just testing the email system for the server!");
 
 	return true;
@@ -465,17 +465,32 @@ function restartGameModeCommand(command, params, client) {
 // ===========================================================================
 
 function clientRunCodeFail(client, returnTo, error) {
+	let messageText = `(${getPlayerName(client)}). Error: ${error}`;
+
+	if (returnTo == null) {
+		console.warn(`[V.RP.Developer] ${messageText}`);
+		return false;
+	}
+
 	let returnClient = getClientFromIndex(returnTo);
 	if (!returnClient) {
 		return false;
 	}
 
-	messagePlayerError(returnClient, `(${getPlayerName(client)}). Error: ${error}`);
+	messageAdmins(`{softRed}${messageText}`);
+	//messagePlayerError(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================
 
 function clientRunCodeSuccess(client, returnTo, returnVal) {
+	let messageText = `(${getPlayerName(client)}) Code returns: ${returnVal}`;
+
+	if (returnTo == null) {
+		console.log(`[V.RP.Developer] ${messageText}`);
+		return false;
+	}
+
 	let returnClient = getClientFromIndex(returnTo);
 	if (!returnClient) {
 		return false;
@@ -483,7 +498,8 @@ function clientRunCodeSuccess(client, returnTo, returnVal) {
 
 	//messagePlayerSuccess(returnClient, `Client code executed for ${getPlayerName(client)}!`);
 	//messagePlayerNormal(returnClient, `Code: ${code}`, getColourByName("yellow"));
-	messagePlayerNormal(returnClient, `(${getPlayerName(client)}) Code returns: ${returnVal}`, getColourByName("white"));
+	messageAdmins(`{yellow}${messageText}`);
+	//messagePlayerNormal(returnClient, messageText, getColourByName("yellow"));
 }
 
 // ===========================================================================
@@ -499,8 +515,8 @@ function submitIdea(client, ideaText) {
 			databaseId = -1;
 		} else {
 			databaseId = getPlayerData(client).accountData.databaseId;
-			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+			position = (getPlayerVehicle(client) != null) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client) != null) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
 		}
 	} else {
 		databaseId = defaultNoAccountId;
@@ -526,8 +542,8 @@ function submitBugReport(client, bugText) {
 			databaseId = -1;
 		} else {
 			databaseId = getPlayerData(client).accountData.databaseId;
-			position = (getPlayerVehicle(client)) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
-			heading = (getPlayerVehicle(client)) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
+			position = (getPlayerVehicle(client) != null) ? getVehiclePosition(getPlayerVehicle(client)) : getPlayerPosition(client);
+			heading = (getPlayerVehicle(client) != null) ? getVehicleHeading(getPlayerVehicle(client)) : getPlayerHeading(client);
 		}
 	} else {
 		databaseId = defaultNoAccountId;
@@ -548,7 +564,7 @@ function isDevelopmentServer() {
 
 // ===========================================================================
 
-async function migrateSubAccountsToPerServerData() {
+function migrateSubAccountsToPerServerData() {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
@@ -569,7 +585,7 @@ async function migrateSubAccountsToPerServerData() {
 
 // ===========================================================================
 
-async function resetAllAccountsHotkeysToDefault() {
+function resetAllAccountsHotkeysToDefault() {
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
 
@@ -586,19 +602,76 @@ async function resetAllAccountsHotkeysToDefault() {
 // ===========================================================================
 
 function togglePauseSavingToDatabaseCommand(command, params, client) {
-	getServerConfig().pauseSavingToDatabase = !getServerConfig().pauseSavingToDatabase;
+	serverConfig.pauseSavingToDatabase = !serverConfig.pauseSavingToDatabase;
 }
 
 // ===========================================================================
 
 function createAccountDataForNewServer(serverId) {
 	let dbConnection = connectToDatabase();
-	let dbQuery = false;
 	if (dbConnection) {
-		dbQuery = queryDatabase(dbConnection, `SELECT * FROM acct_main`);
-		if (dbQuery) {
-			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accountDatabaseId}, ${serverId})`;
-			quickDatabaseQuery(dbQueryString);
+		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main`);
+		for (let i in accounts) {
+			let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accounts[i]["acct_id"]}, ${serverId})`;
+			let dbQuery = queryDatabase(dbConnection, dbQueryString);
+			if (dbQuery) {
+				freeDatabaseQuery(dbQuery);
+			}
+		}
+		disconnectFromDatabase(dbConnection);
+	}
+}
+
+// ===========================================================================
+
+function fixMissingAccountServerData() {
+	let dbConnection = connectToDatabase();
+	console.log(`Connection: ${dbConnection}`);
+	if (dbConnection != false) {
+		let accounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_main`);
+		console.log(`Accounts: ${accounts.length}`);
+		let servers = fetchQueryAssoc(dbConnection, `SELECT * FROM svr_main`);
+		console.log(`Servers: ${servers.length}`);
+
+		for (let i in accounts) {
+			let serverAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM acct_svr WHERE acct_svr_acct = ${accounts[i]["acct_id"]}`)
+			console.log(`Server accounts for ${accounts[i]["acct_id"]}: ${serverAccounts.length}`);
+			for (let k in servers) {
+				let check = serverAccounts.find((sa) => sa["acct_svr_svr"] == servers[k]["svr_id"]);
+				console.log(`Check server: ${servers[k]["svr_id"]}. Amount ${check}`);
+				if (typeof check == "undefined") {
+					let dbQueryString = `INSERT INTO acct_svr (acct_svr_acct, acct_svr_svr) VALUES (${accounts[i]["acct_id"]}, ${servers[k]["svr_id"]})`;
+					//console.log(dbQueryString);
+					quickDatabaseQuery(dbQueryString);
+				}
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function fixMissingSubAccountServerData() {
+	let dbConnection = connectToDatabase();
+	console.log(`Connection: ${dbConnection}`);
+	if (dbConnection != false) {
+		let subAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main`);
+		console.log(`SubAccounts: ${subAccounts.length}`);
+		let servers = fetchQueryAssoc(dbConnection, `SELECT * FROM svr_main`);
+		console.log(`Servers: ${servers.length}`);
+
+		for (let i in subAccounts) {
+			let serverAccounts = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_svr WHERE sacct_svr_sacct = ${subAccounts[i]["sacct_id"]}`)
+			console.log(`Server accounts for ${subAccounts[i]["sacct_id"]}: ${serverAccounts.length}`);
+			for (let k in servers) {
+				let check = serverAccounts.find((sa) => sa["sacct_svr_server"] == servers[k]["svr_id"]);
+				console.log(`Check server: ${servers[k]["svr_id"]}. Amount ${check}`);
+				if (typeof check == "undefined") {
+					let dbQueryString = `INSERT INTO sacct_svr (sacct_svr_sacct, sacct_svr_server) VALUES (${subAccounts[i]["sacct_id"]}, ${servers[k]["svr_id"]})`;
+					//console.log(dbQueryString);
+					quickDatabaseQuery(dbQueryString);
+				}
+			}
 		}
 	}
 }
@@ -643,9 +716,9 @@ function fixAllServerBlipsCommand(command, params, client) {
 		deleteGameElement(blip);
 	});
 
-	createAllJobBlips();
-	createAllBusinessBlips();
-	createAllHouseBlips();
+	spawnAllJobBlips();
+	spawnAllBusinessBlips();
+	spawnAllHouseBlips();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server blips`);
 }
@@ -658,9 +731,9 @@ function fixAllServerPickupsCommand(command, params, client) {
 		deleteGameElement(pickup);
 	});
 
-	createAllJobPickups();
-	createAllBusinessPickups();
-	createAllHousePickups();
+	spawnAllJobPickups();
+	spawnAllBusinessPickups();
+	spawnAllHousePickups();
 
 	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} reset all server pickups`);
 }
@@ -670,13 +743,6 @@ function fixAllServerPickupsCommand(command, params, client) {
 function resetAllServerAmbienceElementsCommand(command, params, client) {
 	clearTemporaryPeds();
 	cleartTemporaryVehicles();
-}
-
-// ===========================================================================
-
-function reloadEconomyConfigurationCommand(command, params, client) {
-	getGlobalConfig().economy = loadEconomyConfig();
-	messageAdmins(`{adminOrange}${getPlayerName(client)} {MAINCOLOUR}has reloaded the economy settings`);
 }
 
 // ===========================================================================

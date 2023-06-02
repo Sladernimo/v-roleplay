@@ -13,7 +13,7 @@ let fiveCardPokerGUI = {
 
 function initFiveCardPokerGUI() {
 	// Render a five card poker game in MexUI
-	//logToConsole(LOG_DEBUG, `[AGRP.GUI] Creating five-card poker GUI ...`);
+	//logToConsole(LOG_DEBUG, `[V.RP.GUI] Creating five-card poker GUI ...`);
 	fiveCardPokerGUI.window = mexui.window(game.width / 2 - 200, game.height - 150, 400, 400, 'Five Card Poker', {
 		main: {
 			backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], 0),
@@ -33,7 +33,7 @@ function initFiveCardPokerGUI() {
 
 	fiveCardPokerGUI.window.shown = false;
 
-	logToConsole(LOG_DEBUG, `[AGRP.GUI] Created five card poker GUI`);
+	logToConsole(LOG_DEBUG, `[V.RP.GUI] Created five card poker GUI`);
 }
 
 // ===========================================================================

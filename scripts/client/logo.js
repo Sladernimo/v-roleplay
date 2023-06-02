@@ -8,7 +8,7 @@
 // ===========================================================================
 
 let logoImage = null;
-let logoPos = toVector2(game.width - 132, game.height - 132);
+let logoPos = (getGame() == V_GAME_MAFIA_ONE) ? toVector2(80, game.height - 80) : toVector2(64, 64);
 let logoSize = toVector2(128, 128);
 
 // ===========================================================================
@@ -53,7 +53,7 @@ function processLogoRendering() {
 // ===========================================================================
 
 function setServerLogoRenderState(state) {
-	logToConsole(LOG_DEBUG, `[AGRP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Main] Server logo ${(state) ? "enabled" : "disabled"}`);
 	renderLogo = state;
 }
 

@@ -19,7 +19,8 @@ const V_ITEM_OWNER_SAFE = 7;                   // Item is in a safe (safes can b
 const V_ITEM_OWNER_ITEM = 8;                   // Item is in another item (trashbag, briefcase, wallet, suitcase, crate/box, barrel, etc)
 const V_ITEM_OWNER_GROUND = 9;                 // Item is on the ground
 const V_ITEM_OWNER_TEMPLOCKER = 10;            // Item is in player's temp locker (used for paintball, jobs, etc)
-const V_ITEM_OWNER_LOCKER = 10;                // Item is in player's locker
+const V_ITEM_OWNER_LOCKER = 11;                // Item is in player's locker
+const V_ITEM_OWNER_JOB = 12;                   // Item is in player's locker
 
 // ===========================================================================
 
@@ -79,12 +80,13 @@ const V_ITEM_USE_TYPE_PLANT = 50;               // Plantable item. Pot plants, c
 const V_ITEM_USE_TYPE_MEGAPHONE = 51;           // Megaphone item. Allows shouting over greater distances. Also called a bullhorn
 const V_ITEM_USE_TYPE_INJECTDRUG = 52;          // Injectable drug like heroine. Action output shows "Player_Name injects some (drug)"
 const V_ITEM_USE_TYPE_ALCOHOL = 53;             // Alcohol. Applies an intoxication/drunkness effect
-const V_ITEM_USE_TYPE_METH_LAB = 54;  		   // Meth lab item. Allows creating meth
-const V_ITEM_USE_TYPE_PLANTER = 55;			   // Plant pot. Can be used to plant item of use type V_ITEM_USE_TYPE_PLANT where terrain is not available
-const V_ITEM_USE_TYPE_FISH = 56;				   // Fishing catch ... bass, catfish, etc
-const V_ITEM_USE_TYPE_JUNK = 57;				   // Worthless junk. Some used as fishing catches
-const V_ITEM_USE_TYPE_BAIT = 58;				   // Bait. Used for fishing
-const V_ITEM_USE_TYPE_FISHINGROD = 59;		   // Fishing rod. Used for fishing.
+const V_ITEM_USE_TYPE_METH_LAB = 54;  		   	// Meth lab item. Allows creating meth
+const V_ITEM_USE_TYPE_PLANTER = 55;			   	// Plant pot. Can be used to plant item of use type V_ITEM_USE_TYPE_PLANT where terrain is not available
+const V_ITEM_USE_TYPE_FISH = 56;				// Fishing catch ... bass, catfish, etc
+const V_ITEM_USE_TYPE_JUNK = 57;				// Worthless junk. Some used as fishing catches
+const V_ITEM_USE_TYPE_BAIT = 58;				// Bait. Used for fishing
+const V_ITEM_USE_TYPE_FISHINGROD = 59;		   	// Fishing rod. Used for fishing.
+const V_ITEM_USE_TYPE_PILLDRUG = 60;		   	// Pill drug. Used for taking pills
 
 // ===========================================================================
 
@@ -275,7 +277,45 @@ let itemRecipes = [
 		new ItemRecipeIngredientData("Salt", 1),
 		new ItemRecipeIngredientData("Lithium Batteries", 1),
 	]),
-]
+];
+
+// ===========================================================================
+
+let itemLists = [];
+let itemListCategories = {
+	"Weapons": [
+		V_ITEM_USE_TYPE_WEAPON,
+	],
+	"Food": [
+		V_ITEM_USE_TYPE_FOOD,
+	],
+	"Drinks": [
+		V_ITEM_USE_TYPE_DRINK,
+		V_ITEM_USE_TYPE_ALCOHOL,
+	],
+	"Electronics": [
+		V_ITEM_USE_TYPE_WALKIETALKIE,
+		V_ITEM_USE_TYPE_PHONE,
+		V_ITEM_USE_TYPE_BOOMBOX,
+	],
+	"Vehicle": [
+		V_ITEM_USE_TYPE_VEHREPAIR,
+		V_ITEM_USE_TYPE_VEHCOLOUR,
+		V_ITEM_USE_TYPE_VEHLIVERY,
+		V_ITEM_USE_TYPE_VEHTIRE,
+		V_ITEM_USE_TYPE_VEHUPGRADE_PART,
+	],
+	"Medical": [
+		V_ITEM_USE_TYPE_HEALTH,
+		V_ITEM_USE_TYPE_AED,
+	],
+	"Drugs": [
+		V_ITEM_USE_TYPE_SNORTDRUG,
+		V_ITEM_USE_TYPE_SMOKEDRUG,
+		V_ITEM_USE_TYPE_INJECTDRUG,
+		V_ITEM_USE_TYPE_PILLDRUG,
+	],
+};
 
 // ===========================================================================
 
@@ -288,7 +328,7 @@ function initItemScript() {
 // ===========================================================================
 
 function loadItemsFromDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading items from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item]: Loading items from database ...`);
 	let tempItems = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
@@ -299,19 +339,19 @@ function loadItemsFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempItemData = new ItemData(dbAssoc[i]);
 				tempItems.push(tempItemData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Item]: Loaded item ${tempItemData.databaseId} (type ${tempItemData.itemType})} from database`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
-	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loaded ${tempItems.length} items from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item]: Loaded ${tempItems.length} items from database ...`);
 	return tempItems;
 }
 
 // ===========================================================================
 
 function loadItemTypesFromDatabase() {
-	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loading item types from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item]: Loading item types from database ...`);
 	let tempItemTypes = [];
 	let dbConnection = connectToDatabase();
 	let dbAssoc = [];
@@ -323,31 +363,35 @@ function loadItemTypesFromDatabase() {
 			for (let i in dbAssoc) {
 				let tempItemTypeData = new ItemTypeData(dbAssoc[i]);
 				tempItemTypes.push(tempItemTypeData);
-				logToConsole(LOG_VERBOSE, `[AGRP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
+				logToConsole(LOG_VERBOSE, `[V.RP.Item]: Loaded item type ${tempItemTypeData.name} (id ${tempItemTypeData.databaseId}} from database`);
 			}
 		}
 		disconnectFromDatabase(dbConnection);
 	}
 
-	logToConsole(LOG_DEBUG, `[AGRP.Item]: Loaded ${tempItemTypes.length} item types from database ...`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item]: Loaded ${tempItemTypes.length} item types from database ...`);
 	return tempItemTypes;
 }
 
 // ===========================================================================
 
-function createItem(itemTypeId, value, ownerType, ownerId, amount = 1) {
+function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary = false, buyPrice = 0) {
 	let tempItemData = new ItemData(false);
 	tempItemData.itemType = getItemTypeData(itemTypeId).databaseId;
 	tempItemData.ownerType = ownerType;
 	tempItemData.ownerId = ownerId;
 	tempItemData.amount = amount;
 	tempItemData.value = value;
+	tempItemData.buyPrice = buyPrice;
 	tempItemData.needsSaved = true;
-	let slot = getServerData().items.push(tempItemData);
-	let index = slot - 1;
-	getServerData().items[slot - 1].index = index;
-	getServerData().items[slot - 1].itemTypeIndex = itemTypeId;
-	return index;
+
+	if (temporary == true) {
+		tempItemData.databaseId = -1;
+	}
+
+	let index = serverData.items.push(tempItemData);
+	setAllItemDataIndexes();
+	return index - 1;
 }
 
 // ===========================================================================
@@ -356,19 +400,23 @@ function createGroundItem(itemTypeId, value, position, dimension = 0) {
 	let itemIndex = createItem(itemTypeId, value, V_ITEM_OWNER_GROUND, 0);
 	getItemData(itemIndex).position = position;
 	getItemData(itemIndex).dimension = dimension;
-	createGroundItemObject(itemIndex);
+	spawnGroundItemObject(itemIndex);
 	return itemIndex;
 }
 
 // ===========================================================================
 
-function createGroundItemObject(itemId) {
+function spawnGroundItemObject(itemId) {
 	if (!getItemData(itemId)) {
 		return false;
 	}
 
 	if (getItemData(itemId).object != null) {
 		deleteGroundItemObject(itemId);
+	}
+
+	if (!isGameFeatureSupported("object")) {
+		return false;
 	}
 
 	let object = createGameObject(getItemTypeData(getItemData(itemId).itemTypeIndex).dropModel, applyOffsetToPos(getItemData(itemId).position, getItemTypeData(getItemData(itemId).itemTypeIndex).dropPosition));
@@ -388,12 +436,12 @@ function createGroundItemObject(itemId) {
 // ===========================================================================
 
 function deleteGroundItemObject(itemId) {
-	if (getServerData().groundItemCache.indexOf(itemId) != -1) {
-		getServerData().groundItemCache.splice(getServerData().groundItemCache.indexOf(itemId), 1);
+	if (serverData.groundItemCache.indexOf(itemId) != -1) {
+		serverData.groundItemCache.splice(serverData.groundItemCache.indexOf(itemId), 1);
 	}
 
 	if (getItemData(itemId).object != null) {
-		destroyGameElement(getItemData(itemId).object);
+		deleteGameElement(getItemData(itemId).object);
 		getItemData(itemId).object = null;
 	}
 }
@@ -520,7 +568,7 @@ function useItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemUseDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -584,7 +632,7 @@ function pickupItemCommand(command, params, client) {
 		return false;
 	}
 
-	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > getGlobalConfig().droppedItemPickupRange) {
+	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > globalConfig.droppedItemPickupRange) {
 		messagePlayerError(client, getLocaleString(client, "NoItemCloseEnough"));
 		return false;
 	}
@@ -613,7 +661,7 @@ function pickupItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = itemId;
 	showPlayerItemPickupDelay(client, itemId);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -683,7 +731,7 @@ function dropItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemDropDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -751,7 +799,7 @@ function putItemCommand(command, params, client) {
 	getPlayerData(client).itemActionItem = hotBarSlot;
 	showPlayerItemPutDelay(client, hotBarSlot);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -807,7 +855,7 @@ function takeItemCommand(command, params, client) {
 	getPlayerData(client).itemActionState = V_ITEM_ACTION_TAKE;
 	showPlayerItemTakeDelay(client, itemId);
 
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -828,7 +876,7 @@ function createItemTypeCommand(command, params, client) {
 	}
 
 	let itemTypeIndex = createItemType(params);
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} created new item type: {ALTCOLOUR}${params}. {MAINCOLOUR}ID: ${itemTypeIndex}/${getItemTypeData(itemTypeIndex).databaseId}!`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} created new item type: {ALTCOLOUR}${params}. {MAINCOLOUR}ID: ${itemTypeIndex}/${getItemTypeData(itemTypeIndex).databaseId}!`, true);
 }
 
 // ===========================================================================
@@ -857,9 +905,14 @@ function setItemTypeDropModelCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderPrice)) {
+		messagePlayerError(client, `The model index must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).dropModel = modelIndex;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s{MAINCOLOUR} dropped object model index to ${modelIndex}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}'s{MAINCOLOUR} dropped object model index to ${modelIndex}`, true);
 }
 
 // ===========================================================================
@@ -888,9 +941,14 @@ function setItemTypeOrderPriceCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderPrice)) {
+		messagePlayerError(client, `The order price must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).orderPrice = orderPrice;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}${getCurrencyString(orderPrice)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} base price to {ALTCOLOUR}${getCurrencyString(orderPrice)}`, true);
 }
 
 // ===========================================================================
@@ -919,9 +977,14 @@ function setItemTypeOrderValueCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(orderValue)) {
+		messagePlayerError(client, `The order value must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).orderValue = orderValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} order value to {ALTCOLOUR}${orderValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} order value to {ALTCOLOUR}${orderValue}`, true);
 }
 
 // ===========================================================================
@@ -950,9 +1013,14 @@ function setItemTypeRiskMultiplierCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(riskMultiplier)) {
+		messagePlayerError(client, `The risk multiplier must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).riskMultiplier = riskMultiplier / 100;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}${riskMultiplier}%`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} risk multiplier to {ALTCOLOUR}${riskMultiplier}%`, true);
 }
 
 // ===========================================================================
@@ -981,7 +1049,7 @@ function toggleItemTypeEnabledCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).enabled = !getItemTypeData(itemTypeIndex).enabled;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} ${getEnabledDisabledFromBool(getItemTypeData(itemTypeIndex).enabled)} item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} ${getEnabledDisabledFromBool(getItemTypeData(itemTypeIndex).enabled)} item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}`, true);
 }
 
 // ===========================================================================
@@ -1010,9 +1078,14 @@ function setItemTypeUseTypeCommand(command, params, client) {
 		return false;
 	}
 
+	if (isNaN(useType)) {
+		messagePlayerError(client, `The use type must be a number!`);
+		return false;
+	}
+
 	getItemTypeData(itemTypeIndex).useType = useType;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}${useType}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use type to {ALTCOLOUR}${useType}`, true);
 }
 
 // ===========================================================================
@@ -1043,7 +1116,7 @@ function setItemTypeUseValueCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).useValue = useValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}${useValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} use value to {ALTCOLOUR}${useValue}`, true);
 }
 
 // ===========================================================================
@@ -1073,13 +1146,13 @@ function setItemTypeDropFrontDistanceCommand(command, params, client) {
 	}
 
 	if (isNaN(dropFrontDistance)) {
-		messagePlayerError(client, `The distance must be a number!`);
+		messagePlayerError(client, `The front distance must be a number!`);
 		return false;
 	}
 
 	getItemTypeData(itemTypeIndex).dropFrontDistance = dropFrontDistance;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop front distance to {ALTCOLOUR}${dropFrontDistance.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop front distance to {ALTCOLOUR}${dropFrontDistance.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1119,7 +1192,7 @@ function setItemTypeDropPositionCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropPosition = dropPosition;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop position offset to {ALTCOLOUR}${dropPosition.x.toFixed(2)}, ${dropPosition.y.toFixed(2)}, ${dropPosition.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop position offset to {ALTCOLOUR}${dropPosition.x.toFixed(2)}, ${dropPosition.y.toFixed(2)}, ${dropPosition.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1151,7 +1224,7 @@ function setItemTypeDropRotationCommand(command, params, client) {
 	}
 
 	if (isNaN(x) || isNaN(y) || isNaN(z)) {
-		messagePlayerError(client, `The positions must be numbers!`);
+		messagePlayerError(client, `The rotation values must be numbers!`);
 		return false;
 	}
 
@@ -1159,7 +1232,7 @@ function setItemTypeDropRotationCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropRotation = dropRotation;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop rotation to {ALTCOLOUR}${dropRotation.x.toFixed(2)}, ${dropRotation.y.toFixed(2)}, ${dropRotation.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop rotation to {ALTCOLOUR}${dropRotation.x.toFixed(2)}, ${dropRotation.y.toFixed(2)}, ${dropRotation.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1191,7 +1264,7 @@ function setItemTypeDropScaleCommand(command, params, client) {
 	}
 
 	if (isNaN(x) || isNaN(y) || isNaN(z)) {
-		messagePlayerError(client, `The positions must be numbers!`);
+		messagePlayerError(client, `The scale values must be numbers!`);
 		return false;
 	}
 
@@ -1199,7 +1272,7 @@ function setItemTypeDropScaleCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).dropScale = dropScale;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop scale to {ALTCOLOUR}${dropScale.x.toFixed(2)}, ${dropScale.y.toFixed(2)}, ${dropScale.z.toFixed(2)}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} drop scale to {ALTCOLOUR}${dropScale.x.toFixed(2)}, ${dropScale.y.toFixed(2)}, ${dropScale.z.toFixed(2)}`, true);
 }
 
 // ===========================================================================
@@ -1235,7 +1308,7 @@ function setItemTypeDemandMultiplierCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).demandMultiplier = demandMultiplier / 100;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} demand multiplier to {ALTCOLOUR}${demandMultiplier}%`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} demand multiplier to {ALTCOLOUR}${demandMultiplier}%`, true);
 }
 
 // ===========================================================================
@@ -1271,7 +1344,7 @@ function setItemTypeMaxValueCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).maxValue = maxValue;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} max value to {ALTCOLOUR}${maxValue}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} max value to {ALTCOLOUR}${maxValue}`, true);
 }
 
 // ===========================================================================
@@ -1307,7 +1380,7 @@ function setItemTypeSizeCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).size = size;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} size to {ALTCOLOUR}${size}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} size to {ALTCOLOUR}${size}`, true);
 }
 
 // ===========================================================================
@@ -1343,7 +1416,7 @@ function setItemTypeCapacityCommand(command, params, client) {
 
 	getItemTypeData(itemTypeIndex).capacity = capacity;
 	getItemTypeData(itemTypeIndex).needsSaved = true;
-	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} capacity to {ALTCOLOUR}${capacity}`, true);
+	messageAdmins(`{ALTCOLOUR}${getPlayerName(client)}{MAINCOLOUR} set item type {ALTCOLOUR}${getItemTypeData(itemTypeIndex).name}{MAINCOLOUR} capacity to {ALTCOLOUR}${capacity}`, true);
 }
 
 // ===========================================================================
@@ -1352,7 +1425,7 @@ function playerUseItem(client, hotBarSlot) {
 	let itemIndex = getPlayerData(client).hotBarItems[hotBarSlot];
 
 	if (itemIndex == -1) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} tried to use an empty hotbar slot ${hotBarSlot}`);
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Item] ${getPlayerDisplayForConsole(client)} tried to use an empty hotbar slot ${hotBarSlot}`);
 		return false;
 	}
 
@@ -1366,14 +1439,23 @@ function playerUseItem(client, hotBarSlot) {
 	let itemTypeData = getItemTypeData(itemData.itemTypeIndex);
 	let hotBarItems = getPlayerData(client).hotBarItems;
 
-	logToConsole(LOG_DEBUG, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item] ${getPlayerDisplayForConsole(client)} used a ${itemTypeData.name} (use type ${itemTypeData.useType} - ${typeof itemTypeData.useType}) item (ID: ${itemData.index}/${itemData.databaseId}, TypeID: ${itemTypeData.index}/${itemTypeData.databaseId})`);
 
 	markPlayerActionTipSeen(client, "UseItemKeyAfterEquipping");
 
 	switch (toInteger(itemTypeData.useType)) {
 		case V_ITEM_USE_TYPE_SKIN: {
-			getPlayerData(client).itemActionItem = itemIndex;
-			forcePlayerIntoSkinSelect(client);
+			if (hasBitFlag(getPlayerData(client).accountData.flags.moderation, getModerationFlagValue("NoSkinCustomization"))) {
+				messagePlayerError(client, "You are not allowed to change your skin!");
+				return false;
+			}
+
+			if (!isPlayerWorking(client)) {
+				getPlayerData(client).itemActionItem = itemIndex;
+				forcePlayerIntoSkinSelect(client, -1);
+			} else {
+				messagePlayerError(client, "You can't use this while working! Use /uniform instead.");
+			}
 			break;
 		}
 
@@ -1424,7 +1506,7 @@ function playerUseItem(client, hotBarSlot) {
 			givePlayerHealth(client, itemTypeData.useValue);
 			itemData.value = itemData.value - itemTypeData.useValue;
 			if (getItemData(itemIndex).value <= 0) {
-				deleteItem(itemIndex);
+				deleteItem(itemIndex, getPlayerData(client).accountData.databaseId);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
 			break;
@@ -1452,29 +1534,29 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_ROPE: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToTie"));
+			if (getPlayerData(closestPlayer) == null) {
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToTie"));
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.handcuffPlayerDistance) {
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
-			if (!isPlayerSurrendered(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedTie", getCharacterFullName(closestPlayer)));
-				return false;
-			}
+			//if (!isPlayerSurrendered(closestPlayer)) {
+			//	messagePlayerError(client, getLocaleString(client, "MustBeSurrendered", getCharacterFullName(closestPlayer)));
+			//	return false;
+			//}
 
 			if (isPlayerHandCuffed(closestPlayer)) {
 				ropeUnTiePlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `unties the rope from ${getCharacterFullName(closestPlayer)}'s hands and feet`);
 			} else {
-				if (!isPlayerSurrendered(closestPlayer)) {
-					messagePlayerError(client, `${getCharacterFullName(closestPlayer)} can't be tied up! They either need to have their hands up, be knocked out, or tazed`);
-					return false;
-				}
+				//if (!isPlayerSurrendered(closestPlayer)) {
+				//	messagePlayerError(client, `${getCharacterFullName(closestPlayer)} can't be tied up! They either need to have their hands up, be knocked out, or tazed`);
+				//	return false;
+				//}
 
 				ropeTiePlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their rope and ties ${getCharacterFullName(closestPlayer)}'s hands and feet together.`);
@@ -1485,13 +1567,13 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_HANDCUFF: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToHandcuff"));
+			if (getPlayerData(closestPlayer) == null) {
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().handcuffPlayerDistance) {
-				messagePlayerError(client, getLocaleString(client, "NobodyCloseEnoughToHandcuff"));
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.handcuffPlayerDistance) {
+				messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
 				return false;
 			}
 
@@ -1499,10 +1581,10 @@ function playerUseItem(client, hotBarSlot) {
 				unHandCuffPlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their key and removes the handcuffs from ${getCharacterFullName(closestPlayer)}`);
 			} else {
-				if (!isPlayerSurrendered(closestPlayer)) {
-					messagePlayerError(client, getLocaleString(client, "PlayerNotSurrenderedHandcuff", getCharacterFullName(closestPlayer)));
-					return false;
-				}
+				//if (!isPlayerSurrendered(closestPlayer)) {
+				//	messagePlayerError(client, getLocaleString(client, "MustBeSurrendered", getCharacterFullName(closestPlayer)));
+				//	return false;
+				//}
 
 				handCuffPlayer(closestPlayer);
 				meActionToNearbyPlayers(client, `takes their cuffs and places them on ${getCharacterFullName(closestPlayer)}`);
@@ -1512,25 +1594,25 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHREPAIR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their repair kit and fixes the vehicle`);
 				repairVehicle(vehicle);
 
 				itemData.value = itemData.value - itemTypeData.useValue;
 				if (itemData.value <= 0) {
-					destroyItem(itemIndex);
+					deleteItem(itemIndex);
 				}
-
-				markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			} else {
 				messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
 			}
+
+			markPlayerActionTipSeen(client, "VehicleRepairItemUsage");
 			break;
 		}
 
 		case V_ITEM_USE_TYPE_VEHUPGRADE_PART: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their upgrade kit and adds a ${itemTypeData.name} to the vehicle.`);
 				addVehicleUpgrade(vehicle, itemTypeData.useId);
 				markPlayerActionTipSeen(client, "VehiclePartItemUsage");
@@ -1542,7 +1624,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHLIVERY: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				meActionToNearbyPlayers(client, `takes their decal kit and adds some decals to the vehicle.`);
 				setVehicleLivery(vehicle, itemData.value);
 			}
@@ -1551,7 +1633,7 @@ function playerUseItem(client, hotBarSlot) {
 
 		case V_ITEM_USE_TYPE_VEHCOLOUR: {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
-			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 				if (itemData.useId == 1) {
 					meActionToNearbyPlayers(client, `takes their vehicle colour kit and changes the primary colour of the vehicle.`);
 					setVehicleColours(vehicle, getVehicleData(vehicle).colour1, itemData.value);
@@ -1573,7 +1655,7 @@ function playerUseItem(client, hotBarSlot) {
 			let vehicle = getClosestVehicle(getPlayerPosition(client));
 			let fuelPump = getClosestFuelPump(getPlayerPosition(client));
 			if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position)) {
-				if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= getGlobalConfig().vehicleRepairDistance) {
+				if (getDistance(getPlayerPosition(client), getVehiclePosition(vehicle)) <= globalConfig.vehicleRepairDistance) {
 					meActionToNearbyPlayers(client, `takes their fuel can and refills the vehicle`);
 					if (itemData.value < itemTypeData.useValue) {
 						getVehicleData(vehicle).fuel += itemData.value;
@@ -1583,11 +1665,11 @@ function playerUseItem(client, hotBarSlot) {
 
 					itemData.value = itemData.value - itemTypeData.useValue;
 					//if(itemData.value <= 0) {
-					//	destroyItem(itemIndex);
+					//	deleteItem(itemIndex);
 					//}
 				}
 			} else {
-				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= getGlobalConfig().fuelPumpUseDistance) {
+				if (getDistance(getPlayerPosition(client), getFuelPumpData(fuelPump).position) <= globalConfig.fuelPumpUseDistance) {
 
 					if (itemData.amount < 100) {
 						let amountToFull = 100 - itemData.amount;
@@ -1644,6 +1726,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -1655,6 +1738,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -1666,6 +1750,7 @@ function playerUseItem(client, hotBarSlot) {
 			if (getPlayerData(client).incomingDamageMultiplier < 0.25) {
 				getPlayerData(client).incomingDamageMultiplier = 0.25;
 			}
+			sendIncomingDamageMultiplierToClient(client, getPlayerData(client).incomingDamageMultiplier);
 			deleteItem(itemIndex);
 			switchPlayerActiveHotBarSlot(client, -1);
 			break;
@@ -1675,7 +1760,7 @@ function playerUseItem(client, hotBarSlot) {
 			meActionToNearbyPlayers(client, `bends down and plants a ${itemTypeData.name} in the ground`);
 			createGroundPlant(itemIndex);
 			if (itemData.value == 0) {
-				destroyItem(itemIndex);
+				deleteItem(itemIndex);
 				switchPlayerActiveHotBarSlot(client, -1);
 			}
 			break;
@@ -1686,10 +1771,10 @@ function playerUseItem(client, hotBarSlot) {
 			let clients = getClients();
 			for (let i in clients) {
 				if (getDistance(getPlayerPosition(client), getPlayerPosition(clients[i])) <= 7) {
-					messagePlayerNormal(client, `{clanOrange}${makeChatBoxSectionHeader(getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)))}`);
-					messagePlayerNormal(client, `{clanOrange}Type:{MAINCOLOUR} ${getJobData(getPlayerJob(client)).name}`);
-					messagePlayerNormal(client, `{clanOrange}ID:{MAINCOLOUR} ${addPrefixNumberFill(getPlayerCurrentSubAccount(client).databaseId, 5)}`);
-					messagePlayerNormal(client, `{clanOrange}Rank:{MAINCOLOUR} ${getJobRankName(getPlayerJob(client), getPlayerJobRank(client))}`);
+					messagePlayerNormal(clients[i], `{clanOrange}${makeChatBoxSectionHeader(getLocaleString(client, "HeaderBadgeInfo", getCharacterFullName(client)))}`);
+					messagePlayerNormal(clients[i], `{clanOrange}Type:{MAINCOLOUR} ${getJobData(getPlayerJob(client)).name}`);
+					messagePlayerNormal(clients[i], `{clanOrange}ID:{MAINCOLOUR} ${addPrefixNumberFill(getPlayerCurrentSubAccount(client).databaseId, 5)}`);
+					messagePlayerNormal(clients[i], `{clanOrange}Rank:{MAINCOLOUR} ${getJobRankName(getPlayerJob(client), getPlayerJobRank(client))}`);
 				}
 			}
 			break;
@@ -1703,12 +1788,12 @@ function playerUseItem(client, hotBarSlot) {
 		case V_ITEM_USE_TYPE_HEALTH: {
 			let closestPlayer = getClosestPlayer(getPlayerPosition(client), client);
 
-			if (!getPlayerData(closestPlayer)) {
+			if (getPlayerData(closestPlayer) == null) {
 				messagePlayerError(client, "There isn't anyone close enough to heal!");
 				return false;
 			}
 
-			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > getGlobalConfig().firstAidKitPlayerDistance) {
+			if (getDistance(getPlayerPosition(closestPlayer), getPlayerPosition(client)) > globalConfig.firstAidKitPlayerDistance) {
 				messagePlayerError(client, "There isn't anyone close enough to heal!");
 				return false;
 			}
@@ -1767,14 +1852,18 @@ function playerDropItem(client, hotBarSlot) {
 		updatePlayerHotBar(client);
 		clearPlayerWeapons(client);
 
+		let position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
+
 		getItemData(itemId).ownerType = V_ITEM_OWNER_GROUND;
 		getItemData(itemId).ownerId = 0;
-		getItemData(itemId).position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
+		getItemData(itemId).position = position;
 		getItemData(itemId).dimension = getPlayerDimension(client);
 		//getItemData(itemId).interior = getPlayerInterior(client);
-		createGroundItemObject(itemId);
+		spawnGroundItemObject(itemId);
 		getItemData(itemId).needsSaved = true;
-		getServerData().groundItemCache.push(itemId);
+		serverData.groundItemCache.push(itemId);
+
+		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, V_ITEM_OWNER_GROUND, 0, position);
 	}
 }
 
@@ -1825,6 +1914,9 @@ function playerPutItem(client, hotBarSlot) {
 			getBusinessData(bestNewOwner[1]).storageItemCache.push(itemId);
 			meActionToNearbyPlayers(client, `puts ${getProperDeterminerForName(getItemName(itemId))} ${getItemName(itemId)} in the business storage room`);
 			break;
+
+		default:
+			return false;
 	}
 
 	getItemData(itemId).ownerType = bestNewOwner[0];
@@ -1854,6 +1946,8 @@ function playerPickupItem(client, itemId) {
 
 		getPlayerData(client).hotBarItems[firstSlot] = itemId;
 		updatePlayerHotBar(client);
+
+		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_GROUND, 0, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, position);
 	}
 }
 
@@ -1866,37 +1960,43 @@ function playerTakeItem(client, itemId) {
 		return false;
 	}
 
-	let ownerId = getItemIdFromDatabaseId(getItemData(itemId).ownerId);
+	let ownerId = getItemIndexFromDatabaseId(getItemData(itemId).ownerId);
+	let ownerType = getItemData(itemId).ownerType;
 
 	getItemData(itemId).ownerType = V_ITEM_OWNER_PLAYER;
 	getItemData(itemId).ownerId = getPlayerCurrentSubAccount(client).databaseId;
-
 	getPlayerData(client).hotBarItems[firstSlot] = itemId;
 	updatePlayerHotBar(client);
 
-	switch (bestOwner[1]) {
+	switch (ownerType) {
 		case V_ITEM_OWNER_HOUSE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromHouse", getItemName(itemId)));
+			cacheHouseItems(getHouseIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_BIZFLOOR:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusiness", getItemName(itemId)));
+			cacheBusinessItems(getBusinessIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_BIZSTORAGE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusinessStorage", getItemName(itemId)));
+			cacheBusinessItems(getBusinessIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_VEHTRUNK:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleTrunk", getItemName(itemId)));
+			cacheVehicleItems(getVehicleIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_VEHDASH:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleDash", getItemName(itemId)));
+			cacheVehicleItems(getVehicleIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_ITEM:
-			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(ownerId));
+			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(getItemIndexFromDatabaseId(ownerId)));
+			cacheItemItems(getItemIndexFromDatabaseId(ownerId));
 			break;
 	}
 }
@@ -1909,7 +2009,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 	}
 
 	let currentHotBarSlot = getPlayerData(client).activeHotBarSlot;
-	logToConsole(LOG_DEBUG, `[AGRP.Item] ${getPlayerDisplayForConsole(client)} switched from hotbar slot ${currentHotBarSlot} to ${newHotBarSlot}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Item] ${getPlayerDisplayForConsole(client)} switched from hotbar slot ${currentHotBarSlot} to ${newHotBarSlot}`);
 
 	let currentHotBarItem = -1;
 	let newHotBarItem = -1;
@@ -1935,7 +2035,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 
 	//if(currentHotBarItem != -1) {
 	//	if(getItemData(currentHotBarItem)) {
-	//		if(getGlobalConfig().weaponEquippableTypes.indexOf(getItemTypeData(getItemData(currentHotBarItem).itemTypeIndex).useType) != -1) {
+	//		if(globalConfig.weaponEquippableTypes.indexOf(getItemTypeData(getItemData(currentHotBarItem).itemTypeIndex).useType) != -1) {
 	//			clearPlayerWeapons(client);
 	//		}
 	//	}
@@ -1944,15 +2044,17 @@ function playerSwitchItem(client, newHotBarSlot) {
 	if (newHotBarItem != -1) {
 		if (getItemData(newHotBarItem)) {
 			if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_WEAPON) {
+				let clipAmmo = getClipAmmoSizeForWeapon(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+				let ammo = getItemData(newHotBarItem).value - clipAmmo;
 				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
-					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 					setPlayerWeaponDamageEnabled(client, true);
 					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 				} else {
 					let ammoItemSlot = getPlayerFirstAmmoItemForWeapon(client, getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
 					if (ammoItemSlot != false) {
 						getItemData(newHotBarItem).value = getItemData(getPlayerData(client).hotBarItems[ammoItemSlot]).value;
-						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 						setPlayerWeaponDamageEnabled(client, true);
 						setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 						deleteItem(getPlayerData(client).hotBarItems[ammoItemSlot]);
@@ -1961,12 +2063,23 @@ function playerSwitchItem(client, newHotBarSlot) {
 					}
 				}
 			} else if (getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useType == V_ITEM_USE_TYPE_TAZER) {
-				if (getItemData(newHotBarItem).value > 0) {
-					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(getItemData(newHotBarItem).value), true, true);
+				let clipAmmo = getClipAmmoSizeForWeapon(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+				let ammo = getItemData(newHotBarItem).value - clipAmmo;
+				if (getItemData(newHotBarItem).value > 0 || isMeleeWeapon(toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId))) {
+					givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
 					setPlayerWeaponDamageEnabled(client, false);
 					setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_TAZER);
 				} else {
-					messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
+					let ammoItemSlot = getPlayerFirstAmmoItemForWeapon(client, getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId);
+					if (ammoItemSlot != false) {
+						getItemData(newHotBarItem).value = getItemData(getPlayerData(client).hotBarItems[ammoItemSlot]).value;
+						givePlayerWeapon(client, toInteger(getItemTypeData(getItemData(newHotBarItem).itemTypeIndex).useId), toInteger(clipAmmo), toInteger(ammo), true, true);
+						setPlayerWeaponDamageEnabled(client, false);
+						setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_TAZER);
+						deleteItem(getPlayerData(client).hotBarItems[ammoItemSlot]);
+					} else {
+						messagePlayerError(client, getLocaleString(client, "ItemUnequippableNoAmmo", getItemName(newHotBarItem), newHotBarSlot));
+					}
 				}
 			}
 		}
@@ -2081,7 +2194,7 @@ function playerSwitchHotBarSlotCommand(command, params, client) {
 // ===========================================================================
 
 function getClosestItemOnGround(position) {
-	let groundItems = getServerData().groundItemCache;
+	let groundItems = serverData.groundItemCache;
 	if (groundItems.length != 0) {
 		let closest = 0;
 		for (let i in groundItems) {
@@ -2099,10 +2212,10 @@ function getClosestItemOnGround(position) {
 // ===========================================================================
 
 function setAllItemDataIndexes() {
-	for (let i in getServerData().items) {
-		if (getServerData().items[i]) {
-			getServerData().items[i].index = i;
-			getServerData().items[i].itemTypeIndex = getItemTypeIndexFromDatabaseId(getServerData().items[i].itemType);
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			serverData.items[i].index = i;
+			serverData.items[i].itemTypeIndex = getItemTypeIndexFromDatabaseId(serverData.items[i].itemType);
 		}
 	}
 }
@@ -2110,16 +2223,16 @@ function setAllItemDataIndexes() {
 // ===========================================================================
 
 function setAllItemTypeDataIndexes() {
-	for (let i in getServerData().itemTypes) {
-		if (getServerData().itemTypes[i]) {
-			getServerData().itemTypes[i].index = i;
-			getServerData().itemTypes[i].useAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].useAnimationName);
-			getServerData().itemTypes[i].switchAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].switchAnimationName);
-			getServerData().itemTypes[i].dropAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].dropAnimationName);
-			getServerData().itemTypes[i].putAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].putAnimationName);
-			getServerData().itemTypes[i].takeAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].takeAnimationName);
-			getServerData().itemTypes[i].giveAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].giveAnimationName);
-			getServerData().itemTypes[i].pickupAnimationIndex = getAnimationFromParams(getServerData().itemTypes[i].pickupAnimationName);
+	for (let i in serverData.itemTypes) {
+		if (serverData.itemTypes[i]) {
+			serverData.itemTypes[i].index = i;
+			serverData.itemTypes[i].useAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].useAnimationName);
+			serverData.itemTypes[i].switchAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].switchAnimationName);
+			serverData.itemTypes[i].dropAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].dropAnimationName);
+			serverData.itemTypes[i].putAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].putAnimationName);
+			serverData.itemTypes[i].takeAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].takeAnimationName);
+			serverData.itemTypes[i].giveAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].giveAnimationName);
+			serverData.itemTypes[i].pickupAnimationIndex = getAnimationFromParams(serverData.itemTypes[i].pickupAnimationName);
 		}
 	}
 }
@@ -2127,19 +2240,21 @@ function setAllItemTypeDataIndexes() {
 // ===========================================================================
 
 function cacheAllGroundItems() {
-	clearArray(getServerData().groundItemCache);
-	for (let i in getServerData().items) {
-		if (getServerData().items[i].ownerType == V_ITEM_OWNER_GROUND) {
-			getServerData().groundItemCache.push(i);
+	serverData.groundItemCache = [];
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			if (serverData.items[i].ownerType == V_ITEM_OWNER_GROUND) {
+				serverData.groundItemCache.push(i);
+			}
 		}
 	}
 }
 
 // ===========================================================================
 
-function createAllGroundItemObjects() {
-	for (let i in getServerData().groundItemCache) {
-		createGroundItemObject(getServerData().groundItemCache[i]);
+function spawnAllGroundItemObjects() {
+	for (let i in serverData.groundItemCache) {
+		spawnGroundItemObject(serverData.groundItemCache[i]);
 	}
 }
 
@@ -2164,6 +2279,8 @@ function getPlayerFirstEmptyHotBarSlot(client) {
 // ===========================================================================
 
 function cachePlayerHotBarItems(client) {
+	logToConsole(LOG_DEBUG, `[V.RP.Event] Caching ${getPlayerDisplayForConsole(client)}'s hotbar items ...`);
+
 	if (isPlayerWorking(client)) {
 		return false;
 	}
@@ -2172,12 +2289,15 @@ function cachePlayerHotBarItems(client) {
 		getPlayerData(client).hotBarItems[i] = -1;
 	}
 
-	for (let i in getServerData().items) {
-		if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER) {
-			if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
-				let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
-				if (firstSlot != -1) {
-					getPlayerData(client).hotBarItems[firstSlot] = i;
+	//let playerItems = getItemsOwnedByPlayer(client);
+	for (let i in serverData.items) {
+		if (getItemData(i) != false) {
+			if (getItemData(i).ownerType == V_ITEM_OWNER_PLAYER || (isPlayerWorking(client) && getItemData(i).ownerType == V_ITEM_OWNER_JOB)) {
+				if (getItemData(i).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+					let firstSlot = getPlayerFirstEmptyHotBarSlot(client);
+					if (firstSlot != -1) {
+						getPlayerData(client).hotBarItems[firstSlot] = i;
+					}
 				}
 			}
 		}
@@ -2186,30 +2306,42 @@ function cachePlayerHotBarItems(client) {
 
 // ===========================================================================
 
-function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
+function deleteItem(itemId, whoDeleted = defaultNoAccountId, resetAllItemIndexes = true) {
 	let owner = -1;
 	let ownerTypeString = "Unknown";
 	switch (getItemData(itemId).ownerType) {
 		case V_ITEM_OWNER_GROUND:
 			ownerTypeString = "Ground/Dropped";
 			deleteGroundItemObject(itemId);
-			getServerData().groundItemCache.splice(getServerData().groundItemCache.indexOf(itemId), 1);
+			serverData.groundItemCache.splice(serverData.groundItemCache.indexOf(itemId), 1);
 			break;
 
 		case V_ITEM_OWNER_PLAYER:
 			ownerTypeString = "Player";
-			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
-			if (getPlayerData(owner) != false) {
+			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
+			if (getPlayerData(owner) != null) {
 				switchPlayerActiveHotBarSlot(owner, -1);
 				getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
 				updatePlayerHotBar(owner);
 			}
 			break;
 
+		case V_ITEM_OWNER_JOB:
+			ownerTypeString = "Player (Job Item)";
+			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId, true);
+			if (getPlayerData(owner) != null) {
+				if (isPlayerWorking(owner)) {
+					switchPlayerActiveHotBarSlot(owner, -1);
+					getPlayerData(owner).hotBarItems[getPlayerData(owner).hotBarItems.indexOf(itemId)] = -1;
+					updatePlayerHotBar(owner);
+				}
+			}
+			break;
+
 		case V_ITEM_OWNER_TEMPLOCKER:
 			ownerTypeString = "Job Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				getPlayerData(owner).tempLockerCache.splice(getPlayerData(owner).tempLockerCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2217,7 +2349,7 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 		case V_ITEM_OWNER_LOCKER:
 			ownerTypeString = "Locker";
 			owner = getPlayerFromCharacterId(getItemData(itemId).ownerId);
-			if (getPlayerData(owner) != false) {
+			if (getPlayerData(owner) != null) {
 				getPlayerData(owner).lockerCache.splice(getPlayerData(owner).lockerCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2225,31 +2357,31 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 		case V_ITEM_OWNER_VEHTRUNK:
 			ownerTypeString = "Vehicle Trunk";
 			owner = getVehicleFromDatabaseId(getItemData(itemId).ownerId)
-			if (getVehicleData(owner) != false) {
+			if (getVehicleData(owner) != null) {
 				getVehicleDataIndex(getItemData(itemId).ownerId).trunkItemCache.splice(getVehicleData(owner).trunkItemCache.indexOf(itemId), 1);
 			}
 			break;
 
 		case V_ITEM_OWNER_BIZFLOOR:
 			ownerTypeString = "Business Floor";
-			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getBusinessData(owner) != false) {
+			owner = getBusinessIndexFromDatabaseId(getItemData(itemId).ownerId);
+			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).floorItemCache.splice(getBusinessData(owner).floorItemCache.indexOf(itemId), 1);
 			}
 			break;
 
 		case V_ITEM_OWNER_BIZSTORAGE:
 			ownerTypeString = "Business Storage";
-			owner = getBusinessIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getBusinessData(owner) != false) {
+			owner = getBusinessIndexFromDatabaseId(getItemData(itemId).ownerId);
+			if (getBusinessData(owner) != null) {
 				getBusinessData(owner).storageItemCache.splice(getBusinessData(owner).storageItemCache.indexOf(itemId), 1);
 			}
 			break;
 
 		case V_ITEM_OWNER_HOUSE:
 			ownerTypeString = "House";
-			owner = getHouseIdFromDatabaseId(getItemData(itemId).ownerId);
-			if (getHouseData(owner) != false) {
+			owner = getHouseIndexFromDatabaseId(getItemData(itemId).ownerId);
+			if (getHouseData(owner) != null) {
 				getHouseData(owner).itemCache.splice(getHouseData(owner).itemCache.indexOf(itemId), 1);
 			}
 			break;
@@ -2257,9 +2389,9 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 	logToConsole(LOG_DEBUG, `Deleted item ${itemId} (DBID: ${getItemData(itemId).databaseId}, Owner Type: ${ownerTypeString}, Owner ID: ${getItemData(itemId).ownerId})`);
 
 	if (getItemData(itemId).databaseId > 0) {
-		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP() WHERE item_id = ${getItemData(itemId).databaseId}`);
+		quickDatabaseQuery(`UPDATE item_main SET item_deleted = 1, item_when_deleted = UNIX_TIMESTAMP(), item_who_deleted = ${whoDeleted} WHERE item_id = ${getItemData(itemId).databaseId}`);
 	}
-	getServerData().items[itemId] = false;
+	serverData.items[itemId] = null;
 
 	if (resetAllItemIndexes) {
 		setAllItemDataIndexes();
@@ -2271,16 +2403,23 @@ function deleteItem(itemId, whoDeleted = -1, resetAllItemIndexes = true) {
 function getBestNewOwnerToPutItem(client) {
 	let position = getPlayerPosition(client);
 
+	if (isPlayerInAnyVehicle(client)) {
+		let vehicle = getClosestVehicle(position);
+		if (getVehicleData(vehicle) != null && isPlayerInFrontVehicleSeat(client)) {
+			return [V_ITEM_OWNER_VEHDASH, vehicle];
+		}
+	}
+
 	let possibleItem = getClosestItemOnGround(position);
 	if (possibleItem != -1) {
-		if (getDistance(getItemPosition(possibleItem), position) <= getGlobalConfig().itemContainerDistance) {
+		if (getDistance(getItemPosition(possibleItem), position) <= globalConfig.itemContainerDistance) {
 			return [V_ITEM_OWNER_ITEM, possibleItem];
 		}
 	}
 
 	let possibleVehicle = getClosestVehicle(position);
 	if (possibleVehicle != false) {
-		if (getVehicleData(possibleVehicle) != false && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= getGlobalConfig().vehicleTrunkDistance) {
+		if (getVehicleData(possibleVehicle) != null && getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
 			return [V_ITEM_OWNER_VEHTRUNK, possibleVehicle];
 		}
 	}
@@ -2311,12 +2450,36 @@ function getBestItemToTake(client, slot) {
 	let ownerType = V_ITEM_OWNER_NONE;
 	let ownerId = 0;
 
+	if (isPlayerInAnyVehicle(client)) {
+		let possibleVehicle = getPlayerVehicle(client);
+		if (getVehicleData(possibleVehicle) != null) {
+			if (isPlayerInFrontVehicleSeat(client)) {
+				if (typeof getVehicleData(possibleVehicle).dashItemCache[slot] != "undefined") {
+					itemId = getVehicleData(possibleVehicle).dashItemCache[slot];
+					ownerType = V_ITEM_OWNER_VEHDASH;
+					ownerId = possibleVehicle;
+				}
+			}
+		}
+	}
+
 	let possibleItem = getClosestItemOnGround(position);
 	if (getItemData(possibleItem)) {
 		if (typeof getItemData(possibleItem).itemCache[slot] != "undefined") {
 			itemId = getItemData(possibleItem).itemCache[slot]
 			ownerType = V_ITEM_OWNER_ITEM;
 			ownerId = possibleItem;
+		}
+	}
+
+	let possibleVehicle = getClosestVehicle(position);
+	if (getVehicleData(possibleVehicle) != null) {
+		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= globalConfig.vehicleTrunkDistance) {
+			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
+				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
+				ownerType = V_ITEM_OWNER_VEHTRUNK;
+				ownerId = possibleVehicle;
+			}
 		}
 	}
 
@@ -2338,17 +2501,6 @@ function getBestItemToTake(client, slot) {
 		}
 	}
 
-	let possibleVehicle = getClosestVehicle(position);
-	if (getVehicleData(possibleVehicle)) {
-		if (getDistance(getVehicleTrunkPosition(possibleVehicle), position) <= closestDistance) {
-			if (typeof getVehicleData(possibleVehicle).trunkItemCache[slot] != "undefined") {
-				itemId = getVehicleData(possibleVehicle).trunkItemCache[slot];
-				ownerType = V_ITEM_OWNER_VEHTRUNK;
-				ownerId = possibleVehicle;
-			}
-		}
-	}
-
 	return [ownerType, ownerId, itemId];
 }
 
@@ -2363,21 +2515,139 @@ function getBestItemToTake(client, slot) {
  * @return {bool} Whether or not the command was successful
  *
  */
-function listPlayerInventoryCommand(command, params, client) {
-	//let targetClient = client;
-	//if(!areParamsEmpty(client)) {
-	//	if(doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration"))) {
-	//		if(targetClient == false) {
-	//			sendMessageToPlayer(client, getLocaleString(client, "InvalidPlayer"));
-	//			return false;
-	//		}
-	//
-	//		targetClient = getPlayerFromParams(params);
-	//	}
-	//}
-	//showPlayerInventoryToPlayer(client, targetClient);
+function listItemTypesCommand(command, params, client) {
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderItemTypesList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
+}
 
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listPlayerInventoryCommand(command, params, client) {
 	showPlayerInventoryToPlayer(client, client);
+	markPlayerActionTipSeen(client, "ViewInventory");
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listOtherPlayerInventoryCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let targetClient = getPlayerFromParams(params);
+
+	if (!targetClient) {
+		messagePlayerError(client, getLocaleString(client, "InvalidPlayer"));
+		return false;
+	}
+
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageItems"))) {
+		if (!isPlayerSurrendered(targetClient) || isPlayerRestrained(targetClient)) {
+			messagePlayerError(client, getLocaleString(client, "MustBeSurrendered"));
+			return false;
+		}
+
+		if (getDistance(getPlayerPosition(client), getPlayerPosition(targetClient)) > globalConfig.searchPlayerDistance) {
+			messagePlayerError(client, getLocaleString(client, "NoPlayerCloseEnough"));
+			return false;
+		}
+	}
+
+	showPlayerInventoryToPlayer(client, targetClient);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listVehicleTrunkInventoryCommand(command, params, client) {
+	let vehicle = getClosestVehicle(getPlayerPosition(client));
+
+	if (getVehicleData(vehicle) == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (getDistance(getPlayerPosition(client), getVehicleTrunkPosition(vehicle)) > globalConfig.vehicleTrunkDistance) {
+		messagePlayerError(client, getLocaleString(client, "VehicleTooFar"));
+		return false;
+	}
+
+	if (getVehicleData(vehicle).locked) {
+		if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+			if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
+				messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
+			} else {
+				messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
+			}
+		} else {
+			messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
+		}
+		return false;
+	}
+
+	showVehicleTrunkInventoryToPlayer(client, vehicle);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function listVehicleDashInventoryCommand(command, params, client) {
+	if (getPlayerVehicle(client) == null) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
+		return false;
+	}
+
+	let vehicle = getPlayerVehicle(client);
+
+	if (getVehicleData(vehicle) == null) {
+		messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
+		return false;
+	}
+
+	if (getPlayerVehicleSeat(client) > 1) {
+		messagePlayerError(client, getLocaleString(client, "MustBeInVehicleFrontSeat"));
+		return false;
+	}
+
+	showVehicleDashInventoryToPlayer(client, vehicle);
 }
 
 // ===========================================================================
@@ -2394,7 +2664,7 @@ function listPlayerInventoryCommand(command, params, client) {
 function listBusinessStorageInventoryCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2421,7 +2691,7 @@ function listBusinessStorageInventoryCommand(command, params, client) {
 function listBusinessFloorInventoryCommand(command, params, client) {
 	let businessId = getPlayerBusiness(client);
 
-	if (!getBusinessData(businessId)) {
+	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
 		return false;
 	}
@@ -2448,7 +2718,7 @@ function listBusinessFloorInventoryCommand(command, params, client) {
 function listHouseInventoryCommand(command, params, client) {
 	let houseId = getPlayerHouse(client);
 
-	if (!getHouseData(houseId)) {
+	if (getHouseData(houseId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidHouse"));
 		return false;
 	}
@@ -2475,7 +2745,7 @@ function listHouseInventoryCommand(command, params, client) {
 function listItemInventoryCommand(command, params, client) {
 	let itemId = getClosestItemOnGround(getPlayerPosition(client));
 
-	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > getGlobalConfig().droppedItemPickupRange) {
+	if (getDistance(getPlayerPosition(client), getItemData(itemId).position) > globalConfig.droppedItemPickupRange) {
 		messagePlayerError(client, `You're too far away!`);
 		return false;
 	}
@@ -2499,8 +2769,12 @@ function getItemData(itemId) {
 		return false;
 	}
 
-	if (typeof getServerData().items[itemId] != "undefined") {
-		return getServerData().items[itemId];
+	if (serverData.items[itemId] == null) {
+		return false;
+	}
+
+	if (typeof serverData.items[itemId] != "undefined") {
+		return serverData.items[itemId];
 	}
 
 	return false;
@@ -2517,8 +2791,8 @@ function getItemTypeData(itemTypeId) {
 		return false;
 	}
 
-	if (typeof getServerData().itemTypes[itemTypeId] != "undefined") {
-		return getServerData().itemTypes[itemTypeId];
+	if (typeof serverData.itemTypes[itemTypeId] != "undefined") {
+		return serverData.itemTypes[itemTypeId];
 	}
 
 	return false;
@@ -2527,23 +2801,25 @@ function getItemTypeData(itemTypeId) {
 // ===========================================================================
 
 function saveAllItemsToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().items) {
-		saveItemToDatabase(i);
+	for (let i in serverData.items) {
+		if (serverData.items[i] != null) {
+			saveItemToDatabase(i);
+		}
 	}
 }
 
 // ===========================================================================
 
 function saveAllItemTypesToDatabase() {
-	if (getServerConfig().devServer) {
+	if (serverConfig.devServer) {
 		return false;
 	}
 
-	for (let i in getServerData().itemTypes) {
+	for (let i in serverData.itemTypes) {
 		saveItemTypeToDatabase(i);
 	}
 }
@@ -2564,7 +2840,7 @@ function saveItemToDatabase(itemId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Saving item '${itemData.index}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Item]: Saving item '${itemData.index}' to database ...`);
 
 	let position = getItemPosition(itemId);
 
@@ -2621,7 +2897,7 @@ function saveItemTypeToDatabase(itemTypeId) {
 		return false;
 	}
 
-	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Saving item type '${itemTypeData.name}' to database ...`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Item]: Saving item type '${itemTypeData.name}' to database ...`);
 
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
@@ -2731,29 +3007,19 @@ function restorePlayerTempLockerItems(client) {
 // ===========================================================================
 
 function getItemIndexFromDatabaseId(databaseId) {
-	for (let i in getServerData().items) {
-		if (getServerData().items[i].databaseId == databaseId) {
-			return i;
-		}
-	}
-	return false;
+	return serverData.items.findIndex(i => i.databaseId == databaseId);
 }
 
 // ===========================================================================
 
 function getItemTypeIndexFromDatabaseId(databaseId) {
-	for (let i in getServerData().itemTypes) {
-		if (getServerData().itemTypes[i].databaseId == databaseId) {
-			return i;
-		}
-	}
-	return false;
+	return serverData.itemTypes.findIndex(i => i.databaseId == databaseId);
 }
 
 // ===========================================================================
 
 function playerItemActionDelayComplete(client) {
-	logToConsole(LOG_VERBOSE, `[AGRP.Item]: Player ${getPlayerDisplayForConsole(client)} item action delay complete (State: ${getPlayerData(client).itemActionState})`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Item]: Player ${getPlayerDisplayForConsole(client)} item action delay complete (State: ${getPlayerData(client).itemActionState})`);
 	switch (getPlayerData(client).itemActionState) {
 		case V_ITEM_ACTION_USE:
 			playerUseItem(client, getPlayerData(client).itemActionItem);
@@ -2819,7 +3085,7 @@ function getItemValueDisplay(itemType, value) {
 	} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_BADGE) {
 		return `#${value}`;
 		//} else if (getItemTypeData(itemType).useType == V_ITEM_USE_TYPE_VEHCOLOUR) {
-		//	return `[${getGameConfig().vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
+		//	return `[${gameData.vehicleColourHex[value]}]SAMPLE[#FFFFFF]`;
 	} else {
 		return value;
 	}
@@ -2984,7 +3250,7 @@ function resyncWeaponItemAmmo(client) {
 	if (getPlayerData(client).currentHotBarItem != -1) {
 		if (getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem] != -1) {
 			if (getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem])) {
-				if (getGlobalConfig().weaponEquippableTypes.indexOf(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).itemTypeIndex).useType)) {
+				if (globalConfig.weaponEquippableTypes.indexOf(getItemTypeData(getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).itemTypeIndex).useType)) {
 					if (getPlayerWeaponAmmo(client) <= getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).value) {
 						getItemData(getPlayerData(client).hotBarItems[getPlayerData(client).currentHotBarItem]).value = getPlayerWeaponAmmo(client);
 					} else {
@@ -2999,7 +3265,7 @@ function resyncWeaponItemAmmo(client) {
 // ===========================================================================
 
 function getOrderPriceForItemType(itemType) {
-	return getItemTypeData(itemType).orderPrice * getServerConfig().inflationMultiplier * getItemTypeData(itemType).demandMultiplier * getItemTypeData(itemType).supplyMultiplier * getItemTypeData(itemType).riskMultiplier;
+	return getItemTypeData(itemType).orderPrice * serverConfig.inflationMultiplier * getItemTypeData(itemType).demandMultiplier * getItemTypeData(itemType).supplyMultiplier * getItemTypeData(itemType).riskMultiplier;
 }
 
 // ===========================================================================
@@ -3065,11 +3331,51 @@ function clearPlayerItemActionStateAfterDelay(client, delay) {
 
 // ===========================================================================
 
+function showVehicleTrunkInventoryToPlayer(client, vehicle) {
+	let itemDisplay = [];
+
+	for (let i in getVehicleData(vehicle).trunkItemCache) {
+		if (getVehicleData(vehicle).trunkItemCache[i] == -1) {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
+		} else {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getVehicleData(vehicle).trunkItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getVehicleData(vehicle).trunkItemCache[i])}`);
+		}
+	}
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleTrunkItemList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
+}
+
+// ===========================================================================
+
+function showVehicleDashInventoryToPlayer(client, vehicle) {
+	let itemDisplay = [];
+
+	for (let i in getVehicleData(vehicle).dashItemCache) {
+		if (getVehicleData(vehicle).dashItemCache[i] == -1) {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
+		} else {
+			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getVehicleData(vehicle).dashItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getVehicleData(vehicle).dashItemCache[i])}`);
+		}
+	}
+
+	messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderVehicleDashItemList")));
+	let chunkedList = splitArrayIntoChunks(itemDisplay, 5);
+	for (let i in chunkedList) {
+		messagePlayerNormal(client, chunkedList[i].join(`{MAINCOLOUR} • `), COLOUR_WHITE);
+	}
+}
+
+// ===========================================================================
+
 function showBusinessFloorInventoryToPlayer(client, businessId) {
 	let itemDisplay = [];
 
 	for (let i in getBusinessData(businessId).floorItemCache) {
-		if (getBusinessData(businessId).floorItemCache == -1) {
+		if (getBusinessData(businessId).floorItemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[i]).itemTypeIndex).name} - ${(getPlayerCurrentSubAccount(client).cash > getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice) ? "{softGreen}" : "{softRed}"}${getCurrencyString(getItemData(getBusinessData(businessId).floorItemCache[i]).buyPrice)}`);
@@ -3088,7 +3394,7 @@ function showBusinessFloorInventoryToPlayer(client, businessId) {
 function showBusinessStorageInventoryToPlayer(client, businessId) {
 	let itemDisplay = [];
 	for (let i in getBusinessData(businessId).storageItemCache) {
-		if (getBusinessData(businessId).storageItemCache == -1) {
+		if (getBusinessData(businessId).storageItemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).storageItemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getBusinessData(businessId).storageItemCache[i])}`);
@@ -3108,7 +3414,7 @@ function showBusinessStorageInventoryToPlayer(client, businessId) {
 function showItemInventoryToPlayer(client, itemId) {
 	let itemDisplay = [];
 	for (let i in getItemData(itemId).itemCache) {
-		if (getItemData(itemId).itemCache == -1) {
+		if (getItemData(itemId).itemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getItemData(itemId).itemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getItemData(itemId).itemCache[i])}`);
@@ -3162,7 +3468,7 @@ function showPlayerInventoryToPlayer(showToClient, targetClient) {
 function showHouseInventoryToPlayer(client, houseId) {
 	let itemDisplay = [];
 	for (let i in getHouseData(houseId).itemCache) {
-		if (getHouseData(houseId).itemCache == -1) {
+		if (getHouseData(houseId).itemCache[i] == -1) {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}{ALTCOLOUR}(Empty)`);
 		} else {
 			itemDisplay.push(`{chatBoxListIndex}${toInteger(i) + 1}: {ALTCOLOUR}${getItemTypeData(getItemData(getHouseData(houseId).itemCache[i]).itemTypeIndex).name} ${getItemValueDisplayForItem(getHouseData(houseId).itemCache[i])}`);
@@ -3185,7 +3491,7 @@ function switchPlayerActiveHotBarSlot(client, slotId) {
 	if (slotId != -1) {
 		showPlayerItemSwitchDelay(client, slotId);
 	}
-	//clearPlayerItemActionStateAfterDelay(client, getGlobalConfig().itemActionStateReset);
+	//clearPlayerItemActionStateAfterDelay(client, globalConfig.itemActionStateReset);
 }
 
 // ===========================================================================
@@ -3231,13 +3537,13 @@ function createGroundPlant(itemId) {
 
 function getItemTypeFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in getServerData().itemTypes) {
-			if (toLowerCase(getServerData().itemTypes[i].name).indexOf(toLowerCase(params)) != -1) {
+		for (let i in serverData.itemTypes) {
+			if (toLowerCase(serverData.itemTypes[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof getServerData().itemTypes[params] != "undefined") {
+		if (typeof serverData.itemTypes[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -3276,21 +3582,58 @@ function getItemPosition(itemId) {
 // ===========================================================================
 
 function cacheAllItemItems() {
-	let items = getServerData().items;
+	let items = serverData.items;
 	for (let i in items) {
-		cacheItemItems(i);
+		if (items[i] != null) {
+			cacheItemItems(i);
+		}
 	}
 }
 
 // ===========================================================================
 
-function cacheItemItems(itemId) {
-	let items = getServerData().items;
-	for (let i in items) {
-		if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
-			getItemData(itemId).itemCache.push(i);
+function cacheItemItems(itemIndex) {
+	serverData.items[itemIndex].itemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_ITEM && item.ownerId == serverData.items[itemIndex].databaseId).map(filteredItem => filteredItem.index);
+}
+
+// ===========================================================================
+
+function despawnAllGroundItemObjects() {
+	for (let i in serverData.groundItemCache) {
+		if (getItemData(serverData.groundItemCache[i]).object != null) {
+			deleteGameElement(getItemData(serverData.groundItemCache[i]).object);
+			getItemData(serverData.groundItemCache[i]).object = null;
 		}
 	}
+}
+
+// ===========================================================================
+
+function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector3(0.0, 0.0, 0.0)) {
+	//if (serverConfig.devServer) {
+	//	return false;
+	//}
+	//
+	//quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+}
+
+// ===========================================================================
+
+function cacheItemLists() {
+	let tempItemList = {};
+
+	for (let i in itemListCategories) {
+		tempItemList[i] = [];
+		for (let j in itemListCategories[i]) {
+			for (let k in serverData.itemTypes) {
+				if (j == serverData.itemTypes[k].useType) {
+					tempItemList[i].push(k);
+				}
+			}
+		}
+	}
+
+	return tempItemList;
 }
 
 // ===========================================================================

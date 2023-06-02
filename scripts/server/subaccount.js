@@ -23,11 +23,14 @@ class SubAccountData {
 		this.cash = 0;
 		this.spawnPosition = toVector3(0.0, 0.0, 0.0);
 		this.spawnHeading = 0.0;
+		this.spawnVehicle = -1;
+		this.spawnVehicleSeat = -1;
 		this.lastLogin = 0;
 		this.clan = 0;
 		this.clanFlags = 0;
 		this.clanRank = 0;
 		this.clanTitle = 0;
+		this.clanIndex = -1;
 		this.isWorking = false;
 		this.jobUniform = this.skin;
 		this.job = 0;
@@ -46,6 +49,10 @@ class SubAccountData {
 		this.inHouse = 0;
 		this.inBusiness = 0;
 		this.accent = "";
+		this.payDayAmount = 0;
+		this.scene = "";
+		this.bank = 0;
+		this.fineAmount = 0;
 
 		this.bodyParts = {
 			hair: [0, 0],
@@ -55,16 +62,16 @@ class SubAccountData {
 		};
 
 		this.bodyProps = {
-			hair: [0, 0],
-			eyes: [0, 0],
-			head: [0, 0],
-			leftHand: [0, 0],
-			rightHand: [0, 0],
-			leftWrist: [0, 0],
-			rightWrist: [0, 0],
-			hip: [0, 0],
-			leftFoot: [0, 0],
-			rightFoot: [0, 0],
+			hair: 0,
+			eyes: 0,
+			head: 0,
+			leftHand: 0,
+			rightHand: 0,
+			leftWrist: 0,
+			rightWrist: 0,
+			hip: 0,
+			leftFoot: 0,
+			rightFoot: 0,
 		};
 
 		if (dbAssoc) {
@@ -83,6 +90,7 @@ class SubAccountData {
 			this.clanFlags = toInteger(dbAssoc["sacct_svr_clan_flags"]);
 			this.clanRank = toInteger(dbAssoc["sacct_svr_clan_rank"]);
 			this.clanTitle = toInteger(dbAssoc["sacct_svr_clan_title"]);
+
 			this.job = toInteger(dbAssoc["sacct_svr_job"]);
 			this.jobRank = toInteger(dbAssoc["sacct_svr_job_rank"]);
 			this.interior = toInteger(dbAssoc["sacct_int"]);
@@ -95,6 +103,10 @@ class SubAccountData {
 			this.inHouse = toInteger(dbAssoc["sacct_inhouse"]);
 			this.inBusiness = toInteger(dbAssoc["sacct_inbusiness"]);
 			this.accent = toString(dbAssoc["sacct_accent"]);
+			this.payDayAmount = toInteger(dbAssoc["sacct_svr_payday"]);
+			this.scene = toString(dbAssoc["sacct_svr_scene"]);
+			this.bank = toInteger(dbAssoc["sacct_bank"]);
+			this.fineAmount = toInteger(dbAssoc["sacct_svr_fine"]);
 
 			this.bodyParts = {
 				hair: [toInteger(dbAssoc["sacct_svr_hd_part_hair_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_part_hair_texture"]) || 0],
@@ -104,17 +116,23 @@ class SubAccountData {
 			};
 
 			this.bodyProps = {
-				hair: [toInteger(dbAssoc["sacct_svr_hd_prop_hair_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_hair_texture"]) || 0],
-				eyes: [toInteger(dbAssoc["sacct_svr_hd_prop_eyes_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_eyes_texture"]) || 0],
-				head: [toInteger(dbAssoc["sacct_svr_hd_prop_head_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_head_texture"]) || 0],
-				leftHand: [toInteger(dbAssoc["sacct_svr_hd_prop_lefthand_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_lefthand_texture"]) || 0],
-				rightHand: [toInteger(dbAssoc["sacct_svr_hd_prop_righthand_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_righthand_texture"]) || 0],
-				leftWrist: [toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist_texture"]) || 0],
-				rightWrist: [toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist_texture"]) || 0],
-				hip: [toInteger(dbAssoc["sacct_svr_hd_prop_hip_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_hip_texture"]) || 0],
-				leftFoot: [toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot_texture"]) || 0],
-				rightFoot: [toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot_model"]) || 0, toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot_texture"]) || 0],
+				hair: toInteger(dbAssoc["sacct_svr_hd_prop_hair"]) || 0,
+				eyes: toInteger(dbAssoc["sacct_svr_hd_prop_eyes"]) || 0,
+				head: toInteger(dbAssoc["sacct_svr_hd_prop_head"]) || 0,
+				leftHand: toInteger(dbAssoc["sacct_svr_hd_prop_lefthand"]) || 0,
+				rightHand: toInteger(dbAssoc["sacct_svr_hd_prop_righthand"]) || 0,
+				leftWrist: toInteger(dbAssoc["sacct_svr_hd_prop_leftwrist"]) || 0,
+				rightWrist: toInteger(dbAssoc["sacct_svr_hd_prop_rightwrist"]) || 0,
+				hip: toInteger(dbAssoc["sacct_svr_hd_prop_hip"]) || 0,
+				leftFoot: toInteger(dbAssoc["sacct_svr_hd_prop_leftfoot"]) || 0,
+				rightFoot: toInteger(dbAssoc["sacct_svr_hd_prop_rightfoot"]) || 0,
 			};
+
+			this.clanIndex = getClanIndexFromDatabaseId(this.clan);
+			this.clanRankIndex = getClanRankIndexFromDatabaseId(this.clanIndex, this.clanRank);
+
+			this.jobIndex = getJobIndexFromDatabaseId(this.job);
+			this.jobRankIndex = getJobRankIndexFromDatabaseId(this.jobIndex, this.jobRank);
 		}
 	}
 };
@@ -166,9 +184,17 @@ function loadSubAccountFromId(subAccountId) {
 
 // ===========================================================================
 
+/**
+ * Loads sub accounts (characters) by account ID
+ *
+ * @param {Number} accountId - The database ID of the account
+ * @return {Array.<SubAccountData>} Array of subaccounts that belong to the account ID
+ *
+ */
 function loadSubAccountsFromAccount(accountId) {
 	let tempSubAccounts = [];
 	let dbAssoc = false;
+
 	if (accountId > 0) {
 		let dbConnection = connectToDatabase();
 		if (dbConnection) {
@@ -180,59 +206,83 @@ function loadSubAccountsFromAccount(accountId) {
 
 					// Make sure skin is valid
 					if (tempSubAccount.skin == -1) {
-						tempSubAccount.skin = getServerConfig().newCharacter.skin;
+						tempSubAccount.skin = serverConfig.newCharacter.skin;
 					}
 
 					// Check if clan and rank are still valid
-					if (tempSubAccount.clan != 0) {
-						let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
-						if (!getClanData(clanIndex)) {
-							tempSubAccount.clan = 0;
-							tempSubAccount.clanRank = 0;
-							tempSubAccount.clanIndex = -1;
-							tempSubAccount.clanRankIndex = -1;
-							tempSubAccount.clanTitle = "";
-							tempSubAccount.clanFlags = 0;
-						} else {
-							let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
-							if (!getClanRankData(clanIndex, clanRankIndex)) {
-								let newClanRankIndex = getLowestClanRank(clanIndex);
-								tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId
-								tempSubAccount.clanRankIndex = newClanRankIndex;
-							} else {
-								tempSubAccount.clanRankIndex = clanRankIndex;
-							}
-
-							tempSubAccount.clanIndex = clanIndex;
-						}
-					}
+					//if (tempSubAccount.clan != 0) {
+					//	let clanIndex = getClanIndexFromDatabaseId(tempSubAccount.clan);
+					//	if (getClanData(clanIndex) == null) {
+					//		tempSubAccount.clan = 0;
+					//		tempSubAccount.clanRank = 0;
+					//		tempSubAccount.clanIndex = -1;
+					//		tempSubAccount.clanRankIndex = -1;
+					//		tempSubAccount.clanTitle = "";
+					//		tempSubAccount.clanFlags = 0;
+					//	} else {
+					//		let clanRankIndex = getClanRankIndexFromDatabaseId(clanIndex, tempSubAccount.clanRank);
+					//		if (!getClanRankData(clanIndex, clanRankIndex)) {
+					//			let newClanRankIndex = getLowestClanRank(clanIndex);
+					//			if (getClanRankData(clanIndex, newClanRankIndex) != false) {
+					//				console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}! Using lowest rank ${newClanRankIndex} instead.`);
+					//				tempSubAccount.clanRank = getClanRankData(clanIndex, newClanRankIndex).databaseId;
+					//				tempSubAccount.clanRankIndex = newClanRankIndex;
+					//			} else {
+					//				// Somethings fucked. Clan rank invalid, and no other rank to use. Removing from clan.
+					//				logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Clan ${clanIndex} has no rank ${tempSubAccount.clanRank}, and no other rank to use. Removing from clan ...`);
+					//				tempSubAccount.clan = 0;
+					//				tempSubAccount.clanRank = 0;
+					//				tempSubAccount.clanIndex = -1;
+					//				tempSubAccount.clanRankIndex = -1;
+					//				tempSubAccount.clanTitle = "";
+					//				tempSubAccount.clanFlags = 0;
+					//			}
+					//		} else {
+					//			tempSubAccount.clanRankIndex = clanRankIndex;
+					//		}
+					//
+					//		tempSubAccount.clanIndex = clanIndex;
+					//	}
+					//}
 
 					// Check if job and rank are still valid
-					if (tempSubAccount.job != 0) {
-						let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
-						if (!getJobData(jobIndex)) {
-							tempSubAccount.job = 0;
-							tempSubAccount.jobRank = 0;
-							tempSubAccount.jobIndex = -1;
-							tempSubAccount.jobRankIndex = -1;
-						} else {
-							if (getJobData(jobIndex).ranks.length > 0) {
-								let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
-								if (!getJobRankData(jobIndex, jobRankIndex)) {
-									let newJobRankIndex = getLowestJobRank(jobIndex);
-									console.log(`[AGRP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
-									tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
-									tempSubAccount.jobRankIndex = newJobRankIndex;
-								} else {
-									tempSubAccount.jobRankIndex = jobRankIndex;
-								}
-							} else {
-								tempSubAccount.jobRankIndex = -1;
-							}
-
-							tempSubAccount.jobIndex = jobIndex;
-						}
-					}
+					//if (tempSubAccount.job != 0) {
+					//	let jobIndex = getJobIndexFromDatabaseId(tempSubAccount.job);
+					//	if (getJobData(jobIndex) == null) {
+					//		tempSubAccount.job = 0;
+					//		tempSubAccount.jobRank = 0;
+					//		tempSubAccount.jobIndex = -1;
+					//		tempSubAccount.jobRankIndex = -1;
+					//	} else {
+					//		if (getJobData(jobIndex).ranks.length > 0) {
+					//			let jobRankIndex = getJobRankIndexFromDatabaseId(jobIndex, tempSubAccount.jobRank);
+					//			if (!getJobRankData(jobIndex, jobRankIndex)) {
+					//				let newJobRankIndex = getLowestJobRank(jobIndex);
+					//				if (getJobRankData(jobIndex, newJobRankIndex) != false) {
+					//					console.log(LOG_DEBUG | LOG_WARN, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}! Using lowest rank ${newJobRankIndex} instead.`);
+					//					tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+					//					tempSubAccount.jobRankIndex = newJobRankIndex;
+					//				} else {
+					//					// Somethings fucked. Job rank invalid, and no other rank to use. Removing from Job.
+					//					logToConsole(LOG_DEBUG | LOG_ERROR, `[V.RP.SubAccount]: Job ${jobIndex} has no rank ${tempSubAccount.jobRank}, and no other rank to use. Removing from job ...`);
+					//					tempSubAccount.job = 0;
+					//					tempSubAccount.jobRank = 0;
+					//					tempSubAccount.jobIndex = -1;
+					//					tempSubAccount.jobRankIndex = -1;
+					//				}
+					//
+					//				tempSubAccount.jobRank = getJobRankData(jobIndex, newJobRankIndex).databaseId;
+					//				tempSubAccount.jobRankIndex = newJobRankIndex;
+					//			} else {
+					//				tempSubAccount.jobRankIndex = jobRankIndex;
+					//			}
+					//		} else {
+					//			tempSubAccount.jobRankIndex = -1;
+					//		}
+					//
+					//		tempSubAccount.jobIndex = jobIndex;
+					//	}
+					//}
 
 					tempSubAccounts.push(tempSubAccount);
 				}
@@ -246,6 +296,13 @@ function loadSubAccountsFromAccount(accountId) {
 
 // ===========================================================================
 
+/**
+ * Saves the subaccount data to the database (character)
+ *
+ * @param {SubAccountData} subAccountData - The data of the subaccount
+ * @return {void}
+ *
+ */
 function saveSubAccountToDatabase(subAccountData) {
 	let dbConnection = connectToDatabase();
 
@@ -263,6 +320,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_name_last", safeLastName],
 			["sacct_name_middle", safeMiddleName],
 			["sacct_cash", subAccountData.cash],
+			["sacct_bank", subAccountData.bank],
 			["sacct_when_lastlogin", subAccountData.lastLogin],
 			["sacct_pos_x", subAccountData.spawnPosition.x],
 			["sacct_pos_y", subAccountData.spawnPosition.y],
@@ -270,8 +328,8 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_rot_z", subAccountData.spawnHeading],
 			["sacct_int", subAccountData.interior],
 			["sacct_vw", subAccountData.dimension],
-			["sacct_health", subAccountData.health],
-			["sacct_armour", subAccountData.armour],
+			["sacct_health", (subAccountData.health != NaN) ? subAccountData.health : 100],
+			["sacct_armour", (subAccountData.armour != NaN) ? subAccountData.armour : 0],
 			["sacct_accent", subAccountData.accent],
 		];
 
@@ -284,7 +342,7 @@ function saveSubAccountToDatabase(subAccountData) {
 			//["sacct_svr_svr", getServerId()],
 			["sacct_svr_sacct", subAccountData.databaseId],
 			["sacct_svr_job", subAccountData.job],
-			//["sacct_svr_job_rank", getServerId()],
+			["sacct_svr_job_rank", subAccountData.jobRank],
 			["sacct_svr_clan", subAccountData.clan],
 			["sacct_svr_clan_rank", subAccountData.clanRank],
 			["sacct_svr_clan_tag", safeClanTag],
@@ -296,34 +354,38 @@ function saveSubAccountToDatabase(subAccountData) {
 			["sacct_svr_skin", subAccountData.skin],
 			["sacct_svr_fightstyle", subAccountData.fightStyle],
 			["sacct_svr_walkstyle", subAccountData.walkStyle],
-			["sacct_svr_hd_part_hair_model", subAccountData.bodyParts.hair[0]],
-			["sacct_svr_hd_part_hair_texture", subAccountData.bodyParts.hair[1]],
+			//["sacct_svr_hd_part_hair_model", subAccountData.bodyParts.hair[0]],
+			//["sacct_svr_hd_part_hair_texture", subAccountData.bodyParts.hair[1]],
 			["sacct_svr_hd_part_head_model", subAccountData.bodyParts.head[0]],
 			["sacct_svr_hd_part_head_texture", subAccountData.bodyParts.head[1]],
 			["sacct_svr_hd_part_upper_model", subAccountData.bodyParts.upper[0]],
 			["sacct_svr_hd_part_upper_texture", subAccountData.bodyParts.upper[1]],
 			["sacct_svr_hd_part_lower_model", subAccountData.bodyParts.lower[0]],
 			["sacct_svr_hd_part_lower_texture", subAccountData.bodyParts.lower[1]],
-			["sacct_svr_hd_prop_hair_model", subAccountData.bodyProps.hair[0]],
-			["sacct_svr_hd_prop_hair_texture", subAccountData.bodyProps.hair[1]],
-			["sacct_svr_hd_prop_eyes_model", subAccountData.bodyProps.eyes[0]],
-			["sacct_svr_hd_prop_eyes_texture", subAccountData.bodyProps.eyes[1]],
-			["sacct_svr_hd_prop_head_model", subAccountData.bodyProps.head[0]],
-			["sacct_svr_hd_prop_head_texture", subAccountData.bodyProps.head[1]],
-			["sacct_svr_hd_prop_lefthand_model", subAccountData.bodyProps.leftHand[0]],
-			["sacct_svr_hd_prop_lefthand_texture", subAccountData.bodyProps.leftHand[1]],
-			["sacct_svr_hd_prop_righthand_model", subAccountData.bodyProps.rightHand[0]],
-			["sacct_svr_hd_prop_righthand_texture", subAccountData.bodyProps.rightHand[1]],
-			["sacct_svr_hd_prop_leftwrist_model", subAccountData.bodyProps.leftWrist[0]],
-			["sacct_svr_hd_prop_leftwrist_texture", subAccountData.bodyProps.leftWrist[1]],
-			["sacct_svr_hd_prop_rightwrist_model", subAccountData.bodyProps.rightWrist[0]],
-			["sacct_svr_hd_prop_rightwrist_texture", subAccountData.bodyProps.rightWrist[1]],
-			["sacct_svr_hd_prop_hip_model", subAccountData.bodyProps.hip[0]],
-			["sacct_svr_hd_prop_hip_texture", subAccountData.bodyProps.hip[1]],
-			["sacct_svr_hd_prop_leftfoot_model", subAccountData.bodyProps.leftFoot[0]],
-			["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
-			["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
-			["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
+			["sacct_svr_hd_prop_head", subAccountData.bodyProps.head],
+			//["sacct_svr_hd_prop_hair_model", subAccountData.bodyProps.hair[0]],
+			//["sacct_svr_hd_prop_hair_texture", subAccountData.bodyProps.hair[1]],
+			//["sacct_svr_hd_prop_eyes_model", subAccountData.bodyProps.eyes[0]],
+			//["sacct_svr_hd_prop_eyes_texture", subAccountData.bodyProps.eyes[1]],
+			//["sacct_svr_hd_prop_head_model", subAccountData.bodyProps.head[0]],
+			//["sacct_svr_hd_prop_head_texture", subAccountData.bodyProps.head[1]],
+			//["sacct_svr_hd_prop_lefthand_model", subAccountData.bodyProps.leftHand[0]],
+			//["sacct_svr_hd_prop_lefthand_texture", subAccountData.bodyProps.leftHand[1]],
+			//["sacct_svr_hd_prop_righthand_model", subAccountData.bodyProps.rightHand[0]],
+			//["sacct_svr_hd_prop_righthand_texture", subAccountData.bodyProps.rightHand[1]],
+			//["sacct_svr_hd_prop_leftwrist_model", subAccountData.bodyProps.leftWrist[0]],
+			//["sacct_svr_hd_prop_leftwrist_texture", subAccountData.bodyProps.leftWrist[1]],
+			//["sacct_svr_hd_prop_rightwrist_model", subAccountData.bodyProps.rightWrist[0]],
+			//["sacct_svr_hd_prop_rightwrist_texture", subAccountData.bodyProps.rightWrist[1]],
+			//["sacct_svr_hd_prop_hip_model", subAccountData.bodyProps.hip[0]],
+			//["sacct_svr_hd_prop_hip_texture", subAccountData.bodyProps.hip[1]],
+			//["sacct_svr_hd_prop_leftfoot_model", subAccountData.bodyProps.leftFoot[0]],
+			//["sacct_svr_hd_prop_leftfoot_texture", subAccountData.bodyProps.leftFoot[1]],
+			//["sacct_svr_hd_prop_rightfoot_model", subAccountData.bodyProps.rightFoot[0]],
+			//["sacct_svr_hd_prop_rightfoot_texture", subAccountData.bodyProps.rightFoot[1]],
+			["sacct_svr_payday", subAccountData.payDayAmount],
+			["sacct_svr_fine", subAccountData.fineAmount],
+			["sacct_svr_scene", subAccountData.scene],
 		];
 
 		dbQuery = null;
@@ -338,8 +400,15 @@ function saveSubAccountToDatabase(subAccountData) {
 
 // ===========================================================================
 
+/**
+ * Creates a new subaccount (character)
+ *
+ * @param {SubAccountData} subAccountData - The data of the subaccount
+ * @return {SubAccountData} The new sub account data
+ *
+ */
 function createSubAccount(accountId, firstName, lastName) {
-	logToConsole(LOG_DEBUG, `[AGRP.Account] Attempting to create subaccount ${firstName} ${lastName} in database`);
+	logToConsole(LOG_DEBUG, `[V.RP.Account] Attempting to create subaccount ${firstName} ${lastName} in database`);
 
 	let dbConnection = connectToDatabase();
 	let dbQuery = false;
@@ -350,7 +419,7 @@ function createSubAccount(accountId, firstName, lastName) {
 		let safeFirstName = escapeDatabaseString(dbConnection, firstName);
 		let safeLastName = escapeDatabaseString(dbConnection, lastName);
 
-		dbQuery = queryDatabase(dbConnection, `INSERT INTO sacct_main (sacct_acct, sacct_name_first, sacct_name_last, sacct_pos_x, sacct_pos_y, sacct_pos_z, sacct_rot_z, sacct_cash, sacct_server, sacct_health, sacct_when_made, sacct_when_lastlogin) VALUES (${accountId}, '${safeFirstName}', '${safeLastName}', ${getServerConfig().newCharacter.spawnPosition.x}, ${getServerConfig().newCharacter.spawnPosition.y}, ${getServerConfig().newCharacter.spawnPosition.z}, ${getServerConfig().newCharacter.spawnHeading}, ${getServerConfig().newCharacter.money}, ${getServerId()}, 100, CURRENT_TIMESTAMP(), 0)`);
+		dbQuery = queryDatabase(dbConnection, `INSERT INTO sacct_main (sacct_acct, sacct_name_first, sacct_name_last, sacct_pos_x, sacct_pos_y, sacct_pos_z, sacct_rot_z, sacct_cash, sacct_server, sacct_health, sacct_when_made, sacct_when_lastlogin) VALUES (${accountId}, '${safeFirstName}', '${safeLastName}', ${serverConfig.newCharacter.spawnPosition.x}, ${serverConfig.newCharacter.spawnPosition.y}, ${serverConfig.newCharacter.spawnPosition.z}, ${serverConfig.newCharacter.spawnHeading}, ${serverConfig.newCharacter.money}, ${getServerId()}, 100, CURRENT_TIMESTAMP(), 0)`);
 		//if(dbQuery) {
 		if (getDatabaseInsertId(dbConnection) > 0) {
 			let dbInsertId = getDatabaseInsertId(dbConnection);
@@ -373,7 +442,7 @@ function showCharacterSelectToClient(client) {
 
 	if (doesPlayerHaveAutoSelectLastCharacterEnabled(client)) {
 		if (getPlayerData(client).subAccounts.length > 0) {
-			logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being auto-spawned as character ID ${getPlayerLastUsedSubAccount(client)}`);
+			logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being auto-spawned as character ID ${getPlayerLastUsedSubAccount(client)}`);
 			selectCharacter(client, getPlayerLastUsedSubAccount(client));
 			return true;
 		}
@@ -381,26 +450,26 @@ function showCharacterSelectToClient(client) {
 
 	if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
 		getPlayerData(client).currentSubAccount = 0;
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 		let tempSubAccount = getPlayerData(client).subAccounts[0];
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
-		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
+		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, gameData.skins[getGame()][tempSubAccount.skin][0]);
 
-		//spawnPlayer(client, getServerConfig().characterSelectPedPosition, getServerConfig().characterSelectPedHeading, getPlayerCurrentSubAccount(client).skin, getServerConfig().characterSelectInterior, getServerConfig().characterSelectDimension);
+		//spawnPlayer(client, serverConfig.characterSelectPedPosition, serverConfig.characterSelectPedHeading, getPlayerCurrentSubAccount(client).skin, serverConfig.characterSelectInterior, serverConfig.characterSelectDimension);
 		//setTimeout(function() {
 		//	showCharacterSelectCameraToPlayer(client);
 		//}, 500);
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select GUI`);
 	} else {
-		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{teal}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
+		let charactersList = getPlayerData(client).subAccounts.map((sacct, index) => `{chatBoxListIndex}${index + 1}: {ALTCOLOUR}${sacct.firstName} ${sacct.lastName}`);
 		let chunkedList = splitArrayIntoChunks(charactersList, 5);
 		messagePlayerNormal(client, makeChatBoxSectionHeader(getLocaleString(client, "HeaderCharactersListSelf")));
 		for (let i in chunkedList) {
 			messagePlayerNormal(client, chunkedList[i].join("{MAINCOLOUR} • "));
 		}
 		messagePlayerInfo(client, getLocaleString(client, "CharacterSelectHelpText", `{ALTCOLOUR}/usechar{MAINCOLOUR}`, `{ALTCOLOUR}/newchar{MAINCOLOUR}`));
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is being shown the character select/list message (GUI disabled)`);
 	}
 }
 
@@ -420,16 +489,34 @@ function checkNewCharacter(client, firstName, lastName) {
 	lastName = lastName.trim();
 
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
-		logToConsole(LOG_INFO | LOG_WARN, `[AGRP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
+		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
 		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
 		return false;
 	}
 
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesSubAccountNameExist(firstName, lastName)) {
+		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (name already used)`);
+		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
+		return false;
+	}
+
+	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesPlayerHaveSimilarCharacterName(client, firstName, lastName)) {
+		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
+		return false;
+	}
+
 	if (getPlayerData(client).changingCharacterName) {
+		if (isNonRPName(firstName, lastName) || (fixCharacterName(firstName) == getPlayerCurrentSubAccount(client).firstName) && (fixCharacterName(lastName) == getPlayerCurrentSubAccount(client).lastName)) {
+			messageAdmins(`${getPlayerName(client)} tried to change their name to ${fixCharacterName(firstName)} ${fixCharacterName(lastName)} but failed because it's the same name.`);
+			showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "NonRPName"));
+			return false;
+		}
+
 		getPlayerCurrentSubAccount(client).firstName = fixCharacterName(firstName);
 		getPlayerCurrentSubAccount(client).lastName = fixCharacterName(lastName);
 		updateAllPlayerNameTags(client);
 		hideAllPlayerGUI(client);
+		messageAdmins(`${getPlayerName(client)} changed their name to ${getCharacterFullName(client)}`);
 		return true;
 	}
 
@@ -465,9 +552,9 @@ function checkPreviousCharacter(client) {
 
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
-		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
+		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, gameData.skins[getGame()][tempSubAccount.skin][0]);
 
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 	}
 }
 
@@ -486,18 +573,18 @@ function checkNextCharacter(client) {
 
 		let clanName = (tempSubAccount.clan != 0) ? getClanData(getClanIndexFromDatabaseId(tempSubAccount.clan)).name : "None";
 		let lastPlayedText = (tempSubAccount.lastLogin != 0) ? `${msToTime(getCurrentUnixTimestamp() - tempSubAccount.lastLogin)} ago` : "Never";
-		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, getGameConfig().skins[getGame()][tempSubAccount.skin][0]);
+		showPlayerCharacterSelectGUI(client, tempSubAccount.firstName, tempSubAccount.lastName, tempSubAccount.cash, clanName, lastPlayedText, gameData.skins[getGame()][tempSubAccount.skin][0]);
 
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Setting ${getPlayerDisplayForConsole(client)}'s character to ID ${getPlayerData(client).currentSubAccount}`);
 	}
 }
 
 // ===========================================================================
 
 function selectCharacter(client, characterId = -1) {
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} character select called (Character ID ${characterId})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} character select called (Character ID ${characterId})`);
 	if (characterId != -1) {
-		logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} provided character ID (${characterId}) to spawn with`);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} provided character ID (${characterId}) to spawn with`);
 		getPlayerData(client).currentSubAccount = characterId;
 	}
 
@@ -507,27 +594,33 @@ function selectCharacter(client, characterId = -1) {
 	let spawnHeading = getPlayerCurrentSubAccount(client).spawnHeading;
 	let spawnInterior = getPlayerCurrentSubAccount(client).interior;
 	let spawnDimension = getPlayerCurrentSubAccount(client).dimension;
+	let spawnScene = getPlayerCurrentSubAccount(client).scene;
 	let skin = getPlayerCurrentSubAccount(client).skin;
 
 	getPlayerData(client).switchingCharacter = false;
 
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 	//setPlayerCameraLookAt(client, getPosBehindPos(spawnPosition, spawnHeading, 5), spawnPosition);
 	getPlayerData(client).pedState = V_PEDSTATE_SPAWNING;
 
 	if (getGame() <= V_GAME_GTA_IV_EFLC) {
-		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0], spawnInterior, spawnDimension);
+		spawnPlayer(client, spawnPosition, spawnHeading, gameData.skins[getGame()][skin][0], spawnInterior, spawnDimension);
 		onPlayerSpawn(client);
 	} else if (getGame() == V_GAME_MAFIA_ONE) {
-		//spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		//logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${getGameConfig().skins[getGame()][skin][1]} (${getGameConfig().skins[getGame()][skin][0]})`);
-		spawnPlayer(client, spawnPosition, spawnHeading, getGameConfig().skins[getGame()][skin][0]);
-		onPlayerSpawn(client);
+		logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Checking saved scene for player ${getPlayerDisplayForConsole(client)} spawn (${spawnScene}, IsMainWorld: ${isMainWorldScene(spawnScene)})`);
+		if (!isMainWorldScene(spawnScene)) {
+			setPlayerScene(client, spawnScene);
+		} else {
+			//spawnPlayer(client, spawnPosition, spawnHeading, gameData.skins[getGame()][skin][0]);
+			//logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawning ${getPlayerDisplayForConsole(client)} as ${gameData.skins[getGame()][skin][1]} (${gameData.skins[getGame()][skin][0]})`);
+			spawnPlayer(client, spawnPosition, spawnHeading, gameData.skins[getGame()][skin][0]);
+			onPlayerSpawn(client);
+		}
 	}
 
 	//removePlayerKeyBind(client, getKeyIdFromParams("insert"));
 
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] Spawned ${getPlayerDisplayForConsole(client)} as character ID ${getPlayerData(client).currentSubAccount} with skin ${skin} (${spawnPosition.x}, ${spawnPosition.y}, ${spawnPosition.z})`);
 
 	getPlayerCurrentSubAccount(client).lastLogin = getCurrentUnixTimestamp();
 }
@@ -535,14 +628,14 @@ function selectCharacter(client, characterId = -1) {
 // ===========================================================================
 
 function switchCharacterCommand(command, params, client) {
-	logToConsole(LOG_DEBUG, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is requesting to switch characters (current character: ${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}])`);
+	logToConsole(LOG_DEBUG, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is requesting to switch characters (current character: ${getCharacterFullName(client)} [${getPlayerData(client).currentSubAccount}/${getPlayerCurrentSubAccount(client).databaseId}])`);
 	if (!isPlayerSpawned(client)) {
-		logToConsole(LOG_WARN, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (not spawned)`);
+		logToConsole(LOG_WARN, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (not spawned)`);
 		return false;
 	}
 
 	if (isPlayerSwitchingCharacter(client)) {
-		logToConsole(LOG_WARN, `[AGRP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
+		logToConsole(LOG_WARN, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
 		messagePlayerError(client, "You are already selecting/switching characters!");
 		return false;
 	}
@@ -627,7 +720,7 @@ function isPlayerCreatingCharacter(client) {
  *
  */
 function getPlayerCurrentSubAccount(client) {
-	if (!getPlayerData(client)) {
+	if (getPlayerData(client) == false) {
 		return false;
 	}
 
@@ -662,7 +755,7 @@ function setFightStyleCommand(command, params, client) {
 
 	if (!fightStyle) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
-		messagePlayerError(client, `Fight styles: ${getGameConfig().fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
+		messagePlayerError(client, `Fight styles: ${gameData.fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
 		return false;
 	}
 
@@ -674,7 +767,7 @@ function setFightStyleCommand(command, params, client) {
 	}
 
 	setPlayerFightStyle(client, fightStyleId);
-	messagePlayerSuccess(client, `Your fight style has been set to ${getGameConfig().fightStyles[getGame()][fightStyleId][0]}`)
+	messagePlayerSuccess(client, `Your fight style has been set to ${gameData.fightStyles[getGame()][fightStyleId][0]}`)
 
 	return true;
 }
@@ -704,7 +797,7 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 		getPlayerCurrentSubAccount(client).dimension = 0;
 	}
 
-	if (isGameFeatureSupported("interior")) {
+	if (isGameFeatureSupported("interiorId")) {
 		getPlayerCurrentSubAccount(client).interior = getPlayerInterior(client);
 	} else {
 		getPlayerCurrentSubAccount(client).interior = 0;
@@ -725,9 +818,45 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 
 	getPlayerData(client).switchingCharacter = true;
 
+	setPlayerControlState(client, false);
+
+	//despawnPlayer(client);
+
 	showConnectCameraToPlayer(client);
 
 	showCharacterSelectToClient(client);
+}
+
+// ===========================================================================
+
+function doesSubAccountNameExist(firstName, lastName) {
+	let dbConnection = connectToDatabase();
+	let dbQueryResult = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`);
+	return dbQueryResult.length > 0;
+}
+
+// ===========================================================================
+
+function doesPlayerHaveSimilarCharacterName(client, firstName, lastName) {
+	let tempPlayerData = getPlayerData(client);
+	for (let i in tempPlayerData.subAccounts) {
+		let subAccount = tempPlayerData.subAccounts[i];
+		if (toLowerCase(subAccount.firstName).indexOf(toLowerCase(firstName)) != -1 && toLowerCase(subAccount.lastName).indexOf(toLowerCase(lastName)) != -1) {
+			return true;
+		}
+
+		if (toLowerCase(firstName).indexOf(toLowerCase(subAccount.firstName)) != -1 && toLowerCase(lastName).indexOf(toLowerCase(subAccount.lastName)) != -1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ===========================================================================
+
+function isSubAccountOnline(subAccountId) {
+	return (serverData.clients.filter(c => c.loggedIn && c.subAccounts[c.currentSubAccount].databaseId == subAccountId).length > 0);
 }
 
 // ===========================================================================

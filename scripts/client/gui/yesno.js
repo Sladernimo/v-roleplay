@@ -18,7 +18,7 @@ let yesNoDialog = {
 // ===========================================================================
 
 function initYesNoDialogGUI() {
-    logToConsole(LOG_DEBUG, `[AGRP.GUI] Created prompt GUI ...`);
+    logToConsole(LOG_DEBUG, `[V.RP.GUI] Created prompt GUI ...`);
     yesNoDialog.window = mexui.window(game.width / 2 - 200, game.height / 2 - 70, 400, 140, 'Question', {
         main: {
             backgroundColour: toColour(secondaryColour[0], secondaryColour[1], secondaryColour[2], windowAlpha),
@@ -73,14 +73,14 @@ function initYesNoDialogGUI() {
             borderColour: toColour(primaryColour[0], primaryColour[1], primaryColour[2], 255),
         },
     }, yesNoDialogAnswerNo);
-    logToConsole(LOG_DEBUG, `[AGRP.GUI] Created prompt GUI`);
+    logToConsole(LOG_DEBUG, `[V.RP.GUI] Created prompt GUI`);
 }
 
 // ===========================================================================
 
 function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonText) {
     closeAllWindows();
-    logToConsole(LOG_DEBUG, `[AGRP.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
+    logToConsole(LOG_DEBUG, `[V.RP.GUI] Showing prompt window. Prompt: ${promptTitle} - ${promptMessage}`);
     mexui.setInput(true);
 
     yesNoDialog.messageLabel.text = "";
@@ -88,10 +88,10 @@ function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonT
     yesNoDialog.noButton.text = "";
     yesNoDialog.window.title = "";
 
-    yesNoDialog.messageLabel.text = promptMessage;
-    yesNoDialog.yesButton.text = yesButtonText;
-    yesNoDialog.noButton.text = noButtonText;
-    yesNoDialog.window.title = promptTitle;
+    yesNoDialog.messageLabel.text = removeColoursInMessage(promptMessage);
+    yesNoDialog.yesButton.text = removeColoursInMessage(yesButtonText);
+    yesNoDialog.noButton.text = removeColoursInMessage(noButtonText);
+    yesNoDialog.window.title = removeColoursInMessage(promptTitle);
 
     yesNoDialog.window.shown = true;
 }
@@ -99,7 +99,7 @@ function showYesNoPromptGUI(promptMessage, promptTitle, yesButtonText, noButtonT
 // ===========================================================================
 
 function yesNoDialogAnswerNo() {
-    logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer NO to server prompt`);
+    logToConsole(LOG_DEBUG, `[V.RP.GUI] Responding with answer NO to server prompt`);
     sendNetworkEventToServer("v.rp.promptAnswerNo");
     closeAllWindows();
 }
@@ -107,7 +107,7 @@ function yesNoDialogAnswerNo() {
 // ===========================================================================
 
 function yesNoDialogAnswerYes() {
-    logToConsole(LOG_DEBUG, `[AGRP.GUI] Responding with answer YES to server prompt`);
+    logToConsole(LOG_DEBUG, `[V.RP.GUI] Responding with answer YES to server prompt`);
     sendNetworkEventToServer("v.rp.promptAnswerYes");
     closeAllWindows();
 }

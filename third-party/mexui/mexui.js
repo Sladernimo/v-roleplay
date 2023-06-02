@@ -248,10 +248,19 @@ mexui.isAnyWindowShown = function () {
 mexui.setInput = function (showInput) {
 	gui.showCursor(showInput, !showInput);
 
-	if (localClient.player && game.game >= GAME_GTA_IV) {
-		if (showInput)
-			game.setCameraLookAtEntity(new Vec3(game.cameraMatrix.m41, game.cameraMatrix.m42, game.cameraMatrix.m43), localPlayer, false);
-		else
-			game.restoreCamera(false);
+	//if (localClient.player && game.game <= GAME_GTA_IV) {
+	//	if (showInput)
+	//		game.setCameraLookAtEntity(new Vec3(game.cameraMatrix.m41, game.cameraMatrix.m42, game.cameraMatrix.m43), localPlayer, false);
+	//	else
+	//		game.restoreCamera(false);
+	//}
+};
+
+mexui.removeWindow = function (window) {
+	for (let i in mexui.windows) {
+		if (window == mexui.windows[i]) {
+			mexui.windows.splice(i, 1);
+			break;
+		}
 	}
 };

@@ -38,11 +38,15 @@ function getLocaleString(client, stringName, ...args) {
 		return "";
 	}
 
+	if (getPlayerData(client) == null) {
+		return "";
+	}
+
 	let tempString = getRawLocaleString(getPlayerData(client).locale, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(getPlayerData(client).locale).englishName}`);
 		submitBugReport(client, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getPlayerLocaleName(client)}"`);
-		return "";
+		return `${getLocaleData(getPlayerData(client).locale).englishName} locale message missing for "${stringName}" (reported to developer)`;
 	}
 
 	for (let i = 1; i <= args.length; i++) {
@@ -57,9 +61,9 @@ function getLocaleString(client, stringName, ...args) {
 function getLanguageLocaleString(localeId, stringName, ...args) {
 	let tempString = getRawLocaleString(localeId, stringName);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${stringName} on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
-		return "";
+		return `${getLocaleData(localeId).englishName} locale message missing for "${stringName}" (reported to developer)`;
 	}
 
 	for (let i = 1; i <= args.length; i++) {
@@ -74,9 +78,9 @@ function getLanguageLocaleString(localeId, stringName, ...args) {
 function getLanguageGroupedLocaleString(localeId, stringName, index, ...args) {
 	let tempString = getRawGroupedLocaleString(localeId, stringName, index);
 	if (tempString == "" || tempString == null || typeof tempString == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for index ${index} of "${stringName}" on language ${getLocaleData(localeId).englishName}`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string index ${index} of "${stringName}" is missing for "${getLocaleData(localeId).englishName}"`);
-		return "";
+		return `${getLocaleData(localeId).englishName} locale message missing for index "${index}" of "${stringName}" (reported to developer)`;
 	}
 
 	for (let i = 1; i <= args.length; i++) {
@@ -106,42 +110,24 @@ function getGroupedLocaleString(client, stringName, index, ...args) {
 
 function getRawLocaleString(localeId, stringName) {
 	if (typeof getLocaleStrings()[localeId][stringName] == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Locale string missing for ${getLocaleStrings()[localeId][stringName]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Locale string is missing for "${getLocaleStrings()[localeId][stringName]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		return "";
+		return `${getLocaleData(localeId).englishName} locale message missing for "${stringName}" (reported to developer)`;
 	}
 
 	return getLocaleStrings()[localeId][stringName];
-
-	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
-	//	return "";
-	//}
-
-	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
-	//if(tempString == "" || tempString == null || tempString == undefined) {
-	//	return "";
-	//}
 }
 
 // ===========================================================================
 
 function getRawGroupedLocaleString(localeId, stringName, index) {
 	if (typeof getLocaleStrings()[localeId][stringName][index] == "undefined") {
-		logToConsole(LOG_WARN, `[AGRP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
+		logToConsole(LOG_WARN, `[V.RP.Locale] Grouped locale string missing for index ${index} of string ${getLocaleStrings()[localeId][stringName][index]} on language ${getLocaleData(localeId).englishName}[${localeId}]`);
 		submitBugReport(null, `(AUTOMATED REPORT) Grouped locale string is missing for index ${index} of string "${getLocaleStrings()[localeId][stringName][index]}" on language ${getLocaleData(localeId).englishName}[${localeId}]`);
-		return "";
+		return `${getLocaleData(localeId).englishName} locale message missing for "${stringName}" (reported to developer)`;
 	}
 
 	return getLocaleStrings()[localeId][stringName][index];
-
-	//if(findResourceByName("agrp_locale").exports.doesLocaleStringExist(localeId, stringName) == false) {
-	//	return "";
-	//}
-
-	//let tempString = findResourceByName("agrp_locale").exports.getRawLocaleString(localeId, stringName);
-	//if(tempString == "" || tempString == null || tempString == undefined) {
-	//	return "";
-	//}
 }
 
 // ===========================================================================
@@ -160,7 +146,7 @@ function getPlayerLocaleName(client) {
 function loadAllLocaleStrings() {
 	let tempLocaleStrings = {};
 
-	let locales = getGlobalConfig().locale.locales;
+	let locales = globalConfig.locale.locales;
 	for (let i in locales) {
 		let localeData = locales[i];
 		let localeFile = JSON.parse(loadTextFile(`locale/${localeData.stringsFile}`));
@@ -173,7 +159,7 @@ function loadAllLocaleStrings() {
 // ===========================================================================
 
 function getLocaleStrings() {
-	return getServerData().localeStrings;
+	return serverData.localeStrings;
 }
 
 // ===========================================================================
@@ -198,7 +184,7 @@ function getLocaleFromParams(params) {
 // ===========================================================================
 
 function getLocales() {
-	return getGlobalConfig().locale.locales;
+	return globalConfig.locale.locales;
 }
 
 // ===========================================================================
@@ -248,50 +234,50 @@ function getLocaleData(localeId) {
 // ===========================================================================
 
 function reloadLocaleConfigurationCommand(command, params, client) {
-	getGlobalConfig().locale = loadLocaleConfig();
-	getServerData().localeStrings = loadAllLocaleStrings();
+	globalConfig.locale = loadLocaleConfig();
+	serverData.localeStrings = loadAllLocaleStrings();
 
 	// Translation Cache
-	getServerData().cachedTranslations = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom = new Array(getGlobalConfig().locale.locales.length);
-	getServerData().cachedTranslationFrom.fill([]);
-	getServerData().cachedTranslations.fill(getServerData().cachedTranslationFrom);
+	serverData.cachedTranslations = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom = new Array(globalConfig.locale.locales.length);
+	serverData.cachedTranslationFrom.fill([]);
+	serverData.cachedTranslations.fill(serverData.cachedTranslationFrom);
 
-	getGlobalConfig().locale.defaultLanguageId = getLocaleFromParams(getGlobalConfig().locale.defaultLanguage);
+	globalConfig.locale.defaultLanguageId = getLocaleFromParams(globalConfig.locale.defaultLanguage);
 
 	messageAdmins(`${getPlayerName(client)}{MAINCOLOUR} has reloaded the locale settings and texts`);
 }
 
 // ===========================================================================
 
-async function translateMessage(messageText, translateFrom = getGlobalConfig().locale.defaultLanguageId, translateTo = getGlobalConfig().locale.defaultLanguageId) {
-	return new Promise(resolve => {
-		if (translateFrom == translateTo) {
-			resolve(messageText);
-		}
+function translateMessage(messageText, translateFrom = globalConfig.locale.defaultLanguageId, translateTo = globalConfig.locale.defaultLanguageId) {
+	//return new Promise(resolve => {
+	if (translateFrom == translateTo) {
+		resolve(messageText);
+	}
 
-		for (let i in cachedTranslations[translateFrom][translateTo]) {
-			if (cachedTranslations[translateFrom][translateTo][i][0] == messageText) {
-				logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${getGlobalConfig().locale.locales[translateFrom].englishName} to ${getGlobalConfig().locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
-				resolve(cachedTranslations[translateFrom][translateTo][i][1]);
-				return true;
-			}
+	for (let i in cachedTranslations[translateFrom][translateTo]) {
+		if (cachedTranslations[translateFrom][translateTo][i][0] == messageText) {
+			logToConsole(LOG_DEBUG, `[Translate]: Using existing translation for ${globalConfig.locale.locales[translateFrom].englishName} to ${globalConfig.locale.locales[translateTo].englishName} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][i][1]})`);
+			resolve(cachedTranslations[translateFrom][translateTo][i][1]);
+			return true;
 		}
+	}
 
-		let thisTranslationURL = getGlobalConfig().locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(getGlobalConfig().locale.locales[translateFrom].isoCode), toUpperCase(getGlobalConfig().locale.locales[translateTo].isoCode), getGlobalConfig().locale.apiEmail);
-		httpGet(
-			thisTranslationURL,
-			"",
-			function (data) {
-				data = ArrayBufferToString(data);
-				let translationData = JSON.parse(data);
-				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
-				resolve(translationData.responseData.translatedText);
-			},
-			function (data) {
-			}
-		);
-	});
+	let thisTranslationURL = globalConfig.locale.translateURL.format(encodeURIComponent(messageText), toUpperCase(globalConfig.locale.locales[translateFrom].isoCode), toUpperCase(globalConfig.locale.locales[translateTo].isoCode), globalConfig.locale.apiEmail);
+	httpGet(
+		thisTranslationURL,
+		"",
+		function (data) {
+			data = ArrayBufferToString(data);
+			let translationData = JSON.parse(data);
+			cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
+			resolve(translationData.responseData.translatedText);
+		},
+		function (data) {
+		}
+	);
+	//});
 }
 
 // ===========================================================================
@@ -301,6 +287,23 @@ function getLocaleFromCountryISO(isoCode = "US") {
 		for (let j in getLocales()[i].countries) {
 			if (toLowerCase(getLocales()[i].countries[j]) == toLowerCase(isoCode)) {
 				return getLocales()[i].id;
+			}
+		}
+	}
+}
+
+// ===========================================================================
+
+function showPlayerRegionalLanguageOffer(client) {
+	if (doesPlayerHaveGUIEnabled(client) && serverConfig.useGUI == true) {
+		if (checkForGeoIPModule()) {
+			let iso = getPlayerCountryISOCode(client);
+			let localeId = getLocaleFromCountryISO(iso);
+
+			if (localeId != 0) {
+				if (getLocaleData(localeId).enabled) {
+					messagePlayerTip(client, getLanguageLocaleString(localeId, "LocaleOffer", `/lang ${getLocaleData(localeId).isoCode}`), getColourByName("white"), 10000, "Roboto");
+				}
 			}
 		}
 	}

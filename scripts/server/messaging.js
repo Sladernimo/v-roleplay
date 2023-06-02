@@ -1,7 +1,6 @@
 // ===========================================================================
-// Asshat Gaming Roleplay
-// https://github.com/VortrexFTW/agrp_main
-// (c) 2022 Asshat Gaming
+// Vortrex's Roleplay Script
+// https://github.com/VortrexFTW/v-roleplay
 // ===========================================================================
 // FILE: messaging.js
 // DESC: Provides messaging functions and usage
@@ -62,6 +61,7 @@ function messageAdmins(messageText, announceToEventChannel = false) {
 
 	let plainMessage = removeColoursInMessage(messageText);
 	messageDiscordAdminChannel(plainMessage);
+	logToConsole(LOG_INFO, `🛡️ ${plainMessage}`);
 
 	if (announceToEventChannel == true) {
 		messageDiscordEventChannel(`🛡️ ${plainMessage}`);
@@ -136,6 +136,12 @@ function messagePlayerTalk(client, talkingClient, messageText) {
 
 // ===========================================================================
 
+function messagePlayerPhone(client, talkingClient, messageText) {
+	messagePlayerNormal(client, `🗣️ ${getPlayerAccentInlineOutput(talkingClient)}${getClientSubAccountName(talkingClient)} says (phone): ${messageText}`, getColourByType("talkMessage"));
+}
+
+// ===========================================================================
+
 function messagePlayerWhisper(client, whisperingClient, messageText) {
 	messagePlayerNormal(client, `🤫 ${getPlayerAccentInlineOutput(whisperingClient)}${getClientSubAccountName(whisperingClient)} whispers: ${messageText}`, getColourByType("whisperMessage"));
 }
@@ -169,7 +175,7 @@ function messagePlayerMeAction(client, doingActionClient, messageText) {
 // ===========================================================================
 
 function messagePlayerClanChat(client, clanChattingClient, messageText) {
-	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRank(client) != -1) ? getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).name : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
+	messagePlayerNormal(client, `👥 ${getInlineChatColourByName("clanOrange")}${(getPlayerClanRank(clanChattingClient) != -1) ? getClanRankData(getPlayerClan(clanChattingClient), getPlayerClanRank(clanChattingClient)).name : "No Rank"} ${getCharacterFullName(clanChattingClient)} {MAINCOLOUR}says (clan): {ALTCOLOUR}${messageText}`, getColourByType("clanChatMessage"));
 }
 
 // ===========================================================================
@@ -206,7 +212,7 @@ function messagePlayerTimedRandomTip(client, message) {
 
 function makeChatBoxSectionHeader(name) {
 	let resultString = `{clanOrange}== {jobYellow}${name} `;
-	let endFiller = fillStringWithCharacter("=", getGlobalConfig().chatSectionHeaderLength - resultString.length);
+	let endFiller = fillStringWithCharacter("=", globalConfig.chatSectionHeaderLength - resultString.length);
 	return `${resultString} {clanOrange}${endFiller}`;
 }
 
@@ -244,21 +250,79 @@ function messagePlayerPrivateMessage(toClient, fromClient, messageText) {
 
 // ===========================================================================
 
+function showPlayerInfo(client, infoMessage, infoTitle = "Info") {
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerErrorGUI(client, errorMessage, errorTitle, getLocaleString(client, "GUIOkButton"));
+	//} else {
+	messagePlayerInfo(client, infoMessage);
+	//}
+}
+
+// ===========================================================================
+
 function showPlayerError(client, errorMessage, errorTitle = "Error") {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerErrorGUI(client, errorMessage, errorTitle);
-	} else {
-		messagePlayerError(client, errorMessage);
-	}
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerErrorGUI(client, errorMessage, errorTitle, getLocaleString(client, "GUIOkButton"));
+	//} else {
+	messagePlayerError(client, errorMessage);
+	//}
 }
 
 // ===========================================================================
 
 function showPlayerAlert(client, alertMessage, alertTitle = "Alert") {
-	if (doesPlayerUseGUI(client)) {
-		showPlayerInfoGUI(client, alertMessage, alertTitle);
+	//if (doesPlayerUseGUI(client)) {
+	//	showPlayerInfoGUI(client, alertMessage, alertTitle);
+	//} else {
+	messagePlayerAlert(client, alertMessage);
+	//}
+}
+
+// ===========================================================================
+
+function messagePlayerPhoneCall(talkingPlayer, receivingPlayer, messageText) {
+	let clients = getClients();
+	for (let i in clients) {
+		if (isPlayerSpawned(clients[i])) {
+			if (hasBitFlag(getPlayerData(clients[i]).accountData.flags.moderation, getModerationFlagValue("CanHearEverything")) || (getDistance(getPlayerPosition(talkingPlayer), getPlayerPosition(clients[i])) <= globalConfig.talkDistance && getPlayerDimension(talkingPlayer) == getPlayerDimension(clients[i]))) {
+				messagePlayerPhone(clients[i], talkingPlayer, messageText);
+			}
+		}
+	}
+
+	messagePlayerNormal(receivingPlayer, `📞 {ALTCOLOUR}(On Phone): {MAINCOLOUR}${messageText}`);
+}
+
+// ===========================================================================
+
+function showServerInDevelopmentMessage(client) {
+	messagePlayerNormal(client, "This server is in early development and may restart at any time for updates.", getColourByName("orange"));
+	messagePlayerNormal(client, "Some jobs may not be available or have nothing to do. They will be ready soon.", getColourByName("orange"));
+	//messagePlayerNormal(client, "Player movement and weapons are NOT synced yet. Jack needs to add it to GTA Connected.", getColourByName("softRed"));
+	messagePlayerNormal(client, `Please report bugs and ideas on the Connected Roleplay discord: https://discord.gg/yJABnrHujG`, getColourByName("yellow"));
+}
+
+// ===========================================================================
+
+function showVehicleLockedMessageForPlayer(client, vehicle) {
+	if (doesPlayerHaveVehicleKeys(client, vehicle)) {
+		if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "lock")) {
+			messagePlayerTip(client, getLocaleString(client, "VehicleLockedKeyPressTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "lock").key))}{MAINCOLOUR}`));
+		} else {
+			messagePlayerTip(client, getLocaleString(client, "VehicleLockedCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/lock{MAINCOLOUR}`));
+		}
 	} else {
-		messagePlayerAlert(client, alertMessage);
+		messagePlayerNormal(client, messagePlayerTip(client, getLocaleString(client, "VehicleLockedCantUnlock", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`)));
+	}
+}
+
+// ===========================================================================
+
+function showVehicleEngineOffMessageForPlayer(client, vehicle) {
+	if (!doesPlayerHaveKeyBindsDisabled(client) && doesPlayerHaveKeyBindForCommand(client, "engine")) {
+		messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartKeyPressTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "engine").key))}{MAINCOLOUR}`));
+	} else {
+		messagePlayerAlert(client, getLocaleString(client, "VehicleEngineStartCommandTip", `{vehiclePurple}${getVehicleName(vehicle)}{MAINCOLOUR}`, `{ALTCOLOUR}/engine{MAINCOLOUR}`));
 	}
 }
 
