@@ -191,6 +191,8 @@ function setAllServerDataIndexes() {
 	cacheAllGroundItems();
 	cacheAllBusinessItems();
 	cacheAllItemItems();
+	cacheAllVehicleItems();
+	cacheAllHouseItems();
 	cacheAllCommandsAliases();
 	cacheAllPaintBallItemTypes();
 	cacheItemLists();
