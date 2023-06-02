@@ -2909,28 +2909,17 @@ function cacheAllBusinessItems() {
 // ===========================================================================
 
 // Caches all items for a business by businessId
-function cacheBusinessItems(businessId) {
-	let businessData = getBusinessData(businessId);
+function cacheBusinessItems(businessIndex) {
+	let businessData = getBusinessData(businessIndex);
 
 	businessData.floorItemCache = [];
 	businessData.storageItemCache = [];
 
-	logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${businessData.name}) ...`);
-	businessData.floorItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
-	businessData.storageItemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_BIZSTORAGE && item.ownerId == businessData.databaseId).map(i => i.index);
+	logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessIndex} (${businessData.name}) ...`);
+	businessData.floorItemCache = serverData.items.filter(item => item != null && item.ownerType == V_ITEM_OWNER_BIZFLOOR && item.ownerId == businessData.databaseId).map(i => i.index);
+	businessData.storageItemCache = serverData.items.filter(item2 => item2 != null && item2.ownerType == V_ITEM_OWNER_BIZSTORAGE && item2.ownerId == businessData.databaseId).map(i2 => i2.index);
 
-	//logToConsole(LOG_VERBOSE, `[V.RP.Business] Caching business items for business ${businessId} (${getBusinessData(businessId).name}) ...`);
-	//for (let i in serverData.items) {
-	//	if (getItemData(i) != false) {
-	//		if (getItemData(i).ownerType == V_ITEM_OWNER_BIZFLOOR && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-	//			getBusinessData(businessId).floorItemCache.push(i);
-	//		} else if (getItemData(i).ownerType == V_ITEM_OWNER_BIZSTORAGE && getItemData(i).ownerId == getBusinessData(businessId).databaseId) {
-	//			getBusinessData(businessId).storageItemCache.push(i);
-	//		}
-	//	}
-	//}
-
-	logToConsole(LOG_VERBOSE, `[V.RP.Business] Successfully cached ${getBusinessData(businessId).floorItemCache.length} floor items and ${getBusinessData(businessId).storageItemCache} storage items for business ${businessId} (${getBusinessData(businessId).name})!`);
+	logToConsole(LOG_VERBOSE, `[V.RP.Business] Successfully cached ${getBusinessData(businessIndex).floorItemCache.length} floor items and ${getBusinessData(businessIndex).storageItemCache} storage items for business ${businessIndex} (${getBusinessData(businessIndex).name})!`);
 }
 
 // ===========================================================================
@@ -3202,11 +3191,7 @@ function deleteBusinessPickups(business) {
 
 function getBusinessFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in serverData.businesses) {
-			if (toLowerCase(serverData.businesses[i].name).indexOf(toLowerCase(params)) != -1) {
-				return i;
-			}
-		}
+		return serverData.businesses.findIndex(business => business.name.toLowerCase().indexOf(params.toLowerCase()) != -1);
 	} else {
 		if (typeof serverData.businesses[params] != "undefined") {
 			return toInteger(params);
@@ -3234,58 +3219,25 @@ function deleteAllBusinessPickups() {
 // ===========================================================================
 
 function getBusinessFromInteriorAndDimension(dimension, interior) {
-	let businesses = serverData.businesses;
-	for (let i in businesses) {
-		if (businesses[i].exitInterior == interior && businesses[i].exitDimension == dimension) {
-			return i;
-		}
-	}
-
-	return -1;
+	return serverData.businesses.findIndex(business => business.exitInterior == interior && business.exitDimension == dimension);
 }
 
 // ===========================================================================
 
 function getClosestBusinessWithBuyableItemOfUseType(position, useType) {
-	let availableBusinesses = getBusinessesWithBuyableItemOfUseType(useType);
-
-	let closestBusiness = 0;
-	for (let i in availableBusinesses) {
-		if (getDistance(position, getBusinessData(availableBusinesses[i]).entrancePosition) < getDistance(position, getBusinessData(availableBusinesses[closestBusiness]).entrancePosition)) {
-			closestBusiness = i;
-		}
-	}
-	return availableBusinesses[closestBusiness];
+	return getBusinessesWithBuyableItemOfUseType(useType).reduce((i, j) => (getDistance(position, i.entrancePosition) <= getDistance(position, j.entrancePosition)) ? i : j);
 }
 
 // ===========================================================================
 
 function getBusinessesWithBuyableItemOfUseType(useType) {
-	let businesses = serverData.businesses;
-	let availableBusinesses = [];
-	for (let i in businesses) {
-		if (doesBusinessHaveBuyableItemOfUseType(i, useType)) {
-			availableBusinesses.push(i);
-		}
-	}
-
-	return availableBusinesses;
+	return serverData.businesses.filter(business => doesBusinessHaveBuyableItemOfUseType(business.index, useType));
 }
 
 // ===========================================================================
 
 function doesBusinessHaveBuyableItemOfUseType(businessId, useType) {
-	let floorItems = getBusinessData(businessId).floorItemCache;
-	for (let i in floorItems) {
-		if (floorItems[i] != -1) {
-			if (getItemData(floorItems[i]) != false) {
-				if (getItemTypeData(getItemData(floorItems[i])).useType == useType) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
+	return (getBusinessData(businessId).floorItemCache.filter(item => getItemData(item) != null && getItemTypeData(getItemData(item)).useType == useType).length > 0);
 }
 
 // ===========================================================================

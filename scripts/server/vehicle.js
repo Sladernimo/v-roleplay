@@ -2085,18 +2085,15 @@ function processVehicleBurning() {
 
 function cacheAllVehicleItems() {
 	for (let i in serverData.vehicles) {
-		serverData.vehicles[i].trunkItemCache = [];
-		serverData.vehicles[i].dashItemCache = [];
-		for (let j in serverData.items) {
-			if (serverData.items[j] != null) {
-				if (getItemData(j).ownerType == V_ITEM_OWNER_VEHTRUNK && getItemData(j).ownerId == serverData.vehicles[i].databaseId) {
-					serverData.vehicles[i].trunkItemCache.push(j);
-				} else if (getItemData(j).ownerType == V_ITEM_OWNER_VEHDASH && getItemData(j).ownerId == serverData.vehicles[i].databaseId) {
-					serverData.vehicles[i].dashItemCache.push(j);
-				}
-			}
-		}
+		cacheVehicleItems(i);
 	}
+}
+
+// ===========================================================================
+
+function cacheVehicleItems(vehicleIndex) {
+	serverData.vehicles[vehicleIndex].trunkItemCache = serverData.items.filter(i => i.ownerType == V_ITEM_OWNER_VEHTRUNK && i.ownerId == serverData.vehicles[vehicleIndex].databaseId).map(filteredItem => filteredItem.index);
+	serverData.vehicles[vehicleIndex].dashItemCache = serverData.items.filter(i => i.ownerType == V_ITEM_OWNER_VEHDASH && i.ownerId == serverData.vehicles[vehicleIndex].databaseId).map(filteredItem => filteredItem.index);
 }
 
 // ===========================================================================

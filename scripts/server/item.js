@@ -1971,32 +1971,32 @@ function playerTakeItem(client, itemId) {
 	switch (ownerType) {
 		case V_ITEM_OWNER_HOUSE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromHouse", getItemName(itemId)));
-			cacheAllHouseItems();
+			cacheHouseItems(getHouseIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_BIZFLOOR:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusiness", getItemName(itemId)));
-			cacheAllBusinessItems();
+			cacheBusinessItems(getBusinessIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_BIZSTORAGE:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromBusinessStorage", getItemName(itemId)));
-			cacheAllBusinessItems();
+			cacheBusinessItems(getBusinessIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_VEHTRUNK:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleTrunk", getItemName(itemId)));
-			cacheAllVehicleItems();
+			cacheVehicleItems(getVehicleIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_VEHDASH:
 			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromVehicleDash", getItemName(itemId)));
-			cacheAllVehicleItems();
+			cacheVehicleItems(getVehicleIndexFromDatabaseId(ownerId));
 			break;
 
 		case V_ITEM_OWNER_ITEM:
-			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(getItemIdFromDatabaseId(ownerId)));
-			cacheAllItemItems();
+			meActionToNearbyPlayers(client, getLocaleString(client, "TakeItemFromItem", getItemName(itemId)), getItemName(getItemIndexFromDatabaseId(ownerId)));
+			cacheItemItems(getItemIndexFromDatabaseId(ownerId));
 			break;
 	}
 }
@@ -2630,7 +2630,7 @@ function listVehicleTrunkInventoryCommand(command, params, client) {
  *
  */
 function listVehicleDashInventoryCommand(command, params, client) {
-	if (getPlayerVehicle(client) != null) {
+	if (getPlayerVehicle(client) == null) {
 		messagePlayerError(client, getLocaleString(client, "MustBeInAVehicle"));
 		return false;
 	}
@@ -3007,26 +3007,13 @@ function restorePlayerTempLockerItems(client) {
 // ===========================================================================
 
 function getItemIndexFromDatabaseId(databaseId) {
-	for (let i in serverData.items) {
-		if (serverData.items[i] != null) {
-			if (serverData.items[i].databaseId == databaseId) {
-				return i;
-			}
-		}
-
-	}
-	return false;
+	return serverData.items.findIndex(i => i.databaseId == databaseId);
 }
 
 // ===========================================================================
 
 function getItemTypeIndexFromDatabaseId(databaseId) {
-	for (let i in serverData.itemTypes) {
-		if (serverData.itemTypes[i].databaseId == databaseId) {
-			return i;
-		}
-	}
-	return false;
+	return serverData.itemTypes.findIndex(i => i.databaseId == databaseId);
 }
 
 // ===========================================================================
@@ -3605,17 +3592,8 @@ function cacheAllItemItems() {
 
 // ===========================================================================
 
-function cacheItemItems(itemId) {
-	getItemData(itemId).itemCache = [];
-
-	let items = serverData.items;
-	for (let i in items) {
-		if (items[i] != null) {
-			if (items[i].ownerType == V_ITEM_OWNER_ITEM && items[i].ownerId == getItemData(itemId).databaseId) {
-				getItemData(itemId).itemCache.push(i);
-			}
-		}
-	}
+function cacheItemItems(itemIndex) {
+	serverData.items[itemIndex].itemCache = serverData.items.filter(item => item.ownerType == V_ITEM_OWNER_ITEM && item.ownerId == serverData.items[itemIndex].databaseId).map(filteredItem => filteredItem.index);
 }
 
 // ===========================================================================

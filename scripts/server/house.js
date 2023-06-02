@@ -1652,16 +1652,8 @@ function cacheAllHouseItems() {
 
 // ===========================================================================
 
-function cacheHouseItems(houseId) {
-	getHouseData(houseId).itemCache = [];
-
-	for (let i in serverData.items) {
-		if (getItemData(i) != false) {
-			if (getItemData(i).ownerType == V_ITEM_OWNER_HOUSE && getItemData(i).ownerId == getHouseData(houseId).databaseId) {
-				getHouseData(houseId).itemCache.push(i);
-			}
-		}
-	}
+function cacheHouseItems(houseIndex) {
+	getHouseData(houseIndex).itemCache = serverData.items.filter(i => i.ownerType == V_ITEM_OWNER_HOUSE && i.ownerId == getHouseData(houseIndex).databaseId).map(filteredItem => filteredItem.index);
 }
 
 // ===========================================================================
