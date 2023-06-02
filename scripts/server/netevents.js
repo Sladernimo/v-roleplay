@@ -127,7 +127,6 @@ function playerClientReady(client) {
 // ===========================================================================
 
 function playerGUIReady(client) {
-	playerGUI[client.index] = true;
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] ${getPlayerDisplayForConsole(client)}'s client GUI is initialized and ready!`);
 }
 

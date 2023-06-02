@@ -14,7 +14,6 @@ let logLevel = LOG_INFO | LOG_DEBUG;
 let playerResourceReady = new Array(server.maxClients).fill(false);
 let playerResourceStarted = new Array(server.maxClients).fill(false);
 let playerInitialized = new Array(server.maxClients).fill(false);
-let playerGUI = new Array(server.maxClients).fill(false);
 let defaultNoAccountId = 1;
 let serverStarting = false;
 
