@@ -105,7 +105,8 @@ let serverBitFlagKeys = {
 		"ManageNPCs",
 		"ManageRanks",
 		"Owner",
-		"ManageBank"
+		"ManageBank",
+		"RankWage",
 	],
 	clanDiscordWebhookFlagKeys: [
 		"None",
