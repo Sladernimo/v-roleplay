@@ -88,16 +88,13 @@ class BusinessData {
 
 		this.entranceFee = 0;
 		this.till = 0;
-
 		this.streamingRadioStation = 0;
 		this.streamingRadioStationIndex = -1;
-
 		this.paintBallPlayers = [];
-
 		this.labelHelpType = V_PROPLABEL_INFO_NONE;
-
 		this.whoAdded = 0;
 		this.whenAdded = 0;
+		this.allowVehicles = false;
 
 		if (dbAssoc) {
 			this.databaseId = toInteger(dbAssoc["biz_id"]);
@@ -132,6 +129,7 @@ class BusinessData {
 			this.streamingRadioStation = toInteger(dbAssoc["biz_radio_station"]);
 			this.whoAdded = toInteger(dbAssoc["biz_who_added"]);
 			this.whenAdded = toInteger(dbAssoc["biz_when_added"]);
+			this.allowVehicles = intToBool(toInteger(dbAssoc["biz_allow_veh"]));
 		}
 	};
 };
@@ -840,6 +838,31 @@ function toggleBusinessInteriorLightsCommand(command, params, client) {
 	getBusinessData(businessId).needsSaved = true;
 
 	meActionToNearbyPlayers(client, `turns ${toLowerCase(getOnOffFromBool(getBusinessData(businessId).interiorLights))} the business lights`);
+}
+
+// ===========================================================================
+
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function toggleBusinessAllowVehiclesCommand(command, params, client) {
+	let businessId = getPlayerBusiness(client);
+
+	if (getBusinessData(businessId) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	getBusinessData(businessId).allowVehicles = !getBusinessData(businessId).allowVehicles;
+	getBusinessData(businessId).needsSaved = true;
+
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set business {businessBlue}${getBusinessData(businessId).name}{MAINCOLOUR}'s vehicle access to {ALTCOLOUR}${toUpperCase(getOnOffFromBool(getBusinessData(businessId).allowVehicles))}`);
 }
 
 // ===========================================================================
@@ -1997,6 +2020,8 @@ function saveBusinessToDatabase(businessId) {
 			["biz_buy_price", tempBusinessData.buyPrice],
 			["biz_who_added", tempBusinessData.whoAdded],
 			["biz_when_added", tempBusinessData.whenAdded],
+			["biz_type", tempBusinessData.type],
+			["biz_allow_veh", boolToInt(tempBusinessData.allowVehicles)],
 			//["biz_rent_price", tempBusinessData.rentPrice],
 		];
 
@@ -3146,20 +3171,26 @@ function canPlayerLockUnlockBusiness(client, businessId) {
 // ===========================================================================
 
 function canPlayerManageBusiness(client, businessId, exemptAdminFlag = false) {
+	let businessData = getBusinessData(businessId);
+
+	if (businessData == null) {
+		return false;
+	}
+
 	if (exemptAdminFlag == false) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageBusinesses"))) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_PLAYER) {
-		if (getBusinessData(businessId).ownerId == getPlayerCurrentSubAccount(client).databaseId) {
+	if (businessData.ownerType == V_BIZ_OWNER_PLAYER) {
+		if (gbusinessData.ownerId == getPlayerCurrentSubAccount(client).databaseId) {
 			return true;
 		}
 	}
 
-	if (getBusinessData(businessId).ownerType == V_BIZ_OWNER_CLAN) {
-		if (getBusinessData(businessId).ownerId == getClanData(getPlayerClan(client)).databaseId) {
+	if (businessData.ownerType == V_BIZ_OWNER_CLAN) {
+		if (businessData.ownerId == getClanData(getPlayerClan(client)).databaseId) {
 			if (doesPlayerHaveClanPermission(client, getClanFlagValue("ManageBusinesses"))) {
 				return true;
 			}
