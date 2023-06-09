@@ -289,11 +289,11 @@ function setClanOwnerCommand(command, params, client) {
 
 	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageClans"))) {
 		let highestRankIndex = getHighestClanRank(clanIndex);
-		getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
 		getPlayerCurrentSubAccount(targetClient).clan = getClanData(clanIndex).databaseId;
 		getPlayerCurrentSubAccount(targetClient).clanIndex = clanIndex;
 		getPlayerCurrentSubAccount(targetClient).clanRank = getClanRankData(clanIndex, highestRankIndex).databaseId;
 		getPlayerCurrentSubAccount(targetClient).clanRankIndex = highestRankIndex;
+		getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(targetClient).databaseId;
 		getClanData(clanIndex).needsSaved = true;
 		messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} changed clan {clanOrange}${getClanData(clanIndex).name}'s{MAINCOLOUR} owner to {ALTCOLOUR}${getCharacterFullName(targetClient)}`);
 	} else {
@@ -1272,7 +1272,7 @@ function saveClanToDatabase(clanData) {
 				clanData.databaseId = getDatabaseInsertId(dbConnection);
 				clanData.needsSaved = false;
 			} else {
-				let queryString = createDatabaseUpdateQuery("clan_main", data, `clan_id=${clanData.databaseId} LIMIT 1`);
+				let queryString = createDatabaseUpdateQuery("clan_main", data, `clan_id=${clanData.databaseId}`);
 				dbQuery = queryDatabase(dbConnection, queryString);
 				clanData.needsSaved = false;
 			}
@@ -1318,7 +1318,7 @@ function saveClanRankToDatabase(clanRankData) {
 			clanRankData.databaseId = getDatabaseInsertId(dbConnection);
 			clanRankData.needsSaved = false;
 		} else {
-			let queryString = createDatabaseUpdateQuery("clan_rank", data, `clan_rank_id=${clanRankData.databaseId} LIMIT 1`);
+			let queryString = createDatabaseUpdateQuery("clan_rank", data, `clan_rank_id=${clanRankData.databaseId}`);
 			dbQuery = queryDatabase(dbConnection, queryString);
 			clanRankData.needsSaved = false;
 		}
