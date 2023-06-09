@@ -876,5 +876,8 @@
 	"InvalidNPC": "Nie znaleziono NPC!",
 	"ClanUnInviteTooLow": "Nie możesz wycofać zaproszenia od członków z rangą wyższą niż twoja!",
 	"RankLevelMustBeNumber": "Ranga musi być numerem!",
-	"RankLevelMustBeBetween": "Ranga musi być numerem między {1} a {2}!"
+	"RankLevelMustBeBetween": "Ranga musi być numerem między {1} a {2}!",
+	"SuggestionSubmitted": "Your suggestion/idea has been sent to the developers!",
+	"BugReportSubmitted": "Your bug report has been sent to the developers!",
+	"JobRankPublicStatusChanged": "The public status of the {1} rank of the {2} job is now: {3}"
 }

@@ -879,5 +879,8 @@
 	"InvalidNPC": "NPC not found!",
 	"ClanUnInviteTooLow": "You can't uninvite members with a rank higher than yours!",
 	"RankLevelMustBeNumber": "The rank level must be a number!",
-	"RankLevelMustBeBetween": "The rank level must be between {1} and {2}!"
+	"RankLevelMustBeBetween": "The rank level must be between {1} and {2}!",
+	"SuggestionSubmitted": "Your suggestion/idea has been sent to the developers!",
+	"BugReportSubmitted": "Your bug report has been sent to the developers!",
+	"JobRankPublicStatusChanged": "The public status of the {1} rank of the {2} job is now: {3}"
 }
