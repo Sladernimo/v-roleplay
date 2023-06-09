@@ -42,9 +42,11 @@ class HouseData {
 		this.needsSaved = false;
 		this.interiorLights = true;
 		this.propertyType = V_PROPERTY_TYPE_HOUSE;
-
+		this.allowVehicles = false;
 		this.itemCache = [];
 		this.locations = [];
+		this.whoAdded = defaultNoAccountId;
+		this.whenAdded = 0;
 		//this.gameScripts = [];
 
 		this.entrancePosition = false;
@@ -81,6 +83,10 @@ class HouseData {
 			this.locked = intToBool(toInteger(dbAssoc["house_locked"]));
 			this.hasInterior = intToBool(toInteger(dbAssoc["house_has_interior"]));
 			this.interiorLights = intToBool(toInteger(dbAssoc["house_interior_lights"]));
+			this.allowVehicles = intToBool(toInteger(dbAssoc["house_allow_veh"]));
+			this.whoAdded = toInteger(dbAssoc["house_who_added"]);
+			this.whenAdded = toInteger(dbAssoc["house_when_added"]);
+			this.streamingRadioStation = toInteger(dbAssoc["house_radio_station"]);
 
 			this.entrancePosition = toVector3(toFloat(dbAssoc["house_entrance_pos_x"]), toFloat(dbAssoc["house_entrance_pos_y"]), toFloat(dbAssoc["house_entrance_pos_z"]));
 			this.entranceRotation = toFloat(dbAssoc["house_entrance_rot_z"]);
@@ -97,6 +103,8 @@ class HouseData {
 			this.exitPickupModel = toInteger(dbAssoc["house_exit_pickup"]);
 			this.exitBlipModel = toInteger(dbAssoc["house_exit_blip"]);
 			this.exitScene = toString(dbAssoc["house_exit_scene"]);
+
+
 		}
 	}
 };
@@ -967,6 +975,9 @@ function saveHouseToDatabase(houseId) {
 			["house_interior_lights", boolToInt(tempHouseData.interiorLights)],
 			["house_custom_interior", boolToInt(tempHouseData.customInterior)],
 			["house_radio_station", (getRadioStationData(tempHouseData.streamingRadioStationIndex) != null) ? getRadioStationData(tempHouseData.streamingRadioStationIndex).databaseId : -1],
+			["house_allow_veh", boolToInt(tempHouseData.allowVehicles)],
+			["house_who_added", toInteger(tempHouseData.whoAdded)],
+			["house_when_added", toInteger(tempHouseData.whoAdded)],
 		];
 
 		let dbQuery = null;
