@@ -451,16 +451,14 @@ function playerPromptAnswerYes(client) {
 			}
 
 			let highestRankIndex = getHighestClanRank(clanIndex);
-
-			getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(client).databaseId;
 			getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
 			getPlayerCurrentSubAccount(client).clanIndex = clanIndex;
 			getPlayerCurrentSubAccount(client).clanRank = getClanRankData(clanIndex, highestRankIndex).databaseId;
 			getPlayerCurrentSubAccount(client).clanRankIndex = highestRankIndex;
-			getClanData(clanIndex).needsSaved = true;
+			//getPlayerCurrentSubAccount(client).clanFlags = getClanFlagValue("All");
 
-			getPlayerCurrentSubAccount(client).clan = getClanData(clanIndex).databaseId;
-			getPlayerCurrentSubAccount(client).clanFlags = getClanFlagValue("All");
+			getClanData(clanIndex).ownerId = getPlayerCurrentSubAccount(client).databaseId;
+			getClanData(clanIndex).needsSaved = true;
 
 			removePlayerFromClan(fromClient);
 
