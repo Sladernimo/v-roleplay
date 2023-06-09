@@ -1005,7 +1005,7 @@ function setElementInterior(element, interior) {
 	}
 
 	setEntityData(element, "v.rp.interior", interior, true);
-	forcePlayerToSyncElementProperties(null, element);
+	sendNetworkEventToPlayer("v.rp.interior", null, element.id, interior);
 }
 
 // ===========================================================================
@@ -1338,6 +1338,12 @@ function warpPedIntoVehicle(ped, vehicle, seatId) {
 	}
 
 	ped.warpIntoVehicle(vehicle, seatId);
+}
+
+// ===========================================================================
+
+function forcePedToEnterVehicle(ped, vehicle, seat) {
+	sendNetworkEventToPlayer("v.rp.enterVehicle", ped.syncer, ped.id, vehicle.id, seat);
 }
 
 // ===========================================================================
