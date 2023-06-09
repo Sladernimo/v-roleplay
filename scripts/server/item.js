@@ -3610,11 +3610,14 @@ function despawnAllGroundItemObjects() {
 // ===========================================================================
 
 function logItemMove(itemId, fromType, fromId, toType, toId, position = toVector3(0.0, 0.0, 0.0)) {
-	//if (serverConfig.devServer) {
-	//	return false;
-	//}
-	//
-	//quickDatabaseQuery(`INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+	if (serverConfig.devServer) {
+		return false;
+	}
+
+	let dbConnection = connectToDatabase();
+
+	queryDatabase(dbConnection, `INSERT INTO log_item_move (log_item_move_item, log_item_move_from_type, log_item_move_from_id, log_item_move_to_type, log_item_move_to_id, log_item_move_when, log_item_move_pos_x, log_item_move_pos_y, log_item_move_pos_z) VALUES (${itemId}, ${fromType}, ${fromId}, ${toType}, ${toId}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+	disconnectFromDatabase(dbConnection);
 }
 
 // ===========================================================================

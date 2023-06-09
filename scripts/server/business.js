@@ -3349,13 +3349,12 @@ function getNearbyBusinessesCommand(command, params, client) {
 // ===========================================================================
 
 function logBusinessItemPurchase(businessId, purchaserId, itemId) {
-	//if (serverConfig.devServer) {
-	//	return false;
-	//}
+	if (serverConfig.devServer) {
+		return false;
+	}
 
-	//quickDatabaseQuery(`INSERT INTO log_biz_buy (log_biz_buy_biz, log_biz_buy_who, log_biz_buy_item, log_biz_buy_when) VALUES (${businessId}, ${purchaserId}, ${itemId}, UNIX_TIMESTAMP())`);
-	//
-	//logItemMove(itemId, V_ITEM_OWNER_BIZFLOOR, businessId, V_ITEM_OWNER_PLAYER, purchaserId)
+	quickDatabaseQuery(`INSERT INTO log_biz_buy (log_biz_buy_biz, log_biz_buy_who, log_biz_buy_item, log_biz_buy_when) VALUES (${businessId}, ${purchaserId}, ${itemId}, UNIX_TIMESTAMP())`);
+	logItemMove(itemId, V_ITEM_OWNER_BIZFLOOR, businessId, V_ITEM_OWNER_PLAYER, purchaserId)
 }
 
 // ===========================================================================
