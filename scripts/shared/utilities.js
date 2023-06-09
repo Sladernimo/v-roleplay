@@ -3330,3 +3330,11 @@ function addPrefixNumberFill(number, amount) {
 }
 
 // ===========================================================================
+
+function getRandomSkin() {
+	let tempAllowedSkins = getAllowedSkins();
+	let randomIndex = getRandom(0, tempAllowedSkins.length - 1);
+	return getSkinIndexFromModel(tempAllowedSkins[randomIndex][0]);
+}
+
+// ===========================================================================
