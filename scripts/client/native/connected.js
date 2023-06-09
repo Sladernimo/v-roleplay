@@ -72,6 +72,20 @@ function setElementPosition(elementId, position) {
 
 // ===========================================================================
 
+function setElementInterior(elementId, interior) {
+	if (!isGameFeatureSupported("interiorId")) {
+		return false;
+	}
+
+	if (getElementFromId(elementId) == null) {
+		return false;
+	}
+
+	getElementFromId(elementId).interior = interior;
+}
+
+// ===========================================================================
+
 function deleteGameElement(elementId, position = toVector3(0.0, 0.0, 0.0)) {
 	if (getElementFromId(elementId) == null) {
 		return false;
