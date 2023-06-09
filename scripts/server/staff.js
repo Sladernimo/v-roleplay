@@ -442,7 +442,7 @@ function getVehicleCommand(command, params, client) {
 	//setElementStreamInDistance(vehicle, oldStreamInDistance);
 	//setElementStreamOutDistance(vehicle, oldStreamOutDistance);
 
-	let vehicle = spawnVehicle(serverData.vehicles[vehicleIndex]);
+	spawnVehicle(serverData.vehicles[vehicleIndex]);
 
 	if (serverData.vehicles[vehicleIndex].vehicle == null) {
 		messagePlayerError(client, "Vehicle could not be teleported!");
