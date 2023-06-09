@@ -260,6 +260,7 @@ function clanBankDepositCommand(command, params, client) {
 	}
 
 	clanData.bank = clanData.bank + amount;
+	clanData.needsSaved = true;
 	takePlayerCash(client, amount);
 
 	messagePlayerSuccess(client, getLocaleString(client, "ClanBankMoneyDeposited", `{ALTCOLOUR}${getCurrencyString(amount)}{MAINCOLOUR}`));
