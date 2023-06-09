@@ -170,9 +170,10 @@ class JobRouteLocationData {
 		this.routeIndex = -1;
 		this.needsSaved = false;
 		this.position = toVector3(0.0, 0.0, 0.0);
+		this.rotation = toVector3(0.0, 0.0, 0.0);
 		this.stopDelay = 0;
 		this.pay = 0;
-		this.type = V_JOB_ROUTE_LOC_TYPE_NONE;
+		this.type = 0;
 		this.gotoMessage = "";
 		this.arriveMessage = "";
 		this.whoAdded = 0;
@@ -185,7 +186,8 @@ class JobRouteLocationData {
 			this.name = toString(dbAssoc["job_route_loc_name"]);
 			this.routeId = toInteger(dbAssoc["job_route_loc_route"]);
 			this.enabled = intToBool(toInteger(dbAssoc["job_route_loc_enabled"]));
-			this.position = toVector3(toFloat(dbAssoc["job_route_loc_x"]), toFloat(dbAssoc["job_route_loc_y"]), toFloat(dbAssoc["job_route_loc_z"]));
+			this.position = toVector3(toFloat(dbAssoc["job_route_loc_pos_x"]), toFloat(dbAssoc["job_route_loc_pos_y"]), toFloat(dbAssoc["job_route_loc_pos_z"]));
+			this.rotation = toVector3(toFloat(dbAssoc["job_route_loc_rot_x"]), toFloat(dbAssoc["job_route_loc_rot_y"]), toFloat(dbAssoc["job_route_loc_rot_z"]));
 			this.stopDelay = toInteger(dbAssoc["job_route_loc_delay"]);
 			this.pay = toInteger(dbAssoc["job_route_loc_pay"]);
 			this.arriveMessage = toString(dbAssoc["job_route_loc_arrive_msg"]);
@@ -465,8 +467,8 @@ class JobBlackListData {
 // ===========================================================================
 
 class JobRouteLocationTypeData {
-	constructor(jobRouteLocationTypeId, name, extra = {}) {
-		this.jobRouteLocationTypeId = jobRouteLocationTypeId;
+	constructor(typeId, name, extra = {}) {
+		this.typeId = typeId;
 		this.name = name;
 		this.animStart = (typeof extra.animStart != "undefined") ? extra.animStart : "none";
 		this.animStop = (typeof extra.animStop != "undefined") ? extra.animStop : "none";
@@ -1495,9 +1497,9 @@ function jobEquipmentCommand(command, params, client) {
 	meActionToNearbyPlayers(client, `grabs the ${jobEquipmentData.name} equipment from the locker`);
 	if (!hasPlayerSeenActionTip(client, "JobEquipmentInventory")) {
 		if (doesPlayerHaveKeyBindForCommand(client, "inv")) {
-			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))));
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", `{ALTCOLOUR}${toUpperCase(getKeyNameFromId(getPlayerKeyBindForCommand(client, "inv").key))}{MAINCOLOUR}`));
 		} else {
-			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", "/inv"));
+			messagePlayerTip(client, getGroupedLocaleString(client, "ActionTips", "JobEquipmentInventory", `{ALTCOLOUR}/inv{MAINCOLOUR}`));
 		}
 		markPlayerActionTipSeen(client, "JobEquipmentInventory");
 	}
@@ -2117,11 +2119,12 @@ function setJobRouteNextLocationTypeCommand(command, params, client) {
 
 	let jobId = getPlayerJob(client);
 	let jobRoute = getPlayerJobRoute(client);
-	let typeId = getJobRouteLocationTypeFromParams(params);
+	let jobRouteLocationTypeIndex = getJobRouteLocationTypeFromParams(params);
+	let jobRouteLocationTypeData = getJobRouteLocationTypeData(jobRouteLocationTypeIndex);
 
-	if (typeId == -1) {
+	if (jobRouteLocationTypeData == null) {
 		messagePlayerError(client, `{ALTCOLOUR}${params}{MAINCOLOUR} is not a valid job route location type`);
-		let nameList = jobRouteLocationTypes[getGame()].map((jobRouteLocationType) => { return jobRouteLocationType[1]; });
+		let nameList = jobRouteLocationTypes[getGame()].map((jobRouteLocationType) => { return jobRouteLocationType.name; });
 		let chunkedList = splitArrayIntoChunks(nameList, 10);
 		messagePlayerNormal(client, makeChatBoxSectionHeader("Job Route Location Types"));
 		for (let i in chunkedList) {
@@ -2130,9 +2133,9 @@ function setJobRouteNextLocationTypeCommand(command, params, client) {
 		return false;
 	}
 
-	getPlayerData(client).jobRouteEditNextLocationType = type;
+	getPlayerData(client).jobRouteEditNextLocationType = jobRouteLocationTypeIndex;
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the type for the next location on route {ALTCOLOUR}${getJobData(jobId).routes[jobRoute].name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job to {ALTCOLOUR}${getJobRouteLocationTypeName(typeId)}{MAINCOLOUR}`);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} set the type for the next location on route {ALTCOLOUR}${getJobData(jobId).routes[jobRoute].name}{MAINCOLOUR} for the {jobYellow}${getJobData(jobId).name}{MAINCOLOUR} job to {ALTCOLOUR}${jobRouteLocationTypeData.name}{MAINCOLOUR}`);
 }
 
 // ===========================================================================
@@ -2543,7 +2546,7 @@ function jobStartRouteCommand(command, params, client) {
 	if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageJobs"))) {
 		if (!areParamsEmpty(params)) {
 			let tempRoute = getJobRouteFromParams(params, getPlayerJob(client));
-			if (tempRoute != false) {
+			if (tempRoute != -1) {
 				forceRoute = tempRoute;
 			}
 		}
@@ -2648,6 +2651,7 @@ function startJobRoute(client, forceRoute = -1) {
 	}
 
 	if (getJobRouteData(jobId, jobRoute).locations.length > 0) {
+		createElementForPlayerJobRouteLocation(client, jobId, jobRoute, 0);
 		showCurrentJobLocation(client);
 	} else {
 		messagePlayerError(client, `There are no locations for this route.`);
@@ -3144,9 +3148,12 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 			["job_route_loc_route", jobRouteLocationData.routeId],
 			["job_route_loc_enabled", boolToInt(jobRouteLocationData.enabled)],
 			["job_route_loc_name", safeName],
-			["job_route_loc_x", jobRouteLocationData.position.x],
-			["job_route_loc_y", jobRouteLocationData.position.y],
-			["job_route_loc_z", jobRouteLocationData.position.z],
+			["job_route_loc_pos_x", jobRouteLocationData.position.x],
+			["job_route_loc_pos_y", jobRouteLocationData.position.y],
+			["job_route_loc_pos_z", jobRouteLocationData.position.z],
+			["job_route_loc_rot_x", jobRouteLocationData.rotation.x],
+			["job_route_loc_rot_y", jobRouteLocationData.rotation.y],
+			["job_route_loc_rot_z", jobRouteLocationData.rotation.z],
 			["job_route_loc_pay", jobRouteLocationData.pay],
 			["job_route_loc_delay", jobRouteLocationData.stopDelay],
 			["job_route_loc_who_added", jobRouteLocationData.whoAdded],
@@ -3155,6 +3162,7 @@ function saveJobRouteLocationToDatabase(jobRouteLocationData) {
 			["job_route_loc_int", jobRouteLocationData.interior],
 			["job_route_loc_goto_msg", safeGotoMessage],
 			["job_route_loc_arrive_msg", safeArriveMessage],
+			["job_route_loc_type", jobRouteLocationData.type],
 		];
 
 		let dbQuery = null;
@@ -3691,7 +3699,9 @@ function playerArrivedAtJobRouteLocation(client) {
 
 	showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).arriveMessage), jobId, jobRouteId), jobData.colour, 3500);
 
-	switch (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).type) {
+	let jobRouteLocationData = getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId);
+
+	switch (jobRouteLocationTypes[getGame()][jobRouteLocationData.type].typeId) {
 		case V_JOB_ROUTE_LOC_TYPE_CHECKPOINT:
 			if (getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay > 0) {
 				freezePlayerJobVehicleForRouteLocation(client);
@@ -3703,28 +3713,31 @@ function playerArrivedAtJobRouteLocation(client) {
 					unFreezePlayerJobVehicleForRouteLocation(client);
 					setVehicleHazardLights(getPlayerVehicle(client), false);
 				}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
-				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, getPlayerData(client).jobRouteLocation);
 			} else {
 				getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 				showCurrentJobLocation(client);
 				showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).gotoMessage), jobId, jobRouteId), jobData.colour, 3500);
-				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, getPlayerData(client).jobRouteLocation);
 			}
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP:
+			//forcePedToEnterVehicle(getPlayerData(client).jobRouteLocationElement, getPlayerVehicle(client), getFirstFreeRearVehicleSeat(client));
 			warpPedIntoVehicle(getPlayerData(client).jobRouteLocationElement, getPlayerVehicle(client), getFirstFreeRearVehicleSeat(client));
 			getPlayerData(client).jobRouteLocation = getNextLocationOnJobRoute(jobId, jobRouteId, jobRouteLocationId);
 			showCurrentJobLocation(client);
 			showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
 
-			createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
+			createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, getPlayerData(client).jobRouteLocation);
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_DROPOFF:
 			let ped = getPlayerData(client).jobRouteLocationElement;
 			removePedFromVehicle(ped);
-			setElementPosition(ped, getPosBehindPos(getVehiclePosition(getPlayerVehicle(client)), getVehicleHeading(getPlayerVehicle(client)), 2));
+			setTimeout(function () {
+				setElementPosition(ped, getPosBehindPos(getVehiclePosition(getPlayerVehicle(client)), getVehicleHeading(getPlayerVehicle(client)), 3));
+			}, 250);
 
 			setTimeout(function () {
 				deleteGameElement(ped);
@@ -3732,8 +3745,8 @@ function playerArrivedAtJobRouteLocation(client) {
 				showCurrentJobLocation(client);
 				showSmallGameMessage(client, replaceJobRouteStringsInMessage(removeColoursInMessage(jobRouteData.locationNextMessage), jobId, jobRouteId), jobData.colour, 3500);
 
-				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, jobRouteLocationId);
-			}, getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
+				createElementForPlayerJobRouteLocation(client, jobId, jobRouteId, getPlayerData(client).jobRouteLocation);
+			}, 250 + getJobRouteLocationData(jobId, jobRouteId, jobRouteLocationId).stopDelay);
 			break;
 
 		default:
@@ -3975,7 +3988,7 @@ function createJobRoute(routeName, closestJobLocation, whoAdded = defaultNoAccou
 
 // ===========================================================================
 
-function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAdded = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", typeId = V_JOB_ROUTE_LOC_TYPE_NONE) {
+function createJobRouteLocation(routeLocationName, position, jobRouteData, whoAdded = defaultNoAccountId, delay = 0, arriveMessage = "", gotoMessage = "", typeId = 0) {
 	let tempJobRouteLocationData = new JobRouteLocationData(false);
 	tempJobRouteLocationData.name = routeLocationName;
 	tempJobRouteLocationData.routeId = jobRouteData.databaseId;
@@ -4505,7 +4518,7 @@ function getJobRouteFromParams(params, jobId) {
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 // ===========================================================================
@@ -4554,14 +4567,14 @@ function updateJobBlipsForPlayer(client) {
 
 function getJobRouteLocationTypeFromParams(params) {
 	if (isNaN(params)) {
-		for (let i in jobRouteLocationTypes) {
-			if (toLowerCase(jobRouteLocationTypes[i][1]).indexOf(toLowerCase(params)) != -1) {
-				return jobRouteLocationTypes[i][0];
+		for (let i in jobRouteLocationTypes[getGame()]) {
+			if (toLowerCase(jobRouteLocationTypes[getGame()][i].name).indexOf(toLowerCase(params)) != -1) {
+				return i;
 			}
 		}
 	} else {
-		if (typeof jobRouteLocationTypes[params] != "undefined") {
-			return jobRouteLocationTypes[params][0];
+		if (typeof jobRouteLocationTypes[getGame()][params] != "undefined") {
+			return toInteger(params);
 		}
 	}
 
@@ -5023,7 +5036,7 @@ function createElementForPlayerJobRouteLocation(client, jobIndex, jobRouteIndex,
 	let tempJobRouteLocationData = getJobRouteLocationData(jobIndex, jobRouteIndex, jobRouteLocationIndex);
 
 	let modelIndex = -1;
-	switch (tempJobRouteLocationData.type) {
+	switch (jobRouteLocationTypes[getGame()][tempJobRouteLocationData.type].typeId) {
 		case V_JOB_ROUTE_LOC_TYPE_BURNING_VEHICLE:
 			modelIndex = getRandomVehicleModel();
 			let vehicle = createGameVehicle(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
@@ -5033,35 +5046,35 @@ function createElementForPlayerJobRouteLocation(client, jobIndex, jobRouteIndex,
 
 				setVehicleEngineState(vehicle, false);
 				setVehicleBurning(vehicle, true);
-				getPlayerData(client).jobRouteElement = vehicle;
+				getPlayerData(client).jobRouteLocationElement = vehicle;
 			}
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_PASSENGER_PICKUP:
 			modelIndex = getRandomSkin();
-			let passenger = createGamePed(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
+			let passenger = createGamePed(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation.z);
 			if (passenger != null) {
 				setElementDimension(passenger, tempJobRouteLocationData.dimension);
 				setElementOnAllDimensions(passenger, false);
-				getPlayerData(client).jobRouteElement = passenger;
+				getPlayerData(client).jobRouteLocationElement = passenger;
 			}
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_INJURED_PED:
 			modelIndex = getRandomSkin();
-			let ped = createGamePed(modelIndex, tempJobRouteLocationData.position, tempJobRouteLocationData.rotation);
+			let ped = createGamePed(getSkinIndexFromModel(model), tempJobRouteLocationData.position, tempJobRouteLocationData.rotation.z);
 			if (ped != null) {
 				setElementDimension(ped, tempJobRouteLocationData.dimension);
 				setElementOnAllDimensions(ped, false);
 				setPedBleeding(ped, true);
-				getPlayerData(client).jobRouteElement = ped;
+				getPlayerData(client).jobRouteLocationElement = ped;
 			}
 			break;
 
 		case V_JOB_ROUTE_LOC_TYPE_ITEM_PICKUP:
 			if (isGameFeatureSupported("object")) {
 				let groundItem = createGroundItem(itemType, tempJobRouteLocationData.itemValue, tempJobRouteLocationData.position, tempJobRouteLocationData.dimension);
-				getPlayerData(client).jobRouteElement = groundItem;
+				getPlayerData(client).jobRouteLocationElement = groundItem;
 			}
 			break;
 
@@ -5088,6 +5101,64 @@ function removePlayerFromJob(client) {
 	getPlayerCurrentSubAccount(client).jobIndex = -1;
 	getPlayerCurrentSubAccount(client).jobRank = 0;
 	getPlayerCurrentSubAccount(client).jobRankIndex = -1;
+}
+
+// ===========================================================================
+
+function setJobRankPublicCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	if (!areThereEnoughParams(params, 2, " ")) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let jobIndex = getPlayerJob(client);
+	let jobData = getJobData(jobIndex);
+
+	if (jobData == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJob"));
+		return false;
+	}
+
+	let jobRankIndex = getJobRankFromParams(jobIndex, params);
+	let jobRankData = getJobRankData(jobIndex, jobRankIndex);
+
+	if (jobRankData == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidJobRank"));
+		return false;
+	}
+
+	if (!doesPlayerHaveJobPermission(client, getJobFlagValue("ManageRanks"))) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	if (getJobRankData(getPlayerJob(client), getPlayerJobRank(client)).level <= jobRankData.level) {
+		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		return false;
+	}
+
+	jobRankData.public = !jobRankData.public;
+	jobRankData.needsSaved = true;
+	messagePlayerSuccess(client, getLocaleString(client, "JobRankPublicStatusChanged", `{ALTCOLOUR}${jobRankData.name}{MAINCOLOUR}`, `{jobYellow}${jobData.name}{MAINCOLOUR}`, `${getBoolRedGreenInlineColour(toUpperCase(getOnOffFromBool(jobRankData.public)))}{MAINCOLOUR}`));
+}
+
+// ===========================================================================
+
+function getJobRouteLocationTypeData(jobRouteLocationTypeIndex) {
+	if (jobRouteLocationTypeIndex == -1) {
+		return null;
+	}
+
+	if (typeof jobRouteLocationTypes[getGame()][jobRouteLocationTypeIndex] == "undefined") {
+		return null;
+	}
+
+	return jobRouteLocationTypes[getGame()][jobRouteLocationTypeIndex];
 }
 
 // ===========================================================================
