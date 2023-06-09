@@ -663,7 +663,8 @@ function vehicleUpgradesCommand(command, params, client) {
 	}
 
 	if (!canPlayerManageVehicle(client, getPlayerVehicle(client))) {
-		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
+		return false;
 	}
 
 	let slotIndex = getParam(params, ' ', 1);
@@ -796,8 +797,8 @@ function vehicleColourCommand(command, params, client) {
 		return false;
 	}
 
-	if (!canPlayerManageVehicle(client, vehicle, false, false)) {
-		messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
+	if (!canPlayerManageVehicle(client, vehicle)) {
+		messagePlayerError(client, getLocaleString(client, "MustOwnVehicle"));
 		return false;
 	}
 
@@ -1056,6 +1057,10 @@ function doesPlayerHaveVehicleKeys(client, vehicle) {
 
 function canPlayerManageVehicle(client, vehicle, exemptAdminFlag = false, onlyPersonalVehicles = false) {
 	let vehicleData = getVehicleData(vehicle);
+
+	if (vehicleData == null) {
+		return false;
+	}
 
 	if (!exemptAdminFlag) {
 		if (doesPlayerHaveStaffPermission(client, getStaffFlagValue("ManageVehicles"))) {
@@ -1791,8 +1796,6 @@ function spawnVehicle(vehicleData) {
 	//setVehicleHealth(vehicle, 1000);
 	repairVehicle(vehicle);
 
-	setEntityData(vehicle, "v.rp.upgrades", vehicleData.extras, true);
-	setEntityData(vehicle, "v.rp.interior", interior, true);
 	setEntityData(vehicle, "v.rp.server", true, true);
 
 	setVehicleLights(vehicle, vehicleData.lights);
@@ -1803,6 +1806,7 @@ function spawnVehicle(vehicleData) {
 	setVehicleDirtLevel(vehicle, vehicleData.dirtLevel);
 	setVehicleLivery(vehicle, vehicleData.livery);
 	setVehicleUpgrades(vehicle, vehicleData.extras);
+	setElementInterior(vehicle, vehicleData.interior);
 
 	forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
