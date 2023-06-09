@@ -120,6 +120,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.showLocaleChooser", showLocaleChooserGUI);
 	addNetworkEventHandler("v.rp.guiColour", setGUIColours);
 	addNetworkEventHandler("v.rp.mapChangingSoon", setMapChangeWarningState);
+	addNetworkEventHandler("v.rp.elementInterior", setElementInterior);
 
 	// 2D Rendering
 	addNetworkEventHandler("v.rp.set2DRendering", set2DRendering);
