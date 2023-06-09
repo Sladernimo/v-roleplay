@@ -282,6 +282,7 @@ let serverBitFlagKeys = {
 		"ManageVehicles",
 		"ManageBusinesses",
 		"Leader",
+		"ManageRanks",
 	],
 };
 
@@ -357,10 +358,15 @@ function doesPlayerHaveClanPermission(client, requiredFlags, exemptAdminFlag = f
 		}
 	}
 
+	// Clan owner always has permission
+	if (getClanData(getPlayerClan(client).ownerId == getPlayerCurrentSubAccount(client).databaseId)) {
+		return false;
+	}
+
 	let clanFlags = 0;
 	clanFlags = getPlayerCurrentSubAccount(client).clanFlags | getClanRankData(getPlayerClan(client), getPlayerClanRank(client)).flags;
 
-	// -1 is automatic override (having -1 for staff flags is basically god mode admin level)
+	// All (-1) is automatic override, always has permission
 	if (clanFlags == getClanFlagValue("All")) {
 		return true;
 	}
