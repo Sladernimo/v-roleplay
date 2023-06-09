@@ -180,7 +180,7 @@ function submitIdeaCommand(command, params, client) {
 
 	submitIdea(client, params);
 
-	messagePlayerNormal(client, `Your suggestion/idea has been sent to the developers!`);
+	messagePlayerNormal(client, getLocaleString(client, "SuggestionSubmitted"));
 	return true;
 }
 
@@ -194,7 +194,7 @@ function submitBugReportCommand(command, params, client) {
 
 	submitBugReport(client, params);
 
-	messagePlayerNormal(client, `Your bug report has been sent to the developers!`);
+	messagePlayerNormal(client, getLocaleString(client, "BugReportSubmitted"));
 	return true;
 }
 
@@ -368,7 +368,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			if (closestProperty.exitScene != "" && closestProperty.exitScene != "V.RP.MAINWORLD") {
-				if (gameData.interiors[getGame()][closestProperty.exitScene][5] == false) {
+				if (gameData.interiors[getGame()][closestProperty.exitScene][5] == false && closestProperty.allowVehicles == false) {
 					if (isPlayerInAnyVehicle(client)) {
 						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 						return false;
@@ -446,7 +446,7 @@ function enterExitPropertyCommand(command, params, client) {
 			}
 
 			if (closestProperty.entranceScene != "" && closestProperty.entranceScene != "V.RP.MAINWORLD") {
-				if (gameData.interiors[getGame()][closestProperty.entranceScene][5] == false) {
+				if (gameData.interiors[getGame()][closestProperty.entranceScene][5] == false && closestProperty.allowVehicles == false) {
 					if (isPlayerInAnyVehicle(client)) {
 						messagePlayerError(client, getLocaleString(client, "UnableToDoThat"));
 						return false;
@@ -778,7 +778,7 @@ function lockCommand(command, params, client) {
 	if (isPlayerInAnyVehicle(client)) {
 		let vehicle = getPlayerVehicle(client);
 
-		if (getVehicleData(vehicle) != null) {
+		if (getVehicleData(vehicle) == null) {
 			messagePlayerError(client, getLocaleString(client, "RandomVehicleCommandsDisabled"));
 			return false;
 		}
@@ -991,6 +991,8 @@ function processPlayerDeath(client) {
 	getPlayerData(client).pedState = V_PEDSTATE_DEAD;
 	updatePlayerSpawnedState(client, false);
 	setPlayerControlState(client, false);
+
+	logDeath(getPlayerCurrentSubAccount(client).databaseId, defaultNoAccountId, getPlayerPosition(client));
 
 	if (isPlayerWorking(client)) {
 		logToConsole(LOG_DEBUG, `[V.RP.Events] Player ${getPlayerDisplayForConsole(client)} died while working, forcing them to stop work ...`);
@@ -1457,6 +1459,11 @@ function saveNonRPNameToDatabase(firstName, lastName, forAccountId = defaultNoAc
 // ===========================================================================
 
 function isNonRPName(firstName, lastName) {
+	// Don't allow duplicate first and last names
+	if (toLowerCase(firstName) == toLowerCase(lastName)) {
+		return true;
+	}
+
 	let dbConnection = connectToDatabase();
 	let safeFirstName = escapeDatabaseString(dbConnection, firstName);
 	let safeLastName = escapeDatabaseString(dbConnection, lastName);
@@ -1467,6 +1474,19 @@ function isNonRPName(firstName, lastName) {
 	}
 
 	return false;
+}
+
+// ===========================================================================
+
+function logDeath(whoDied = defaultNoAccountId, whoKilled = defaultNoAccountId, position = toVector3(0.0, 0.0, 0.0)) {
+	if (serverConfig.devServer) {
+		return false;
+	}
+
+	let dbConnection = connectToDatabase();
+
+	queryDatabase(dbConnection, `INSERT INTO log_death (log_death_server, log_death_who_died, log_death_who_killed, log_death_timestamp, log_death_pos_x, log_death_pos_y, log_death_pos_z) VALUES (${getServerId()}, ${whoDied}, ${whoKilled}, UNIX_TIMESTAMP(), ${position.x}, ${position.y}, ${position.z})`);
+	disconnectFromDatabase(dbConnection);
 }
 
 // ===========================================================================
