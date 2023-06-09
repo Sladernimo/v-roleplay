@@ -172,6 +172,7 @@ function loadCommands() {
 			new CommandData("jobbizs", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
 			new CommandData("jobbiz", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
 			new CommandData("jobbusinesses", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
+			new CommandData("bizallowveh", toggleBusinessAllowVehiclesCommand, "", getStaffFlagValue("ManageBusinesses"), true, true, "Toggles whether vehicles are allowed to enter/exit the business"),
 		],
 		callbox: [
 			new CommandData("addcallbox", createCallBoxCommand, "", getStaffFlagValue("ManagePayPhones"), true, true, "Creates a police call box (gamewell)"),
@@ -508,6 +509,7 @@ function loadCommands() {
 			new CommandData("jobroutes", getJobRoutesCommand, "", getStaffFlagValue("ManageJobs"), true, false, "Shows a list of job routes for the nearest job location"),
 			new CommandData("jobrouteinfo", getJobRouteInfoCommand, "", getStaffFlagValue("ManageJobs"), true, false, "Shows info about a job route"),
 			new CommandData("jobrank", setPlayerJobRankCommand, "<player name/id> <rank name/id>", getStaffFlagValue("None"), true, true, "Sets a player's job rank"),
+			new CommandData("jobrankpublic", setJobRankPublicCommand, "<rank name/id>", getStaffFlagValue("None"), true, true, "Toggles whether a job rank is available to public"),
 			new CommandData("jobsetrank", setPlayerJobRankCommand, "<player name/id> <rank name/id>", getStaffFlagValue("None"), true, true, "Sets a player's job rank"),
 			new CommandData("jobinvite", jobInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a job"),
 			new CommandData("jobhire", jobInviteCommand, "<player name/id>", getStaffFlagValue("None"), true, false, "Invites a player to a job"),
