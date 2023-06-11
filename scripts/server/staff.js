@@ -421,8 +421,7 @@ function getVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	deleteGameElement(serverData.vehicles[vehicleIndex]);
-	serverData.vehicles[vehicleIndex].vehicle = null;
+	despawnVehicle(serverData.vehicles[vehicleIndex]);
 
 	serverData.vehicles[vehicleIndex].spawnPosition = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), globalConfig.spawnCarDistance);
 	serverData.vehicles[vehicleIndex].spawnRotation = getRotationFromHeading(getPlayerHeading(client));
@@ -449,7 +448,7 @@ function getVehicleCommand(command, params, client) {
 		return false;
 	}
 
-	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
+	messageAdmins(`{adminOrange}${getPlayerName(client)}{MAINCOLOUR} teleported a {vehiclePurple}${getVehicleName(serverData.vehicles[vehicleIndex].vehicle)}{ALTCOLOUR} (ID ${vehicle.id}){MAINCOLOUR} to their position`, true);
 }
 
 // ===========================================================================
