@@ -1527,6 +1527,8 @@ function respawnVehicleCommand(command, params, client) {
 // ===========================================================================
 
 function respawnAllVehiclesCommand(command, params, client) {
+	clearTemporaryVehicles();
+
 	for (let i in serverData.vehicles) {
 		respawnVehicle(serverData.vehicles[i].vehicle);
 	}
@@ -2256,7 +2258,7 @@ function updateVehicleSavedPositions() {
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Updating all vehicle's saved positions ...`);
 
 	for (let i in serverData.vehicles) {
-		updateVehicleSavedPosition(i);
+		updateVehicleSavedPosition(serverData.vehicles[i]);
 	}
 
 	logToConsole(LOG_DEBUG, `[V.RP.Vehicle] Updated all vehicle's saved positions`);
@@ -2264,17 +2266,19 @@ function updateVehicleSavedPositions() {
 
 // ===========================================================================
 
-function updateVehicleSavedPosition(vehicleId) {
-	if (serverData.vehicles[vehicleId].vehicle == null) {
-		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Vehicle] Failed to update saved position for vehicle ${vehicleId}. Vehicle is null`);
+function updateVehicleSavedPosition(vehicleData) {
+	if (typeof vehicleData == "undefined") {
 		return false;
 	}
 
-	if (!serverData.vehicles[vehicleId].spawnLocked) {
-		if (!isVehicleUnoccupied(serverData.vehicles[vehicleId].vehicle)) {
-			serverData.vehicles[vehicleId].spawnPosition = getVehiclePosition(serverData.vehicles[vehicleId].vehicle);
-			serverData.vehicles[vehicleId].spawnRotation = getVehicleRotation(serverData.vehicles[vehicleId].vehicle);
-			serverData.vehicles[vehicleId].dimension = getElementDimension(serverData.vehicles[vehicleId].vehicle);
+	if (vehicleData.vehicle == null) {
+		return false;
+	}
+
+	if (!vehicleData.spawnLocked) {
+		if (!isVehicleUnoccupied(vehicleData.vehicle)) {
+			vehicleData.spawnPosition = getVehiclePosition(vehicleData.vehicle);
+			vehicleData.spawnRotation = getVehicleRotation(vehicleData.vehicle);
 		}
 	}
 }

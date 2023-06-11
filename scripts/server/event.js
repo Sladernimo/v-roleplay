@@ -135,6 +135,7 @@ function onProcess(event, deltaTime) {
 
 	processVehiclePurchasing();
 	processPlayerDragging();
+	updateVehicleSavedPosition();
 }
 
 // ===========================================================================
