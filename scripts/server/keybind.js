@@ -109,6 +109,7 @@ function copyKeyBindsToServerCommand(command, params, client) {
 
 function addPlayerKeyBind(client, keyId, command, params, tempKey = false) {
 	let keyBindData = new KeyBindData(false, keyId, `${command} ${params}`);
+	keyBindData.account = getPlayerData(client).accountData.databaseId;
 	if (tempKey == true) {
 		keyBindData.databaseId = -1;
 	}
