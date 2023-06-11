@@ -82,7 +82,6 @@ class ClientData {
 		this.businessOrderAmount = 0;
 		this.businessOrderBusiness = -1;
 		this.businessOrderItem = -1;
-		this.businessOrderValue = -1;
 		this.businessOrderSellPrice = 0;
 
 		// For Non-Server Elements
