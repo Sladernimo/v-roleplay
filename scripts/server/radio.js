@@ -15,13 +15,17 @@ class RadioStationData {
 		this.genre = "";
 		this.codec = "";
 		this.index = -1;
+		this.isFile = false;
+		this.fileLength = 0;
 
 		if (dbAssoc) {
-			this.databaseId = dbAssoc["radio_id"];
-			this.name = dbAssoc["radio_name"];
-			this.url = dbAssoc["radio_url"];
-			this.genre = dbAssoc["radio_genre"];
-			this.codec = dbAssoc["radio_codec"];
+			this.databaseId = toInteger(dbAssoc["radio_id"]);
+			this.name = toString(dbAssoc["radio_name"]);
+			this.url = toString(dbAssoc["radio_url"]);
+			this.genre = toString(dbAssoc["radio_genre"]);
+			this.codec = toInteger(dbAssoc["radio_codec"]);
+			this.isFile = intToBool(dbAssoc["radio_is_file"]);
+			this.fileLength = toInteger(dbAssoc["radio_file_length"]);
 		}
 	}
 };
@@ -75,11 +79,14 @@ function playStreamingRadioCommand(command, params, client) {
 		return false;
 	}
 
-	let radioStationId = getRadioStationFromParams(params);
+	let radioStationId = -1;
+	if (toLowerCase(params) != "none") {
+		radioStationId = getRadioStationFromParams(params);
 
-	if (getRadioStationData(radioStationId) == null) {
-		messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
-		return false;
+		if (getRadioStationData(radioStationId) == null) {
+			messagePlayerError(client, getLocaleString(client, "InvalidRadioStation"));
+			return false;
+		}
 	}
 
 	if (isPlayerInAnyVehicle(client)) {
