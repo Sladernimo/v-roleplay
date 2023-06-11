@@ -881,5 +881,12 @@
 	"RankLevelMustBeBetween": "The rank level must be between {1} and {2}!",
 	"SuggestionSubmitted": "Your suggestion/idea has been sent to the developers!",
 	"BugReportSubmitted": "Your bug report has been sent to the developers!",
-	"JobRankPublicStatusChanged": "The public status of the {1} rank of the {2} job is now: {3}"
+	"JobRankPublicStatusChanged": "The public status of the {1} rank of the {2} job is now: {3}",
+	"FirstNameEmpty": "The first name can't be empty!",
+	"LastNameEmpty": "The first name can't be empty!",
+	"InvalidCharactersInName": "Only letters are allowed in names",
+	"NameNotAvailable": "That name is not available!",
+	"CharacterCreateFailed": "Your character could not be created!",
+	"AlreadySwitchingCharacters": "You are already selecting/switching characters!",
+	"UseSwitchCharacterCommandFirst": "Use /switchchar to save this character and return to the characters screen first!"
 }
