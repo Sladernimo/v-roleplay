@@ -1093,6 +1093,7 @@ function loadKeyBindConfig() {
 	logToConsole(LOG_DEBUG, "[V.RP.Config] Loading keybind configuration ...");
 	let keyBindConfig = JSON.parse(loadTextFile("config/keybind.json"));
 	if (keyBindConfig != null) {
+		keyBindConfig.defaultKeyBinds = keyBindConfig.defaultKeyBinds[getGameIdentifier()];
 		return keyBindConfig;
 	}
 	return false;
