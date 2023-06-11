@@ -900,6 +900,7 @@ function createGamePed(modelIndex, position, heading, toClient = null) {
 		if (ped) {
 			//ped.position = position;
 			ped.heading = heading;
+			ped.rotation = toVector3(0, 0, heading);
 			return ped;
 		}
 	}
@@ -1819,6 +1820,35 @@ function setPedBleeding(ped, state) {
 
 	setEntityData(ped, "v.rp.bleeding", state, true);
 	sendNetworkEventToPlayer("v.rp.bleeding", null, ped.id, state);
+}
+
+// ===========================================================================
+
+function loadArrayDataFromDatabase(queryString, dataClass) {
+	let tempArray = [];
+	let dbConnection = connectToDatabase();
+	let dbAssoc = [];
+
+	if (dbConnection) {
+		dbAssoc = fetchQueryAssoc(dbConnection, queryString);
+		if (dbAssoc.length > 0) {
+			for (let i in dbAssoc) {
+				let tempData = new dataClass(dbAssoc[i]);
+				tempArray.push(tempData);
+			}
+		}
+
+		disconnectFromDatabase(dbConnection);
+	}
+
+	return tempArray;
+}
+
+// ===========================================================================
+
+function setPedHeading(ped, heading) {
+	ped.heading = heading;
+	sendNetworkEventToPlayer("v.rp.elementHeading", null, ped.id, heading);
 }
 
 // ===========================================================================
