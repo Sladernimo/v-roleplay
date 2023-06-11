@@ -996,7 +996,7 @@ function saveAccountKeyBindToDatabase(keyBindData) {
 			["acct_hotkey_key", keyBindData.key],
 			["acct_hotkey_down", boolToInt(keyBindData.keyState)],
 			["acct_hotkey_when_added", keyBindData.whenAdded],
-			["acct_hotkey_server", keyBindData.whenAdded],
+			["acct_hotkey_server", getServerId()],
 		];
 
 		let dbQuery = null;
