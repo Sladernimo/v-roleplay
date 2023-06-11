@@ -391,6 +391,7 @@ function createItem(itemTypeId, value, ownerType, ownerId, amount = 1, temporary
 
 	let index = serverData.items.push(tempItemData);
 	setAllItemDataIndexes();
+	saveItemToDatabase(tempItemData);
 	return index - 1;
 }
 
@@ -2807,7 +2808,7 @@ function saveAllItemsToDatabase() {
 
 	for (let i in serverData.items) {
 		if (serverData.items[i] != null) {
-			saveItemToDatabase(i);
+			saveItemToDatabase(serverData.items[i]);
 		}
 	}
 }
@@ -2826,8 +2827,7 @@ function saveAllItemTypesToDatabase() {
 
 // ===========================================================================
 
-function saveItemToDatabase(itemId) {
-	let itemData = getItemData(itemId);
+function saveItemToDatabase(itemData) {
 	if (itemData == false) {
 		return false;
 	}
@@ -2842,7 +2842,7 @@ function saveItemToDatabase(itemId) {
 
 	logToConsole(LOG_VERBOSE, `[V.RP.Item]: Saving item '${itemData.index}' to database ...`);
 
-	let position = getItemPosition(itemId);
+	let position = getItemPosition(itemData.index);
 
 	let dbConnection = connectToDatabase();
 	if (dbConnection) {
