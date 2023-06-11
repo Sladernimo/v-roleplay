@@ -865,6 +865,14 @@ function setPedBleeding(pedId, state) {
 
 // ===========================================================================
 
+function setElementHeading(elementId, heading) {
+	let element = getElementFromId(elementId);
+
+	element.heading = heading;
+}
+
+// ===========================================================================
+
 function isServerScript() {
 	return false;
 }

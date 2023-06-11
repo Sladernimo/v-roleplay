@@ -121,6 +121,7 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.guiColour", setGUIColours);
 	addNetworkEventHandler("v.rp.mapChangingSoon", setMapChangeWarningState);
 	addNetworkEventHandler("v.rp.elementInterior", setElementInterior);
+	addNetworkEventHandler("v.rp.elementHeading", setElementHeading);
 
 	// 2D Rendering
 	addNetworkEventHandler("v.rp.set2DRendering", set2DRendering);
