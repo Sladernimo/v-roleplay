@@ -15,9 +15,26 @@ let nightHourStart = 18;
 let nightMinuteStart = 0;
 let nightMinuteWarningStart = 5;
 
+// ===========================================================================
+
 let emojiNumbers = ["➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"];
 //let emojiNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"];
 //let emojiNumbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
+
+// ===========================================================================
+
+let gameIdentifiers = {
+	[V_GAME_GTA_III]: "gta:iii",
+	[V_GAME_GTA_VC]: "gta:vc",
+	[V_GAME_GTA_SA]: "gta:sa",
+	[V_GAME_GTA_IV]: "gta:iv",
+	[V_GAME_MAFIA_ONE]: "mafia:one",
+	[V_GAME_MAFIA_TWO]: "mafia:two",
+	[V_GAME_MAFIA_THREE]: "mafia:three",
+	[V_GAME_MAFIA_ONE_DE]: "mafia:one_de",
+};
+
+// ===========================================================================
 
 let bindableKeys = {
 	97: "a",
@@ -3125,14 +3142,14 @@ function getAnimationFromParams(params) {
  */
 function getAnimationData(animationSlot, gameId = getGame()) {
 	if (animationSlot == -1) {
-		return false;
+		return null;
 	}
 
 	if (typeof gameData.animations[gameId][animationSlot] != "undefined") {
 		return gameData.animations[gameId][animationSlot];
 	}
 
-	return false;
+	return null;
 }
 
 // ===========================================================================
@@ -3335,6 +3352,12 @@ function getRandomSkin() {
 	let tempAllowedSkins = getAllowedSkins();
 	let randomIndex = getRandom(0, tempAllowedSkins.length - 1);
 	return getSkinIndexFromModel(tempAllowedSkins[randomIndex][0]);
+}
+
+// ===========================================================================
+
+function getGameIdentifier(gameId = getGame()) {
+	return gameIdentifiers[gameId];
 }
 
 // ===========================================================================

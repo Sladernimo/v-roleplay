@@ -27,6 +27,11 @@ function makePedPlayAnimation(pedId, animationSlot, positionOffset) {
 	}
 
 	let animationData = getAnimationData(animationSlot);
+	if (animationData == null) {
+		logToConsole(LOG_DEBUG | LOG_WARN, `[V.RP.Animation] Could not play animation ${animationData[0]} for ped ${pedId}. Animation data is null.`);
+		return false;
+	}
+
 	logToConsole(LOG_DEBUG, `[V.RP.Animation] Playing animation ${animationData[0]} for ped ${pedId}`);
 
 	let freezePlayer = false;
@@ -113,6 +118,10 @@ function forcePedAnimation(pedId, animSlot) {
 	}
 
 	let animationData = getAnimationData(animSlot);
+
+	if (animationData == null) {
+		return false;
+	}
 
 	if (getGame() < V_GAME_GTA_IV) {
 		ped.position = ped.position;

@@ -23,13 +23,7 @@ function playPlayerAnimationCommand(command, params, client) {
 	let animationSlot = getAnimationFromParams(getParam(params, " ", 1));
 	let animationPositionOffset = 1;
 
-	if (!animationSlot) {
-		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
-		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
-		return false;
-	}
-
-	if (!getAnimationData(animationSlot)) {
+	if (getAnimationData(animationSlot) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidAnimation"));
 		messagePlayerInfo(client, getLocaleString(client, "AnimationCommandTip", `{ALTCOLOUR}/animlist{MAINCOLOUR}`));
 		return false;
