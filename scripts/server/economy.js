@@ -7,6 +7,18 @@
 // TYPE: Server (JavaScript)
 // ===========================================================================
 
+const V_MONEY_LOG_OWNER_TYPE_NONE = 0;
+const V_MONEY_LOG_OWNER_TYPE_SERVER = 1;
+const V_MONEY_LOG_OWNER_TYPE_PLAYER = 2;
+const V_MONEY_LOG_OWNER_TYPE_JOB = 3;
+const V_MONEY_LOG_OWNER_TYPE_CLAN = 4;
+const V_MONEY_LOG_OWNER_TYPE_BUSINESS = 5;
+const V_MONEY_LOG_OWNER_TYPE_GROUND = 6;
+const V_MONEY_LOG_OWNER_TYPE_ITEM = 7;
+const V_MONEY_LOG_OWNER_TYPE_PAYDAY = 8;
+
+// ===========================================================================
+
 function initEconomyScript() {
 	logToConsole(LOG_INFO, "[V.RP.Economy]: Initializing economy script ...");
 	logToConsole(LOG_INFO, "[V.RP.Economy]: Economy script initialized successfully!");
@@ -77,6 +89,14 @@ function playerPayDay(client) {
 		if (canPayNow >= allExpenses) {
 			let payInCash = allExpenses - grossIncome;
 			takePlayerCash(client, payInCash);
+			logMoneyTransaction(
+				netIncome,
+				V_MONEY_LOG_OWNER_TYPE_PLAYER,
+				getPlayerCurrentSubAccount(client).databaseId,
+				V_MONEY_LOG_OWNER_TYPE_PAYDAY,
+				getServerId(),
+				defaultNoAccountId
+			);
 			messagePlayerInfo(client, `{orange}${getLocaleString(client, "RemainingTaxPaidInMoney", `{ALTCOLOUR}${getCurrencyString(payInCash)}{orange}`)}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "LostMoneyFromTaxes")}`);
 			messagePlayerAlert(client, `{orange}${getLocaleString(client, "NextPaycheckRepossessionWarning")}`);
@@ -98,6 +118,14 @@ function playerPayDay(client) {
 	} else {
 		messagePlayerInfo(client, getLocaleString(client, "PayDayReceive", `{ALTCOLOUR}${getCurrencyString(netIncome)}{MAINCOLOUR}`));
 		givePlayerCash(client, netIncome);
+		logMoneyTransaction(
+			netIncome,
+			V_MONEY_LOG_OWNER_TYPE_PAYDAY,
+			getServerId(),
+			V_MONEY_LOG_OWNER_TYPE_PLAYER,
+			getPlayerCurrentSubAccount(client).databaseId,
+			defaultNoAccountId
+		);
 	}
 
 	getPlayerCurrentSubAccount(client).payDayAmount = 0;
@@ -532,6 +560,29 @@ function setIncomeInflationMultiplierCommand(command, params, client) {
 	serverConfig.economy.incomeInflationMultiplier = amount / 100;
 	serverConfig.needsSaved = true;
 	messageAdmins(`{adminOrange}${client.name}{MAINCOLOUR} set the income inflation to {ALTCOLOUR}${amount}%`);
+}
+
+// ===========================================================================
+
+function logMoneyTransaction(amount, oldOwnerType, oldOwnerId, newOwnerType, newOwnerId, whoAdded = defaultNoAccountId) {
+	let dbConnection = connectToDatabase();
+	if (dbConnection) {
+		let queryString = createDatabaseInsertQuery("log_money", [
+			["log_money_server", getServerId()],
+			["log_money_old_owner_type", toInteger(oldOwnerType)],
+			["log_money_old_owner_id", toInteger(oldOwnerId)],
+			["log_money_new_owner_type", toInteger(newOwnerType)],
+			["log_money_new_owner_id", toInteger(newOwnerId)],
+			["log_money_who_added", toInteger(whoAdded)],
+			["log_money_amount", toInteger(amount)],
+			["log_money_when_added", getCurrentUnixTimestamp()],
+		]);
+		queryDatabase(dbConnection, queryString);
+
+		disconnectFromDatabase(dbConnection);
+	}
+
+	return true;
 }
 
 // ===========================================================================
