@@ -477,31 +477,43 @@ function showCharacterSelectToClient(client) {
 
 function checkNewCharacter(client, firstName, lastName) {
 	if (areParamsEmpty(firstName)) {
-		showPlayerNewCharacterFailedGUI(client, "First name cannot be blank!");
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "FirstNameEmpty"));
 		return false;
 	}
+
+	// Trim and recheck
 	firstName = firstName.trim();
+	if (areParamsEmpty(firstName)) {
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "FirstNameEmpty"));
+		return false;
+	}
 
 	if (areParamsEmpty(lastName)) {
-		showPlayerNewCharacterFailedGUI(client, "Last name cannot be blank!");
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "LastNameEmpty"));
 		return false;
 	}
+
+	// Trim and recheck
 	lastName = lastName.trim();
+	if (areParamsEmpty(lastName)) {
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "LastNameEmpty"));
+		return false;
+	}
 
 	if (doesNameContainInvalidCharacters(firstName) || doesNameContainInvalidCharacters(lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (invalid characters in name)`);
-		showPlayerNewCharacterFailedGUI(client, "Invalid characters in name!");
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "InvalidCharactersInName"));
 		return false;
 	}
 
 	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesSubAccountNameExist(firstName, lastName)) {
 		logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Account] Subaccount ${firstName} ${lastName} could not be created (name already used)`);
-		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "NameNotAvailable"));
 		return false;
 	}
 
 	if (!doesPlayerHaveStaffPermission(client, getStaffFlagValue("BasicModeration")) && doesPlayerHaveSimilarCharacterName(client, firstName, lastName)) {
-		showPlayerNewCharacterFailedGUI(client, "Name is not available!");
+		showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "NameNotAvailable"));
 		return false;
 	}
 
@@ -523,11 +535,11 @@ function checkNewCharacter(client, firstName, lastName) {
 	let subAccountData = createSubAccount(getPlayerData(client).accountData.databaseId, firstName, lastName);
 	if (!subAccountData) {
 		if (doesServerHaveGUIEnabled() && doesPlayerHaveGUIEnabled(client)) {
-			showPlayerNewCharacterFailedGUI(client, "Your character could not be created!");
+			showPlayerNewCharacterFailedGUI(client, getLocaleString(client, "CharacterCreateFailed"));
 		} else {
-			messagePlayerError(client, "Your character could not be created!");
+			messagePlayerError(client, getLocaleString(client, "CharacterCreateFailed"));
 		}
-		messagePlayerAlert(client, `${getServerName()} staff have been notified of the problem and will fix it soon.`);
+		messagePlayerAlert(client, getLocaleString(client, "DevelopersNotified"));
 		return false;
 	}
 
@@ -636,7 +648,7 @@ function switchCharacterCommand(command, params, client) {
 
 	if (isPlayerSwitchingCharacter(client)) {
 		logToConsole(LOG_WARN, `[V.RP.SubAccount] ${getPlayerDisplayForConsole(client)} is not allowed to switch characters (already in switch char mode)`);
-		messagePlayerError(client, "You are already selecting/switching characters!");
+		messagePlayerError(client, getLocaleString(client, "AlreadySwitchingCharacters"));
 		return false;
 	}
 
@@ -661,7 +673,7 @@ function newCharacterCommand(command, params, client) {
 
 function useCharacterCommand(command, params, client) {
 	if (!getPlayerData(client).switchingCharacter) {
-		messagePlayerError(client, "Use /switchchar to save this character and return to the characters screen first!");
+		messagePlayerError(client, getLocaleString(client, "UseSwitchCharacterCommandFirst"));
 		return false;
 	}
 
@@ -746,6 +758,11 @@ function getClientSubAccountName(client) {
 // ===========================================================================
 
 function setFightStyleCommand(command, params, client) {
+	if (isGameFeatureSupported("pedFightStyle") == false) {
+		messagePlayerError(client, getLocaleString(client, "FightStylesNotSupported"));
+		return false;
+	}
+
 	if (areParamsEmpty(params)) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
@@ -753,7 +770,7 @@ function setFightStyleCommand(command, params, client) {
 
 	let fightStyleId = getFightStyleFromParams(params);
 
-	if (!fightStyle) {
+	if (!fightStyleId) {
 		messagePlayerError(client, `That fight style doesn't exist!`);
 		messagePlayerError(client, `Fight styles: ${gameData.fightStyles[getGame()].map(fs => fs[0]).join(", ")}`);
 		return false;
@@ -831,7 +848,9 @@ function forcePlayerIntoSwitchCharacterScreen(client) {
 
 function doesSubAccountNameExist(firstName, lastName) {
 	let dbConnection = connectToDatabase();
-	let dbQueryResult = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main WHERE sacct_name_first = '${firstName}' AND sacct_name_last = '${lastName}' LIMIT 1;`);
+	let safeFirstName = escapeDatabaseString(dbConnection, firstName);
+	let safeLastName = escapeDatabaseString(dbConnection, lastName);
+	let dbQueryResult = fetchQueryAssoc(dbConnection, `SELECT * FROM sacct_main WHERE sacct_name_first = '${safeFirstName}' AND sacct_name_last = '${safeLastName}' LIMIT 1;`);
 	return dbQueryResult.length > 0;
 }
 
