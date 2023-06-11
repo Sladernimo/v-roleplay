@@ -134,7 +134,7 @@ function loadCommands() {
 			new CommandData("buy", buyFromBusinessCommand, "<slot> [amount]", getStaffFlagValue("None"), true, true, "Buy items from a business"),
 			new CommandData("bizstock", stockItemOnBusinessFloorCommand, "<item name> <amount> <sell price>", getStaffFlagValue("None"), true, true, "Uses storage items to restock the business with."),
 			new CommandData("bizstore", storeItemInBusinessStorageCommand, "<item name> <amount>", getStaffFlagValue("None"), true, true, "Moves items from the business to the business storage"),
-			new CommandData("bizorder", orderItemForBusinessCommand, "<item name> <amount> <sell price>", getStaffFlagValue("None"), true, true, "Orders items to sell from a business"),
+			new CommandData("bizorder", orderItemForBusinessCommand, "<item name> <amount>", getStaffFlagValue("None"), true, true, "Orders items to sell from a business"),
 			new CommandData("bizitemprice", setBusinessItemSellPriceCommand, "<item slot> <sell price>", getStaffFlagValue("None"), true, true, "Sets the purchase price of a business item"),
 			new CommandData("bizname", setBusinessNameCommand, "<name>", getStaffFlagValue("None"), true, true, "Changes a business name"),
 			new CommandData("bizowner", setBusinessOwnerCommand, "<player name/id>", getStaffFlagValue("None"), true, true, "Changes the owner of a business"),
@@ -173,6 +173,7 @@ function loadCommands() {
 			new CommandData("jobbiz", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
 			new CommandData("jobbusinesses", listJobBusinessesCommand, "", getStaffFlagValue("None"), true, true, "Shows all businesses owned by your job"),
 			new CommandData("bizallowveh", toggleBusinessAllowVehiclesCommand, "", getStaffFlagValue("ManageBusinesses"), true, true, "Toggles whether vehicles are allowed to enter/exit the business"),
+			new CommandData("bizcombineitems", combineBusinessFloorItemsCommand, "<item slot 1> <item slot 2>", getStaffFlagValue("None"), true, true, "Combines two sets of a for-sale item into one"),
 		],
 		callbox: [
 			new CommandData("addcallbox", createCallBoxCommand, "", getStaffFlagValue("ManagePayPhones"), true, true, "Creates a police call box (gamewell)"),
