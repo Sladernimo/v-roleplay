@@ -1614,27 +1614,26 @@ function orderItemForBusinessCommand(command, params, client) {
 		return false;
 	}
 
-	if (!areThereEnoughParams(params, 3, " ")) {
+	if (!areThereEnoughParams(params, 2, " ")) {
 		messagePlayerSyntax(client, getCommandSyntaxText(command));
 		return false;
 	}
 
 	let splitParams = params.split(" ");
-	let itemType = getItemTypeFromParams(splitParams.slice(0, -2).join(" "));
+	let itemType = getItemTypeFromParams(splitParams.slice(0, -1).join(" "));
 
 	if (!getItemTypeData(itemType)) {
 		messagePlayerError(client, getLocaleString(client, "InvalidItemType"));
-		messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes{MAINCOLOUR} for a list of items`);
+		//messagePlayerInfo(client, `Use {ALTCOLOUR}/itemtypes{MAINCOLOUR} for a list of items`);
 		return false;
 	}
 	let pricePerItem = getOrderPriceForItemType(itemType);
 
-	let amount = toInteger(splitParams.slice(-2, -1)) || 1;
-	let sellPrice = toInteger(splitParams.slice(-1)) || pricePerItem;
-	//let value = getItemTypeData(itemType).orderValue;
+	let amount = toInteger(splitParams.slice(-1)) || 1;
+	let sellPrice = pricePerItem;
 	let businessId = getPlayerBusiness(client);
 
-	logToConsole(LOG_DEBUG, `[V.RP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -2).join(" ")}`);
+	logToConsole(LOG_DEBUG, `[V.RP.Business] ${getPlayerDisplayForConsole(client)} is ordering ${amount} ${splitParams.slice(0, -1).join(" ")}`);
 
 	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -2787,7 +2786,12 @@ function buyFromBusinessCommand(command, params, client) {
  *
  */
 function setBusinessItemSellPriceCommand(command, params, client) {
-	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let businessId = getPlayerBusiness(client);
 
 	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -2818,6 +2822,90 @@ function setBusinessItemSellPriceCommand(command, params, client) {
 	messagePlayerSuccess(client, `You changed the price of the {ALTCOLOUR}${getItemTypeData(getItemData(getBusinessData(businessId).floorItemCache[itemSlot - 1]).itemTypeIndex).name}'s {MAINCOLOUR}in slot {ALTCOLOUR}${itemSlot} {MAINCOLOUR}from ${getCurrencyString(oldPrice)} to ${getCurrencyString(newPrice)} (with inflation: ${getCurrencyString(applyServerInflationMultiplier(newPrice))})`);
 }
 
+/**
+ * This is a command handler function.
+ *
+ * @param {string} command - The command name used by the player
+ * @param {string} params - The parameters/args string used with the command by the player
+ * @param {Client} client - The client/player that used the command
+ * @return {bool} Whether or not the command was successful
+ *
+ */
+function combineBusinessFloorItemsCommand(command, params, client) {
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let businessIndex = getPlayerBusiness(client);
+
+	if (getBusinessData(businessIndex) == null) {
+		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
+		return false;
+	}
+
+	let itemSlot1 = toInteger(getParam(params, " ", 1)) || 0;
+	let itemSlot2 = toInteger(getParam(params, " ", 2)) || 0;
+
+	if (typeof getBusinessData(businessIndex).floorItemCache[itemSlot1 - 1] == "undefined") {
+		messagePlayerError(client, `Item slot ${itemSlot1 - 1} doesn't exist!`);
+		return false;
+	}
+
+	if (getBusinessData(businessIndex).floorItemCache[itemSlot1 - 1] == -1) {
+		messagePlayerError(client, `Item slot ${itemSlot1 - 1} slot is empty!`);
+		return false;
+	}
+
+	if (typeof getBusinessData(businessIndex).floorItemCache[itemSlot2 - 1] == "undefined") {
+		messagePlayerError(client, `Item slot ${itemSlot2 - 1} doesn't exist!`);
+		return false;
+	}
+
+	if (getBusinessData(businessIndex).floorItemCache[itemSlot2 - 1] == -1) {
+		messagePlayerError(client, `Item slot ${itemSlot2 - 1} slot is empty!`);
+		return false;
+	}
+
+	let itemIndex1 = getBusinessData(businessIndex).floorItemCache[itemSlot1 - 1];
+	let itemIndex2 = getBusinessData(businessIndex).floorItemCache[itemSlot2 - 1];
+
+	let itemData1 = getItemData(itemIndex1);
+	let itemData2 = getItemData(itemIndex2);
+
+	if (itemData1 == null) {
+		messagePlayerError(client, `Item slot ${itemSlot1 - 1} slot is empty!`);
+		return false;
+	}
+
+	if (itemData2 == null) {
+		messagePlayerError(client, `Item slot ${itemSlot2 - 1} slot is empty!`);
+		return false;
+	}
+
+	if (itemData1.itemTypeIndex != itemData2.itemTypeIndex) {
+		messagePlayerError(client, "The items must be of the same type!");
+		return false;
+	}
+
+	if (itemData1.buyPrice != itemData2.buyPrice) {
+		messagePlayerError(client, "The items must have the same price!");
+		return false;
+	}
+
+	if (itemData1.value != itemData2.value) {
+		messagePlayerError(client, "The items must have the same value!");
+		return false;
+	}
+
+	itemData1.amount += itemData2.amount;
+	itemData1.needsSaved = true;
+	deleteItem(itemData2.index);
+	cacheBusinessItems(businessIndex);
+
+	messagePlayerSuccess(client, `You combined two slots of ${getItemTypeData(itemData1.itemTypeIndex).name} into one slot!`);
+}
+
 // ===========================================================================
 
 /**
@@ -2830,7 +2918,12 @@ function setBusinessItemSellPriceCommand(command, params, client) {
  *
  */
 function storeItemInBusinessStorageCommand(command, params, client) {
-	let businessId = getBusinessFromParams(getParam(params, " ", 3)) || getPlayerBusiness(client);
+	if (areParamsEmpty(params)) {
+		messagePlayerSyntax(client, getCommandSyntaxText(command));
+		return false;
+	}
+
+	let businessId = getPlayerBusiness(client);
 
 	if (getBusinessData(businessId) == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidBusiness"));
@@ -3222,7 +3315,7 @@ function deleteBusinessPickups(business) {
 
 function getBusinessFromParams(params) {
 	if (isNaN(params)) {
-		return serverData.businesses.findIndex(business => business.name.toLowerCase().indexOf(params.toLowerCase()) != -1);
+		return serverData.businesses.findIndex(business => toLowerCase(business.name).indexOf(toLowerCase(params)) != -1);
 	} else {
 		if (typeof serverData.businesses[params] != "undefined") {
 			return toInteger(params);
