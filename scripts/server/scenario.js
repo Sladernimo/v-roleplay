@@ -133,13 +133,12 @@ function disableScenario(scenarioIndex) {
 function spawnScenarioVehicles(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.vehicles) {
-		let vehicleData = serverData.vehicles[scenarioData.vehicles[i]];
-		if (vehicleData != null) {
-			if (vehicleData.vehicle == null) {
-				deleteGameElement(vehicleData.vehicle);
-				vehicleData.vehicle = null;
+		if (typeof serverData.vehicles[scenarioData.vehicles[i]] != "undefined") {
+			if (serverData.vehicles[scenarioData.vehicles[i]].vehicle == null) {
+				deleteGameElement(serverData.vehicles[scenarioData.vehicles[i]].vehicle);
+				serverData.vehicles[scenarioData.vehicles[i]].vehicle = null;
 			}
-			spawnVehicle(vehicleData);
+			spawnVehicle(serverData.vehicles[scenarioData.vehicles[i]]);
 		}
 	}
 }
@@ -149,11 +148,10 @@ function spawnScenarioVehicles(scenarioIndex) {
 function despawnScenarioVehicles(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.vehicles) {
-		let vehicleData = serverData.vehicles[scenarioData.vehicles[i]];
-		if (vehicleData != null) {
-			if (vehicleData.vehicle != null) {
-				deleteGameElement(vehicleData.vehicle);
-				vehicleData.vehicle = null;
+		if (typeof serverData.vehicles[scenarioData.vehicles[i]] != "undefined") {
+			if (serverData.vehicles[scenarioData.vehicles[i]].vehicle != null) {
+				deleteGameElement(serverData.vehicles[scenarioData.vehicles[i]].vehicle);
+				serverData.vehicles[scenarioData.vehicles[i]].vehicle = null;
 			}
 		}
 	}
@@ -164,13 +162,12 @@ function despawnScenarioVehicles(scenarioIndex) {
 function spawnScenarioNPCs(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.npcs) {
-		let npcData = serverData.npcs[scenarioData.npcs[i]];
-		if (npcData != null) {
-			if (npcData.ped == null) {
-				deleteGameElement(npcData.ped);
-				npcData.ped = null;
+		if (typeof serverData.npcs[scenarioData.npcs[i]] != "undefined") {
+			if (serverData.npcs[scenarioData.npcs[i]].ped == null) {
+				deleteGameElement(serverData.npcs[scenarioData.npcs[i]].ped);
+				serverData.npcs[scenarioData.npcs[i]].ped = null;
 			}
-			spawnNPC(npcData);
+			spawnNPC(serverData.npcs[scenarioData.npcs[i]]);
 		}
 	}
 }
@@ -180,11 +177,10 @@ function spawnScenarioNPCs(scenarioIndex) {
 function despawnScenarioNPCs(scenarioIndex) {
 	let scenarioData = getScenarioData(scenarioIndex);
 	for (let i in scenarioData.npcs) {
-		let npcData = serverData.npcs[scenarioData.npcs[i]];
-		if (npcData != null) {
-			if (npcData.ped == null) {
-				deleteGameElement(npcData.ped);
-				npcData.ped = null;
+		if (typeof serverData.npcs[scenarioData.npcs[i]] != "undefined") {
+			if (serverData.npcs[scenarioData.npcs[i]].ped != null) {
+				deleteGameElement(serverData.npcs[scenarioData.npcs[i]].ped);
+				serverData.npcs[scenarioData.npcs[i]].ped = null;
 			}
 		}
 	}
@@ -201,28 +197,16 @@ function setAllScenarioDataIndexes() {
 // ===========================================================================
 
 function cacheAllScenarioVehicles() {
-	for (let i in serverData.vehicles) {
-		if (serverData.vehicles[i].ownerType == V_VEH_OWNER_SCENARIO) {
-			for (let j in serverData.scenarios) {
-				if (serverData.vehicles[i].ownerId == serverData.scenarios[j].databaseId) {
-					serverData.scenarios[j].vehicles.push(i);
-				}
-			}
-		}
+	for (let j in serverData.scenarios) {
+		serverData.scenarios[j].vehicles = serverData.vehicles.filter(veh => veh.ownerType == V_VEH_OWNER_SCENARIO && veh.ownerId == serverData.scenarios[j].databaseId).map(filteredVehicle => filteredVehicle.index);
 	}
 }
 
 // ===========================================================================
 
 function cacheAllScenarioNPCs() {
-	for (let i in serverData.npcs) {
-		if (serverData.npcs[i].ownerType = V_NPC_OWNER_SCENARIO) {
-			for (let j in serverData.scenarios) {
-				if (serverData.npcs[i].ownerId == serverData.scenarios[j].databaseId) {
-					serverData.scenarios[j].npcs.push(i);
-				}
-			}
-		}
+	for (let j in serverData.scenarios) {
+		serverData.scenarios[j].npcs = serverData.npcs.filter(npc => npc.ownerType == V_NPC_OWNER_SCENARIO && npc.ownerId == serverData.scenarios[j].databaseId).map(filteredNPC => filteredNPC.index);
 	}
 }
 
