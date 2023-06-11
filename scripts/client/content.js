@@ -63,3 +63,15 @@ function playCustomAudio(audioName, volume = 0.5, loop = false) {
 }
 
 // ===========================================================================
+
+function stopCustomAudio(audioName) {
+	let contentResource = findResourceByName(extraContentResource[getGame()]);
+	if (contentResource != null) {
+		if (contentResource.isStarted) {
+			contentResource.exports.stopCustomAudio(audioName);
+		}
+	}
+	return false;
+}
+
+// ===========================================================================
