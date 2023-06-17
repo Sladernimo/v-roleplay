@@ -1658,12 +1658,12 @@ function clanUninviteCommand(command, params, client) {
 // ===========================================================================
 
 function clanLeaveCommand(command, params, client) {
-	if (getPlayerClan(client) == -1) {
+	let clanData = getClanData(getPlayerClan(client));
+
+	if (clanData == null) {
 		messagePlayerError(client, getLocaleString(client, "InvalidClan"));
 		return false;
 	}
-
-	let clanData = getClanData(getPlayerClan(client));
 
 	removePlayerFromClan(client);
 	messagePlayerSuccess(client, getLocaleString(client, "LeftClan", `{clanOrange}${clanData.name}{MAINCOLOUR}`));
