@@ -3030,6 +3030,10 @@ function cacheAllBusinessItems() {
 function cacheBusinessItems(businessIndex) {
 	let businessData = getBusinessData(businessIndex);
 
+	if (businessData == null) {
+		return false;
+	}
+
 	businessData.floorItemCache = [];
 	businessData.storageItemCache = [];
 
