@@ -46,14 +46,22 @@ let ENTITYTYPE_OBJECT = 4;
 let ENTITYTYPE_DUMMY = 5;
 
 function GetEntityType(Entity) {
-	if (Entity.isType(ELEMENT_BUILDING))
-		return ENTITYTYPE_BUILDING;
-	if (Entity.isType(ELEMENT_VEHICLE))
-		return ENTITYTYPE_VEHICLE;
-	if (Entity.isType(ELEMENT_PED))
-		return ENTITYTYPE_PED;
-	if (Entity.isType(ELEMENT_OBJECT))
-		return ENTITYTYPE_OBJECT;
+	if (getGame() <= V_GAME_GTA_SA) {
+		if (Entity.isType(ELEMENT_BUILDING))
+			return ENTITYTYPE_BUILDING;
+		if (Entity.isType(ELEMENT_VEHICLE))
+			return ENTITYTYPE_VEHICLE;
+		if (Entity.isType(ELEMENT_PED))
+			return ENTITYTYPE_PED;
+		if (Entity.isType(ELEMENT_OBJECT))
+			return ENTITYTYPE_OBJECT;
+	} else if (getGame() == V_GAME_MAFIA_ONE) {
+		if (Entity.isType(ELEMENT_VEHICLE))
+			return ENTITYTYPE_VEHICLE;
+		if (Entity.isType(ELEMENT_PED))
+			return ENTITYTYPE_PED;
+	}
+
 	//if (Entity.isType(ELEMENT_DUMMY))
 	//	return ENTITYTYPE_DUMMY;
 	return undefined;
