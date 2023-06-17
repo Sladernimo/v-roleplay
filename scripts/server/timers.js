@@ -213,7 +213,7 @@ function checkServerGameTime() {
 	//}
 
 	if (!serverConfig.useRealTime) {
-		if (serverConfig.minute >= 59) {
+		if (serverConfig.minute + globalConfig.gameTimeMinuteIncrement >= 59) {
 			serverConfig.minute = 0;
 			if (serverConfig.hour >= 23) {
 				serverConfig.hour = 0;
@@ -239,6 +239,7 @@ function checkServerGameTime() {
 
 				if (isNightTime(serverConfig.hour)) {
 					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to night`);
+					serverConfig.needsSaved = true;
 					messageDiscordEventChannel("🌙 Changing server map to night");
 					gameData.mainWorldScene[getGame()] = "FREERIDENOC";
 					setServerPassword(generateRandomString(10, globalConfig.alphaNumericCharacters));
@@ -262,6 +263,7 @@ function checkServerGameTime() {
 
 				if (!isNightTime(serverConfig.hour)) {
 					logToConsole(LOG_INFO | LOG_WARN, `[V.RP.Timers] Changing server map to day`);
+					serverConfig.needsSaved = true;
 					messageDiscordEventChannel("🌞 Changing server map to day");
 					gameData.mainWorldScene[getGame()] = "FREERIDE";
 					setServerPassword(generateRandomString(10, globalConfig.alphaNumericCharacters));
@@ -288,6 +290,7 @@ function checkServerGameTime() {
 	}
 
 	updateServerRules();
+	sendServerTimeToPlayer(null);
 }
 
 // ===========================================================================
