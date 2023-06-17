@@ -13,7 +13,7 @@ let streamingRadioElement = null;
 
 // ===========================================================================
 
-function playStreamingRadio(url, loop, volume, element = false) {
+function playStreamingRadio(url, loop, volume, seek = -1) {
 	if (streamingRadio != null) {
 		streamingRadio.stop();
 	}
@@ -22,7 +22,16 @@ function playStreamingRadio(url, loop, volume, element = false) {
 
 	streamingRadio = audio.createSoundFromURL(url, loop);
 	streamingRadio.volume = volume / 100;
+
+	//if (seek != -1) {
+	//	streamingRadio.position = seek;
+	//}
+
 	streamingRadio.play();
+
+	if (seek != -1) {
+		streamingRadio.position = seek;
+	}
 }
 
 // ===========================================================================
