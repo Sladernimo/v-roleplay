@@ -304,9 +304,9 @@ function getVehicleRotation(vehicle) {
 		return false;
 	}
 
-	if (getGame() == V_GAME_MAFIA_ONE) {
-		return getRotationFromHeading(vehicle.heading);
-	}
+	//if (getGame() == V_GAME_MAFIA_ONE) {
+	//	return getRotationFromHeading(vehicle.heading);
+	//}
 
 	return vehicle.rotation;
 }
@@ -1343,8 +1343,14 @@ function warpPedIntoVehicle(ped, vehicle, seatId) {
 
 // ===========================================================================
 
-function forcePedToEnterVehicle(ped, vehicle, seat) {
-	sendNetworkEventToPlayer("v.rp.enterVehicle", ped.syncer, ped.id, vehicle.id, seat);
+function makePedEnterVehicle(ped, vehicle, seatId) {
+	sendNetworkEventToPlayer("v.rp.enterVehicle", ped.syncer, ped.id, vehicle.id, seatId);
+}
+
+// ===========================================================================
+
+function makePedExitVehicle(ped) {
+	sendNetworkEventToPlayer("v.rp.exitVehicle", ped.syncer, ped.id);
 }
 
 // ===========================================================================
