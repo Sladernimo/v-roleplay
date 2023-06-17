@@ -475,6 +475,7 @@ function loadCommands() {
 			new CommandData("jobuniformrank", setJobUniformMinimumRankCommand, "<uniform id> <rank level>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutelocpos", setJobRouteLocationPositionCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutename", setJobRouteNameCommand, "<name>", getStaffFlagValue("ManageJobs"), true, false),
+			new CommandData("jobrouterespawnveh", toggleJobRouteRespawnVehicleCommand, "", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutepay", setJobRoutePayCommand, "<amount>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutestartmsg", setJobRouteStartMessageCommand, "<new message>", getStaffFlagValue("ManageJobs"), true, false),
 			new CommandData("jobroutefinishmsg", setJobRouteFinishMessageCommand, "<new message>", getStaffFlagValue("ManageJobs"), true, false),
