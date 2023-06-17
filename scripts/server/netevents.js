@@ -102,7 +102,16 @@ function updateAllPlayerNameTags() {
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending updated nametags to all players`);
 	let clients = getClients();
 	for (let i in clients) {
-		updatePlayerNameTag(clients[i]);
+		if (clients[i] == null) {
+			return false;
+		}
+
+		if (getPlayerData(clients[i]) == null) {
+			return false;
+		}
+
+		logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending ${getPlayerDisplayForConsole(clients[i])}'s updated nametag to all players`);
+		sendNetworkEventToPlayer("v.rp.nametag", null, getPlayerName(clients[i]), getPlayerNameForNameTag(clients[i]), getPlayerColour(clients[i]), getPlayerData(clients[i]).afk, getPlayerPing(clients[i]));
 	}
 }
 
@@ -274,7 +283,8 @@ function setPlayerWeaponDamageEnabled(client, state) {
 
 function setPlayerWeaponDamageEvent(client, eventType) {
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Sending weapon damage event (${eventType}) for ${getPlayerDisplayForConsole(client)} to all players`);
-	sendNetworkEventToPlayer("v.rp.weaponDamageEvent", null, getPlayerName(client), eventType);
+	//sendNetworkEventToPlayer("v.rp.weaponDamageEvent", null, getPlayerName(client), eventType);
+	setEntityData(client, "v.rp.weaponDamageEvent", eventType, true);
 	getPlayerData(client).weaponDamageEvent = eventType;
 }
 
@@ -992,14 +1002,14 @@ function sendPlayerChatAutoHideDelay(client, delay) {
 
 // ===========================================================================
 
-function playRadioStreamForPlayer(client, streamURL, loop = true, volume = 0, element = false) {
+function playRadioStreamForPlayer(client, streamURL, loop = true, volume = 0, seek = -1) {
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Forcing ${getPlayerDisplayForConsole(client)} to stream ${streamURL}`);
-	sendNetworkEventToPlayer("v.rp.radioStream", client, streamURL, loop, volume, element);
+	sendNetworkEventToPlayer("v.rp.radioStream", client, streamURL, loop, volume, seek);
 }
 
 // ===========================================================================
 
-function playAudioFileForPlayer(client, audioName, loop = true, volume = 0, element = false) {
+function playAudioFileForPlayer(client, audioName, loop = true, volume = 0, seek = -1) {
 	logToConsole(LOG_DEBUG, `[V.RP.NetEvents] Forcing ${getPlayerDisplayForConsole(client)} to play audio ${audioName}`);
 	sendNetworkEventToPlayer("v.rp.audioFileStream", client, audioName, loop, volume);
 }
@@ -1262,18 +1272,20 @@ function sendAllJobsToPlayer(client) {
 	let jobs = serverData.jobs;
 	for (let i in jobs) {
 		for (let j in jobs[i].locations) {
-			sendJobToPlayer(
-				client,
-				jobs[i].index,
-				false,
-				jobs[i].locations[j].index,
-				jobs[i].name,
-				jobs[i].locations[j].position,
-				getJobLocationBlipModelForNetworkEvent(i),
-				getJobLocationPickupModelForNetworkEvent(i),
-				doesJobHavePublicRank(i),
-				0
-			);
+			if (jobs[i].locations[j].hidden == false) {
+				sendJobToPlayer(
+					client,
+					jobs[i].index,
+					false,
+					jobs[i].locations[j].index,
+					jobs[i].name,
+					jobs[i].locations[j].position,
+					getJobLocationBlipModelForNetworkEvent(i),
+					getJobLocationPickupModelForNetworkEvent(i),
+					doesJobHavePublicRank(i),
+					0
+				);
+			}
 		}
 	}
 }
@@ -1557,6 +1569,18 @@ function updatePlayerVehicleSeat(client, seat) {
 	}
 
 	getPlayerData(client).vehicleSeat = seat;
+}
+
+// ==========================================================================
+
+function sendServerTimeToPlayer(client) {
+	sendNetworkEventToPlayer("v.rp.time", client, serverConfig.hour, serverConfig.minute);
+}
+
+// ==========================================================================
+
+function sendItemNameToPlayer(client, itemName) {
+	sendNetworkEventToPlayer("v.rp.itemName", client, itemName);
 }
 
 // ==========================================================================
