@@ -26,7 +26,7 @@ const V_VEH_OWNER_SCENARIO = 8;					// Owned by a scenario (car crashes, random 
  * @property {Array.<Number>} dashItemCache
  */
 class VehicleData {
-	constructor(dbAssoc = false, vehicle = false) {
+	constructor(dbAssoc = false, vehicle = null) {
 		// General Info
 		this.databaseId = 0;
 		this.serverId = getServerId();
@@ -1637,8 +1637,6 @@ function respawnBusinessVehiclesCommand(command, params, client) {
 // ===========================================================================
 
 function stopRentingVehicle(client) {
-	serverData.rentingVehicleCache.splice(serverData.rentingVehicleCache.indexOf(client), 1);
-
 	let vehicle = getPlayerData(client).rentingVehicle;
 
 	if (vehicle != null) {
@@ -1648,6 +1646,8 @@ function stopRentingVehicle(client) {
 			respawnVehicle(vehicle);
 		}, 1000);
 	}
+
+	serverData.rentingVehicleCache.splice(serverData.rentingVehicleCache.indexOf(client), 1);
 
 	getPlayerData(client).rentingVehicle = null;
 }
@@ -1810,7 +1810,7 @@ function spawnVehicle(vehicleData) {
 	setVehicleUpgrades(vehicle, vehicleData.extras);
 	setElementInterior(vehicle, vehicleData.interior);
 
-	forcePlayerToSyncElementProperties(null, vehicle);
+	//forcePlayerToSyncElementProperties(null, vehicle);
 	setElementTransient(vehicle, false);
 
 	return vehicle;
@@ -2277,8 +2277,15 @@ function updateVehicleSavedPosition(vehicleData) {
 
 	if (!vehicleData.spawnLocked) {
 		if (!isVehicleUnoccupied(vehicleData.vehicle)) {
+			let oldSpawnRotation = vehicleData.spawnRotation;
+			let oldSpawnPosition = vehicleData.spawnPosition;
+
 			vehicleData.spawnPosition = getVehiclePosition(vehicleData.vehicle);
 			vehicleData.spawnRotation = getVehicleRotation(vehicleData.vehicle);
+
+			if (vehicleData.spawnRotation != oldSpawnRotation || vehicleData.spawnPosition != oldSpawnPosition) {
+				vehicleData.needsSaved = true;
+			}
 		}
 	}
 }
