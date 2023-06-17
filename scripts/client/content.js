@@ -41,9 +41,9 @@ function getCustomAudio(audioName) {
 	let contentResource = findResourceByName(extraContentResource[getGame()]);
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
-			let audioFile = contentResource.exports.getCustomAudio(audioName);
-			if (audioFile != null) {
-				return audioFile;
+			let audioObject = contentResource.exports.getCustomAudio(audioName);
+			if (audioObject != null) {
+				return audioObject;
 			}
 		}
 	}
@@ -57,6 +57,7 @@ function playCustomAudio(audioName, volume = 0.5, loop = false) {
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			contentResource.exports.playCustomAudio(audioName, volume, loop);
+			return true;
 		}
 	}
 	return false;
@@ -69,9 +70,22 @@ function stopCustomAudio(audioName) {
 	if (contentResource != null) {
 		if (contentResource.isStarted) {
 			contentResource.exports.stopCustomAudio(audioName);
+			return true;
 		}
 	}
 	return false;
+}
+
+// ===========================================================================
+
+function loadCustomFont(filePath, fontSize) {
+	let tempFont = null;
+	let fontStream = openFile(filePath);
+	if (fontStream != null) {
+		tempFont = lucasFont.createFont(fontStream, fontSize);
+	}
+
+	return tempFont;
 }
 
 // ===========================================================================
