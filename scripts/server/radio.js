@@ -80,7 +80,7 @@ function playStreamingRadioCommand(command, params, client) {
 	}
 
 	let radioStationId = -1;
-	if (toLowerCase(params) != "none") {
+	if (toLowerCase(params) != "none" && toLowerCase(params) != "off" && toLowerCase(params) != "stop" && toLowerCase(params) != "0") {
 		radioStationId = getRadioStationFromParams(params);
 
 		if (getRadioStationData(radioStationId) == null) {
@@ -116,10 +116,15 @@ function playStreamingRadioCommand(command, params, client) {
 		getPlayerData(client).streamingRadioStation = radioStationId;
 		meActionToNearbyPlayers(client, getLocaleString(client, "ActionVehicleRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
+		let seek = -1;
+		if (getRadioStationData(radioStationId).isFile) {
+			seek = (getCurrentUnixTimestamp() - serverStartTime) % getRadioStationData(radioStationId).fileLength;
+		}
+
 		let clients = getClients();
 		for (let i in clients) {
 			if (vehicle == getPlayerVehicle(clients[i])) {
-				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(client));
+				playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(client), seek);
 			}
 		}
 	} else {
@@ -145,10 +150,15 @@ function playStreamingRadioCommand(command, params, client) {
 				getPlayerData(client).streamingRadioStation = radioStationId;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionHouseRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
+				let seek = -1;
+				if (getRadioStationData(radioStationId).isFile) {
+					seek = (getCurrentUnixTimestamp() - serverStartTime) % getRadioStationData(radioStationId).fileLength;
+				}
+
 				let clients = getClients();
 				for (let i in clients) {
 					if (getPlayerHouse(client) == houseId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]));
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]), seek);
 					}
 				}
 			}
@@ -174,10 +184,15 @@ function playStreamingRadioCommand(command, params, client) {
 				getPlayerData(client).streamingRadioStation = radioStationId;
 				meActionToNearbyPlayers(client, getLocaleString(client, "ActionBusinessRadioStationChange", getRadioStationData(radioStationId).name, getRadioStationData(radioStationId).genre));
 
+				let seek = -1;
+				if (getRadioStationData(getPlayerData(clients[i]).streamingRadioStation).isFile) {
+					seek = (getCurrentUnixTimestamp() - serverStartTime) % getRadioStationData(getPlayerData(clients[i]).streamingRadioStation).fileLength;
+				}
+
 				let clients = getClients();
 				for (let i in clients) {
 					if (getPlayerBusiness(clients[i]) == businessId) {
-						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]));
+						playRadioStreamForPlayer(clients[i], getRadioStationData(radioStationId).url, true, getPlayerStreamingRadioVolume(clients[i]), seek);
 					}
 				}
 			}
