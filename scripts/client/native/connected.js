@@ -865,6 +865,38 @@ function setPedBleeding(pedId, state) {
 
 // ===========================================================================
 
+function makePedEnterVehicle(pedId, vehicleId, seatId) {
+	let ped = getElementFromId(pedId);
+
+	if (ped != null) {
+		if (getGame() <= V_GAME_GTA_VC) {
+			ped.enterVehicle(getElementFromId(vehicleId), (seatId == 0) ? true : false);
+		} else if (getGame() == V_GAME_GTA_IV) {
+			warpPedIntoVehicle(ped, getElementFromId(vehicleId), seatId);
+		} else if (getGame() == V_GAME_MAFIA_ONE) {
+			warpPedIntoVehicle(ped, getElementFromId(vehicleId), seatId);
+		}
+	}
+}
+
+// ===========================================================================
+
+function makePedExitVehicle(pedId) {
+	let ped = getElementFromId(pedId);
+
+	if (ped != null) {
+		if (getGame() <= V_GAME_GTA_VC) {
+			ped.exitVehicle();
+		} else if (getGame() == V_GAME_GTA_IV) {
+			removePedFromVehicle(pedId);
+		} else if (getGame() == V_GAME_MAFIA_ONE) {
+			removePedFromVehicle(pedId);
+		}
+	}
+}
+
+// ===========================================================================
+
 function setElementHeading(elementId, heading) {
 	let element = getElementFromId(elementId);
 
