@@ -809,9 +809,11 @@ function getClosestNPC(position, dimension, interior) {
 
 	let closest = 0;
 	for (let i in npcs) {
-		if (npcs[i].interior == interior && npcs[i].dimension == dimension) {
-			if (getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position)) {
-				closest = i;
+		if (npcs[i].ped != null) {
+			if (npcs[i].interior == interior && npcs[i].dimension == dimension) {
+				if (getDistance(npcs[i].ped.position, position) < getDistance(npcs[closest].ped.position, position)) {
+					closest = i;
+				}
 			}
 		}
 	}
@@ -824,12 +826,12 @@ function getClosestNPC(position, dimension, interior) {
 function getNPCFromParams(params) {
 	if (isNaN(params)) {
 		for (let i in serverData.npc) {
-			if (toLowerCase(serverData.npc[i].name).indexOf(toLowerCase(params)) != -1) {
+			if (toLowerCase(serverData.npcs[i].name).indexOf(toLowerCase(params)) != -1) {
 				return i;
 			}
 		}
 	} else {
-		if (typeof serverData.npc[params] != "undefined") {
+		if (typeof serverData.npcs[params] != "undefined") {
 			return toInteger(params);
 		}
 	}
@@ -861,8 +863,8 @@ function createNPC(skinIndex, position, heading, interior, dimension) {
 
 function despawnAllNPCs() {
 	for (let i in serverData.npcs) {
-		deleteGameElement(serverData.npc[i].npc);
-		serverData.npc[i].npc = null;
+		deleteGameElement(serverData.npcs[i].npc);
+		serverData.npcs[i].npc = null;
 	}
 }
 
@@ -882,7 +884,7 @@ function getNPCIndexFromDatabaseId(databaseId) {
 	}
 
 	for (let i in serverData.npc) {
-		if (serverData.npc[i].databaseId == databaseId) {
+		if (serverData.npcs[i].databaseId == databaseId) {
 			return i;
 		}
 	}
