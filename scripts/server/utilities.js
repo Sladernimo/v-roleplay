@@ -638,8 +638,10 @@ function processPlayerSceneSwitch(client, spawn = false) {
 
 	setTimeout(function () {
 		if (isGameFeatureSupported("fadeCamera")) {
-			logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
-			fadePlayerCamera(client, true, 1000);
+			if (getGame() != V_GAME_MAFIA_ONE) {
+				logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Fading camera IN for player ${getPlayerDisplayForConsole(client)}`);
+				fadePlayerCamera(client, true, 1000);
+			}
 		}
 
 		logToConsole(LOG_DEBUG, `[V.RP.Utilities]: Setting interior lights ${getOnOffFromBool(getPlayerData(client).interiorLights)} for player ${getPlayerDisplayForConsole(client)}`);
