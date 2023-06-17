@@ -2471,31 +2471,44 @@ function replaceEmojiInMessage(messageString) {
 
 // ===========================================================================
 
-function makeReadableTime(hour, minute) {
+function makeReadableTime(hour, minute, use24HourClock = true) {
 	let hourStr = toString(hour);
 	let minuteStr = toString(minute);
-	let meridianStr = "AM";
 
-	if (hour < 10) {
-		hourStr = "0" + toString(hour);
-		meridianStr = "AM";
-	}
-
-	if (hour > 11) {
-		let actualHour = hour - 12;
-		if (actualHour < 10) {
-			hourStr = "0" + toString(hour - 12);
-		} else {
-			hourStr = toString(hour - 12);
+	if (use24HourClock) {
+		if (hour < 10) {
+			hourStr = "0" + toString(hour);
 		}
-		meridianStr = "PM";
-	}
 
-	if (minute < 10) {
-		minuteStr = "0" + toString(minute);
-	}
+		if (minute < 10) {
+			minuteStr = "0" + toString(minute);
+		}
 
-	return hourStr + ":" + minuteStr + " " + meridianStr;
+		return hourStr + ":" + minuteStr;
+	} else {
+		let meridianStr = "AM";
+
+		if (hour < 10) {
+			hourStr = "0" + toString(hour);
+			meridianStr = "AM";
+		}
+
+		if (hour > 11) {
+			let actualHour = hour - 12;
+			if (actualHour < 10) {
+				hourStr = "0" + toString(hour - 12);
+			} else {
+				hourStr = toString(hour - 12);
+			}
+			meridianStr = "PM";
+		}
+
+		if (minute < 10) {
+			minuteStr = "0" + toString(minute);
+		}
+
+		return hourStr + ":" + minuteStr + " " + meridianStr;
+	}
 }
 
 // ===========================================================================
@@ -3171,7 +3184,7 @@ function isMainWorldScene(sceneName, gameId = getGame()) {
 // ===========================================================================
 
 function isNightTime(hour) {
-	if (hour >= dayHourStart && hour <= nightHourStart) {
+	if (hour > dayHourStart && hour < nightHourStart) {
 		return false;
 	} else {
 		return true;
