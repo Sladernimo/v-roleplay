@@ -729,10 +729,14 @@ function fixDesyncedPayPhones() {
 				if (getPayPhoneData(i).otherPayPhone != -1) {
 					if (getPayPhoneData(getPayPhoneData(i).otherPayPhone).state != V_PAYPHONE_STATE_CALLING) {
 						if (serverData.payPhones[i].usingPlayer != null) {
-							getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
-							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
-							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
-							getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
+							if (getPlayerData(serverData.payPhones[i].usingPlayer) != null) {
+								getPlayerData(serverData.payPhones[i].usingPlayer).usingPayPhone = -1;
+								getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneCallStart = 0;
+								getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneInitiatedCall = false;
+								getPlayerData(serverData.payPhones[i].usingPlayer).payPhoneOtherPlayer = null;
+							} else {
+								serverData.payPhones[i].usingPlayer = null;
+							}
 						}
 						getPayPhoneData(i).otherPayPhone = -1;
 						setPayPhoneState(i, V_PAYPHONE_STATE_IDLE);
