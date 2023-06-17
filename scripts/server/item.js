@@ -1852,6 +1852,7 @@ function playerDropItem(client, hotBarSlot) {
 		//cachePlayerHotBarItems(client);
 		updatePlayerHotBar(client);
 		clearPlayerWeapons(client);
+		sendItemNameToPlayer(client, "Empty Hands");
 
 		let position = getPosInFrontOfPos(getPlayerPosition(client), getPlayerHeading(client), getItemTypeData(getItemData(itemId).itemTypeIndex).dropFrontDistance);
 
@@ -1930,6 +1931,7 @@ function playerPutItem(client, hotBarSlot) {
 
 	getPlayerData(client).hotBarItems[hotBarSlot] = -1;
 	updatePlayerHotBar(client);
+	sendItemNameToPlayer(client, "Empty Hands");
 }
 
 // ===========================================================================
@@ -1947,6 +1949,8 @@ function playerPickupItem(client, itemId) {
 
 		getPlayerData(client).hotBarItems[firstSlot] = itemId;
 		updatePlayerHotBar(client);
+
+		//sendItemNameToPlayer(client, getItemName(itemId));
 
 		logItemMove(getItemData(itemId).databaseId, V_ITEM_OWNER_GROUND, 0, V_ITEM_OWNER_PLAYER, getPlayerCurrentSubAccount(client).databaseId, position);
 	}
@@ -2138,6 +2142,7 @@ function playerSwitchItem(client, newHotBarSlot) {
 	}
 
 	getPlayerData(client).activeHotBarSlot = newHotBarSlot;
+	updatePlayerCurrentItemText(client);
 	updatePlayerHotBar(client);
 }
 
@@ -3637,6 +3642,19 @@ function cacheItemLists() {
 	}
 
 	return tempItemList;
+}
+
+// ===========================================================================
+
+function updatePlayerCurrentItemText(client) {
+	let itemName = "Empty Hands";
+	if (getPlayerData(client).activeHotBarSlot != -1) {
+		if (getPlayerData(client).hotBarItems[getPlayerData(client).activeHotBarSlot] != -1) {
+			itemName = getItemName(getPlayerData(client).hotBarItems[getPlayerData(client).activeHotBarSlot]);
+		}
+	}
+
+	sendItemNameToPlayer(client, itemName);
 }
 
 // ===========================================================================

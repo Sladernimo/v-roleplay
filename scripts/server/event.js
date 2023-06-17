@@ -135,7 +135,6 @@ function onProcess(event, deltaTime) {
 
 	processVehiclePurchasing();
 	processPlayerDragging();
-	updateVehicleSavedPosition();
 }
 
 // ===========================================================================
@@ -417,6 +416,8 @@ function onPlayerSpawn(client) {
 	setPlayerWeaponDamageEvent(client, V_WEAPON_DAMAGE_EVENT_NORMAL);
 	updateJobBlipsForPlayer(client);
 	updatePlayerNameTag(client);
+	sendItemNameToPlayer(client, "Empty Hands");
+	sendServerTimeToPlayer(client);
 
 	sendPlayerJobType(client, (getPlayerCurrentSubAccount(client).job != 0) ? getPlayerCurrentSubAccount(client).jobIndex : -1);
 
