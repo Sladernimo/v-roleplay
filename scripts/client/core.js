@@ -39,7 +39,11 @@ let controlsEnabled = true;
 let interiorLightsEnabled = true;
 let interiorLightsColour = toColour(0, 0, 0, 150);
 
-
+let serverTime = {
+	hour: 0,
+	minute: 0,
+	twelveHourClock: false,
+};
 
 let currentPickup = null;
 

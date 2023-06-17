@@ -13,6 +13,10 @@ let itemActionDelayEnabled = false;
 let itemActionDelayPosition = toVector2(game.width / 2 - 100, game.height - 10);
 let itemActionDelaySize = toVector2(200, 5);
 
+let currentItemName = "Empty Hands";
+
+let localPlayerItems = [];
+
 // ===========================================================================
 
 function initItemScript() {
@@ -67,6 +71,12 @@ function showItemActionDelay(duration) {
 	}, itemActionDelayDuration + 100);
 
 	logToConsole(LOG_DEBUG, `Item action delay started. Duration: ${itemActionDelayDuration}, Start: ${itemActionDelayStart}, Rendering Enabled: ${renderItemActionDelay}`);
+}
+
+// ===========================================================================
+
+function receiveItemNameFromServer(itemName) {
+	currentItemName = itemName;
 }
 
 // ===========================================================================

@@ -122,6 +122,8 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.mapChangingSoon", setMapChangeWarningState);
 	addNetworkEventHandler("v.rp.elementInterior", setElementInterior);
 	addNetworkEventHandler("v.rp.elementHeading", setElementHeading);
+	addNetworkEventHandler("v.rp.time", receiveTimeFromServer);
+	addNetworkEventHandler("v.rp.itemName", receiveItemNameFromServer);
 
 	// 2D Rendering
 	addNetworkEventHandler("v.rp.set2DRendering", set2DRendering);
@@ -191,6 +193,8 @@ function addAllNetworkHandlers() {
 	addNetworkEventHandler("v.rp.warpIntoVehicle", warpPedIntoVehicle);
 	addNetworkEventHandler("v.rp.godMode", setGodModeState);
 	addNetworkEventHandler("v.rp.countDown", startCountDown);
+	addNetworkEventHandler("v.rp.enterVehicle", makePedEnterVehicle);
+	addNetworkEventHandler("v.rp.exitVehicle", makePedExitVehicle);
 }
 
 // ===========================================================================
@@ -556,6 +560,13 @@ function setGodModeState(state) {
 	godMode = state;
 
 	return true;
+}
+
+// ===========================================================================
+
+function receiveTimeFromServer(hour, minute) {
+	serverTime.hour = hour;
+	serverTime.minute = minute;
 }
 
 // ===========================================================================
