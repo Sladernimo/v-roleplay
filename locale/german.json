@@ -117,7 +117,7 @@
 	"HandsBusy": "Deine Hände sind beschäftigt",
 	"CantUseItemInSkinChange": "Du kannst Gegenstände nicht benutzen, während du dein Aussehen anpasst",
 	"CantDropItemInSkinChange": "Du kannst Gegenstände nicht ablegen, während du dein Aussehen anpasst",
-	"CantPickupItemInSkinChange": "Du kannst keine Gegenstände aufheben, während du dein Aussehen anpasst,
+	"CantPickupItemInSkinChange": "Du kannst keine Gegenstände aufheben, während du dein Aussehen anpasst",
 	"CantSwitchItemInSkinChange": "Du kannst keine Gegenstände wechseln, während du dein Aussehen anpasst",
 	"CantGiveItemInSkinChange": "Du kannst keine Gegenstände hergeben, während du dein Aussehen anpasst",
 	"CantTakeItemInSkinChange": "Du kannst keine Gegenstände nehmen, während du dein Aussehen anpasst",
@@ -206,47 +206,47 @@
 		"Drive away from the dealership with the new vehicle to confirm the purchase."
 	],
 	"JobHelp": [
-		"Visit job locations to get a job and earn money. Look for yellow spots on the map",
-		"At a job location, use {1} to get the job. Use {2} to quit your job",
-		"Use {1} to begin working. You can also get a job {2} and {3}",
-		"Most job vehicles are locked. Use {1} near one to enter it.",
-		"When entering a job vehicle, information on how to do the job will be shown to you."
+		"Besuche die Arbeitsorte, um einen Job zu bekommen und Geld zu verdienen. Suche nach den gelben Punkten auf der Karte",
+		"Wenn du an einem Arbeitsort bist, benutze {1} um einen Job zu bekommen. Benutze {2} um den Job zu kündigen",
+		"Benutze {1} um mit der Arbeit zu beginnen. Du kannst auch einen Job bekommen {2} und {3}",
+		"Die meisten Arbeitsfahrzeuge sind abgeschlossen. Benutze {1} in der Nähe um einzusteigen.",
+		"Wenn du in ein Arbeitsfahrzeug einsteigst, werden dir Informationen angezeigt, wie du den Job zu erledigen hast."
 	],
 	"ChatHelp": [
-		"There are two main types of chat: out-of-character (OOC) and in-character (IC)",
-		"Mixing these two types is not proper roleplay. See {1} for info.",
-		"Some chat commands: {1}",
-		"Some have shorter names available ({1} to talk, {2} to shout, etc)"
+		"Es gibt 2 Haupttypen des Chats: out-of-character (OOC, also außerhalb des Rollenspiels) und in-character (IC, also innerhalb des Rollenspiels)",
+		"Das Vermischen dieser beiden Typen ist kein richtiges Rollenspiel. Siehe {1} für weitere Informationen.",
+		"Einige Chat-Befehle: {1}",
+		"Für einige sind kürzere Namen verfügbar ({1} zum Sprechen, {2} zum Schreien usw.)"
 	],
 	"ServerRulesHelp": [
-		"Unrealistic actions (powergaming) are not allowed. You aren't superman.",
-		"No terrorist or terrorism roleplay is allowed.",
-		"Always follow instructions given by moderators and admins.",
-		"Do not mix the chats (metagaming). You can't use info in IC that was received OOC",
-		"Keep English in main chats. If you aren't good at English, use {1}"
+		"Unrealistische Aktionen (powergaming) sind nicht erlaubt. Du bist nicht Superman.",
+		"Weder Terrorismus noch terroristisches Rollenspiel sind erlaubt.",
+		"Befolge immer die Anweisungen der Moderatoren und Administratoren.",
+		"Vermische nicht die verschiedenen Chat-Arten (metagaming). Es ist beispielsweise nicht erlaubt Informationen im IC zu nutzen, welche du über OOC erhalten hast",
+		"Benutze bitte die Englische Sprache im Haupt-Chat. Wenn du nicht gut Englisch sprechen bzw. verstehen kannst, benutze {1}"
 	],
 	"AnimationHelp": [
-		"Animations allow you to enhance roleplay with visual actions",
-		"Use {1} or {2} with a name to use an animation.",
-		"To see a list of animations, use {1}"
+		"Animationen ermöglichen es dir, das Rollenspiel mit visuellen Aktionen zu verbessern bzw. zu erweitern",
+		"Benutze {1} oder {2} mit einem Namen um eine Animation zu verwenden.",
+		"Um eine Liste der Animationen zu sehen, benutze {1}"
 	],
 	"WeaponHelp": [
-		"Visit an gun store to buy weapons. Use {1} to find one.",
-		"Buying a weapon requires a weapon license.",
-		"Weapon licenses are managed by the police department. Apply there to get one.",
-		"Weapons can also be purchased illegally from some businesses, weapon dealers, and clans."
+		"Besuche einen Waffenladen um Waffen zu kaufen. Benutze {1} um einen zu finden.",
+		"Für den legalen Kauf einer Waffe ist ein Waffenschein erforderlich.",
+		"Waffenscheine werden von der Polizeibehörde verwaltet. Melde dich dort, um einen zu erhalten.",
+		"Waffen können auch illegal von einigen Geschäften, Waffenhändlern und Clans erworben werden."
 	],
 	"SkinHelp": [
-		"At a clothing store, use {1} to purchase clothes",
-		"When you have a clothing item, equip and use it like any other item to show the skin selection (check {1} to learn how to use items)",
-		"Some skins are restricted to jobs, clans, or for other reasons."
+		"Benutze {1} in einem Bekleidungsgeschäft um Kleidung zu kaufen",
+		"Wenn du ein Kleidungsstück hast, rüste es aus und benutze es wie jeden anderen Gegenstand, um das Skin-Menü anzuzeigen (siehe {1} um zu lernen wie man Gegenstände benutzt)",
+		"Einige Skins sind auf bestimmte Berufe, Clans oder aus anderen Gründen beschränkt."
 	],
 	"KeyBindHelp": [
-		"You can set your own key binds. Use {1} to see your binded keys.",
-		"Use {1} to add a new keybind and {2} to remove one.",
-		"Default keys are: {1} for vehicle engine, {2} for lights, and {3} for lock/unlock",
-		"Press {1} to see your items and {2} to equip an item or {3} to unequip all.",
-		"Press {1} to use the item you're holding, press {2} to drop it, or press {3} to pickup an item from the ground."
+		"Du kannst deinen eigenen Tasten-Bindungen setzen. Benutze {1} um deine gebundenen Tasten anzuzeigen.",
+		"Benutze {1} um eine neue Tasten-Bindung hinzuzufügen und {2} um eine zu entfernen.",
+		"Standart-Tasten sind wie folgt: {1} für den Fahrzeugmotor, {2} für die Scheinwerfer, und {3} zum Abschließen und Aufschließen",
+		"Drücke {1} um deine Gegenstände zu sehen und {2} um einen Gegenstand auszurüsten oder {3} um alle ausgerüsteten Gegenstände zurückzunehmen.",
+		"Drücke {1} um den Gegenstand, den du in der Hand hälst zu benutzen, drücke {2} um ihn fallen zu lassen, oder drücke {3} um einen Gegenstand vom Boden aufzuheben."
 	],
 	"BusinessHelp": [
 		"Use {1} to purchase items or {2} to see a list of what's for sale at any business",
